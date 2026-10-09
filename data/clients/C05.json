@@ -860,5 +860,7 @@
  },
  "declared": [],
  "events": [],
- "samples": []
+ "samples": [
+  "ssi_C05.xlsx"
+ ]
 }

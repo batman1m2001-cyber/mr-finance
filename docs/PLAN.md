@@ -95,3 +95,10 @@ phone screenshots).
   personal and family views; light and dark; checked at 1440px and 400px. Charts follow the
   dataviz method: the validated palette (colour follows the asset class), one axis, a tooltip on
   every mark, a legend with every value.
+- P3 (statements and the chat): done. statement_flow reads CSV, Excel and PDF; the rules know the
+  three sample layouts (VPS, SSI, Vietcombank), the model reads anything else, and a model that
+  fails or answers nothing usable falls back to the rules (`on_error`). declare_flow is an
+  operonx-agents agent with six tools writing for the run's client (`deps`), a SQLite session per
+  chat, and a rule reader for the brief's sentences; an agent that cannot answer falls back too.
+  **Not yet run against a real model:** this machine has none (the OpenAI key has no credit, the
+  AIHub gateway is internal). The AI paths are tested with operonx's scripted model.

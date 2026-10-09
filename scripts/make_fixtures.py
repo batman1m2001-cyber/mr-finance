@@ -295,7 +295,7 @@ def client_c04(rng):
             {"id": "D-INS-04", "class": "insurance", "name": "Bảo hiểm sức khỏe cao cấp", "value": 0, "premium_annual": 40 * TR, "premium_month": 6},
         ],
         "events": [{"date": "2027-01-20", "direction": "out", "amount": 350 * TR, "label": "Phẫu thuật khớp gối (dự kiến)", "category": "health"}],
-        "samples": [],
+        "samples": ["vcb_C04.pdf"],
     }
 
 
@@ -326,7 +326,7 @@ def client_c05(rng):
         },
         "declared": [],
         "events": [],
-        "samples": [],
+        "samples": ["ssi_C05.xlsx"],
     }
 
 

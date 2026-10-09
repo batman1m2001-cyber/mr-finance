@@ -13,7 +13,7 @@ from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
 from wealth import fixtures, store
-from wealth.paths import ROOT
+from wealth.paths import DATA, ROOT
 
 
 async def clients(request: Request) -> JSONResponse:
@@ -23,9 +23,7 @@ async def clients(request: Request) -> JSONResponse:
         out.append(
             {
                 **fixtures.summary(cid),
-                "household": [
-                    {**m, "name": fixtures.client(m["id"])["name"]} for m in c.get("household", [])
-                ],
+                "household": [{**m, "name": fixtures.client(m["id"])["name"]} for m in c.get("household", [])],
                 "samples": c.get("samples", []),
             }
         )
@@ -45,8 +43,10 @@ async def reset(request: Request) -> JSONResponse:
 app = Starlette(
     routes=[
         Route("/healthz", healthz),
-    Route("/api/clients", clients),
+        Route("/api/clients", clients),
         Route("/api/reset", reset, methods=["POST"]),
+        # the sample statements a demo uploads
+        Mount("/samples", app=StaticFiles(directory=DATA / "samples"), name="samples"),
         Mount("/", app=StaticFiles(directory=ROOT / "web", html=True), name="web"),
     ]
 )

@@ -47,9 +47,7 @@ def recurring(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     for t in transactions:
         if t.get("category") in SKIP:
             continue
-        groups[
-            (t.get("owner", ""), t["direction"], t.get("category", ""), _norm(t["desc"]))
-        ].append(t)
+        groups[(t.get("owner", ""), t["direction"], t.get("category", ""), _norm(t["desc"]))].append(t)
     out = []
     for (owner, direction, category, desc), rows in groups.items():
         months = sorted({r["date"][:7] for r in rows})
@@ -63,9 +61,7 @@ def recurring(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         gaps = [b - a for a, b in zip(idx, idx[1:])]
         if len(months) >= 9 and max(gaps) <= 2:
             cadence, when = "monthly", None
-        elif len(months) <= 6 and all(
-            g in (2, 3, 4) for g in gaps
-        ):  # school terms, a quarterly bill
+        elif len(months) <= 6 and all(g in (2, 3, 4) for g in gaps):  # school terms, a quarterly bill
             cadence, when = "quarterly", sorted({int(m[5:7]) for m in months})
         else:
             continue
@@ -134,11 +130,7 @@ def build(
         elif h["class"] == "deposit" and d.get("maturity"):
             years = max(
                 0.0,
-                (
-                    date.fromisoformat(d["maturity"])
-                    - date.fromisoformat(d.get("opened") or d["maturity"])
-                ).days
-                / 365,
+                (date.fromisoformat(d["maturity"]) - date.fromisoformat(d.get("opened") or d["maturity"])).days / 365,
             )
             add(
                 d["maturity"][:7],
@@ -196,12 +188,8 @@ def build(
         items = sorted(cal[m], key=lambda i: (i["direction"], -i["amount"]))
         inflow = sum(i["amount"] for i in items if i["direction"] == "in")
         outflow = sum(i["amount"] for i in items if i["direction"] == "out")
-        rows.append(
-            {"month": m, "in": inflow, "out": outflow, "net": inflow - outflow, "items": items}
-        )
-        large += [
-            {**i, "month": m} for i in items if i["direction"] == "out" and i["amount"] >= big
-        ]
+        rows.append({"month": m, "in": inflow, "out": outflow, "net": inflow - outflow, "items": items})
+        large += [{**i, "month": m} for i in items if i["direction"] == "out" and i["amount"] >= big]
     return {
         "start": start,
         "months": rows,

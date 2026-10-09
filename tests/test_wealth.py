@@ -32,9 +32,7 @@ def test_every_client_fixture_values_without_a_gap():
 
 def test_a_stock_is_valued_at_market_with_its_cost_and_stress():
     mk = fixtures.market()
-    h = valuation.stock(
-        "C01", "tcbs", {"ticker": "FPT", "qty": 1_000, "avg_price": 95_000}, mk, "verified"
-    )
+    h = valuation.stock("C01", "tcbs", {"ticker": "FPT", "qty": 1_000, "avg_price": 95_000}, mk, "verified")
     assert h["value"] == 128 * TR and h["cost"] == 95 * TR and h["prev_value"] == 122 * TR
     assert h["stress"] == round(0.25 * 1.05, 4) and h["detail"]["sector"] == "Công nghệ"
 
@@ -67,9 +65,7 @@ def test_declared_gold_is_valued_at_today_s_price_and_a_house_at_its_word():
 
 def test_the_store_keeps_what_clients_add_and_resets():
     store.put_holdings("C01", "statement", [{"key": "C01:statement:x", "value": 1}])
-    store.put_holdings(
-        "C01", "statement", [{"key": "C01:statement:x", "value": 2}]
-    )  # replaced, not doubled
+    store.put_holdings("C01", "statement", [{"key": "C01:statement:x", "value": 2}])  # replaced, not doubled
     assert [h["value"] for h in store.holdings("C01", "statement")] == [2]
     item = store.add_profile("C01", "dependent", {"name": "An"})
     assert store.profile("C01", "dependent")[0]["id"] == item

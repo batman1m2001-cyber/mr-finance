@@ -221,9 +221,7 @@ def concentration(holdings: list, net_worth: dict) -> dict:
                 }
             )
             if flag:
-                warnings.append(
-                    f"{label} {name}: {pct(share)} tài sản (ngưỡng {pct(limit, digits=0)})"
-                )
+                warnings.append(f"{label} {name}: {pct(share)} tài sản (ngưỡng {pct(limit, digits=0)})")
     return {"concentration": {"rows": rows, "warnings": warnings}}
 
 
@@ -258,11 +256,7 @@ def cashflow(holdings: list, transactions: list, profile: dict, months: int = 12
     """The next months' money in and out (see dashboard/_calendar.py), and the large payments."""
     mk = fixtures.market()
     big = max(500 * TR, 3 * profile["spending_monthly"])
-    return {
-        "cashflow": _calendar.build(
-            holdings, transactions, profile["events"], mk["as_of"], months, big, mk
-        )
-    }
+    return {"cashflow": _calendar.build(holdings, transactions, profile["events"], mk["as_of"], months, big, mk)}
 
 
 @op
@@ -287,9 +281,7 @@ def assemble(
     headline = {
         "net_worth": vnd(net_worth["value"]),
         "month_change": pct(net_worth["month_change_pct"], signed=True),
-        "allocation": " · ".join(
-            f"{a['group']} {pct(a['share'], digits=0)}" for a in allocation[:4]
-        ),
+        "allocation": " · ".join(f"{a['group']} {pct(a['share'], digits=0)}" for a in allocation[:4]),
         "liquidity": f"{vnd(liquidity['value'])} = đủ chi {months_text(liquidity['months'])}",
         "risk": f"Ngưỡng {pct(risk['limit'], digits=0)} · hiện tại {pct(risk['current'])}",
     }

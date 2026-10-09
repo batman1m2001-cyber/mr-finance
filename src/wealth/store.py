@@ -97,6 +97,13 @@ def profile(client_id: str, kind: Optional[str] = None) -> List[Dict[str, Any]]:
         return [json.loads(r[0]) for r in con.execute(q + " order by created", args)]
 
 
+def created(item_id: str) -> float:
+    """When a profile item was added (0 when unknown)."""
+    with _db() as con:
+        row = con.execute("select created from profile where id = ?", (item_id,)).fetchone()
+    return row[0] if row else 0.0
+
+
 # ── the latest result of a kind: a risk test, the alerts ────────────────
 
 
@@ -110,9 +117,7 @@ def put_result(client_id: str, kind: str, data: Any) -> None:
 
 def result(client_id: str, kind: str) -> Optional[Any]:
     with _db() as con:
-        row = con.execute(
-            "select data from results where client_id = ? and kind = ?", (client_id, kind)
-        ).fetchone()
+        row = con.execute("select data from results where client_id = ? and kind = ?", (client_id, kind)).fetchone()
     return json.loads(row[0]) if row else None
 
 
@@ -134,8 +139,7 @@ def decide(item_id: str, status: str, note: str = "") -> Optional[Dict[str, Any]
         raise ValueError(f"a decision is approved or rejected, not {status!r}")
     with _db() as con:
         cur = con.execute(
-            "update reviews set status = ?, note = ?, decided = ?"
-            " where id = ? and status = 'pending'",
+            "update reviews set status = ?, note = ?, decided = ? where id = ? and status = 'pending'",
             (status, note, time.time(), item_id),
         )
         if not cur.rowcount:
