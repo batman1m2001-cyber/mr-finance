@@ -5,6 +5,8 @@ POST /api/statement {client_id, filename, content} ──► statement_flow ─�
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
+POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
+POST /api/review/propose ──► the RM queue · POST /api/review/decide ──► review_flow (approve / reject)
 07:00 daily ──► sweep_flow (every client's alerts) · `operonx run policy_sweep` ──► the same, as a job
 GET  /api/clients, POST /api/reset, GET /    ──► app/web.py (the sample clients, the UI)
 
@@ -19,7 +21,9 @@ from dashboard.graph import dashboard_api
 from declare.graph import declare_api
 from impact.graph import alerts_api, alerts_flow, sweep_flow
 from impact.ops import every_client
+from review.graph import decide_api, propose_api
 from risk.graph import risk_api
+from scenarios.graph import scenario_api
 from statements.graph import statement_api
 
 PORT = env("PORT", 8030)
@@ -57,6 +61,24 @@ APP = Application(
             http("POST", "/api/alerts", port=PORT),
             graph=alerts_api,
             description="POST {client_id, scope?}: what is moving the client's wealth, in VND, with sources.",
+        ),
+        Service(
+            "scenario",
+            http("POST", "/api/scenario", port=PORT),
+            graph=scenario_api,
+            description="POST {client_id, scenario, params?, scope?}: a life event or a stress test, with two options.",
+        ),
+        Service(
+            "propose",
+            http("POST", "/api/review/propose", port=PORT),
+            graph=propose_api,
+            description="POST {client_id, scenario, title, option}: an option sent to the RM queue.",
+        ),
+        Service(
+            "decide",
+            http("POST", "/api/review/decide", port=PORT),
+            graph=decide_api,
+            description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
         # every morning, before the RMs start: every client's alerts again
         Service(

@@ -6,7 +6,8 @@
   const $ = (s, root) => (root || document).querySelector(s);
 
   const state = {clients: [], client: null, scope: "personal", months: 12, tab: "overview", board: null, seq: 0,
-                 reads: {}, chat: {}, busy: false, risk: {}, alerts: null, alertFilter: "all"};
+                 reads: {}, chat: {}, busy: false, risk: {}, alerts: null, alertFilter: "all",
+                 catalog: [], sim: {}, simBusy: false, queue: []};
   const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
                     "Tôi có 2 con, 14 tuổi và 10 tuổi", "Tôi có 20% cổ phần công ty Hoa Sen trị giá 5 tỷ"];
 
@@ -313,6 +314,135 @@
     }
   }
 
+  // ── scenarios ───────────────────────────────────────────────────────
+  const PARAMS = {
+    per_year: ["Học phí mỗi năm", "tỷ"], years: ["Số năm", ""], start_year: ["Năm bắt đầu", ""], fx_rise: ["Tỷ giá tăng", "%"],
+    retire_age: ["Tuổi nghỉ hưu", ""], spending_after: ["Chi tiêu mỗi tháng sau nghỉ hưu", "triệu"], price: ["Giá BĐS", "tỷ"],
+    loan_ratio: ["Tỷ lệ vay", "%"], rate: ["Lãi suất vay", "%"], rent_monthly: ["Tiền thuê kỳ vọng mỗi tháng", "triệu"],
+    share: ["Phần chuyển cho con", "%"], need: ["Số tiền cần", "tỷ"], cost: ["Chi phí điều trị", "tỷ"], cover: ["Bảo hiểm chi trả", "%"],
+    usd: ["Số USD cần", "USD"], amount: ["Khoản rút ra", "tỷ"],
+  };
+  const UNIT = {"tỷ": 1e9, "triệu": 1e6, "%": 0.01, "": 1, "USD": 1};
+  const TONE = {good: "delta up", bad: "delta down", neutral: ""};
+
+  function simState() { return state.sim[state.client] = state.sim[state.client] || {pick: null, result: null, sent: {}}; }
+
+  async function runScenario(id, params) {
+    const st = simState();
+    st.pick = id;
+    state.simBusy = true;
+    renderScenarios();
+    try {
+      st.result = await api("/api/scenario", {client_id: state.client, scenario: id, params: params || {}, scope: state.scope});
+    } catch (e) {
+      st.result = {error: e.message};
+    }
+    state.simBusy = false;
+    renderScenarios();
+    // on a narrow screen the result sits above the list: bring it into view
+    const panel = $("#tab-scenarios .simgrid > div:last-child");
+    if (panel && innerWidth <= 980) panel.scrollIntoView({block: "start", behavior: "smooth"});
+  }
+
+  async function propose(option) {
+    const st = simState(), r = st.result;
+    try {
+      const item = await api("/api/review/propose", {client_id: state.client, scenario: r.scenario, title: r.title, option, summary: r.summary});
+      st.sent[`${r.scenario}:${option.id}`] = item.id;
+      await loadQueue();
+    } catch (e) { alert("Không gửi được: " + e.message); }
+    renderScenarios();
+  }
+
+  function renderScenarios() {
+    const box = $("#tab-scenarios");
+    const st = simState();
+    const me = state.clients.find(c => c.id === state.client) || {};
+    const fit = (s) => s.personas.includes(me.persona_hint);
+    const group = (kind, title, sub) => `<div class="card"><h2>${title}</h2><p class="muted small" style="margin-top:-6px">${sub}</p>
+      <div class="slist">${state.catalog.filter(s => s.kind === kind).map(s => `<button type="button" class="sitem${st.pick === s.id ? " on" : ""}" data-sim="${s.id}">
+        <b>${esc(s.title)}</b>${fit(s) ? `<span class="chip">hợp chân dung ${esc(me.persona_hint)}</span>` : ""}<span class="muted small">${esc(s.question)}</span></button>`).join("")}</div></div>`;
+    const r = st.result;
+    let panel = `<div class="card muted">Chọn một kịch bản để mô phỏng trên chính dữ liệu của ${esc(me.name || "khách hàng")}.</div>`;
+    if (state.simBusy) panel = `<div class="card muted">Đang mô phỏng…</div>`;
+    else if (r && r.error) panel = `<div class="card error">Không mô phỏng được: ${esc(r.error)}</div>`;
+    else if (r) {
+      const form = Object.entries(r.params || {}).filter(([k]) => PARAMS[k]).map(([k, v]) => {
+        const [label, unit] = PARAMS[k];
+        const shown = typeof v === "number" ? +(v / UNIT[unit]).toFixed(unit === "%" ? 1 : 2) : v;
+        return `<label class="field"><span>${label}${unit ? ` (${unit})` : ""}</span><input type="number" step="any" name="${k}" value="${shown}"></label>`;
+      }).join("");
+      const cmp = (k, fmtf) => `<td class="num">${fmtf(r.before[k])}</td><td class="num">${fmtf(r.after[k])}</td>`;
+      panel = `<div class="card">
+          <div class="muted small">${r.kind === "stress" ? "Stress test thị trường · AI tự chạy" : "Kịch bản theo mốc đời"} · dữ liệu ngày ${esc(r.as_of)}</div>
+          <h3 class="qtext" style="margin:4px 0 2px">${esc(r.title)}</h3><p class="muted">${esc(r.question)}</p>
+          ${form ? `<form id="sim-form" class="simform">${form}<button type="submit" class="btn">Chạy lại</button></form>` : ""}
+          <div class="stats mt">${r.summary.map(l => `<div class="stat"><span class="k">${esc(l.label)}</span><span class="v ${TONE[l.tone] || ""}">${esc(l.value)}</span></div>`).join("")}</div>
+          <div class="tablewrap mt"><table><thead><tr><th></th><th class="num">Trước</th><th class="num">Sau</th></tr></thead><tbody>
+            <tr><td>Tài sản ròng</td>${cmp("net_worth", vnd)}</tr>
+            <tr><td>Thanh khoản</td>${cmp("liquid", vnd)}</tr>
+            <tr><td>Đủ chi</td>${cmp("liquid_months", monthsText)}</tr></tbody></table></div>
+        </div>
+        <div class="grid g2 mt">${(r.options || []).map(o => {
+          const sent = st.sent[`${r.scenario}:${o.id}`];
+          const item = sent && state.queue.find(q => q.id === sent);
+          const tag = item ? `<span class="badge ${item.status === "approved" ? "verified" : item.status === "rejected" ? "declared" : "statement"}">${item.status === "approved" ? "RM đã duyệt" : item.status === "rejected" ? "RM từ chối" : "Chờ RM duyệt"}</span>` : "";
+          return `<div class="card"><div class="ahead2"><span class="chip">${o.id === "light" ? "Hướng nhẹ" : "Hướng mạnh"}</span>${tag}</div>
+            <h3 style="margin:8px 0">${esc(o.title)}</h3>
+            <div class="small muted">Làm gì</div><ul>${o.actions.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
+            <div class="small muted">Kết quả</div><ul>${o.effect.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
+            ${item ? (item.note ? `<p class="small"><b>Ghi chú RM:</b> ${esc(item.note)}</p>` : "") : `<button type="button" class="btn" data-propose="${o.id}">Gửi RM duyệt</button>`}</div>`;
+        }).join("")}</div>
+        <p class="note mt">${esc(r.note)}</p>`;
+    }
+    box.innerHTML = `<div class="simgrid"><div class="grid">${group("life", "Theo mốc trong đời", "Khách hàng chủ động thử.")}
+      ${group("stress", "Stress test thị trường", "AI tự chạy, khách hàng xem kết quả.")}</div><div>${panel}</div></div>`;
+    for (const b of box.querySelectorAll("[data-sim]")) b.onclick = () => runScenario(b.dataset.sim, {});
+    for (const b of box.querySelectorAll("[data-propose]")) b.onclick = () => propose(r.options.find(o => o.id === b.dataset.propose));
+    const form = $("#sim-form");
+    if (form) form.onsubmit = (ev) => {
+      ev.preventDefault();
+      const prm = {...r.params};
+      for (const i of form.querySelectorAll("input")) prm[i.name] = Number(i.value) * UNIT[PARAMS[i.name][1]];
+      runScenario(r.scenario, prm);
+    };
+  }
+
+  // ── the RM's queue ──────────────────────────────────────────────────
+  async function loadQueue() {
+    try { state.queue = (await api("/api/review")).items; } catch (_) { state.queue = []; }
+    renderRM();
+  }
+
+  async function decideItem(id, decision) {
+    const note = ($(`#note-${id}`) || {}).value || "";
+    try {
+      await api("/api/review/decide", {item_id: id, decision, note});
+    } catch (e) { alert("Không lưu được: " + e.message); }
+    await loadQueue();
+    renderScenarios();
+  }
+
+  function renderRM() {
+    const box = $("#tab-rm");
+    const pending = state.queue.filter(q => q.status === "pending");
+    const done = state.queue.filter(q => q.status !== "pending");
+    const row = (q) => `<div class="card"><div class="ahead2"><b>${esc(q.client_name)}</b><span class="muted small">${new Date(q.created * 1000).toLocaleString("vi-VN")}</span>
+        ${q.status !== "pending" ? `<span class="badge ${q.status === "approved" ? "verified" : "declared"}">${q.status === "approved" ? "Đã duyệt" : "Từ chối"}</span>` : ""}</div>
+      <h3 style="margin:8px 0">${esc(q.title)}</h3>
+      <ul>${((q.data.option || {}).actions || []).map(a => `<li>${esc(a)}</li>`).join("")}</ul>
+      <div class="stats small">${(q.data.summary || []).slice(0, 4).map(l => `<div class="stat"><span class="k">${esc(l.label)}</span><span class="v">${esc(l.value)}</span></div>`).join("")}</div>
+      ${q.status === "pending" ? `<div class="chatform mt"><input id="note-${q.id}" placeholder="Ghi chú cho khách hàng (không bắt buộc)" aria-label="Ghi chú">
+        <button type="button" class="btn" data-ok="${q.id}">Duyệt</button><button type="button" class="btn ghostbtn" data-no="${q.id}">Từ chối</button></div>`
+        : (q.note ? `<p class="small"><b>Ghi chú:</b> ${esc(q.note)}</p>` : "")}</div>`;
+    box.innerHTML = `<div class="card"><h2>Hàng chờ RM duyệt <span class="hint">${pending.length} đang chờ</span></h2>
+        <p class="muted small" style="margin-top:-6px">Mọi khuyến nghị từ kịch bản đều là mô phỏng cho đến khi RM duyệt (tuân thủ đề bài).</p></div>
+      <div class="grid g2 mt">${pending.map(row).join("") || `<div class="card muted">Không có đề xuất nào đang chờ.</div>`}</div>
+      ${done.length ? `<h2 class="mt" style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)">Đã xử lý</h2><div class="grid g2">${done.map(row).join("")}</div>` : ""}`;
+    for (const b of box.querySelectorAll("[data-ok]")) b.onclick = () => decideItem(b.dataset.ok, "approved");
+    for (const b of box.querySelectorAll("[data-no]")) b.onclick = () => decideItem(b.dataset.no, "rejected");
+  }
+
   // ── the risk test ───────────────────────────────────────────────────
   const LEVEL_NAMES = ["Bảo toàn", "Thận trọng", "Cân bằng", "Tăng trưởng", "Mạo hiểm"];
   function riskState() {
@@ -407,6 +537,7 @@
       renderSources(d);
       if (state.alerts && state.alerts.client_id === state.client && state.alerts.scope === state.scope) alertsCard(state.alerts);
       loadAlerts(seq);
+      renderScenarios();
       if (!$("#tab-risk").dataset.client || $("#tab-risk").dataset.client !== state.client) {
         $("#tab-risk").dataset.client = state.client;
         renderRisk();
@@ -438,6 +569,8 @@
   async function start() {
     try { const t = localStorage.getItem("mf.theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) { /* */ }
     const {clients} = await api("/api/clients");
+    try { state.catalog = (await api("/api/scenarios")).scenarios; } catch (_) { state.catalog = []; }
+    loadQueue();
     state.clients = clients;
     const sel = $("#client");
     sel.innerHTML = clients.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.persona_hint)}</option>`).join("");
