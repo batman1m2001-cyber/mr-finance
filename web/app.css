@@ -193,6 +193,7 @@ td .sub { display: none; color: var(--muted); font-size: 11px; margin-top: 2px; 
 .chipbtn { border: 1px solid var(--hair); background: var(--surface-2); border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; text-align: left; }
 .chatform { display: flex; gap: 8px; }
 .chatform input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--axis); border-radius: 8px; background: var(--surface); }
+.linkbtn { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; margin-left: 8px; text-decoration: underline; font-size: 12px; }
 .tip { position: fixed; z-index: 20; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--hair);
   border-radius: 8px; padding: 8px 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, .14); font-size: 12px; max-width: 280px; }
 .tip b { display: block; margin-bottom: 4px; }

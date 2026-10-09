@@ -3,6 +3,8 @@
 - vps_C01.csv   a VPS securities statement (CSV)
 - ssi_C05.xlsx  an SSI securities statement (Excel)
 - vcb_C04.pdf   a Vietcombank deposit statement (PDF)
+- mbs_C02.csv   an MBS statement whose columns are named differently (the eval's)
+- hsc_note.txt  a broker's confirmation in plain sentences: only a model reads it (the eval's)
 
 The PDF is written by hand (a few text lines, no font embedding), so its text is plain ASCII, as
 many bank exports are.
@@ -38,6 +40,21 @@ SSI_ROWS = [
     ["MBB", 4000, 22000, 24500, 98000000],
     ["Tien mat", None, None, None, 50000000],
 ]
+
+MBS_CSV = """CÔNG TY CỔ PHẦN CHỨNG KHOÁN MB (MBS)
+BÁO CÁO TÀI SẢN,30/09/2026
+Mã chứng khoán,SL,Giá TB,Thị giá,Giá trị
+VNM,3000,68000,62000,186000000
+FPT,1000,115000,128000,128000000
+Tiền mặt,,,,42000000
+"""
+
+HSC_NOTE = (
+    "CÔNG TY CỔ PHẦN CHỨNG KHOÁN TP.HCM (HSC)\n"
+    "Thư xác nhận số dư ngày 30/09/2026.\n"
+    "Quý khách đang nắm giữ 2.000 cổ phiếu FPT với giá vốn bình quân 100.000 đồng và 1.500 cổ phiếu VNM "
+    "với giá vốn 65.000 đồng. Tiền trên tài khoản giao dịch: 35.000.000 đồng.\n"
+)
 
 VCB_LINES = [
     "NGAN HANG TMCP NGOAI THUONG VIET NAM (VIETCOMBANK)",
@@ -82,6 +99,8 @@ def main() -> None:
         ws.append(row)
     wb.save(OUT / "ssi_C05.xlsx")
     (OUT / "vcb_C04.pdf").write_bytes(pdf(VCB_LINES))
+    (OUT / "mbs_C02.csv").write_text(MBS_CSV, encoding="utf-8")
+    (OUT / "hsc_note.txt").write_text(HSC_NOTE, encoding="utf-8")
 
 
 if __name__ == "__main__":
