@@ -3,9 +3,8 @@
 import base64
 from pathlib import Path
 
-from starlette.testclient import TestClient
-
 from operonx.app import Application
+from starlette.testclient import TestClient
 
 SAMPLES = Path(__file__).resolve().parents[1] / "data" / "samples"
 
