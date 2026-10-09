@@ -6,7 +6,7 @@
   const $ = (s, root) => (root || document).querySelector(s);
 
   const state = {clients: [], client: null, scope: "personal", months: 12, tab: "overview", board: null, seq: 0,
-                 reads: {}, chat: {}, busy: false, risk: {}};
+                 reads: {}, chat: {}, busy: false, risk: {}, alerts: null, alertFilter: "all"};
   const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
                     "Tôi có 2 con, 14 tuổi và 10 tuổi", "Tôi có 20% cổ phần công ty Hoa Sen trị giá 5 tỷ"];
 
@@ -107,7 +107,8 @@
           <div><h2>Khoản định kỳ tìm thấy trong giao dịch</h2>
             <ul class="legend">${cf.recurring.map(r => `<li><span class="sw" style="background:${r.direction === "in" ? "var(--in)" : "var(--out)"}"></span><span>${esc(r.label)} <span class="muted small">· ${r.cadence === "monthly" ? "hằng tháng" : "theo kỳ"}</span></span><span class="v">${r.direction === "in" ? "+" : "−"}${vnd(r.amount)}</span><span></span></li>`).join("")}</ul></div>
         </div>
-      </div>`;
+      </div>
+      <div class="card mt" id="alerts-card"><h2>Cảnh báo tác động</h2><p class="muted small">Đang quét chính sách, vĩ mô và hạ tầng…</p></div>`;
     const trust = nw.trust_mix.map(t => ({label: TRUST_LABEL[t.trust] || t.label, value: t.value, share: t.share, trust: t.trust}));
     $("#trust", box).append(C.shareBar(trust, r => TRUST_COLOR[r.trust]));
     $("#alloc", box).append(C.shareBar(d.allocation.map(a => ({label: a.group, value: a.value, share: a.share})),
@@ -240,6 +241,78 @@
     if (log) log.scrollTop = log.scrollHeight;
   }
 
+  // ── alerts: what is moving the picture ──────────────────────────────
+  const SEV = {
+    high: {icon: "■", label: "Cao", color: "var(--critical)"},
+    medium: {icon: "▲", label: "Trung bình", color: "var(--warning)"},
+    low: {icon: "●", label: "Thấp", color: "var(--axis)"},
+  };
+  const KIND = {policy: "Chính sách", macro: "Vĩ mô", infrastructure: "Hạ tầng"};
+
+  function sevTag(a) {
+    if (a.opportunity) return `<span class="status"><span class="dot" style="background:var(--good)" aria-hidden="true"></span>Cơ hội · ${SEV[a.severity].label.toLowerCase()}</span>`;
+    const v = SEV[a.severity];
+    return `<span class="status"><span aria-hidden="true" style="color:${v.color}">${v.icon}</span>Rủi ro · ${v.label.toLowerCase()}</span>`;
+  }
+
+  function alertsCard(rep) {
+    const box = $("#alerts-card");
+    if (!box) return;
+    const top = rep.alerts.slice(0, 3);
+    box.innerHTML = `<h2>Cảnh báo tác động <span class="hint">${rep.risks} rủi ro · ${rep.opportunities} cơ hội</span></h2>
+      <div class="alist">${top.map(a => `<div class="arow">${sevTag(a)}<b>${esc(a.title)}</b><span class="v ${a.impact >= 0 ? "delta up" : "delta down"}">${vnd(a.impact, true)}</span>
+        <span class="muted small">${esc(a.message)}</span></div>`).join("")}</div>
+      <button type="button" class="btn ghostbtn mt" id="to-alerts">Xem tất cả ${rep.alerts.length} cảnh báo →</button>`;
+    $("#to-alerts").onclick = () => showTab("alerts");
+  }
+
+  function renderAlerts() {
+    const box = $("#tab-alerts");
+    const rep = state.alerts;
+    if (!rep) { box.innerHTML = `<div class="card muted">Đang quét…</div>`; return; }
+    const f = state.alertFilter;
+    const list = rep.alerts.filter(a => f === "all" || (f === "opp" ? a.opportunity : !a.opportunity));
+    const maxAbs = Math.max(1, ...rep.alerts.map(a => Math.abs(a.impact)));
+    box.innerHTML = `
+      <div class="card"><h2>Tác động lên tài sản ròng <span class="hint">${rep.scope === "family" ? "gia đình" : "cá nhân"} · tài sản ròng ${vnd(rep.net_worth)}</span></h2>
+        <p class="muted small" style="margin-top:-4px">Tác động (VND) = Mức nắm giữ × Độ nhạy × Xác suất xảy ra · xác suất theo trạng thái: dự thảo thấp, đang lấy ý kiến trung bình, đã thông qua cao.</p>
+        <div class="keys"><span><span class="sw" style="background:var(--out)"></span>Rủi ro (giảm tài sản)</span><span><span class="sw" style="background:var(--in)"></span>Cơ hội (tăng tài sản)</span>
+          <span class="seg" role="group" aria-label="Lọc" style="margin-left:auto">${[["all", "Tất cả"], ["risk", "Rủi ro"], ["opp", "Cơ hội"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${f === k}">${t}</button>`).join("")}</span></div>
+        <div class="dbars mt">${list.slice(0, 10).map(a => `<div class="dbar" tabindex="0" data-tip="${esc(a.id)}"><span class="dl">${esc(a.title)}</span>
+          <span class="dt"><span class="dneg">${a.impact < 0 ? `<span style="width:${Math.abs(a.impact) / maxAbs * 100}%"></span>` : ""}</span><span class="dpos">${a.impact > 0 ? `<span style="width:${a.impact / maxAbs * 100}%"></span>` : ""}</span></span>
+          <span class="dv">${vnd(a.impact, true)}</span></div>`).join("")}</div>
+      </div>
+      <p class="note mt">⚠ ${esc(rep.note)}</p>
+      <div class="grid g2 mt">${list.map(a => `<div class="card acard">
+          <div class="ahead2">${sevTag(a)}<span class="chip">${esc(KIND[a.kind] || a.kind)}</span><span class="chip">${esc(a.status_label)}</span></div>
+          <h3>${esc(a.title)}</h3>
+          <p>${esc(a.message)}</p>
+          <div class="stats small">
+            <div class="stat"><span class="k">Tác động ước tính (đã tính xác suất)</span><span class="v ${a.impact >= 0 ? "delta up" : "delta down"}">${vnd(a.impact, true)} · ${pct(a.impact_pct, true, 2)} tài sản ròng</span></div>
+            <div class="stat"><span class="k">Mức nắm giữ × Độ nhạy × Xác suất</span><span class="v">${vnd(a.exposure)} × ${pct(a.sensitivity, true, 2)} × ${pct(a.probability, false, 0)}</span></div>
+            <div class="stat"><span class="k">Khoản bị ảnh hưởng</span><span class="v">${a.affected.map(esc).join(", ")}</span></div>
+          </div>
+          <div class="muted small mt">Nguồn: ${esc(a.source)}</div></div>`).join("")}</div>`;
+    for (const b of box.querySelectorAll("[data-af]")) b.onclick = () => { state.alertFilter = b.dataset.af; renderAlerts(); };
+    for (const el of box.querySelectorAll("[data-tip]")) {
+      const a = rep.alerts.find(x => x.id === el.dataset.tip);
+      C.hover(el, `<b>${esc(a.title)}</b><div>${esc(a.message)}</div><div class="row"><span>Tác động</span><span>${vnd(a.impact, true)}</span></div>`);
+    }
+  }
+
+  async function loadAlerts(seq) {
+    try {
+      const rep = await api("/api/alerts", {client_id: state.client, scope: state.scope});
+      if (seq !== state.seq) return;
+      state.alerts = rep;
+      alertsCard(rep);
+      renderAlerts();
+    } catch (e) {
+      const box = $("#alerts-card");
+      if (box) box.innerHTML = `<h2>Cảnh báo tác động</h2><p class="error">Không tải được: ${esc(e.message)}</p>`;
+    }
+  }
+
   // ── the risk test ───────────────────────────────────────────────────
   const LEVEL_NAMES = ["Bảo toàn", "Thận trọng", "Cân bằng", "Tăng trưởng", "Mạo hiểm"];
   function riskState() {
@@ -332,6 +405,8 @@
       state.board = d;
       renderOverview(d);
       renderSources(d);
+      if (state.alerts && state.alerts.client_id === state.client && state.alerts.scope === state.scope) alertsCard(state.alerts);
+      loadAlerts(seq);
       if (!$("#tab-risk").dataset.client || $("#tab-risk").dataset.client !== state.client) {
         $("#tab-risk").dataset.client = state.client;
         renderRisk();

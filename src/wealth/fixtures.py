@@ -41,3 +41,9 @@ def summary(client_id: str) -> Dict[str, Any]:
     """What the client picker shows."""
     c = _client(client_id)
     return {k: c.get(k) for k in ("id", "name", "age", "occupation", "segment", "persona_hint", "city")}
+
+
+@lru_cache(maxsize=1)
+def factors() -> Dict[str, Any]:
+    """The policies, macro moves and infrastructure projects the alerts watch (data/factors.json)."""
+    return json.loads((DATA / "factors.json").read_text(encoding="utf-8"))

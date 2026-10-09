@@ -4,16 +4,21 @@ POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
+POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
+07:00 daily ──► sweep_flow (every client's alerts) · `operonx run policy_sweep` ──► the same, as a job
 GET  /api/clients, POST /api/reset, GET /    ──► app/web.py (the sample clients, the UI)
 
 Every service and job of the product is declared here; operonx.toml only points at `APP`.
 """
 
-from operonx.app import Application, Service, asgi, env, http
+from operonx.app import Application, Service, asgi, env, http, schedule
+from operonx.app.jobs import Job
 
 from app import web
 from dashboard.graph import dashboard_api
 from declare.graph import declare_api
+from impact.graph import alerts_api, alerts_flow, sweep_flow
+from impact.ops import every_client
 from risk.graph import risk_api
 from statements.graph import statement_api
 
@@ -47,7 +52,24 @@ APP = Application(
             graph=risk_api,
             description="POST {client_id, answers}: the next question of the risk test, or its result.",
         ),
+        Service(
+            "alerts",
+            http("POST", "/api/alerts", port=PORT),
+            graph=alerts_api,
+            description="POST {client_id, scope?}: what is moving the client's wealth, in VND, with sources.",
+        ),
+        # every morning, before the RMs start: every client's alerts again
+        Service(
+            "morning_sweep",
+            schedule(at="07:00", port=PORT),
+            graph=sweep_flow,
+            description="07:00 daily: the policy sweep over every client.",
+        ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
+    ],
+    jobs=[
+        # the same sweep from a terminal or cron: `operonx run policy_sweep`
+        Job("policy_sweep", graph=alerts_flow, items=every_client, key="client_id"),
     ],
 )

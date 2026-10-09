@@ -34,3 +34,5 @@ select = ["E", "F", "I", "W"]
 
 [tool.ruff.lint.per-file-ignores]
 "scripts/make_fixtures.py" = ["E501"]  # one client per screen: data rows stay whole
+"scripts/make_factors.py" = ["E501"]  # each factor's source line stays whole
+"src/impact/_rules.py" = ["E501"]  # the messages a client reads stay whole
