@@ -32,6 +32,11 @@ async def clients(request: Request) -> JSONResponse:
     return JSONResponse({"clients": out, "as_of": fixtures.market()["as_of"]})
 
 
+async def healthz(request: Request) -> JSONResponse:
+    # operonx leaves /healthz to the asgi app when one is mounted at "/"
+    return JSONResponse({"ok": True})
+
+
 async def reset(request: Request) -> JSONResponse:
     store.reset()
     return JSONResponse({"reset": True})
@@ -39,7 +44,8 @@ async def reset(request: Request) -> JSONResponse:
 
 app = Starlette(
     routes=[
-        Route("/api/clients", clients),
+        Route("/healthz", healthz),
+    Route("/api/clients", clients),
         Route("/api/reset", reset, methods=["POST"]),
         Mount("/", app=StaticFiles(directory=ROOT / "web", html=True), name="web"),
     ]
