@@ -1,6 +1,6 @@
 # Mr. Finance — build plan
 
-The brief: `mr_finance_idea_final.md` (plan v2, "Consolidate + Dashboard tổng thể"). Its message:
+The brief: [`mr_finance_idea_final.md`](../mr_finance_idea_final.md) (plan v2, "Consolidate + Dashboard tổng thể"). Its message:
 *a client holds assets across many products, channels and platforms, and nobody shows them the
 whole picture. We do, and we say what is moving it.*
 
