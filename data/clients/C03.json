@@ -1,0 +1,1038 @@
+{
+ "id": "C03",
+ "name": "Phạm Gia Huy",
+ "age": 29,
+ "occupation": "Đồng sáng lập startup fintech",
+ "segment": "Priority",
+ "persona_hint": "F2",
+ "city": "Hà Nội",
+ "income_monthly": 80000000,
+ "spending_monthly": 45000000,
+ "benchmark": "VNINDEX",
+ "drawdown_limit": 0.3,
+ "household": [],
+ "dependents": [],
+ "sources": {
+  "techcombank": {
+   "accounts": [
+    {
+     "id": "0909-CASA-01",
+     "type": "CASA",
+     "name": "Tài khoản thanh toán",
+     "balance": 300000000
+    }
+   ],
+   "cards": [
+    {
+     "id": "VISA-PLT-03",
+     "name": "Visa Platinum",
+     "limit": 150000000,
+     "outstanding": 28000000
+    }
+   ],
+   "loans": [],
+   "transactions": [
+    {
+     "date": "2025-10-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2025-10-02",
+     "amount": 2618000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-05",
+     "amount": 79740000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T10/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-10-07",
+     "amount": 1440000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-09",
+     "amount": 2883000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-13",
+     "amount": 252000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-20",
+     "amount": 262000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-22",
+     "amount": 533000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-25",
+     "amount": 35750000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2025-10-26",
+     "amount": 1329000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-27",
+     "amount": 2207000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2025-11-05",
+     "amount": 79870000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T11/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-11-07",
+     "amount": 685000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-07",
+     "amount": 2246000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-11",
+     "amount": 1381000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-15",
+     "amount": 1776000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-16",
+     "amount": 709000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-21",
+     "amount": 1226000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-22",
+     "amount": 1951000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-25",
+     "amount": 24260000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2025-11-28",
+     "amount": 1001000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2025-12-05",
+     "amount": 79290000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T12/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-12-06",
+     "amount": 945000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-12",
+     "amount": 2121000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-15",
+     "amount": 2649000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-16",
+     "amount": 203000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-17",
+     "amount": 969000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-18",
+     "amount": 2958000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-19",
+     "amount": 1205000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-25",
+     "amount": 28300000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2025-12-27",
+     "amount": 418000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-01",
+     "amount": 2786000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-01-03",
+     "amount": 625000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-04",
+     "amount": 2786000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-05",
+     "amount": 80000000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T1/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-01-08",
+     "amount": 952000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-13",
+     "amount": 2214000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-23",
+     "amount": 2350000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-24",
+     "amount": 1045000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-25",
+     "amount": 32290000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-01-25",
+     "amount": 1593000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-02-02",
+     "amount": 2863000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-03",
+     "amount": 1928000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-05",
+     "amount": 80740000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T2/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-02-06",
+     "amount": 675000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-12",
+     "amount": 691000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-17",
+     "amount": 1414000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-21",
+     "amount": 1962000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-25",
+     "amount": 35190000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-02-27",
+     "amount": 2627000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-28",
+     "amount": 2912000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-03-02",
+     "amount": 2494000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-05",
+     "amount": 80400000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T3/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-03-05",
+     "amount": 2541000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-10",
+     "amount": 2113000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-12",
+     "amount": 1107000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-20",
+     "amount": 2370000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-23",
+     "amount": 2987000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-25",
+     "amount": 22550000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-03-25",
+     "amount": 1511000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-25",
+     "amount": 2296000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-04-04",
+     "amount": 2842000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-05",
+     "amount": 80220000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T4/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-04-12",
+     "amount": 1318000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-13",
+     "amount": 2724000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-14",
+     "amount": 401000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-21",
+     "amount": 2882000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-22",
+     "amount": 788000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-25",
+     "amount": 24580000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-04-26",
+     "amount": 2506000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-28",
+     "amount": 663000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-01",
+     "amount": 2171000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-01",
+     "amount": 486000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-05-03",
+     "amount": 1630000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-05",
+     "amount": 80710000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T5/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-05-05",
+     "amount": 1464000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-05",
+     "amount": 2491000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-17",
+     "amount": 1203000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-25",
+     "amount": 24460000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-05-27",
+     "amount": 655000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-28",
+     "amount": 1192000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-01",
+     "amount": 2604000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-06-05",
+     "amount": 79230000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T6/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-06-05",
+     "amount": 1854000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-06",
+     "amount": 2476000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-07",
+     "amount": 666000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-09",
+     "amount": 849000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-17",
+     "amount": 1471000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-20",
+     "amount": 1142000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-25",
+     "amount": 35570000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-06-26",
+     "amount": 2684000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-01",
+     "amount": 1902000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-07-03",
+     "amount": 1391000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-05",
+     "amount": 80800000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T7/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-07-06",
+     "amount": 1224000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-07",
+     "amount": 280000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-10",
+     "amount": 1830000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-14",
+     "amount": 1532000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-16",
+     "amount": 2783000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-16",
+     "amount": 819000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-25",
+     "amount": 26910000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-08-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-08-05",
+     "amount": 79790000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T8/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-08-07",
+     "amount": 816000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-18",
+     "amount": 460000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-18",
+     "amount": 1866000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-19",
+     "amount": 784000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-21",
+     "amount": 909000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-23",
+     "amount": 1348000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-25",
+     "amount": 36130000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-08-25",
+     "amount": 870000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-26",
+     "amount": 547000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-01",
+     "amount": 2392000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-02",
+     "amount": 15000000.0,
+     "direction": "out",
+     "desc": "CHUYEN TIEN THUE NHA CHUNG CU",
+     "category": "rent_out"
+    },
+    {
+     "date": "2026-09-05",
+     "amount": 79800000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY FINTECH ZEN T9/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-09-14",
+     "amount": 1804000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-16",
+     "amount": 2345000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-17",
+     "amount": 1542000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-18",
+     "amount": 2720000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-22",
+     "amount": 236000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-23",
+     "amount": 1754000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-24",
+     "amount": 1504000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-25",
+     "amount": 27190000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    }
+   ]
+  },
+  "tcbs": {
+   "stocks": [
+    {
+     "ticker": "FPT",
+     "qty": 5000,
+     "avg_price": 110000
+    },
+    {
+     "ticker": "SSI",
+     "qty": 40000,
+     "avg_price": 26000
+    },
+    {
+     "ticker": "DGC",
+     "qty": 10000,
+     "avg_price": 105000
+    },
+    {
+     "ticker": "MWG",
+     "qty": 10000,
+     "avg_price": 50000
+    },
+    {
+     "ticker": "HPG",
+     "qty": 30000,
+     "avg_price": 26000
+    }
+   ],
+   "bonds": [],
+   "realized_ytd": 180000000,
+   "margin": {
+    "id": "MRG-03",
+    "name": "Vay ký quỹ TCBS",
+    "outstanding": 600000000,
+    "rate": 0.12
+   }
+  },
+  "techcom_capital": {
+   "funds": [
+    {
+     "code": "TCEF",
+     "units": 30000,
+     "avg_nav": 26000
+    }
+   ]
+  },
+  "onehousing": {
+   "properties": []
+  },
+  "open_api": []
+ },
+ "declared": [
+  {
+   "id": "D-BTC-01",
+   "class": "crypto",
+   "name": "Bitcoin",
+   "symbol": "BTC",
+   "qty": 0.8
+  },
+  {
+   "id": "D-ETH-01",
+   "class": "crypto",
+   "name": "Ethereum",
+   "symbol": "ETH",
+   "qty": 5
+  }
+ ],
+ "events": [
+  {
+   "date": "2027-05-01",
+   "direction": "out",
+   "amount": 400000000,
+   "label": "Góp vốn vòng hạt giống startup",
+   "category": "business"
+  }
+ ],
+ "samples": []
+}

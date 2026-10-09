@@ -1,0 +1,306 @@
+{
+ "as_of": "2026-10-09",
+ "note": "Mock market data for the demo: not quotes.",
+ "stocks": {
+  "FPT": {
+   "price": 128000,
+   "prev_month": 122000,
+   "ytd_base": 118000,
+   "sector": "Công nghệ",
+   "beta": 1.05,
+   "issuer": "FPT",
+   "div": 2000,
+   "div_months": [
+    6,
+    12
+   ]
+  },
+  "TCB": {
+   "price": 26500,
+   "prev_month": 25800,
+   "ytd_base": 23000,
+   "sector": "Ngân hàng",
+   "beta": 1.15,
+   "issuer": "Techcombank",
+   "div": 1000,
+   "div_months": [
+    7
+   ]
+  },
+  "VCB": {
+   "price": 64000,
+   "prev_month": 63000,
+   "ytd_base": 61000,
+   "sector": "Ngân hàng",
+   "beta": 0.85,
+   "issuer": "Vietcombank",
+   "div": 0,
+   "div_months": []
+  },
+  "MBB": {
+   "price": 24500,
+   "prev_month": 24000,
+   "ytd_base": 21500,
+   "sector": "Ngân hàng",
+   "beta": 1.1,
+   "issuer": "MB",
+   "div": 500,
+   "div_months": [
+    7
+   ]
+  },
+  "VNM": {
+   "price": 62000,
+   "prev_month": 63500,
+   "ytd_base": 66000,
+   "sector": "Tiêu dùng",
+   "beta": 0.6,
+   "issuer": "Vinamilk",
+   "div": 3850,
+   "div_months": [
+    1,
+    8
+   ]
+  },
+  "HPG": {
+   "price": 27500,
+   "prev_month": 26000,
+   "ytd_base": 25500,
+   "sector": "Thép",
+   "beta": 1.3,
+   "issuer": "Hòa Phát",
+   "div": 0,
+   "div_months": []
+  },
+  "VHM": {
+   "price": 45000,
+   "prev_month": 42000,
+   "ytd_base": 40000,
+   "sector": "Bất động sản",
+   "beta": 1.4,
+   "issuer": "Vinhomes",
+   "div": 0,
+   "div_months": []
+  },
+  "MWG": {
+   "price": 68000,
+   "prev_month": 65000,
+   "ytd_base": 58000,
+   "sector": "Bán lẻ",
+   "beta": 1.2,
+   "issuer": "Thế Giới Di Động",
+   "div": 500,
+   "div_months": [
+    9
+   ]
+  },
+  "DGC": {
+   "price": 92000,
+   "prev_month": 95000,
+   "ytd_base": 98000,
+   "sector": "Hóa chất",
+   "beta": 1.3,
+   "issuer": "Đức Giang",
+   "div": 3000,
+   "div_months": [
+    11
+   ]
+  },
+  "SSI": {
+   "price": 33000,
+   "prev_month": 31500,
+   "ytd_base": 28000,
+   "sector": "Chứng khoán",
+   "beta": 1.5,
+   "issuer": "SSI",
+   "div": 1000,
+   "div_months": [
+    10
+   ]
+  }
+ },
+ "funds": {
+  "TCBF": {
+   "name": "Quỹ trái phiếu TCBF",
+   "nav": 25000,
+   "prev_month": 24900,
+   "ytd_base": 24300,
+   "type": "bond",
+   "drawdown": 0.05,
+   "liquid": true
+  },
+  "TCEF": {
+   "name": "Quỹ cổ phiếu TCEF",
+   "nav": 31000,
+   "prev_month": 30000,
+   "ytd_base": 28500,
+   "type": "equity",
+   "drawdown": 0.3,
+   "liquid": false
+  },
+  "TCMF": {
+   "name": "Quỹ tiền tệ TCMF",
+   "nav": 12000,
+   "prev_month": 11950,
+   "ytd_base": 11700,
+   "type": "money",
+   "drawdown": 0.01,
+   "liquid": true
+  }
+ },
+ "bonds": {
+  "TCB12401": {
+   "issuer": "Techcombank",
+   "sector": "Ngân hàng",
+   "kind": "bank",
+   "price": 101200,
+   "par": 100000,
+   "coupon": 0.065,
+   "coupon_months": [
+    5,
+    11
+   ],
+   "maturity": "2029-05-20",
+   "duration": 2.4
+  },
+  "SMR12501": {
+   "issuer": "BĐS Sao Mai (mock)",
+   "sector": "Bất động sản",
+   "kind": "corporate",
+   "price": 98000,
+   "par": 100000,
+   "coupon": 0.105,
+   "coupon_months": [
+    3,
+    9
+   ],
+   "maturity": "2027-09-15",
+   "duration": 1.0
+  },
+  "HBE12403": {
+   "issuer": "Năng lượng Hòa Bình (mock)",
+   "sector": "Năng lượng",
+   "kind": "corporate",
+   "price": 100000,
+   "par": 100000,
+   "coupon": 0.09,
+   "coupon_months": [
+    6,
+    12
+   ],
+   "maturity": "2028-12-01",
+   "duration": 2.0
+  },
+  "TD2535": {
+   "issuer": "Kho bạc Nhà nước",
+   "sector": "Chính phủ",
+   "kind": "government",
+   "price": 102000,
+   "par": 100000,
+   "coupon": 0.032,
+   "coupon_months": [
+    4
+   ],
+   "maturity": "2035-04-10",
+   "duration": 7.5
+  }
+ },
+ "areas": {
+  "thao_dien": {
+   "name": "Thảo Điền, TP. Thủ Đức",
+   "city": "TP.HCM",
+   "price_sqm": 120000000,
+   "prev_month": 118000000,
+   "yoy": 0.08,
+   "months_to_sell": 6
+  },
+  "phu_my_hung": {
+   "name": "Phú Mỹ Hưng, Quận 7",
+   "city": "TP.HCM",
+   "price_sqm": 95000000,
+   "prev_month": 95000000,
+   "yoy": 0.05,
+   "months_to_sell": 8
+  },
+  "vinhomes_grand_park": {
+   "name": "Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ)",
+   "city": "TP.HCM",
+   "price_sqm": 52000000,
+   "prev_month": 51000000,
+   "yoy": 0.07,
+   "months_to_sell": 5
+  },
+  "quan_3": {
+   "name": "Võ Văn Tần, Quận 3",
+   "city": "TP.HCM",
+   "price_sqm": 140000000,
+   "prev_month": 140000000,
+   "yoy": 0.04,
+   "months_to_sell": 9
+  },
+  "long_thanh": {
+   "name": "Đất nền Long Thành, Đồng Nai",
+   "city": "Đồng Nai",
+   "price_sqm": 18000000,
+   "prev_month": 17500000,
+   "yoy": 0.12,
+   "months_to_sell": 18
+  }
+ },
+ "gold": {
+  "name": "Vàng miếng SJC",
+  "price_per_luong": 150000000,
+  "prev_month": 146000000,
+  "ytd_base": 120000000,
+  "world_gap": 0.12
+ },
+ "crypto": {
+  "BTC": {
+   "price": 2635000000,
+   "prev_month": 2480000000,
+   "ytd_base": 2300000000
+  },
+  "ETH": {
+   "price": 90000000,
+   "prev_month": 86000000,
+   "ytd_base": 95000000
+  }
+ },
+ "fx": {
+  "USDVND": {
+   "rate": 26350,
+   "prev_month": 26200,
+   "ytd_base": 25500
+  }
+ },
+ "benchmarks": {
+  "VNINDEX": {
+   "name": "VN-Index",
+   "ytd": 0.145,
+   "month": 0.021
+  },
+  "TD12M": {
+   "name": "Lãi tiết kiệm 12 tháng",
+   "ytd": 0.038,
+   "month": 0.004
+  }
+ },
+ "rates": {
+  "deposit_12m": 0.05,
+  "policy": 0.045,
+  "mortgage_floating": 0.095
+ },
+ "stress_drawdown": {
+  "cash": 0.0,
+  "deposit": 0.0,
+  "bond_government": 0.05,
+  "bond_bank": 0.08,
+  "bond_corporate": 0.15,
+  "stock_base": 0.25,
+  "real_estate": 0.1,
+  "gold": 0.1,
+  "business": 0.25,
+  "crypto": 0.6,
+  "insurance": 0.0
+ }
+}

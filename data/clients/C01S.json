@@ -1,0 +1,578 @@
+{
+ "id": "C01S",
+ "name": "Trần Thu Hà",
+ "age": 40,
+ "occupation": "Kế toán trưởng",
+ "segment": "Priority",
+ "persona_hint": "Chuyên gia",
+ "city": "TP.HCM",
+ "member_of": "C01",
+ "income_monthly": 77000000,
+ "spending_monthly": 20000000,
+ "benchmark": "VNINDEX",
+ "drawdown_limit": 0.12,
+ "household": [],
+ "dependents": [],
+ "sources": {
+  "techcombank": {
+   "accounts": [
+    {
+     "id": "2207-CASA-01",
+     "type": "CASA",
+     "name": "Tài khoản thanh toán",
+     "balance": 350000000
+    },
+    {
+     "id": "2207-TD-01",
+     "type": "TD",
+     "name": "Tiền gửi 6 tháng",
+     "balance": 1500000000,
+     "rate": 0.047,
+     "opened": "2026-04-10",
+     "maturity": "2027-04-10"
+    }
+   ],
+   "cards": [],
+   "loans": [],
+   "transactions": [
+    {
+     "date": "2025-10-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2025-10-04",
+     "amount": 1737000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-05",
+     "amount": 54720000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T10/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-10-05",
+     "amount": 1035000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-17",
+     "amount": 2811000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-26",
+     "amount": 2325000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-02",
+     "amount": 1662000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2025-11-05",
+     "amount": 55460000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T11/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-11-19",
+     "amount": 1895000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-25",
+     "amount": 2912000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-27",
+     "amount": 429000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-02",
+     "amount": 1759000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2025-12-05",
+     "amount": 55130000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T12/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-12-07",
+     "amount": 2209000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-17",
+     "amount": 1199000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-18",
+     "amount": 314000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-01-05",
+     "amount": 55420000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T1/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-01-09",
+     "amount": 1860000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-12",
+     "amount": 2492000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-24",
+     "amount": 1716000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-25",
+     "amount": 2616000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-02-03",
+     "amount": 900000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-05",
+     "amount": 55150000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T2/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-02-15",
+     "amount": 2621000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-26",
+     "amount": 2326000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-27",
+     "amount": 591000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-03-05",
+     "amount": 55090000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T3/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-03-05",
+     "amount": 979000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-10",
+     "amount": 919000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-14",
+     "amount": 1214000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-20",
+     "amount": 347000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-04-05",
+     "amount": 54970000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T4/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-04-06",
+     "amount": 1836000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-17",
+     "amount": 908000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-27",
+     "amount": 1167000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-27",
+     "amount": 2703000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-05-04",
+     "amount": 2371000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-05",
+     "amount": 55350000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T5/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-05-07",
+     "amount": 395000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-12",
+     "amount": 1819000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-25",
+     "amount": 2032000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-06-03",
+     "amount": 1027000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-05",
+     "amount": 55280000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T6/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-06-05",
+     "amount": 589000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-05",
+     "amount": 2469000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-06",
+     "amount": 2550000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-07-04",
+     "amount": 1958000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-05",
+     "amount": 55360000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T7/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-07-19",
+     "amount": 407000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-23",
+     "amount": 2746000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-24",
+     "amount": 396000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-08-05",
+     "amount": 55140000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T8/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-08-10",
+     "amount": 833000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-14",
+     "amount": 2395000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-14",
+     "amount": 717000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-18",
+     "amount": 2964000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-03",
+     "amount": 22000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO PMH",
+     "category": "rent"
+    },
+    {
+     "date": "2026-09-03",
+     "amount": 2200000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-05",
+     "amount": 55360000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY XNK SAI GON T9/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-09-09",
+     "amount": 2631000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-10",
+     "amount": 2697000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-23",
+     "amount": 1935000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    }
+   ]
+  },
+  "tcbs": {
+   "stocks": [
+    {
+     "ticker": "VCB",
+     "qty": 10000,
+     "avg_price": 58000
+    }
+   ],
+   "bonds": [],
+   "realized_ytd": 25000000
+  },
+  "techcom_capital": {
+   "funds": []
+  },
+  "onehousing": {
+   "properties": [
+    {
+     "id": "OH-PMH-01",
+     "name": "Căn hộ Phú Mỹ Hưng (cho thuê)",
+     "area": "phu_my_hung",
+     "type": "Căn hộ",
+     "sqm": 85,
+     "purchase_year": 2021,
+     "purchase_price": 6500000000,
+     "rental_monthly": 22000000,
+     "use": "Cho thuê"
+    }
+   ]
+  },
+  "open_api": []
+ },
+ "declared": [],
+ "events": [],
+ "samples": []
+}

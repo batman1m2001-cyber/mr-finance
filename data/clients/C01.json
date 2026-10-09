@@ -1,0 +1,974 @@
+{
+ "id": "C01",
+ "name": "Nguyễn Minh Khoa",
+ "age": 42,
+ "occupation": "Giám đốc công nghệ",
+ "segment": "Priority",
+ "persona_hint": "Chuyên gia",
+ "city": "TP.HCM",
+ "income_monthly": 120000000,
+ "spending_monthly": 115000000,
+ "benchmark": "VNINDEX",
+ "drawdown_limit": 0.15,
+ "household": [
+  {
+   "id": "C01S",
+   "relation": "Vợ",
+   "consent": true
+  }
+ ],
+ "dependents": [
+  {
+   "name": "Nguyễn Minh An",
+   "relation": "Con",
+   "birth_year": 2012
+  },
+  {
+   "name": "Nguyễn Minh Châu",
+   "relation": "Con",
+   "birth_year": 2016
+  }
+ ],
+ "sources": {
+  "techcombank": {
+   "accounts": [
+    {
+     "id": "1902-CASA-01",
+     "type": "CASA",
+     "name": "Tài khoản thanh toán",
+     "balance": 680000000
+    },
+    {
+     "id": "1902-TD-01",
+     "type": "TD",
+     "name": "Tiền gửi 12 tháng",
+     "balance": 2500000000,
+     "rate": 0.052,
+     "opened": "2025-12-20",
+     "maturity": "2026-12-20"
+    }
+   ],
+   "cards": [
+    {
+     "id": "VISA-SIG-01",
+     "name": "Visa Signature",
+     "limit": 300000000,
+     "outstanding": 45000000
+    }
+   ],
+   "loans": [
+    {
+     "id": "LN-HOME-01",
+     "name": "Vay mua nhà Thảo Điền",
+     "outstanding": 2400000000,
+     "rate": 0.092,
+     "rate_type": "floating",
+     "monthly_payment": 38000000,
+     "end": "2034-06-20",
+     "collateral": "OH-TD-01"
+    }
+   ],
+   "transactions": [
+    {
+     "date": "2025-10-01",
+     "amount": 3789000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-04",
+     "amount": 1815000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-05",
+     "amount": 120400000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T10/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-10-13",
+     "amount": 1886000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-18",
+     "amount": 1740000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-19",
+     "amount": 2746000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2025-10-25",
+     "amount": 31750000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2025-10-26",
+     "amount": 3308000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-01",
+     "amount": 1696000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-03",
+     "amount": 1343000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-05",
+     "amount": 120680000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T11/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-11-10",
+     "amount": 90000000,
+     "direction": "out",
+     "desc": "HOC PHI TRUONG QUOC TE (2 CON)",
+     "category": "school"
+    },
+    {
+     "date": "2025-11-10",
+     "amount": 3811000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-11",
+     "amount": 2305000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-17",
+     "amount": 2811000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2025-11-21",
+     "amount": 2292000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-25",
+     "amount": 35270000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2025-12-03",
+     "amount": 3185000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-04",
+     "amount": 2652000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-05",
+     "amount": 120810000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T12/2025",
+     "category": "salary"
+    },
+    {
+     "date": "2025-12-07",
+     "amount": 1152000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-08",
+     "amount": 3823000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-10",
+     "amount": 1163000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2025-12-22",
+     "amount": 2286000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-25",
+     "amount": 32600000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-01-05",
+     "amount": 119130000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T1/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-01-05",
+     "amount": 470000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-05",
+     "amount": 3800000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-10",
+     "amount": 90000000,
+     "direction": "out",
+     "desc": "HOC PHI TRUONG QUOC TE (2 CON)",
+     "category": "school"
+    },
+    {
+     "date": "2026-01-12",
+     "amount": 2564000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-16",
+     "amount": 1799000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-19",
+     "amount": 2098000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-01-22",
+     "amount": 2180000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-25",
+     "amount": 36630000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-02-02",
+     "amount": 3599000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-05",
+     "amount": 119000000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T2/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-02-07",
+     "amount": 2173000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-10",
+     "amount": 2773000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-16",
+     "amount": 1712000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-17",
+     "amount": 746000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-02-20",
+     "amount": 2106000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-25",
+     "amount": 33310000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-03-05",
+     "amount": 120400000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T3/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-03-07",
+     "amount": 1555000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-08",
+     "amount": 2305000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-15",
+     "amount": 3449000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-16",
+     "amount": 2772000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-03-20",
+     "amount": 3168000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-23",
+     "amount": 813000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-25",
+     "amount": 35590000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-04-01",
+     "amount": 776000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-05",
+     "amount": 120090000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T4/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-04-10",
+     "amount": 90000000,
+     "direction": "out",
+     "desc": "HOC PHI TRUONG QUOC TE (2 CON)",
+     "category": "school"
+    },
+    {
+     "date": "2026-04-12",
+     "amount": 2527000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-13",
+     "amount": 3755000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-17",
+     "amount": 1991000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-04-22",
+     "amount": 2177000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-23",
+     "amount": 3345000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-25",
+     "amount": 33540000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-05-05",
+     "amount": 120780000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T5/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-05-08",
+     "amount": 401000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-08",
+     "amount": 321000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-15",
+     "amount": 2802000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-18",
+     "amount": 1768000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-05-25",
+     "amount": 31740000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-05-26",
+     "amount": 3015000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-27",
+     "amount": 3077000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-04",
+     "amount": 1591000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-04",
+     "amount": 1549000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-05",
+     "amount": 120700000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T6/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-06-05",
+     "amount": 3503000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-10",
+     "amount": 2405000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-15",
+     "amount": 1379000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-06-25",
+     "amount": 34080000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-06-26",
+     "amount": 2298000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-04",
+     "amount": 2582000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-05",
+     "amount": 119350000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T7/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-07-07",
+     "amount": 3970000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-16",
+     "amount": 3062000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-17",
+     "amount": 406000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-18",
+     "amount": 911000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-07-22",
+     "amount": 1344000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-25",
+     "amount": 30710000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-08-05",
+     "amount": 119910000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T8/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-08-05",
+     "amount": 1590000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-07",
+     "amount": 2469000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-10",
+     "amount": 90000000,
+     "direction": "out",
+     "desc": "HOC PHI TRUONG QUOC TE (2 CON)",
+     "category": "school"
+    },
+    {
+     "date": "2026-08-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-08-20",
+     "amount": 2512000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-20",
+     "amount": 3730000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-25",
+     "amount": 31990000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-08-26",
+     "amount": 3995000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-28",
+     "amount": 1226000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-04",
+     "amount": 3309000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-05",
+     "amount": 120430000.0,
+     "direction": "in",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN T9/2026",
+     "category": "salary"
+    },
+    {
+     "date": "2026-09-10",
+     "amount": 2549000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-13",
+     "amount": 3456000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-16",
+     "amount": 3694000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-17",
+     "amount": 1552000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-20",
+     "amount": 38000000.0,
+     "direction": "out",
+     "desc": "TRA NO VAY THE CHAP 1902xxxx",
+     "category": "loan"
+    },
+    {
+     "date": "2026-09-25",
+     "amount": 34770000.0,
+     "direction": "out",
+     "desc": "THANH TOAN DU NO THE TIN DUNG",
+     "category": "card"
+    },
+    {
+     "date": "2026-09-27",
+     "amount": 3063000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    }
+   ]
+  },
+  "tcbs": {
+   "stocks": [
+    {
+     "ticker": "FPT",
+     "qty": 15000,
+     "avg_price": 95000
+    },
+    {
+     "ticker": "TCB",
+     "qty": 40000,
+     "avg_price": 21000
+    },
+    {
+     "ticker": "VNM",
+     "qty": 8000,
+     "avg_price": 70000
+    },
+    {
+     "ticker": "HPG",
+     "qty": 20000,
+     "avg_price": 24000
+    }
+   ],
+   "bonds": [
+    {
+     "code": "TCB12401",
+     "qty": 10000,
+     "avg_price": 100000
+    },
+    {
+     "code": "SMR12501",
+     "qty": 5000,
+     "avg_price": 100000
+    }
+   ],
+   "realized_ytd": 320000000
+  },
+  "techcom_capital": {
+   "funds": [
+    {
+     "code": "TCBF",
+     "units": 40000,
+     "avg_nav": 23500
+    },
+    {
+     "code": "TCEF",
+     "units": 20000,
+     "avg_nav": 27000
+    }
+   ]
+  },
+  "onehousing": {
+   "properties": [
+    {
+     "id": "OH-TD-01",
+     "name": "Căn hộ Thảo Điền",
+     "area": "thao_dien",
+     "type": "Căn hộ",
+     "sqm": 120,
+     "purchase_year": 2019,
+     "purchase_price": 8000000000,
+     "rental_monthly": 0,
+     "use": "Ở"
+    }
+   ]
+  },
+  "open_api": [
+   {
+    "institution": "VPBank",
+    "consent": true,
+    "accounts": [
+     {
+      "id": "VPB-001",
+      "type": "CASA",
+      "name": "Tài khoản VPBank",
+      "balance": 420000000
+     }
+    ]
+   }
+  ]
+ },
+ "declared": [
+  {
+   "id": "D-GOLD-01",
+   "class": "gold",
+   "name": "Vàng miếng SJC",
+   "qty": 10
+  },
+  {
+   "id": "D-INS-01",
+   "class": "insurance",
+   "name": "Bảo hiểm nhân thọ (liên kết chung)",
+   "value": 300000000,
+   "premium_annual": 60000000,
+   "premium_month": 3
+  }
+ ],
+ "events": [
+  {
+   "date": "2027-03-15",
+   "direction": "out",
+   "amount": 1800000000,
+   "label": "Học phí du học (Úc) – Minh An",
+   "category": "school"
+  },
+  {
+   "date": "2027-03-31",
+   "direction": "out",
+   "amount": 85000000,
+   "label": "Quyết toán thuế TNCN 2026",
+   "category": "tax"
+  }
+ ],
+ "samples": [
+  "vps_C01.csv"
+ ]
+}

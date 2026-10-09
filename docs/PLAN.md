@@ -86,3 +86,7 @@ phone screenshots).
 ## 5. Status
 
 - P0 (scaffold, public repo): done.
+- P1 (domain, fixtures, consolidate + dashboard): done. 7 people (5 clients and 2 spouses, one
+  without consent), 20 tests. The stress factors were set so the five risk pictures differ: C03
+  (crypto, small caps) is far over its limit, C05 (a leveraged first home) just over, the others
+  near theirs.
