@@ -90,3 +90,8 @@ phone screenshots).
   without consent), 20 tests. The stress factors were set so the five risk pictures differ: C03
   (crypto, small caps) is far over its limit, C05 (a leveraged first home) just over, the others
   near theirs.
+- P2 (the web UI): done. Tổng quan (net worth, trust mix, allocation, P&L, risk, liquidity, the
+  cash-flow calendar) and Kết nối dữ liệu (the three tiers, every holding with its trust), in the
+  personal and family views; light and dark; checked at 1440px and 400px. Charts follow the
+  dataviz method: the validated palette (colour follows the asset class), one axis, a tooltip on
+  every mark, a legend with every value.
