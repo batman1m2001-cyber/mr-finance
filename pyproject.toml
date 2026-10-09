@@ -29,3 +29,6 @@ extend-exclude = [".operonx"]  # generated: the guides `operonx guide` copies in
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/make_fixtures.py" = ["E501"]  # one client per screen: data rows stay whole

@@ -1,0 +1,884 @@
+{
+ "id": "C04",
+ "name": "Đỗ Thị Hạnh",
+ "age": 63,
+ "occupation": "Nghỉ hưu (nguyên giảng viên)",
+ "segment": "Priority",
+ "persona_hint": "Nghỉ hưu",
+ "city": "TP.HCM",
+ "income_monthly": 37000000,
+ "spending_monthly": 40000000,
+ "benchmark": "TD12M",
+ "drawdown_limit": 0.08,
+ "household": [],
+ "dependents": [],
+ "sources": {
+  "techcombank": {
+   "accounts": [
+    {
+     "id": "0505-CASA-01",
+     "type": "CASA",
+     "name": "Tài khoản thanh toán",
+     "balance": 500000000
+    },
+    {
+     "id": "0505-TD-01",
+     "type": "TD",
+     "name": "Tiền gửi 12 tháng",
+     "balance": 5000000000,
+     "rate": 0.052,
+     "opened": "2025-11-25",
+     "maturity": "2026-11-25"
+    },
+    {
+     "id": "0505-TD-02",
+     "type": "TD",
+     "name": "Tiền gửi 12 tháng",
+     "balance": 3000000000,
+     "rate": 0.053,
+     "opened": "2026-02-14",
+     "maturity": "2027-02-14"
+    }
+   ],
+   "cards": [],
+   "loans": [],
+   "transactions": [
+    {
+     "date": "2025-10-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2025-10-05",
+     "amount": 2890000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-06",
+     "amount": 1432000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2025-10-12",
+     "amount": 6280000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2025-10-12",
+     "amount": 1356000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-13",
+     "amount": 1461000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-20",
+     "amount": 1444000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2025-10-26",
+     "amount": 1153000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-01",
+     "amount": 669000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2025-11-04",
+     "amount": 372000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-05",
+     "amount": 995000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2025-11-12",
+     "amount": 7540000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2025-11-22",
+     "amount": 2782000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-25",
+     "amount": 1226000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-11-26",
+     "amount": 1484000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2025-12-07",
+     "amount": 2437000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2025-12-11",
+     "amount": 2490000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-12",
+     "amount": 5770000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2025-12-14",
+     "amount": 2395000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-19",
+     "amount": 2952000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-20",
+     "amount": 987000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2025-12-22",
+     "amount": 2238000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-01-08",
+     "amount": 2041000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-01-12",
+     "amount": 5890000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-01-14",
+     "amount": 1064000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-19",
+     "amount": 591000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-20",
+     "amount": 2735000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-23",
+     "amount": 1039000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-01-28",
+     "amount": 1551000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-02-04",
+     "amount": 1118000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-04",
+     "amount": 2270000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-07",
+     "amount": 628000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-02-12",
+     "amount": 5400000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-02-15",
+     "amount": 1453000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-22",
+     "amount": 2553000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-02-26",
+     "amount": 604000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-02",
+     "amount": 2709000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-03-09",
+     "amount": 381000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-03-11",
+     "amount": 1641000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-12",
+     "amount": 6000000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-03-20",
+     "amount": 1056000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-22",
+     "amount": 1169000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-03-27",
+     "amount": 606000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-04-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-04-10",
+     "amount": 916000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-12",
+     "amount": 4210000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-04-15",
+     "amount": 1334000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-17",
+     "amount": 800000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-20",
+     "amount": 410000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-20",
+     "amount": 2249000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-04-26",
+     "amount": 1432000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-05-04",
+     "amount": 1761000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-07",
+     "amount": 1800000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-09",
+     "amount": 398000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-05-12",
+     "amount": 7040000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-05-12",
+     "amount": 1874000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-15",
+     "amount": 898000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-05-21",
+     "amount": 1454000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-06-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-06-11",
+     "amount": 1489000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-12",
+     "amount": 7160000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-06-13",
+     "amount": 806000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-15",
+     "amount": 2860000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-17",
+     "amount": 1781000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-18",
+     "amount": 2075000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-06-21",
+     "amount": 2412000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-07-06",
+     "amount": 2972000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-06",
+     "amount": 1335000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GUARDIAN",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-07",
+     "amount": 2088000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-07-12",
+     "amount": 5450000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-07-13",
+     "amount": 1829000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-17",
+     "amount": 540000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-07-26",
+     "amount": 1557000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE HIGHLANDS",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-02",
+     "amount": 2355000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE PETROLIMEX",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-08-07",
+     "amount": 2788000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-08-12",
+     "amount": 4850000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-08-19",
+     "amount": 459000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE VINMART",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-23",
+     "amount": 1618000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-24",
+     "amount": 2666000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-08-28",
+     "amount": 2227000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-03",
+     "amount": 25000000,
+     "direction": "in",
+     "desc": "TIEN THUE CAN HO VO VAN TAN",
+     "category": "rent"
+    },
+    {
+     "date": "2026-09-10",
+     "amount": 12000000,
+     "direction": "in",
+     "desc": "LUONG HUU BHXH TP.HCM",
+     "category": "pension"
+    },
+    {
+     "date": "2026-09-12",
+     "amount": 6450000.0,
+     "direction": "out",
+     "desc": "CHI PHI KHAM CHUA BENH DINH KY",
+     "category": "health"
+    },
+    {
+     "date": "2026-09-13",
+     "amount": 2713000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-21",
+     "amount": 473000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-26",
+     "amount": 2937000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CGV",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-26",
+     "amount": 1872000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE SHOPEE",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-27",
+     "amount": 2602000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE CIRCLE K",
+     "category": "living"
+    },
+    {
+     "date": "2026-09-28",
+     "amount": 486000.0,
+     "direction": "out",
+     "desc": "THANH TOAN THE GRAB",
+     "category": "living"
+    }
+   ]
+  },
+  "tcbs": {
+   "stocks": [],
+   "bonds": [
+    {
+     "code": "TD2535",
+     "qty": 30000,
+     "avg_price": 100500
+    },
+    {
+     "code": "TCB12401",
+     "qty": 20000,
+     "avg_price": 100000
+    }
+   ],
+   "realized_ytd": 40000000
+  },
+  "techcom_capital": {
+   "funds": [
+    {
+     "code": "TCBF",
+     "units": 80000,
+     "avg_nav": 23000
+    },
+    {
+     "code": "TCMF",
+     "units": 50000,
+     "avg_nav": 11500
+    }
+   ]
+  },
+  "onehousing": {
+   "properties": [
+    {
+     "id": "OH-Q3-01",
+     "name": "Căn hộ Võ Văn Tần (cho thuê)",
+     "area": "quan_3",
+     "type": "Căn hộ",
+     "sqm": 80,
+     "purchase_year": 2010,
+     "purchase_price": 3000000000,
+     "rental_monthly": 25000000,
+     "use": "Cho thuê"
+    }
+   ]
+  },
+  "open_api": []
+ },
+ "declared": [
+  {
+   "id": "D-HOUSE-04",
+   "class": "real_estate",
+   "name": "Nhà phố Quận 3 (đang ở)",
+   "value": 18000000000,
+   "area": "quan_3"
+  },
+  {
+   "id": "D-GOLD-04",
+   "class": "gold",
+   "name": "Vàng miếng SJC",
+   "qty": 20
+  },
+  {
+   "id": "D-INS-04",
+   "class": "insurance",
+   "name": "Bảo hiểm sức khỏe cao cấp",
+   "value": 0,
+   "premium_annual": 40000000,
+   "premium_month": 6
+  }
+ ],
+ "events": [
+  {
+   "date": "2027-01-20",
+   "direction": "out",
+   "amount": 350000000,
+   "label": "Phẫu thuật khớp gối (dự kiến)",
+   "category": "health"
+  }
+ ],
+ "samples": []
+}

@@ -12,3 +12,6 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+
+# what clients added in the demo (docs/PLAN.md D6)
+data/state.db*

@@ -1,0 +1,49 @@
+{
+ "id": "C02S",
+ "name": "Hoàng Thị Mai",
+ "age": 52,
+ "occupation": "Nội trợ",
+ "segment": "Private",
+ "persona_hint": "F1",
+ "city": "TP.HCM",
+ "member_of": "C02",
+ "income_monthly": 0,
+ "spending_monthly": 30000000,
+ "benchmark": "TD12M",
+ "drawdown_limit": 0.1,
+ "household": [],
+ "dependents": [],
+ "sources": {
+  "techcombank": {
+   "accounts": [
+    {
+     "id": "0302-TD-01",
+     "type": "TD",
+     "name": "Tiền gửi 12 tháng",
+     "balance": 4000000000,
+     "rate": 0.053,
+     "opened": "2026-02-01",
+     "maturity": "2027-02-01"
+    }
+   ],
+   "cards": [],
+   "loans": [],
+   "transactions": []
+  },
+  "tcbs": {
+   "stocks": [],
+   "bonds": [],
+   "realized_ytd": 0
+  },
+  "techcom_capital": {
+   "funds": []
+  },
+  "onehousing": {
+   "properties": []
+  },
+  "open_api": []
+ },
+ "declared": [],
+ "events": [],
+ "samples": []
+}

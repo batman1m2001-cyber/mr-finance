@@ -1,29 +1,32 @@
-"""mr-finance: one HTTP service in front of an agent.
+"""Mr. Finance: the whole picture of a client's wealth, and what is moving it.
 
-POST /ask:8000 {"input": ...} ──► assistant ──► {status, output, run_id, ...}
-                                   └── llm:assistant ⇄ word_count tool
-POST /ask/resume {"run_id", "approvals"}: answers a run that waits for a human.
+POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──► the dashboard
+GET  /api/clients, POST /api/reset, GET /    ──► app/web.py (the sample clients, the UI)
 
-Every service and job of the project is declared here; operonx.toml only
-points at `APP`.
+Every service and job of the product is declared here; operonx.toml only points at `APP`.
 """
 
-from operonx.agents import SQLiteStateStore, agent_service
-from operonx.app import Application, env, http
+from operonx.app import Application, Service, asgi, env, http
 
-from assistant.graph import ASSISTANT
+from app import web
+from dashboard.graph import dashboard_api
+
+PORT = env("PORT", 8030)
 
 APP = Application(
     "mr-finance",
-    description="An agent with one tool (operonx-agents), served over HTTP.",
+    description="Consolidate every asset a client holds, anywhere, into one picture — and say "
+    "what is moving it.",
     services=[
-        agent_service(
-            ASSISTANT,
-            http("POST", "/ask", port=env("PORT", 8000)),
-            # where a run that waits for an approval is kept until its resume
-            store=SQLiteStateStore(".operonx/agent_runs.db"),
-            description="POST {input}: the agent's reply. Accept: text/event-stream for "
-            "its events as they happen.",
+        Service(
+            "dashboard",
+            http("POST", "/api/dashboard", port=PORT),
+            graph=dashboard_api,
+            description="POST {client_id, scope: personal|family, months}: the dashboard.",
+        ),
+        # last: it is mounted at "/", and would answer every path the services above own
+        Service(
+            "web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."
         ),
     ],
 )
