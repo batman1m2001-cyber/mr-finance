@@ -968,6 +968,14 @@
    "category": "tax"
   }
  ],
+ "behaviour": [
+  {
+   "date": "2026-04-15",
+   "market_move": -0.06,
+   "action": "hold",
+   "note": "Giữ nguyên danh mục khi VN-Index giảm 6%"
+  }
+ ],
  "samples": [
   "vps_C01.csv"
  ]

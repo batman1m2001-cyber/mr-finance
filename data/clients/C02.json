@@ -1209,5 +1209,13 @@
    "category": "business"
   }
  ],
+ "behaviour": [
+  {
+   "date": "2026-04-15",
+   "market_move": -0.06,
+   "action": "buy",
+   "note": "Mua thêm 50.000 cổ phiếu MBB khi VN-Index giảm 6%"
+  }
+ ],
  "samples": []
 }

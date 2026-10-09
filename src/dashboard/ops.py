@@ -68,6 +68,7 @@ def client_profile(client_id: str, members: list) -> dict:
             "benchmark": me.get("benchmark", "VNINDEX"),
             "drawdown_limit": (test or {}).get("drawdown_limit") or me.get("drawdown_limit", 0.15),
             "risk_persona": (test or {}).get("persona"),
+            "risk_profile": ((test or {}).get("profile") or {}).get("name"),
             "dependents": dependents,
             "events": events,
         }
