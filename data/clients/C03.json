@@ -1034,5 +1034,13 @@
    "category": "business"
   }
  ],
+ "behaviour": [
+  {
+   "date": "2026-04-15",
+   "market_move": -0.06,
+   "action": "panic_sell",
+   "note": "Bán 60% danh mục cổ phiếu khi VN-Index giảm 6%, mua lại sau 3 tuần"
+  }
+ ],
  "samples": []
 }

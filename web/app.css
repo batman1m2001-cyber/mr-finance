@@ -145,6 +145,12 @@ td .sub { display: none; color: var(--muted); font-size: 11px; margin-top: 2px; 
 .src .no { color: var(--muted); }
 .src .what { grid-column: 2 / 4; color: var(--muted); font-size: 12px; }
 
+/* the risk test */
+.qcard { max-width: 760px; }
+.qtext { font-size: 20px; line-height: 1.35; margin: 8px 0 16px; font-weight: 600; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; padding: 12px 14px; border: 1px solid var(--axis); border-radius: 10px; background: var(--surface); cursor: pointer; font-size: 15px; }
+.opt:hover, .opt:focus-visible { border-color: var(--accent); background: var(--accent-soft); }
 /* actions, the chat */
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--accent);

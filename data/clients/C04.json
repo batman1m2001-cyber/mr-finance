@@ -880,6 +880,14 @@
    "category": "health"
   }
  ],
+ "behaviour": [
+  {
+   "date": "2026-04-15",
+   "market_move": -0.06,
+   "action": "hold",
+   "note": "Không giao dịch"
+  }
+ ],
  "samples": [
   "vcb_C04.pdf"
  ]

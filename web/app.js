@@ -6,7 +6,7 @@
   const $ = (s, root) => (root || document).querySelector(s);
 
   const state = {clients: [], client: null, scope: "personal", months: 12, tab: "overview", board: null, seq: 0,
-                 reads: {}, chat: {}, busy: false};
+                 reads: {}, chat: {}, busy: false, risk: {}};
   const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
                     "Tôi có 2 con, 14 tuổi và 10 tuổi", "Tôi có 20% cổ phần công ty Hoa Sen trị giá 5 tỷ"];
 
@@ -78,6 +78,7 @@
           </tbody></table></div>` : ""}
         </div>
         <div class="card"><h2>Rủi ro</h2>
+          ${d.profile.risk_profile ? `<div class="stat"><span class="k">Hồ sơ rủi ro (bài test)</span><span class="v">${esc(d.profile.risk_profile)} · ${esc(d.profile.risk_persona)}</span></div>` : `<p class="muted small" style="margin:0 0 8px">Chưa làm bài test rủi ro: ngưỡng lấy theo hồ sơ.</p>`}
           <div class="stat"><span class="k">Ngưỡng sụt giảm chấp nhận</span><span class="v">${pct(rk.limit, false, 0)}</span></div>
           <div class="stat"><span class="k">Mức sụt giảm ước tính khi thị trường xấu</span><span class="v">${pct(rk.current)}</span></div>
           <div id="riskmeter"></div>
@@ -239,6 +240,87 @@
     if (log) log.scrollTop = log.scrollHeight;
   }
 
+  // ── the risk test ───────────────────────────────────────────────────
+  const LEVEL_NAMES = ["Bảo toàn", "Thận trọng", "Cân bằng", "Tăng trưởng", "Mạo hiểm"];
+  function riskState() {
+    return state.risk[state.client] = state.risk[state.client] || {answers: {}, order: [], reply: null};
+  }
+
+  async function riskStep() {
+    const r = riskState();
+    const box = $("#tab-risk");
+    box.classList.add("loading");
+    try {
+      r.reply = await api("/api/risk", {client_id: state.client, answers: r.answers});
+    } catch (e) {
+      r.reply = {error: e.message};
+    }
+    box.classList.remove("loading");
+    renderRisk();
+    if (r.reply && r.reply.result) load();   // the dashboard measures risk against it now
+  }
+
+  function scoreBar(label, score, level) {
+    return `<div class="stat"><span class="k">${label}</span><span class="v">${LEVEL_NAMES[level - 1]} · ${Math.round(score)}/100</span></div>
+      <div class="meter" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${score}" aria-label="${label}">
+        <span class="fill" style="width:${score}%;background:var(--s1)"></span>
+        ${[20, 40, 60, 80].map(x => `<span class="mark" style="left:calc(${x}% - 1px);height:10px;top:0;background:var(--surface)"></span>`).join("")}</div>`;
+  }
+
+  function renderRisk() {
+    const box = $("#tab-risk");
+    const r = riskState();
+    const me = state.clients.find(c => c.id === state.client) || {};
+    if (!r.reply) {
+      box.innerHTML = `<div class="card"><h2>Bài test khẩu vị rủi ro</h2>
+        <p>8–12 câu hỏi tình huống; câu sau phụ thuộc vào câu trả lời trước. Kết quả tách hai điều:
+        <b>mức chấp nhận rủi ro</b> (anh/chị muốn chịu bao nhiêu) và <b>khả năng chịu rủi ro</b> (dữ liệu tài chính cho thấy anh/chị có thể chịu bao nhiêu).</p>
+        <button type="button" class="btn" id="risk-start">Bắt đầu cho ${esc(me.name || "")}</button></div>`;
+      $("#risk-start").onclick = riskStep;
+      return;
+    }
+    if (r.reply.error) {
+      box.innerHTML = `<div class="card error">Không tải được bài test: ${esc(r.reply.error)}</div>`;
+      return;
+    }
+    if (r.reply.question) {
+      const q = r.reply.question;
+      box.innerHTML = `<div class="card qcard"><div class="muted small">Câu ${q.number} / ${q.of}</div>
+        <h3 class="qtext">${esc(q.text)}</h3>
+        <div class="opts">${q.options.map(o => `<button type="button" class="opt" data-opt="${esc(o.id)}">${esc(o.text)}</button>`).join("")}</div>
+        <div class="actions mt">${r.order.length ? `<button type="button" class="btn ghostbtn" id="risk-back">← Câu trước</button>` : ""}</div></div>`;
+      for (const b of box.querySelectorAll("[data-opt]")) {
+        b.onclick = () => { r.answers[q.id] = b.dataset.opt; r.order.push(q.id); riskStep(); };
+      }
+      const back = $("#risk-back");
+      if (back) back.onclick = () => { delete r.answers[r.order.pop()]; riskStep(); };
+      return;
+    }
+    const res = r.reply.result;
+    box.innerHTML = `
+      <div class="card hero">
+        <div><div class="label">Hồ sơ rủi ro</div>
+          <div class="figure" style="font-size:40px">${esc(res.profile.name)}</div>
+          <div>Ngưỡng sụt giảm tối đa <b>${pct(res.drawdown_limit, false, 0)}</b> · ${res.questions} câu · ngày ${esc(res.taken)}</div>
+          <div class="who"><span class="chip">Chân dung: <b>${esc(res.persona)}</b></span></div>
+          <p class="muted small">${esc(res.persona_text)}</p></div>
+        <div>${scoreBar("Mức chấp nhận rủi ro (KH muốn)", res.tolerance, res.tolerance_level)}
+          ${scoreBar("Khả năng chịu rủi ro (dữ liệu cho thấy)", res.capacity, res.capacity_level)}
+          <div class="muted small">Hồ sơ lấy mức thấp hơn của hai chỉ số.</div></div>
+      </div>
+      ${res.warnings.length ? `<div class="card mt"><h2>Cần lưu ý</h2><ul class="warn-list">${res.warnings.map(w => `<li><span class="ic" aria-hidden="true">⚠</span><span>${esc(w)}</span></li>`).join("")}</ul></div>` : ""}
+      <div class="grid g2 mt">
+        <div class="card"><h2>Vì sao khả năng chịu rủi ro ở mức này</h2><ul class="legend">${res.capacity_reasons.map(w => `<li><span class="sw" style="background:var(--axis)"></span><span>${esc(w)}</span><span></span><span></span></li>`).join("")}</ul></div>
+        <div class="card"><h2>Phân bổ gợi ý cho hồ sơ ${esc(res.profile.name)}</h2>
+          <table><tbody>${Object.entries(res.profile.mix).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${esc(v)}</td></tr>`).join("")}</tbody></table>
+          <p class="muted small">Gợi ý mang tính mô phỏng; khuyến nghị cụ thể phải qua RM duyệt.</p></div>
+      </div>
+      <div class="card mt"><h2>Tự cập nhật</h2><p>Hệ thống sẽ hỏi lại vào <b>${esc(res.retest.date)}</b>, hoặc sớm hơn:</p>
+        <ul>${res.retest.when.map(w => `<li>${esc(w)}</li>`).join("")}</ul>
+        <button type="button" class="btn ghostbtn" id="risk-redo">Làm lại bài test</button></div>`;
+    $("#risk-redo").onclick = () => { state.risk[state.client] = null; renderRisk(); };
+  }
+
   // ── loading ─────────────────────────────────────────────────────────
   async function load() {
     const seq = ++state.seq;
@@ -250,6 +332,10 @@
       state.board = d;
       renderOverview(d);
       renderSources(d);
+      if (!$("#tab-risk").dataset.client || $("#tab-risk").dataset.client !== state.client) {
+        $("#tab-risk").dataset.client = state.client;
+        renderRisk();
+      }
     } catch (e) {
       $("#tab-overview").innerHTML = `<div class="card error">Không tải được dữ liệu: ${esc(e.message)}</div>`;
     } finally {

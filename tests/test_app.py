@@ -24,5 +24,8 @@ def test_upload_then_chat_then_the_dashboard_shows_both():
         assert after["net_worth"]["value"] == before + read.json()["total"] + 10 * 150_000_000
         assert {s["source"]: s["status"] for s in after["sources"]}["statement"] == "connected"
         assert client.get("/samples/vps_C01.csv").status_code == 200
-        assert client.post("/api/statement", json={"client_id": "C01", "filename": "x.exe", "content": ""}).status_code == 500
+        assert (
+            client.post("/api/statement", json={"client_id": "C01", "filename": "x.exe", "content": ""}).status_code
+            == 500
+        )
         assert client.post("/api/reset").json() == {"reset": True}

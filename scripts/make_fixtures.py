@@ -140,6 +140,7 @@ def client_c01(rng):
         ],
         "events": [{"date": "2027-03-15", "direction": "out", "amount": 1_800 * TR, "label": "Học phí du học (Úc) – Minh An", "category": "school"},
                    {"date": "2027-03-31", "direction": "out", "amount": 85 * TR, "label": "Quyết toán thuế TNCN 2026", "category": "tax"}],
+        "behaviour": [{"date": "2026-04-15", "market_move": -0.06, "action": "hold", "note": "Giữ nguyên danh mục khi VN-Index giảm 6%"}],
         "samples": ["vps_C01.csv"],
     }
 
@@ -215,6 +216,7 @@ def client_c02(rng):
         ],
         "events": [{"date": "2026-11-20", "direction": "out", "amount": 1_200 * TR, "label": "Học phí đại học (Mỹ) – Phát Đạt", "category": "school"},
                    {"date": "2027-06-30", "direction": "out", "amount": 2 * TY, "label": "Góp vốn mở rộng kho bãi", "category": "business"}],
+        "behaviour": [{"date": "2026-04-15", "market_move": -0.06, "action": "buy", "note": "Mua thêm 50.000 cổ phiếu MBB khi VN-Index giảm 6%"}],
         "samples": [],
     }
 
@@ -262,6 +264,7 @@ def client_c03(rng):
             {"id": "D-ETH-01", "class": "crypto", "name": "Ethereum", "symbol": "ETH", "qty": 5},
         ],
         "events": [{"date": "2027-05-01", "direction": "out", "amount": 400 * TR, "label": "Góp vốn vòng hạt giống startup", "category": "business"}],
+        "behaviour": [{"date": "2026-04-15", "market_move": -0.06, "action": "panic_sell", "note": "Bán 60% danh mục cổ phiếu khi VN-Index giảm 6%, mua lại sau 3 tuần"}],
         "samples": [],
     }
 
@@ -295,6 +298,7 @@ def client_c04(rng):
             {"id": "D-INS-04", "class": "insurance", "name": "Bảo hiểm sức khỏe cao cấp", "value": 0, "premium_annual": 40 * TR, "premium_month": 6},
         ],
         "events": [{"date": "2027-01-20", "direction": "out", "amount": 350 * TR, "label": "Phẫu thuật khớp gối (dự kiến)", "category": "health"}],
+        "behaviour": [{"date": "2026-04-15", "market_move": -0.06, "action": "hold", "note": "Không giao dịch"}],
         "samples": ["vcb_C04.pdf"],
     }
 
@@ -326,6 +330,7 @@ def client_c05(rng):
         },
         "declared": [],
         "events": [],
+        "behaviour": [{"date": "2026-04-15", "market_move": -0.06, "action": "sell", "note": "Bán một nửa quỹ cổ phiếu TCEF khi VN-Index giảm 6%, chưa mua lại"}],
         "samples": ["ssi_C05.xlsx"],
     }
 

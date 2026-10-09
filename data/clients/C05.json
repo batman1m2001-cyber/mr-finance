@@ -860,6 +860,14 @@
  },
  "declared": [],
  "events": [],
+ "behaviour": [
+  {
+   "date": "2026-04-15",
+   "market_move": -0.06,
+   "action": "sell",
+   "note": "Bán một nửa quỹ cổ phiếu TCEF khi VN-Index giảm 6%, chưa mua lại"
+  }
+ ],
  "samples": [
   "ssi_C05.xlsx"
  ]
