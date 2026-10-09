@@ -102,3 +102,9 @@ phone screenshots).
   chat, and a rule reader for the brief's sentences; an agent that cannot answer falls back too.
   **Not yet run against a real model:** this machine has none (the OpenAI key has no credit, the
   AIHub gateway is internal). The AI paths are tested with operonx's scripted model.
+- P4 (the risk test): done. 13 situational questions, 8–12 asked on any path (the drop question in
+  the client's own money; a fearful answer asks about a smaller fall, a calm one about a crash;
+  the business and big-expense questions only for who has them). Tolerance from the answers,
+  capacity from the data (liquidity, debt service, leverage, dependents, age, horizon, income);
+  the profile is the lower, lowered one more level when what the client did in the April dip
+  contradicts what they say. The result sets the dashboard's drawdown limit.
