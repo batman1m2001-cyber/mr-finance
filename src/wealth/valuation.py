@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional
 from wealth.labels import SOURCES
 
 
-def _h(
+def holding(
     owner: str,
     source: str,
     ident: str,
@@ -66,7 +66,7 @@ def stock(
 ) -> Dict[str, Any]:
     m = market["stocks"][row["ticker"]]
     qty = row["qty"]
-    return _h(
+    return holding(
         owner,
         source,
         ident or f"stock:{row['ticker']}",
@@ -90,12 +90,10 @@ def stock(
     )
 
 
-def bond(
-    owner: str, source: str, row: Dict[str, Any], market: Dict[str, Any], trust: str
-) -> Dict[str, Any]:
+def bond(owner: str, source: str, row: Dict[str, Any], market: Dict[str, Any], trust: str) -> Dict[str, Any]:
     m = market["bonds"][row["code"]]
     qty = row["qty"]
-    return _h(
+    return holding(
         owner,
         source,
         f"bond:{row['code']}",
@@ -125,7 +123,7 @@ def techcombank(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List
     for a in raw.get("accounts", []):
         cls = "deposit" if a["type"] == "TD" else "cash"
         out.append(
-            _h(
+            holding(
                 owner,
                 "techcombank",
                 a["id"],
@@ -143,7 +141,7 @@ def techcombank(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List
     for c in raw.get("cards", []):
         if c.get("outstanding"):
             out.append(
-                _h(
+                holding(
                     owner,
                     "techcombank",
                     c["id"],
@@ -157,7 +155,7 @@ def techcombank(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List
             )
     for ln in raw.get("loans", []):
         out.append(
-            _h(
+            holding(
                 owner,
                 "techcombank",
                 ln["id"],
@@ -182,7 +180,7 @@ def tcbs(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List[Dict[s
     mg = raw.get("margin")
     if mg:
         out.append(
-            _h(
+            holding(
                 owner,
                 "tcbs",
                 mg["id"],
@@ -199,15 +197,13 @@ def tcbs(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List[Dict[s
     return out
 
 
-def techcom_capital(
-    owner: str, raw: Dict[str, Any], market: Dict[str, Any]
-) -> List[Dict[str, Any]]:
+def techcom_capital(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List[Dict[str, Any]]:
     out = []
     for f in raw.get("funds", []):
         m = market["funds"][f["code"]]
         u = f["units"]
         out.append(
-            _h(
+            holding(
                 owner,
                 "techcom_capital",
                 f"fund:{f['code']}",
@@ -240,7 +236,7 @@ def onehousing(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List[
         area = market["areas"][p["area"]]
         v = property_value(p, market)
         out.append(
-            _h(
+            holding(
                 owner,
                 "onehousing",
                 p["id"],
@@ -274,7 +270,7 @@ def open_api(owner: str, raw: List[Dict[str, Any]], market: Dict[str, Any]) -> L
         name = inst["institution"]
         for a in inst.get("accounts", []):
             out.append(
-                _h(
+                holding(
                     owner,
                     "open_api",
                     f"{name}:{a['id']}",
@@ -295,9 +291,7 @@ def open_api(owner: str, raw: List[Dict[str, Any]], market: Dict[str, Any]) -> L
     return out
 
 
-def declared(
-    owner: str, items: List[Dict[str, Any]], market: Dict[str, Any]
-) -> List[Dict[str, Any]]:
+def declared(owner: str, items: List[Dict[str, Any]], market: Dict[str, Any]) -> List[Dict[str, Any]]:
     """What the client says they hold. Gold and crypto are valued at market; a property in an
     area we know is valued by its area when it gives its size; the rest at the client's word."""
     sd = market["stress_drawdown"]
@@ -308,7 +302,7 @@ def declared(
         if cls == "gold":
             g = market["gold"]
             out.append(
-                _h(
+                holding(
                     owner,
                     "declared",
                     ident,
@@ -328,7 +322,7 @@ def declared(
         elif cls == "crypto":
             c = market["crypto"][d["symbol"]]
             out.append(
-                _h(
+                holding(
                     owner,
                     "declared",
                     ident,
@@ -351,7 +345,7 @@ def declared(
             else:
                 value = prev = d.get("value") or 0
             out.append(
-                _h(
+                holding(
                     owner,
                     "declared",
                     ident,
@@ -373,7 +367,7 @@ def declared(
             )
         elif cls == "loan":
             out.append(
-                _h(
+                holding(
                     owner,
                     "declared",
                     ident,
@@ -389,7 +383,7 @@ def declared(
             )
         else:  # business, insurance, anything else: the client's own value
             out.append(
-                _h(
+                holding(
                     owner,
                     "declared",
                     ident,

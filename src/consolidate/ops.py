@@ -49,9 +49,7 @@ async def _each(members: List[Dict[str, Any]], read) -> List[Dict[str, Any]]:
 async def techcombank(members: list) -> dict:
     """Deposits, cards, loans, and the account's transactions."""
     mk = fixtures.market()
-    holdings = await _each(
-        members, lambda mid, c: valuation.techcombank(mid, c["sources"]["techcombank"], mk)
-    )
+    holdings = await _each(members, lambda mid, c: valuation.techcombank(mid, c["sources"]["techcombank"], mk))
     tx = []
     for m in members:
         for t in fixtures.client(m["id"])["sources"]["techcombank"].get("transactions", []):
@@ -64,9 +62,7 @@ async def tcbs(members: list) -> dict:
     """Stocks and bonds at TCBS, and the profit already taken this year."""
     mk = fixtures.market()
     holdings = await _each(members, lambda mid, c: valuation.tcbs(mid, c["sources"]["tcbs"], mk))
-    realized = sum(
-        fixtures.client(m["id"])["sources"]["tcbs"].get("realized_ytd", 0) for m in members
-    )
+    realized = sum(fixtures.client(m["id"])["sources"]["tcbs"].get("realized_ytd", 0) for m in members)
     return {"holdings": holdings, "realized_ytd": realized}
 
 
@@ -74,9 +70,7 @@ async def tcbs(members: list) -> dict:
 async def techcom_capital(members: list) -> dict:
     """Fund certificates at Techcom Capital."""
     mk = fixtures.market()
-    holdings = await _each(
-        members, lambda mid, c: valuation.techcom_capital(mid, c["sources"]["techcom_capital"], mk)
-    )
+    holdings = await _each(members, lambda mid, c: valuation.techcom_capital(mid, c["sources"]["techcom_capital"], mk))
     return {"holdings": holdings}
 
 
@@ -84,9 +78,7 @@ async def techcom_capital(members: list) -> dict:
 async def onehousing(members: list) -> dict:
     """Properties, valued by OneHousing's prices for their area."""
     mk = fixtures.market()
-    holdings = await _each(
-        members, lambda mid, c: valuation.onehousing(mid, c["sources"]["onehousing"], mk)
-    )
+    holdings = await _each(members, lambda mid, c: valuation.onehousing(mid, c["sources"]["onehousing"], mk))
     return {"holdings": holdings}
 
 
@@ -94,9 +86,7 @@ async def onehousing(members: list) -> dict:
 async def open_api(members: list) -> dict:
     """Other banks and brokers the client let us read."""
     mk = fixtures.market()
-    holdings = await _each(
-        members, lambda mid, c: valuation.open_api(mid, c["sources"].get("open_api"), mk)
-    )
+    holdings = await _each(members, lambda mid, c: valuation.open_api(mid, c["sources"].get("open_api"), mk))
     return {"holdings": holdings}
 
 
@@ -113,9 +103,7 @@ async def declared(members: list) -> dict:
     mk = fixtures.market()
     holdings = await _each(
         members,
-        lambda mid, c: valuation.declared(
-            mid, c.get("declared", []) + store.profile(mid, "asset"), mk
-        ),
+        lambda mid, c: valuation.declared(mid, c.get("declared", []) + store.profile(mid, "asset"), mk),
     )
     return {"holdings": holdings}
 

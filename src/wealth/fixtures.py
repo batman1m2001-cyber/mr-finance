@@ -40,6 +40,4 @@ def client_ids(members: bool = False) -> List[str]:
 def summary(client_id: str) -> Dict[str, Any]:
     """What the client picker shows."""
     c = _client(client_id)
-    return {
-        k: c.get(k) for k in ("id", "name", "age", "occupation", "segment", "persona_hint", "city")
-    }
+    return {k: c.get(k) for k in ("id", "name", "age", "occupation", "segment", "persona_hint", "city")}

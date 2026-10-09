@@ -5,6 +5,7 @@
 
 llm:assistant:
   api_type: openai          # openai | azure | vllm | gemini | anthropic
-  api_key: ${LLM_API_KEY:}       # empty: the AI steps use their rule fallback (docs/PLAN.md D2)
+  # unset: the client still builds, and the AI steps take their rule path (docs/PLAN.md D2)
+  api_key: ${LLM_API_KEY:not-set}
   base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL:gpt-4o-mini}

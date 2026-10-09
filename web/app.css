@@ -131,6 +131,7 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--hair); vertical-align: top; }
 th { font-weight: 600; color: var(--ink-2); font-size: 12px; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .sub { display: none; color: var(--muted); font-size: 11px; margin-top: 2px; }
 .badge { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; border: 1px solid var(--hair); white-space: nowrap; }
 .badge.verified { background: color-mix(in srgb, var(--good) 14%, transparent); }
 .badge.statement { background: color-mix(in srgb, var(--s1) 14%, transparent); }
@@ -144,6 +145,19 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-sp
 .src .no { color: var(--muted); }
 .src .what { grid-column: 2 / 4; color: var(--muted); font-size: 12px; }
 
+/* actions, the chat */
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--surface); cursor: pointer; font-weight: 600; }
+.btn.ghostbtn { background: transparent; color: var(--accent); }
+.chat { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; padding: 4px 2px 8px; }
+.msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; line-height: 1.45; }
+.msg.me { align-self: flex-end; background: var(--accent); color: var(--surface); border-bottom-right-radius: 4px; }
+.msg.bot { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--hair); border-bottom-left-radius: 4px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 10px; }
+.chipbtn { border: 1px solid var(--hair); background: var(--surface-2); border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; text-align: left; }
+.chatform { display: flex; gap: 8px; }
+.chatform input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--axis); border-radius: 8px; background: var(--surface); }
 .tip { position: fixed; z-index: 20; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--hair);
   border-radius: 8px; padding: 8px 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, .14); font-size: 12px; max-width: 280px; }
 .tip b { display: block; margin-bottom: 4px; }
@@ -164,5 +178,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-sp
   main { padding: 14px 16px 24px; }
   .foot { padding: 0 16px 20px; }
   .hero .figure { font-size: 40px; }
+  th.wide, td.wide { display: none; }
+  td .sub { display: block; }
   .card { padding: 14px; }
 }

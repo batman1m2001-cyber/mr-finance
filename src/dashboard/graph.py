@@ -27,9 +27,7 @@ def dashboard_flow(client_id, scope, months):
     who = client_profile(client_id=client_id, members=held["members"])
     worth = net_worth(holdings=held["holdings"])
     mix = allocation(holdings=held["holdings"])
-    pnl = performance(
-        holdings=held["holdings"], realized_ytd=held["realized_ytd"], profile=who["profile"]
-    )
+    pnl = performance(holdings=held["holdings"], realized_ytd=held["realized_ytd"], profile=who["profile"])
     risk = drawdown(holdings=held["holdings"], net_worth=worth["net_worth"], profile=who["profile"])
     spread = concentration(holdings=held["holdings"], net_worth=worth["net_worth"])
     reserve = liquidity(holdings=held["holdings"], profile=who["profile"])

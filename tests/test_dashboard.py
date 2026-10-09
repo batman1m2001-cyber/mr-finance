@@ -47,13 +47,9 @@ def test_net_worth_is_assets_less_debt_with_its_month_change_and_confidence():
 
 def test_drawdown_compares_a_stress_with_the_limit():
     rows = [h("stock", 10 * TY, stress=0.3), h("deposit", 10 * TY)]
-    risk = drawdown(
-        holdings=rows, net_worth={"value": 20 * TY}, profile={"drawdown_limit": 0.10}
-    )()["risk"]
+    risk = drawdown(holdings=rows, net_worth={"value": 20 * TY}, profile={"drawdown_limit": 0.10})()["risk"]
     assert (risk["current"], risk["status"]) == (0.15, "over")
-    calm = drawdown(
-        holdings=rows, net_worth={"value": 20 * TY}, profile={"drawdown_limit": 0.30}
-    )()["risk"]
+    calm = drawdown(holdings=rows, net_worth={"value": 20 * TY}, profile={"drawdown_limit": 0.30})()["risk"]
     assert calm["status"] == "ok"
 
 

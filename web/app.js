@@ -5,7 +5,10 @@
   const C = window.Charts;
   const $ = (s, root) => (root || document).querySelector(s);
 
-  const state = {clients: [], client: null, scope: "personal", months: 12, tab: "overview", board: null, seq: 0};
+  const state = {clients: [], client: null, scope: "personal", months: 12, tab: "overview", board: null, seq: 0,
+                 reads: {}, chat: {}, busy: false};
+  const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
+                    "Tôi có 2 con, 14 tuổi và 10 tuổi", "Tôi có 20% cổ phần công ty Hoa Sen trị giá 5 tỷ"];
 
   // colour follows the asset class, never its rank
   const GROUP_COLOR = {
@@ -144,14 +147,96 @@
         ${tier(2, "Ngoài hệ sinh thái", "Open API theo khung của NHNN, hoặc tải sao kê PDF / Excel để AI đọc.")}
         ${tier(3, "Khách hàng tự khai", "Form thông minh hoặc chat với AI.")}
       </div>
+      <div class="grid g2 mt">${uploadCard()}${chatCard()}</div>
       <div class="card mt"><h2>Tất cả tài sản và khoản nợ <span class="hint">${d.holdings.length} khoản</span></h2>
         <div class="tablewrap"><table>
-          <thead><tr>${family ? "<th>Chủ sở hữu</th>" : ""}<th>Khoản</th><th>Loại</th><th>Nguồn</th><th>Độ tin cậy</th><th class="num">Giá trị</th></tr></thead>
-          <tbody>${d.holdings.map(h => `<tr>${family ? `<td>${esc(h.owner_name)}</td>` : ""}<td>${esc(h.name)}</td>
-            <td>${esc(CLASS_LABEL[h.class] || h.class)}</td><td>${esc((d.sources.find(s => s.source === h.source) || {}).label || h.source)}</td>
+          <thead><tr>${family ? `<th class="wide">Chủ sở hữu</th>` : ""}<th>Khoản</th><th class="wide">Loại</th><th class="wide">Nguồn</th><th>Độ tin cậy</th><th class="num">Giá trị</th></tr></thead>
+          <tbody>${d.holdings.map(h => { const src = esc((d.sources.find(s => s.source === h.source) || {}).label || h.source); return `<tr>${family ? `<td class="wide">${esc(h.owner_name)}</td>` : ""}<td>${esc(h.name)}<div class="sub">${family ? esc(h.owner_name) + " · " : ""}${src}</div></td>
+            <td class="wide">${esc(CLASS_LABEL[h.class] || h.class)}</td><td class="wide">${src}</td>
             <td><span class="badge ${h.trust}">${TRUST_LABEL[h.trust]}</span></td>
-            <td class="num">${h.kind === "liability" ? "−" : ""}${vnd(h.value)}</td></tr>`).join("")}</tbody>
+            <td class="num">${h.kind === "liability" ? "−" : ""}${vnd(h.value)}</td></tr>`; }).join("")}</tbody>
         </table></div></div>`;
+    wireSources();
+  }
+
+  // ── tier 2: a statement the client uploads ──────────────────────────
+  const METHOD = {ai: "AI đọc", rules: "Đọc theo mẫu"};
+  function uploadCard() {
+    const me = state.clients.find(c => c.id === state.client) || {};
+    const read = state.reads[state.client];
+    const rows = read ? read.holdings.map(h => `<tr><td>${esc(h.name)}</td><td class="num">${vnd(h.value)}</td></tr>`).join("") : "";
+    return `<div class="card"><h2>Tải sao kê <span class="hint">PDF · Excel · CSV</span></h2>
+      <p class="muted small" style="margin-top:-6px">AI đọc sao kê của ngân hàng / công ty chứng khoán khác và tách từng khoản; khách hàng không phải nhập tay.</p>
+      <div class="actions"><label class="btn"><input type="file" id="stmt-file" accept=".pdf,.xlsx,.xlsm,.csv,.txt" hidden>Chọn tệp…</label>
+        ${(me.samples || []).map(n => `<button type="button" class="btn ghostbtn" data-sample="${esc(n)}">Dùng sao kê mẫu: ${esc(n)}</button>`).join("")}</div>
+      <div id="stmt-out" class="mt" aria-live="polite">${read ? `<div><b>Đã đọc ${read.count} khoản từ ${esc(read.institution)}</b> · ${vnd(read.total)}
+        <span class="badge statement">${METHOD[read.method] || read.method}</span></div>
+        <div class="tablewrap"><table><tbody>${rows}</tbody></table></div>` : ""}</div></div>`;
+  }
+
+  function b64(buf) {
+    const bytes = new Uint8Array(buf);
+    let bin = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+
+  async function sendStatement(name, buf) {
+    const out = $("#stmt-out");
+    if (out) out.innerHTML = `<span class="muted">Đang đọc ${esc(name)}…</span>`;
+    try {
+      const read = await api("/api/statement", {client_id: state.client, filename: name, content: b64(buf)});
+      state.reads[state.client] = read;
+      await load();
+    } catch (e) {
+      if (out) out.innerHTML = `<span class="error">Không đọc được tệp: ${esc(e.message)}</span>`;
+    }
+  }
+
+  // ── tier 3: the chat ────────────────────────────────────────────────
+  function chatCard() {
+    const log = state.chat[state.client] || [];
+    const lines = log.map(m => m.who === "me"
+      ? `<div class="msg me">${esc(m.text)}</div>`
+      : `<div class="msg bot">${esc(m.text).replace(/\n/g, "<br>")}${m.method ? `<div class="muted small">${m.method === "ai" ? "Trợ lý AI" : "Đọc theo quy tắc"}${m.recorded ? ` · ghi ${m.recorded} mục` : ""}</div>` : ""}</div>`).join("");
+    return `<div class="card"><h2>Khai báo qua chat</h2>
+      <div class="chat" id="chat-log" aria-live="polite">${lines || `<div class="msg bot">Chào anh/chị, hãy kể những tài sản ngân hàng chưa thấy: nhà đất, vàng, cổ phần, khoản nợ, người phụ thuộc…</div>`}</div>
+      <div class="chips">${EXAMPLES.map(t => `<button type="button" class="chipbtn" data-say="${esc(t)}">${esc(t)}</button>`).join("")}</div>
+      <form id="chat-form" class="chatform"><input id="chat-in" autocomplete="off" placeholder="Ví dụ: Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ" aria-label="Tin nhắn">
+        <button type="submit" class="btn">Gửi</button></form></div>`;
+  }
+
+  async function say(text) {
+    text = (text || "").trim();
+    if (!text || state.busy) return;
+    const log = state.chat[state.client] = state.chat[state.client] || [];
+    log.push({who: "me", text});
+    state.busy = true;
+    if (state.board) renderSources(state.board);
+    try {
+      const turn = await api("/api/declare", {client_id: state.client, message: text, session_id: `${state.client}-web`});
+      log.push({who: "bot", text: turn.reply, method: turn.method, recorded: turn.recorded.length});
+    } catch (e) {
+      log.push({who: "bot", text: "Xin lỗi, có lỗi khi ghi nhận: " + e.message});
+    }
+    state.busy = false;
+    await load();
+  }
+
+  function wireSources() {
+    const file = $("#stmt-file");
+    if (file) file.onchange = async () => { const f = file.files[0]; if (f) sendStatement(f.name, await f.arrayBuffer()); };
+    for (const b of document.querySelectorAll("[data-sample]")) {
+      b.onclick = async () => {
+        const r = await fetch(`/samples/${encodeURIComponent(b.dataset.sample)}`);
+        sendStatement(b.dataset.sample, await r.arrayBuffer());
+      };
+    }
+    for (const b of document.querySelectorAll("[data-say]")) b.onclick = () => say(b.dataset.say);
+    const form = $("#chat-form");
+    if (form) form.onsubmit = (ev) => { ev.preventDefault(); const i = $("#chat-in"); const t = i.value; i.value = ""; say(t); };
+    const log = $("#chat-log");
+    if (log) log.scrollTop = log.scrollHeight;
   }
 
   // ── loading ─────────────────────────────────────────────────────────
