@@ -145,6 +145,24 @@ td .sub { display: none; color: var(--muted); font-size: 11px; margin-top: 2px; 
 .src .no { color: var(--muted); }
 .src .what { grid-column: 2 / 4; color: var(--muted); font-size: 12px; }
 
+/* alerts */
+.alist { display: grid; gap: 10px; }
+.arow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline;
+  padding-bottom: 10px; border-bottom: 1px solid var(--hair); }
+.arow:last-child { border-bottom: 0; }
+.arow > .muted { grid-column: 2 / 4; }
+.note { color: var(--ink-2); font-size: 12px; background: var(--surface-2); border: 1px solid var(--hair); border-radius: 8px; padding: 8px 12px; }
+.dbars { display: grid; gap: 6px; }
+.dbar { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 92px; gap: 10px; align-items: center; font-size: 13px; }
+.dbar .dl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); }
+.dbar .dt { display: grid; grid-template-columns: 1fr 1fr; height: 14px; }
+.dbar .dneg { display: flex; justify-content: flex-end; border-right: 1px solid var(--axis); }
+.dbar .dneg span { background: var(--out); border-radius: 4px 0 0 4px; height: 100%; min-width: 2px; }
+.dbar .dpos span { display: block; background: var(--in); border-radius: 0 4px 4px 0; height: 100%; min-width: 2px; }
+.dbar .dv { text-align: right; font-variant-numeric: tabular-nums; }
+.acard h3 { margin: 8px 0 6px; font-size: 16px; }
+.acard p { margin: 0 0 10px; }
+.ahead2 { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 /* the risk test */
 .qcard { max-width: 760px; }
 .qtext { font-size: 20px; line-height: 1.35; margin: 8px 0 16px; font-weight: 600; }
@@ -185,6 +203,8 @@ td .sub { display: none; color: var(--muted); font-size: 11px; margin-top: 2px; 
   .foot { padding: 0 16px 20px; }
   .hero .figure { font-size: 40px; }
   th.wide, td.wide { display: none; }
+  .dbar { grid-template-columns: minmax(0, 1fr) 72px; }
+  .dbar .dt { grid-column: 1 / 3; grid-row: 2; }
   td .sub { display: block; }
   .card { padding: 14px; }
 }

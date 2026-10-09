@@ -19,6 +19,7 @@ operonx graph the studio can draw and trace; the web UI only calls them.
 | D5 | **Money in VND integers**, shown as tỷ / triệu. UI text in Vietnamese; code and docs in English. | The audience is Vietnamese; the code follows operonx conventions. |
 | D6 | **State in SQLite** (`data/state.db`, gitignored, made on demand): what a client added (statements, declarations, dependents), risk results, alerts, the RM queue. Fixtures stay read-only; `reset` empties the state. | One file, no server, works with pip or uv. |
 | D7 | **One Application, one port.** JSON APIs are `http` services on graphs; the web UI and plain reads (client list, RM queue list) are one `asgi` service mounted last at `/`. | `operonx serve` runs the whole product. |
+| D9 | **consolidate_flow is the one graph features share.** Every picture (dashboard, risk, alerts) starts from the same holdings, so it is a subgraph of theirs; other shared logic lives in `src/wealth`. | One consolidation, never three that drift apart. |
 | D8 | **Policy facts are dated fixtures with a status** (dự thảo / lấy ý kiến / đã thông qua) and a source line. The UI says they must be checked before a real demo. | The brief warns that their legal status moves fast. |
 
 ## 2. Layout
@@ -108,3 +109,10 @@ phone screenshots).
   capacity from the data (liquidity, debt service, leverage, dependents, age, horizon, income);
   the profile is the lower, lowered one more level when what the client did in the April dip
   contradicts what they say. The result sets the dashboard's drawdown limit.
+- P5 (impact and alerts): done. data/factors.json: the brief's 14 policies, two macro moves and
+  three infrastructure projects, each with a status (→ probability), a source line and a rule
+  (src/impact/_rules.py, 16 rule types). Impact = exposure × sensitivity × probability, in VND
+  and as a share of net worth; 🔴/🟡/🟢 at 1% and 0.3%. alerts_flow keeps the latest per client;
+  the policy_sweep Job (`operonx run policy_sweep`) and the 07:00 schedule (sweep_flow, every
+  client through `invoke`) run it for everyone. UI: Cảnh báo (a diverging impact bar, each alert
+  with its formula, holdings and source) and the overview's top three.
