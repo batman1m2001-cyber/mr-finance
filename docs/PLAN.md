@@ -116,3 +116,10 @@ phone screenshots).
   the policy_sweep Job (`operonx run policy_sweep`) and the 07:00 schedule (sweep_flow, every
   client through `invoke`) run it for everyone. UI: Cảnh báo (a diverging impact bar, each alert
   with its formula, holdings and source) and the overview's top three.
+- P6 (scenarios and the RM queue): done. 9 life-event scenarios and 5 stress tests
+  (src/scenarios/_sim.py), each on the client's own holdings with defaults from their data,
+  answering in numbers, before/after, and a light and a heavy option; scenario_flow branches
+  life / stress with `if_`. An option goes to the RM queue (propose_api); review_flow records the
+  RM's decision once. UI: Kịch bản (parameters editable, options with their status) and
+  RM duyệt (the queue: approve or reject with a note). No sign-in: in the demo the RM view is
+  a tab.
