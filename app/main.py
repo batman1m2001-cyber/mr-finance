@@ -13,7 +13,8 @@ GET  /api/clients, POST /api/reset, GET /    ──► app/web.py (the sample cl
 Every service and job of the product is declared here; operonx.toml only points at `APP`.
 """
 
-from operonx.app import Application, Service, asgi, env, http, schedule
+from operonx.app import Application, Eval, Service, asgi, env, http, schedule
+from operonx.app.evals import Gate
 from operonx.app.jobs import Job
 
 from app import web
@@ -24,7 +25,8 @@ from impact.ops import every_client
 from review.graph import decide_api, propose_api
 from risk.graph import risk_api
 from scenarios.graph import scenario_api
-from statements.graph import statement_api
+from statements.checks import items_match
+from statements.graph import sample_flow, statement_api
 
 PORT = env("PORT", 8030)
 
@@ -93,5 +95,15 @@ APP = Application(
     jobs=[
         # the same sweep from a terminal or cron: `operonx run policy_sweep`
         Job("policy_sweep", graph=alerts_flow, items=every_client, key="client_id"),
+        # how well statements are read: `operonx run statement_reading` (exit code: the gate's).
+        # The three demo samples must pass; the free-text note needs a model (MF_AI=on).
+        Eval(
+            "statement_reading",
+            graph=sample_flow,
+            input="filename",
+            dataset="dataset:statements",
+            evaluators=[items_match],
+            gate=Gate(threshold=0.8),
+        ),
     ],
 )

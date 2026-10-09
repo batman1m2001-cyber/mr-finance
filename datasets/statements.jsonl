@@ -1,0 +1,5 @@
+{"id": "vps-csv", "input": "vps_C01.csv", "expected": {"institution": "VPS", "stocks": {"MWG": 6000, "SSI": 15000}, "balances": [120000000]}, "tags": ["critical", "rules"]}
+{"id": "ssi-xlsx", "input": "ssi_C05.xlsx", "expected": {"institution": "SSI", "stocks": {"HPG": 5000, "MBB": 4000}, "balances": [50000000]}, "tags": ["critical", "rules"]}
+{"id": "vcb-pdf", "input": "vcb_C04.pdf", "expected": {"institution": "Vietcombank", "stocks": {}, "balances": [2000000000, 85000000]}, "tags": ["critical", "rules"]}
+{"id": "mbs-csv", "input": "mbs_C02.csv", "expected": {"institution": "MBS", "stocks": {"VNM": 3000, "FPT": 1000}, "balances": [42000000]}, "tags": ["rules"]}
+{"id": "hsc-note", "input": "hsc_note.txt", "expected": {"institution": "HSC", "stocks": {"FPT": 2000, "VNM": 1500}, "balances": [35000000]}, "tags": ["model-only"]}

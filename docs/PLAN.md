@@ -123,3 +123,11 @@ phone screenshots).
   RM's decision once. UI: Kịch bản (parameters editable, options with their status) and
   RM duyệt (the queue: approve or reject with a note). No sign-in: in the demo the RM view is
   a tab.
+- P7 (the demo): done. docs/DEMO.md is the brief's five-minute demo on C01 with the numbers it shows
+  (family net worth 45,1 tỷ; the brief's example said 45,2); tests/test_demo.py walks it through the
+  HTTP API. statement_reading is an operonx Eval over five samples (3 critical): rules alone pass
+  4/5, the free-text note needs a model. README is agent-first, uv and pip. **Làm lại demo** resets.
+
+**Not done, and why:** the AI paths have not run against a real model (none reachable from the
+build machine); set `LLM_API_KEY` and run `MF_AI=on uv run operonx run statement_reading` to see the
+model read the fifth sample.

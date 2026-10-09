@@ -77,9 +77,7 @@ def model_failed(error: str = "", kind: str = "txt", text: str = "", rows: list 
 
 
 @op
-def save_holdings(
-    client_id: str,
-    filename: str,
+def pick_items(
     institution: str,
     model_items: list = None,
     rule_items: list = None,
@@ -88,11 +86,30 @@ def save_holdings(
     rule_method: str = None,
     fallback_method: str = None,
 ) -> dict:
+    """The one arm that ran: the model's (checked), the rules', or the rules after a failed model call."""
+    items = next((x for x in (model_items, rule_items, fallback_items) if x is not None), [])
+    return {
+        "items": items,
+        "method": model_method or rule_method or fallback_method or "rules",
+        "institution": institution,
+    }
+
+
+@op
+def load_sample(filename: str) -> dict:
+    """A sample statement (data/samples), as an upload would send it."""
+    from wealth.paths import DATA
+
+    path = (DATA / "samples" / filename).resolve()
+    if path.parent != (DATA / "samples").resolve() or not path.is_file():
+        raise ValueError(f"no sample {filename!r}")
+    return {"content": base64.b64encode(path.read_bytes()).decode()}
+
+
+@op
+def save_holdings(client_id: str, filename: str, institution: str, items: list, method: str = "rules") -> dict:
     """The items as holdings — a stock valued at today's price, a balance as it is — kept as
     this client's ``statement`` holdings (reading the same file again replaces them)."""
-    # one arm ran: the model's (checked), the rules', or the rules after a failed model call
-    items = next((x for x in (model_items, rule_items, fallback_items) if x is not None), [])
-    method = model_method or rule_method or fallback_method or "rules"
     mk = fixtures.market()
     tag = re.sub(r"[^a-z0-9]+", "-", institution.lower()).strip("-") or "other"
     out = []

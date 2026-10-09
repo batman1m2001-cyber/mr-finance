@@ -16,3 +16,4 @@ __pycache__/
 # what clients added in the demo (docs/PLAN.md D6)
 data/state.db*
 .operonx/jobs/
+evals/

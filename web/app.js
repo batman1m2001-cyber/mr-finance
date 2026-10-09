@@ -126,7 +126,7 @@
 
   function drawCash() {
     const host = $("#cash");
-    if (!host || !state.board) return;
+    if (!host || !state.board || !host.clientWidth) return;   // hidden: drawn when its tab shows
     host.replaceChildren(C.cashflow(state.board.cashflow.months, state.board.cashflow.large, host.clientWidth));
   }
   let resizeTimer = null;
@@ -556,6 +556,8 @@
       else b.removeAttribute("aria-current");
     }
     for (const s of document.querySelectorAll(".tab")) s.hidden = s.id !== `tab-${tab}`;
+    // a chart drawn while its tab was hidden measured no width: draw it again now it shows
+    if (tab === "overview") drawCash();
     try { localStorage.setItem("mf.tab", tab); } catch (_) { /* private mode */ }
   }
 
@@ -588,6 +590,14 @@
     }
     for (const b of document.querySelectorAll(".tabs button")) b.onclick = () => showTab(b.dataset.tab);
     $("#theme").onclick = theme;
+    $("#reset").onclick = async () => {
+      if (!confirm("Xóa mọi dữ liệu đã tải lên, đã khai, bài test và hàng chờ RM để làm lại demo?")) return;
+      await api("/api/reset", {});
+      Object.assign(state, {reads: {}, chat: {}, risk: {}, sim: {}, alerts: null, queue: []});
+      $("#tab-risk").dataset.client = "";
+      await loadQueue();
+      load();
+    };
     let tab = "overview";
     try { tab = localStorage.getItem("mf.tab") || tab; } catch (_) { /* */ }
     showTab(document.querySelector(`.tabs [data-tab="${tab}"]`) ? tab : "overview");

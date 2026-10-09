@@ -7,8 +7,10 @@ from operonx.providers.ops import LLMOp
 
 from statements.ops import (
     ai_mode,
+    load_sample,
     model_failed,
     model_read,
+    pick_items,
     read_file,
     read_request,
     rule_read,
@@ -30,8 +32,9 @@ READ_PROMPT = {
 
 
 @graph
-def statement_flow(client_id, filename, content):
-    """A statement the client uploaded, read and kept as their tier-2 holdings."""
+def read_flow(filename, content):
+    """A statement file → its items: the model's reading when AI is on, else the rules'; a model
+    that fails or gives nothing usable falls back to the rules."""
     file = read_file(filename=filename, content=content)
     mode = ai_mode()
     model = LLMOp.of(
@@ -51,9 +54,7 @@ def statement_flow(client_id, filename, content):
     )
     oops = model_failed(kind=file["kind"], text=file["text"], rows=file["rows"])
     rules = rule_read(kind=file["kind"], text=file["text"], rows=file["rows"])
-    saved = save_holdings(
-        client_id=client_id,
-        filename=filename,
+    picked = pick_items(
         institution=file["institution"],
         model_items=checked["items"],
         rule_items=rules["items"],
@@ -65,10 +66,32 @@ def statement_flow(client_id, filename, content):
     model.on_error(oops)  # the model unreachable: the rules read it, the run goes on
     START >> file >> mode >> if_(mode["ai"] == True, model).else_(rules)  # noqa: E712
     model >> checked
-    checked >> saved
-    rules >> saved
-    oops >> saved
-    saved >> END
+    checked >> picked
+    rules >> picked
+    oops >> picked
+    picked >> END
+
+
+@graph
+def statement_flow(client_id, filename, content):
+    """A statement the client uploaded, read and kept as their tier-2 holdings."""
+    got = read_flow(filename=filename, content=content)
+    saved = save_holdings(
+        client_id=client_id,
+        filename=filename,
+        institution=got["institution"],
+        items=got["items"],
+        method=got["method"],
+    )
+    START >> got >> saved >> END
+
+
+@graph
+def sample_flow(filename):
+    """The eval's graph: a sample statement from data/samples, read (nothing is kept)."""
+    sample = load_sample(filename=filename)
+    got = read_flow(filename=filename, content=sample["content"])
+    START >> sample >> got >> END
 
 
 @graph
