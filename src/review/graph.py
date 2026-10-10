@@ -1,34 +1,25 @@
-"""propose_flow puts a simulation's option in the RM queue; review_flow records the RM's decision."""
+"""propose_flow puts a simulation's option in the RM queue; review_flow records the RM's decision.
+
+Both are served as is (POST /api/review/propose, /api/review/decide): the body fills their
+parameters."""
 
 from operonx import END, START, graph
-from operonx.app.serve import egress, ingress
 
 from review.ops import check_pending, decide, propose, read_decision, read_proposal
 
 
 @graph
-def review_flow(item_id, decision, note):
-    """An RM approves or rejects a pending proposal."""
-    pending = check_pending(item_id=item_id)
-    done = decide(item_id=pending["item_id"], decision=decision, note=note)
-    START >> pending >> done >> END
-
-
-@graph
-def propose_api():
-    """POST {client_id, scenario, title, option, summary?} → the queued item."""
-    req = ingress()
-    ask = read_proposal(item=req["item"])
+def propose_flow(client_id, option, scenario=None, title=None, summary=None):
+    """A simulation's option, sent to the RM queue as a pending item."""
+    ask = read_proposal(client_id=client_id, scenario=scenario, title=title, option=option, summary=summary)
     queued = propose(client_id=ask["client_id"], kind=ask["kind"], title=ask["title"], data=ask["data"])
-    out = egress(item=queued["item"])
-    START >> req >> ask >> queued >> out >> END
+    START >> ask >> queued >> END
 
 
 @graph
-def decide_api():
-    """POST {item_id, decision, note?} → the decided item."""
-    req = ingress()
-    ask = read_decision(item=req["item"])
-    done = review_flow(item_id=ask["item_id"], decision=ask["decision"], note=ask["note"])
-    out = egress(item=done["item"])
-    START >> req >> ask >> done >> out >> END
+def review_flow(item_id, decision, note=None):
+    """An RM approves or rejects a pending proposal."""
+    ask = read_decision(item_id=item_id, decision=decision, note=note)
+    pending = check_pending(item_id=ask["item_id"])
+    done = decide(item_id=pending["item_id"], decision=ask["decision"], note=ask["note"])
+    START >> ask >> pending >> done >> END

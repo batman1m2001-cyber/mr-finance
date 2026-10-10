@@ -150,7 +150,8 @@ def test_the_services_answer_over_http():
         assert [c["id"] for c in listed["clients"]] == ["C01", "C02", "C03", "C04", "C05"]
         board = client.post("/api/dashboard", json={"client_id": "C04", "scope": "personal"})
         assert board.status_code == 200, board.text
-        assert board.json()["client_id"] == "C04"
+        assert board.json()["dashboard"]["client_id"] == "C04"
+        assert client.post("/api/dashboard", json={"client": "C04"}).json()["field"] == "client"  # not a parameter: 400
         bad = client.post("/api/dashboard", json={"client_id": "nobody"})
         assert bad.status_code == 500
         assert client.get("/").status_code == 200

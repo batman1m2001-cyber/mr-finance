@@ -1,10 +1,10 @@
-"""The alerts' steps: the profile, every factor scored, the alerts kept; and the daily sweep."""
+"""The alerts' steps: the profile, every factor scored, the alerts kept; and the daily sweep's items."""
 
 from __future__ import annotations
 
 from typing import Any, Dict, Iterator, List
 
-from operonx import invoke, op
+from operonx import op
 
 from impact import _rules
 from wealth import fixtures, profile, store
@@ -13,13 +13,12 @@ SEVERITY = {"high": "Cao", "medium": "Trung bình", "low": "Thấp"}
 
 
 @op
-def read_request(item: dict = None) -> dict:
-    """``{"client_id", "scope"?}``."""
-    item = item or {}
-    client_id = str(item.get("client_id") or "")
+def check_request(client_id: str = None, scope: str = None) -> dict:
+    """What a caller sent, checked: a known client, and a scope."""
+    client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    return {"client_id": client_id, "scope": item.get("scope") or "personal"}
+    return {"client_id": client_id, "scope": scope or "personal"}
 
 
 @op
@@ -90,16 +89,3 @@ def every_client() -> Iterator[Dict[str, str]]:
     """The policy sweep's items: every client, in the personal view."""
     for cid in fixtures.client_ids():
         yield {"client_id": cid, "scope": "personal"}
-
-
-@op
-async def sweep_all(tick: dict = None) -> dict:
-    """The morning sweep: every client's alerts again, each as a step of this run."""
-    from impact.graph import alerts_flow
-
-    done = []
-    for item in every_client():
-        out = await invoke(alerts_flow, **item)
-        rep = out["report"]
-        done.append({"client_id": item["client_id"], "high": rep["counts"]["high"], "alerts": len(rep["alerts"])})
-    return {"summary": {"tick": (tick or {}).get("tick"), "clients": done}}

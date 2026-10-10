@@ -113,13 +113,13 @@ phone screenshots).
   three infrastructure projects, each with a status (→ probability), a source line and a rule
   (src/impact/_rules.py, 16 rule types). Impact = exposure × sensitivity × probability, in VND
   and as a share of net worth; 🔴/🟡/🟢 at 1% and 0.3%. alerts_flow keeps the latest per client;
-  the policy_sweep Job (`operonx run policy_sweep`) and the 07:00 schedule (sweep_flow, every
-  client through `invoke`) run it for everyone. UI: Cảnh báo (a diverging impact bar, each alert
+  the policy_sweep Job runs it for everyone, on demand (`operonx run policy_sweep`) and at 07:00
+  (`Job(schedule=...)`, since operonx 1.19). UI: Cảnh báo (a diverging impact bar, each alert
   with its formula, holdings and source) and the overview's top three.
 - P6 (scenarios and the RM queue): done. 9 life-event scenarios and 5 stress tests
   (src/scenarios/_sim.py), each on the client's own holdings with defaults from their data,
   answering in numbers, before/after, and a light and a heavy option; scenario_flow branches
-  life / stress with `if_`. An option goes to the RM queue (propose_api); review_flow records the
+  life / stress with `if_`. An option goes to the RM queue (propose_flow); review_flow records the
   RM's decision once. UI: Kịch bản (parameters editable, options with their status) and
   RM duyệt (the queue: approve or reject with a note). No sign-in: in the demo the RM view is
   a tab.
@@ -131,3 +131,13 @@ phone screenshots).
 **Not done, and why:** the AI paths have not run against a real model (none reachable from the
 build machine); set `LLM_API_KEY` and run `MF_AI=on uv run operonx run statement_reading` to see the
 model read the fifth sample.
+
+## Update: doorless services (operonx 1.19.0, 2026-10-10)
+
+Each service now runs its feature's graph as is: the JSON body fills the graph's parameters (a
+field it does not take is a 400) and the reply is its outputs, one key per service — `dashboard`,
+`read`, `turn`, `reply`, `report`, `result`, `item`. The eight `*_api` wrapper graphs went; their
+`read_request` checks became each flow's first op (`check_request`, `read_proposal`,
+`read_decision`). The morning sweep is the `policy_sweep` job with `schedule=schedule(at="07:00")`,
+so `sweep_flow` and its `invoke` loop went too. The web UI reads the one key of each reply.
+

@@ -26,17 +26,15 @@ def _assets(holdings: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 @op
-def read_request(item: dict = None) -> dict:
-    """The JSON a caller sends: ``{"client_id", "scope"?, "months"?}``."""
-    item = item or {}
-    client_id = str(item.get("client_id") or "")
+def check_request(client_id: str = None, scope: str = None, months: int = None) -> dict:
+    """What a caller sent, checked: a known client, a scope, 1–36 months."""
+    client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    months = int(item.get("months") or 12)
     return {
         "client_id": client_id,
-        "scope": item.get("scope") or "personal",
-        "months": max(1, min(36, months)),
+        "scope": scope or "personal",
+        "months": max(1, min(36, int(months or 12))),
     }
 
 

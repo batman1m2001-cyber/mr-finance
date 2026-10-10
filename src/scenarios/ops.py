@@ -13,19 +13,18 @@ NOTE = "Nội dung là mô phỏng; khuyến nghị cụ thể phải qua RM duy
 
 
 @op
-def read_request(item: dict = None) -> dict:
-    """``{"client_id", "scenario", "params"?}``."""
-    item = item or {}
-    client_id = str(item.get("client_id") or "")
+def check_request(client_id: str = None, scenario: str = None, params: dict = None, scope: str = None) -> dict:
+    """What a caller sent, checked: a known client and scenario, ``params`` an object."""
+    client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    scenario = str(item.get("scenario") or "")
+    scenario = str(scenario or "")
     if scenario not in _sim.SCENARIOS:
         raise ValueError(f"no scenario {scenario!r}; one of {sorted(_sim.SCENARIOS)}")
-    params = item.get("params") or {}
+    params = params or {}
     if not isinstance(params, dict):
         raise ValueError("params is an object")
-    return {"client_id": client_id, "scenario": scenario, "params": params, "scope": item.get("scope") or "personal"}
+    return {"client_id": client_id, "scenario": scenario, "params": params, "scope": scope or "personal"}
 
 
 @op

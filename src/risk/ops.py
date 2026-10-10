@@ -14,13 +14,12 @@ RISKY = ("stock", "crypto")
 
 
 @op
-def read_request(item: dict = None) -> dict:
-    """``{"client_id", "answers": {question: option}}``."""
-    item = item or {}
-    client_id = str(item.get("client_id") or "")
+def check_request(client_id: str = None, answers: dict = None) -> dict:
+    """What a caller sent, checked: a known client, and ``answers`` as {question: option}."""
+    client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    answers = item.get("answers") or {}
+    answers = answers or {}
     if not isinstance(answers, dict):
         raise ValueError("answers is an object: {question: option}")
     return {"client_id": client_id, "answers": {str(k): str(v) for k, v in answers.items()}}

@@ -64,7 +64,7 @@ def test_selling_a_second_home_needs_one():
 def test_an_option_waits_for_the_rm_and_is_decided_once():
     app = Application.find(".")
     with TestClient(app.asgi()) as client:
-        r = client.post("/api/scenario", json={"client_id": "C02", "scenario": "business_cash"}).json()
+        r = client.post("/api/scenario", json={"client_id": "C02", "scenario": "business_cash"}).json()["result"]
         item = client.post(
             "/api/review/propose",
             json={
@@ -74,13 +74,13 @@ def test_an_option_waits_for_the_rm_and_is_decided_once():
                 "option": r["options"][0],
                 "summary": r["summary"],
             },
-        ).json()
+        ).json()["item"]
         assert item["status"] == "pending" and item["title"].startswith("Doanh nghiệp cần vốn gấp")
         queue = client.get("/api/review", params={"status": "pending"}).json()["items"]
         assert [q["id"] for q in queue] == [item["id"]] and queue[0]["client_name"] == "Lê Văn Phát"
         done = client.post(
             "/api/review/decide", json={"item_id": item["id"], "decision": "approved", "note": "OK"}
-        ).json()
+        ).json()["item"]
         assert (done["status"], done["note"]) == ("approved", "OK")
         again = client.post("/api/review/decide", json={"item_id": item["id"], "decision": "rejected"})
         assert again.status_code == 500, "a decided item is not decided again"

@@ -15,19 +15,19 @@ KINDS = {"asset", "dependent", "income"}
 
 
 @op
-def read_request(item: dict = None) -> dict:
-    """``{"client_id", "message", "session_id"?}``."""
-    item = item or {}
-    client_id = str(item.get("client_id") or "")
+def check_request(client_id: str = None, message: str = None, session_id: str = None) -> dict:
+    """What a caller sent, checked: a known client, a message (at most 2000 characters), and the
+    chat's session (the client's own by default)."""
+    client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    message = str(item.get("message") or "").strip()
+    message = str(message or "").strip()
     if not message:
         raise ValueError("an empty message")
     return {
         "client_id": client_id,
         "message": message[:2000],
-        "session_id": str(item.get("session_id") or f"{client_id}-chat"),
+        "session_id": str(session_id or f"{client_id}-chat"),
     }
 
 

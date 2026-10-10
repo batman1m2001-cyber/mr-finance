@@ -3,10 +3,9 @@ rules do — and what the turn added to their profile."""
 
 from operonx import END, START, graph
 from operonx.agents import Agent, AgentOp, Model, UsageLimits
-from operonx.app.serve import egress, ingress
 from operonx.core.ops import if_
 
-from declare.ops import agent_answer, ai_mode, chat_session, read_request, recorded, rule_declare
+from declare.ops import agent_answer, ai_mode, chat_session, check_request, recorded, rule_declare
 from declare.tools import TOOLS
 
 DECLARER = Agent(
@@ -26,8 +25,10 @@ DECLARER = Agent(
 
 
 @graph
-def declare_flow(client_id, message, session_id):
-    """One message from the client, recorded as their tier-3 declarations."""
+def declare_flow(client_id, message, session_id=None):
+    """One message from the client (POST /api/declare), recorded as their tier-3 declarations."""
+    ask = check_request(client_id=client_id, message=message, session_id=session_id)
+    client_id, message, session_id = ask["client_id"], ask["message"], ask["session_id"]
     mode = ai_mode()
     agent = AgentOp.of(agent=DECLARER, input=message, session_id=session_id, deps=client_id, sessions=chat_session)
     said = agent_answer(
@@ -46,17 +47,7 @@ def declare_flow(client_id, message, session_id):
         ai_method=said["method"],
         rule_method=rules["method"],
     )
-    START >> mode >> if_(mode["ai"] == True, agent).else_(rules)  # noqa: E712
+    START >> ask >> mode >> if_(mode["ai"] == True, agent).else_(rules)  # noqa: E712
     agent >> said >> turn
     rules >> turn
     turn >> END
-
-
-@graph
-def declare_api():
-    """POST {client_id, message, session_id?} → the reply and what was recorded."""
-    req = ingress()
-    ask = read_request(item=req["item"])
-    chat = declare_flow(client_id=ask["client_id"], message=ask["message"], session_id=ask["session_id"])
-    out = egress(item=chat["turn"])
-    START >> req >> ask >> chat >> out >> END

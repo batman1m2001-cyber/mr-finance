@@ -8,20 +8,22 @@ from wealth import fixtures, store
 
 
 @op
-def read_proposal(item: dict = None) -> dict:
-    """``{"client_id", "scenario", "title", "option": {"id", "title", "actions", "effect"}, "summary"?}``."""
-    item = item or {}
-    client_id = str(item.get("client_id") or "")
+def read_proposal(
+    client_id: str = None, scenario: str = None, title: str = None, option: dict = None, summary: list = None
+) -> dict:
+    """A simulation's option, checked (``option``: {"id", "title", "actions", "effect"}), as the
+    queue item it becomes."""
+    client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    option = item.get("option") or {}
+    option = option or {}
     if option.get("id") not in ("light", "heavy"):
         raise ValueError("option.id is light or heavy")
     return {
         "client_id": client_id,
-        "kind": str(item.get("scenario") or "scenario"),
-        "title": f"{item.get('title') or 'Kịch bản'} — {option.get('title') or option['id']}",
-        "data": {"scenario": item.get("scenario"), "option": option, "summary": item.get("summary") or []},
+        "kind": str(scenario or "scenario"),
+        "title": f"{title or 'Kịch bản'} — {option.get('title') or option['id']}",
+        "data": {"scenario": scenario, "option": option, "summary": summary or []},
     }
 
 
@@ -33,13 +35,12 @@ def propose(client_id: str, kind: str, title: str, data: dict) -> dict:
 
 
 @op
-def read_decision(item: dict = None) -> dict:
-    """``{"item_id", "decision": "approved" | "rejected", "note"?}``."""
-    item = item or {}
-    decision = str(item.get("decision") or "")
+def read_decision(item_id: str = None, decision: str = None, note: str = None) -> dict:
+    """The RM's decision, checked: approved or rejected, with a note of at most 1000 characters."""
+    decision = str(decision or "")
     if decision not in ("approved", "rejected"):
         raise ValueError("decision is approved or rejected")
-    return {"item_id": str(item.get("item_id") or ""), "decision": decision, "note": str(item.get("note") or "")[:1000]}
+    return {"item_id": str(item_id or ""), "decision": decision, "note": str(note or "")[:1000]}
 
 
 @op
