@@ -141,3 +141,20 @@ field it does not take is a 400) and the reply is its outputs, one key per servi
 `read_decision`). The morning sweep is the `policy_sweep` job with `schedule=schedule(at="07:00")`,
 so `sweep_flow` and its `invoke` loop went too. The web UI reads the one key of each reply.
 
+
+## Update: the AI paths on a real model (2026-10-10)
+
+First run against a real model: OpenRouter `anthropic/claude-haiku-5.5`, via `LLM_API_KEY`,
+`LLM_BASE_URL` and `LLM_MODEL` in `.env`, with `MF_AI=on`.
+
+- **Statement reading:** `operonx run statement_reading` passed 5/5 (gate 0.8). All five samples,
+  including the free-text `hsc_note.txt`, were read by the model in 2–3 s each.
+- **Declarations:** the agent records gold, land (area, purchase year and price), children, company
+  shares and an outside loan through its tools. A loan lowers net worth by its amount, the same as
+  the rule path. It asks for what is missing instead of guessing, and declines off-topic questions.
+- **Fixed:**
+  - the model sometimes called the same tool twice for one sentence, so 10 lượng became 20. A
+    declaration identical to one already written in the same run is now answered "already
+    recorded" (`declare/tools.py`, test `test_the_same_call_twice_in_one_turn_is_recorded_once`);
+  - replies used markdown the chat box does not render, and mixed bạn / anh/chị / mình / tôi. The
+    instructions now ask for plain text, "em" and "anh/chị".
