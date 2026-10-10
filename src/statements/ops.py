@@ -15,16 +15,15 @@ MAX_BYTES = 5 * 1024 * 1024
 
 
 @op
-def read_request(item: dict = None) -> dict:
-    """``{"client_id", "filename", "content": base64}``."""
-    item = item or {}
-    client_id = str(item.get("client_id") or "")
+def check_request(client_id: str = None, filename: str = None, content: str = None) -> dict:
+    """What a caller sent, checked: a known client, a statement's file name, base64 content."""
+    client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    filename = str(item.get("filename") or "statement.txt")
+    filename = str(filename or "statement.txt")
     if not re.search(r"\.(csv|xlsx|xlsm|pdf|txt)$", filename.lower()):
         raise ValueError(f"{filename!r}: a statement is a PDF, an Excel or a CSV file")
-    return {"client_id": client_id, "filename": filename, "content": str(item.get("content") or "")}
+    return {"client_id": client_id, "filename": filename, "content": str(content or "")}
 
 
 @op(bound="cpu")  # parsing a PDF or a workbook blocks: off the event loop

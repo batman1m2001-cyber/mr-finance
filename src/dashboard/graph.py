@@ -1,28 +1,29 @@
 """dashboard_flow: the consolidated holdings, then every section of the page at once.
 
-dashboard_api is the same graph behind an HTTP door (app/main.py)."""
+Served as is on POST /api/dashboard (app/main.py): the body fills its parameters."""
 
 from operonx import END, START, graph
-from operonx.app.serve import egress, ingress
 
 from consolidate.graph import consolidate_flow
 from dashboard.ops import (
     allocation,
     assemble,
     cashflow,
+    check_request,
     client_profile,
     concentration,
     drawdown,
     liquidity,
     net_worth,
     performance,
-    read_request,
 )
 
 
 @graph
-def dashboard_flow(client_id, scope, months):
+def dashboard_flow(client_id, scope="personal", months=12):
     """The whole picture of a client's wealth (``scope``: personal or family)."""
+    ask = check_request(client_id=client_id, scope=scope, months=months)
+    client_id, scope, months = ask["client_id"], ask["scope"], ask["months"]
     held = consolidate_flow(client_id=client_id, scope=scope)
     who = client_profile(client_id=client_id, members=held["members"])
     worth = net_worth(holdings=held["holdings"])
@@ -53,16 +54,6 @@ def dashboard_flow(client_id, scope, months):
         liquidity=reserve["liquidity"],
         cashflow=flows["cashflow"],
     )
-    START >> held >> who >> [worth, mix, pnl, reserve, flows]
+    START >> ask >> held >> who >> [worth, mix, pnl, reserve, flows]
     worth >> [risk, spread]
     [mix, pnl, reserve, flows, risk, spread] >> page >> END
-
-
-@graph
-def dashboard_api():
-    """POST {client_id, scope?, months?} → the dashboard."""
-    req = ingress()
-    ask = read_request(item=req["item"])
-    board = dashboard_flow(client_id=ask["client_id"], scope=ask["scope"], months=ask["months"])
-    out = egress(item=board["dashboard"])
-    START >> req >> ask >> board >> out >> END

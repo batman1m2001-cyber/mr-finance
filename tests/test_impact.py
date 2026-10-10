@@ -4,7 +4,7 @@ from operonx import Operon
 from operonx.app.jobs import Job
 
 from impact import _rules
-from impact.graph import alerts_flow, sweep_flow
+from impact.graph import alerts_flow
 from impact.ops import every_client
 from wealth import fixtures, store
 from wealth.money import TY
@@ -89,10 +89,16 @@ def test_the_sweep_job_runs_every_client(tmp_path):
     assert run.status == "ok" and sorted(run.results) == fixtures.client_ids()
 
 
-def test_the_morning_schedule_sweeps_through_invoke():
-    from operonx.app.jobs import Job as _Job  # noqa: F401 - the schedule's graph has doors: run it as a job
+def test_the_policy_sweep_runs_at_seven_every_morning():
+    from app.main import APP
 
-    run = asyncio.run(_Job("morning", graph=sweep_flow, items=[{"tick": 1}], record_dir=None).run())
-    assert run.status == "ok"
-    (summary,) = run.results.values()
-    assert [c["client_id"] for c in summary["clients"]] == fixtures.client_ids()
+    job = APP.job("policy_sweep")
+    assert job.schedule is not None and job.schedule.options == {"at": "07:00"}
+    clock = next(s for s in APP.describe()["services"] if s["name"] == "policy_sweep")
+    assert clock["kind"] == "schedule" and clock["job"] == "policy_sweep"
+
+
+def test_alerts_refuse_an_unknown_client():
+    out = asyncio.run(ENGINE.run({"client_id": "C99", "scope": None}))
+    (error,) = out["$errors"].values()
+    assert "no client 'C99'" in error["message"]

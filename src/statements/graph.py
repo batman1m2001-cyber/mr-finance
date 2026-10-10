@@ -1,18 +1,17 @@
 """statement_flow: the file → the model's reading (when AI is on) or the rules' → holdings."""
 
 from operonx import END, START, graph
-from operonx.app.serve import egress, ingress
 from operonx.core.ops import if_
 from operonx.providers.ops import LLMOp
 
 from statements.ops import (
     ai_mode,
+    check_request,
     load_sample,
     model_failed,
     model_read,
     pick_items,
     read_file,
-    read_request,
     rule_read,
     save_holdings,
 )
@@ -74,16 +73,18 @@ def read_flow(filename, content):
 
 @graph
 def statement_flow(client_id, filename, content):
-    """A statement the client uploaded, read and kept as their tier-2 holdings."""
-    got = read_flow(filename=filename, content=content)
+    """A statement the client uploaded (POST /api/statement), read and kept as their tier-2
+    holdings."""
+    ask = check_request(client_id=client_id, filename=filename, content=content)
+    got = read_flow(filename=ask["filename"], content=ask["content"])
     saved = save_holdings(
-        client_id=client_id,
-        filename=filename,
+        client_id=ask["client_id"],
+        filename=ask["filename"],
         institution=got["institution"],
         items=got["items"],
         method=got["method"],
     )
-    START >> got >> saved >> END
+    START >> ask >> got >> saved >> END
 
 
 @graph
@@ -92,13 +93,3 @@ def sample_flow(filename):
     sample = load_sample(filename=filename)
     got = read_flow(filename=filename, content=sample["content"])
     START >> sample >> got >> END
-
-
-@graph
-def statement_api():
-    """POST {client_id, filename, content: base64} → what was read."""
-    req = ingress()
-    ask = read_request(item=req["item"])
-    read = statement_flow(client_id=ask["client_id"], filename=ask["filename"], content=ask["content"])
-    out = egress(item=read["read"])
-    START >> req >> ask >> read >> out >> END

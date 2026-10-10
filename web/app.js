@@ -188,7 +188,7 @@
     const out = $("#stmt-out");
     if (out) out.innerHTML = `<span class="muted">Đang đọc ${esc(name)}…</span>`;
     try {
-      const read = await api("/api/statement", {client_id: state.client, filename: name, content: b64(buf)});
+      const read = (await api("/api/statement", {client_id: state.client, filename: name, content: b64(buf)})).read;
       state.reads[state.client] = read;
       await load();
     } catch (e) {
@@ -217,7 +217,7 @@
     state.busy = true;
     if (state.board) renderSources(state.board);
     try {
-      const turn = await api("/api/declare", {client_id: state.client, message: text, session_id: `${state.client}-web`});
+      const turn = (await api("/api/declare", {client_id: state.client, message: text, session_id: `${state.client}-web`})).turn;
       log.push({who: "bot", text: turn.reply, method: turn.method, recorded: turn.recorded.length});
     } catch (e) {
       log.push({who: "bot", text: "Xin lỗi, có lỗi khi ghi nhận: " + e.message});
@@ -303,7 +303,7 @@
 
   async function loadAlerts(seq) {
     try {
-      const rep = await api("/api/alerts", {client_id: state.client, scope: state.scope});
+      const rep = (await api("/api/alerts", {client_id: state.client, scope: state.scope})).report;
       if (seq !== state.seq) return;
       state.alerts = rep;
       alertsCard(rep);
@@ -333,7 +333,7 @@
     state.simBusy = true;
     renderScenarios();
     try {
-      st.result = await api("/api/scenario", {client_id: state.client, scenario: id, params: params || {}, scope: state.scope});
+      st.result = (await api("/api/scenario", {client_id: state.client, scenario: id, params: params || {}, scope: state.scope})).result;
     } catch (e) {
       st.result = {error: e.message};
     }
@@ -347,7 +347,7 @@
   async function propose(option) {
     const st = simState(), r = st.result;
     try {
-      const item = await api("/api/review/propose", {client_id: state.client, scenario: r.scenario, title: r.title, option, summary: r.summary});
+      const item = (await api("/api/review/propose", {client_id: state.client, scenario: r.scenario, title: r.title, option, summary: r.summary})).item;
       st.sent[`${r.scenario}:${option.id}`] = item.id;
       await loadQueue();
     } catch (e) { alert("Không gửi được: " + e.message); }
@@ -454,7 +454,7 @@
     const box = $("#tab-risk");
     box.classList.add("loading");
     try {
-      r.reply = await api("/api/risk", {client_id: state.client, answers: r.answers});
+      r.reply = (await api("/api/risk", {client_id: state.client, answers: r.answers})).reply;
     } catch (e) {
       r.reply = {error: e.message};
     }
@@ -530,7 +530,7 @@
     const main = $("#main");
     main.classList.add("loading");
     try {
-      const d = await api("/api/dashboard", {client_id: state.client, scope: state.scope, months: state.months});
+      const d = (await api("/api/dashboard", {client_id: state.client, scope: state.scope, months: state.months})).dashboard;
       if (seq !== state.seq) return;
       state.board = d;
       renderOverview(d);
