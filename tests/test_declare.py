@@ -68,6 +68,21 @@ def test_the_agent_records_through_its_tools(monkeypatch):
     assert store.profile("C01") == []
 
 
+def test_the_same_call_twice_in_one_turn_is_recorded_once(monkeypatch):
+    """Claude Haiku called declare_gold twice for one sentence and 10 lượng became 20: within a
+    run, an identical declaration is answered as already recorded, not written again."""
+    monkeypatch.setenv("MF_AI", "on")
+    model = ScriptedLLM(
+        asks(("declare_gold", {"luong": 10}), ("declare_gold", {"luong": 10})),
+        asks(("declare_gold", {"luong": 10})),
+        says("Đã ghi 10 lượng vàng."),
+    )
+    with scripted(assistant=model):
+        turn = say("Nhà tôi có 10 lượng vàng")
+    assert [r["data"]["qty"] for r in turn["recorded"]] == [10]
+    assert [a["qty"] for a in store.profile("C05", "asset")] == [10]
+
+
 def test_when_the_agent_cannot_answer_the_rules_still_record(monkeypatch):
     monkeypatch.setenv("MF_AI", "on")
 

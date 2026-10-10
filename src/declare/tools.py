@@ -6,6 +6,8 @@ run's ``deps`` (declare/graph.py), so a tool can only ever write for the client 
 
 from __future__ import annotations
 
+import json
+from collections import OrderedDict
 from typing import Optional
 
 from operonx.agents import RunContext, tool
@@ -14,9 +16,27 @@ from declare import _rules
 from wealth import store
 from wealth.money import TR, TY, vnd
 
+#: What each recent run has written, so the same thing said once is recorded once. A model can
+#: call a tool twice with the same arguments in one run (measured on Claude Haiku: 10 lượng of
+#: gold became 20); the second call is answered, not written.
+_WRITTEN: "OrderedDict[str, set]" = OrderedDict()
+_KEEP_RUNS = 256
+ALREADY = "Đã ghi mục này trong lượt này rồi — không ghi lại lần nữa."
 
-def _add(ctx: RunContext, kind: str, data: dict) -> None:
+
+def _add(ctx: RunContext, kind: str, data: dict) -> Optional[str]:
+    """Write one declaration; ``ALREADY`` (and no write) when this run already wrote the same."""
+    if ctx.run_id:
+        seen = _WRITTEN.setdefault(ctx.run_id, set())
+        _WRITTEN.move_to_end(ctx.run_id)
+        while len(_WRITTEN) > _KEEP_RUNS:
+            _WRITTEN.popitem(last=False)
+        key = json.dumps([ctx.deps, kind, data], ensure_ascii=False, sort_keys=True, default=str)
+        if key in seen:
+            return ALREADY
+        seen.add(key)
     store.add_profile(ctx.deps, kind, {**data, "via": "chat"})
+    return None
 
 
 @tool(idempotent=False)
@@ -43,7 +63,7 @@ def declare_property(
     """
     area = _rules.area_of(location)
     value = value_ty * TY if value_ty else (purchase_price_ty * TY if purchase_price_ty and not sqm else None)
-    _add(
+    if dup := _add(
         ctx,
         "asset",
         {
@@ -57,7 +77,8 @@ def declare_property(
             "value": value,
             "rental_monthly": (rental_million_per_month or 0) * TR,
         },
-    )
+    ):
+        return dup
     return f"Đã ghi: {name} ở {location}" + (f", {vnd(value)}" if value else "")
 
 
@@ -68,7 +89,8 @@ def declare_gold(ctx: RunContext, luong: float) -> str:
     Args:
         luong: How many lượng.
     """
-    _add(ctx, "asset", {"class": "gold", "name": "Vàng (tự khai)", "qty": luong})
+    if dup := _add(ctx, "asset", {"class": "gold", "name": "Vàng (tự khai)", "qty": luong}):
+        return dup
     return f"Đã ghi: {luong:g} lượng vàng"
 
 
@@ -82,7 +104,8 @@ def declare_holding(ctx: RunContext, kind: str, name: str, value_ty: float) -> s
         value_ty: What it is worth, in tỷ.
     """
     cls = kind if kind in ("business", "insurance", "crypto") else "other"
-    _add(ctx, "asset", {"class": cls, "name": f"{name} (tự khai)", "value": value_ty * TY})
+    if dup := _add(ctx, "asset", {"class": cls, "name": f"{name} (tự khai)", "value": value_ty * TY}):
+        return dup
     return f"Đã ghi: {name}, {vnd(value_ty * TY)}"
 
 
@@ -95,7 +118,7 @@ def declare_loan(ctx: RunContext, name: str, outstanding_ty: float, monthly_paym
         outstanding_ty: What is still owed, in tỷ.
         monthly_payment_million: The monthly instalment, in triệu.
     """
-    _add(
+    if dup := _add(
         ctx,
         "asset",
         {
@@ -105,7 +128,8 @@ def declare_loan(ctx: RunContext, name: str, outstanding_ty: float, monthly_paym
             "monthly_payment": monthly_payment_million * TR,
             "rate_type": "fixed",
         },
-    )
+    ):
+        return dup
     return f"Đã ghi: khoản nợ {name}, {vnd(outstanding_ty * TY)}"
 
 
@@ -118,7 +142,8 @@ def declare_dependent(ctx: RunContext, name: str, relation: str, birth_year: Opt
         relation: Con, Bố, Mẹ, ...
         birth_year: Their year of birth, if known (from their age: 2026 − age).
     """
-    _add(ctx, "dependent", {"name": name, "relation": relation, "birth_year": birth_year})
+    if dup := _add(ctx, "dependent", {"name": name, "relation": relation, "birth_year": birth_year}):
+        return dup
     return f"Đã ghi người phụ thuộc: {name} ({relation})"
 
 
@@ -130,7 +155,8 @@ def declare_income(ctx: RunContext, label: str, million_per_month: float) -> str
         label: What it is.
         million_per_month: How much, in triệu per month.
     """
-    _add(ctx, "income", {"label": f"{label} (tự khai)", "amount": million_per_month * TR})
+    if dup := _add(ctx, "income", {"label": f"{label} (tự khai)", "amount": million_per_month * TR}):
+        return dup
     return f"Đã ghi thu nhập: {label}, {million_per_month:g} triệu/tháng"
 
 
