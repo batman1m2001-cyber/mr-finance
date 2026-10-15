@@ -90,6 +90,12 @@ client C01, keyword router; before = main at 2b8a6c2):
 | Long tasks (> 50 ms) during a question | none | none |
 | Running animations when the tab is hidden | — | all paused |
 
+Re-measured after the UI redesign (R7, 2026-10-16, same script and page): at rest with the panel closed 1.4 ms,
+0 recalcs, 0 animations (unchanged); one question 170 ms, 43 recalcs, 11 layouts (from 144 ms — the answer now
+draws a card and its sources; not isolated further); no long task; every running animation paused when the tab is
+hidden; transform and opacity only. The page now loads 62 KB of JS (from 135 KB: the pre-redesign app.js is gone,
+pages load on demand) and 56 KB of CSS (from 29 KB: one stylesheet for every page).
+
 The added cost is spread over seconds (at most about 8 ms per second while busy, under 2 ms per second at rest
 with the panel open) and nothing runs per frame on the main thread. The header dot's own breathing was dropped after the first measurement, so busy shows two moving
 things, not three.

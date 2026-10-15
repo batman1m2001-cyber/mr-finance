@@ -67,4 +67,4 @@ own families only (Q-17), re-ask triggers for the risk test (Q-16), alerting on 
 | R4 | done 2026-10-16: Bản đồ tài chính (overview graph, `POST /api/overview`), News Impact panel, event timeline, CIO run graph (`GET /api/runs/{id}/graph`); 9 tests | #36 |
 | R5 | done 2026-10-16: Copilot 2.0 — as-of and sources, cards (figures, list, bars, chain), `dieu_tra` and `kich_ban`, every call audited, suggestion chips, followed goals; 6 tests | #37 |
 | R6 | done 2026-10-16: live models on the public demo (CIO Sonnet 5.5, challenger Gemini 3.8 Flash, Copilot router Haiku 5.5); `scripts/demo_walkthrough.py` filled it from fetched news (2 runs in effect, 1 view pending); 154 k tokens | #38 |
-| R7 | next | |
+| R7 | done 2026-10-16: every route × 2 sizes × 2 themes in the suite; Living Interface re-measured; approved-view checklist fixed; [report](UI_REDESIGN_REPORT.md) | #39 |
