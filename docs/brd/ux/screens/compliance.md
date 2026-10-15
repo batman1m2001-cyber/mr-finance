@@ -46,9 +46,9 @@ release, release time not reached, restricted-list mention.
 | Route | `#/compliance/nhat-ky` |
 | Feature | [FEAT-11](../../features/FEAT-11-audit-log.md) |
 | Requirements | BRD-BR-12, BRD-FR-702, BRD-NFR-09 |
-| Data | `GET /api/audit`, `GET /api/audit/verify` |
+| Data | `GET /api/audit`, `GET /api/audit/verify`, `GET /api/audit/export` |
 | Screenshot | [desktop](../../assets/current_ui/SCR-CMP-03_desktop-light.jpg) |
 
 The verification result on top (intact, with the algorithms in use, and the note that the database blocks edits
 and deletes — or “Gãy ở dòng n” with the reason), then the latest 200 rows: #, Lúc, Ai, Việc, Đối tượng, the first
-12 characters of the hash. No export (FR-702 gap).
+12 characters of the hash. **Tải JSON (kèm kiểm tra chuỗi)** and **Tải CSV** download the whole chain (2026-10-16).

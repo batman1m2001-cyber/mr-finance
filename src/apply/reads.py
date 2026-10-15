@@ -56,6 +56,8 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
             "modelled_share": r["modelled_share"],
             "goal_impact": r.get("goal_impact"),  # FR-404; absent on runs computed before it
         }
+        outlets = sorted({n.get("outlet") or "Nguồn công khai" for n in ev.get("news") or []})
+        item["sources"] = {"outlets": outlets, "count": len(ev.get("news") or [])}  # RULE-CONTENT-02, no headline
         if role != "client":  # the view's text may name tickers: staff only (flow 2)
             item["summary"] = view["current"]["summary"]
             item.update(

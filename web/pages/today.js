@@ -1,6 +1,6 @@
 /* RM · Hôm nay: the families to look at first — flagged for pre-review by an effective run
    (3-month P10 at or below −5 % of net worth), worst first. */
-import {empty, esc, get, pct, signClass, vnd} from "../core/core.js";
+import {internal, empty, esc, get, pct, signClass, vnd} from "../core/core.js";
 
 const LEVEL = {contact_now: "bad", confirm_goal: "human", remind: "warn", note: ""};
 
@@ -17,7 +17,7 @@ export async function render(box, ctx) {
   }
   const cases = Object.values(byFamily).sort((a, b) => a.worst.p10_3m_pct - b.worst.p10_3m_pct);
   const families = new Set(cases.map(c => c.family_id));
-  box.innerHTML = `
+  box.innerHTML = `${internal()}
     <div class="cols">
       <div class="panel hero-panel c4">
         <div class="eyebrow">Hôm nay · cần xem trước</div>

@@ -159,3 +159,6 @@ export const EVENT_TYPE = {
   regulation: "Chính sách, quy định", commodity: "Hàng hóa", crypto: "Tiền số", equity: "Thị trường cổ phiếu",
   geopolitics: "Địa chính trị, thương mại",
 };
+
+// BRD §14 (RULE-SEC-03): staff screens say they are internal
+export const internal = () => `<div class="internal" role="note"><span class="badge">Nội bộ</span> Chỉ nhân viên xem được; khách hàng không thấy trang này.</div>`;

@@ -43,7 +43,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 
 | Path | Query | Returns | Feature |
 |---|---|---|---|
-| `/healthz` | — | liveness | — |
+| `/healthz` | — | liveness, and each protection on or off (`protections`, `off`) | FEAT-11, 12 |
 | `/api/clients` | — | the sample clients | FEAT-20 |
 | `/api/scenarios` | — | the scenario catalogue (id, kind, title, question, personas) | FEAT-26 |
 | `/api/review` | `client_id?, status?` | the RM queue | FEAT-27 |
@@ -63,6 +63,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/trace/{run_id}/{family_id}` | `key?, horizon? (3m)` | the trace (404 if unknown) | FEAT-09 |
 | `/api/rm/today` | — | flagged cases and goal tasks | FEAT-13, 10 |
 | `/api/audit`, `/api/audit/verify` | `limit (≤ 1000)` | log rows; chain check | FEAT-11 |
+| `/api/audit/export` | `format=json\|csv` | the whole chain as a download (JSON includes the check) | FEAT-11 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |
 | `/api/goals/regulation` | `family_id?, role?` | regulation matches, purposes, a family's goals (staff) | FEAT-10 |
 

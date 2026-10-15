@@ -639,9 +639,13 @@
 
   async function loadGoals(seq) {
     try {
-      const out = await api("/api/goals", {client_id: state.client, scope: state.scope});
+      const [out, reg] = await Promise.all([
+        api("/api/goals", {client_id: state.client, scope: state.scope}),
+        // FR-603: regulation notes on the goals, as the viewer may read them (the client: only its messages)
+        api(`/api/goals/regulation?family_id=${encodeURIComponent(state.client)}${state.viewer === "staff" ? "" : "&role=client"}`).catch(() => ({matches: []})),
+      ]);
       if (seq !== state.seq) return;
-      state.goals = {client: state.client, scope: state.scope, list: out.goals, stages: out.stages};
+      state.goals = {client: state.client, scope: state.scope, list: out.goals, stages: out.stages, reg: reg.matches || []};
       const st0 = planState(), r0 = st0.result;
       const kept = r0 && !r0.error && st0.scope === state.scope && out.goals.find(g => g.id === r0.scenario);
       if (kept && r0.goal) { kept.goal = r0.goal; kept.params = r0.params; }
@@ -906,7 +910,9 @@
     else if (entry) panel = goalPanel(entry, r);
     else if (state.simBusy || !r) panel = `<div class="card muted">Đang mô phỏng…</div>`;
     else panel = scenarioPanel(r);
-    box.innerHTML = `${head}${wealthMini()}<div class="simgrid"><div class="card"><h2>Life goals <span class="hint">Mục tiêu theo giai đoạn đời</span></h2>${left}${otherList}</div>
+    const reg = (goals.reg || []).map(m => `<li><b>${esc(m.goal)}</b> · ${esc(m.level_label)} · mốc ${esc(m.milestone)}<div class="small">${esc(m.client_message || m.rm_hint || "")}</div></li>`).join("");
+    const regBox = reg ? `<div class="card mt"><h2>Lưu ý quy định cho mục tiêu <span class="hint">nhánh mục tiêu: mốc thời gian và hồ sơ, không phải tiền</span></h2><ul class="acts">${reg}</ul></div>` : "";
+    box.innerHTML = `${head}${wealthMini()}${regBox}<div class="simgrid"><div class="card"><h2>Life goals <span class="hint">Mục tiêu theo giai đoạn đời</span></h2>${left}${otherList}</div>
       <div class="${state.simBusy ? "loading" : ""}">${panel}</div></div>`;
     drawCash();
     for (const b of box.querySelectorAll("[data-sim]")) b.onclick = () => runScenario(b.dataset.sim, null);

@@ -250,6 +250,7 @@ def agent_status() -> Dict[str, Any]:
         "mode": mode,
         "models": m if mode == "live" else {"cio": "mock", "challenger": "rules"},
         "prompt_version": agents.PROMPT_VERSION,
+        "budget": {**agents.budget(), "by_event": vstore.tokens()["by_subject"]},  # NFR-10: cost per event
     }
 
 

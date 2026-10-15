@@ -1,5 +1,5 @@
 /* "Cách tính": one number of a family, back to the news it came from (FR-406). Staff only. */
-import {drawer, esc, failed, get, loading, pct, vnd, when, severity, runBadge} from "../core/core.js";
+import {internal, drawer, esc, failed, get, loading, pct, vnd, when, severity, runBadge} from "../core/core.js";
 
 let factorNames = null;
 export async function names() {
@@ -22,7 +22,7 @@ export async function openTrace(runId, familyId, key) {
     const holdings = [...t.holdings].sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution)).slice(0, 6);
     const resp = (t.challenge && t.challenge.responses) || {};
     const crit = t.challenge ? t.challenge.findings.filter(f => f.severity === "critical") : [];
-    body.innerHTML = `
+    body.innerHTML = `${internal()}
       <div class="chain">
         <div class="link data"><div class="k">Con số · ${esc(t.family.name)}</div>
           <div class="hero sm ${n.value < 0 ? "down" : "up"}">${vnd(n.value, true)}</div>

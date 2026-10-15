@@ -1,7 +1,7 @@
 /* Đồ thị tác động (redesign kit K3): news → event → scenario → factor → asset → family → goal for one family,
    drawn in columns from GET /api/families/{id}/graph. Every edge shows the stored records it came from. Click
    (or Enter on) a node to light its path and read its details; the list view is the same graph as a table. */
-import {$, empty, esc, get, pct, signClass, vnd} from "../core/core.js";
+import {internal, $, empty, esc, get, pct, signClass, vnd} from "../core/core.js";
 import {hover} from "../charts/charts.js";
 
 const COLOR = {news: "var(--s7)", event: "var(--s1)", branch: "var(--s4)", factor: "var(--s5)", asset: "var(--s2)",
@@ -30,7 +30,7 @@ export async function render(box, ctx) {
   const src = (e) => e.sources.map(s => `${SRC[s.type] || s.type} ${esc(s.id)}`).join(" · ");
   const val = (e) => (e.value == null ? "" : vnd(e.value, true));
 
-  box.innerHTML = `
+  box.innerHTML = `${staff ? internal() : ""}
     <div class="panel">
       <h3>Đồ thị tác động <span class="hint">${esc(g.family || "")} · ${g.runs.length} lần áp dụng đang hiệu lực · 3 tháng</span></h3>
       <div class="row" style="gap:6px;flex-wrap:wrap">

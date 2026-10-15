@@ -12,15 +12,15 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 41 | 3 | 14 | 2 | 0 | 1 | 0 | 0 |
+| BRD numbered (BR, FR, NFR) | 61 | 43 | 4 | 11 | 2 | 0 | 1 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
-| BRD rules (RULE) | 97 | 59 | 4 | 12 | 3 | 5 | 2 | 10 | 2 |
+| BRD rules (RULE) | 97 | 60 | 5 | 11 | 3 | 4 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 6 | 5 | 1 | 0 | 0 | 0 | 0 | 7 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
-completion is not 100 %:** of the 61 numbered requirements, 41 are implemented and verified by tests; the rest are
+completion is not 100 %:** of the 61 numbered requirements, 43 are implemented and verified by tests; the rest are
 partial, unverified, planned, not implemented or blocked, each with its reason below. (The `not_applicable` KIT rows
 are the documentation rules this repository itself follows.) Counts are recomputed by the checker.
 
@@ -70,10 +70,10 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-FR-503 | §6.5 | Flag “RM xem trước” at 3-month P10 ≤ −5 % | FEAT-08 | SCR-RM-01 | `src/apply/run.py::compute` (`pre_review`) | `tests/test_apply.py::test_the_rm_today_list_holds_the_flagged_families_worst_first` | implemented_verified | |
 | BRD-FR-601 | §6.6 | RM declares outflow purpose/country; inference otherwise | FEAT-10 | SCR-RM-02 | `src/procedural/goals.py::infer`, `goal_outflow_flow` | `tests/test_research.py::test_inference_from_a_goals_name`, `tests/test_research.py::test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal` | implemented_verified | |
 | BRD-FR-602 | §6.6 | Match notes to goals; milestone and level | FEAT-10 | SCR-RM-01 | `src/procedural/goals.py::match` | `tests/test_research.py::test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal`, `tests/test_research.py::test_an_issued_rule_close_to_the_milestone_means_contact_now_and_late_rules_are_a_note` | implemented_verified | BRD §10 example reproduced (2026-12-07, remind) |
-| BRD-FR-603 | §6.6 | Shown on RM home, Goals tab, Research page | FEAT-10 | SCR-RM-01, SCR-CIO-06, SCR-CL-05 | `src/apply/reads.py::rm_today`, `app/web.py::goal_regulation` | `tests/test_research.py::test_the_reads_and_the_rm_list` | partially_implemented | Not on the client's goal-planning cards (Q-20) |
+| BRD-FR-603 | §6.6 | Shown on RM home, Goals tab, Research page | FEAT-10 | SCR-RM-01, SCR-CIO-06, SCR-CL-05 | `src/apply/reads.py::rm_today`, `app/web.py::goal_regulation` | `tests/test_research.py::test_the_reads_and_the_rm_list` | implemented_unverified | Also on the planning tab since 2026-10-16 (SCR-CL-03, Q-20): browser-checked, no automated UI test |
 | BRD-FR-604 | §6.6 | Refuse AML wording | FEAT-03, 10 | SCR-CIO-06 | `src/procedural/goals.py::forbidden_words` | `tests/test_research.py::test_a_regulation_note_with_aml_wording_is_refused` | implemented_verified | |
 | BRD-FR-701 | §6.7 | Versioned, owned configuration; propose then approve | FEAT-14 | SCR-CIO-07 | `data/factor_model.json`, `data/news_config.json` | `tests/test_engine.py::test_the_model_hash_changes_with_any_parameter` | partially_implemented | Versioned files only; no owners, approval, two-person rule (Q-15) |
-| BRD-FR-702 | §6.7 | Hash-chained log; integrity check; export | FEAT-11 | SCR-CMP-03 | `src/control/audit.py` | `tests/test_apply.py::test_every_step_is_in_the_audit_chain_and_it_verifies`, `tests/test_apply.py::test_hmac_chain_and_no_downgrade` | partially_implemented | No export |
+| BRD-FR-702 | §6.7 | Hash-chained log; integrity check; export | FEAT-11 | SCR-CMP-03 | `src/control/audit.py` | `tests/test_apply.py::test_every_step_is_in_the_audit_chain_and_it_verifies`, `tests/test_apply.py::test_hmac_chain_and_no_downgrade`, `tests/test_brd_gaps.py::test_the_audit_export_is_the_whole_chain_and_reverifies` | implemented_verified | Export `GET /api/audit/export` (JSON with the check, or CSV) since 2026-10-16 |
 | BRD-FR-703 | §6.7 | Agent catalogue | FEAT-15 | — | `app/web.py::agents_status` | — | partially_implemented | Mode, models, prompt version only; no purpose/owner/risk/last run/references |
 | BRD-FR-704 | §6.7 | Per-step trace of the CIO agent | FEAT-04 | SCR-CIO-03 | `src/views/agents.py::_record` | `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node` | implemented_verified | |
 | BRD-FR-801 | §6.8 | CIO newsletter | FEAT-17 | — | — | — | planned | News plan N5 (optional) |
@@ -86,7 +86,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-NFR-07 | §15 | Encryption, secret store, pen and prompt-injection tests | — | — | `.env` secrets | `tests/test_views.py::test_an_injection_in_the_news_stays_data` | partially_implemented | Prompt-injection test only; the rest is the bank deployment's |
 | BRD-NFR-08 | §15 | Client data in Vietnam; never to an AI provider | FEAT-04, 22, 23 | — | barrier in `gather` | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | partially_implemented | News-impact AI verified; the pre-BRD statement and chat steps send client text when AI is on |
 | BRD-NFR-09 | §15 | Immutable log; retention per bank rules | FEAT-11 | SCR-CMP-03 | `src/control/audit.py` | `tests/test_apply.py::test_the_database_refuses_to_edit_the_log_and_a_forced_edit_is_found` | implemented_verified | Retention is a bank policy; demo reset drops the log |
-| BRD-NFR-10 | §15 | Token limits, daily budget, cost per event | FEAT-04 | — | `MAX_TOKENS` in `src/views/agents.py` | `tests/test_views.py::test_live_mode_refuses_same_models_a_cut_reply_and_another_model` | partially_implemented | Per-call caps and truncation refusal; no budget, no cost tracking |
+| BRD-NFR-10 | §15 | Token limits, daily budget, cost per event | FEAT-04 | — | `MAX_TOKENS`, `budget()` in `src/views/agents.py`; `src/views/store.py::tokens` | `tests/test_views.py::test_live_mode_refuses_same_models_a_cut_reply_and_another_model`, `tests/test_brd_gaps.py::test_the_daily_token_budget_stops_a_live_call_and_cost_is_kept_per_event` | implemented_verified | Per-call caps; daily budget (`AGENT_DAILY_TOKENS`, default 300 000) refuses a call over it; tokens per event in `/api/agents` (no money cost: no price per token configured) |
 | BRD-NFR-11 | §15 | Vietnamese; “cách tính” on every number; desktop and phone | FEAT-09 | all | `web/` | `tests/test_web.py::test_every_routed_page_module_exists_and_is_served` | partially_implemented | Phone/desktop checked by screenshots; trace on news-impact numbers for staff only (Q-14) |
 | BRD-NFR-12 | §15 | Central logs; alerts on feed, agent, chain failures | FEAT-01, 11 | SCR-CIO-01, SCR-CMP-03 | feed-health strip; `GET /api/audit/verify` | `tests/test_news.py::test_the_inbox_endpoint_returns_items_and_feed_health` | partially_implemented | Failures are visible on demand; nothing alerts |
 
@@ -183,16 +183,16 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-LC-04 | FEAT-19 | planned | — | News plan N5 |
 | BRD-RULE-SEC-01 | FEAT-12 | out_of_scope_demo | — | ADR-0006 |
 | BRD-RULE-SEC-02 | FEAT-12 | partially_implemented | `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides` | News-impact writes all checked; the RM decision checked (DEF-02); other pre-BRD services and all reads unchecked |
-| BRD-RULE-SEC-03 | FEAT-13, 28 | partially_implemented | — | “Nội bộ” banner on the advisory pages; staff impact/trace pages have no stamp |
+| BRD-RULE-SEC-03 | FEAT-13, 28 | implemented_unverified | — | “Nội bộ” on the advisory pages and, since 2026-10-16, on the staff views of impact, trace, graph, Toàn cảnh and Hôm nay; browser-checked |
 | BRD-RULE-SEC-04 | FEAT-03, 14 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | Research SoD only; newsletter and config two-person rules not built (Q-15) |
 | BRD-RULE-SEC-05 | FEAT-14 | not_implemented | — | No configuration ownership (Q-15) |
 | BRD-RULE-SEC-06 | FEAT-03, 04 | implemented_verified | `tests/test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox` | |
 | BRD-RULE-SEC-07 | FEAT-19 | out_of_scope_demo | — | No inbox mode |
 | BRD-RULE-SEC-08 | FEAT-11 | implemented_verified | `tests/test_apply.py::test_hmac_chain_and_no_downgrade` | WORM anchoring is the bank's |
 | BRD-RULE-SEC-09 | FEAT-09, 11 | implemented_verified | `tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news` | |
-| BRD-RULE-SEC-10 | FEAT-11, 12 | not_implemented | — | No health endpoint listing disabled protections (`/healthz` is liveness only) |
+| BRD-RULE-SEC-10 | FEAT-11, 12 | implemented_verified | `tests/test_brd_gaps.py::test_health_lists_the_protections_that_are_off` | `/healthz` lists each protection and which are off (HMAC, two models, client text kept from AI, Copilot router, sign-in) |
 | BRD-RULE-CONTENT-01 | FEAT-13, 17 | partially_implemented | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | Flow 2 in-app; flow 1 (newsletter) not built; flow 3 out of scope |
-| BRD-RULE-CONTENT-02 | FEAT-13 | partially_implemented | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | AI label, responsible person, time, “không phải khuyến nghị”, RM path: yes; per-item sources and COI disclosure: no |
+| BRD-RULE-CONTENT-02 | FEAT-13 | partially_implemented | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | AI label, responsible person, time, “không phải khuyến nghị”, RM path, per-item sources (outlets and count, no headline: `tests/test_brd_gaps.py::test_the_client_sees_outlets_not_headlines`): yes; COI disclosure: no |
 | BRD-RULE-CONTENT-03 | FEAT-03 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | Release-time rule enforced; COI is free text |
 | BRD-RULE-CONTENT-04 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | |
 | BRD-RULE-MEAS-01 | FEAT-18 | blocked | — | Needs realised history |

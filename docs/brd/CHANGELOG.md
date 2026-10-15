@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — BRD gaps: audit export (FR-702), `/healthz` protections (RULE-SEC-10), daily token budget and
+  tokens per event (NFR-10), “Nội bộ” on staff views (RULE-SEC-03), regulation notes on the planning tab (FR-603,
+  Q-20), client sources by outlet (RULE-CONTENT-02); D-03 raised in docs/TO_DISCUSS.md — matrix, FEAT-04, FEAT-11,
+  open_questions, api_reference, compliance.md.
+
 - 2026-10-16 — Kit K6: regression sweep and status — regression_coverage, PRODUCT_OVERVIEW, matrix header,
   REDESIGN_KIT_PLAN §5.
 

@@ -35,7 +35,8 @@ decisions, agent runs, runs and their statuses, research, goal declarations). **
 `::test_the_database_refuses_to_edit_the_log_and_a_forced_edit_is_found`, `::test_hmac_chain_and_no_downgrade`.
 
 ## Limitations
-- No export (FR-702 “xuất”): the read returns up to 1,000 rows as JSON.
+- Export since 2026-10-16: `GET /api/audit/export` (JSON with the chain check and genesis, so an auditor can re-walk
+  it; `?format=csv`), buttons on SCR-CMP-03.
 - No periodic anchoring of the chain head to WORM storage (bank deployment).
 - `POST /api/reset` (demo reset) drops the log with the rest of the demo state.
 - No alert when the chain breaks (NFR-12).

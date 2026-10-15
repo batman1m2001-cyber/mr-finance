@@ -7,6 +7,7 @@ it is served here, by the asgi service app/main.py mounts last.
 from __future__ import annotations
 
 import json
+import os
 from functools import lru_cache
 
 from starlette.applications import Starlette
@@ -48,8 +49,45 @@ async def clients(request: Request) -> JSONResponse:
 
 
 async def healthz(request: Request) -> JSONResponse:
+    """Liveness, and which protections are on or off right now (BRD §13, RULE-SEC-10)."""
     # operonx leaves /healthz to the asgi app when one is mounted at "/"
-    return JSONResponse({"ok": True})
+    from copilot import router as copilot_router
+    from wealth import ai
+
+    agents = view_ops.agent_status()
+    hmac_on = bool((os.environ.get("AUDIT_HMAC_KEY") or "").strip())
+    router_by = "mô hình " + copilot_router.model() if copilot_router.live() else "từ khóa"
+    protections = [
+        {
+            "id": "audit_hmac",
+            "on": hmac_on,
+            "note": "Chuỗi nhật ký ký HMAC"
+            if hmac_on
+            else "Chuỗi nhật ký chỉ SHA-256: ai ghi được cơ sở dữ liệu có thể tính lại cả chuỗi",
+        },
+        {
+            "id": "two_models",
+            "on": agents["mode"] == "live",
+            "note": "Agent CIO và phản biện dùng hai mô hình khác nhau"
+            if agents["mode"] == "live"
+            else "Agent chạy mô phỏng (chưa cấu hình hai mô hình)",
+        },
+        {
+            "id": "client_text_off_ai",
+            "on": not ai.enabled(),
+            "note": "Bước đọc sao kê và chat khai báo không gửi dữ liệu khách cho AI"
+            if not ai.enabled()
+            else "AI đang bật: bước đọc sao kê và chat khai báo gửi nội dung của khách cho mô hình "
+            "(docs/TO_DISCUSS.md D-03)",
+        },
+        {
+            "id": "copilot_router",
+            "on": True,
+            "note": f"Copilot định tuyến bằng {router_by}; mô hình không đọc dữ liệu khách",
+        },
+        {"id": "sign_in", "on": False, "note": "Không có đăng nhập: bộ chuyển vai trò chỉ để demo (ADR-0006)"},
+    ]
+    return JSONResponse({"ok": True, "protections": protections, "off": [p["id"] for p in protections if not p["on"]]})
 
 
 async def scenarios(request: Request) -> JSONResponse:
@@ -322,6 +360,44 @@ async def audit_verify(request: Request) -> JSONResponse:
         return JSONResponse(control_audit.verify(con))
 
 
+async def audit_export(request: Request):
+    """FR-702 export: ?format=json (default, with the chain check) or csv (one row per entry)."""
+    import csv
+    import io
+    from datetime import datetime, timezone
+
+    from starlette.responses import Response
+
+    with control_db.tx() as con:
+        out = control_audit.export(con)
+    stamp = datetime.fromtimestamp(out["exported"], timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    if request.query_params.get("format") == "csv":
+        buf = io.StringIO()
+        w = csv.writer(buf)
+        w.writerow(["seq", "ts_utc", "actor", "action", "object", "alg", "prev_hash", "hash", "data"])
+        for r in out["rows"]:
+            ts = datetime.fromtimestamp(r["ts"], timezone.utc).isoformat()
+            w.writerow(
+                [
+                    r["seq"],
+                    ts,
+                    r["actor"],
+                    r["action"],
+                    r["object"],
+                    r["alg"],
+                    r["prev_hash"],
+                    r["hash"],
+                    json.dumps(r["data"], ensure_ascii=False, sort_keys=True),
+                ]
+            )
+        return Response(
+            buf.getvalue(),
+            media_type="text/csv; charset=utf-8",
+            headers={"content-disposition": f'attachment; filename="audit-{stamp}.csv"'},
+        )
+    return JSONResponse(out, headers={"content-disposition": f'attachment; filename="audit-{stamp}.json"'})
+
+
 async def audit_list(request: Request) -> JSONResponse:
     try:
         limit = min(int(request.query_params.get("limit") or 100), 1000)
@@ -460,6 +536,7 @@ app = Starlette(
         Route("/api/research", research_list),
         Route("/api/goals/regulation", goal_regulation),
         Route("/api/audit/verify", audit_verify),
+        Route("/api/audit/export", audit_export),
         Route("/api/reset", reset, methods=["POST"]),
         # the sample statements a demo uploads
         Mount("/samples", app=StaticFiles(directory=DATA / "samples"), name="samples"),

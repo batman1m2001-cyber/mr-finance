@@ -59,5 +59,6 @@ Live run recorded 2026-10-15 (OpenRouter): CIO agent 26 s over 7 nodes (news pla
 
 ## Limitations
 - The inbox (“hộp chờ”) run mode of FR-307 is not built (FEAT-19).
-- No daily token budget or cost per event (NFR-10): only per-call caps.
+- NFR-10 since 2026-10-16: a daily token budget (`AGENT_DAILY_TOKENS`, default 300 000) refuses calls past it;
+  tokens per event in `GET /api/agents` (`budget.by_event`). No money cost (no price per token configured).
 - The stressed-branch rule is not enforced after the model answers.

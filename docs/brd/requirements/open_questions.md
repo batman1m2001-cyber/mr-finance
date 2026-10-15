@@ -27,7 +27,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | open |
 | Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005) |
 | Q-19 | divergence | The advisory track record is mock and could be read as BR-15 | resolved (labelled; dates fixed) |
-| Q-20 | gap | FR-603 “tab Mục tiêu”: the goal branch is not on the client's Goals/Plan tab | open |
+| Q-20 | gap | FR-603 “tab Mục tiêu”: the goal branch is not on the client's Goals/Plan tab | resolved (shown on Kế hoạch) |
 | Q-21 | divergence | The client view exists although the BRD puts client delivery in the pilot phase | resolved (ADR-0008) |
 | Q-22 | divergence | Factor-model parameters are assumed, not estimated | resolved (ADR-0004); estimation blocked |
 | Q-23 | divergence | One process instead of a separate AI zone; no signed inbox | resolved for the demo (ADR-0009) |
@@ -118,7 +118,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-20 — The goal branch on the Goals tab (FR-603)
 - **Fact:** FR-603: show on the RM home, the Goals tab, and the Research page. The product shows it on RM “Hôm nay”, on “Tin tác động” (client and RM) and on “Nghiên cứu”. The client's “Mục tiêu & kịch bản → Kế hoạch” tab (goal planning) does not show it.
-- **Open:** add the regulation note to the goal card of the planning tab. Owner: product.
+- **Resolution (2026-10-16):** the planning tab shows “Lưu ý quy định cho mục tiêu” above the goals (client: only notes with a client message; staff: every match).
 
 ### Q-21 — A client view before the pilot
 - **Fact:** §3: the client interface belongs to the pilot. The product has a client role (it predates the BRD).
