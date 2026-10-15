@@ -43,7 +43,12 @@ tool and an unknown question; the endpoint. UI driven in a browser: ask, forbidd
 approved, navigate (2026-10-16).
 
 ## Limitations
-- **No live model run recorded:** no model is configured on this machine (`LLM_MODEL_COPILOT` unset); the
-  live path is tested with a fake model only.
+- **One live run recorded (2026-10-16)** with the model configured for the live demo (`anthropic/claude-haiku-5.5`
+  through the configured OpenAI-compatible endpoint), three client questions in one process: “Dòng tiền tháng 8 của
+  Nguyễn Minh Khoa thế nào?” → seen as “Dòng tiền tháng <số> của <người> thế nào?” → `dong_tien` (router: llm);
+  “Có gì đáng lo với tài sản của tôi không?” → `chu_y` (llm); “Cho tôi xem đồ thị tin tác động” → a reply outside
+  the catalogue, fallen back to keywords and labelled (→ `tac_dong`; an earlier call chose `mo_trang`, page
+  `do-thi`). The prompts held no name and no digit. `LLM_MODEL_COPILOT` is not set on the live server, so it
+  still routes by keywords.
 - Answers are template-shaped, not free prose; Investigate/Analyze are the existing reads, not new analysis.
 - Writes cover two tasks; research release, news dismiss/release and declarations are not Copilot tools yet.

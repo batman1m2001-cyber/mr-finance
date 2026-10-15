@@ -70,11 +70,11 @@ Each phase ends with its tests, desktop + phone screenshots in light and dark, a
 | K2 | done | (this change) | `POST /api/flows` is a served graph (not the GET first planned: the Copilot's tools are the served graphs, D3); old overview kept whole as “Chi tiết”; `tests/test_flows.py`; screenshots in docs/brd |
 | K3 | done | (this change) | `GET /api/families/{id}/graph` (per family; the CIO's whole-run view deferred); `tests/test_graph.py`; FEAT-30 |
 | K4 | done | (this change) | `POST /api/feed` (served graph); a panel of Toàn cảnh; thresholds ours (FEAT-31); `tests/test_feed.py` |
-| K5 | done, except the recorded live run | (this change) | `tests/test_copilot.py` (barrier with a control, roles, confirm, failures, fake live router); no model configured here, so no live run is recorded (FEAT-32) |
+| K5 | done | PR #22 | `tests/test_copilot.py` (barrier with a control, roles, confirm, failures, fake live router); one recorded live run with `anthropic/claude-haiku-5.5` (FEAT-32 limitations) |
 | K6 | done | (this change) | 195 passed; route sweep 128 loads clean (regression_coverage.md); matrix: KIT 6 verified, 5 unverified (UI only, no automated UI test), 1 partial (Copilot capabilities), 7 n/a |
 
 **Summary (2026-10-16).** K1–K6 done. Traceability completeness and implementation completion are reported
 separately in `docs/brd/requirements/requirements_traceability.md` §0. Not done, by design or for lack of means:
-a recorded live run of the Copilot router (no model configured here), the CIO's whole-run graph, and Copilot tools
+the CIO's whole-run graph, and Copilot tools
 for research release, news dismiss/release and declarations (FEAT-30, FEAT-32 limitations). Owner decisions:
 `docs/TO_DISCUSS.md`.
