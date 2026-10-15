@@ -9,7 +9,8 @@ working demo of the brief in [`mr_finance_idea_final.md`](mr_finance_idea_final.
 [operonx](https://pypi.org/project/operonx/) and operonx-agents. Every number is computed by an
 operonx graph from mock data for five sample clients.
 
-> **Coding assistants:** start at [`AGENTS.md`](AGENTS.md), then [`docs/PLAN.md`](docs/PLAN.md).
+> **Coding assistants:** start at [`AGENTS.md`](AGENTS.md), then [`docs/brd/README.md`](docs/brd/README.md) — the
+> product's living specification (requirements, features, screens, decisions, traceability).
 
 ## Run it
 

@@ -22,6 +22,13 @@ demo is `docs/DEMO.md` (and `tests/test_demo.py` walks it).
 - One exception to "no feature imports another feature's graph": `consolidate_flow` is the subgraph
   every picture starts from (docs/PLAN.md D9). Shared logic otherwise goes in `src/wealth/`.
 
+## Product documentation (read first)
+
+`docs/brd/README.md` is the product's living specification: the BRD's requirements (Layer A), how each
+feature behaves (Layer B), the screens (Layer C), decisions, and the traceability matrix — the only place a
+requirement's status is stated. When you change behaviour, a screen, an API or a rule, update the affected
+documents as `docs/brd/MAINTAINING.md` says; `tests/test_brd_docs.py` fails if links, IDs or cited tests drift.
+
 ## Before you write code
 
 1. Read `.operonx/guide/README.md`. It indexes the guide of every installed
