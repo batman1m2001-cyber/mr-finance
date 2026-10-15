@@ -172,3 +172,71 @@ export function moves(box, rows) {
       <span class="num" style="text-align:right">${esc(r.text)}</span></div>`;
   }).join("");
 }
+
+// ── sankey: a month's money in → the month → out (Money Flow, kit K2) ────────
+export function sankey(box, f, opts = {}) {
+  // f: the /api/flows answer; both sides balance: a surplus is a “Còn lại” band out, a shortfall a
+  // “Thiếu hụt” band in. Static (no motion); every band and node is focusable and opens its rows.
+  const short = f.left < 0 ? [{category: "_short", label: "Thiếu hụt (từ tiền tích lũy)", amount: -f.left, color: "var(--down)"}] : [];
+  const left = [...f.inflow.map(b => ({...b, color: "var(--s1)"})), ...short];
+  const right = [...f.outflow.map(b => ({...b, color: "var(--s2)"})),
+    ...(f.left > 0 ? [{category: "_left", label: "Còn lại", amount: f.left, color: "var(--s3)"}] : [])];
+  const total = Math.max(f.total_in, f.total_out);
+  if (!total) { box.innerHTML = `<div class="small muted">Không có giao dịch trong tháng này.</div>`; return; }
+  const width = Math.max(300, box.clientWidth || 640), narrow = width < 560;
+  const lw = narrow ? 92 : 168, nodeW = 12, gap = 10;
+  const n = Math.max(left.length, right.length);
+  const height = opts.height || Math.max(200, n * (narrow ? 46 : 40));
+  const scale = (height - 8 - gap * (n - 1)) / total;
+  const x0 = lw, xm = width / 2 - nodeW / 2, x1 = width - lw - nodeW;
+  const svg = el("svg", {class: "viz sankey", viewBox: `0 0 ${width} ${height}`, role: "img",
+    "aria-label": opts.label || "Dòng tiền trong tháng: tiền vào theo nhóm, tiền ra theo nhóm"});
+  const place = (nodes) => {
+    const used = nodes.reduce((a, b) => a + b.amount * scale, 0) + gap * (nodes.length - 1);
+    let y = (height - used) / 2;
+    for (const b of nodes) { b.y = y; b.h = Math.max(2, b.amount * scale); y += b.h + gap; }
+  };
+  place(left); place(right);
+  const mh = total * scale, my = (height - mh) / 2;
+  const fmt = (v) => (narrow ? vnd(v).replace(" triệu", " tr") : vnd(v));
+  const curve = (xa, ya, xb, yb, h) => {
+    const c = (xa + xb) / 2;
+    return `M${xa},${ya}C${c},${ya} ${c},${yb} ${xb},${yb}L${xb},${yb + h}C${c},${yb + h} ${c},${ya + h} ${xa},${ya + h}Z`;
+  };
+  const bands = el("g", {}, svg);
+  const pick = (b, side) => () => opts.onPick && opts.onPick(b, side);
+  const band = (d, b, side) => {
+    const p = el("path", {d, fill: b.color, "fill-opacity": 0.32, tabindex: 0, role: "button", class: "band",
+      "aria-label": `${b.label}: ${vnd(b.amount)}`}, bands);
+    hover(p, `<b>${esc(b.label)}</b><br>${vnd(b.amount)} · ${pct(b.amount / total)}${b.rows ? `<br>${b.rows.length} giao dịch` : ""}`);
+    p.addEventListener("click", pick(b, side));
+    p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(b, side)(); } });
+  };
+  let at = my;
+  for (const b of left) { band(curve(x0 + nodeW, b.y, xm, at, b.h), b, "in"); at += b.h; }
+  at = my;
+  for (const b of right) { band(curve(xm + nodeW, at, x1, b.y, b.h), b, "out"); at += b.h; }
+  const label = (x, y, anchor, b) => {
+    const t = el("text", {x, y, "text-anchor": anchor, class: "lbl"}, svg);
+    const name = narrow && b.label.length > 13 ? b.label.slice(0, 12) + "…" : b.label;
+    t.textContent = name;
+    const v = el("text", {x, y: y + 14, "text-anchor": anchor, class: "val"}, svg);
+    v.textContent = fmt(b.amount);
+  };
+  for (const b of left) {
+    el("rect", {x: x0, y: b.y, width: nodeW, height: b.h, rx: 3, fill: b.color}, svg);
+    label(x0 - 8, b.y + b.h / 2 - 2, "end", b);
+  }
+  for (const b of right) {
+    el("rect", {x: x1, y: b.y, width: nodeW, height: b.h, rx: 3, fill: b.color}, svg);
+    label(x1 + nodeW + 8, b.y + b.h / 2 - 2, "start", b);
+  }
+  el("rect", {x: xm, y: my, width: nodeW, height: mh, rx: 3, fill: "var(--ink-2)"}, svg);
+  box.innerHTML = "";
+  box.appendChild(svg);
+  const legend = document.createElement("div");
+  legend.className = "legend";
+  legend.innerHTML = `<span><i style="background:var(--s1)"></i>Tiền vào</span><span><i style="background:var(--s2)"></i>Tiền ra</span>` +
+    (f.left > 0 ? `<span><i style="background:var(--s3)"></i>Còn lại</span>` : f.left < 0 ? `<span><i style="background:var(--down)"></i>Thiếu hụt</span>` : "");
+  box.appendChild(legend);
+}

@@ -1,6 +1,7 @@
 """Mr. Finance: the whole picture of a client's wealth, and what is moving it.
 
 POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──► the dashboard
+POST /api/flows     {client_id, scope?, month?} ──► flows_flow ──► a month's money in → out, with the rows
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
@@ -36,6 +37,7 @@ from apply.graph import recompute_flow, run_decide_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
 from events.graph import event_flow
+from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from news.graph import dismiss_flow, ingest_flow, release_flow
@@ -58,6 +60,12 @@ APP = Application(
             http("POST", "/api/dashboard", port=PORT),
             graph=dashboard_flow,
             description="POST {client_id, scope: personal|family, months}: the dashboard.",
+        ),
+        Service(
+            "flows",
+            http("POST", "/api/flows", port=PORT),
+            graph=flows_flow,
+            description="POST {client_id, scope: personal|family, month: YYYY-MM}: Money Flow from the transactions.",
         ),
         Service(
             "statement",

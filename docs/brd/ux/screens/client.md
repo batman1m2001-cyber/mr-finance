@@ -14,7 +14,7 @@ footer disclaimer ([information architecture](../information_architecture.md#the
 
 | | |
 |---|---|
-| Route | `#/client/tong-quan`; RM: `#/rm/khach-hang/tong-quan` |
+| Route | `#/client/tong-quan/chi-tiet` (“Chi tiết”); RM: `#/rm/khach-hang/tong-quan` (“Chi tiết”) |
 | Generation | legacy (`web/app.js`, tab `overview`) |
 | Features | [FEAT-21](../../features/FEAT-21-dashboard.md), [FEAT-20](../../features/FEAT-20-consolidation.md), [FEAT-25](../../features/FEAT-25-policy-cost-alerts-and-house-views.md) (Headline News card) |
 | Requirements | BRIEF-DASH-01…07, BRIEF-DATA-04, BRIEF-DATA-05 |
@@ -43,8 +43,9 @@ sơ”; values not provided by a source show “—”.
 **Responsive / a11y.** Single column on phone (3,308 px tall); no horizontal scroll at 390 px; chart has a legend.
 
 **Notes.** The Headline News card's numbers come from the point rules, not from the engine shown on SCR-CL-05
-(Q-03). The redesign plan replaces this page with Financial Pulse / Wealth Map / Money Flow (FEAT-29) and the
-card with the Intelligence Feed (FEAT-31), keeping every block (checklist above).
+(Q-03). Since 2026-10-16 the summary lives on [SCR-CL-08](#scr-cl-08--toàn-cảnh-pulse-wealth-map-money-flow) (Toàn
+cảnh, opened first); this page is unchanged under “Chi tiết”, so every block above stays. The card is still to be
+replaced by the Intelligence Feed (FEAT-31).
 
 ---
 
@@ -189,3 +190,30 @@ probability), holding × sensitivity × probability, the holdings touched, the s
 the **Approval queue** (“Hàng chờ chuyên gia duyệt · n đang chờ”): each proposal with its actions and summary and,
 while pending, “Đang chờ chuyên gia duyệt”; decided items with their badge and note. Read-only: the RM decides on
 [SCR-RM-06](rm.md#scr-rm-06--duyệt-đề-xuất-approval-queue) (DEF-02 fixed 2026-10-15).
+
+---
+
+## SCR-CL-08 — Toàn cảnh (Pulse, Wealth Map, Money Flow)
+
+| | |
+|---|---|
+| Route | `#/client/tong-quan/toan-canh` (client's first page); RM: `#/rm/khach-hang/toan-canh` |
+| Generation | new (`web/pages/pulse.js`) |
+| Feature | [FEAT-29](../../features/FEAT-29-financial-pulse-wealth-map-money-flow.md) |
+| Requirements | KIT-UX-01, KIT-UX-02, KIT-UX-03, KIT-UX-06; BRIEF-DASH-01 (net worth), BRIEF-DASH-02 (allocation) |
+| Data | `POST /api/dashboard`, `POST /api/flows` |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CL-08_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-08_phone-light.jpg) · [dark](../../assets/current_ui/SCR-CL-08_desktop-dark.jpg) |
+
+**Journey.** In one screen: what I am worth and how it moved, what came in and went out last month and what was
+left, how long my reserve lasts, how exposed I am — then where the money sits and where it flowed.
+
+**Layout.** KPI strip of six tiles (2 columns on a phone, 3 below 1100 px). **Bản đồ tài sản** (5/12): a 100 % bar
+by class, a legend with value and share, a class opens its holdings. **Dòng tiền** (7/12): month picker, Sankey
+(blue in, orange out, green “Còn lại” / red “Thiếu hụt”), the table of bands, a band opens its transactions.
+A link to “Chi tiết” (SCR-CL-01).
+
+**States.** A month with no rows: “Không có giao dịch trong tháng này.”; a failed flows call keeps the page and
+shows the error under the chart.
+
+**Interaction.** Bands and map segments are focusable buttons (Enter / Space); tooltips on hover and focus; no
+animation (reduced motion needs nothing more).

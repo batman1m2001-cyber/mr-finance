@@ -36,5 +36,5 @@ is, and the money coming in and going out over the next 12–36 months.
 `::test_the_family_view_is_the_household_sum`); `tests/test_demo.py::test_the_five_minute_demo`.
 
 ## Limitations
-The “Headline News” card shows point-rule impacts, not the engine's (Q-03). Planned redesign: Financial Pulse,
-Wealth Map and Money Flow (FEAT-29).
+The “Headline News” card shows point-rule impacts, not the engine's (Q-03). Since 2026-10-16 this page is
+“Tổng quan → Chi tiết”; “Toàn cảnh” (FEAT-29) opens first and links here.

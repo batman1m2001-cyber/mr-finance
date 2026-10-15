@@ -270,3 +270,24 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 #page-new .check { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 6px; align-items: start; }
 .item > * { min-width: 0; }
 #page-new input[data-note], #page-new input[data-resp] { min-width: 140px !important; }
+
+/* Toàn cảnh (kit K2): the KPI strip, the Wealth Map bar, the Sankey */
+.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s-3, 12px); }
+.kpi { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+.kpi .k { font-size: 12px; color: var(--muted); }
+.kpi .v { font-size: 22px; font-weight: 750; font-variant-numeric: tabular-nums; margin: 2px 0; white-space: nowrap; }
+.kpi .s { font-size: 12px; color: var(--ink-2); }
+@media (max-width: 1100px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi .v { font-size: 18px; } }
+.wmap { display: flex; gap: 2px; height: 28px; border-radius: 8px; overflow: hidden; }
+.wseg { border: 0; padding: 0; min-width: 3px; cursor: pointer; }
+.wseg[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: -2px; }
+.wlegend { display: grid; gap: 2px; margin-top: 10px; }
+.wrow { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto 44px; gap: 8px; align-items: center; text-align: left;
+  background: none; border: 0; padding: 5px 4px; border-radius: 6px; color: var(--ink); font: inherit; cursor: pointer; }
+.wrow i { width: 10px; height: 10px; border-radius: 3px; }
+.wrow b { text-align: right; }
+.wrow:hover, .wrow[aria-pressed="true"] { background: var(--surface-2); }
+.sankey .band { cursor: pointer; transition: fill-opacity .12s; }
+.sankey .band:hover, .sankey .band:focus { fill-opacity: .6; outline: none; }
+@media (prefers-reduced-motion: reduce) { .sankey .band { transition: none; } }
