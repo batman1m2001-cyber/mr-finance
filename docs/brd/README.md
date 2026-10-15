@@ -37,6 +37,7 @@ The single place where the chain is assembled, with a status per requirement, is
 | Their extracted, numbered form | `requirements/business_requirements.md`, `functional_requirements.md`, `non_functional_requirements.md`, `business_rules.md` | Faithful extraction with the original Vietnamese; never edited to match the code |
 | Requirements of the capabilities that predate the BRD | [`requirements/brief_requirements.md`](requirements/brief_requirements.md) (from [`mr_finance_idea_final.md`](../../mr_finance_idea_final.md)) | The original product brief |
 | Requirements of the redesign kit (proposed extensions) | [`requirements/kit_requirements.md`](requirements/kit_requirements.md) | Source: [`sources/redesign_kit_2026-10-15/`](sources/redesign_kit_2026-10-15/) |
+| Requests of the product owner (approved extensions) | [`requirements/owner_requirements.md`](requirements/owner_requirements.md) | Source: [`sources/owner_requests/`](sources/owner_requests/) |
 | Ambiguities, conflicts, BRD-vs-product divergence | [`requirements/open_questions.md`](requirements/open_questions.md) | Each has a proposed interpretation and an owner |
 | **Implementation status of each requirement** | [`requirements/requirements_traceability.md`](requirements/requirements_traceability.md) | The only place a status is stated; other files link to it |
 | How a capability behaves | the feature file in [`features/`](features/) | One file per feature |
@@ -63,6 +64,7 @@ reused.
 | `BRD-RULE-<area>-nn` | Rule stated in BRD prose or tables without its own code | `BRD-RULE-GOAL-03` | business_rules.md |
 | `BRIEF-<area>-nn` | Requirement of the original product brief | `BRIEF-DASH-04` | brief_requirements.md |
 | `KIT-<area>-nn` | Requirement of the redesign kit (proposed) | `KIT-COPILOT-01` | kit_requirements.md |
+| `OWN-<area>-nn` | Request of the product owner | `OWN-MOTION-03` | owner_requirements.md |
 | `FEAT-nn` | Feature (Layer B) | `FEAT-08` | features/README.md |
 | `SCR-<role>-nn` | Screen or significant component | `SCR-CIO-03` | ux/screen_inventory.md |
 | `ADR-nnnn` | Decision | `ADR-0006` | decisions/README.md |

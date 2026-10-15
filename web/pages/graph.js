@@ -9,6 +9,10 @@ const COLOR = {news: "var(--s7)", event: "var(--s1)", branch: "var(--s4)", facto
 const KIND = {news: "Tin", event: "Sự kiện", branch: "Kịch bản", factor: "Yếu tố", asset: "Tài sản", family: "Gia đình", goal: "Mục tiêu"};
 const SRC = {event: "Sự kiện", view: "Nhận định", run: "Lần áp dụng"};
 const NS = "http://www.w3.org/2000/svg";
+// Living Interface (B-01): a Copilot answer about an event lights that event's path, as a click would
+let onFocus = null;
+window.addEventListener("mf:focus", (e) => onFocus && onFocus(e.detail.keys || []));
+
 const mk = (tag, attrs, parent) => {
   const n = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs)) if (v != null) n.setAttribute(k, v);
@@ -84,19 +88,25 @@ export async function render(box, ctx) {
     $("#g-clear", box).onclick = () => select(null);
   };
 
-  const select = (id) => { state.sel = state.sel === id ? null : id; draw(); };
+  const select = (id) => { state.sel = state.sel === id ? null : id; state.flash = !!state.sel; draw(); };
+  onFocus = (keys) => {
+    if (!box.isConnected) { onFocus = null; return; }
+    const id = keys.map(k => k.startsWith("event:") && `EV:${k.slice(6)}`).find(x => x && byId[x]);
+    if (id && state.view === "graph" && state.sel !== id) { state.hidden.delete("event"); state.sel = id; state.flash = true; draw(); }
+  };
+  const focusKey = (e) => [byId[e.from], byId[e.to]].filter(n => n.kind === "event").map(n => `event:${n.ref}`).join(" ") || null;
 
   const drawList = (el) => {
     const es = shownEdges();
     if ((el.clientWidth || window.innerWidth) < 640) {  // a phone: one stacked line per edge
-      el.innerHTML = `<div class="list">${es.map(e => `<div class="gedge">
+      el.innerHTML = `<div class="list">${es.map(e => `<div class="gedge"${focusKey(e) ? ` data-focus="${esc(focusKey(e))}"` : ""}>
         <button type="button" class="linkbtn" data-n="${esc(e.from)}">${esc(byId[e.from].label)}</button> → <button type="button" class="linkbtn" data-n="${esc(e.to)}">${esc(byId[e.to].label)}</button>
         <div class="small muted">${esc(e.label)}${e.value == null ? "" : ` · <span class="num ${signClass(e.value)}">${val(e)}</span>`} · ${src(e)}</div></div>`).join("")}</div>`;
       for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => select(b.dataset.n);
       return;
     }
     el.innerHTML = `<table class="table"><thead><tr><th>Từ</th><th>Đến</th><th>Quan hệ</th><th class="r">3 tháng</th><th>Nguồn</th></tr></thead><tbody>${
-      es.map(e => `<tr><td><button type="button" class="linkbtn" data-n="${esc(e.from)}">${esc(byId[e.from].label)}</button><div class="small muted">${KIND[byId[e.from].kind]}</div></td>
+      es.map(e => `<tr${focusKey(e) ? ` data-focus="${esc(focusKey(e))}"` : ""}><td><button type="button" class="linkbtn" data-n="${esc(e.from)}">${esc(byId[e.from].label)}</button><div class="small muted">${KIND[byId[e.from].kind]}</div></td>
         <td><button type="button" class="linkbtn" data-n="${esc(e.to)}">${esc(byId[e.to].label)}</button><div class="small muted">${KIND[byId[e.to].kind]}</div></td>
         <td class="small">${esc(e.label)}</td><td class="r num ${signClass(e.value || 0)}">${val(e)}</td><td class="small muted">${src(e)}</td></tr>`).join("")}</tbody></table>`;
     for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => select(b.dataset.n);
@@ -113,6 +123,8 @@ export async function render(box, ctx) {
       list.forEach((n, j) => { pos[n.id] = {x: i * colW + (colW - nodeW) / 2, y: top + j * rowH}; });
     });
     const lit = state.sel ? path(state.sel) : null;
+    const flash = state.flash; state.flash = false;  // the path just chosen fades in column by column, once
+    const col = Object.fromEntries(cols.map((c, i) => [c.kind, i]));
     const svg = mk("svg", {class: "viz igraph", viewBox: `0 0 ${width} ${height}`, role: "group", "aria-label": "Đồ thị tác động"});
     cols.forEach((c, i) => { const t = mk("text", {x: i * colW + colW / 2, y: 14, "text-anchor": "middle", class: "lbl"}, svg); t.textContent = c.label; });
     const es = shownEdges();
@@ -124,15 +136,17 @@ export async function render(box, ctx) {
       const on = !lit || (lit.has(e.from) && lit.has(e.to));
       const p = mk("path", {d: `M${x1},${y1}C${cx},${y1} ${cx},${y2} ${x2},${y2}`, fill: "none",
         stroke: e.value == null ? "var(--axis)" : e.value < 0 ? "var(--down)" : "var(--up)",
-        "stroke-width": e.value == null ? 1.5 : 1.5 + 5 * Math.abs(e.value) / maxV, "stroke-opacity": on ? 0.75 : 0.08}, svg);
+        "stroke-width": e.value == null ? 1.5 : 1.5 + 5 * Math.abs(e.value) / maxV, "stroke-opacity": on ? 0.75 : 0.08,
+        class: flash && lit && on ? "mf-lit" : null, style: flash && lit && on ? `--i:${col[byId[e.from].kind]}` : null}, svg);
       hover(p, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + val(e)}<br><span class="muted">${src(e)}</span>`);
     }
     for (const n of g.nodes) {
       const q = pos[n.id];
       if (!q) continue;
       const on = !lit || lit.has(n.id);
-      const grp = mk("g", {tabindex: 0, role: "button", class: "gnode", "aria-label": `${KIND[n.kind]}: ${n.label}`,
-        "aria-pressed": String(state.sel === n.id), opacity: on ? 1 : 0.2}, svg);
+      const grp = mk("g", {tabindex: 0, role: "button", class: flash && lit && on ? "gnode mf-lit" : "gnode", "aria-label": `${KIND[n.kind]}: ${n.label}`,
+        "aria-pressed": String(state.sel === n.id), opacity: on ? 1 : 0.2, style: flash && lit && on ? `--i:${col[n.kind]}` : null,
+        "data-focus": n.kind === "event" ? `event:${n.ref}` : null}, svg);
       mk("rect", {x: q.x, y: q.y, width: nodeW, height: 28, rx: 7, fill: "var(--surface)", stroke: COLOR[n.kind],
         "stroke-width": state.sel === n.id ? 2.5 : 1.5}, grp);
       const t = mk("text", {x: q.x + 9, y: q.y + 18, class: "lbl"}, grp);

@@ -5,7 +5,8 @@
    The role switcher is a demo: it sends a user id with each action and the server checks that id's
    role. It is not security, and the footer says so. */
 import {$, $$, esc, failed, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261016h";
+import {mount as mountCopilot} from "./copilot.js?v=20261016i";
+import {start as startMotion} from "./motion.js?v=20261016i";
 
 const ROLES = {
   client: {
@@ -134,6 +135,7 @@ async function route() {
     box.innerHTML = "";
     await window.Legacy.ready;
     window.Legacy.showTab(target.legacy);
+    window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
     return;
   }
   for (const s of $$(".tab")) s.hidden = true;
@@ -141,9 +143,10 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016h`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016i`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
+    if (seq === state.seq) window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));  // motion.js: a waiting highlight
   } catch (e) {
     if (seq === state.seq) box.innerHTML = failed(e);
     console.error(e);
@@ -194,6 +197,7 @@ async function start() {
   $("#client").addEventListener("change", () => { if (!$("#page-new").hidden) route(); });
   for (const b of $$("[data-scope]")) b.addEventListener("click", () => { if (!$("#page-new").hidden) setTimeout(route); });
   window.addEventListener("hashchange", route);
+  startMotion();
   mountCopilot();
   try {
     const a = await (await fetch("/api/agents")).json();

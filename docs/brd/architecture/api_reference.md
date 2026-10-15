@@ -16,8 +16,8 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 |---|---|---|---|---|
 | `/api/dashboard` | dashboard → `dashboard_flow` | `client_id, scope?, months?` | — | FEAT-21 |
 | `/api/flows` | flows → `flows_flow` | `client_id, scope?, month? (YYYY-MM)` | — | FEAT-29 |
-| `/api/feed` | feed → `feed_flow` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 |
-| `/api/copilot` | copilot → `copilot_flow` | `question, role, client_id?, scope?, route?, confirm?` | per tool (and the wrapped graph's own check) | FEAT-32 |
+| `/api/feed` | feed → `feed_flow` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 (each item has a stable `key`, FEAT-33) |
+| `/api/copilot` | copilot → `copilot_flow` | `question, role, client_id?, scope?, route?, confirm?` | per tool (and the wrapped graph's own check) | FEAT-32; an ok answer has `focus` (page element keys, FEAT-33) |
 | `/api/config/propose` | config_propose → `config_propose_flow` | `kind, data, by, note?` | the kind's owner role | FEAT-14 |
 | `/api/config/decide` | config_decide → `config_decide_flow` | `version_id, action (approve\|reject), by, note?` | owner role; ≠ proposer for two-person kinds | FEAT-14 |
 | `/api/statement` | statement → `statement_flow` | `client_id, filename, content` (base64) | — | FEAT-22 |

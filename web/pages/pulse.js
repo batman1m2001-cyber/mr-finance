@@ -23,7 +23,7 @@ export async function render(box, ctx) {
   ]);
   let f = first.flows;
   const nw = d.net_worth, liq = d.liquidity, rk = d.risk;
-  const tile = (k, v, sub, cls = "") => `<div class="kpi"><div class="k">${k}</div><div class="v ${cls}">${v}</div><div class="s">${sub}</div></div>`;
+  const tile = (k, v, sub, cls = "", key = "") => `<div class="kpi"${key ? ` data-focus="${key}"` : ""}><div class="k">${k}</div><div class="v ${cls}">${v}</div><div class="s">${sub}</div></div>`;
   const badge = (s) => `<span class="badge ${(STATUS[s] || [""])[0]}">${esc((STATUS[s] || ["", s])[1])}</span>`;
 
   // Wealth Map: assets by class (cash folded into deposits), each opening to its holdings
@@ -47,7 +47,7 @@ export async function render(box, ctx) {
         <div id="wmap-rows" class="wmap-rows"></div>
         <div class="footnote">Nợ ${vnd(nw.liabilities)} không nằm trong bản đồ; tài sản ròng = tài sản − nợ.</div>
       </div>
-      <div class="panel c7">
+      <div class="panel c7" id="flow-panel">
         <h3>Dòng tiền <span class="hint" id="flow-of"></span>
           <select id="month" aria-label="Tháng" style="margin-left:auto"></select></h3>
         <div id="sankey"></div>
@@ -59,12 +59,12 @@ export async function render(box, ctx) {
 
   const drawKpis = () => {
     $("#kpis", box).innerHTML = [
-      tile("Tài sản ròng", vnd(nw.value), `<span class="${signClass(nw.month_change)}">${vnd(nw.month_change, true)} (${pct(nw.month_change_pct, true)})</span> so với tháng trước`),
+      tile("Tài sản ròng", vnd(nw.value), `<span class="${signClass(nw.month_change)}">${vnd(nw.month_change, true)} (${pct(nw.month_change_pct, true)})</span> so với tháng trước`, "", "kpi:net_worth"),
       tile(`Tiền vào ${MONTH(f.month)}`, vnd(f.total_in), `${f.inflow.length} nguồn`),
       tile(`Tiền ra ${MONTH(f.month)}`, vnd(f.total_out), `${f.outflow.length} nhóm chi`),
       tile(f.left >= 0 ? "Còn lại" : "Thiếu hụt", vnd(Math.abs(f.left)), f.total_in ? `${pct(f.left / f.total_in)} tiền vào` : "—", f.left >= 0 ? "up" : "down"),
-      tile("Thanh khoản dự phòng", vnd(liq.value), `đủ chi ${liq.months >= 24 ? Math.floor(liq.months / 12) + " năm" : Math.round(liq.months) + " tháng"} ${badge(liq.status)}`),
-      tile("Rủi ro khi thị trường xấu", pct(rk.current), `ngưỡng ${pct(rk.limit, false, 0)} ${badge(rk.status)}`),
+      tile("Thanh khoản dự phòng", vnd(liq.value), `đủ chi ${liq.months >= 24 ? Math.floor(liq.months / 12) + " năm" : Math.round(liq.months) + " tháng"} ${badge(liq.status)}`, "", "kpi:liquidity"),
+      tile("Rủi ro khi thị trường xấu", pct(rk.current), `ngưỡng ${pct(rk.limit, false, 0)} ${badge(rk.status)}`, "", "kpi:risk"),
     ].join("");
   };
 
@@ -89,7 +89,7 @@ export async function render(box, ctx) {
   const drawRows = (b, side) => {
     const el = $("#flow-rows", box);
     if (!b) {  // the table view of the chart: every band and its total
-      const line = (x, sign) => `<tr class="click" data-cat="${esc(x.category)}" data-side="${sign}"><td>${esc(x.label)}</td><td class="r num">${sign === "in" ? "+" : "−"}${vnd(x.amount)}</td><td class="r small muted">${x.rows.length} giao dịch</td></tr>`;
+      const line = (x, sign) => `<tr class="click" data-cat="${esc(x.category)}" data-side="${sign}" data-focus="flow:${f.month}:${sign}:${esc(x.category)}"><td>${esc(x.label)}</td><td class="r num">${sign === "in" ? "+" : "−"}${vnd(x.amount)}</td><td class="r small muted">${x.rows.length} giao dịch</td></tr>`;
       el.innerHTML = `<table class="table"><tbody>${f.inflow.map(x => line(x, "in")).join("")}${f.outflow.map(x => line(x, "out")).join("")}
         <tr><td><b>${f.left >= 0 ? "Còn lại" : "Thiếu hụt"}</b></td><td class="r num"><b class="${f.left >= 0 ? "up" : "down"}">${vnd(f.left, true)}</b></td><td></td></tr></tbody></table>`;
       for (const r of el.querySelectorAll("[data-cat]")) r.onclick = () => drawRows((r.dataset.side === "in" ? f.inflow : f.outflow).find(x => x.category === r.dataset.cat), r.dataset.side);
@@ -105,6 +105,7 @@ export async function render(box, ctx) {
   };
 
   const drawFlow = () => {
+    $("#flow-panel", box).dataset.focus = `flow:${f.month}`;
     $("#flow-of", box).textContent = `${MONTH(f.month)} · ${scope === "family" ? "gia đình" : "cá nhân"} · ${f.rows} giao dịch`;
     const sel = $("#month", box);
     sel.innerHTML = [...f.months].reverse().map(m => `<option value="${m}" ${m === f.month ? "selected" : ""}>${MONTH(m)}</option>`).join("");
@@ -130,7 +131,7 @@ export async function render(box, ctx) {
     if (fd.error) { el.innerHTML = `<h3>Điều đáng chú ý</h3><div class="small muted">Không tải được: ${esc(fd.error)}</div>`; return; }
     const its = fd.feed.items;
     el.innerHTML = `<h3>Điều đáng chú ý <span class="hint">${its.length ? `${its.length} mục · quan trọng trước` : ""}</span></h3>
-      ${its.length ? `<div class="list">${its.map((i, k) => `<div class="item feed-item">
+      ${its.length ? `<div class="list">${its.map((i, k) => `<div class="item feed-item" data-focus="${esc(i.key)}">
         <span class="badge ${SEV[i.severity][0]}">${SEV[i.severity][1]}</span>
         <div><div class="t">${esc(i.title)}</div><div class="m">${esc(TYPE[i.type] || i.type)} · ${esc(i.why)}</div>
           <div class="small muted">Nguồn: ${esc(source(i.evidence))}</div></div>

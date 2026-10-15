@@ -60,6 +60,23 @@ a table; dark: passes on the indigo surface). Rules followed: one axis; colour f
 diverging bars around zero for contributions; a legend for ≥ 2 series; tooltips on marks; text in ink tokens, not
 series colours; P5 dashed as “reference only”.
 
+## Motion
+
+Owner request B-01 ([FEAT-33](../features/FEAT-33-living-interface.md)); rules in the last block of `tokens.css`,
+driven by [`web/motion.js`](../../../web/motion.js) and `web/copilot.js`.
+
+- **Only for a change of state**: a request sent, its outcome, something entering, the evidence an answer read, a
+  chosen graph path. Nothing moves at rest with the Copilot closed (measured: 0 animations, 0 style or layout work).
+- **Only `transform` and `opacity`** (checked by `tests/test_living_interface.py`); no library, no JS loop.
+- **Tokens**: `--dur-1` 160 ms (a control answers), `--dur-2` 240 ms (something enters), `--hold` 2.6 s (a mark
+  stays), `--ease-out` `cubic-bezier(.2, .8, .2, 1)`.
+- **Classes**: `data-state` on `.cp-fab` / `.cp-panel` (idle, busy, ok, error, pending); `.cp-in` (enter);
+  `.cp-dots` (thinking); `.mf-focus` (ring) and `svg.mf-dim` (dim the other marks); `.mf-lit` with `--i` (graph
+  path, one column per 70 ms); `html[data-hidden]` pauses all animation.
+- **Colours** reuse the status tokens: `--good` ready/ok, `--accent` working, `--critical` error, `--warning`
+  pending; the ring is `--accent` with a `--band` halo.
+- **Reduced motion**: no animation or transition; states stay as colour and text; a mark is a still outline.
+
 ## Responsive
 
 Breakpoints at 900 px (grid to one column) and 640 px (tighter header, short chart labels). Every current route
@@ -68,6 +85,6 @@ was captured at 390 px with no horizontal page scroll (2026-10-15).
 ## Accessibility — what is in place, what is not
 
 In place: `aria-pressed` on the role and scope toggles, `aria-current` on nav, `role="dialog"` + `aria-modal` on the
-drawer with Esc, `aria-busy` on loading, `role="alert"` on errors, reduced-motion stops the skeleton shimmer, text
+drawer with Esc, `aria-busy` on loading and on the Copilot while it works, `role="alert"` on errors, reduced-motion stops the skeleton shimmer and all motion (FEAT-33), text
 contrast ≥ 4.5:1. Not verified: full keyboard paths through charts (tooltips are hover-only), screen-reader
 reading of the SVG charts (no table alternative on SCR-CL-05's fan chart), focus return after the drawer closes.

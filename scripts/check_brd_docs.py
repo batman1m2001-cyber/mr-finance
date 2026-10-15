@@ -61,7 +61,7 @@ STATUSES = (
     "out_of_scope_demo",
     "not_applicable",
 )
-REQ_ID = r"(?:BRD-(?:BR-\d{2}|FR-\d{3}|NFR-\d{2}|KPI-\d{2}|RULE-[A-Z]+-\d{2})|BRIEF-[A-Z]+-\d{2}|KIT-[A-Z]+-\d{2})"
+REQ_ID = r"(?:BRD-(?:BR-\d{2}|FR-\d{3}|NFR-\d{2}|KPI-\d{2}|RULE-[A-Z]+-\d{2})|(?:BRIEF|KIT|OWN)-[A-Z]+-\d{2})"
 LINK = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)\)|!\[[^\]]*\]\(([^)\s]+)\)")
 TEST_REF = re.compile(r"tests/(test_\w+\.py)::(test_\w+)")
 
@@ -172,6 +172,7 @@ def check_requirements(errors: List[str], report: List[str]) -> None:
         "BRD rules (RULE)": r"BRD-RULE-",
         "Original brief (BRIEF)": r"BRIEF-",
         "Redesign kit (KIT)": r"KIT-",
+        "Owner requests (OWN)": r"OWN-",
     }
     counts = {name: Counter() for name in sets}
     for rid, row in rows.items():

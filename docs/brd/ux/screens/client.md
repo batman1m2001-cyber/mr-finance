@@ -258,7 +258,7 @@ rest; again or “Bỏ chọn” clears. Tooltips on nodes and edges. Phones ope
 | Feature | [FEAT-32](../../features/FEAT-32-copilot.md) |
 | Requirements | KIT-COPILOT-01…05; BRD-BR-11, BRD-NFR-08 |
 | Data | `POST /api/copilot` |
-| Screenshots | [client](../../assets/current_ui/SCR-CL-10_desktop-light.jpg) · [RM confirm](../../assets/current_ui/SCR-CL-10_desktop-light-rm.jpg) · [phone](../../assets/current_ui/SCR-CL-10_phone-light.jpg) |
+| Screenshots | [client](../../assets/current_ui/SCR-CL-10_desktop-light.jpg) · [RM confirm](../../assets/current_ui/SCR-CL-10_desktop-light-rm.jpg) · [phone](../../assets/current_ui/SCR-CL-10_phone-light.jpg) · states (FEAT-33): [marks](../../assets/current_ui/SCR-CL-10_desktop-light-marks.jpg) · [flow marks](../../assets/current_ui/SCR-CL-10_desktop-light-flow.jpg) · [refusal](../../assets/current_ui/SCR-CL-10_desktop-light-error.jpg) · [phone busy](../../assets/current_ui/SCR-CL-10_phone-light-busy.jpg) · [phone marks after close](../../assets/current_ui/SCR-CL-10_phone-light-marks.jpg) · [graph path](../../assets/current_ui/SCR-CL-09_desktop-light-path.jpg) |
 
 **Layout.** Header with the router label (“bộ định tuyến từ khóa” or the model), the page context (“Đang xem:
 Toàn cảnh · Khách hàng · Nguyễn Minh Khoa”), the conversation (answers with a status badge when failed,
@@ -267,3 +267,10 @@ the model only picks a tool and that this is not investment advice.
 
 **Interaction.** Enter sends; a pending write shows **Xác nhận** / **Huỷ**; Esc or ✕ closes and returns focus to
 the button; a navigate answer changes the page. Phones: the panel fills the width.
+
+**States and marks** ([FEAT-33](../../features/FEAT-33-living-interface.md)). A status dot left of the title: green
+(ready; a slow ripple while the panel is open), accent while the request runs (three dots in the list, the
+button's ✦ breathes), ✓ on the button after an answer, red after a refusal or failure (also a dot on the button
+and a red edge on the answer), amber while a write waits for Xác nhận. An answer that read numbers on this page
+marks them and offers **Chỉ trên trang**; otherwise **Mở … →** opens the page and marks them there. Phones: the
+marks wait until the panel is closed.

@@ -207,6 +207,7 @@ export function sankey(box, f, opts = {}) {
   const pick = (b, side) => () => opts.onPick && opts.onPick(b, side);
   const band = (d, b, side) => {
     const p = el("path", {d, fill: b.color, "fill-opacity": 0.32, tabindex: 0, role: "button", class: "band",
+      "data-focus": `flow:${f.month}:${side}:${b.category}`,
       "aria-label": `${b.label}: ${vnd(b.amount)}`}, bands);
     hover(p, `<b>${esc(b.label)}</b><br>${vnd(b.amount)} · ${pct(b.amount / total)}${b.rows ? `<br>${b.rows.length} giao dịch` : ""}`);
     p.addEventListener("click", pick(b, side));

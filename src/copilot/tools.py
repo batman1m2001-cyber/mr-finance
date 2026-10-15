@@ -101,7 +101,11 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         f"tháng trước). Thanh khoản dự phòng {_vnd(lq['value'])}, đủ chi {months}. Khi thị trường xấu, mức sụt giảm "
         f"ước tính {_pct(rk['current'])} so với ngưỡng {_pct(rk['limit'], 0)}: {status}."
     )
-    return {"text": text, "data": {"net_worth": nw["value"], "risk": rk["status"], "as_of": d["as_of"]}}
+    return {
+        "text": text,
+        "data": {"net_worth": nw["value"], "risk": rk["status"], "as_of": d["as_of"]},
+        "focus": ["kpi:net_worth", "kpi:liquidity", "kpi:risk"],
+    }
 
 
 MONTH = re.compile(r"(?:tháng|t)\s*(\d{1,2})(?:\s*[/\-]\s*(\d{2,4}))?", re.I)
@@ -132,7 +136,8 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         f"{left} {_vnd(abs(f['left']))}."
         + (f" Khoản chi lớn nhất: {top['label']} {_vnd(top['amount'])} ({len(top['rows'])} giao dịch)." if top else "")
     )
-    return {"text": text, "data": {"month": f["month"], "left": f["left"]}}
+    focus = [f"flow:{f['month']}"] + ([f"flow:{f['month']}:out:{top['category']}"] if top else [])
+    return {"text": text, "data": {"month": f["month"], "left": f["left"]}, "focus": focus}
 
 
 async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -144,7 +149,11 @@ async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         return {"text": "Không có điều gì cần chú ý lúc này.", "data": {"items": 0}}
     lines = [f"{k + 1}) {i['title']} — {i['why']}." for k, i in enumerate(items[:3])]
     more = f" Còn {len(items) - 3} mục khác trên Toàn cảnh." if len(items) > 3 else ""
-    return {"text": f"{len(items)} điều đáng chú ý. " + " ".join(lines) + more, "data": {"items": len(items)}}
+    return {
+        "text": f"{len(items)} điều đáng chú ý. " + " ".join(lines) + more,
+        "data": {"items": len(items)},
+        "focus": [i["key"] for i in items[:3]],
+    }
 
 
 async def goals(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -175,7 +184,7 @@ async def impact(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         f"Lớn nhất: {big['event']['title']} ({_vnd(big['horizons']['3m']['expected'], True)}). Đây là ước tính theo "
         "kịch bản CIO duyệt, không phải khuyến nghị."
     )
-    return {"text": text, "data": {"events": len(eff)}}
+    return {"text": text, "data": {"events": len(eff)}, "focus": [f"event:{big['event']['id']}"]}
 
 
 async def rm_today(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -187,7 +196,7 @@ async def rm_today(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         if fams
         else "Không có gia đình nào chạm ngưỡng xem trước."
     ) + (f" {len(tasks)} việc theo mục tiêu." if tasks else "")
-    return {"text": text, "data": {"families": len(fams)}}
+    return {"text": text, "data": {"families": len(fams)}, "focus": [f"family:{f}" for f in fams]}
 
 
 async def inbox(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:

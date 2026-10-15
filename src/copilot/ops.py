@@ -113,6 +113,7 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question) -> D
         "tool": t.name,
         "navigate": out.get("navigate"),
         "evidence": link and {"label": page[0], "route": link},
+        "focus": out.get("focus") or [],  # page elements the answer was read from (data-focus keys)
         "suggest": t.follow or HELP[role],
     }
 

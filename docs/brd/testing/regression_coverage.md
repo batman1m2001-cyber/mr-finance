@@ -51,6 +51,7 @@ Not automated beyond `tests/test_web.py`. Recorded manual/scripted checks:
 |---|---|---|
 | 2026-10-15 | 21 routes × {1440 × 900, 390 × 844} (desktop all, phone 6, dark 2) captured for this repository with Playwright against the dev server; page errors, console errors and horizontal scroll recorded per capture | 30 captures, 0 page/console errors, 0 horizontal scroll |
 | 2026-10-16 | K6 sweep: every menu route of every role (29) × {1440 × 900, 390 × 844} × {light, dark}, plus 3 CIO detail routes × the same 4, scripted with Playwright on the dev server (three effective runs) | 128 page loads: 0 page or console errors, 0 horizontal scroll, 0 error panels |
+| 2026-10-16 | B-01 Living Interface, driven on the dev server at 1440 and 390 px: busy (answer delayed 3–4 s), answer marks on Toàn cảnh, phone marks after close, flow row and band, refusal, graph path and phone list; hidden tab pauses; performance before/after (FEAT-33) | as expected; no page error, no horizontal scroll, no long task |
 | 2026-10-16 | K2–K5 click-throughs: Wealth Map drill-down, month switch, Sankey band → rows; feed link → evidence page; graph node → path and detail; Copilot ask, refusal, RM confirm → record approved, navigate | all as expected, no console error |
 | 2026-10-15 | U1–U2 acceptance (news plan §9): 21 routes × desktop/phone × light/dark | 84 screenshots, no horizontal scroll, no console error; 6 click-through flows, 5 passed, 1 skipped (a legacy link not shown for the test client) |
 
