@@ -84,9 +84,11 @@ def in_thread(fn, *args):
 class Page:
     """A page that records errors and waits for the shell to say a route has rendered (`mf:page`)."""
 
-    def __init__(self, browser, base_url, size="desktop", reduced=False):
+    def __init__(self, browser, base_url, size="desktop", reduced=False, theme="light"):
         w, h = SIZES[size]
-        self.ctx = browser.new_context(viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None)
+        self.ctx = browser.new_context(
+            viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None, color_scheme=theme
+        )
         self.page = self.ctx.new_page()
         self.errors = []
         self.page.on("pageerror", lambda e: self.errors.append(f"pageerror: {e} @ {(e.stack or '').splitlines()[1:3]}"))
@@ -132,8 +134,8 @@ class Page:
 def open_page(browser, base_url):
     pages = []
 
-    def make(size="desktop", reduced=False):
-        pages.append(Page(browser, base_url, size, reduced))
+    def make(size="desktop", reduced=False, theme="light"):
+        pages.append(Page(browser, base_url, size, reduced, theme))
         return pages[-1]
 
     yield make

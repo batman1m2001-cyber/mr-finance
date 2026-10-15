@@ -1,6 +1,6 @@
 /* CIO · Sự kiện & nhận định: events, the CIO agent's view of each, the independent challenge, and the
    decision. The page shows what the server decided (status, checks, findings); it decides nothing. */
-import {ASSET_CLASS, EVENT_TYPE, HORIZON, empty, esc, get, post, pct, toast, viewBadge, when, runBadge, severity, signClass, vnd} from "../core/core.js";
+import {ASSET_CLASS, EVENT_TYPE, HORIZON, empty, esc, get, post, pct, toast, viewBadge, viewLabel, when, runBadge, severity, signClass, vnd} from "../core/core.js";
 import {moves, probBar, slot} from "../charts/charts.js";
 
 const STEPS = [["DRAFTING", "Agent soạn"], ["PENDING_CHALLENGE", "Phản biện"], ["PENDING_APPROVAL", "CIO duyệt"], ["APPROVED", "Đã duyệt"]];
@@ -78,6 +78,9 @@ async function renderView(box, ctx, id) {
   const answered = ch ? ((v.responses || {})[ch.id] || {}) : {};
   const editable = ["PENDING_CHALLENGE", "PENDING_APPROVAL"].includes(v.status);
   const allOk = d.checks.length && d.checks.every(c => c.ok);
+  // once decided, “Đang chờ duyệt” is not a failed condition: the view is past it (R7: it showed a red ✕ on APPROVED)
+  const decided = !["DRAFTING", "PENDING_CHALLENGE", "PENDING_APPROVAL", "AGENT_ERROR"].includes(v.status);
+  const checks = decided ? d.checks.filter(c => c.code !== "a") : d.checks;
 
   box.innerHTML = `
     <div class="pagehead"><div><a class="small" href="${ctx.href("nhan-dinh", v.event_id)}">← ${esc(v.event_id)}</a>
@@ -91,8 +94,8 @@ async function renderView(box, ctx, id) {
       <div class="panel c7"><h3>Nhận định <span class="badge ai">${v.mode === "live" ? "AI soạn" : "mô phỏng"}</span></h3>
         <div style="font-size:15px">${esc(cur.summary)}</div>
         <div class="small muted" style="margin-top:8px">Đã vào giá: <b>${{none: "chưa", partial: "một phần", full: "đã hết"}[cur.scenarios.priced_in]}</b> · nội dung ${esc(v.content_hash.slice(0, 10))}</div></div>
-      <div class="panel c5"><h3>Điều kiện duyệt</h3>
-        <div class="list">${d.checks.map(c => `<div class="check"><span class="${c.ok ? "up" : "down"}" aria-hidden="true">${c.ok ? "✓" : "✕"}</span><div><div>${esc(c.label)}</div>${c.ok ? "" : `<div class="small muted">${esc(c.detail)}</div>`}</div></div>`).join("")}</div>
+      <div class="panel c5"><h3>Điều kiện duyệt${decided ? ` <span class="hint">đã quyết: ${esc(viewLabel(v.status))}</span>` : ""}</h3>
+        <div class="list">${checks.map(c => `<div class="check"><span class="${c.ok ? "up" : "down"}" aria-hidden="true">${c.ok ? "✓" : "✕"}</span><div><div>${esc(c.label)}</div>${c.ok ? "" : `<div class="small muted">${esc(c.detail)}</div>`}</div></div>`).join("")}</div>
         ${v.status === "PENDING_APPROVAL" || v.status === "PENDING_CHALLENGE" ? `
         <label class="field" style="margin-top:12px">Lý do (bắt buộc)<textarea id="reason" placeholder="Ví dụ: Đồng ý kịch bản; nhánh căng thẳng giữ để đo rủi ro"></textarea></label>
         <div class="row" style="margin-top:10px"><button type="button" class="btn primary" data-act="approve" ${allOk ? "" : "disabled"}>Duyệt và áp dụng</button>

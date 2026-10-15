@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — UI redesign R7: regression — every route of every role on desktop and phone, light and dark, in the
+  suite (254 tests); Living Interface re-measured (rest unchanged, one question 170 ms, JS 62 KB from 135 KB); an
+  approved view's checklist no longer shows “Đang chờ duyệt” as failed; final report `docs/UI_REDESIGN_REPORT.md`
+  — FEAT-33, PRODUCT_OVERVIEW, UI_REDESIGN_PLAN §4.
+
 - 2026-10-16 — UI redesign R6: the public demo runs the real models (CIO agent, challenger on another vendor, Copilot
   router); `scripts/demo_walkthrough.py` fills a demo over HTTP from fetched news — events, agent, challenger,
   answers to critical findings and approvals, each reason naming the script; the live demo now has two runs in

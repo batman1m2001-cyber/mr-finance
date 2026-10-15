@@ -1,5 +1,6 @@
 """Every menu route of every role renders in the browser — no page error, no error panel, no horizontal scroll,
-the Copilot button present — on a desktop and a phone, with one approved event so the news-impact pages have content."""
+the Copilot button present — on a desktop and a phone, light and dark (R7), with one approved event so the
+news-impact pages have content."""
 
 import pytest
 from conftest import in_thread
@@ -20,12 +21,14 @@ def routes(p):
     return out
 
 
+@pytest.mark.parametrize("theme", ["light", "dark"])
 @pytest.mark.parametrize("size", ["desktop", "phone"])
-def test_every_route_renders_without_errors(open_page, size):
+def test_every_route_renders_without_errors(open_page, size, theme):
     in_thread(approved, *MARKET)
-    p = open_page(size)
+    p = open_page(size, theme=theme)
+    assert p.page.evaluate("matchMedia('(prefers-color-scheme: dark)').matches") == (theme == "dark")
     seen = routes(p)
-    assert len(seen) >= 29, seen
+    assert len(seen) >= 36, seen  # 33 before R4; + Bản đồ tài chính (client, RM) and the CIO run graph
     bad = {}
     for r in seen:
         p.errors.clear()

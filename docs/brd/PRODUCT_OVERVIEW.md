@@ -34,8 +34,9 @@ flowchart LR
 
 ## What is real and what is not
 
-Real: the news (public RSS), all logic and rules, the engine, the audit chain, the tests (195 passing on
-2026-10-16). Mock or assumed: clients and prices ([ADR-0005](decisions/ADR-0005-mock-clients-and-prices-public-news.md)),
+Real: the news (public RSS), all logic and rules, the engine, the audit chain, the tests (254 passing on
+2026-10-16), and on the public demo since 2026-10-16 the AI: the CIO agent, its challenger on another vendor and
+the Copilot's router run on real models. Mock or assumed: clients and prices ([ADR-0005](decisions/ADR-0005-mock-clients-and-prices-public-news.md)),
 factor-model parameters ([ADR-0004](decisions/ADR-0004-assumed-factor-model-parameters.md)), the restricted list,
 identities ([ADR-0006](decisions/ADR-0006-the-role-switcher-is-not-security.md)). The agents run in mock mode unless
 two models are configured ([ADR-0010](decisions/ADR-0010-two-configured-models-and-a-labelled-mock.md)); the Copilot
@@ -49,7 +50,10 @@ configuration (FR-701), the agent catalogue (FR-703), the policy agent (FR-306),
 tracking (BR-15, blocked on data); goal impact per run (FR-404) is built on our definition, awaiting the CIO
 (Q-11, decided in ADR-0017). The redesign kit's additions are built (2026-10-16, [docs/REDESIGN_KIT_PLAN.md](../REDESIGN_KIT_PLAN.md)):
 Toàn cảnh with the feed (FEAT-29, 31), the impact graph (FEAT-30) and the Copilot (FEAT-32). At the owner's request
-the interface answers the Copilot: its state is shown, and an answer marks the numbers it read (FEAT-33).
+the interface answers the Copilot: its state is shown, and an answer marks the numbers it read (FEAT-33). The whole
+interface was then redrawn to the kit's concept board (UI redesign R0–R7, [docs/UI_REDESIGN_PLAN.md](../UI_REDESIGN_PLAN.md),
+report in [docs/UI_REDESIGN_REPORT.md](../UI_REDESIGN_REPORT.md)): every page in one look, the pre-redesign pages
+rebuilt, the overview graph, an event timeline, the CIO's run graph, Copilot 2.0, browser tests for every route.
 
 ## Roadmap (from the BRD §18)
 
