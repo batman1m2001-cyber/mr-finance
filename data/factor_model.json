@@ -1,0 +1,574 @@
+{
+ "version": "FM-DEMO-2026-10",
+ "status": "assumed",
+ "note": "Cỡ cú sốc, tỷ lệ thể hiện và cách tính theo BRD mục 9. Độ biến động, tương quan, R² và hệ số căng thẳng là giả định cho demo, chưa ước lượng từ dữ liệu.",
+ "horizons": {
+  "1w": 0.25,
+  "3m": 3,
+  "12m": 12
+ },
+ "priced_in": {
+  "none": 1.0,
+  "partial": 0.5,
+  "full": 0.0
+ },
+ "core_uncertainty": 0.4,
+ "stressed": {
+  "scale": 1.4,
+  "clip": 0.85,
+  "min_vol_multiplier": 1.2,
+  "overrides": [
+   [
+    "VNINDEX",
+    "FOREIGN_FLOW",
+    0.7
+   ],
+   [
+    "VNINDEX",
+    "USDVND",
+    -0.6
+   ],
+   [
+    "VNINDEX",
+    "GLOBAL_EQ",
+    0.7
+   ],
+   [
+    "VNINDEX",
+    "RE_SPREAD",
+    -0.65
+   ]
+  ]
+ },
+ "factors": [
+  {
+   "id": "US10Y",
+   "name": "Lợi suất trái phiếu Mỹ 10 năm",
+   "group": "intl",
+   "unit": "bp",
+   "sizes": {
+    "S": 15,
+    "M": 30,
+    "L": 60
+   },
+   "realisation": {
+    "1w": 0.8,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 25,
+   "stress_vol_multiplier": 1.3,
+   "assumed": true
+  },
+  {
+   "id": "DXY",
+   "name": "Chỉ số USD (DXY)",
+   "group": "intl",
+   "unit": "pct",
+   "sizes": {
+    "S": 1,
+    "M": 2,
+    "L": 4
+   },
+   "realisation": {
+    "1w": 0.8,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 2.0,
+   "stress_vol_multiplier": 1.3,
+   "assumed": true
+  },
+  {
+   "id": "GLOBAL_EQ",
+   "name": "Cổ phiếu toàn cầu",
+   "group": "intl",
+   "unit": "pct",
+   "sizes": {
+    "S": 3,
+    "M": 7,
+    "L": 15
+   },
+   "realisation": {
+    "1w": 0.8,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 4.5,
+   "stress_vol_multiplier": 1.5,
+   "assumed": true
+  },
+  {
+   "id": "BRENT",
+   "name": "Giá dầu Brent",
+   "group": "intl",
+   "unit": "pct",
+   "sizes": {
+    "S": 5,
+    "M": 12,
+    "L": 25
+   },
+   "realisation": {
+    "1w": 0.8,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 9.0,
+   "stress_vol_multiplier": 1.4,
+   "assumed": true
+  },
+  {
+   "id": "GOLD",
+   "name": "Giá vàng thế giới",
+   "group": "intl",
+   "unit": "pct",
+   "sizes": {
+    "S": 2,
+    "M": 5,
+    "L": 10
+   },
+   "realisation": {
+    "1w": 0.8,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 4.0,
+   "stress_vol_multiplier": 1.3,
+   "assumed": true
+  },
+  {
+   "id": "BTC",
+   "name": "Bitcoin",
+   "group": "intl",
+   "unit": "pct",
+   "sizes": {
+    "S": 8,
+    "M": 20,
+    "L": 40
+   },
+   "realisation": {
+    "1w": 0.9,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Giả định",
+   "vol_month": 18.0,
+   "stress_vol_multiplier": 1.3,
+   "assumed": true
+  },
+  {
+   "id": "USDVND",
+   "name": "Tỷ giá USD/VND",
+   "group": "domestic",
+   "unit": "pct",
+   "sizes": {
+    "S": 0.5,
+    "M": 1.5,
+    "L": 3
+   },
+   "realisation": {
+    "1w": 0.4,
+    "3m": 0.9,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 0.8,
+   "stress_vol_multiplier": 1.5,
+   "assumed": true
+  },
+  {
+   "id": "VN_RATE",
+   "name": "Lãi suất VND điều hành, liên ngân hàng",
+   "group": "domestic",
+   "unit": "bp",
+   "sizes": {
+    "S": 25,
+    "M": 50,
+    "L": 100
+   },
+   "realisation": {
+    "1w": 0.3,
+    "3m": 0.8,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 15,
+   "stress_vol_multiplier": 1.6,
+   "assumed": true
+  },
+  {
+   "id": "VN_GOV",
+   "name": "Lợi suất TPCP Việt Nam",
+   "group": "domestic",
+   "unit": "bp",
+   "sizes": {
+    "S": 15,
+    "M": 30,
+    "L": 60
+   },
+   "realisation": {
+    "1w": 0.3,
+    "3m": 0.8,
+    "12m": 1.0
+   },
+   "brd_parameter": "Giả định",
+   "vol_month": 15,
+   "stress_vol_multiplier": 1.5,
+   "assumed": true
+  },
+  {
+   "id": "RE_SPREAD",
+   "name": "Chênh lệch tín dụng DN bất động sản",
+   "group": "domestic",
+   "unit": "bp",
+   "sizes": {
+    "S": 50,
+    "M": 150,
+    "L": 300
+   },
+   "realisation": {
+    "1w": 0.2,
+    "3m": 0.7,
+    "12m": 1.0
+   },
+   "brd_parameter": "Giả định",
+   "vol_month": 40,
+   "stress_vol_multiplier": 2.0,
+   "assumed": true
+  },
+  {
+   "id": "FIN_SPREAD",
+   "name": "Chênh lệch tín dụng DN tài chính",
+   "group": "domestic",
+   "unit": "bp",
+   "sizes": {
+    "S": 20,
+    "M": 50,
+    "L": 100
+   },
+   "realisation": {
+    "1w": 0.2,
+    "3m": 0.7,
+    "12m": 1.0
+   },
+   "brd_parameter": "Giả định",
+   "vol_month": 15,
+   "stress_vol_multiplier": 1.6,
+   "assumed": true
+  },
+  {
+   "id": "VNINDEX",
+   "name": "VN-Index",
+   "group": "domestic",
+   "unit": "pct",
+   "sizes": {
+    "S": 3,
+    "M": 7,
+    "L": 15
+   },
+   "realisation": {
+    "1w": 0.7,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 6.0,
+   "stress_vol_multiplier": 1.6,
+   "assumed": true
+  },
+  {
+   "id": "FOREIGN_FLOW",
+   "name": "Dòng vốn ngoại trên HOSE",
+   "group": "domestic",
+   "unit": "sd",
+   "sizes": {
+    "S": 1,
+    "M": 2,
+    "L": 3
+   },
+   "realisation": {
+    "1w": 0.7,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng một phần",
+   "vol_month": 1.0,
+   "stress_vol_multiplier": 1.2,
+   "assumed": true
+  },
+  {
+   "id": "SJC_GAP",
+   "name": "Chênh lệch vàng SJC so với thế giới",
+   "group": "domestic",
+   "unit": "pp",
+   "sizes": {
+    "S": 2,
+    "M": 4,
+    "L": 8
+   },
+   "realisation": {
+    "1w": 0.6,
+    "3m": 1.0,
+    "12m": 1.0
+   },
+   "brd_parameter": "Ước lượng",
+   "vol_month": 2.5,
+   "stress_vol_multiplier": 1.4,
+   "assumed": true
+  },
+  {
+   "id": "VN_HOUSE",
+   "name": "Giá nhà ở Việt Nam",
+   "group": "domestic",
+   "unit": "pct",
+   "sizes": {
+    "S": 1,
+    "M": 3,
+    "L": 6
+   },
+   "realisation": {
+    "1w": 0.0,
+    "3m": 0.3,
+    "12m": 1.0
+   },
+   "brd_parameter": "Giả định",
+   "vol_month": 1.5,
+   "stress_vol_multiplier": 1.3,
+   "assumed": true
+  }
+ ],
+ "correlations": [
+  [
+   "US10Y",
+   "DXY",
+   0.4
+  ],
+  [
+   "US10Y",
+   "GLOBAL_EQ",
+   -0.2
+  ],
+  [
+   "US10Y",
+   "GOLD",
+   -0.3
+  ],
+  [
+   "US10Y",
+   "BTC",
+   -0.2
+  ],
+  [
+   "US10Y",
+   "USDVND",
+   0.3
+  ],
+  [
+   "US10Y",
+   "VN_GOV",
+   0.3
+  ],
+  [
+   "US10Y",
+   "VNINDEX",
+   -0.2
+  ],
+  [
+   "DXY",
+   "GLOBAL_EQ",
+   -0.3
+  ],
+  [
+   "DXY",
+   "BRENT",
+   -0.2
+  ],
+  [
+   "DXY",
+   "GOLD",
+   -0.4
+  ],
+  [
+   "DXY",
+   "BTC",
+   -0.3
+  ],
+  [
+   "DXY",
+   "USDVND",
+   0.5
+  ],
+  [
+   "DXY",
+   "VNINDEX",
+   -0.25
+  ],
+  [
+   "DXY",
+   "FOREIGN_FLOW",
+   -0.3
+  ],
+  [
+   "GLOBAL_EQ",
+   "BRENT",
+   0.3
+  ],
+  [
+   "GLOBAL_EQ",
+   "BTC",
+   0.4
+  ],
+  [
+   "GLOBAL_EQ",
+   "USDVND",
+   -0.2
+  ],
+  [
+   "GLOBAL_EQ",
+   "VNINDEX",
+   0.45
+  ],
+  [
+   "GLOBAL_EQ",
+   "FOREIGN_FLOW",
+   0.35
+  ],
+  [
+   "BRENT",
+   "GOLD",
+   0.15
+  ],
+  [
+   "GOLD",
+   "BTC",
+   0.15
+  ],
+  [
+   "GOLD",
+   "USDVND",
+   -0.15
+  ],
+  [
+   "GOLD",
+   "SJC_GAP",
+   -0.3
+  ],
+  [
+   "USDVND",
+   "VN_RATE",
+   0.3
+  ],
+  [
+   "USDVND",
+   "VNINDEX",
+   -0.35
+  ],
+  [
+   "USDVND",
+   "FOREIGN_FLOW",
+   -0.4
+  ],
+  [
+   "USDVND",
+   "SJC_GAP",
+   0.2
+  ],
+  [
+   "USDVND",
+   "VN_GOV",
+   0.25
+  ],
+  [
+   "VN_RATE",
+   "VN_GOV",
+   0.6
+  ],
+  [
+   "VN_RATE",
+   "RE_SPREAD",
+   0.3
+  ],
+  [
+   "VN_RATE",
+   "FIN_SPREAD",
+   0.3
+  ],
+  [
+   "VN_RATE",
+   "VNINDEX",
+   -0.3
+  ],
+  [
+   "VN_RATE",
+   "VN_HOUSE",
+   -0.2
+  ],
+  [
+   "VN_GOV",
+   "RE_SPREAD",
+   0.2
+  ],
+  [
+   "VN_GOV",
+   "FIN_SPREAD",
+   0.3
+  ],
+  [
+   "VN_GOV",
+   "VNINDEX",
+   -0.25
+  ],
+  [
+   "RE_SPREAD",
+   "FIN_SPREAD",
+   0.5
+  ],
+  [
+   "RE_SPREAD",
+   "VNINDEX",
+   -0.4
+  ],
+  [
+   "RE_SPREAD",
+   "VN_HOUSE",
+   -0.35
+  ],
+  [
+   "FIN_SPREAD",
+   "VNINDEX",
+   -0.3
+  ],
+  [
+   "VNINDEX",
+   "FOREIGN_FLOW",
+   0.5
+  ],
+  [
+   "VNINDEX",
+   "VN_HOUSE",
+   0.2
+  ]
+ ],
+ "loadings": {
+  "stock_r2": 0.35,
+  "usd_revenue": {
+   "FPT": 0.5
+  },
+  "fund_beta": {
+   "equity": 1.0
+  },
+  "fund_duration": {
+   "bond": 2.0,
+   "bond_long": 7.0,
+   "bond_corporate": 2.5,
+   "money": 0.0
+  },
+  "gold_sjc_gap": 0.9,
+  "private_equity_vnindex": 0.5
+ }
+}
