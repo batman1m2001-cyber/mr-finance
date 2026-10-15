@@ -50,10 +50,10 @@ CIO                                         Tuân thủ (Compliance)
 └── Cấu hình ............ SCR-CIO-09
 ```
 
-Two page generations live in this shell ([ADR-0013](../decisions/ADR-0013-wrap-the-legacy-pages-in-the-new-shell.md)):
-**legacy** pages (rendered by `web/app.js` into `#tab-*`: overview, sources, scenarios, risk, alerts, rm,
-performance, perfall) and **new** pages (`web/pages/*.js` into `#page-new`). The same legacy page appears for
-the client and inside the RM's “Khách hàng” section (staff view).
+Every page is an ES module in `web/pages/` rendered into `#page` ([ADR-0019](../decisions/ADR-0019-every-page-is-a-module-page.md),
+which supersedes ADR-0013's two generations since UI redesign R3, 2026-10-16). The shell owns the client picker,
+the personal / family scope and “Làm lại demo”. The same page appears for the client and inside the RM's
+“Khách hàng” section (staff view, marked internal).
 
 ## Where each capability lives
 

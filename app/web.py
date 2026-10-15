@@ -34,6 +34,16 @@ from wealth import fixtures, store
 from wealth.paths import DATA, ROOT
 
 
+class Revalidated(StaticFiles):
+    """The UI's files, which a browser checks again on every load (a 304 when unchanged): the pages are ES modules
+    that import each other, and a module kept from before a deploy beside one from after it breaks the page."""
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
 async def clients(request: Request) -> JSONResponse:
     out = []
     for cid in fixtures.client_ids():
@@ -572,6 +582,6 @@ app = Starlette(
         Route("/api/reset", reset, methods=["POST"]),
         # the sample statements a demo uploads
         Mount("/samples", app=StaticFiles(directory=DATA / "samples"), name="samples"),
-        Mount("/", app=StaticFiles(directory=ROOT / "web", html=True), name="web"),
+        Mount("/", app=Revalidated(directory=ROOT / "web", html=True), name="web"),
     ]
 )

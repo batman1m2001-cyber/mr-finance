@@ -65,8 +65,8 @@ tagline hides, search takes its own row ([FEAT-34](../features/FEAT-34-header-se
 | Charts: `fan`, `diverging`, `probBar`, `heat`, `spark`, `moves`, `sankey`, `hover` | charts/charts.js | SVG, no library |
 | Copilot button | tokens.css, copilot.js | a 56 px round mark with the sparkles icon; its states are in Motion |
 
-The old pages (`web/app.css`, `web/app.js`) read the same tokens but keep their own layout until they are rebuilt
-(UI redesign plan R3).
+Since UI redesign R3 every page uses these tokens and components; the old `web/app.css` and `web/app.js` are gone
+(ADR-0019).
 
 ## Data visualisation rules (applied)
 

@@ -162,3 +162,8 @@ export const EVENT_TYPE = {
 
 // BRD §14 (RULE-SEC-03): staff screens say they are internal
 export const internal = () => `<div class="internal" role="note"><span class="badge">Nội bộ</span> Chỉ nhân viên xem được; khách hàng không thấy trang này.</div>`;
+
+// the goals the client follows on Kế hoạch, kept in this browser (null: the server's defaults)
+export function followedIds(client) {
+  try { return JSON.parse(localStorage.getItem(`mf.goals.${client}`) || "null"); } catch (_) { return null; }
+}

@@ -6,8 +6,7 @@
 <title>OneWealth</title>
 <meta name="description" content="Bức tranh toàn cảnh tài sản của khách hàng, và tin tức đang tác động tới nó.">
 <script>try { const t = localStorage.getItem("mf.theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}</script>
-<link rel="stylesheet" href="app.css?v=20261016r1">
-<link rel="stylesheet" href="core/tokens.css?v=20261016r1">
+<link rel="stylesheet" href="core/tokens.css?v=20261016r4">
 </head>
 <body>
 <header class="shell-top">
@@ -45,23 +44,12 @@
 </header>
 <nav class="subnav" id="subnav" aria-label="Mục" hidden></nav>
 <main id="main">
-  <section id="page-new" class="page" hidden></section>
-  <section id="tab-overview" class="tab" hidden></section>
-  <section id="tab-alerts" class="tab" hidden></section>
-  <section id="tab-risk" class="tab" hidden></section>
-  <section id="tab-scenarios" class="tab" hidden></section>
-  <section id="tab-performance" class="tab" hidden></section>
-  <section id="tab-perfall" class="tab" hidden></section>
-  <section id="tab-sources" class="tab" hidden></section>
-  <section id="tab-rm" class="tab" hidden></section>
+  <section id="page" class="page"></section>
 </main>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <footer class="foot">Dữ liệu khách hàng và giá là mô phỏng; tin tức lấy từ nguồn công khai; tham số mô hình là giả định.
   Nội dung không phải khuyến nghị đầu tư. Bộ chuyển vai trò chỉ để demo, không phải cơ chế bảo mật.
   <button type="button" id="reset" class="linkbtn">Làm lại demo</button></footer>
-<script src="fmt.js?v=20261016r1"></script>
-<script src="charts.js?v=20261016r1"></script>
-<script src="app.js?v=20261016r1"></script>
-<script type="module" src="shell.js?v=20261016r1"></script>
+<script type="module" src="shell.js?v=20261016r4"></script>
 </body>
 </html>

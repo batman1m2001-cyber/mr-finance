@@ -89,11 +89,11 @@ class Page:
         self.ctx = browser.new_context(viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None)
         self.page = self.ctx.new_page()
         self.errors = []
-        self.page.on("pageerror", lambda e: self.errors.append(f"pageerror: {e}"))
+        self.page.on("pageerror", lambda e: self.errors.append(f"pageerror: {e} @ {(e.stack or '').splitlines()[1:3]}"))
         self.page.on("console", lambda m: m.type == "error" and self.errors.append(f"console: {m.text}"))
         self.base = base_url
         self.page.goto(f"{base_url}/#/client")
-        self.page.wait_for_function("document.querySelector('#nav a') && window.Legacy")
+        self.page.wait_for_function("document.querySelector('#nav a') && document.querySelector('#client option')")
 
     def go(self, route):
         ok = self.page.evaluate(
@@ -107,7 +107,7 @@ class Page:
         )
         if not ok:
             self.errors.append(f"{route}: did not finish rendering in 15 s")
-        self.page.wait_for_function("!document.querySelector('#page-new:not([hidden]) .skeleton')")
+        self.page.wait_for_function("!document.querySelector('#page:not([hidden]) .skeleton')")
         self.page.wait_for_timeout(150)
 
     def problems(self):

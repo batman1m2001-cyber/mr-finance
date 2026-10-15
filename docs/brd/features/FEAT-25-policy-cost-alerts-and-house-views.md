@@ -22,7 +22,7 @@ These are not the BRD's engine (Q-03, [ADR-0007](../decisions/ADR-0007-policy-co
 cash-cost rules stay here; price-moving ones should move to the engine (N5).
 
 ## Implementation
-`src/impact/{graph,ops,_rules}.py`; `app/web.py::views`; UI `web/app.js` (tab `alerts`).
+`src/impact/{graph,ops,_rules}.py`; `app/web.py::views`; UI `web/pages/policy.js` (was tab `alerts`).
 
 ## Acceptance and tests
 `tests/test_impact.py` (10 tests, e.g. `::test_impact_is_exposure_times_sensitivity_times_probability`,

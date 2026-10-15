@@ -23,7 +23,7 @@ const FOR = {ok: "ok", pending: "pending", failed: "error", forbidden: "error", 
 
 function context() {
   const role = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "client";
-  const client = (window.Legacy && window.Legacy.client && window.Legacy.client()) || ($("#client") || {}).value || null;
+  const client = ($("#client") || {}).value || null;
   const scope = (document.querySelector("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope;
   return {role: ROLE_LABEL[role] ? role : "client", client_id: client, scope, route: location.hash};
 }

@@ -15,8 +15,8 @@ missed news, AI pipeline scores per stage, news-reading engagement). `/api/advis
 staff pages carry a “Nội bộ” banner.
 
 ## Implementation
-`app/web.py` (`advisory`, `advisory_all`), `scripts/make_advisory.py`; UI `web/app.js` (tabs `rm`,
-`performance`, `perfall`).
+`app/web.py` (`advisory`, `advisory_all`), `scripts/make_advisory.py`; UI `web/pages/advisor.js`,
+`web/pages/performance.js`, `web/pages/perfall.js` (were tabs `rm`, `performance`, `perfall`).
 
 ## Acceptance and tests
 `tests/test_app.py::test_the_specialist_team_and_the_advisory_record`, `::test_the_advisory_record_over_every_client`.

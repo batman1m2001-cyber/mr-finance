@@ -18,9 +18,10 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0010](ADR-0010-two-configured-models-and-a-labelled-mock.md) | Two configured models, refused if equal; a labelled mock | accepted | 2026-10-15 |
 | [ADR-0011](ADR-0011-engine-in-floats-rounded-to-the-dong.md) | The engine computes in floats and rounds to the dong once | accepted | 2026-10-15 |
 | [ADR-0012](ADR-0012-the-copilot-routes-and-never-reads-client-data.md) | The Copilot routes; it never reads client data | accepted (planned) | 2026-10-15 |
-| [ADR-0013](ADR-0013-wrap-the-legacy-pages-in-the-new-shell.md) | Wrap the legacy pages in the new shell instead of rewriting them | accepted | 2026-10-15 |
+| [ADR-0013](ADR-0013-wrap-the-legacy-pages-in-the-new-shell.md) | Wrap the legacy pages in the new shell instead of rewriting them | superseded by ADR-0019 | 2026-10-15 |
 | [ADR-0014](ADR-0014-docs-brd-is-the-living-product-repository.md) | docs/brd is the living product knowledge repository | accepted | 2026-10-15 |
 | [ADR-0015](ADR-0015-decisions-of-the-first-build-plan.md) | Decisions of the first build plan (D1–D9) | accepted | 2026-10-09 |
 | [ADR-0016](ADR-0016-configuration-two-person-rule.md) | Configuration is versioned; two people for the factor model, thresholds and restricted list | accepted | 2026-10-16 |
 | [ADR-0017](ADR-0017-goal-impact-rule.md) | Goal impact (FR-404): goals draw on financial assets in date order; levels as in goals planning | accepted | 2026-10-16 |
 | [ADR-0018](ADR-0018-owner-decisions-public-quotes-and-ai-in-the-demo.md) | Owner decisions: BRD quotes stay public; the demo may send client text to the model | accepted | 2026-10-16 |
+| [ADR-0019](ADR-0019-every-page-is-a-module-page.md) | Every page is a module page; the pre-redesign pages are rebuilt and removed | accepted | 2026-10-16 |

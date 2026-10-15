@@ -99,7 +99,7 @@ Found during the documentation audit; small, but recorded so a refactor can move
 |---|---|---|
 | `web/pages/today.js` | Groups the server's per-run RM cases by family and **sums** their 3-month expected changes; picks the worst P10 | The family total is not computed or tested server-side |
 | `web/pages/impact.js` | Sums contributions per holding across runs for the staff detail table; chooses the event shown in the fan chart (largest absolute change) | Untested aggregation |
-| `web/app.js` | Maps tiers to the three source-group titles of the overview | Presentation only |
+| `web/pages/detail.js` | Maps tiers to the three source-group titles of Chi tiết | Presentation only |
 | `web/pages/events.js` | Builds the `idem_key` from action, view id and content hash | The server accepts any key; idempotency depends on the client sending a stable one |
 
 ## 5. Run and deploy

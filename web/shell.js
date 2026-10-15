@@ -1,6 +1,6 @@
-/* The shell: roles, navigation, routing, theme. Each role sees its own pages (docs/NEWS_IMPACT_PLAN.md
-   §5). A page is either one that came before the redesign (rendered by app.js into a #tab-* section)
-   or a new module in pages/ rendered into #page-new. The address is the route: #/cio/nhan-dinh/VW-0001-v1.
+/* The shell: roles, navigation, routing, the client picker and scope, theme, demo reset. Each role sees its own
+   pages (docs/NEWS_IMPACT_PLAN.md §5); every page is a module in pages/ rendered into #page (ADR-0019). The
+   address is the route: #/cio/nhan-dinh/VW-0001-v1.
 
    The role switcher is a demo: it sends a user id with each action and the server checks that id's
    role. It is not security, and the footer says so. */
@@ -17,10 +17,10 @@ const ROLES = {
         {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "chi-tiet", label: "Chi tiết", page: "detail"}]},
       {id: "tai-san", label: "Tài sản", page: "holdings"},
       {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [
-        {id: "ke-hoach", label: "Kế hoạch", page: "plan"}, {id: "khau-vi", label: "Khẩu vị rủi ro", legacy: "risk"}]},
+        {id: "ke-hoach", label: "Kế hoạch", page: "plan"}, {id: "khau-vi", label: "Khẩu vị rủi ro", page: "risktest"}]},
       {id: "tin", label: "Tin tác động", sub: [
-        {id: "thi-truong", label: "Tác động thị trường", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}]},
-      {id: "chuyen-gia", label: "Chuyên gia", legacy: "rm"},
+        {id: "thi-truong", label: "Tác động thị trường", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}]},
+      {id: "chuyen-gia", label: "Chuyên gia", page: "advisor"},
     ],
   },
   rm: {
@@ -32,9 +32,9 @@ const ROLES = {
         {id: "toan-canh", label: "Toàn cảnh", page: "pulse"},
         {id: "tong-quan", label: "Chi tiết", page: "detail"},
         {id: "tai-san", label: "Tài sản", page: "holdings"}, {id: "ke-hoach", label: "Kế hoạch", page: "plan"},
-        {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "performance"},
-        {id: "duyet", label: "Duyệt đề xuất", legacy: "rm"}]},
-      {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "perfall"},
+        {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "performance"},
+        {id: "duyet", label: "Duyệt đề xuất", page: "advisor"}]},
+      {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "perfall"},
     ],
   },
   cio: {
@@ -61,14 +61,6 @@ const ROLES = {
     ],
   },
 };
-// legacy tab → where it lives for each role (for links inside the legacy pages)
-const LEGACY_HOME = {};
-for (const [role, r] of Object.entries(ROLES)) {
-  for (const n of r.nav) {
-    for (const s of n.sub || [n]) if (s.legacy) (LEGACY_HOME[role] ||= {})[s.legacy] = n.sub ? `#/${role}/${n.id}/${s.id}` : `#/${role}/${n.id}`;
-  }
-}
-
 const state = {role: "client", users: {}, route: null, seq: 0};
 const pages = {};
 
@@ -141,31 +133,31 @@ async function route() {
   localStore("mf.role", rt.role);
   drawChrome(rt);
   if (header) header.refresh();
-  window.Legacy && window.Legacy.setViewer(rt.role === "client" ? "client" : "staff", ROLES[rt.role].user);
   const target = rt.sub || rt.nav;
-  const box = $("#page-new");
-  if (target.legacy) {
-    box.hidden = true;
-    box.innerHTML = "";
-    await window.Legacy.ready;
-    window.Legacy.showTab(target.legacy);
-    window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
-    return;
-  }
-  for (const s of $$(".tab")) s.hidden = true;
-  box.hidden = false;
+  // each render gets its own element: a page still drawing for an earlier route (a late fetch, a timer) writes
+  // into a node that has left the document, never into the page shown now
+  const box = document.createElement("div");
+  $("#page").replaceChildren(box);
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r1`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r4`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {
     if (seq === state.seq) box.innerHTML = failed(e);
-    console.error(e);
+    if (box.isConnected) console.error(e);
   }
   // the route has rendered, or failed visibly: motion.js applies a waiting highlight; tests wait on it
   if (seq === state.seq) window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
+}
+
+// the picked client and scope: every page reads them through ctx; a change redraws the page
+const client = () => $("#client").value;
+const scope = () => ($("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope;
+function setClient(id) {
+  const sel = $("#client");
+  if (sel.value !== id && [...sel.options].some(o => o.value === id)) { sel.value = id; sel.dispatchEvent(new Event("change")); }
 }
 
 function ctx(rt) {
@@ -175,15 +167,12 @@ function ctx(rt) {
     user: r.user,
     users: state.users,
     param: rt.param,
-    client: () => (window.Legacy && window.Legacy.client()) || $("#client").value,
-    scope: () => ($("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope,
+    client,
+    scope,
     go,
     href: (nav, sub, param) => `#/${rt.role}/${[nav, sub, param].filter(Boolean).map(encodeURIComponent).join("/")}`,
     isCurrent: (seq) => seq === state.seq,
-    setClient: (id) => {
-      const sel = $("#client");
-      if (sel.value !== id) { sel.value = id; sel.dispatchEvent(new Event("change")); }
-    },
+    setClient,
   };
 }
 
@@ -195,39 +184,49 @@ function theme() {
   route(); // charts read their colours when drawn
 }
 
+async function pickers() {
+  const {clients} = await (await fetch("/api/clients")).json();
+  const sel = $("#client");
+  sel.innerHTML = clients.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.persona_hint)}</option>`).join("");
+  const saved = localStore("mf.client");
+  sel.value = clients.some(c => c.id === saved) ? saved : clients[0].id;
+  sel.addEventListener("change", () => { localStore("mf.client", sel.value); header.refresh(); route(); });
+  for (const b of $$("[data-scope]")) {
+    b.addEventListener("click", () => {
+      for (const o of $$("[data-scope]")) o.setAttribute("aria-pressed", String(o === b));
+      header.refresh();
+      route();
+    });
+  }
+}
+
+// “Làm lại demo”: the server forgets what was uploaded, declared, tested and proposed; this browser forgets the
+// followed goals and what each page kept for the tab; the page loads again from nothing
+async function reset() {
+  if (!confirm("Xóa mọi dữ liệu đã tải lên, đã khai, bài test, mục tiêu và hàng chờ duyệt để làm lại demo?")) return;
+  await fetch("/api/reset", {method: "POST", headers: {"content-type": "application/json"}, body: "{}"});
+  try {
+    for (const k of Object.keys(localStorage)) if (k.startsWith("mf.goals.")) localStorage.removeItem(k);
+    for (const k of Object.keys(sessionStorage)) if (k.startsWith("mf.")) sessionStorage.removeItem(k);
+  } catch (_) { /* private mode */ }
+  location.reload();
+}
+
 async function start() {
-  window.Shell = {
-    openLegacy: (tab) => {
-      const home = (LEGACY_HOME[state.role] || {})[tab] || (LEGACY_HOME.client || {})[tab];
-      if (home) go(home);
-      else window.Legacy.showTab(tab);
-    },
-  };
   $("#theme").onclick = theme;
+  $("#reset").onclick = reset;
   $("#roles").addEventListener("click", (e) => {
     const b = e.target.closest("[data-role]");
     if (b) go(`#/${b.dataset.role}`);
   });
-  // a new page that depends on the client redraws when the client or the scope changes
-  $("#client").addEventListener("change", () => { if (!$("#page-new").hidden) route(); });
-  for (const b of $$("[data-scope]")) b.addEventListener("click", () => { if (!$("#page-new").hidden) setTimeout(route); });
   window.addEventListener("hashchange", route);
   startMotion();
-  header = mountHeader({
-    role: () => state.role,
-    client: () => (window.Legacy && window.Legacy.client()) || $("#client").value,
-    scope: () => ($("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope,
-    pages: pagesFor,
-    go,
-    setClient: (id) => { const sel = $("#client"); if (sel.value !== id) { sel.value = id; sel.dispatchEvent(new Event("change")); } },
-  });
-  $("#client").addEventListener("change", () => header.refresh());
-  for (const b of $$("[data-scope]")) b.addEventListener("click", () => setTimeout(() => header.refresh()));
+  header = mountHeader({role: () => state.role, client, scope, pages: pagesFor, go, setClient});
   mountCopilot();
-  try {
-    const a = await (await fetch("/api/agents")).json();
-    for (const u of a.users || []) state.users[u.id] = u;
-  } catch (_) { /* the pages still work */ }
+  await Promise.all([
+    pickers(),
+    fetch("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
+  ]);
   await route();
 }
 

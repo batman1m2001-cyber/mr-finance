@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — UI redesign R3: the eight pre-redesign pages rebuilt in the board's look as module pages (Chi tiết,
+  Tài sản, Kế hoạch, Khẩu vị rủi ro, Chi phí chính sách, Chuyên gia / Duyệt đề xuất, Hiệu quả tư vấn one client and
+  all), every block and action kept; `web/app.js`, `app.css`, `charts.js`, `fmt.js` deleted; the shell owns the client
+  picker, scope and “Làm lại demo”; each route renders into its own element (a late redraw of an earlier page no
+  longer breaks the page shown); the UI's files are served `no-cache`; icon markup fixed (text after an icon was
+  swallowed) — ADR-0019 (supersedes ADR-0013), ADR-0003 note, matrix (OWN-UI-01, 02 verified), owner_requirements,
+  client.md, rm.md, screen_inventory, information_architecture, assets (16 screenshots), UI_REDESIGN_PLAN §4.
+
 - 2026-10-16 — UI redesign R2: Toàn cảnh as on the concept board (four Pulse cards with small charts, Sankey with a
   colour and icon per category, ratios and flow dots, donut, impact cards, goals card) — FEAT-29, FEAT-33 note,
   matrix (KIT-UX-01, 03 verified; OWN-UI-01), client.md SCR-CL-08, design_system, 4 screenshots, UI_REDESIGN_PLAN §4.

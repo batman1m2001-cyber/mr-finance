@@ -1,4 +1,4 @@
-/* Charts of the rebuilt pages (UI redesign R3), ported from the pre-redesign web/charts.js: the cash-flow columns
+/* Charts of the rebuilt pages (UI redesign R3), ported from the pre-redesign web/charts.js (deleted in R3): the cash-flow columns
    (what happened solid, the forecast lighter, a “Hôm nay” line, ⚠ on a month with a large payment), month
    columns, lines over dates (0–100) and a sparkline. SVG drawn at the width it is shown at; one axis; a tooltip
    on every mark (charts.js::hover). */
