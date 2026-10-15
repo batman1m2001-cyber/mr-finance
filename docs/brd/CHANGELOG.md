@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Owner decisions D-01…D-03: BRD quotes stay public, the mock demo keeps AI on (ADR-0018); FR-404 rule
+  kept and decided (ADR-0017, Q-11 resolved; the impact page no longer says “chờ CIO xác nhận”) — decisions,
+  open_questions, functional_requirements, matrix (FR-404, NFR-08), FEAT-08, PRODUCT_OVERVIEW, docs/TO_DISCUSS.md.
+
 - 2026-10-16 — Living Interface (owner request B-01): Copilot states, evidence marks (`focus` on answers, `key` on
   feed items), motion rules and tokens; new requirement source OWN-* (SRC-05) — FEAT-33, FEAT-32, owner_requirements,
   matrix (§5, KIT-UX-06), checker, sources, README, design_system, interaction_patterns, client.md, inventory,

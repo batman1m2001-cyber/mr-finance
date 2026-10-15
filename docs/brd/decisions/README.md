@@ -22,3 +22,5 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0014](ADR-0014-docs-brd-is-the-living-product-repository.md) | docs/brd is the living product knowledge repository | accepted | 2026-10-15 |
 | [ADR-0015](ADR-0015-decisions-of-the-first-build-plan.md) | Decisions of the first build plan (D1–D9) | accepted | 2026-10-09 |
 | [ADR-0016](ADR-0016-configuration-two-person-rule.md) | Configuration is versioned; two people for the factor model, thresholds and restricted list | accepted | 2026-10-16 |
+| [ADR-0017](ADR-0017-goal-impact-rule.md) | Goal impact (FR-404): goals draw on financial assets in date order; levels as in goals planning | accepted | 2026-10-16 |
+| [ADR-0018](ADR-0018-owner-decisions-public-quotes-and-ai-in-the-demo.md) | Owner decisions: BRD quotes stay public; the demo may send client text to the model | accepted | 2026-10-16 |

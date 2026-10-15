@@ -153,5 +153,5 @@ function drawGoals(el, it) {
     <table class="table"><thead><tr><th>Mục tiêu</th><th>Trước</th><th>Sau</th></tr></thead><tbody>
     ${g.goals.map(x => `<tr><td>${esc(x.label)}${x.changed ? ' <span class="badge warn">đổi mức</span>' : ""}
       <div class="small muted num">hạn ${esc(x.date)} · cần ${vnd(x.amount)}</div></td><td>${lvl(x.before)}</td><td>${lvl(x.after)}</td></tr>`).join("")}</tbody></table>
-    <div class="footnote">Mục tiêu lấy nguồn theo thứ tự hạn từ tài sản tài chính (tiền, tiền gửi, quỹ, trái phiếu, cổ phiếu, vàng, tiền số): ${vnd(g.pool.before)} → ${vnd(g.pool.after)} (${vnd(g.pool.change, true)}). Mức: tiền cần để dành mỗi tháng ÷ thặng dư hằng tháng — ≤ 0,6 Đạt, ≤ 1 Theo dõi, cao hơn Thiếu. Ngưỡng là đề xuất, chờ CIO xác nhận.</div>`;
+    <div class="footnote">Mục tiêu lấy nguồn theo thứ tự hạn từ tài sản tài chính (tiền, tiền gửi, quỹ, trái phiếu, cổ phiếu, vàng, tiền số): ${vnd(g.pool.before)} → ${vnd(g.pool.after)} (${vnd(g.pool.change, true)}). Mức: tiền cần để dành mỗi tháng ÷ thặng dư hằng tháng — ≤ 0,6 Đạt, ≤ 1 Theo dõi, cao hơn Thiếu. Đây là quy tắc của bản demo, không phải chính sách của ngân hàng.</div>`;
 }
