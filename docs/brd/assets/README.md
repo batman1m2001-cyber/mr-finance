@@ -71,6 +71,9 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-10_desktop-light-error.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, client asks an RM task: refusal, red dot and edge |
 | `SCR-CL-10_phone-light-busy.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server, answer delayed 4 s in the page: thinking dots |
 | `SCR-CL-10_phone-light-marks.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server: the KPI marks shown after the panel closed |
+| `SCR-CL-10_desktop-light-chain.jpg` | SCR-CL-10 Copilot | current | desktop 1440×900, light, “Vì sao…”: the chain card | 2026-10-16, UI redesign R5, dev server, one approved event (client C01) |
+| `SCR-CL-10_desktop-light-scenario.jpg` | SCR-CL-10 Copilot | current | desktop 1440×900, light, a stress scenario: figures card | 2026-10-16, UI redesign R5, dev server, one approved event (client C01) |
+| `SCR-CL-10_phone-light-card.jpg` | SCR-CL-10 Copilot | current | phone 390×844, light, the goals card | 2026-10-16, UI redesign R5, dev server, one approved event (client C01) |
 | `SCR-CL-11_desktop-light.jpg` | SCR-CL-11 Bản đồ tài chính | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-11_desktop-dark.jpg` | SCR-CL-11 Bản đồ tài chính | current | desktop 1440×900, dark, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-11_phone-light.jpg` | SCR-CL-11 Bản đồ tài chính | current | phone 390×844, light, the list view | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |

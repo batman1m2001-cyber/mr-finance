@@ -2,18 +2,31 @@
 
 from __future__ import annotations
 
+import time
 from typing import Any, Dict
 
 from operonx import op
 
-from control import roles
+from control import audit, db, roles
 from copilot import router
 from copilot.scrub import scrub
 from copilot.tools import PAGES, PLANS, TOOLS, USER, Ctx, ToolFailed, allowed
 
 HELP = {
-    "client": ["Tài sản của tôi thế nào?", "Dòng tiền tháng này?", "Có gì cần chú ý?", "Tin nào ảnh hưởng tới tôi?"],
-    "rm": ["Hôm nay cần gọi ai?", "Có gì cần chú ý với khách này?", "Duyệt đề xuất đang chờ", "Mở đồ thị tác động"],
+    "client": [
+        "Tài sản của tôi thế nào?",
+        "Dòng tiền tháng này?",
+        "Có gì cần chú ý?",
+        "Vì sao tin này ảnh hưởng tới tôi?",
+        "Tạo kịch bản VN-Index giảm mạnh",
+    ],
+    "rm": [
+        "Hôm nay cần gọi ai?",
+        "Có gì cần chú ý với khách này?",
+        "Điều tra tin lớn nhất",
+        "Kịch bản lãi suất tăng",
+        "Duyệt đề xuất đang chờ",
+    ],
     "cio": ["Hộp tin có bao nhiêu tin?", "Lấy tin mới", "Mở hộp tin"],
     "compliance": ["Có bao nhiêu tin bị giữ?", "Mở tin bị giữ"],
 }
@@ -27,6 +40,7 @@ def check_request(
     scope: str = None,
     route: str = None,
     confirm: dict = None,
+    goals: list = None,
 ) -> dict:
     role = str(role or "client")
     if role not in USER:
@@ -41,6 +55,7 @@ def check_request(
         "scope": scope or "personal",
         "route": str(route or ""),
         "confirm": confirm or None,
+        "followed": None if goals is None else [str(g) for g in goals][:50],  # the goals followed in the browser
     }
 
 
@@ -72,13 +87,16 @@ async def act(
     client_id: str = None,
     scope: str = "personal",
     question: str = "",
+    followed: list = None,  # None does not bind across ops: the persona's defaults
 ) -> dict:
     """Run the tool, or for a write without confirm, describe it and stop. Failures are said as failures."""
-    return {"result": await run_tool(tool, args or {}, bool(confirmed), role, client_id, scope, question or "")}
+    return {
+        "result": await run_tool(tool, args or {}, bool(confirmed), role, client_id, scope, question or "", followed)
+    }
 
 
-async def run_tool(tool, args, confirmed, role, client_id, scope, question) -> Dict[str, Any]:
-    ctx = Ctx(role=role, client_id=client_id, scope=scope, question=question)
+async def run_tool(tool, args, confirmed, role, client_id, scope, question, followed=None) -> Dict[str, Any]:
+    ctx = Ctx(role=role, client_id=client_id, scope=scope, question=question, followed=followed)
     if not tool:
         return {
             "status": "unknown",
@@ -115,16 +133,41 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question) -> D
         "evidence": link and {"label": page[0], "route": link},
         "focus": out.get("focus") or [],  # page elements the answer was read from (data-focus keys)
         "suggest": t.follow or HELP[role],
+        "as_of": out.get("as_of"),  # the data's own date (prices, month), when the tool has one
+        "sources": [x for x in out.get("sources") or [] if x],
+        "card": out.get("card"),  # figures / list / bars / chain, drawn by the panel from the tool's numbers
     }
 
 
 @op
-def answer(result: dict, seen: str, router_info: dict) -> dict:
+def answer(result: dict, seen: str, router_info: dict, role: str = "client", client_id: str = None) -> dict:
+    """The answer, stamped with its time and written to the audit chain: who asked (the demo user), which tool,
+    what came of it, how it was routed and the question as the router saw it (scrubbed)."""
+    at = time.time()
+    actor = USER.get(role) or f"client:{client_id or '-'}"
+    with db.tx() as con:
+        seq = audit.append(
+            con,
+            actor,
+            "copilot.ask",
+            result.get("tool") or "-",
+            {
+                "role": role,
+                "client_id": client_id,
+                "status": result.get("status"),
+                "router": router_info.get("kind"),
+                "model": router_info.get("model"),
+                "seen": seen,
+                "confirmed": router_info.get("kind") == "confirm",
+            },
+        )
     return {
         "copilot": {
             **result,
             "seen": seen,
             "router": router_info,
+            "answered_at": at,
+            "audit_seq": seq,
             "note": "Câu trả lời viết từ kết quả công cụ theo mẫu cố định; mô hình chỉ chọn công cụ.",
         }
     }

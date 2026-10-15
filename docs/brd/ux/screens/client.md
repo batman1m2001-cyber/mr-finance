@@ -281,9 +281,9 @@ goals before → after, the outlets. The CIO opens the same page on a whole run 
 | Route | none: a panel over every page of every role, opened by “✦ Hỏi OneWealth” (bottom right) |
 | Generation | new (`web/copilot.js`) |
 | Feature | [FEAT-32](../../features/FEAT-32-copilot.md) |
-| Requirements | KIT-COPILOT-01…05; BRD-BR-11, BRD-NFR-08 |
+| Requirements | KIT-COPILOT-01…05, OWN-UI-05; BRD-BR-11, BRD-NFR-08 |
 | Data | `POST /api/copilot` |
-| Screenshots | [client](../../assets/current_ui/SCR-CL-10_desktop-light.jpg) · [RM confirm](../../assets/current_ui/SCR-CL-10_desktop-light-rm.jpg) · [phone](../../assets/current_ui/SCR-CL-10_phone-light.jpg) · states (FEAT-33): [marks](../../assets/current_ui/SCR-CL-10_desktop-light-marks.jpg) · [flow marks](../../assets/current_ui/SCR-CL-10_desktop-light-flow.jpg) · [refusal](../../assets/current_ui/SCR-CL-10_desktop-light-error.jpg) · [phone busy](../../assets/current_ui/SCR-CL-10_phone-light-busy.jpg) · [phone marks after close](../../assets/current_ui/SCR-CL-10_phone-light-marks.jpg) · [graph path](../../assets/current_ui/SCR-CL-09_desktop-light-path.jpg) |
+| Screenshots | [client](../../assets/current_ui/SCR-CL-10_desktop-light.jpg) · [RM confirm](../../assets/current_ui/SCR-CL-10_desktop-light-rm.jpg) · [phone](../../assets/current_ui/SCR-CL-10_phone-light.jpg) · states (FEAT-33): [marks](../../assets/current_ui/SCR-CL-10_desktop-light-marks.jpg) · [flow marks](../../assets/current_ui/SCR-CL-10_desktop-light-flow.jpg) · [refusal](../../assets/current_ui/SCR-CL-10_desktop-light-error.jpg) · [phone busy](../../assets/current_ui/SCR-CL-10_phone-light-busy.jpg) · [phone marks after close](../../assets/current_ui/SCR-CL-10_phone-light-marks.jpg) · [graph path](../../assets/current_ui/SCR-CL-09_desktop-light-path.jpg) · R5: [investigate (chain)](../../assets/current_ui/SCR-CL-10_desktop-light-chain.jpg) · [stress scenario](../../assets/current_ui/SCR-CL-10_desktop-light-scenario.jpg) · [phone, goals card](../../assets/current_ui/SCR-CL-10_phone-light-card.jpg) |
 
 **Layout.** Header with the router label (“bộ định tuyến từ khóa” or the model), the page context (“Đang xem:
 Toàn cảnh · Khách hàng · Nguyễn Minh Khoa”), the conversation (answers with a status badge when failed,
@@ -300,6 +300,10 @@ and a red edge on the answer), amber while a write waits for Xác nhận. An ans
 marks them and offers **Chỉ trên trang**; otherwise **Mở … →** opens the page and marks them there. Phones: the
 marks wait until the panel is closed.
 
+**Since R5.** Under an ok answer: its card (figures; a list with chips and progress, a row marks its element on
+the page; bars; the chain of an event's path), then “Số liệu <date> · trả lời lúc <time>” and “Nguồn: …”. The
+chips sit under “Bạn có thể muốn:”; the first offer “Vì sao tin này ảnh hưởng tới tôi?” and “Tạo kịch bản VN-Index
+giảm mạnh”.
 
 ---
 

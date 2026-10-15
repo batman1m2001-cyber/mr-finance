@@ -65,4 +65,5 @@ own families only (Q-17), re-ask triggers for the risk test (Q-16), alerting on 
 | R2 | done 2026-10-16: Toàn cảnh as on the board; 3 browser tests | #34 |
 | R3 | done 2026-10-16: the 8 pre-redesign pages rebuilt as module pages, app.js/app.css/charts.js/fmt.js deleted, shell owns client/scope/reset, per-route render host, UI files revalidated (`no-cache`); ADR-0019; 5 flow tests | #35 |
 | R4 | done 2026-10-16: Bản đồ tài chính (overview graph, `POST /api/overview`), News Impact panel, event timeline, CIO run graph (`GET /api/runs/{id}/graph`); 9 tests | #36 |
-| R5 | next | |
+| R5 | done 2026-10-16: Copilot 2.0 — as-of and sources, cards (figures, list, bars, chain), `dieu_tra` and `kich_ban`, every call audited, suggestion chips, followed goals; 6 tests | #37 |
+| R6 | next | |

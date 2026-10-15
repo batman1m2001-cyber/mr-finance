@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — UI redesign R5, Copilot 2.0: answers carry the data's date, the answer time and their sources, and a
+  card drawn from the tool's numbers (figures, list with chips and progress, bars, chain); new tools `dieu_tra` (an
+  approved event's path from the impact graph) and `kich_ban` (a stress test through `scenario_flow`, chosen by
+  words); every call is an audit row with the scrubbed question; suggestion chips; the goals followed in the browser
+  — FEAT-32, matrix (OWN-UI-05 verified, KIT-COPILOT-02), api_reference, client.md SCR-CL-10, 3 screenshots,
+  UI_REDESIGN_PLAN §4.
+
 - 2026-10-16 — UI redesign R4: Bản đồ tài chính, the overview graph of the board (client in the centre; asset
   classes opening onto holdings, data sources, followed goals, flagged risks, policy items, approved news events;
   every edge names its record; node → page; `POST /api/overview`); the News Impact panel on Đồ thị tác động

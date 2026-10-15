@@ -19,7 +19,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/feed` | feed → `feed_flow` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 (each item has a stable `key`, FEAT-33) |
 | `/api/overview` | overview → `overview_flow` | `client_id, scope?, role? (client\|rm), goals? (ids followed)` | — (client: event types, classes for news) | FEAT-30 (R4) |
 | `/api/search` | search → `search_flow` | `q, role, client_id?, scope?` | role decides the kinds; the client sees type labels only | FEAT-34 |
-| `/api/copilot` | copilot → `copilot_flow` | `question, role, client_id?, scope?, route?, confirm?` | per tool (and the wrapped graph's own check) | FEAT-32; an ok answer has `focus` (page element keys, FEAT-33) |
+| `/api/copilot` | copilot → `copilot_flow` | `question, role, client_id?, scope?, route?, confirm?, goals?` | per tool (and the wrapped graph's own check) | FEAT-32; an ok answer has `focus` (FEAT-33), `as_of`, `answered_at`, `sources`, `card`; every call is an audit row (`audit_seq`) |
 | `/api/config/propose` | config_propose → `config_propose_flow` | `kind, data, by, note?` | the kind's owner role | FEAT-14 |
 | `/api/config/decide` | config_decide → `config_decide_flow` | `version_id, action (approve\|reject), by, note?` | owner role; ≠ proposer for two-person kinds | FEAT-14 |
 | `/api/statement` | statement → `statement_flow` | `client_id, filename, content` (base64) | — | FEAT-22 |
