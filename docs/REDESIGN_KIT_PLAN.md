@@ -70,5 +70,5 @@ Each phase ends with its tests, desktop + phone screenshots in light and dark, a
 | K2 | done | (this change) | `POST /api/flows` is a served graph (not the GET first planned: the Copilot's tools are the served graphs, D3); old overview kept whole as “Chi tiết”; `tests/test_flows.py`; screenshots in docs/brd |
 | K3 | done | (this change) | `GET /api/families/{id}/graph` (per family; the CIO's whole-run view deferred); `tests/test_graph.py`; FEAT-30 |
 | K4 | done | (this change) | `POST /api/feed` (served graph); a panel of Toàn cảnh; thresholds ours (FEAT-31); `tests/test_feed.py` |
-| K5 | not started | — | — |
+| K5 | done, except the recorded live run | (this change) | `tests/test_copilot.py` (barrier with a control, roles, confirm, failures, fake live router); no model configured here, so no live run is recorded (FEAT-32) |
 | K6 | not started | — | — |

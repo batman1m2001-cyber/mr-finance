@@ -242,3 +242,24 @@ note that edges are potential impacts with stored sources.
 rest; again or “Bỏ chọn” clears. Tooltips on nodes and edges. Phones open on the list.
 
 **States.** No effective run: “Chưa có tin nào được CIO duyệt áp dụng cho gia đình này”.
+
+---
+
+## SCR-CL-10 — OneWealth Copilot (panel, all roles)
+
+| | |
+|---|---|
+| Route | none: a panel over every page of every role, opened by “✦ Hỏi OneWealth” (bottom right) |
+| Generation | new (`web/copilot.js`) |
+| Feature | [FEAT-32](../../features/FEAT-32-copilot.md) |
+| Requirements | KIT-COPILOT-01…05; BRD-BR-11, BRD-NFR-08 |
+| Data | `POST /api/copilot` |
+| Screenshots | [client](../../assets/current_ui/SCR-CL-10_desktop-light.jpg) · [RM confirm](../../assets/current_ui/SCR-CL-10_desktop-light-rm.jpg) · [phone](../../assets/current_ui/SCR-CL-10_phone-light.jpg) |
+
+**Layout.** Header with the router label (“bộ định tuyến từ khóa” or the model), the page context (“Đang xem:
+Toàn cảnh · Khách hàng · Nguyễn Minh Khoa”), the conversation (answers with a status badge when failed,
+forbidden or pending; “Mở … →” evidence link; “Mô hình thấy gì”), suggestion chips, the input, and the note that
+the model only picks a tool and that this is not investment advice.
+
+**Interaction.** Enter sends; a pending write shows **Xác nhận** / **Huỷ**; Esc or ✕ closes and returns focus to
+the button; a navigate answer changes the page. Phones: the panel fills the width.

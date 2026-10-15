@@ -301,3 +301,26 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 /* Intelligence Feed (kit K4) */
 .feed-item { grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; }
 @media (max-width: 560px) { .feed-item { grid-template-columns: minmax(0, 1fr); } }
+/* OneWealth Copilot (kit K5) */
+.cp-fab { position: fixed; right: 20px; bottom: 20px; z-index: 40; border: 0; border-radius: 999px; padding: 12px 18px;
+  background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 700; box-shadow: 0 8px 24px var(--ring); cursor: pointer; }
+.cp-panel { position: fixed; right: 16px; bottom: 76px; top: 16px; width: min(400px, calc(100vw - 32px)); z-index: 41;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--hair); border-radius: var(--radius);
+  box-shadow: 0 16px 48px var(--ring); display: flex; flex-direction: column; overflow: hidden; }
+.cp-panel[hidden] { display: none; }
+.cp-head { display: flex; gap: 8px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--hair); }
+.cp-head .linkbtn { margin-left: auto; }
+.cp-panel .badge { font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--axis); }
+.cp-panel .badge.bad { background: var(--critical-soft); color: var(--critical); border-color: transparent; }
+.cp-panel .badge.warn { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
+.cp-panel .badge.assumed { border-style: dashed; color: var(--ink-2); }
+.cp-ctx { padding: 6px 14px; border-bottom: 1px solid var(--hair); }
+.cp-msgs { flex: 1; overflow-y: auto; padding: 12px 14px; display: grid; gap: 10px; align-content: start; }
+.cp-me { justify-self: end; background: var(--accent-soft); padding: 8px 12px; border-radius: 12px 12px 2px 12px; max-width: 85%; }
+.cp-bot { background: var(--surface-2); padding: 10px 12px; border-radius: 12px 12px 12px 2px; max-width: 95%; line-height: 1.45; }
+.cp-sugg { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 14px 0; }
+.cp-sugg .chip { border: 1px solid var(--axis); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 12.5px; cursor: pointer; }
+.cp-form { display: flex; gap: 8px; padding: 10px 14px; }
+.cp-form input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--axis); border-radius: 9px; background: var(--surface); color: var(--ink); font: inherit; }
+.cp-foot { padding: 0 14px 10px; }
+@media (max-width: 560px) { .cp-panel { right: 8px; left: 8px; width: auto; top: 8px; bottom: 70px; } .cp-fab { right: 12px; bottom: 12px; } }
