@@ -17,6 +17,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD rules (RULE) | 97 | 61 | 5 | 12 | 2 | 3 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 6 | 5 | 1 | 0 | 0 | 0 | 0 | 7 |
+| Owner requests (OWN) | 7 | 2 | 4 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -247,7 +248,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | KIT-UX-03 | FEAT-29 | implemented_unverified | SCR-CL-08 Wealth Map: values, shares, price date, drill-down to holdings; screenshots only |
 | KIT-UX-04 | FEAT-30 | implemented_verified | `tests/test_graph.py::test_every_edge_comes_from_a_stored_record_and_the_columns_chain`, `tests/test_graph.py::test_the_client_sees_no_headline_and_no_holding` — columns, filters, path highlight, detail panel, list view (built 2026-10-16) |
 | KIT-UX-05 | FEAT-31 | implemented_verified | `tests/test_feed.py::test_a_news_impact_shows_with_its_run_and_its_reason`, `tests/test_feed.py::test_thresholds_and_a_spending_jump_carry_their_numbers`, `tests/test_feed.py::test_the_client_reads_the_event_type_not_the_headline` — on SCR-CL-08 (built 2026-10-16) |
-| KIT-UX-06 | FEAT-29…32 | implemented_unverified | No animation added; one 0.12 s hover fade, off under reduced motion; every chart has a table or list view (Sankey table, graph list); K6 sweep |
+| KIT-UX-06 | FEAT-29…33 | implemented_unverified | Motion only for a state change (FEAT-33, 2026-10-16): request in flight, outcome, the evidence an answer read, a chosen graph path; transform/opacity only, all off under reduced motion (`tests/test_living_interface.py::test_hidden_tabs_pause_reduced_motion_stops_and_no_js_loop`); every chart has a table or list view (Sankey table, graph list); the static alternative is checked by screenshots only |
 | KIT-UX-07 | all | implemented_unverified | Sankey bands, map segments and graph nodes are focusable (Enter/Space); responsive at 390 px; progressive disclosure (band → rows, node → path); K6 sweep, no automated UI test |
 | KIT-COPILOT-01 | FEAT-32 | implemented_unverified | Floating button and side panel on every page with page context (SCR-CL-10, built 2026-10-16); checked by screenshots and a driven browser run, no automated UI test |
 | KIT-COPILOT-02 | FEAT-32 | partially_implemented | Ask (11 tools), Act (2 writes, confirmed), Navigate, Continue (tab session) built; Investigate/Analyze only through existing reads; under ADR-0012 the model reads no data |
@@ -261,3 +262,15 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | KIT-DOC-04 | — | not_applicable | Met: status rules (README §4) |
 | KIT-DOC-05 | — | not_applicable | Met: §0 above |
 | KIT-DOC-06 | — | not_applicable | Applies to each future change (testing/acceptance_criteria.md) |
+
+## 5. Owner requests (`OWN-*`)
+
+| ID | Features | Status | Notes |
+|---|---|---|---|
+| OWN-MOTION-01 | FEAT-33 | implemented_unverified | A slow ripple from the panel's status dot while the panel is open and idle; nothing when closed (display:none), paused when the tab is hidden, none under reduced motion. Browser run and screenshots (2026-10-16); cost measured: +9 ms main thread per 5 s, no layout |
+| OWN-MOTION-02 | FEAT-33 | implemented_unverified | While the request is in flight only (`data-state="busy"`): the button's ✦ breathes, three dots in the panel, `aria-busy`; no step-by-step progress is shown because the server does not report steps. Browser run with a 3–4 s delayed answer |
+| OWN-MOTION-03 | FEAT-33 | implemented_verified | `tests/test_living_interface.py::test_an_answer_names_the_elements_it_was_read_from`, `tests/test_living_interface.py::test_an_impact_answer_points_at_the_largest_event_and_the_feed_at_its_items`, `tests/test_living_interface.py::test_failures_mark_nothing`, `tests/test_living_interface.py::test_every_focus_key_has_a_page_that_renders_it` — the answer's `focus` keys come from the tool's result; KPIs, flow panel/rows/bands, feed items, events, families and the graph path are marked (browser run). Goals (legacy planning page) are not marked |
+| OWN-MOTION-04 | FEAT-33 | implemented_unverified | ok: ✦ turns into ✓ for 1.6 s, green dot; error/forbidden: red dot on the button and panel, red edge on the answer, kept until the next question or close; pending: amber dot until confirm/cancel. Browser run and screenshots |
+| OWN-MOTION-05 | FEAT-33 | implemented_unverified | Nothing moves at rest with the panel closed (0 animations, 0 style/layout work in 5 s, measured); one accent colour; durations 160 ms / 240 ms / 2.6 s; screenshots |
+| OWN-MOTION-06 | FEAT-33 | implemented_verified | `tests/test_living_interface.py::test_only_transform_and_opacity_animate`, `tests/test_living_interface.py::test_hidden_tabs_pause_reduced_motion_stops_and_no_js_loop` — no library added; measured before/after in FEAT-33 (no long task; one question 57 → 144 ms main thread over 3.5 s, 80 ms under reduced motion) |
+| OWN-MOTION-07 | FEAT-33 | not_applicable | Met by this change: business logic unchanged (the answer gains `focus`, a feed item gains `key`), full suite green, docs updated (CHANGELOG 2026-10-16) |

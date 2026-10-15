@@ -28,6 +28,9 @@
   shows “Mô hình thấy gì” (the scrubbed text and the router), and follow-up suggestions.
 - **Panel** (`web/copilot.js`): floating button, side panel (full width on phones), page context, progress,
   confirm / cancel, Esc closes; the conversation is kept in `sessionStorage` per role for this tab only.
+- **States and evidence highlight** ([FEAT-33](FEAT-33-living-interface.md), 2026-10-16): the button and panel show
+  idle / busy / ok / error / pending from the request itself; an ok answer carries `focus`, the keys of the page
+  elements it was read from, which the page marks for 2.6 s (“Chỉ trên trang” shows them again).
 
 ## Implementation
 `src/copilot/{scrub,tools,router,ops,graph}.py`; service `copilot` in `app/main.py`; resource `llm:copilot`

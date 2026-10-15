@@ -28,7 +28,7 @@ export async function render(box, ctx) {
       <div class="panel c8">
         <h3>Danh sách <span class="hint">xấu nhất trước</span></h3>
         ${cases.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Gia đình</th><th>Sự kiện chạm ngưỡng</th><th class="r">Kỳ vọng 3 tháng</th><th class="r">P10 xấu nhất</th><th></th></tr></thead><tbody>
-          ${cases.map(c => `<tr class="click" data-family="${esc(c.family_id)}">
+          ${cases.map(c => `<tr class="click" data-family="${esc(c.family_id)}" data-focus="family:${esc(c.family_id)}">
             <td><b>${esc(c.name)}</b><div class="small muted">${vnd(c.net_worth)} tài sản ròng</div></td>
             <td class="small">${c.events.map(esc).join("<br>")}</td>
             <td class="r ${signClass(c.expected_3m)}">${vnd(c.expected_3m, true)}<div class="small muted">${pct(c.net_worth ? c.expected_3m / c.net_worth : 0, true, 2)}</div></td>
@@ -38,7 +38,7 @@ export async function render(box, ctx) {
       </div>
       <div class="panel c12"><h3>Việc theo mục tiêu <span class="hint">quy định mới làm chậm mục tiêu chuyển tiền ra nước ngoài</span></h3>
         ${d.goal_tasks.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Mức</th><th>Gia đình · mục tiêu</th><th>Văn bản</th><th>Mốc chuẩn bị</th><th>Việc của RM</th></tr></thead><tbody>
-          ${d.goal_tasks.map(t => `<tr class="click" data-family="${esc(t.family_id)}"><td><span class="badge ${LEVEL[t.level]}">${esc(t.level_label)}</span></td>
+          ${d.goal_tasks.map(t => `<tr class="click" data-family="${esc(t.family_id)}" data-focus="family:${esc(t.family_id)}"><td><span class="badge ${LEVEL[t.level]}">${esc(t.level_label)}</span></td>
             <td><b>${esc(t.family_name)}</b><div class="small">${esc(t.goal)} · ${esc(t.purpose_label)}${t.country ? ` · ${esc(t.country)}` : ""}</div></td>
             <td class="small">${esc(t.note_title)}<div class="muted">${t.note_status === "issued" ? "Đã ban hành" : "Dự thảo"}</div></td>
             <td class="num">${esc(t.milestone)}</td><td class="small">${esc(t.rm_hint || "")}</td></tr>`).join("")}

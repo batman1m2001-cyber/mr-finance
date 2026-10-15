@@ -53,6 +53,12 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-10_desktop-light.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, keyword router, client C01: a month's flow (name and number scrubbed, “Mô hình thấy gì” open) and the feed |
 | `SCR-CL-10_desktop-light-rm.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, keyword router, RM: a write waiting for Xác nhận |
 | `SCR-CL-10_phone-light.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server, keyword router, client: net worth answer |
+| `SCR-CL-10_desktop-light-marks.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, client C01: net-worth answer, three KPI tiles marked, ✓ on the button (FEAT-33) |
+| `SCR-CL-10_desktop-light-flow.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, full page | 2026-10-16, dev server, client C01: month's flow answer, Dòng tiền panel and the largest spending row marked |
+| `SCR-CL-10_desktop-light-error.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, client asks an RM task: refusal, red dot and edge |
+| `SCR-CL-10_phone-light-busy.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server, answer delayed 4 s in the page: thinking dots |
+| `SCR-CL-10_phone-light-marks.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server: the KPI marks shown after the panel closed |
+| `SCR-CL-09_desktop-light-path.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, light, full page | 2026-10-16, dev server, client C01: “Tin nào ảnh hưởng tới tôi?” lights the largest event's path |
 | `SCR-CMP-01_desktop-light.jpg` | SCR-CMP-01 Tin bị giữ | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_desktop-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_phone-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |

@@ -16,6 +16,8 @@ Layer C. Patterns used across screens, so each screen document only names them.
 | **Fold the detail** | `details.more` keeps the page short; the summary says what is inside | most new pages |
 | **Badge for provenance** | “giả định”, “mô phỏng”, “theo mô hình”, “Độc quyền”, “AI hỗ trợ · CIO duyệt”, “demo” | throughout |
 | **Empty state with a promise** | Says what will appear and when (“Khi một lần áp dụng có gia đình chạm ngưỡng −5 %, ca đó hiện ở đây.”) | new pages |
+| **Assistant state** | The Copilot button and panel show idle / busy / ok / error / pending, set only by the request (FEAT-33) | every page |
+| **Evidence mark** | An answer's `focus` keys ring the matching `data-focus` elements for 2.6 s (a chart dims its other marks; the graph lights the path); on another page after it renders; a still outline under reduced motion | SCR-CL-08, 09, Tác động tin, SCR-RM-01 |
 | **Demo reset** | “Làm lại demo” in the footer empties the demo state (including the audit log) | footer |
 
 ## States every new page handles

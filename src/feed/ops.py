@@ -190,6 +190,8 @@ def build(client_id: str, scope: str, role: str, dashboard: Dict[str, Any], tran
         _impacts(family_id, role, nw) + _regulation(family_id, role) + _thresholds(dashboard) + _spending(transactions)
     )
     items.sort(key=lambda x: (RANK[x["severity"]], -abs(x.get("value") or 0)))
+    for i in items:  # a stable handle for the page and the Copilot's highlight
+        i["key"] = "feed:" + ":".join(str(v) for v in i["evidence"].values())
     return {
         "client_id": client_id,
         "family_id": family_id,

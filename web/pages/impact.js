@@ -78,7 +78,7 @@ export async function render(box, ctx) {
     {label: "Đóng góp theo nhóm tài sản"});
   $("#events", box).innerHTML = items.map(i => {
     const e = i.horizons["3m"].expected;
-    return `<div class="item">
+    return `<div class="item" data-focus="event:${esc(i.event.id)}">
       <span class="badge ${i.status === "EFFECTIVE" ? "ai" : ""}" aria-hidden="true">${esc(i.event.id.slice(-4))}</span>
       <div><div class="t">${esc(i.event.title)}</div>
         <div class="m">${runBadge(i.status, i.status_label)} · duyệt ${when(i.approved_at)} ${staff && i.pre_review ? '· <span class="badge bad">xem trước</span>' : ""}</div>

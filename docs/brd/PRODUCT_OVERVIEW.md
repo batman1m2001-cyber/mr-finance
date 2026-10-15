@@ -48,7 +48,8 @@ Of the BRD's 61 requirements, most are implemented and verified by tests; the ga
 configuration (FR-701), the agent catalogue (FR-703), the policy agent (FR-306), the newsletter (FR-801), accuracy
 tracking (BR-15, blocked on data); goal impact per run (FR-404) is built on our definition, awaiting the CIO
 (Q-11). The redesign kit's additions are built (2026-10-16, [docs/REDESIGN_KIT_PLAN.md](../REDESIGN_KIT_PLAN.md)):
-Toàn cảnh with the feed (FEAT-29, 31), the impact graph (FEAT-30) and the Copilot (FEAT-32).
+Toàn cảnh with the feed (FEAT-29, 31), the impact graph (FEAT-30) and the Copilot (FEAT-32). At the owner's request
+the interface answers the Copilot: its state is shown, and an answer marks the numbers it read (FEAT-33).
 
 ## Roadmap (from the BRD §18)
 
