@@ -69,6 +69,6 @@ Each phase ends with its tests, desktop + phone screenshots in light and dark, a
 | K1 | matrix done; pre-BRD inventory done | (this change) | `docs/brd/requirements/requirements_traceability.md` (61 + 7 + 97 + 29 + 19 rows), checked by `tests/test_brd_docs.py` |
 | K2 | done | (this change) | `POST /api/flows` is a served graph (not the GET first planned: the Copilot's tools are the served graphs, D3); old overview kept whole as “Chi tiết”; `tests/test_flows.py`; screenshots in docs/brd |
 | K3 | done | (this change) | `GET /api/families/{id}/graph` (per family; the CIO's whole-run view deferred); `tests/test_graph.py`; FEAT-30 |
-| K4 | not started | — | — |
+| K4 | done | (this change) | `POST /api/feed` (served graph); a panel of Toàn cảnh; thresholds ours (FEAT-31); `tests/test_feed.py` |
 | K5 | not started | — | — |
 | K6 | not started | — | — |

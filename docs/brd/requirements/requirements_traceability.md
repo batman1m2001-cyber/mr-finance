@@ -16,7 +16,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
 | BRD rules (RULE) | 97 | 59 | 4 | 12 | 3 | 5 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Redesign kit (KIT) | 19 | 2 | 2 | 0 | 8 | 0 | 0 | 0 | 7 |
+| Redesign kit (KIT) | 19 | 3 | 2 | 0 | 7 | 0 | 0 | 0 | 7 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -246,7 +246,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | KIT-UX-02 | FEAT-29 | implemented_verified | `tests/test_flows.py::test_the_bands_are_the_transactions_of_the_month_to_the_dong`, `tests/test_flows.py::test_the_latest_month_by_default_and_the_family_adds_the_spouse` — transaction rows only; a band opens to its rows |
 | KIT-UX-03 | FEAT-29 | implemented_unverified | SCR-CL-08 Wealth Map: values, shares, price date, drill-down to holdings; screenshots only |
 | KIT-UX-04 | FEAT-30 | implemented_verified | `tests/test_graph.py::test_every_edge_comes_from_a_stored_record_and_the_columns_chain`, `tests/test_graph.py::test_the_client_sees_no_headline_and_no_holding` — columns, filters, path highlight, detail panel, list view (built 2026-10-16) |
-| KIT-UX-05 | FEAT-31 | planned | K4 |
+| KIT-UX-05 | FEAT-31 | implemented_verified | `tests/test_feed.py::test_a_news_impact_shows_with_its_run_and_its_reason`, `tests/test_feed.py::test_thresholds_and_a_spending_jump_carry_their_numbers`, `tests/test_feed.py::test_the_client_reads_the_event_type_not_the_headline` — on SCR-CL-08 (built 2026-10-16) |
 | KIT-UX-06 | FEAT-29…32 | planned | Every K phase; the skeleton already respects reduced motion |
 | KIT-UX-07 | all | planned | Every K phase |
 | KIT-COPILOT-01 | FEAT-32 | planned | K5 |
