@@ -12,15 +12,15 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 43 | 4 | 11 | 2 | 0 | 1 | 0 | 0 |
+| BRD numbered (BR, FR, NFR) | 61 | 44 | 4 | 10 | 2 | 0 | 1 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
-| BRD rules (RULE) | 97 | 60 | 5 | 11 | 3 | 4 | 2 | 10 | 2 |
+| BRD rules (RULE) | 97 | 61 | 5 | 11 | 2 | 4 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 6 | 5 | 1 | 0 | 0 | 0 | 0 | 7 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
-completion is not 100 %:** of the 61 numbered requirements, 43 are implemented and verified by tests; the rest are
+completion is not 100 %:** of the 61 numbered requirements, 44 are implemented and verified by tests; the rest are
 partial, unverified, planned, not implemented or blocked, each with its reason below. (The `not_applicable` KIT rows
 are the documentation rules this repository itself follows.) Counts are recomputed by the checker.
 
@@ -74,7 +74,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-FR-604 | §6.6 | Refuse AML wording | FEAT-03, 10 | SCR-CIO-06 | `src/procedural/goals.py::forbidden_words` | `tests/test_research.py::test_a_regulation_note_with_aml_wording_is_refused` | implemented_verified | |
 | BRD-FR-701 | §6.7 | Versioned, owned configuration; propose then approve | FEAT-14 | SCR-CIO-07 | `data/factor_model.json`, `data/news_config.json` | `tests/test_engine.py::test_the_model_hash_changes_with_any_parameter` | partially_implemented | Versioned files only; no owners, approval, two-person rule (Q-15) |
 | BRD-FR-702 | §6.7 | Hash-chained log; integrity check; export | FEAT-11 | SCR-CMP-03 | `src/control/audit.py` | `tests/test_apply.py::test_every_step_is_in_the_audit_chain_and_it_verifies`, `tests/test_apply.py::test_hmac_chain_and_no_downgrade`, `tests/test_brd_gaps.py::test_the_audit_export_is_the_whole_chain_and_reverifies` | implemented_verified | Export `GET /api/audit/export` (JSON with the check, or CSV) since 2026-10-16 |
-| BRD-FR-703 | §6.7 | Agent catalogue | FEAT-15 | — | `app/web.py::agents_status` | — | partially_implemented | Mode, models, prompt version only; no purpose/owner/risk/last run/references |
+| BRD-FR-703 | §6.7 | Agent catalogue | FEAT-15 | SCR-CIO-08 | `src/views/catalogue.py::catalogue`, `GET /api/agents/catalogue` | `tests/test_catalogue.py::test_one_entry_per_agent_with_the_six_fields`, `tests/test_catalogue.py::test_the_latest_run_and_the_quality_figures_come_from_the_store` | implemented_verified | Five entries (the BRD §8 four + Copilot) with purpose, owner, risk, model (BRD default and configured), latest run, open-source references (2026-10-16) |
 | BRD-FR-704 | §6.7 | Per-step trace of the CIO agent | FEAT-04 | SCR-CIO-03 | `src/views/agents.py::_record` | `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node` | implemented_verified | |
 | BRD-FR-801 | §6.8 | CIO newsletter | FEAT-17 | — | — | — | planned | News plan N5 (optional) |
 | BRD-NFR-01 | §15 | 6,500 families ≤ 5 min; family page ≤ 2 s | FEAT-08 | — | `src/apply/run.py` | — | implemented_unverified | Measured 0.44 s for 5 families (news plan §9); never run at scale |
@@ -198,7 +198,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-MEAS-01 | FEAT-18 | blocked | — | Needs realised history |
 | BRD-RULE-MEAS-02 | FEAT-18 | blocked | — | Needs realised history |
 | BRD-RULE-MEAS-03 | — | not_implemented | — | |
-| BRD-RULE-MEAS-04 | FEAT-04, 06 | planned | — | Data is recorded (edits, findings, retries); no report. Would belong with the agent catalogue (N5) |
+| BRD-RULE-MEAS-04 | FEAT-04, 06, 15 | implemented_verified | `tests/test_catalogue.py::test_the_latest_run_and_the_quality_figures_come_from_the_store` | `catalogue.quality`: share of decided views the CIO edited, findings and critical ones, agent runs and errors, format retries — 7 days and all time, on SCR-CIO-08 |
 | BRD-RULE-MEAS-05 | FEAT-06 | out_of_scope_demo | — | Data recorded (decision times); pilot metric |
 | BRD-RULE-MEAS-06 | — | out_of_scope_demo | — | Pilot control group |
 | BRD-RULE-MEAS-07 | FEAT-04 | partially_implemented | — | No news-agent eval set; only the pre-BRD `statement_reading` eval exists |

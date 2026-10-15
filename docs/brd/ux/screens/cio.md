@@ -139,3 +139,21 @@ status badge.
 Version (FM-DEMO-2026-10) with “tham số giả định”; **Cách tính** (the four steps in words, the stressed-matrix
 repair figures); **15 yếu tố** — group, S/M/L sizes, realisation at 1 week / 3 months / 12 months (the BRD's), monthly
 volatility normal / stressed, each assumed value badged “giả định”. Read-only: no edit or approval (FR-701 gap).
+
+---
+
+## SCR-CIO-08 — Agent (catalogue and AI quality)
+
+| | |
+|---|---|
+| Route | `#/cio/agent`; Compliance: `#/compliance/agent` |
+| Generation | new (`web/pages/agents.js`) |
+| Feature | [FEAT-15](../../features/FEAT-15-agent-catalogue.md) |
+| Requirements | BRD-FR-703, BRD-RULE-MEAS-04 |
+| Data | `GET /api/agents/catalogue?days=7` |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CIO-08_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-08_phone-light.jpg) |
+
+One card per task: name and mode badge (Trực tiếp / Mô phỏng / Từ khóa / Mẫu tất định / Chưa xây), purpose, owner,
+risk (badge and why), model (configured and the BRD default, with the resource), what it may read, latest run (id,
+subject, time, mode, status). Then **Chất lượng AI** (7 days and all time) and **Tham khảo mã nguồn mở**.
+

@@ -291,6 +291,17 @@ async def agents_status(request: Request) -> JSONResponse:
     )
 
 
+async def agent_catalogue(request: Request) -> JSONResponse:
+    """FR-703 agent catalogue and RULE-MEAS-04 AI quality (?days=7)."""
+    from views import catalogue
+
+    try:
+        days = max(1, min(int(request.query_params.get("days") or 7), 365))
+    except ValueError:
+        return JSONResponse({"error": "days is a number"}, status_code=400)
+    return JSONResponse({**catalogue.catalogue(), "quality": catalogue.quality(days)})
+
+
 async def runs_list(request: Request) -> JSONResponse:
     """Application runs, newest first (CIO: all; ?role=rm: only those that passed post-check)."""
     q = request.query_params
@@ -525,6 +536,7 @@ app = Starlette(
         Route("/api/events/{event_id}", event_one),
         Route("/api/views/{view_id}", view_one),
         Route("/api/agents", agents_status),
+        Route("/api/agents/catalogue", agent_catalogue),
         Route("/api/runs", runs_list),
         Route("/api/runs/{run_id}", run_one),
         Route("/api/runs/{run_id}/verify", run_verify),
