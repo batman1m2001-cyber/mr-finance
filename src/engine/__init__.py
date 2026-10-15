@@ -4,7 +4,10 @@ no I/O beyond reading the factor model file, no AI (BRD §9, docs/NEWS_IMPACT_PL
 from engine.model import FactorModel, FactorModelError, default_model
 from engine.scenario import Branch, ScenarioError, Shock, evaluate, propagate
 
+ENGINE_VERSION = "engine-1"  # bump when a formula changes: runs record which one computed them
+
 __all__ = [
+    "ENGINE_VERSION",
     "Branch",
     "FactorModel",
     "FactorModelError",

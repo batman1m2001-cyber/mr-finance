@@ -13,6 +13,8 @@ import time
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
+from control import audit
+from control.audit import SCHEMA as AUDIT_SCHEMA
 from wealth.paths import state_path
 
 STATUSES = ("new", "dismissed", "grouped", "refused")
@@ -36,7 +38,7 @@ def _db() -> Iterator[sqlite3.Connection]:
     con = sqlite3.connect(path, timeout=10, isolation_level=None)
     con.row_factory = sqlite3.Row
     try:
-        con.executescript(SCHEMA)
+        con.executescript(SCHEMA + AUDIT_SCHEMA)
         con.execute("begin immediate")
         yield con
         con.execute("commit")
@@ -82,6 +84,14 @@ def add(items: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], int]:
                 ),
             )
             added.append(row)
+        if added:
+            audit.append(
+                con,
+                "system:ingest",
+                "news.add",
+                "news",
+                {"ids": [r["id"] for r in added], "refused": [r["id"] for r in added if r["status"] == "refused"]},
+            )
     return added, dup
 
 
@@ -177,6 +187,8 @@ def set_status(ids: List[str], status: str, by: str, note: str = "") -> int:
                 (status, json.dumps(d, ensure_ascii=False), item_id),
             )
             changed += 1
+        if changed:
+            audit.append(con, by, f"news.{status}", ",".join(ids), {"note": note})
     return changed
 
 
@@ -191,6 +203,7 @@ def clear_hold(item_id: str, by: str, note: str) -> bool:
         con.execute(
             "update news_items set held = 0, data = ? where id = ?", (json.dumps(d, ensure_ascii=False), item_id)
         )
+        audit.append(con, by, "news.release", item_id, {"note": note, "restricted": d.get("restricted", [])})
     return True
 
 

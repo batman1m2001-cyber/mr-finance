@@ -13,7 +13,7 @@ import json
 import time
 from typing import Any, Dict, List, Optional
 
-from control import db
+from control import audit, db
 
 LIFECYCLE = (
     "DRAFTING",
@@ -54,6 +54,7 @@ def create(event_id: str, by: str, mode: str, models: Dict[str, str]) -> Dict[st
         con.execute(
             "insert into views values (?, ?, ?, ?, ?, ?)", (view_id, event_id, version, "DRAFTING", now, db.dumps(data))
         )
+        audit.append(con, by, "view.create", view_id, {"event_id": event_id, "mode": mode, "models": models})
     return get(view_id)
 
 
@@ -79,7 +80,23 @@ def save(view: Dict[str, Any], status: str, by: str, note: str = "") -> Dict[str
     if status != view["status"]:
         data["history"] = data.get("history", []) + [{"at": time.time(), "by": by, "status": status, "note": note}]
     with db.tx() as con:
+        before = con.execute("select status, data from views where id = ?", (view["id"],)).fetchone()
         con.execute("update views set status = ?, data = ? where id = ?", (status, db.dumps(data), view["id"]))
+        old = json.loads(before["data"]) if before else {}
+        changed = sorted(k for k in set(old) | set(data) if old.get(k) != data.get(k) and k != "history")
+        audit.append(
+            con,
+            by,
+            "view.save",
+            view["id"],
+            {
+                "from": before["status"] if before else None,
+                "to": status,
+                "note": note,
+                "changed": changed,
+                "content_hash": data.get("content_hash"),
+            },
+        )
     return get(view["id"])
 
 
@@ -89,6 +106,19 @@ def add_challenge(view_id: str, stage: str, data: Dict[str, Any]) -> Dict[str, A
         n = con.execute("select count(*) from challenges where view_id = ?", (view_id,)).fetchone()[0] + 1
         cid = f"CH-{view_id[3:]}-{n}"
         con.execute("insert into challenges values (?, ?, ?, ?, ?)", (cid, view_id, stage, now, db.dumps(data)))
+        audit.append(
+            con,
+            "agent:challenger",
+            "challenge.add",
+            cid,
+            {
+                "view_id": view_id,
+                "stage": stage,
+                "model": data.get("model"),
+                "content_hash": data.get("content_hash"),
+                "findings": [[f["id"], f["severity"]] for f in data.get("findings", [])],
+            },
+        )
     return {**data, "id": cid, "view_id": view_id, "stage": stage, "created": now}
 
 
@@ -116,6 +146,13 @@ def add_decision(view_id: str, action: str, idem_key: Optional[str], data: Dict[
         con.execute(
             "insert into decisions values (?, ?, ?, ?, ?, ?)", (did, view_id, action, idem_key, now, db.dumps(data))
         )
+        audit.append(
+            con,
+            data.get("by", "?"),
+            f"decision.{action}",
+            did,
+            {"view_id": view_id, "reason": data.get("reason"), "content_hash": data.get("content_hash")},
+        )
     return {**data, "id": did, "view_id": view_id, "action": action, "idem_key": idem_key, "created": now}
 
 
@@ -140,6 +177,7 @@ def start_run(agent: str, subject_id: str, mode: str, model: str) -> str:
         rid = f"AG-{seq:06d}"
         data = {"mode": mode, "model": model, "nodes": [], "status": "running"}
         con.execute("insert into agent_runs values (?, ?, ?, ?, ?)", (rid, agent, subject_id, now, db.dumps(data)))
+        audit.append(con, f"agent:{agent}", "agent.start", rid, {"subject": subject_id, "mode": mode, "model": model})
     return rid
 
 
@@ -157,6 +195,14 @@ def finish_run(run_id: str, status: str, error: str = "") -> None:
         data = json.loads(row["data"])
         data.update(status=status, error=error, finished=time.time())
         con.execute("update agent_runs set data = ? where id = ?", (db.dumps(data), run_id))
+        nodes = hashlib.sha256(db.dumps(data["nodes"]).encode("utf-8")).hexdigest()
+        audit.append(
+            con,
+            "agent",
+            "agent.finish",
+            run_id,
+            {"status": status, "error": error, "nodes": len(data["nodes"]), "nodes_hash": nodes},
+        )
 
 
 def runs(subject_id: str) -> List[Dict[str, Any]]:

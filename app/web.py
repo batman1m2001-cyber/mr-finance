@@ -15,6 +15,10 @@ from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
+from apply import reads as apply_reads
+from apply import run as apply_run
+from apply import trace as apply_trace
+from control import audit as control_audit
 from control import db as control_db
 from control import roles
 from events import store as events_store
@@ -242,6 +246,74 @@ async def agents_status(request: Request) -> JSONResponse:
     )
 
 
+async def runs_list(request: Request) -> JSONResponse:
+    """Application runs, newest first (CIO: all; ?role=rm: only those that passed post-check)."""
+    q = request.query_params
+    statuses = apply_run.RM_VISIBLE if q.get("role") == "rm" else None
+    rows = apply_run.runs(view_id=q.get("view_id") or None, statuses=statuses)
+    return JSONResponse({"runs": rows})
+
+
+async def run_one(request: Request) -> JSONResponse:
+    try:
+        return JSONResponse({"run": apply_run.get(request.path_params["run_id"])})
+    except KeyError as exc:
+        return JSONResponse({"error": str(exc.args[0])}, status_code=404)
+
+
+async def run_verify(request: Request) -> JSONResponse:
+    """Recompute every family from the run's frozen snapshot and compare to the dong (NFR-04)."""
+    try:
+        return JSONResponse(apply_run.verify(request.path_params["run_id"]))
+    except KeyError as exc:
+        return JSONResponse({"error": str(exc.args[0])}, status_code=404)
+
+
+async def family_impact(request: Request) -> JSONResponse:
+    role = request.query_params.get("role") or "client"
+    try:
+        return JSONResponse(apply_reads.family_impact(request.path_params["family_id"], role))
+    except roles.Forbidden as exc:
+        return JSONResponse({"error": str(exc)}, status_code=403)
+
+
+async def trace(request: Request) -> JSONResponse:
+    """FR-406: a family's number back to the news (staff only: it names holdings)."""
+    q = request.query_params
+    try:
+        return JSONResponse(
+            apply_trace.trace(
+                request.path_params["run_id"],
+                request.path_params["family_id"],
+                key=q.get("key") or None,
+                horizon=q.get("horizon") or "3m",
+            )
+        )
+    except KeyError as exc:
+        return JSONResponse({"error": str(exc.args[0])}, status_code=404)
+
+
+async def rm_today(request: Request) -> JSONResponse:
+    return JSONResponse(apply_reads.rm_today())
+
+
+async def audit_verify(request: Request) -> JSONResponse:
+    with control_db.tx() as con:
+        return JSONResponse(control_audit.verify(con))
+
+
+async def audit_list(request: Request) -> JSONResponse:
+    try:
+        limit = min(int(request.query_params.get("limit") or 100), 1000)
+    except ValueError:
+        return JSONResponse({"error": "limit is a number"}, status_code=400)
+    with control_db.tx() as con:
+        rows = [dict(r) for r in con.execute("select * from audit_log order by seq desc limit ?", (limit,))]
+    for r in rows:
+        r["data"] = json.loads(r["data"])
+    return JSONResponse({"rows": rows})
+
+
 async def reset(request: Request) -> JSONResponse:
     store.reset()
     news_store.reset()
@@ -263,6 +335,14 @@ app = Starlette(
         Route("/api/events/{event_id}", event_one),
         Route("/api/views/{view_id}", view_one),
         Route("/api/agents", agents_status),
+        Route("/api/runs", runs_list),
+        Route("/api/runs/{run_id}", run_one),
+        Route("/api/runs/{run_id}/verify", run_verify),
+        Route("/api/families/{family_id}/impact", family_impact),
+        Route("/api/trace/{run_id}/{family_id}", trace),
+        Route("/api/rm/today", rm_today),
+        Route("/api/audit", audit_list),
+        Route("/api/audit/verify", audit_verify),
         Route("/api/reset", reset, methods=["POST"]),
         # the sample statements a demo uploads
         Mount("/samples", app=StaticFiles(directory=DATA / "samples"), name="samples"),

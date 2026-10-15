@@ -14,6 +14,9 @@ POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──�
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
 POST /api/events ──► event_flow · POST /api/events/run-agent ──► cio_agent_flow (agent + challenger)
 POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
+approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
+     run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
+     /api/rm/today, /api/audit[/verify] ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
      clients, the specialist team, the advisory track record, the house views, the UI)
 
@@ -27,6 +30,7 @@ from operonx.app.evals import Gate
 from operonx.app.jobs import Job
 
 from app import web
+from apply.graph import recompute_flow, run_decide_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
 from events.graph import event_flow
@@ -135,6 +139,18 @@ APP = Application(
             http("POST", "/api/views/decide", port=PORT),
             graph=decide_flow,
             description="POST {view_id, action, by, reason, idem_key?, edits?, responses?}: one CIO action.",
+        ),
+        Service(
+            "run_recompute",
+            http("POST", "/api/runs/recompute", port=PORT),
+            graph=recompute_flow,
+            description="POST {run_id, by, idem_key?}: re-apply the run's view on today's data and compare.",
+        ),
+        Service(
+            "run_decide",
+            http("POST", "/api/runs/decide", port=PORT),
+            graph=run_decide_flow,
+            description="POST {run_id, action: make_effective|withdraw, by, reason}: the CIO on a run.",
         ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),

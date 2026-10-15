@@ -13,6 +13,7 @@ import sqlite3
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, Optional
 
+from control.audit import SCHEMA as AUDIT_SCHEMA
 from wealth.paths import state_path
 
 SCHEMA = """
@@ -33,9 +34,28 @@ create index if not exists decisions_view on decisions (view_id);
 create table if not exists agent_runs (
   id text primary key, agent text not null, subject_id text not null, created real not null, data text not null);
 create index if not exists agent_runs_subject on agent_runs (subject_id);
+create table if not exists application_runs (
+  id text primary key, view_id text not null, event_id text not null, status text not null,
+  idem_key text unique, created real not null, data text not null);
+create index if not exists application_runs_view on application_runs (view_id);
+create table if not exists run_snapshots (id text primary key, created real not null, data text not null);
+create table if not exists family_impacts (
+  id text primary key, run_id text not null, family_id text not null, data text not null,
+  unique (run_id, family_id));
+create index if not exists family_impacts_family on family_impacts (family_id);
 """
 
-TABLES = ("events", "views", "challenges", "decisions", "agent_runs", "counters")
+TABLES = (
+    "events",
+    "views",
+    "challenges",
+    "decisions",
+    "agent_runs",
+    "application_runs",
+    "run_snapshots",
+    "family_impacts",
+    "counters",
+)
 
 
 @contextmanager
@@ -45,7 +65,7 @@ def tx() -> Iterator[sqlite3.Connection]:
     con = sqlite3.connect(path, timeout=10, isolation_level=None)
     con.row_factory = sqlite3.Row
     try:
-        con.executescript(SCHEMA)
+        con.executescript(SCHEMA + AUDIT_SCHEMA)
         con.execute("begin immediate")
         yield con
         con.execute("commit")
@@ -79,7 +99,9 @@ def load(row: Optional[sqlite3.Row]) -> Optional[Dict[str, Any]]:
 
 
 def reset() -> None:
-    """The demo starts over: every news-impact record goes (the fetched news stays, news.store)."""
+    """The demo starts over: every news-impact record goes (the fetched news stays, news.store). The
+    audit log refuses DELETE by design, so the demo reset drops it and a new chain starts."""
     with tx() as con:
         for t in TABLES:
             con.execute(f"delete from {t}")
+        con.execute("drop table if exists audit_log")

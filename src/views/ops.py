@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 
 from operonx import op
 
+from apply import run as apply_run
 from control import roles
 from engine import default_model
 from events import store as events
@@ -30,6 +31,10 @@ def public(view_id: str) -> Dict[str, Any]:
         "decisions": vstore.decisions(view_id),
         "runs": vstore.runs(view_id),
         "checks": decide.checks(v) if v.get("current") else [],
+        "application_runs": [
+            {k: r.get(k) for k in ("id", "status", "status_label", "totals", "snapshot_id", "created")}
+            for r in apply_run.runs(view_id=view_id)
+        ],
     }
     if v.get("current"):
         try:
@@ -227,6 +232,10 @@ async def decide_view(
     vstore.save(v, decide.TO[action], by, f"{dec['id']}: {reason}")
     if action == "approve":
         dec["superseded"] = decide.supersede_older(vstore.get(v["id"]), by)
+        run = await apply_run.apply_view(vstore.get(v["id"]), by, dec["id"], idem_key=f"apply:{dec['id']}")
+        dec["run"] = {k: run.get(k) for k in ("id", "status", "status_label", "totals", "snapshot_id")}
+    if action == "withdraw":
+        dec["withdrawn_runs"] = apply_run.withdraw_view(v["id"], by, reason)
     return {"result": public(v["id"]), "decision": dec}
 
 

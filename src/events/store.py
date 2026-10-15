@@ -10,7 +10,7 @@ import time
 from collections import Counter
 from typing import Any, Dict, List, Optional
 
-from control import db
+from control import audit, db
 from news import store as news_store
 
 
@@ -41,6 +41,7 @@ def create(news_ids: List[str], title: Optional[str], by: str) -> Dict[str, Any]
         seq = db.next_seq(con, f"event-{year}")
         event_id = f"EV-{year}-{seq:04d}"
         con.execute("insert into events values (?, ?, ?, ?)", (event_id, now, "open", db.dumps(data)))
+        audit.append(con, by, "event.create", event_id, {"news_ids": data["news_ids"], "title": data["title"]})
     news_store.set_status(data["news_ids"], "grouped", by=by, note=event_id)
     return get(event_id)
 
