@@ -22,7 +22,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-12 | conflict | FR-501 “the challenger writes the summary” vs F02 / §7.1 | resolved (BRD F02) |
 | Q-13 | conflict | NFR-05 exact decimals vs the BRD's own float engine (F22) | resolved (ADR-0011) |
 | Q-14 | conflict | NFR-11 “every number has cách tính” vs flow 2 (no tickers to clients) | open |
-| Q-15 | conflict | §13.1 two-person rule: sentence vs ownership table | open — Compliance |
+| Q-15 | conflict | §13.1 two-person rule: sentence vs ownership table | resolved for the demo (ADR-0016) |
 | Q-16 | gap | Brief: re-asking the risk test on triggers | open |
 | Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | open |
 | Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005) |
@@ -100,7 +100,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-15 — Two-person rule
 - **Fact:** §13.1 sentence: “cần hai người cho prompt, mô hình AI, mô hình yếu tố, ngưỡng cảnh báo và danh sách hạn chế”. §13.1 table: two people only for prompts and AI models; thresholds, factor model, restricted list “Không”. F14 says the factor model, thresholds and restricted list *were changed* to need two people.
-- **Open:** which is current. FR-701 is not built either way. Owner: Compliance.
+- **Resolution (2026-10-16, ADR-0016):** follow the sentence and F14 (stricter): two people for the factor model, thresholds and restricted list; Compliance may relax it.
 
 ### Q-16 — Re-asking the risk test
 - **Fact:** BRIEF-RISK-04 asks the system to re-ask on life changes, market moves or every 6 months. The product compares what the client says with what they did (April dip), but has no re-ask trigger. Owner: product.

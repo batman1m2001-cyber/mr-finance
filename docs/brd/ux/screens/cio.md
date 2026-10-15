@@ -157,3 +157,21 @@ One card per task: name and mode badge (Trực tiếp / Mô phỏng / Từ khóa
 risk (badge and why), model (configured and the BRD default, with the resource), what it may read, latest run (id,
 subject, time, mode, status). Then **Chất lượng AI** (7 days and all time) and **Tham khảo mã nguồn mở**.
 
+---
+
+## SCR-CIO-09 — Cấu hình (versioned configuration)
+
+| | |
+|---|---|
+| Route | `#/cio/cau-hinh`; Compliance: `#/compliance/cau-hinh` |
+| Generation | new (`web/pages/config.js`) |
+| Feature | [FEAT-14](../../features/FEAT-14-versioned-configuration.md) |
+| Requirements | BRD-FR-701, BRD-RULE-SEC-04, BRD-RULE-SEC-05 |
+| Data | `GET /api/config`, `POST /api/config/propose`, `POST /api/config/decide` |
+| Screenshots | [desktop, a pending proposal](../../assets/current_ui/SCR-CIO-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-09_phone-light.jpg) |
+
+One panel per kind: owner and “hai người”, the version in force (number, id, hash, who approved), its content in
+short; a pending proposal with who proposed, when, why, its content, and — for the owner's role — an approver
+picker (the proposer left out where two people are required), **Duyệt** and **Từ chối**; for thresholds and the
+restricted list an “Đề xuất thay đổi” JSON editor with a reason; the history.
+

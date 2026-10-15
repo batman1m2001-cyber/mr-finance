@@ -5,7 +5,7 @@
    The role switcher is a demo: it sends a user id with each action and the server checks that id's
    role. It is not security, and the footer says so. */
 import {$, $$, esc, failed, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261016f";
+import {mount as mountCopilot} from "./copilot.js?v=20261016h";
 
 const ROLES = {
   client: {
@@ -45,6 +45,7 @@ const ROLES = {
       {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
       {id: "mo-hinh", label: "Mô hình", page: "model"},
       {id: "agent", label: "Agent", page: "agents"},
+      {id: "cau-hinh", label: "Cấu hình", page: "config"},
     ],
   },
   compliance: {
@@ -54,6 +55,7 @@ const ROLES = {
       {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "agent", label: "Agent", page: "agents"},
+      {id: "cau-hinh", label: "Cấu hình", page: "config"},
     ],
   },
 };
@@ -139,7 +141,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016f`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016h`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {

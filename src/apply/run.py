@@ -26,14 +26,15 @@ from datetime import date
 from typing import Any, Dict, List, Optional
 
 from apply.goals import goal_impacts
-from control import audit, db
+from control import audit, config, db
 from engine import ENGINE_VERSION, FactorModel, evaluate
 from procedural import goals as procedural_goals
 from views import schema
 from wealth import fixtures, profile
 from wealth.paths import DATA
 
-PRE_REVIEW_PCT = -0.05  # BR-09: the 3-month P10 at or below −5 % of net worth
+# BR-09 default: the 3-month P10 at or below −5 % of net worth; the value in force is versioned (FR-701)
+PRE_REVIEW_PCT = config.THRESHOLDS["pre_review_pct"]
 RM_VISIBLE = ("EFFECTIVE", "SUPERSEDED", "WITHDRAWN")
 STATUS_LABEL = {
     "COMPUTING": "Đang tính",
@@ -88,7 +89,7 @@ async def family_holdings() -> Dict[str, Dict[str, Any]]:
 
 def make_snapshot(view: Dict[str, Any], families: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
     market_raw = (DATA / "market.json").read_bytes()
-    model_raw = json.loads((DATA / "factor_model.json").read_text(encoding="utf-8"))
+    model_raw = config.data("factor_model")  # FR-701: the approved version in force
     sc = view["current"]["scenarios"]
     body = {
         "view_id": view["id"],
@@ -98,6 +99,7 @@ def make_snapshot(view: Dict[str, Any], families: Dict[str, Dict[str, Any]]) -> 
         "families": families,
         "market": {"as_of": fixtures.market()["as_of"], "sha256": hashlib.sha256(market_raw).hexdigest()},
         "factor_model": model_raw,
+        "thresholds": config.data("thresholds"),  # frozen with the run, so a recompute uses the same rules
         "engine_version": ENGINE_VERSION,
     }
     return {"id": "SN-" + _hash(body)[:16], "hash": _hash(body), **body}
@@ -106,6 +108,7 @@ def make_snapshot(view: Dict[str, Any], families: Dict[str, Dict[str, Any]]) -> 
 def compute(snapshot: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     """The engine over every family of a snapshot: pure, so the same snapshot gives the same numbers."""
     model = FactorModel.from_dict(snapshot["factor_model"])
+    limits = snapshot.get("thresholds") or config.THRESHOLDS
     out = {}
     for fid, fam in sorted(snapshot["families"].items()):
         hs = fam["holdings"]
@@ -147,7 +150,7 @@ def compute(snapshot: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
             "holdings": r["holdings"],
             "loan_interest_3m": sum(v for k, v in h3["by_holding"].items() if k in loans),
             "modelled_share": modelled / assets if assets else 0.0,
-            "pre_review": bool(nw > 0 and h3["p10"] <= PRE_REVIEW_PCT * nw),
+            "pre_review": bool(nw > 0 and h3["p10"] <= limits["pre_review_pct"] * nw),
             "model": r["model"],
             "goal_impact": goal_impacts(fam, h3["by_holding"], snapshot["market"]["as_of"]),
         }
@@ -159,6 +162,7 @@ def postcheck(
 ) -> Dict[str, Any]:
     """FR-501's rules; the summary is a template, not a model (F02: no family data goes to AI)."""
     findings: List[Dict[str, Any]] = []
+    limits = snapshot.get("thresholds") or config.THRESHOLDS
     as_of = date.fromisoformat(snapshot["market"]["as_of"])
     age = (date.fromisoformat(today) if today else date.today()) - as_of
     if age.days > 3:
@@ -175,7 +179,7 @@ def postcheck(
     for fid, r in results.items():
         nw = r["net_worth"]
         biggest = max((h for h in r["holdings"] if h["value"] > 0), key=lambda h: h["value"], default=None)
-        if biggest and nw > 0 and biggest["value"] / nw > 0.4:
+        if biggest and nw > 0 and biggest["value"] / nw > limits["concentration_share"]:
             findings.append(
                 {
                     "id": f"P1-{fid}",
@@ -185,7 +189,7 @@ def postcheck(
                     "detail": f"{biggest['name']} chiếm {biggest['value'] / nw:.0%} tài sản ròng.",
                 }
             )
-        if r["modelled_share"] > 0.5:
+        if r["modelled_share"] > limits["modelled_share"]:
             findings.append(
                 {
                     "id": f"P3-{fid}",
@@ -195,7 +199,7 @@ def postcheck(
                     "detail": f"{r['modelled_share']:.0%} tài sản tính bằng đại diện (BĐS, cổ phần tư nhân).",
                 }
             )
-        if nw > 0 and abs(r["horizons"]["3m"]["expected"]) > 0.25 * nw:
+        if nw > 0 and abs(r["horizons"]["3m"]["expected"]) > limits["implausible_share"] * nw:
             findings.append(
                 {
                     "id": f"P4-{fid}",

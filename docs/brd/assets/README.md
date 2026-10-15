@@ -31,6 +31,8 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CIO-07_desktop-light.jpg` | SCR-CIO-07 Mô hình | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CIO-08_desktop-light.jpg` | SCR-CIO-08 Agent | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, mock agents, three approved views |
 | `SCR-CIO-08_phone-light.jpg` | SCR-CIO-08 Agent | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, mock agents, three approved views |
+| `SCR-CIO-09_desktop-light.jpg` | SCR-CIO-09 Cấu hình | current | desktop 1440×900, light, full page | 2026-10-16, dev server, Compliance, a restricted-list proposal waiting for the second person; thresholds v2 in force |
+| `SCR-CIO-09_phone-light.jpg` | SCR-CIO-09 Cấu hình | current | phone 390×844, light, viewport | 2026-10-16, dev server, Compliance |
 | `SCR-CL-01_desktop-light.jpg` | SCR-CL-01 Tổng quan | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CL-01_phone-light.jpg` | SCR-CL-01 Tổng quan | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CL-02_desktop-light.jpg` | SCR-CL-02 Tài sản | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |

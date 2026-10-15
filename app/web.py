@@ -291,6 +291,24 @@ async def agents_status(request: Request) -> JSONResponse:
     )
 
 
+async def config_list(request: Request) -> JSONResponse:
+    """FR-701: every kind of configuration, its version in force, a pending proposal, the history."""
+    from control import config
+
+    return JSONResponse({"kinds": config.overview(), "users": [{"id": k, **v} for k, v in roles.USERS.items()]})
+
+
+async def config_version(request: Request) -> JSONResponse:
+    from control import config
+
+    vid = request.path_params["version_id"]
+    kind = vid[3:].rsplit("-v", 1)[0]
+    try:
+        return JSONResponse(next(v for v in config.versions(kind) if v["id"] == vid))
+    except (StopIteration, ValueError):
+        return JSONResponse({"error": f"không có phiên bản {vid}"}, status_code=404)
+
+
 async def agent_catalogue(request: Request) -> JSONResponse:
     """FR-703 agent catalogue and RULE-MEAS-04 AI quality (?days=7)."""
     from views import catalogue
@@ -537,6 +555,8 @@ app = Starlette(
         Route("/api/views/{view_id}", view_one),
         Route("/api/agents", agents_status),
         Route("/api/agents/catalogue", agent_catalogue),
+        Route("/api/config", config_list),
+        Route("/api/config/{version_id}", config_version),
         Route("/api/runs", runs_list),
         Route("/api/runs/{run_id}", run_one),
         Route("/api/runs/{run_id}/verify", run_verify),

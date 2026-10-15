@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Versioned configuration with owners and approval (FR-701; SCR-CIO-09; ADR-0016 resolves Q-15) —
+  FEAT-14, matrix (BR-07, FR-701, RULE-SEC-04/05), business_rules, open_questions, cio.md, inventory, IA,
+  api_reference, decisions, 2 screenshots.
+
 - 2026-10-16 — Agent catalogue and AI quality (FR-703, RULE-MEAS-04; SCR-CIO-08) — FEAT-15, matrix, cio.md,
   inventory, IA, api_reference, agent_workflows, 2 screenshots.
 
