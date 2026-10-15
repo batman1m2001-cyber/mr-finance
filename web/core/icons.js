@@ -83,3 +83,5 @@ export const FLOW_ICON = {
   health: "health", rent_out: "rent", _left: "savings", _short: "alert",
 };
 export const has = (name) => name in PATHS;
+/* The inner markup of an icon, for drawing inside an SVG chart (a nested <svg viewBox="0 0 24 24">). */
+export const iconPaths = (name) => PATHS[name] || PATHS.info;

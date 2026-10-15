@@ -10,6 +10,17 @@
 
 const HOLD = 2600;  // ms a highlight stays: long enough to find it, short enough not to linger
 let waiting = null, queued = null, clear = null;
+const running = new Set();  // Web Animations started by charts (Sankey flow dots): paused with the tab
+
+document.addEventListener("visibilitychange", () => { for (const a of running) document.hidden ? a.pause() : a.play(); });
+
+/* Keep a Web Animation in step with the tab: paused while hidden, forgotten when it ends. */
+export function track(anim) {
+  running.add(anim);
+  if (document.hidden) anim.pause();
+  anim.finished.then(() => running.delete(anim), () => running.delete(anim));
+  return anim;
+}
 
 export const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 

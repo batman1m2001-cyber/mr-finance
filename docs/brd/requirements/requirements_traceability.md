@@ -16,7 +16,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
 | BRD rules (RULE) | 97 | 61 | 5 | 12 | 2 | 3 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Redesign kit (KIT) | 19 | 7 | 4 | 1 | 0 | 0 | 0 | 0 | 7 |
+| Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 6 | 2 | 1 | 4 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
@@ -243,9 +243,9 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
-| KIT-UX-01 | FEAT-29 | implemented_unverified | SCR-CL-08 KPI strip (built 2026-10-16); checked by screenshots, no automated UI test |
+| KIT-UX-01 | FEAT-29 | implemented_verified | `tests/ui/test_pulse.py::test_the_figures_are_the_apis` — four Pulse cards (board look, R2) whose figures and small charts are the dashboard's, flows' and goals' fields; the class split sums to the month change |
 | KIT-UX-02 | FEAT-29 | implemented_verified | `tests/test_flows.py::test_the_bands_are_the_transactions_of_the_month_to_the_dong`, `tests/test_flows.py::test_the_latest_month_by_default_and_the_family_adds_the_spouse` — transaction rows only; a band opens to its rows |
-| KIT-UX-03 | FEAT-29 | implemented_unverified | SCR-CL-08 Wealth Map: values, shares, price date, drill-down to holdings; screenshots only |
+| KIT-UX-03 | FEAT-29 | implemented_verified | `tests/ui/test_pulse.py::test_the_figures_are_the_apis` — donut by class with values, shares, price date and drill-down to holdings (R2) |
 | KIT-UX-04 | FEAT-30 | implemented_verified | `tests/test_graph.py::test_every_edge_comes_from_a_stored_record_and_the_columns_chain`, `tests/test_graph.py::test_the_client_sees_no_headline_and_no_holding` — columns, filters, path highlight, detail panel, list view (built 2026-10-16) |
 | KIT-UX-05 | FEAT-31 | implemented_verified | `tests/test_feed.py::test_a_news_impact_shows_with_its_run_and_its_reason`, `tests/test_feed.py::test_thresholds_and_a_spending_jump_carry_their_numbers`, `tests/test_feed.py::test_the_client_reads_the_event_type_not_the_headline` — on SCR-CL-08 (built 2026-10-16) |
 | KIT-UX-06 | FEAT-29…33 | implemented_unverified | Motion only for a state change (FEAT-33, 2026-10-16): request in flight, outcome, the evidence an answer read, a chosen graph path; transform/opacity only, all off under reduced motion (`tests/test_living_interface.py::test_hidden_tabs_pause_reduced_motion_stops_and_no_js_loop`); every chart has a table or list view (Sankey table, graph list); the static alternative is checked by screenshots only |
@@ -274,7 +274,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-MOTION-05 | FEAT-33 | implemented_unverified | Nothing moves at rest with the panel closed (0 animations, 0 style/layout work in 5 s, measured); one accent colour; durations 160 ms / 240 ms / 2.6 s; screenshots |
 | OWN-MOTION-06 | FEAT-33 | implemented_verified | `tests/test_living_interface.py::test_only_transform_and_opacity_animate`, `tests/test_living_interface.py::test_hidden_tabs_pause_reduced_motion_stops_and_no_js_loop` — no library added; measured before/after in FEAT-33 (no long task; one question 57 → 144 ms main thread over 3.5 s, 80 ms under reduced motion) |
 | OWN-MOTION-07 | FEAT-33 | not_applicable | Met by this change: business logic unchanged (the answer gains `focus`, a feed item gains `key`), full suite green, docs updated (CHANGELOG 2026-10-16) |
-| OWN-UI-01 | all | partially_implemented | R1 (2026-10-16): board tokens, header, icons, controls on every new page; the old pages wait for R3 |
+| OWN-UI-01 | all | partially_implemented | R1 (2026-10-16): board tokens, header, icons, controls on every new page; R2: Toàn cảnh as on the board (`tests/ui/test_pulse.py::test_the_figures_are_the_apis`); the old pages wait for R3 |
 | OWN-UI-02 | — | planned | UI redesign plan R3 |
 | OWN-UI-03 | FEAT-34 | implemented_verified | `tests/test_search.py::test_the_client_never_matches_a_headline_staff_do`, `tests/test_search.py::test_news_and_research_stay_with_staff`, `tests/ui/test_header.py::test_search_opens_a_holding_a_page_and_a_client`, `tests/ui/test_header.py::test_the_bell_counts_the_feed_and_opens_the_evidence` |
 | OWN-UI-04 | FEAT-30 | planned | UI redesign plan R4 |

@@ -90,6 +90,8 @@ driven by [`web/motion.js`](../../../web/motion.js) and `web/copilot.js`.
   path, one column per 70 ms); `html[data-hidden]` pauses all animation.
 - **Colours** reuse the status tokens: `--good` ready/ok, `--accent` working, `--critical` error, `--warning`
   pending; the ring is `--accent` with a `--band` halo.
+- **Flow dots** (Sankey, R2): a picked band sends three dots along itself three times, then stops — Web Animations
+  on `transform`, registered with `motion.js::track` so a hidden tab pauses them.
 - **Reduced motion**: no animation or transition; states stay as colour and text; a mark is a still outline.
 
 ## Responsive

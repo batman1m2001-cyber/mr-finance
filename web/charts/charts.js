@@ -2,6 +2,8 @@
    fills, direct labels on the few marks that matter, a table view next to every chart. Colours come
    from the tokens (validated palette); a sign is gain/loss, a series is its slot, never its rank. */
 import {esc, vnd, pct} from "../core/core.js";
+import {iconPaths} from "../core/icons.js?v=20261016r1";
+import {track} from "../motion.js?v=20261016r1";
 
 const NS = "http://www.w3.org/2000/svg";
 function el(tag, attrs, parent) {
@@ -173,24 +175,31 @@ export function moves(box, rows) {
   }).join("");
 }
 
-// ── sankey: a month's money in → the month → out (Money Flow, kit K2) ────────
+// ── sankey: a month's money in → the month → out (Money Flow, kit K2; board look R2) ─────────────
+// A fixed colour per category (colour follows the entity, never its rank); bands fade from their node's colour
+// toward the month; icon chips beside the labels on wide screens. Picking a band highlights it and sends three
+// dots along it three times (transform only, paused with the tab, none under reduced motion), then stops.
+const IN_COLOR = {salary: "var(--s1)", pension: "var(--s7)", rent: "var(--s6)", _short: "var(--down)"};
+const OUT_COLOR = {living: "var(--s2)", card: "var(--s4)", loan: "var(--s8)", school: "var(--s7)", health: "var(--s5)",
+  rent_out: "var(--s1)", _left: "var(--s3)"};
 export function sankey(box, f, opts = {}) {
   // f: the /api/flows answer; both sides balance: a surplus is a “Còn lại” band out, a shortfall a
-  // “Thiếu hụt” band in. Static (no motion); every band and node is focusable and opens its rows.
-  const short = f.left < 0 ? [{category: "_short", label: "Thiếu hụt (từ tiền tích lũy)", amount: -f.left, color: "var(--down)"}] : [];
-  const left = [...f.inflow.map(b => ({...b, color: "var(--s1)"})), ...short];
-  const right = [...f.outflow.map(b => ({...b, color: "var(--s2)"})),
-    ...(f.left > 0 ? [{category: "_left", label: "Còn lại", amount: f.left, color: "var(--s3)"}] : [])];
+  // “Thiếu hụt” band in. Every band and node is focusable and opens its rows.
+  const short = f.left < 0 ? [{category: "_short", label: "Thiếu hụt (từ tiền tích lũy)", amount: -f.left}] : [];
+  const left = [...f.inflow, ...short].map(b => ({...b, color: IN_COLOR[b.category] || "var(--other)"}));
+  const right = [...f.outflow, ...(f.left > 0 ? [{category: "_left", label: "Còn lại", amount: f.left}] : [])]
+    .map(b => ({...b, color: OUT_COLOR[b.category] || "var(--other)"}));
   const total = Math.max(f.total_in, f.total_out);
   if (!total) { box.innerHTML = `<div class="small muted">Không có giao dịch trong tháng này.</div>`; return; }
   const width = Math.max(300, box.clientWidth || 640), narrow = width < 560;
-  const lw = narrow ? 92 : 168, nodeW = 12, gap = 10;
+  const lw = narrow ? 92 : 190, nodeW = 10, gap = 12, icons = !narrow && opts.icons !== false;
   const n = Math.max(left.length, right.length);
-  const height = opts.height || Math.max(200, n * (narrow ? 46 : 40));
+  const height = opts.height || Math.max(210, n * (narrow ? 46 : 44));
   const scale = (height - 8 - gap * (n - 1)) / total;
   const x0 = lw, xm = width / 2 - nodeW / 2, x1 = width - lw - nodeW;
   const svg = el("svg", {class: "viz sankey", viewBox: `0 0 ${width} ${height}`, role: "img",
     "aria-label": opts.label || "Dòng tiền trong tháng: tiền vào theo nhóm, tiền ra theo nhóm"});
+  const defs = el("defs", {}, svg);
   const place = (nodes) => {
     const used = nodes.reduce((a, b) => a + b.amount * scale, 0) + gap * (nodes.length - 1);
     let y = (height - used) / 2;
@@ -203,41 +212,84 @@ export function sankey(box, f, opts = {}) {
     const c = (xa + xb) / 2;
     return `M${xa},${ya}C${c},${ya} ${c},${yb} ${xb},${yb}L${xb},${yb + h}C${c},${yb + h} ${c},${ya + h} ${xa},${ya + h}Z`;
   };
-  const bands = el("g", {}, svg);
-  const pick = (b, side) => () => opts.onPick && opts.onPick(b, side);
-  const band = (d, b, side) => {
-    const p = el("path", {d, fill: b.color, "fill-opacity": 0.32, tabindex: 0, role: "button", class: "band",
-      "data-focus": `flow:${f.month}:${side}:${b.category}`,
+  const centre = (xa, ya, xb, yb, h) => {  // the band's middle line, sampled for the flow dots
+    const c = (xa + xb) / 2, a = ya + h / 2, z = yb + h / 2, out = [];
+    for (let i = 0; i <= 16; i++) {
+      const t = i / 16, u = 1 - t;
+      out.push([u * u * u * xa + 3 * u * u * t * c + 3 * u * t * t * c + t * t * t * xb, u * u * u * a + 3 * u * u * t * a + 3 * u * t * t * z + t * t * t * z]);
+    }
+    return out;
+  };
+  const bands = el("g", {}, svg), dots = el("g", {class: "flowdots"}, svg);
+  let gid = 0;
+  const grad = (color, side) => {  // one hue per band, strongest at its own node
+    const id = `sk${Math.random().toString(36).slice(2, 7)}${gid++}`;
+    const g = el("linearGradient", {id, x1: 0, x2: 1, y1: 0, y2: 0}, defs);
+    el("stop", {offset: 0, "stop-color": color, "stop-opacity": side === "in" ? 0.5 : 0.16}, g);
+    el("stop", {offset: 1, "stop-color": color, "stop-opacity": side === "in" ? 0.16 : 0.5}, g);
+    return `url(#${id})`;
+  };
+  const flow = (pts, color) => {
+    dots.innerHTML = "";
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const frames = pts.map(([x, y]) => ({transform: `translate(${x}px, ${y}px)`}));
+    for (let i = 0; i < 3; i++) {
+      const d = el("circle", {r: 3.2, cx: 0, cy: 0, fill: color, stroke: "var(--surface)", "stroke-width": 1.5}, dots);
+      track(d.animate(frames, {duration: 1800, delay: i * 600, iterations: 3, easing: "linear", fill: "backwards"}))
+        .finished.then(() => d.remove(), () => d.remove());
+    }
+  };
+  const band = (d, b, side, pts) => {
+    const p = el("path", {d, fill: grad(b.color, side), tabindex: 0,
+      role: "button", class: "band", "data-focus": `flow:${f.month}:${side}:${b.category}`,
       "aria-label": `${b.label}: ${vnd(b.amount)}`}, bands);
+    p.style.setProperty("--c", b.color);
     hover(p, `<b>${esc(b.label)}</b><br>${vnd(b.amount)} · ${pct(b.amount / total)}${b.rows ? `<br>${b.rows.length} giao dịch` : ""}`);
-    p.addEventListener("click", pick(b, side));
-    p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(b, side)(); } });
+    const pick = () => {
+      for (const q of bands.querySelectorAll(".band")) q.classList.toggle("on", q === p);
+      svg.classList.add("picked");
+      flow(pts, b.color);
+      opts.onPick && opts.onPick(b, side);
+    };
+    p.addEventListener("click", pick);
+    p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
   };
   let at = my;
-  for (const b of left) { band(curve(x0 + nodeW, b.y, xm, at, b.h), b, "in"); at += b.h; }
+  for (const b of left) { band(curve(x0 + nodeW, b.y, xm, at, b.h), b, "in", centre(x0 + nodeW, b.y, xm, at, b.h)); at += b.h; }
   at = my;
-  for (const b of right) { band(curve(xm + nodeW, at, x1, b.y, b.h), b, "out"); at += b.h; }
+  for (const b of right) { band(curve(xm + nodeW, at, x1, b.y, b.h), b, "out", centre(xm + nodeW, at, x1, b.y, b.h)); at += b.h; }
+  const chip = (x, y, b, side) => {
+    const name = (side === "in" ? {salary: "salary", pension: "pension", rent: "rent", _short: "alert"}
+      : {living: "cart", card: "card", loan: "loan", school: "school", health: "health", rent_out: "rent", _left: "savings"})[b.category] || "wallet";
+    el("rect", {x, y: y - 11, width: 22, height: 22, rx: 6, fill: b.color, "fill-opacity": 0.14}, svg);
+    const ic = el("svg", {x: x + 4, y: y - 7, width: 14, height: 14, viewBox: "0 0 24 24", fill: "none", stroke: b.color,
+      "stroke-width": 2.2, "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true"}, svg);
+    ic.innerHTML = iconPaths(name);
+  };
   const label = (x, y, anchor, b) => {
     const t = el("text", {x, y, "text-anchor": anchor, class: "lbl"}, svg);
-    const name = narrow && b.label.length > 13 ? b.label.slice(0, 12) + "…" : b.label;
-    t.textContent = name;
-    const v = el("text", {x, y: y + 14, "text-anchor": anchor, class: "val"}, svg);
+    const max = narrow ? 12 : 22;
+    t.textContent = b.label.length > max ? b.label.slice(0, max - 1) + "…" : b.label;
+    const v = el("text", {x, y: y + 15, "text-anchor": anchor, class: "val"}, svg);
     v.textContent = fmt(b.amount);
   };
   for (const b of left) {
-    el("rect", {x: x0, y: b.y, width: nodeW, height: b.h, rx: 3, fill: b.color}, svg);
-    label(x0 - 8, b.y + b.h / 2 - 2, "end", b);
+    el("rect", {x: x0, y: b.y, width: nodeW, height: b.h, rx: 4, fill: b.color}, svg);
+    const cy = b.y + b.h / 2;
+    if (icons) chip(x0 - 30, cy, b, "in");
+    label(x0 - (icons ? 38 : 8), cy - 2, "end", b);
   }
   for (const b of right) {
-    el("rect", {x: x1, y: b.y, width: nodeW, height: b.h, rx: 3, fill: b.color}, svg);
-    label(x1 + nodeW + 8, b.y + b.h / 2 - 2, "start", b);
+    el("rect", {x: x1, y: b.y, width: nodeW, height: b.h, rx: 4, fill: b.color}, svg);
+    const cy = b.y + b.h / 2;
+    if (icons) chip(x1 + nodeW + 8, cy, b, "out");
+    label(x1 + nodeW + (icons ? 38 : 8), cy - 2, "start", b);
   }
-  el("rect", {x: xm, y: my, width: nodeW, height: mh, rx: 3, fill: "var(--ink-2)"}, svg);
+  el("rect", {x: xm, y: my, width: nodeW, height: mh, rx: 4, fill: "var(--axis)"}, svg);
   box.innerHTML = "";
   box.appendChild(svg);
   const legend = document.createElement("div");
   legend.className = "legend";
-  legend.innerHTML = `<span><i style="background:var(--s1)"></i>Tiền vào</span><span><i style="background:var(--s2)"></i>Tiền ra</span>` +
-    (f.left > 0 ? `<span><i style="background:var(--s3)"></i>Còn lại</span>` : f.left < 0 ? `<span><i style="background:var(--down)"></i>Thiếu hụt</span>` : "");
+  legend.innerHTML = `<span>← Tiền vào theo nguồn</span><span>Tháng ${esc(f.month.slice(5))}/${esc(f.month.slice(0, 4))}</span><span>Tiền ra theo nhóm${f.left > 0 ? " và phần còn lại" : ""} →</span>`;
   box.appendChild(legend);
 }

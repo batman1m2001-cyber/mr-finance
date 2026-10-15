@@ -42,9 +42,12 @@ uses a number from the page, it points at that number. Nothing moves unless some
    they are on another page, **Mở … →** opens it and the marks show once it has rendered (the shell sends
    `mf:page`). On a phone the panel covers the page, so the marks wait until it closes.
 3. **Entrances.** The panel and each new message rise 6 px and fade in over 240 ms; older messages do not move.
-4. **Inactive.** While the tab is hidden, every animation is paused (`html[data-hidden]`) and a highlight that
+4. **Flow dots** (UI redesign R2): picking a Sankey band sends three dots along it three times, then they are
+   removed — Web Animations on `transform`, tracked by `motion.js::track` (paused while the tab is hidden), not
+   started under reduced motion ([FEAT-29](FEAT-29-financial-pulse-wealth-map-money-flow.md)).
+5. **Inactive.** While the tab is hidden, every animation is paused (`html[data-hidden]`) and a highlight that
    arrives then waits until the tab is shown. With the panel closed and nothing happening, nothing runs.
-5. **Reduced motion** (`prefers-reduced-motion: reduce`): no animation or transition. States stay as colour and
+6. **Reduced motion** (`prefers-reduced-motion: reduce`): no animation or transition. States stay as colour and
    text, the highlight is a still outline for the same 2.6 s, and scrolling is instant.
 
 ## Rules and validation

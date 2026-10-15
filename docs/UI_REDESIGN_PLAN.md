@@ -62,4 +62,5 @@ own families only (Q-17), re-ask triggers for the risk test (Q-16), alerting on 
 |---|---|---|
 | R0 | done 2026-10-16: 6 browser tests (every route × 2 sizes, Copilot) in the suite, control checked | #32 |
 | R1 | done 2026-10-16: tokens, header (search, bell), icons, small charts, controls, Copilot button; FEAT-34 | #33 |
-| R2 | next | |
+| R2 | done 2026-10-16: Toàn cảnh as on the board; 3 browser tests | #34 |
+| R3 | next | |
