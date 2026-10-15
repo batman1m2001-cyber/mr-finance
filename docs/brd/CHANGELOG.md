@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Accuracy over time and the measurement reports (BRD completion F3): the model walked forward over
+  2021–2026 market history per factor and horizon (band coverage, direction from engine step 2); every approved
+  view's forecasts recorded at approval and scored by the daily `accuracy_score` job; monthly misses, approval
+  speed and edits, news-to-RM time, inbox and agent timing; AI-05 scoped to agent answers (a CIO edit gets the
+  challenger's R2) — FEAT-18, FEAT-04, matrix (BR-15, KPI-03/04, MEAS-01/02/03/05, WF-09, NFR-02 verified; KPI-01
+  partial), screen_inventory, cio.md (SCR-CIO-12, SCR-CIO-13), api_reference.
+
 - 2026-10-16 — Model estimated from market history (BRD completion F2): volatilities and correlations of 12/15
   factors from 55 months with 20 % shrinkage, proposed by a CIO and approved by a second; out-of-sample check
   2/2024–8/2026 (85 % inside P10–P90) written up for Model Risk; AI-05 enforced on every answer — FEAT-07,

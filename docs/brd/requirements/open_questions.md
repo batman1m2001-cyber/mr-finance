@@ -116,7 +116,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-19 — The advisory track record
 - **Fact:** “Hiệu quả tư vấn” ([SCR-RM-05](../assets/current_ui/SCR-RM-05_desktop-light.jpg)) shows recommendations, accuracy (75 %), money gained/lost, missed news and AI pipeline scores, from `data/advisory.json` (mock, labelled “Dữ liệu giả định cho demo”). Some entries are dated after the demo's date (e.g. 2026-10-24 when the data is as of 2026-10-09).
-- **Risk:** it can be mistaken for BR-15 (accuracy over time), which is **not built**. Proposed: say on the page that it is illustrative and is not BR-15; fix the dates. Owner: product.
+- **Risk:** it can be mistaken for BR-15 (accuracy over time; built since F3 as FEAT-18 on real market data). Proposed: say on the page that it is illustrative and is not BR-15; fix the dates. Owner: product.
 - **Resolution (2026-10-15):** the page note now says “minh họa, không phải số liệu theo dõi độ chính xác của nhận định”; dates clamped to the data date (DEF-05, `tests/test_app.py::test_nothing_in_the_advisory_record_is_dated_after_the_data_date`).
 
 ### Q-20 — The goal branch on the Goals tab (FR-603)

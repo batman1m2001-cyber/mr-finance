@@ -59,6 +59,7 @@ from market.graph import (
     market_yields_flow,
     model_estimate_flow,
 )
+from measure.graph import accuracy_flow
 from news.graph import dismiss_flow, ingest_flow, release_flow
 from overview.graph import overview_flow
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
@@ -316,6 +317,13 @@ APP = Application(
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: SJC gold bars (PNJ's history).",
+        ),
+        Job(
+            "accuracy_score",
+            graph=accuracy_flow,
+            schedule=schedule(at="18:30", port=PORT),
+            timeout=600,
+            description="18:30 daily, after the market jobs: approved views' forecasts kept and scored (FEAT-18).",
         ),
         # history on demand: `operonx run market_backfill [--set since=2020-01-01]`
         Job(

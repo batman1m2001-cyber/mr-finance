@@ -86,6 +86,8 @@ Every `/api/*` path but these needs a session (401 without one); a customer gets
 | `/api/audit/export` | `format=json\|csv` | the whole chain as a download (JSON includes the check) | FEAT-11 |
 | `/api/market` | — | staff: the market jobs (cadence, last run, last success, last error), each series' coverage, last value, source and 120-day tail, each factor's provenance | FEAT-35 |
 | `/api/market/series` | `id, from?` | staff: one stored or computed (DXY, SJC_GAP) series' points | FEAT-35 |
+| `/api/accuracy` | — | staff: the model walked forward over history (per horizon and factor: observations, share inside P10–P90, verdict, direction hit rate; KPI-03), the approved views' forecasts summarised and listed with their scores | FEAT-18 |
+| `/api/measure` | — | staff: the monthly reports — misses with causes, approvals (minutes, without edits, under 2 min), news to RM hours, inbox and CIO agent minutes | FEAT-18 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |
 | `/api/goals/regulation` | `family_id?, role?` | regulation matches, purposes, a family's goals (staff) | FEAT-10 |
 

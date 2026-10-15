@@ -759,3 +759,11 @@ body.signed-out .bellwrap, body.signed-out .cp-fab, body.signed-out #reset { dis
 
 /* Dữ liệu thị trường (F1): the 120-day line beside each series */
 .mk-spark { display: block; }
+/* Độ chính xác (FEAT-18): the share inside P10–P90 on a 0–100 % track, the accepted 70–90 % zone shaded */
+.covcell { display: flex; align-items: center; gap: 10px; }
+.cov { position: relative; display: inline-block; flex: none; width: 120px; height: 8px; border-radius: 999px; background: var(--surface-3); }
+.cov .zone { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--good) 30%, transparent); }
+.cov .dot { position: absolute; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--ink);
+  box-shadow: 0 0 0 2px var(--surface); }
+.good-text { color: var(--good); }
+@media (max-width: 560px) { .cov { width: 56px; } .covcell { gap: 6px; } }

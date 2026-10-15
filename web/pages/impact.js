@@ -43,7 +43,7 @@ export async function render(box, ctx) {
           ${flagged ? '<span class="badge bad">RM xem trước: P10 3 tháng ≤ −5%</span>' : ""}
           <span class="badge ai">AI hỗ trợ · CIO duyệt</span>
         </div>
-        <div class="footnote">Kỳ vọng = trung bình theo xác suất các kịch bản CIO duyệt. Giá ngày ${esc(sel.price_date || "—")} · tham số mô hình là giả định${d.labels ? ` · ${esc(d.labels.responsible)}` : ""}.</div>
+        <div class="footnote">Kỳ vọng = trung bình theo xác suất các kịch bản CIO duyệt. Giá ngày ${esc(sel.price_date || "—")} · ${sel.model && sel.model.assumed === false ? `mô hình ${esc(sel.model.version)} ước lượng từ dữ liệu thị trường` : "tham số mô hình là giả định"}${d.labels ? ` · ${esc(d.labels.responsible)}` : ""}.</div>
       </div>
       <div class="panel c7">
         <h3>Dải kết quả có thể <span class="hint" id="fan-of"></span></h3>

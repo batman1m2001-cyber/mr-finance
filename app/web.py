@@ -588,6 +588,37 @@ async def model_estimate_preview(request: Request) -> JSONResponse:
     return JSONResponse({"report": est["report"], "validation": val, "in_force": base["version"]})
 
 
+async def accuracy(request: Request) -> JSONResponse:
+    """FEAT-18: the model walked forward over history, and every approved view's forecasts scored as their horizons
+    pass (BR-15, KPI-03/04, MEAS-01/02)."""
+    from measure import backtest, forecasts
+
+    rows = forecasts.all_rows()
+    views = {}
+    for r in rows:
+        v = views.setdefault(r["view_id"], {"view_id": r["view_id"], "event_id": r.get("event_id"),
+                                            "origin": r["origin"], "late": r.get("late"), "model": r.get("model"),
+                                            "forecasts": []})
+        v["forecasts"].append({k: r.get(k) for k in ("factor", "horizon", "due", "expected", "p10", "p50", "p90",
+                                                      "unit", "result", "realised", "inside", "direction_hit")})
+    return JSONResponse({
+        "history": backtest.cached(),
+        "views": forecasts.summary(rows),
+        "recorded": sorted(views.values(), key=lambda v: v["origin"], reverse=True),
+        "min_obs": backtest.MIN_OBS,
+        "accept": list(backtest.ACCEPT),
+        "direction_target": backtest.DIRECTION_TARGET,
+    })
+
+
+async def measure_reports(request: Request) -> JSONResponse:
+    """The monthly measurement reports: misses (MEAS-03), rubber-stamping (MEAS-05), news to RM (KPI-01, WF-09),
+    inbox and agent timing (NFR-02)."""
+    from measure import reports
+
+    return JSONResponse(reports.all_reports())
+
+
 async def news_config(request: Request) -> JSONResponse:
     """The white list and the (mock) restricted list Compliance owns."""
     cfg = news_ops.config()
@@ -735,6 +766,8 @@ STAFF_ONLY = (
     "/api/runs",
     "/api/audit",
     "/api/market",
+    "/api/accuracy",
+    "/api/measure",
     "/api/research",
     "/api/rm/",
     "/api/trace/",
@@ -820,6 +853,8 @@ app = Starlette(
         Route("/api/rm/today", rm_today),
         Route("/api/audit", audit_list),
         Route("/api/market", market),
+        Route("/api/accuracy", accuracy),
+        Route("/api/measure", measure_reports),
         Route("/api/market/series", market_series),
         Route("/api/research", research_list),
         Route("/api/goals/regulation", goal_regulation),

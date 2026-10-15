@@ -50,6 +50,10 @@ create table if not exists config_versions (
   created real not null, data text not null, unique (kind, version));
 create table if not exists goal_outflows (
   goal_id text primary key, family_id text not null, created real not null, data text not null);
+create table if not exists forecasts (
+  id text primary key, view_id text not null, factor text not null, horizon text not null, origin text not null,
+  due text not null, created real not null, scored real, data text not null);
+create index if not exists forecasts_open on forecasts (scored, due);
 """
 
 TABLES = (
@@ -62,6 +66,7 @@ TABLES = (
     "run_snapshots",
     "family_impacts",
     "config_versions",
+    "forecasts",
     "counters",
 )
 

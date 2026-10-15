@@ -218,3 +218,42 @@ VN_RATE, the months of moves and the latest month's move. **Các chuỗi đang l
 and day, its sources in order (the one in use in bold, “đang dùng …” when a fallback answered), points stored since
 when, and a 120-day line (green up, red down; its label gives the first and last value).
 
+---
+
+## SCR-CIO-12 — Độ chính xác (accuracy over time)
+
+| | |
+|---|---|
+| Route | `#/cio/mo-hinh/do-chinh-xac` (Mô hình → Độ chính xác) |
+| Feature | [FEAT-18](../../features/FEAT-18-accuracy-tracking.md) |
+| Requirements | BRD-BR-15, BRD-KPI-03, BRD-KPI-04, BRD-RULE-MEAS-01, BRD-RULE-MEAS-02 |
+| Data | `GET /api/accuracy` |
+| Screenshot | [desktop](../../assets/current_ui/SCR-CIO-12_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CIO-12_phone-light.jpg) |
+
+A horizon switch (1 tuần / 3 tháng / 12 tháng) drives the whole page. Four tiles: the share of realised moves
+inside P10–P90 over history, pooled, with its verdict; VN-Index direction over history against the 70 % target
+(KPI-03); approved views with the next due day; VN-Index direction from the views. **Mô hình chạy lại trên lịch
+sử**: per factor, the observations, a 0–100 % track with the accepted 70–90 % zone and the share as a dot, the
+verdict (“đạt”, “dải hẹp”, “dải rộng”, “chưa đủ 24 quan sát”) and the direction hit rate; the method and the
+overlap of the 3- and 12-month periods are said above the table. **Dự báo của các nhận định đã duyệt**: the same
+per factor once scored, otherwise how many views wait and when the first is due; then VN-Index in each approved
+view: approval day, due day, expected, P10…P90, the realised move and the result.
+
+---
+
+## SCR-CIO-13 — Đo lường (measurement reports)
+
+| | |
+|---|---|
+| Route | `#/cio/do-luong`; Compliance `#/compliance/do-luong` |
+| Feature | [FEAT-18](../../features/FEAT-18-accuracy-tracking.md) |
+| Requirements | BRD-RULE-MEAS-03, BRD-RULE-MEAS-05, BRD-KPI-01, BRD-RULE-WF-09, BRD-NFR-02 |
+| Data | `GET /api/measure` |
+| Screenshot | [desktop](../../assets/current_ui/SCR-CIO-13_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CIO-13_phone-light.jpg) |
+
+Four monthly tables. **Bỏ sót**: high-relevance news that never became an event and events that never reached
+families, counted by cause, then the events and (folded) the news. **Duyệt cho có**: approvals, the CIO's minutes
+from ready to approved (median, P90, longest), approvals under 2 minutes (our signal, said so) and the share
+approved without an edit. **Từ tin đến RM**: hours from the event's first news to the effective run, against 2 h;
+“urgent ≤ 30 min” is said to be unmeasurable. **Tốc độ hộp tin và Agent**: minutes from publication to the inbox
+(≤ 10) and CIO agent run time (≤ 15), with the share meeting each.

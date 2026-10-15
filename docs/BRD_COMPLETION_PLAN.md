@@ -179,6 +179,11 @@ demo the estimate is proposed by `cio` and approved by `cio2` after the backfill
   - KPI-01 and WF-09, news-to-RM time end to end;
   - NFR-02, agent run durations.
 
+**Done** (FEAT-18, SCR-CIO-12/13): the model walked forward over 2022–2026 (pooled 72 / 77 / 75 % inside P10–P90 at
+1 week / 3 / 12 months; VN-Index direction from the other factors 57 / 72 / 96 %); every approved view's 15 × 3
+forecasts recorded at approval and scored by the 18:30 `accuracy_score` job; the four monthly reports. KPI-01's
+“urgent ≤ 30 min” is not measured (nothing defines urgent).
+
 ### F4 — Configuration completes (B)
 
 - New kinds: `return_assumptions` (CIO), `forbidden_phrases` and `consent` (Compliance), `prompts` and `models`

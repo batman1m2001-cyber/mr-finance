@@ -33,7 +33,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-15](FEAT-15-agent-catalogue.md) | Agent catalogue | FR-703 | partial | — |
 | [FEAT-16](FEAT-16-policy-agent.md) | Policy agent | FR-306 | not built | — |
 | [FEAT-17](FEAT-17-cio-newsletter.md) | CIO newsletter | FR-801 | not built | — |
-| [FEAT-18](FEAT-18-accuracy-tracking.md) | Accuracy over time | BR-15 | not built (blocked on data) | — |
+| [FEAT-18](FEAT-18-accuracy-tracking.md) | Accuracy over time and the measurement reports | BR-15, KPI-01/03/04, MEAS-01/02/03/05, NFR-02 | built (F3) | SCR-CIO-12, SCR-CIO-13 |
 | [FEAT-19](FEAT-19-external-ai-inbox.md) | External AI zone and signed inbox | FR-307, §7.1 | not built | — |
 
 ## Existing capabilities (original brief, PR #13)

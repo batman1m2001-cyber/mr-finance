@@ -12,16 +12,16 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 45 | 4 | 9 | 3 | 0 | 0 | 0 | 0 |
-| BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 2 | 0 | 0 | 5 | 0 |
-| BRD rules (RULE) | 97 | 66 | 4 | 11 | 4 | 2 | 0 | 8 | 2 |
+| BRD numbered (BR, FR, NFR) | 61 | 47 | 3 | 9 | 2 | 0 | 0 | 0 | 0 |
+| BRD success metrics (KPI) | 7 | 2 | 0 | 1 | 0 | 0 | 0 | 4 | 0 |
+| BRD rules (RULE) | 97 | 71 | 4 | 10 | 2 | 1 | 0 | 7 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
-completion is not 100 %:** of the 61 numbered requirements, 45 are implemented and verified by tests; the rest are
+completion is not 100 %:** of the 61 numbered requirements, 47 are implemented and verified by tests; the rest are
 partial, unverified, planned, not implemented or blocked, each with its reason below. (The `not_applicable` KIT rows
 are the documentation rules this repository itself follows.) Counts are recomputed by the checker.
 
@@ -43,7 +43,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-BR-12 | §4 | Every number traceable; immutable log | FEAT-09, 11 | SCR-RM-03, SCR-CMP-03 | `src/apply/trace.py`, `src/control/audit.py` | `tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news`, `tests/test_apply.py::test_the_database_refuses_to_edit_the_log_and_a_forced_edit_is_found` | implemented_verified | Log covers news-impact writes only (FEAT-11) |
 | BRD-BR-13 | §4 | CIO sees all clients' exposure by factor | FEAT-08 | SCR-CIO-04 | `src/apply/run.py::exposure` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | implemented_verified | |
 | BRD-BR-14 | §4 | CIO withdraws a view; RMs see “Đã thu hồi” | FEAT-06, 08, 13 | SCR-CIO-03, SCR-RM-02 | `src/apply/run.py::withdraw_view` | `tests/test_apply.py::test_withdrawing_the_view_withdraws_its_runs_and_rms_see_the_label` | implemented_verified | |
-| BRD-BR-15 | §4 | Accuracy over time vs the forecast band | FEAT-18, 35 | — | — | — | planned | Realised history now stored from public sources (FEAT-35, ADR-0021); scoring is BRD_COMPLETION_PLAN F3. Not the mock advisory record (Q-19) |
+| BRD-BR-15 | §4 | Accuracy over time vs the forecast band | FEAT-18, 35 | SCR-CIO-12 | `src/measure/backtest.py::run`, `src/measure/forecasts.py` (`record` at approval, `score` by job `accuracy_score` 18:30); `GET /api/accuracy` | `tests/test_accuracy.py::test_walking_forward_on_history_that_follows_the_model_covers_about_80_percent`, `tests/test_accuracy.py::test_an_approved_view_keeps_its_forecasts_and_they_are_scored_when_due` | implemented_verified | The model walked forward over 2022–2026 market history, and every approved view's 15 factors × 3 horizons scored as each horizon passes. Not the mock advisory record (Q-19) |
 | BRD-FR-101 | §6.1 | RSS every 10 minutes | FEAT-01 | SCR-CIO-01 | `app/main.py` Job `news_ingest` (`every="10m"`), `src/news/ops.py::fetch` | `tests/test_news.py::test_one_run_counts_each_source_keeps_refusals_aside_and_survives_a_broken_feed` | implemented_unverified | Fetching is tested; the 10-minute schedule is declared and runs on the live demo, but no test asserts it |
 | BRD-FR-102 | §6.1 | Classify, score relevance, suggest event type | FEAT-01 | SCR-CIO-01 | `src/news/rules.py::classify` | `tests/test_news.py::test_classification_by_source_then_words` | implemented_verified | |
 | BRD-FR-103 | §6.1 | CIO inbox: filter, dismiss, group | FEAT-02 | SCR-CIO-01 | `app/web.py::news_inbox`, `dismiss_flow`, `event_flow` | `tests/test_news.py::test_the_inbox_filters_and_dismiss`, `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | implemented_verified | Dismiss: CIO only (DEF-03 fixed) |
@@ -79,7 +79,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-FR-704 | §6.7 | Per-step trace of the CIO agent | FEAT-04 | SCR-CIO-03 | `src/views/agents.py::_record` | `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node` | implemented_verified | |
 | BRD-FR-801 | §6.8 | CIO newsletter | FEAT-17 | — | — | — | planned | News plan N5 (optional) |
 | BRD-NFR-01 | §15 | 6,500 families ≤ 5 min; family page ≤ 2 s | FEAT-08 | — | `src/apply/run.py` | — | implemented_unverified | Measured 0.44 s for 5 families (news plan §9); never run at scale |
-| BRD-NFR-02 | §15 | News to inbox ≤ 10 min; CIO agent ≤ 15 min | FEAT-01, 04 | — | Job `news_ingest`; `cio_agent_flow` | — | implemented_unverified | One live agent run took 26 s; schedule not asserted by a test |
+| BRD-NFR-02 | §15 | News to inbox ≤ 10 min; CIO agent ≤ 15 min | FEAT-01, 04 | SCR-CIO-13 | Job `news_ingest` (every 10 min); `src/measure/reports.py::timing`; `GET /api/measure` | `tests/test_accuracy.py::test_the_reports_read_approval_time_edits_and_news_to_rm_time` | implemented_verified | Measured monthly: on the demo 41 % of news reached the inbox within 10 min (median 35 min — the feeds publish late); CIO agent runs 0.4–1.1 min |
 | BRD-NFR-03 | §15 | 99.5 %; AI failure does not stop computing or viewing | FEAT-05, 07 | — | engine has no AI dependency | `tests/test_views.py::test_a_failed_challenger_keeps_the_draft_and_can_run_again` | partially_implemented | Availability is a deployment matter (not measured) |
 | BRD-NFR-04 | §15 | Same snapshot → same result to the dong | FEAT-07, 08 | SCR-CIO-05 | `src/apply/run.py::verify` | `tests/test_engine.py::test_the_same_inputs_give_the_same_numbers_to_the_dong`, `tests/test_apply.py::test_a_run_recomputes_to_the_dong_and_tampering_is_found` | implemented_verified | |
 | BRD-NFR-05 | §15 | Exact money; no floats for balances | FEAT-07 | — | integer balances; one rounding place in `src/engine` | `tests/test_engine.py::test_the_contributions_add_up_to_the_expected_change` | implemented_verified | Interpretation of ADR-0011 (Q-13) |
@@ -95,10 +95,10 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Metric | Status | Evidence, gaps |
 |---|---|---|---|
-| BRD-KPI-01 | News → RM ready ≤ 2 h | out_of_scope_demo | Pilot measurement; the product records every timestamp needed |
+| BRD-KPI-01 | News → RM ready ≤ 2 h | partially_implemented | Measured per event, monthly (`src/measure/reports.py::speed`, SCR-CIO-13); “urgent ≤ 30 min” not measured: nothing defines urgent news |
 | BRD-KPI-02 | Important news collected ≥ 95 % | out_of_scope_demo | Pilot measurement; “important” undefined (Q-07) |
-| BRD-KPI-03 | Direction right ≥ 70 % | planned | History stored (FEAT-35); measured in F3 (FEAT-18) |
-| BRD-KPI-04 | Band coverage 70–90 % | planned | History stored (FEAT-35); measured in F3 (FEAT-18) |
+| BRD-KPI-03 | Direction right ≥ 70 % | implemented_verified | `src/measure/backtest.py`, `src/measure/forecasts.py`, SCR-CIO-12, `tests/test_accuracy.py::test_walking_forward_on_history_that_follows_the_model_covers_about_80_percent`. History (engine step 2 given the other factors, walk-forward 2022–2026): VN-Index 72 % at 3 months, 96 % at 12 months, 57 % at 1 week. Views: scored as horizons pass, < 24 so far |
+| BRD-KPI-04 | Band coverage 70–90 % | implemented_verified | `tests/test_accuracy.py::test_walking_forward_on_history_that_follows_the_model_covers_about_80_percent`; history walk-forward pooled 72 % (1 week), 77 % (3 months), 75 % (12 months); per factor on SCR-CIO-12 (gold and the VN yields too narrow) |
 | BRD-KPI-05 | Recommendations reviewed and logged 100 % | out_of_scope_demo | No recommendation is sent; views and runs are reviewed and logged (FEAT-06, 11) |
 | BRD-KPI-06 | RM contacts from system signals ≥ 50 % | out_of_scope_demo | Pilot measurement (no CRM) |
 | BRD-KPI-07 | High alerts opened ≥ 70 % | out_of_scope_demo | Pilot measurement (no client app) |
@@ -126,7 +126,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-WF-06 | FEAT-08 | implemented_verified | `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | 0.44 s for 5 families |
 | BRD-RULE-WF-07 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_rm_today_list_holds_the_flagged_families_worst_first` | |
 | BRD-RULE-WF-08 | — | out_of_scope_demo | — | Specialist process is a later phase |
-| BRD-RULE-WF-09 | FEAT-04, 08 | partially_implemented | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | Barrier verified; end-to-end time not measured |
+| BRD-RULE-WF-09 | FEAT-04, 08 | implemented_verified | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them`, `tests/test_accuracy.py::test_the_reports_read_approval_time_edits_and_news_to_rm_time` | Barrier verified; end-to-end time measured per event (KPI-01) |
 | BRD-RULE-ZONE-01 | FEAT-19 | out_of_scope_demo | — | One process (ADR-0009) |
 | BRD-RULE-ZONE-02 | FEAT-19 | planned | — | Signed inbox, news plan N5 |
 | BRD-RULE-ZONE-03 | FEAT-04 | implemented_verified | `tests/test_views.py::test_the_schema_refuses` | Same checks applied to live and mock output |
@@ -196,11 +196,11 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-CONTENT-02 | FEAT-13 | partially_implemented | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | AI label, responsible person, time, “không phải khuyến nghị”, RM path, per-item sources (outlets and count, no headline: `tests/test_brd_gaps.py::test_the_client_sees_outlets_not_headlines`): yes; COI disclosure: no |
 | BRD-RULE-CONTENT-03 | FEAT-03 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | Release-time rule enforced; COI is free text |
 | BRD-RULE-CONTENT-04 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | |
-| BRD-RULE-MEAS-01 | FEAT-18, 35 | planned | — | History stored (FEAT-35); scored in F3 |
-| BRD-RULE-MEAS-02 | FEAT-18, 35 | planned | — | History stored (FEAT-35); scored in F3 |
-| BRD-RULE-MEAS-03 | — | not_implemented | — | |
+| BRD-RULE-MEAS-01 | FEAT-18, 35 | implemented_verified | `tests/test_accuracy.py::test_walking_forward_on_history_that_follows_the_model_covers_about_80_percent`, `tests/test_accuracy.py::test_fewer_than_24_observations_is_not_a_conclusion` | Per factor and horizon (1 week, 3, 12 months), 70–90 % accepted, < 24 observations “chưa đủ 24 quan sát” |
+| BRD-RULE-MEAS-02 | FEAT-18, 35 | implemented_verified | `tests/test_accuracy.py::test_walking_forward_on_history_that_follows_the_model_covers_about_80_percent`, `tests/test_accuracy.py::test_an_approved_view_keeps_its_forecasts_and_they_are_scored_when_due` | History: engine step 2 out of sample; views: the sign of the expected move against the realised one |
+| BRD-RULE-MEAS-03 | FEAT-18 | implemented_verified | `tests/test_accuracy.py::test_an_event_without_an_approved_view_is_a_miss_after_a_day` | `src/measure/reports.py::misses` on SCR-CIO-13: high-relevance news not grouped (dismissed, held, > 1 day in the inbox) and events with no effective run, by cause and month. “Important” = relevance high (Q-07) |
 | BRD-RULE-MEAS-04 | FEAT-04, 06, 15 | implemented_verified | `tests/test_catalogue.py::test_the_latest_run_and_the_quality_figures_come_from_the_store` | `catalogue.quality`: share of decided views the CIO edited, findings and critical ones, agent runs and errors, format retries — 7 days and all time, on SCR-CIO-08 |
-| BRD-RULE-MEAS-05 | FEAT-06 | out_of_scope_demo | — | Data recorded (decision times); pilot metric |
+| BRD-RULE-MEAS-05 | FEAT-06, 18 | implemented_verified | `tests/test_accuracy.py::test_the_reports_read_approval_time_edits_and_news_to_rm_time` | `src/measure/reports.py::rubber_stamp` on SCR-CIO-13: CIO minutes from ready to approved, share without edits, approvals under 2 min (our signal) |
 | BRD-RULE-MEAS-06 | — | out_of_scope_demo | — | Pilot control group |
 | BRD-RULE-MEAS-07 | FEAT-04 | partially_implemented | — | No news-agent eval set; only the pre-BRD `statement_reading` eval exists |
 | BRD-RULE-MEAS-08 | FEAT-07 | implemented_verified | `tests/test_estimate.py::test_out_of_sample_coverage_is_near_80_percent_when_the_history_is_what_the_model_says`, `tests/test_estimate.py::test_a_band_too_narrow_is_said_to_be` | Out of sample 2/2024–8/2026 on real history: [model_validation.md](../testing/model_validation.md) (85 % inside P10–P90); Model Risk's conclusion is theirs |

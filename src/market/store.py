@@ -102,6 +102,13 @@ def coverage() -> Dict[str, Dict[str, Any]]:
     return {r["series"]: dict(r) for r in rows}
 
 
+def stamp() -> Tuple[Any, ...]:
+    """Changes whenever a point is written: for caches of what is computed from the history."""
+    with _db() as con:
+        r = con.execute("select max(fetched_at), count(*) from market_series").fetchone()
+    return (r[0], r[1])
+
+
 def runs(job: Optional[str] = None, limit: int = 200) -> List[Dict[str, Any]]:
     q, args = "select * from source_runs", []
     if job:
