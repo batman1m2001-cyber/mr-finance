@@ -1,6 +1,6 @@
 {
  "as_of": "2026-10-09",
- "note": "Dữ liệu giả định cho demo: tên, số điện thoại, e-mail, địa chỉ và kết quả tư vấn đều không có thật.",
+ "note": "Dữ liệu giả định cho demo: tên, số điện thoại, e-mail, địa chỉ và kết quả tư vấn đều không có thật. Đây là minh họa, không phải số liệu theo dõi độ chính xác của nhận định.",
  "team": {
   "C01": {
    "rm": {
@@ -616,7 +616,7 @@
    ],
    "advice": [
     {
-     "date": "2026-10-24",
+     "date": "2026-10-09",
      "agent": "planner",
      "text": "Khóa tỷ giá cho học phí kỳ tới bằng tiền gửi ngoại tệ",
      "outcome": "open",
@@ -955,7 +955,7 @@
    ],
    "advice": [
     {
-     "date": "2026-10-13",
+     "date": "2026-10-09",
      "agent": "planner",
      "text": "Khóa tỷ giá cho học phí kỳ tới bằng tiền gửi ngoại tệ",
      "outcome": "open",
@@ -1958,7 +1958,7 @@
    ],
    "advice": [
     {
-     "date": "2026-10-20",
+     "date": "2026-10-09",
      "agent": "planner",
      "text": "Khóa tỷ giá cho học phí kỳ tới bằng tiền gửi ngoại tệ",
      "outcome": "open",

@@ -169,8 +169,8 @@ advisor); **Tác động lên tài sản ròng** (diverging bars per policy, fil
 legal-status notes; **Policy headlines** — one card per policy with level, legal status, the impact (with
 probability), holding × sensitivity × probability, the holdings touched, the source line.
 
-**Known defect DEF-01.** At 1440 px the “Wealth check” card's first column is squeezed: the label wraps one word
-per line and the “Mở Wealth Planning Advisor” button is a narrow column (visible in the screenshot).
+**DEF-01 (fixed 2026-10-15).** The “Wealth check” card was squeezed into an 18 px column at 1440 px: the new pages'
+`.check` checklist rule (`web/core/tokens.css`) also matched this legacy card. The rule is now scoped to `#page-new`.
 
 ---
 

@@ -28,6 +28,7 @@ demo is `docs/DEMO.md` (and `tests/test_demo.py` walks it).
 feature behaves (Layer B), the screens (Layer C), decisions, and the traceability matrix — the only place a
 requirement's status is stated. When you change behaviour, a screen, an API or a rule, update the affected
 documents as `docs/brd/MAINTAINING.md` says; `tests/test_brd_docs.py` fails if links, IDs or cited tests drift.
+Decisions that only the owner can take, and that would be risky to get wrong, wait in `docs/TO_DISCUSS.md`.
 
 ## Before you write code
 

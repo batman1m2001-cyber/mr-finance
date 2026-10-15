@@ -188,9 +188,12 @@ def track(cid: str, rng: random.Random) -> dict:
     for month, agent, text, outcome, value in ADVICE:
         if rng.random() < 0.12:  # not every client got every call
             continue
+        day = rng.randint(3, 27)
+        if month == AS_OF[:7]:  # nothing dated after the data date (DEF-05)
+            day = min(day, int(AS_OF[8:]))
         advice.append(
             {
-                "date": f"{month}-{rng.randint(3, 27):02d}",
+                "date": f"{month}-{day:02d}",
                 "agent": agent,
                 "text": text,
                 "outcome": outcome,
@@ -294,7 +297,7 @@ def main() -> None:
     rng = random.Random(20261013)
     out = {
         "as_of": AS_OF,
-        "note": "Dữ liệu giả định cho demo: tên, số điện thoại, e-mail, địa chỉ và kết quả tư vấn đều không có thật.",
+        "note": "Dữ liệu giả định cho demo: tên, số điện thoại, e-mail, địa chỉ và kết quả tư vấn đều không có thật. Đây là minh họa, không phải số liệu theo dõi độ chính xác của nhận định.",
         "team": {cid: team(cid) for cid in CLIENTS},
         "tracking": {cid: track(cid, rng) for cid in CLIENTS},
     }
