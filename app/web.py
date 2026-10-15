@@ -15,6 +15,7 @@ from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
+from apply import impact_graph
 from apply import reads as apply_reads
 from apply import run as apply_run
 from apply import trace as apply_trace
@@ -283,6 +284,19 @@ async def family_impact(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc)}, status_code=403)
 
 
+async def family_graph(request: Request) -> JSONResponse:
+    """Kit K3: news → event → scenario → factor → asset → family → goal, every edge with its records."""
+    q = request.query_params
+    try:
+        return JSONResponse(
+            impact_graph.family_graph(
+                request.path_params["family_id"], q.get("role") or "client", q.get("run_id") or None
+            )
+        )
+    except roles.Forbidden as exc:
+        return JSONResponse({"error": str(exc)}, status_code=403)
+
+
 async def trace(request: Request) -> JSONResponse:
     """FR-406: a family's number back to the news (staff only: it names holdings)."""
     q = request.query_params
@@ -439,6 +453,7 @@ app = Starlette(
         Route("/api/runs/{run_id}", run_one),
         Route("/api/runs/{run_id}/verify", run_verify),
         Route("/api/families/{family_id}/impact", family_impact),
+        Route("/api/families/{family_id}/graph", family_graph),
         Route("/api/trace/{run_id}/{family_id}", trace),
         Route("/api/rm/today", rm_today),
         Route("/api/audit", audit_list),

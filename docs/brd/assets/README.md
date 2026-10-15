@@ -42,6 +42,10 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-08_desktop-light.jpg` | SCR-CL-08 Toàn cảnh | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26 |
 | `SCR-CL-08_phone-light.jpg` | SCR-CL-08 Toàn cảnh | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26 |
 | `SCR-CL-08_desktop-dark.jpg` | SCR-CL-08 Toàn cảnh | current | desktop 1440×900, dark, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26 |
+| `SCR-CL-09_desktop-light.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
+| `SCR-CL-09_phone-light.jpg` | SCR-CL-09 Đồ thị tác động | current | phone 390×844, light (list view), full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
+| `SCR-CL-09_desktop-dark.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, dark, full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
+| `SCR-CL-09_desktop-light-rm.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, RM, C01, a scenario node selected |
 | `SCR-CMP-01_desktop-light.jpg` | SCR-CMP-01 Tin bị giữ | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_desktop-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_phone-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |

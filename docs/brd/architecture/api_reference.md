@@ -57,6 +57,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/runs` | `role? (rm), view_id?` | runs, newest first | FEAT-08 |
 | `/api/runs/{id}`, `/api/runs/{id}/verify` | — | a run; its recomputation compared to the dong | FEAT-08 |
 | `/api/families/{id}/impact` | `role (default client)` | the family's impact as that role may see it (403 for an unknown role) | FEAT-13 |
+| `/api/families/{id}/graph` | `role (default client)`, `run_id?` | news → … → goal nodes and edges with their stored sources (403 for an unknown role) | FEAT-30 |
 | `/api/trace/{run_id}/{family_id}` | `key?, horizon? (3m)` | the trace (404 if unknown) | FEAT-09 |
 | `/api/rm/today` | — | flagged cases and goal tasks | FEAT-13, 10 |
 | `/api/audit`, `/api/audit/verify` | `limit (≤ 1000)` | log rows; chain check | FEAT-11 |

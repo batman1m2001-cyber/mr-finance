@@ -16,7 +16,7 @@ const ROLES = {
       {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [
         {id: "ke-hoach", label: "Kế hoạch", legacy: "scenarios"}, {id: "khau-vi", label: "Khẩu vị rủi ro", legacy: "risk"}]},
       {id: "tin", label: "Tin tác động", sub: [
-        {id: "thi-truong", label: "Tác động thị trường", page: "impact"}, {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}]},
+        {id: "thi-truong", label: "Tác động thị trường", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}]},
       {id: "chuyen-gia", label: "Chuyên gia", legacy: "rm"},
     ],
   },
@@ -25,7 +25,8 @@ const ROLES = {
     nav: [
       {id: "hom-nay", label: "Hôm nay", page: "today"},
       {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
-        {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "toan-canh", label: "Toàn cảnh", page: "pulse"},
+        {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
+        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"},
         {id: "tong-quan", label: "Chi tiết", legacy: "overview"},
         {id: "tai-san", label: "Tài sản", legacy: "sources"}, {id: "ke-hoach", label: "Kế hoạch", legacy: "scenarios"},
         {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "performance"},
@@ -135,7 +136,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016b`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {

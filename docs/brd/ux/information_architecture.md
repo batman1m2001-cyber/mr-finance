@@ -26,12 +26,13 @@ Khách hàng (client)                         RM
 ├── Tổng quan                               ├── Hôm nay ......................... SCR-RM-01
 │   ├── Toàn cảnh ....... SCR-CL-08         ├── Khách hàng  (client picker)
 │   └── Chi tiết ........ SCR-CL-01         │   ├── Tác động tin ................ SCR-RM-02 (+ SCR-RM-03 drawer)
-├── Tài sản ............. SCR-CL-02         │   ├── Toàn cảnh ................... SCR-CL-08 (staff view)
-├── Mục tiêu & kịch bản                     │   ├── Chi tiết .................... SCR-CL-01 (staff view)
-│   ├── Kế hoạch ........ SCR-CL-03         │   ├── Tài sản ..................... SCR-CL-02
-│   └── Khẩu vị rủi ro .. SCR-CL-04         │   ├── Kế hoạch .................... SCR-CL-03
-├── Tin tác động                            │   ├── Chi phí chính sách .......... SCR-CL-06
-│   ├── Tác động thị trường SCR-CL-05       │   ├── Hiệu quả tư vấn ............. SCR-RM-04
+├── Tài sản ............. SCR-CL-02         │   ├── Đồ thị tác động ............. SCR-CL-09 (staff view)
+├── Mục tiêu & kịch bản                     │   ├── Toàn cảnh ................... SCR-CL-08 (staff view)
+│   ├── Kế hoạch ........ SCR-CL-03         │   ├── Chi tiết .................... SCR-CL-01 (staff view)
+│   └── Khẩu vị rủi ro .. SCR-CL-04         │   ├── Tài sản ..................... SCR-CL-02
+├── Tin tác động                            │   ├── Kế hoạch .................... SCR-CL-03
+│   ├── Tác động thị trường SCR-CL-05       │   ├── Chi phí chính sách .......... SCR-CL-06
+│   ├── Đồ thị tác động . SCR-CL-09         │   ├── Hiệu quả tư vấn ............. SCR-RM-04
 │   └── Chi phí chính sách  SCR-CL-06       │   └── Duyệt đề xuất ............... SCR-RM-06
 └── Chuyên gia .......... SCR-CL-07         └── Hiệu quả tư vấn (all clients) ... SCR-RM-05
 
@@ -54,6 +55,7 @@ the client and inside the RM's “Khách hàng” section (staff view).
 
 | Capability | Feature | Client | RM | CIO | Compliance |
 |---|---|---|---|---|---|
+| News → goal graph | FEAT-30 | Tin tác động → Đồ thị tác động | Khách hàng → Đồ thị tác động | — | — |
 | Pulse, Wealth Map, Money Flow | FEAT-29 | Tổng quan → Toàn cảnh | Khách hàng → Toàn cảnh | — | — |
 | Net worth, allocation, P&L, risk, liquidity, cash flow | FEAT-21 | Tổng quan → Chi tiết | Khách hàng → Chi tiết | — | — |
 | Every holding, statements, chat declarations | FEAT-20, 22, 23 | Tài sản | Khách hàng → Tài sản | — | — |
@@ -80,4 +82,4 @@ legacy “RM duyệt” tab only to the client's “Chuyên gia”) and the serv
 Khách hàng → **Duyệt đề xuất** (SCR-RM-06), the server requires role `rm`, and the client sees the queue read-only.
 
 Capabilities with **no UI entry**: the scheduled news fetch (FEAT-01, a job), the agent catalogue (FEAT-15, API
-only), the statement-reading eval (CLI). Not built: FEAT-16…19, FEAT-30…32.
+only), the statement-reading eval (CLI). Not built: FEAT-16…19, FEAT-31, FEAT-32.

@@ -217,3 +217,27 @@ shows the error under the chart.
 
 **Interaction.** Bands and map segments are focusable buttons (Enter / Space); tooltips on hover and focus; no
 animation (reduced motion needs nothing more).
+
+---
+
+## SCR-CL-09 — Đồ thị tác động (Intelligence Graph)
+
+| | |
+|---|---|
+| Route | `#/client/tin/do-thi`; RM: `#/rm/khach-hang/do-thi` |
+| Generation | new (`web/pages/graph.js`) |
+| Feature | [FEAT-30](../../features/FEAT-30-financial-intelligence-graph.md) |
+| Requirements | KIT-UX-04, KIT-UX-06; BRD-RULE-CONTENT-01 (flow 2) |
+| Data | `GET /api/families/{id}/graph?role=client\|rm` |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CL-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-09_phone-light.jpg) · [dark](../../assets/current_ui/SCR-CL-09_desktop-dark.jpg) · [RM, a node selected](../../assets/current_ui/SCR-CL-09_desktop-light-rm.jpg) |
+
+**Journey.** “Which news reaches my money, through what, and down to which goal?” — read left to right.
+
+**Layout.** One panel: “Đồ thị / Danh sách” switch, seven type filters (chips, struck through when hidden), the
+graph in seven columns (Tin, Sự kiện, Kịch bản, Yếu tố, Tài sản, Gia đình, Mục tiêu), the detail panel, the
+note that edges are potential impacts with stored sources.
+
+**Interaction.** A node is a focusable button: click, Enter or Space selects it, lights its path and dims the
+rest; again or “Bỏ chọn” clears. Tooltips on nodes and edges. Phones open on the list.
+
+**States.** No effective run: “Chưa có tin nào được CIO duyệt áp dụng cho gia đình này”.

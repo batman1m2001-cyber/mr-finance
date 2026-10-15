@@ -55,7 +55,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | ID | Feature | Requirements | Plan phase |
 |---|---|---|---|
 | [FEAT-29](FEAT-29-financial-pulse-wealth-map-money-flow.md) | Financial Pulse, Wealth Map, Money Flow | KIT-UX-01…03 | K2 — built 2026-10-16 |
-| [FEAT-30](FEAT-30-financial-intelligence-graph.md) | Financial Intelligence Graph | KIT-UX-04 | K3 |
+| [FEAT-30](FEAT-30-financial-intelligence-graph.md) | Financial Intelligence Graph | KIT-UX-04 | K3 — built 2026-10-16 |
 | [FEAT-31](FEAT-31-intelligence-feed.md) | Intelligence Feed | KIT-UX-05 | K4 |
 | [FEAT-32](FEAT-32-copilot.md) | OneWealth Copilot | KIT-COPILOT-01…06 | K5 |
 
