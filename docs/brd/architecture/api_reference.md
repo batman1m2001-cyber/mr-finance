@@ -18,6 +18,8 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/flows` | flows → `flows_flow` | `client_id, scope?, month? (YYYY-MM)` | — | FEAT-29 |
 | `/api/feed` | feed → `feed_flow` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 |
 | `/api/copilot` | copilot → `copilot_flow` | `question, role, client_id?, scope?, route?, confirm?` | per tool (and the wrapped graph's own check) | FEAT-32 |
+| `/api/config/propose` | config_propose → `config_propose_flow` | `kind, data, by, note?` | the kind's owner role | FEAT-14 |
+| `/api/config/decide` | config_decide → `config_decide_flow` | `version_id, action (approve\|reject), by, note?` | owner role; ≠ proposer for two-person kinds | FEAT-14 |
 | `/api/statement` | statement → `statement_flow` | `client_id, filename, content` (base64) | — | FEAT-22 |
 | `/api/declare` | declare → `declare_flow` | `client_id, message, session_id` | — | FEAT-23 |
 | `/api/risk` | risk → `risk_flow` | `client_id, answers` | — | FEAT-24 |
@@ -46,6 +48,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/healthz` | — | liveness, and each protection on or off (`protections`, `off`) | FEAT-11, 12 |
 | `/api/clients` | — | the sample clients | FEAT-20 |
 | `/api/agents/catalogue` | `days (1–365, default 7)` | FR-703 catalogue, open-source references, RULE-MEAS-04 quality | FEAT-15 |
+| `/api/config`, `/api/config/{id}` | — | every kind with its version in force, pending proposal and history; one version | FEAT-14 |
 | `/api/scenarios` | — | the scenario catalogue (id, kind, title, question, personas) | FEAT-26 |
 | `/api/review` | `client_id?, status?` | the RM queue | FEAT-27 |
 | `/api/advisory` | `client_id` | a client's specialist team and record (mock) | FEAT-28 |

@@ -45,6 +45,9 @@ create table if not exists family_impacts (
 create index if not exists family_impacts_family on family_impacts (family_id);
 create table if not exists research_items (
   id text primary key, kind text not null, status text not null, created real not null, data text not null);
+create table if not exists config_versions (
+  id text primary key, kind text not null, version integer not null, status text not null,
+  created real not null, data text not null, unique (kind, version));
 create table if not exists goal_outflows (
   goal_id text primary key, family_id text not null, created real not null, data text not null);
 """
@@ -58,6 +61,7 @@ TABLES = (
     "application_runs",
     "run_snapshots",
     "family_impacts",
+    "config_versions",
     "counters",
 )
 
@@ -109,3 +113,6 @@ def reset() -> None:
         for t in TABLES:
             con.execute(f"delete from {t}")
         con.execute("drop table if exists audit_log")
+    from control import config
+
+    config.clear_cache()

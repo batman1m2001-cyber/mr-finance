@@ -101,4 +101,6 @@ def rm_today() -> Dict[str, Any]:
     from research.ops import matches
 
     tasks = [m for m in matches() if m["level"] in ("contact_now", "confirm_goal", "remind")]
-    return {"cases": cases, "threshold_pct": runs.PRE_REVIEW_PCT, "goal_tasks": tasks}
+    from control import config
+
+    return {"cases": cases, "threshold_pct": config.data("thresholds")["pre_review_pct"], "goal_tasks": tasks}

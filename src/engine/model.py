@@ -13,7 +13,6 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, field
-from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -185,8 +184,15 @@ def _cov(corr: Matrix, vols: List[float]) -> Matrix:
     return [[corr[i][j] * vols[i] * vols[j] for j in range(n)] for i in range(n)]
 
 
-@lru_cache(maxsize=1)
-def default_model() -> FactorModel:
-    from wealth.paths import DATA
+_ACTIVE: Dict[str, FactorModel] = {}
 
-    return FactorModel.from_dict(json.loads((DATA / "factor_model.json").read_text(encoding="utf-8")))
+
+def default_model() -> FactorModel:
+    """The factor model in force: the ACTIVE version of the versioned configuration (FR-701), which is the
+    shipped data/factor_model.json until a CIO-approved change replaces it. Built once per version."""
+    from control import config
+
+    h = config.active_hash("factor_model")
+    if h not in _ACTIVE:
+        _ACTIVE[h] = FactorModel.from_dict(config.data("factor_model"))
+    return _ACTIVE[h]

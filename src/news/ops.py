@@ -20,9 +20,16 @@ USER_AGENT = "OneWealth-demo/0.1 (+https://github.com/batman1m2001-cyber/mr-fina
 
 
 @lru_cache(maxsize=1)
-def config() -> Dict[str, Any]:
-    """data/news_config.json (scripts/make_news_config.py): sources, words, the restricted list."""
+def _file() -> Dict[str, Any]:
     return json.loads((DATA / "news_config.json").read_text(encoding="utf-8"))
+
+
+def config() -> Dict[str, Any]:
+    """data/news_config.json (scripts/make_news_config.py): sources, words, the restricted list — with the
+    sources and the restricted list as their approved versions in force (FR-701)."""
+    from control import config as versioned
+
+    return {**_file(), "sources": versioned.data("news_sources"), "restricted": versioned.data("restricted")}
 
 
 def _get(url: str, timeout: float) -> bytes:

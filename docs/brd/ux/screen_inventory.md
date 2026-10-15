@@ -30,6 +30,7 @@ row: a replaced screen is marked `replaced by SCR-…` and keeps its capabilitie
 | [SCR-CIO-06](screens/cio.md#scr-cio-06--nghiên-cứu-research-cio) | Nghiên cứu (upload) | CIO `#/cio/nghien-cuu` | new | FEAT-03, 10 | FR-201, FR-204, FR-603 | current | [d](../assets/current_ui/SCR-CIO-06_desktop-light.jpg) |
 | [SCR-CIO-07](screens/cio.md#scr-cio-07--mô-hình-factor-model) | Mô hình | CIO `#/cio/mo-hinh` | new | FEAT-07, 14 | §9, FR-701 (read) | current | [d](../assets/current_ui/SCR-CIO-07_desktop-light.jpg) |
 | [SCR-CIO-08](screens/cio.md#scr-cio-08--agent-catalogue-and-ai-quality) | Agent | CIO `#/cio/agent`; Compliance `#/compliance/agent` | new | FEAT-15 | FR-703, RULE-MEAS-04 | current | [d](../assets/current_ui/SCR-CIO-08_desktop-light.jpg) [p](../assets/current_ui/SCR-CIO-08_phone-light.jpg) |
+| [SCR-CIO-09](screens/cio.md#scr-cio-09--cấu-hình-versioned-configuration) | Cấu hình | CIO `#/cio/cau-hinh`; Compliance `#/compliance/cau-hinh` | new | FEAT-14 | FR-701, RULE-SEC-04/05 | current | [d](../assets/current_ui/SCR-CIO-09_desktop-light.jpg) [p](../assets/current_ui/SCR-CIO-09_phone-light.jpg) |
 | [SCR-CMP-01](screens/compliance.md#scr-cmp-01--tin-bị-giữ-held-news) | Tin bị giữ | Compliance `#/compliance/giu` | new | FEAT-02 | BR-04, FR-105 | current | [d](../assets/current_ui/SCR-CMP-01_desktop-light.jpg) |
 | [SCR-CMP-02](screens/compliance.md#scr-cmp-02--nghiên-cứu-research-release) | Nghiên cứu (release) | Compliance `#/compliance/nghien-cuu` | new | FEAT-03 | BR-03, FR-202, FR-203 | current | [d](../assets/current_ui/SCR-CMP-02_desktop-light.jpg) [p](../assets/current_ui/SCR-CMP-02_phone-light.jpg) |
 | [SCR-CMP-03](screens/compliance.md#scr-cmp-03--nhật-ký-audit-log) | Nhật ký | Compliance `#/compliance/nhat-ky` | new | FEAT-11 | BR-12, FR-702 | current | [d](../assets/current_ui/SCR-CMP-03_desktop-light.jpg) |
@@ -39,7 +40,7 @@ row: a replaced screen is marked `replaced by SCR-…` and keeps its capabilitie
 | SCR-PRO-04 | Copilot panel | all | — | FEAT-32 | KIT-COPILOT-* | replaced by SCR-CL-10 (built 2026-10-16) | concept KIT-01 |
 
 Screens of **BRD capabilities not built** (no row yet): policy agent (FEAT-16), CIO
-newsletter (FEAT-17), accuracy (FEAT-18), configuration editor (FEAT-14).
+newsletter (FEAT-17), accuracy (FEAT-18).
 
 **Verification of the current screens (2026-10-15):** 21 routes captured at 1440 × 900 and 390 × 844; no page
 error or console error, no horizontal scroll at either width (capture log in

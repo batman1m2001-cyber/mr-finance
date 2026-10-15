@@ -21,3 +21,4 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0013](ADR-0013-wrap-the-legacy-pages-in-the-new-shell.md) | Wrap the legacy pages in the new shell instead of rewriting them | accepted | 2026-10-15 |
 | [ADR-0014](ADR-0014-docs-brd-is-the-living-product-repository.md) | docs/brd is the living product knowledge repository | accepted | 2026-10-15 |
 | [ADR-0015](ADR-0015-decisions-of-the-first-build-plan.md) | Decisions of the first build plan (D1–D9) | accepted | 2026-10-09 |
+| [ADR-0016](ADR-0016-configuration-two-person-rule.md) | Configuration is versioned; two people for the factor model, thresholds and restricted list | accepted | 2026-10-16 |
