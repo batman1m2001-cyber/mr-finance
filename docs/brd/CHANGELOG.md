@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — UI redesign R2: Toàn cảnh as on the concept board (four Pulse cards with small charts, Sankey with a
+  colour and icon per category, ratios and flow dots, donut, impact cards, goals card) — FEAT-29, FEAT-33 note,
+  matrix (KIT-UX-01, 03 verified; OWN-UI-01), client.md SCR-CL-08, design_system, 4 screenshots, UI_REDESIGN_PLAN §4.
+
 - 2026-10-16 — UI redesign R1: board look (tokens, header with tagline, search, bell, demo roles on the tabs row),
   Lucide icons, icon chips, pills, small charts, one look for controls, round Copilot button; `POST /api/search`;
   owner request recorded as OWN-UI-01…07 — FEAT-34, owner_requirements, matrix §5, sources, design_system,

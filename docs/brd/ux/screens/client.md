@@ -204,24 +204,27 @@ while pending, “Đang chờ chuyên gia duyệt”; decided items with their b
 | Route | `#/client/tong-quan/toan-canh` (client's first page); RM: `#/rm/khach-hang/toan-canh` |
 | Generation | new (`web/pages/pulse.js`) |
 | Feature | [FEAT-29](../../features/FEAT-29-financial-pulse-wealth-map-money-flow.md) |
-| Requirements | KIT-UX-01, KIT-UX-02, KIT-UX-03, KIT-UX-05, KIT-UX-06; BRIEF-DASH-01 (net worth), BRIEF-DASH-02 (allocation) |
-| Data | `POST /api/dashboard`, `POST /api/flows`, `POST /api/feed` |
-| Screenshots | [desktop](../../assets/current_ui/SCR-CL-08_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-08_phone-light.jpg) · [dark](../../assets/current_ui/SCR-CL-08_desktop-dark.jpg) |
+| Requirements | KIT-UX-01, KIT-UX-02, KIT-UX-03, KIT-UX-05, KIT-UX-06, OWN-UI-01; BRIEF-DASH-01 (net worth), BRIEF-DASH-02 (allocation) |
+| Data | `POST /api/dashboard`, `POST /api/flows`, `POST /api/feed`, `POST /api/goals` |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CL-08_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-08_phone-light.jpg) · [dark](../../assets/current_ui/SCR-CL-08_desktop-dark.jpg) · [band picked](../../assets/current_ui/SCR-CL-08_flow-picked.jpg) |
 
 **Journey.** In one screen: what I am worth and how it moved, what came in and went out last month and what was
 left, how long my reserve lasts, how exposed I am — then where the money sits and where it flowed.
 
-**Layout.** KPI strip of six tiles (2 columns on a phone, 3 below 1100 px). **Điều đáng chú ý** (FEAT-31): each
-item with a severity badge, title, why, source, and a link to its evidence; the rules beneath. **Bản đồ tài sản** (5/12): a 100 % bar
-by class, a legend with value and share, a class opens its holdings. **Dòng tiền** (7/12): month picker, Sankey
-(blue in, orange out, green “Còn lại” / red “Thiếu hụt”), the table of bands, a band opens its transactions.
-A link to “Chi tiết” (SCR-CL-01).
+**Layout** (the concept board, R2). Four Pulse cards (two per row below 1100 px, one on a phone), each with one
+small chart: net worth with the classes that moved it, the month's cash flow with six months of in/out bars,
+the reserve with a ring, the stress loss on a gauge. **Dòng tiền của bạn** (7/12): month picker, Sankey with a
+colour and icon per category, three ratios, the table of bands. **Phân bổ tài sản** (5/12): donut with the total
+inside and a legend; a class opens its holdings. **Điều đáng chú ý** (7/12, FEAT-31): impact cards — icon by type,
+severity, type and (for news) the 3-month impact as pills, why, source, evidence link. **Mục tiêu tài chính**
+(5/12): followed goals with status, need, deadline, progress bar and gap. A link to “Chi tiết” (SCR-CL-01).
 
 **States.** A month with no rows: “Không có giao dịch trong tháng này.”; a failed flows call keeps the page and
 shows the error under the chart.
 
-**Interaction.** Bands and map segments are focusable buttons (Enter / Space); tooltips on hover and focus; no
-animation (reduced motion needs nothing more).
+**Interaction.** Bands, donut segments and legend rows are focusable buttons (Enter / Space); tooltips on hover
+and focus. A picked band dims the others and sends three dots along itself three times (none under reduced motion;
+paused while the tab is hidden).
 
 ---
 
