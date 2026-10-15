@@ -95,4 +95,7 @@ def rm_today() -> Dict[str, Any]:
             if row["pre_review"]:
                 cases.append({**row, "run_id": run["id"], "event": {"id": ev["id"], "title": ev["title"]}})
     cases.sort(key=lambda c: (c["p10_3m_pct"], c["family_id"]))
-    return {"cases": cases, "threshold_pct": runs.PRE_REVIEW_PCT}
+    from research.ops import matches
+
+    tasks = [m for m in matches() if m["level"] in ("contact_now", "confirm_goal", "remind")]
+    return {"cases": cases, "threshold_pct": runs.PRE_REVIEW_PCT, "goal_tasks": tasks}

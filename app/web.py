@@ -24,6 +24,8 @@ from control import roles
 from events import store as events_store
 from news import ops as news_ops
 from news import store as news_store
+from research import ops as research_ops
+from research import store as research_store
 from scenarios._sim import SCENARIOS
 from views import ops as view_ops
 from wealth import fixtures, store
@@ -325,22 +327,89 @@ async def model(request: Request) -> JSONResponse:
 
     m = default_model()
     vol_s = m.vol("stressed")
-    return JSONResponse({
-        "version": m.version, "hash": m.hash, "status": m.status, "note": m.note, "engine_version": ENGINE_VERSION,
-        "horizons": m.horizons, "priced_in": m.priced_in, "core_uncertainty": m.core_uncertainty,
-        "stressed_repair": m.stressed_repair, "loadings": m.loadings,
-        "factors": [{"id": f.id, "name": f.name, "group": f.group, "unit": f.unit, "sizes": f.sizes,
-                     "realisation": f.realisation, "vol_month": f.vol_month, "vol_month_stressed": round(vs, 4),
-                     "brd_parameter": f.brd_parameter, "assumed": f.assumed} for f, vs in zip(m.factors, vol_s)],
-        "correlations": {"ids": m.ids, "normal": [[round(x, 3) for x in r] for r in m.corr["normal"]],
-                         "stressed": [[round(x, 3) for x in r] for r in m.corr["stressed"]]},
-    })
+    return JSONResponse(
+        {
+            "version": m.version,
+            "hash": m.hash,
+            "status": m.status,
+            "note": m.note,
+            "engine_version": ENGINE_VERSION,
+            "horizons": m.horizons,
+            "priced_in": m.priced_in,
+            "core_uncertainty": m.core_uncertainty,
+            "stressed_repair": m.stressed_repair,
+            "loadings": m.loadings,
+            "factors": [
+                {
+                    "id": f.id,
+                    "name": f.name,
+                    "group": f.group,
+                    "unit": f.unit,
+                    "sizes": f.sizes,
+                    "realisation": f.realisation,
+                    "vol_month": f.vol_month,
+                    "vol_month_stressed": round(vs, 4),
+                    "brd_parameter": f.brd_parameter,
+                    "assumed": f.assumed,
+                }
+                for f, vs in zip(m.factors, vol_s)
+            ],
+            "correlations": {
+                "ids": m.ids,
+                "normal": [[round(x, 3) for x in r] for r in m.corr["normal"]],
+                "stressed": [[round(x, 3) for x in r] for r in m.corr["stressed"]],
+            },
+        }
+    )
 
 
 async def news_config(request: Request) -> JSONResponse:
     """The white list and the (mock) restricted list Compliance owns."""
     cfg = news_ops.config()
     return JSONResponse({k: cfg[k] for k in ("version", "note", "gates", "sources", "restricted", "event_types")})
+
+
+async def research_list(request: Request) -> JSONResponse:
+    """Uploaded research and regulation notes with their status (CIO, Compliance)."""
+    return JSONResponse(
+        {"items": research_store.listing(request.query_params.get("status") or None), "kinds": research_store.KINDS}
+    )
+
+
+async def goal_regulation(request: Request) -> JSONResponse:
+    """The goal branch (FR-602/603): released regulation notes matched to goals. ?role=client keeps
+    only declared goals with a client message; staff see every match, RM tasks included."""
+    from datetime import date
+
+    from procedural.goals import PURPOSES, goals_of
+
+    q = request.query_params
+    fid = q.get("family_id") or None
+    rows = research_ops.matches(fid)
+    if q.get("role") == "client":
+        rows = [
+            {
+                k: r[k]
+                for k in (
+                    "goal",
+                    "need_date",
+                    "purpose_label",
+                    "country",
+                    "milestone",
+                    "level",
+                    "level_label",
+                    "documents",
+                    "client_message",
+                )
+            }
+            for r in rows
+            if r["client_message"]
+        ]
+    out = {"matches": rows, "purposes": PURPOSES}
+    if fid and q.get("role") != "client":
+        decl = research_store.declared()
+        out["goals"] = [{**g, "declared": decl.get(g["goal_id"])} for g in goals_of(fixtures.client(fid), date.today())]
+    return JSONResponse(out)
 
 
 async def reset(request: Request) -> JSONResponse:
@@ -373,6 +442,8 @@ app = Starlette(
         Route("/api/trace/{run_id}/{family_id}", trace),
         Route("/api/rm/today", rm_today),
         Route("/api/audit", audit_list),
+        Route("/api/research", research_list),
+        Route("/api/goals/regulation", goal_regulation),
         Route("/api/audit/verify", audit_verify),
         Route("/api/reset", reset, methods=["POST"]),
         # the sample statements a demo uploads

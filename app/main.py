@@ -17,6 +17,8 @@ POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/vie
 approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
      run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
      /api/rm/today, /api/audit[/verify] ──► app/web.py
+POST /api/research, /api/research/release, /api/goals/outflow ──► the research and goal-branch flows ·
+     GET /api/research, /api/goals/regulation ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
      clients, the specialist team, the advisory track record, the house views, the UI)
 
@@ -37,6 +39,7 @@ from events.graph import event_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from news.graph import dismiss_flow, ingest_flow, release_flow
+from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, review_flow
 from risk.graph import risk_flow
 from scenarios.graph import goals_flow, scenario_flow
@@ -151,6 +154,24 @@ APP = Application(
             http("POST", "/api/runs/decide", port=PORT),
             graph=run_decide_flow,
             description="POST {run_id, action: make_effective|withdraw, by, reason}: the CIO on a run.",
+        ),
+        Service(
+            "research_upload",
+            http("POST", "/api/research", port=PORT),
+            graph=research_upload_flow,
+            description="POST {item: {kind, report_no, title, summary, release_at, conflicts?, regulation?}, by}.",
+        ),
+        Service(
+            "research_release",
+            http("POST", "/api/research/release", port=PORT),
+            graph=research_release_flow,
+            description="POST {item_id, decision: release|reject, by, note}: Compliance, after the release time.",
+        ),
+        Service(
+            "goal_outflow",
+            http("POST", "/api/goals/outflow", port=PORT),
+            graph=goal_outflow_flow,
+            description="POST {family_id, goal_id, purpose, country?, by}: the RM declares a goal's outflow.",
         ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),

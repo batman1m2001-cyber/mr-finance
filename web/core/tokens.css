@@ -268,3 +268,5 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .editing .editing-only { display: revert; }
 .editing .editing-only.row, .editing .row.editing-only { display: flex; }
 .check { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 6px; align-items: start; }
+.item > * { min-width: 0; }
+#page-new input[data-note], #page-new input[data-resp] { min-width: 140px !important; }

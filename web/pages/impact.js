@@ -1,19 +1,26 @@
 /* Tin tác động: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {ASSET_CLASS, CLASS_COLOR, HORIZON, empty, esc, get, pct, runBadge, signClass, vnd, when, $} from "../core/core.js";
+import {ASSET_CLASS, CLASS_COLOR, HORIZON, empty, esc, get, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
+
+const LEVEL = {contact_now: "bad", confirm_goal: "human", remind: "warn", note: ""};
 
 export async function render(box, ctx) {
   const client = ctx.client();
   const staff = ctx.role !== "client";
-  const d = await get(`/api/families/${encodeURIComponent(client)}/impact?role=${staff ? "rm" : "client"}`);
+  const [d, goals] = await Promise.all([
+    get(`/api/families/${encodeURIComponent(client)}/impact?role=${staff ? "rm" : "client"}`),
+    get(`/api/goals/regulation?family_id=${encodeURIComponent(client)}${staff ? "" : "&role=client"}`),
+  ]);
+  const goalBlock = goalsPanel(goals, staff);
   const items = d.items;
   const effective = items.filter(i => i.status === "EFFECTIVE");
   if (!items.length) {
-    box.innerHTML = `<div class="panel">${empty("Chưa có tin nào được CIO duyệt áp dụng cho gia đình này",
-      staff ? "Khi CIO duyệt một nhận định, kết quả của mọi gia đình hiện ở đây sau hậu kiểm." : "Khi có tin đáng chú ý đã được kiểm duyệt, tác động lên tài sản của bạn sẽ hiện ở đây.")}</div>`;
+    box.innerHTML = `<div class="cols"><div class="panel c12">${empty("Chưa có tin nào được CIO duyệt áp dụng cho gia đình này",
+      staff ? "Khi CIO duyệt một nhận định, kết quả của mọi gia đình hiện ở đây sau hậu kiểm." : "Khi có tin đáng chú ý đã được kiểm duyệt, tác động lên tài sản của bạn sẽ hiện ở đây.")}</div>${goalBlock}</div>`;
+    wireGoals(box, ctx, client);
     return;
   }
   const nw = items[0].net_worth;
@@ -52,8 +59,10 @@ export async function render(box, ctx) {
       ${staff ? `<div class="panel c12"><details class="more"><summary>Chi tiết cho RM: theo yếu tố và theo vị thế</summary>
         <div class="cols" style="margin-top:8px"><div class="c6"><div class="small muted">Theo yếu tố (3 tháng)</div><div id="by-factor"></div></div>
         <div class="c6"><div class="small muted">Vị thế góp phần nhiều nhất</div><div id="by-holding"></div></div></div></details></div>` : ""}
+      ${goalBlock}
       ${d.labels ? `<div class="c12 notice small">${esc(d.labels.note)}</div>` : ""}
     </div>`;
+  wireGoals(box, ctx, client);
 
   const drawFan = (it) => {
     sel = it;
@@ -94,4 +103,38 @@ export async function render(box, ctx) {
       `<tr class="click" data-key="${esc(k)}" title="${esc(h.method)}"><td>${esc(h.name)}${h.modelled ? ' <span class="badge assumed">mô hình</span>' : ""}</td><td class="r ${signClass(h.v)}">${vnd(h.v, true)}</td></tr>`).join("")}</tbody></table>` : `<div class="small muted">—</div>`;
     box.querySelectorAll("[data-key]").forEach(r => { r.onclick = () => openTrace(sel.run_id, client, r.dataset.key); });
   }
+}
+
+function goalsPanel(g, staff) {
+  const rows = g.matches || [];
+  if (!staff) {
+    if (!rows.length) return "";
+    return `<div class="panel c12"><h3>Lưu ý cho mục tiêu của bạn <span class="hint">quy định mới về chuyển tiền ra nước ngoài</span></h3>
+      ${rows.map(m => `<div style="padding:8px 0;border-bottom:1px solid var(--hair)"><b>${esc(m.goal)}</b> <span class="badge ${LEVEL[m.level]}">${esc(m.level_label)}</span>
+        <div class="small">${esc(m.client_message)}</div><div class="small muted">Nên chuẩn bị trước ${esc(m.milestone)}${m.documents.length ? ` · hồ sơ: ${m.documents.map(esc).join(", ")}` : ""}</div></div>`).join("")}</div>`;
+  }
+  const goalsList = g.goals || [];
+  if (!goalsList.length && !rows.length) return "";
+  const opts = Object.entries(g.purposes || {}).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
+  return `<div class="panel c12"><h3>Mục tiêu và quy định <span class="hint">nhánh mục tiêu: mốc thời gian và hồ sơ, không phải tiền</span></h3>
+    ${rows.length ? rows.map(m => `<div style="padding:6px 0"><span class="badge ${LEVEL[m.level]}">${esc(m.level_label)}</span> <b>${esc(m.goal)}</b> · ${esc(m.note_title)} · mốc <span class="num">${esc(m.milestone)}</span><div class="small muted">${esc(m.rm_hint || "")}</div></div>`).join("") : '<div class="small muted">Chưa có ghi chú quy định nào khớp mục tiêu của gia đình này.</div>'}
+    <details class="more" style="margin-top:8px"><summary>Khai dòng tiền ra nước ngoài cho mục tiêu (RM)</summary>
+      ${goalsList.map(x => `<div class="row" style="margin:6px 0"><span style="min-width:220px"><b>${esc(x.label)}</b><div class="small muted">${esc(x.date)}${x.declared ? ` · đã khai: ${esc((g.purposes || {})[x.declared.purpose] || x.declared.purpose)} ${esc(x.declared.country || "")}` : " · chưa khai"}</div></span>
+        <select data-purpose="${esc(x.goal_id)}">${opts}</select><input data-country="${esc(x.goal_id)}" placeholder="Nước đến" style="width:110px;padding:6px 9px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
+        <button type="button" class="btn sm" data-declare="${esc(x.goal_id)}">Lưu</button></div>`).join("")}</details></div>`;
+}
+
+function wireGoals(box, ctx, client) {
+  box.querySelectorAll("[data-declare]").forEach(b => {
+    b.onclick = async () => {
+      const id = b.dataset.declare;
+      try {
+        await post("/api/goals/outflow", {family_id: client, goal_id: id, by: ctx.user,
+          purpose: box.querySelector(`[data-purpose="${CSS.escape(id)}"]`).value,
+          country: box.querySelector(`[data-country="${CSS.escape(id)}"]`).value.trim()});
+        toast("Đã lưu khai báo");
+      } catch (e) { toast(e.message); }
+      ctx.go(location.hash);
+    };
+  });
 }

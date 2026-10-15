@@ -43,6 +43,10 @@ create table if not exists family_impacts (
   id text primary key, run_id text not null, family_id text not null, data text not null,
   unique (run_id, family_id));
 create index if not exists family_impacts_family on family_impacts (family_id);
+create table if not exists research_items (
+  id text primary key, kind text not null, status text not null, created real not null, data text not null);
+create table if not exists goal_outflows (
+  goal_id text primary key, family_id text not null, created real not null, data text not null);
 """
 
 TABLES = (

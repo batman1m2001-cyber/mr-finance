@@ -37,6 +37,7 @@ const ROLES = {
       {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events"},
       {id: "phoi-nhiem", label: "Phơi nhiễm", page: "exposure"},
       {id: "ap-dung", label: "Lần áp dụng", page: "runs"},
+      {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
       {id: "mo-hinh", label: "Mô hình", page: "model"},
     ],
   },
@@ -44,6 +45,7 @@ const ROLES = {
     label: "Tuân thủ", user: "compliance",
     nav: [
       {id: "giu", label: "Tin bị giữ", page: "held"},
+      {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
     ],
   },
