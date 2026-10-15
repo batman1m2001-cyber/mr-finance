@@ -9,3 +9,17 @@ llm:assistant:
   api_key: ${LLM_API_KEY:not-set}
   base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL:gpt-4o-mini}
+
+# The CIO agent and the challenger (BRD §8): two different models, so their mistakes do not line
+# up. Unset or equal, agent runs are mock (keywords, no model) and say so.
+llm:cio:
+  api_type: openai
+  api_key: ${LLM_API_KEY:not-set}
+  base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
+  model: ${LLM_MODEL_CIO:not-set}
+
+llm:challenger:
+  api_type: openai
+  api_key: ${LLM_API_KEY:not-set}
+  base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
+  model: ${LLM_MODEL_CHALLENGER:not-set}

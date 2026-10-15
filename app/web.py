@@ -15,9 +15,13 @@ from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
+from control import db as control_db
+from control import roles
+from events import store as events_store
 from news import ops as news_ops
 from news import store as news_store
 from scenarios._sim import SCENARIOS
+from views import ops as view_ops
 from wealth import fixtures, store
 from wealth.paths import DATA, ROOT
 
@@ -198,9 +202,50 @@ async def news_inbox(request: Request) -> JSONResponse:
     return JSONResponse({"items": items, "sources": sources, "last_run": last, "config_version": cfg["version"]})
 
 
+async def events_list(request: Request) -> JSONResponse:
+    """Every event, newest first, with its views (CIO workspace)."""
+    out = []
+    for ev in events_store.listing():
+        out.append(
+            {
+                **{k: ev[k] for k in ("id", "title", "type", "created", "blocked", "held", "news_ids", "factors")},
+                "views": view_ops.event_views(ev["id"]),
+            }
+        )
+    return JSONResponse({"events": out})
+
+
+async def event_one(request: Request) -> JSONResponse:
+    try:
+        ev = events_store.get(request.path_params["event_id"])
+    except events_store.EventError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=404)
+    return JSONResponse({"event": ev, "views": view_ops.event_views(ev["id"])})
+
+
+async def view_one(request: Request) -> JSONResponse:
+    """A view with its findings, decisions, agent runs (every node), approval checks and preview."""
+    try:
+        return JSONResponse(view_ops.public(request.path_params["view_id"]))
+    except KeyError as exc:
+        return JSONResponse({"error": str(exc.args[0])}, status_code=404)
+
+
+async def agents_status(request: Request) -> JSONResponse:
+    """Which mode an agent run would use now, the models, and the demo users (role switcher)."""
+    return JSONResponse(
+        {
+            **view_ops.agent_status(),
+            "users": [{"id": k, **v} for k, v in roles.USERS.items()],
+            "note": "Bộ chuyển vai trò chỉ để demo, không phải cơ chế bảo mật.",
+        }
+    )
+
+
 async def reset(request: Request) -> JSONResponse:
     store.reset()
     news_store.reset()
+    control_db.reset()
     return JSONResponse({"reset": True})
 
 
@@ -214,6 +259,10 @@ app = Starlette(
         Route("/api/advisory/all", advisory_all),
         Route("/api/views", views),
         Route("/api/news/inbox", news_inbox),
+        Route("/api/events", events_list),
+        Route("/api/events/{event_id}", event_one),
+        Route("/api/views/{view_id}", view_one),
+        Route("/api/agents", agents_status),
         Route("/api/reset", reset, methods=["POST"]),
         # the sample statements a demo uploads
         Mount("/samples", app=StaticFiles(directory=DATA / "samples"), name="samples"),

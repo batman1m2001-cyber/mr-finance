@@ -12,6 +12,8 @@ POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/revi
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
 POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (Compliance)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
+POST /api/events ──► event_flow · POST /api/events/run-agent ──► cio_agent_flow (agent + challenger)
+POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
      clients, the specialist team, the advisory track record, the house views, the UI)
 
@@ -27,6 +29,7 @@ from operonx.app.jobs import Job
 from app import web
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
+from events.graph import event_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from news.graph import dismiss_flow, ingest_flow, release_flow
@@ -35,6 +38,7 @@ from risk.graph import risk_flow
 from scenarios.graph import goals_flow, scenario_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
+from views.graph import cio_agent_flow, decide_flow
 
 PORT = env("PORT", 8030)
 
@@ -113,6 +117,24 @@ APP = Application(
             http("POST", "/api/news/release", port=PORT),
             graph=release_flow,
             description="POST {item_id, by, note}: Compliance releases an item held by the restricted list.",
+        ),
+        Service(
+            "event",
+            http("POST", "/api/events", port=PORT),
+            graph=event_flow,
+            description="POST {news_ids, title?, by}: the CIO groups news into an event.",
+        ),
+        Service(
+            "cio_agent",
+            http("POST", "/api/events/run-agent", port=PORT),
+            graph=cio_agent_flow,
+            description="POST {event_id, by, mode?: live|mock}: the CIO agent, then the challenger.",
+        ),
+        Service(
+            "view_decide",
+            http("POST", "/api/views/decide", port=PORT),
+            graph=decide_flow,
+            description="POST {view_id, action, by, reason, idem_key?, edits?, responses?}: one CIO action.",
         ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
