@@ -200,14 +200,15 @@ while pending, “Đang chờ chuyên gia duyệt”; decided items with their b
 | Route | `#/client/tong-quan/toan-canh` (client's first page); RM: `#/rm/khach-hang/toan-canh` |
 | Generation | new (`web/pages/pulse.js`) |
 | Feature | [FEAT-29](../../features/FEAT-29-financial-pulse-wealth-map-money-flow.md) |
-| Requirements | KIT-UX-01, KIT-UX-02, KIT-UX-03, KIT-UX-06; BRIEF-DASH-01 (net worth), BRIEF-DASH-02 (allocation) |
-| Data | `POST /api/dashboard`, `POST /api/flows` |
+| Requirements | KIT-UX-01, KIT-UX-02, KIT-UX-03, KIT-UX-05, KIT-UX-06; BRIEF-DASH-01 (net worth), BRIEF-DASH-02 (allocation) |
+| Data | `POST /api/dashboard`, `POST /api/flows`, `POST /api/feed` |
 | Screenshots | [desktop](../../assets/current_ui/SCR-CL-08_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-08_phone-light.jpg) · [dark](../../assets/current_ui/SCR-CL-08_desktop-dark.jpg) |
 
 **Journey.** In one screen: what I am worth and how it moved, what came in and went out last month and what was
 left, how long my reserve lasts, how exposed I am — then where the money sits and where it flowed.
 
-**Layout.** KPI strip of six tiles (2 columns on a phone, 3 below 1100 px). **Bản đồ tài sản** (5/12): a 100 % bar
+**Layout.** KPI strip of six tiles (2 columns on a phone, 3 below 1100 px). **Điều đáng chú ý** (FEAT-31): each
+item with a severity badge, title, why, source, and a link to its evidence; the rules beneath. **Bản đồ tài sản** (5/12): a 100 % bar
 by class, a legend with value and share, a class opens its holdings. **Dòng tiền** (7/12): month picker, Sankey
 (blue in, orange out, green “Còn lại” / red “Thiếu hụt”), the table of bands, a band opens its transactions.
 A link to “Chi tiết” (SCR-CL-01).

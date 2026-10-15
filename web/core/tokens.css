@@ -298,3 +298,6 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .chip[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
 .gedge { padding: 8px 0; border-bottom: 1px solid var(--hair); overflow-wrap: anywhere; }
 .gedge .linkbtn { text-align: left; }
+/* Intelligence Feed (kit K4) */
+.feed-item { grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; }
+@media (max-width: 560px) { .feed-item { grid-template-columns: minmax(0, 1fr); } }

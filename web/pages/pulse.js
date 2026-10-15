@@ -15,9 +15,11 @@ const MONTH = (m) => `T${Number(m.slice(5))}/${m.slice(2, 4)}`;
 export async function render(box, ctx) {
   const client = ctx.client(), scope = ctx.scope();
   const state = {month: null};
-  const [{dashboard: d}, first] = await Promise.all([
+  const staff = ctx.role !== "client";
+  const [{dashboard: d}, first, fd] = await Promise.all([
     post("/api/dashboard", {client_id: client, scope}),
     post("/api/flows", {client_id: client, scope}),
+    post("/api/feed", {client_id: client, scope, role: staff ? "rm" : "client"}).catch((e) => ({error: e.message})),
   ]);
   let f = first.flows;
   const nw = d.net_worth, liq = d.liquidity, rk = d.risk;
@@ -38,6 +40,7 @@ export async function render(box, ctx) {
   box.innerHTML = `
     <div class="cols">
       <div class="c12 kpis" id="kpis"></div>
+      <div class="panel c12" id="feed"></div>
       <div class="panel c5">
         <h3>Bản đồ tài sản <span class="hint">${vnd(assets)} tài sản · giá ngày ${esc(d.as_of)} · bấm một nhóm để xem từng khoản</span></h3>
         <div class="wmap" id="wmap" role="list"></div>
@@ -113,5 +116,34 @@ export async function render(box, ctx) {
     drawRows(null);
   };
 
-  drawKpis(); drawMap(); drawFlow();
+  // Intelligence Feed (kit K4): what matters, why, and where its evidence is
+  const ROUTE = staff
+    ? {impact: ctx.href("khach-hang", "tac-dong"), graph: ctx.href("khach-hang", "do-thi"), detail: ctx.href("khach-hang", "tong-quan")}
+    : {impact: ctx.href("tin", "thi-truong"), graph: ctx.href("tin", "do-thi"), detail: ctx.href("tong-quan", "chi-tiet")};
+  const SEV = {high: ["bad", "Cần xem"], medium: ["warn", "Đáng chú ý"], info: ["", "Thông tin"]};
+  const TYPE = {impact: "Tin tác động", goal: "Mục tiêu", risk: "Ngưỡng", change: "Thay đổi"};
+  const KIND = {run: "Lần áp dụng", regulation: "Ghi chú quy định", goal: "Mục tiêu", dashboard: "Tổng quan", transactions: "Giao dịch"};
+  const PART = {risk: "rủi ro", liquidity: "thanh khoản", net_worth: "tài sản ròng"};
+  const source = (ev) => `${KIND[ev.kind] || ev.kind} ${ev.kind === "dashboard" ? PART[ev.id] || ev.id : ev.kind === "transactions" ? `${ev.category} ${ev.month}` : ev.id}`;
+  const drawFeed = () => {
+    const el = $("#feed", box);
+    if (fd.error) { el.innerHTML = `<h3>Điều đáng chú ý</h3><div class="small muted">Không tải được: ${esc(fd.error)}</div>`; return; }
+    const its = fd.feed.items;
+    el.innerHTML = `<h3>Điều đáng chú ý <span class="hint">${its.length ? `${its.length} mục · quan trọng trước` : ""}</span></h3>
+      ${its.length ? `<div class="list">${its.map((i, k) => `<div class="item feed-item">
+        <span class="badge ${SEV[i.severity][0]}">${SEV[i.severity][1]}</span>
+        <div><div class="t">${esc(i.title)}</div><div class="m">${esc(TYPE[i.type] || i.type)} · ${esc(i.why)}</div>
+          <div class="small muted">Nguồn: ${esc(source(i.evidence))}</div></div>
+        ${i.link === "flow" ? `<button type="button" class="linkbtn small" data-month="${esc(i.evidence.month)}">Xem dòng tiền →</button>`
+          : `<a class="small" href="${ROUTE[i.link]}">Xem bằng chứng →</a>`}</div>`).join("")}</div>`
+        : `<div class="small muted">Không có điều gì cần chú ý lúc này.</div>`}
+      <div class="footnote">Vì sao một mục hiện ở đây: ${esc(fd.feed.rules)}</div>`;
+    for (const b of el.querySelectorAll("[data-month]")) b.onclick = () => {
+      const sel = $("#month", box);
+      sel.value = b.dataset.month; sel.dispatchEvent(new Event("change"));
+      sel.scrollIntoView({block: "center"});
+    };
+  };
+
+  drawKpis(); drawFeed(); drawMap(); drawFlow();
 }

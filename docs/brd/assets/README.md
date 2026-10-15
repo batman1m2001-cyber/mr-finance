@@ -39,9 +39,9 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-05_phone-light.jpg` | SCR-CL-05 Tác động thị trường | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CL-06_desktop-light.jpg` | SCR-CL-06 Chi phí chính sách | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CL-07_desktop-light.jpg` | SCR-CL-07 Chuyên gia | current | desktop 1440×900, light, viewport | 2026-10-15, dev server, seeded demo data (client C01), after DEF-02: queue read-only with one pending item |
-| `SCR-CL-08_desktop-light.jpg` | SCR-CL-08 Toàn cảnh | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26 |
-| `SCR-CL-08_phone-light.jpg` | SCR-CL-08 Toàn cảnh | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26 |
-| `SCR-CL-08_desktop-dark.jpg` | SCR-CL-08 Toàn cảnh | current | desktop 1440×900, dark, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26 |
+| `SCR-CL-08_desktop-light.jpg` | SCR-CL-08 Toàn cảnh (with the feed) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26, three effective runs |
+| `SCR-CL-08_phone-light.jpg` | SCR-CL-08 Toàn cảnh (with the feed) | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26, three effective runs |
+| `SCR-CL-08_desktop-dark.jpg` | SCR-CL-08 Toàn cảnh (with the feed) | current | desktop 1440×900, dark, full page (≤ 2,600 px) | 2026-10-16, dev server, client C01, personal, T9/26, three effective runs |
 | `SCR-CL-09_desktop-light.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
 | `SCR-CL-09_phone-light.jpg` | SCR-CL-09 Đồ thị tác động | current | phone 390×844, light (list view), full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
 | `SCR-CL-09_desktop-dark.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, dark, full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
