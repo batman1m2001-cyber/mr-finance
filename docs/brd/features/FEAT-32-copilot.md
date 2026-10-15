@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| Type | Extension (redesign kit), built 2026-10-16 (plan phase K5) |
-| Requirements | KIT-COPILOT-01…06; keeps BRD-BR-11, BRD-NFR-08, BRD-RULE-ZONE-04 |
+| Type | Extension (redesign kit), built 2026-10-16 (plan phase K5); Copilot 2.0 in UI redesign R5 (2026-10-16) |
+| Requirements | KIT-COPILOT-01…06, OWN-UI-05; keeps BRD-BR-11, BRD-NFR-08, BRD-RULE-ZONE-04 |
 | Users | Every role |
-| Entry points | “✦ Hỏi OneWealth” on every page → [SCR-CL-10](../ux/screens/client.md#scr-cl-10--onewealth-copilot-panel-all-roles); `POST /api/copilot {question, role, client_id, scope, route, confirm}` |
+| Entry points | “✦ Hỏi OneWealth” on every page → [SCR-CL-10](../ux/screens/client.md#scr-cl-10--onewealth-copilot-panel-all-roles); `POST /api/copilot {question, role, client_id, scope, route, confirm, goals}` |
 | Plan | [docs/REDESIGN_KIT_PLAN.md](../../REDESIGN_KIT_PLAN.md) phase **K5**, D1–D3; [ADR-0012](../decisions/ADR-0012-the-copilot-routes-and-never-reads-client-data.md) |
 | Status | see [traceability](../requirements/requirements_traceability.md) §4 |
 
@@ -19,13 +19,22 @@
   section names (ids dropped), the role and the catalogue (`router.prompt`). Stricter than ADR-0012: no entity id
   reaches the model; our code takes the client from the page and parses the month from the original question.
   A reply outside the catalogue falls back to keywords, said so.
-- **Act** (`tools.py`): 11 tools. Read — tong_quan (dashboard), dong_tien (flows), chu_y (feed), muc_tieu (goals),
-  tac_dong (role-filtered impact), hom_nay (RM), hop_tin (CIO), tin_bi_giu (Compliance), mo_trang (navigate).
+- **Act** (`tools.py`): 13 tools. Read — tong_quan (dashboard), dong_tien (flows), chu_y (feed), muc_tieu (goals,
+  the ones followed in the browser when `goals` is sent), tac_dong (role-filtered impact), **dieu_tra** (an approved
+  event's path from the impact graph: news, scenarios, factors, assets with this event's share, goals), **kich_ban**
+  (a stress test through the planning page's `scenario_flow`: stock market, corporate bonds, property freeze, rates,
+  USD — the router chooses among plain words, never an id with digits), hom_nay (RM), hop_tin (CIO), tin_bi_giu
+  (Compliance), mo_trang (navigate).
   Write — duyet_de_xuat (RM; review_flow with the RM's id), lay_tin (CIO; ingest). A tool outside the role is
   refused; a write first returns what it will do and waits for **Xác nhận**; the confirmed call runs through the
   same served graph, whose own role checks apply; failures are reported as failures.
 - **Answer**: fixed templates over the tool's result; each answer links to the page that holds its evidence,
-  shows “Mô hình thấy gì” (the scrubbed text and the router), and follow-up suggestions.
+  shows “Mô hình thấy gì” (the scrubbed text and the router), and follow-up suggestions (“Bạn có thể muốn:”).
+  Since R5 an ok answer also carries `as_of` (the data's own date, when the tool has one), `answered_at`, `sources`
+  (what it read: records, outlets, counts) and a `card` the panel draws — `figures`, `list` (chips, progress, a row
+  marks its page element), `bars` or `chain`. Every call — answered, refused, unknown or confirmed — is one row in the
+  audit chain (`copilot.ask`: the demo user, the tool, the status, the router and the question as the router saw it,
+  scrubbed); the answer names its `audit_seq`.
 - **Panel** (`web/copilot.js`): floating button, side panel (full width on phones), page context, progress,
   confirm / cancel, Esc closes; the conversation is kept in `sessionStorage` per role for this tab only.
 - **States and evidence highlight** ([FEAT-33](FEAT-33-living-interface.md), 2026-10-16): the button and panel show
@@ -42,8 +51,10 @@
 the fixtures (control: the unscrubbed prompt does); the live router (fake model) receives only scrubbed text;
 an off-catalogue reply falls back, labelled; a client cannot run a CIO tool, even by sending a confirm; no write
 before confirm, the confirmed write changes the record, a repeated decision is reported as failed; a failing
-tool and an unknown question; the endpoint. UI driven in a browser: ask, forbidden badge, RM confirm → record
-approved, navigate (2026-10-16).
+tool and an unknown question; the endpoint. R5: an answer's as-of, sources and card; dieu_tra equals the impact
+graph (event type for the client, headline for staff); kich_ban equals scenario_flow and picks the scenario by
+words; every call is in the audit chain, which verifies, with the scrubbed question; the followed goals.
+`tests/ui/test_copilot_ui.py::test_answers_show_their_card_their_time_and_sources_and_offer_next_steps`.
 
 ## Limitations
 - **One live run recorded (2026-10-16)** with the model configured for the live demo (`anthropic/claude-haiku-5.5`
@@ -53,5 +64,6 @@ approved, navigate (2026-10-16).
   the catalogue, fallen back to keywords and labelled (→ `tac_dong`; an earlier call chose `mo_trang`, page
   `do-thi`). The prompts held no name and no digit. `LLM_MODEL_COPILOT` is not set on the live server, so it
   still routes by keywords.
-- Answers are template-shaped, not free prose; Investigate/Analyze are the existing reads, not new analysis.
+- Answers are template-shaped, not free prose; Investigate (dieu_tra) and Analyze (kich_ban) read existing graphs —
+  no new analysis is invented.
 - Writes cover two tasks; research release, news dismiss/release and declarations are not Copilot tools yet.

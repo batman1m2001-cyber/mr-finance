@@ -1,5 +1,8 @@
 """The Copilot in the browser (FEAT-32, FEAT-33): an answer marks the page elements it read; states follow the
-request; a refusal is shown as one; reduced motion runs no animation."""
+request; a refusal is shown as one; reduced motion runs no animation; answers carry their card, time and sources."""
+
+from conftest import in_thread
+from test_apply import MARKET, approved
 
 
 def ask(p, q):
@@ -63,3 +66,18 @@ def test_busy_lasts_exactly_as_long_as_the_request(open_page):
     p.page.evaluate("window.__hold()")
     p.page.wait_for_function("document.querySelector('.cp-fab').dataset.state === 'ok'")
     assert p.page.locator(".cp-dots").count() == 0 and p.page.get_attribute("#cp-msgs", "aria-busy") == "false"
+
+
+def test_answers_show_their_card_their_time_and_sources_and_offer_next_steps(open_page):
+    in_thread(approved, *MARKET)
+    p = open_page()
+    p.go("#/client/tong-quan/toan-canh")
+    a = ask(p, "Vì sao tin này ảnh hưởng tới tôi?")
+    assert a.locator(".cp-chain li").count() >= 4  # tin, sự kiện, kịch bản, yếu tố, tài sản
+    assert "trả lời lúc" in a.locator(".cp-meta").inner_text() and "Lần áp dụng" in a.locator(".cp-meta").inner_text()
+    assert p.page.inner_text("#cp-sugg").startswith("Bạn có thể muốn:")
+    p.page.locator("#cp-sugg [data-s]").first.click()  # a suggestion is a question
+    p.page.wait_for_function("document.querySelectorAll('#cp-msgs .cp-card .cp-figs').length > 0")
+    b = ask(p, "Mục tiêu của tôi thế nào?")
+    assert b.locator(".cp-li").count() > 0 and b.locator(".bar-track").count() == b.locator(".cp-li").count()
+    assert not p.problems()

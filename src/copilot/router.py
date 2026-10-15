@@ -23,11 +23,13 @@ RULES: List[Tuple[str, str]] = [  # (tool, folded keywords as a regex); first ma
     (
         "mo_trang",
         r"\b(mo|di toi|chuyen sang|vao)\b.*"
-        r"\b(trang|toan canh|chi tiet|tai san|ke hoach|tac dong|do thi|hop tin|hom nay|bi giu)",
+        r"\b(trang|toan canh|ban do|chi tiet|tai san|ke hoach|tac dong|do thi|hop tin|hom nay|bi giu)",
     ),
     ("tin_bi_giu", r"bi giu|han che"),
     ("hop_tin", r"hop tin"),
     ("hom_nay", r"hom nay|xem truoc|goi ai|gia dinh nao"),
+    ("kich_ban", r"kich ban|stress|khung hoang|dong bang|lai suat tang|ty gia tang|giam manh|neu .*(giam|tang)"),
+    ("dieu_tra", r"vi sao|tai sao|dieu tra|duong di|chuoi tac dong|bang cach nao"),
     ("dong_tien", r"dong tien|chi tieu|thu nhap|tien vao|tien ra|con lai|tieu bao nhieu|chi bao nhieu"),
     ("chu_y", r"chu y|quan trong|can biet|co gi moi|dang lo|canh bao"),
     ("muc_tieu", r"muc tieu|hoc phi|nghi huu|tien do"),
@@ -36,6 +38,7 @@ RULES: List[Tuple[str, str]] = [  # (tool, folded keywords as a regex); first ma
 ]
 PAGE_WORDS = {
     "toan-canh": "toan canh",
+    "ban-do": "ban do",
     "chi-tiet": "chi tiet",
     "tai-san": "tai san",
     "ke-hoach": "ke hoach",
@@ -46,6 +49,15 @@ PAGE_WORDS = {
     "hop-tin": "hop tin",
     "tin-bi-giu": "bi giu",
 }
+
+
+SCENARIO_WORDS = [  # (the kich_ban choice, folded words); names and numbers are scrubbed before this, so words only
+    ("lai_suat", r"lai suat"),
+    ("ty_gia", r"ty gia|ngoai te|do la"),
+    ("bat_dong_san", r"bat dong san|nha dat|dong bang"),
+    ("trai_phieu", r"trai phieu"),
+    ("co_phieu", r"chung khoan|co phieu|index|thi truong"),
+]
 
 
 def page_path(route: Optional[str]) -> str:
@@ -63,6 +75,8 @@ def keyword(scrubbed: str, route: str) -> Dict[str, Any]:
                 args["page"] = next((k for k, w in PAGE_WORDS.items() if w in q.split("mo", 1)[-1]), None)
             if tool == "duyet_de_xuat":
                 args["decision"] = "rejected" if "tu choi" in q else "approved"
+            if tool == "kich_ban":
+                args["scenario"] = next((sid for sid, w in SCENARIO_WORDS if re.search(w, q)), "co_phieu")
             return {"tool": tool, "args": args}
     return {"tool": None, "args": {}}
 

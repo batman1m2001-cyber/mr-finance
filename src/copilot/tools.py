@@ -18,6 +18,7 @@ from wealth import store as wealth_store
 USER = {"client": None, "rm": "rm01", "cio": "cio", "compliance": "compliance"}
 PAGES = {  # page key → (label, route per role); the router may name a key, never a route
     "toan-canh": ("Toàn cảnh", {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/toan-canh"}),
+    "ban-do": ("Bản đồ tài chính", {"client": "#/client/tong-quan/ban-do", "rm": "#/rm/khach-hang/ban-do"}),
     "chi-tiet": ("Chi tiết tài sản", {"client": "#/client/tong-quan/chi-tiet", "rm": "#/rm/khach-hang/tong-quan"}),
     "tai-san": ("Tài sản", {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"}),
     "ke-hoach": ("Kế hoạch", {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"}),
@@ -40,6 +41,7 @@ class Ctx:
     client_id: Optional[str]
     scope: str
     question: str  # the original question: read only by our code (month parsing), never sent to a model
+    followed: Optional[List[str]] = None  # goal ids the client follows in this browser (None: the persona's)
 
 
 @dataclass
@@ -101,10 +103,32 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         f"tháng trước). Thanh khoản dự phòng {_vnd(lq['value'])}, đủ chi {months}. Khi thị trường xấu, mức sụt giảm "
         f"ước tính {_pct(rk['current'])} so với ngưỡng {_pct(rk['limit'], 0)}: {status}."
     )
+    tone = {"ok": "good", "near": "warn", "over": "bad"}[rk["status"]]
+    used = [s for s in d["sources"] if s["count"]]
     return {
         "text": text,
         "data": {"net_worth": nw["value"], "risk": rk["status"], "as_of": d["as_of"]},
         "focus": ["kpi:net_worth", "kpi:liquidity", "kpi:risk"],
+        "as_of": d["as_of"],
+        "sources": [f"Tổng hợp {sum(s['count'] for s in used)} khoản từ {len(used)} nguồn"],
+        "card": {
+            "kind": "figures",
+            "items": [
+                {
+                    "label": "Tài sản ròng",
+                    "value": _vnd(nw["value"]),
+                    "sub": f"{_vnd(nw['month_change'], True)} tháng này",
+                    "tone": "good" if nw["month_change"] >= 0 else "bad",
+                },
+                {"label": "Thanh khoản dự phòng", "value": _vnd(lq["value"]), "sub": f"đủ chi {months}"},
+                {
+                    "label": "Sụt giảm khi thị trường xấu",
+                    "value": _pct(rk["current"]),
+                    "sub": f"ngưỡng {_pct(rk['limit'], 0)} · {status}",
+                    "tone": tone,
+                },
+            ],
+        },
     }
 
 
@@ -137,7 +161,27 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         + (f" Khoản chi lớn nhất: {top['label']} {_vnd(top['amount'])} ({len(top['rows'])} giao dịch)." if top else "")
     )
     focus = [f"flow:{f['month']}"] + ([f"flow:{f['month']}:out:{top['category']}"] if top else [])
-    return {"text": text, "data": {"month": f["month"], "left": f["left"]}, "focus": focus}
+    return {
+        "text": text,
+        "data": {"month": f["month"], "left": f["left"]},
+        "focus": focus,
+        "as_of": f["month"],
+        "sources": [f"{sum(len(x['rows']) for x in f['inflow'] + f['outflow'])} giao dịch của tháng"],
+        "card": {
+            "kind": "bars",
+            "title": "Chi lớn nhất trong tháng",
+            "items": [{"label": x["label"], "value": x["amount"], "text": _vnd(x["amount"])} for x in f["outflow"][:5]],
+            "figures": [
+                {"label": "Vào", "value": _vnd(f["total_in"]), "tone": "good"},
+                {"label": "Ra", "value": _vnd(f["total_out"]), "tone": "bad"},
+                {
+                    "label": left.capitalize(),
+                    "value": _vnd(abs(f["left"])),
+                    "tone": "good" if f["left"] >= 0 else "bad",
+                },
+            ],
+        },
+    }
 
 
 async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -149,10 +193,25 @@ async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         return {"text": "Không có điều gì cần chú ý lúc này.", "data": {"items": 0}}
     lines = [f"{k + 1}) {i['title']} — {i['why']}." for k, i in enumerate(items[:3])]
     more = f" Còn {len(items) - 3} mục khác trên Toàn cảnh." if len(items) > 3 else ""
+    level = {"high": ("bad", "Cao"), "medium": ("warn", "Vừa"), "info": ("", "Thông tin")}
     return {
         "text": f"{len(items)} điều đáng chú ý. " + " ".join(lines) + more,
         "data": {"items": len(items)},
         "focus": [i["key"] for i in items[:3]],
+        "sources": ["Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"],
+        "card": {
+            "kind": "list",
+            "items": [
+                {
+                    "title": i["title"],
+                    "sub": i["why"],
+                    "chip": level.get(i.get("severity"), ("", ""))[1],
+                    "tone": level.get(i.get("severity"), ("", ""))[0],
+                    "focus": i["key"],
+                }
+                for i in items[:5]
+            ],
+        },
     }
 
 
@@ -160,7 +219,7 @@ async def goals(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     from scenarios.graph import goals_flow
 
     out = (await _graph(goals_flow, client_id=_need_client(ctx), scope=ctx.scope))["goals"]
-    followed = [g for g in out if g["followed"]]
+    followed = [g for g in out if (g["id"] in ctx.followed if ctx.followed is not None else g["followed"])]
     label = {"on_track": "đúng tiến độ", "at_risk": "cần chú ý", "off_track": "chậm tiến độ"}
     lines = [f"{g['title']}: {label.get(g['goal']['status'], g['goal']['status'])}" for g in followed]
     text = (
@@ -168,7 +227,26 @@ async def goals(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         if followed
         else "Chưa có mục tiêu đang theo dõi."
     )
-    return {"text": text, "data": {"followed": len(followed)}}
+    tone = {"on_track": "good", "at_risk": "warn", "off_track": "bad"}
+    return {
+        "text": text,
+        "data": {"followed": len(followed)},
+        "sources": ["Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"],
+        "card": {
+            "kind": "list",
+            "items": [
+                {
+                    "title": g["title"],
+                    "sub": f"cần {_vnd(g['goal']['need'])} · có {_vnd(g['goal']['have'])}",
+                    "chip": label.get(g["goal"]["status"], ""),
+                    "tone": tone.get(g["goal"]["status"], ""),
+                    "progress": max(0.0, min(1.0, g["goal"].get("progress") or 0.0)),
+                    "focus": f"goal:{g['id']}",
+                }
+                for g in followed
+            ],
+        },
+    }
 
 
 async def impact(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -184,7 +262,149 @@ async def impact(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         f"Lớn nhất: {big['event']['title']} ({_vnd(big['horizons']['3m']['expected'], True)}). Đây là ước tính theo "
         "kịch bản CIO duyệt, không phải khuyến nghị."
     )
-    return {"text": text, "data": {"events": len(eff)}, "focus": [f"event:{big['event']['id']}"]}
+    return {
+        "text": text,
+        "data": {"events": len(eff)},
+        "focus": [f"event:{big['event']['id']}"],
+        "as_of": big.get("price_date"),
+        "sources": [
+            f"{len(eff)} lần áp dụng CIO duyệt",
+            *sorted({o for i in eff for o in i["sources"]["outlets"]})[:3],
+        ],
+        "card": {
+            "kind": "list",
+            "items": [
+                {
+                    "title": i["event"]["title"],
+                    "sub": "kỳ vọng 3 tháng",
+                    "value": _vnd(i["horizons"]["3m"]["expected"], True),
+                    "tone": "bad" if i["horizons"]["3m"]["expected"] < 0 else "good",
+                    "focus": f"event:{i['event']['id']}",
+                }
+                for i in sorted(eff, key=lambda i: -abs(i["horizons"]["3m"]["expected"]))[:5]
+            ],
+        },
+    }
+
+
+STRESS = {  # what the router may choose (plain words: it never sees a digit) → a stress scenario of scenarios._sim
+    "co_phieu": "vni_30",
+    "trai_phieu": "bond_crisis",
+    "bat_dong_san": "re_freeze",
+    "lai_suat": "rates_up",
+    "ty_gia": "usd_up",
+}
+
+
+async def investigate(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """An approved event's path to the family, read from the impact graph (the largest by 3-month effect)."""
+    from apply.impact_graph import family_graph
+
+    g = family_graph(_family(ctx), "rm" if ctx.role == "rm" else "client")
+    events = [n for n in g["nodes"] if n["kind"] == "event"]
+    if not events:
+        raise ToolFailed("Chưa có tin nào được CIO duyệt áp dụng cho gia đình này")
+    ev = max(events, key=lambda n: abs(n.get("expected_3m") or 0))
+    by = {n["id"]: n for n in g["nodes"]}
+    down = lambda ids: {e["to"] for e in g["edges"] if e["from"] in ids}  # noqa: E731
+    branches = sorted((by[i] for i in down({ev["id"]})), key=lambda n: -n.get("probability", 0))
+    factors = sorted(
+        (by[i] for i in down({b["id"] for b in branches}) if i in by), key=lambda n: -abs(n.get("contribution") or 0)
+    )
+    run = ev.get("run")
+    assets = sorted(
+        (
+            (by[e["from"]], e["by_run"][run])
+            for e in g["edges"]
+            if e["to"].startswith("FAM:") and run in (e.get("by_run") or {})
+        ),
+        key=lambda x: -abs(x[1]),
+    )
+    goals = [n for n in g["nodes"] if n["kind"] == "goal"]
+    news = [
+        n
+        for n in g["nodes"]
+        if n["kind"] == "news" and any(e["from"] == n["id"] and e["to"] == ev["id"] for e in g["edges"])
+    ]
+    main = branches[0] if branches else None
+    text = (
+        f"{ev['label']}: {len(news)} tin, CIO duyệt {len(branches)} kịch bản"
+        + (f" (chính: {main['label']})" if main else "")
+        + (f"; đi qua {', '.join(f['label'] for f in factors[:2])}" if factors else "")
+        + (f"; tới {', '.join(a['label'] for a, _ in assets[:3])}" if assets else "")
+        + f". Tác động kỳ vọng 3 tháng {_vnd(ev.get('expected_3m') or 0, True)}. Có thể ảnh hưởng theo kịch bản, "
+        "không phải quan hệ nhân quả."
+    )
+    return {
+        "text": text,
+        "data": {"event": ev["ref"], "run": run, "factors": len(factors), "assets": len(assets)},
+        "focus": [f"event:{ev['ref']}"],
+        "sources": [
+            f"Lần áp dụng {run}",
+            f"Nhận định {main['ref']}" if main else "",
+            *sorted({n.get("outlet") or n["label"].split(" · ")[0] for n in news})[:2],
+        ],
+        "card": {
+            "kind": "chain",
+            "steps": [
+                {"label": "Tin", "items": [n["label"] for n in news[:2]]},
+                {"label": "Sự kiện", "items": [ev["label"]]},
+                {"label": "Kịch bản", "items": [b["label"] for b in branches[:3]]},
+                {"label": "Yếu tố", "items": [f["label"] for f in factors[:3]]},
+                {"label": "Tài sản", "items": [f"{a['label']} {_vnd(v, True)}" for a, v in assets[:3]]},
+                *(
+                    [{"label": "Mục tiêu", "items": [f"{x['label']}: {x['before']} → {x['after']}" for x in goals[:2]]}]
+                    if goals
+                    else []
+                ),
+            ],
+        },
+    }
+
+
+async def stress(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """One stress test on the client's own holdings, through the planning page's scenario_flow."""
+    from scenarios.graph import scenario_flow
+
+    sid = STRESS.get(args.get("scenario"), "vni_30")
+    r = (await _graph(scenario_flow, client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
+    b, a = r["before"], r["after"]
+    d = a["net_worth"] - b["net_worth"]
+    pct = d / b["net_worth"] if b["net_worth"] else 0.0
+    verdict = next((x["value"] for x in r["summary"] if x["label"].startswith("So với ngưỡng")), "")
+    text = (
+        f"Kịch bản {r['title']}: tài sản ròng {_vnd(b['net_worth'])} → {_vnd(a['net_worth'])} ({_vnd(d, True)}, "
+        f"{'−' if pct < 0 else '+'}{_pct(abs(pct))})"
+        + (f"; so với ngưỡng chấp nhận: {verdict}" if verdict else "")
+        + ". Đây là mô phỏng trên tài sản hiện có, không phải dự báo."
+    )
+    return {
+        "text": text,
+        "data": {"scenario": sid, "before": b["net_worth"], "after": a["net_worth"]},
+        "as_of": r.get("as_of"),
+        "sources": ["Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"],
+        "card": {
+            "kind": "figures",
+            "title": r["title"],
+            "items": [
+                {"label": "Trước", "value": _vnd(b["net_worth"])},
+                {
+                    "label": "Sau cú sốc",
+                    "value": _vnd(a["net_worth"]),
+                    "sub": f"{_vnd(d, True)} · {'−' if pct < 0 else '+'}{_pct(abs(pct))}",
+                    "tone": "bad" if d < 0 else "good",
+                },
+                {
+                    "label": "Thanh khoản sau",
+                    "value": _vnd(a["liquid"]),
+                    "sub": f"{a['liquid_months']:.0f} tháng chi tiêu".replace(".", ","),
+                },
+            ],
+            "notes": [f"{x['label']}: {x['value']}" for x in r["summary"] if x["label"].startswith("Ảnh hưởng nhiều")][
+                :3
+            ],
+        },
+    }
 
 
 async def rm_today(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -196,7 +416,27 @@ async def rm_today(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         if fams
         else "Không có gia đình nào chạm ngưỡng xem trước."
     ) + (f" {len(tasks)} việc theo mục tiêu." if tasks else "")
-    return {"text": text, "data": {"families": len(fams)}, "focus": [f"family:{f}" for f in fams]}
+    return {
+        "text": text,
+        "data": {"families": len(fams)},
+        "focus": [f"family:{f}" for f in fams],
+        "sources": ["Hậu kiểm của các lần áp dụng đang hiệu lực"],
+        "card": {
+            "kind": "list",
+            "items": [  # the worst case of each family first (the list is sorted worst first)
+                {
+                    "title": c.get("name") or c["family_id"],
+                    "sub": f"P10 3 tháng {_pct(c['p10_3m_pct'])} tài sản ròng · {c['event']['title']}",
+                    "chip": "Xem trước",
+                    "tone": "bad",
+                    "focus": f"family:{c['family_id']}",
+                }
+                for c in sorted(
+                    {c["family_id"]: c for c in reversed(d["cases"])}.values(), key=lambda c: c["p10_3m_pct"]
+                )
+            ],
+        },
+    }
 
 
 async def inbox(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -308,7 +548,24 @@ TOOLS: Dict[str, Tool] = {
             ("client", "rm"),
             impact,
             page="tac-dong",
-            follow=["Mở đồ thị tác động", "Có gì cần chú ý?"],
+            follow=["Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Mở đồ thị tác động"],
+        ),
+        Tool(
+            "dieu_tra",
+            "điều tra đường đi của tin đã duyệt: tin, kịch bản, yếu tố, tài sản, mục tiêu",
+            ("client", "rm"),
+            investigate,
+            page="do-thi",
+            follow=["Tạo kịch bản VN-Index giảm mạnh", "Tin nào ảnh hưởng tới tôi?"],
+        ),
+        Tool(
+            "kich_ban",
+            "chạy một kịch bản sốc thị trường trên tài sản hiện có",
+            ("client", "rm"),
+            stress,
+            args={"scenario": list(STRESS)},
+            page="ke-hoach",
+            follow=["Kịch bản lãi suất tăng", "Kịch bản bất động sản đóng băng", "Mục tiêu của tôi thế nào?"],
         ),
         Tool(
             "hom_nay",

@@ -124,3 +124,90 @@ def test_the_endpoint():
         r = c.post("/api/copilot", json={"question": "Tài sản của tôi thế nào?", "role": "client", "client_id": "C01"})
         body = r.json()["copilot"]
         assert r.status_code == 200 and body["status"] == "ok" and body["router"]["kind"] == "keyword"
+
+
+# -- Copilot 2.0 (UI redesign R5) ------------------------------------------------------------------
+
+
+def test_an_answer_says_when_its_data_is_from_what_it_read_and_carries_its_card():
+    from dashboard.graph import dashboard_flow
+
+    a = ask("Tài sản của tôi thế nào?")
+    d = asyncio.run(
+        Operon(dashboard_flow, params={"client_id": None, "scope": None, "months": None}).run(
+            inputs={"client_id": "C01"}
+        )
+    )["dashboard"]
+    assert a["status"] == "ok" and a["answered_at"] > 0
+    assert a["as_of"] == d["as_of"] and a["sources"]
+    assert a["card"]["kind"] == "figures" and a["card"]["items"][0]["label"] == "Tài sản ròng"
+    f = ask("Dòng tiền tháng này?")
+    assert f["card"]["kind"] == "bars" and f["as_of"] == f["focus"][0].split(":")[1]
+
+
+def test_investigate_reads_the_events_path_from_the_impact_graph():
+    from test_apply import MARKET, approved
+
+    from apply.impact_graph import family_graph
+
+    _, run = approved(*MARKET)
+    a = ask("Vì sao tin này ảnh hưởng tới tôi?")
+    assert a["tool"] == "dieu_tra" and a["status"] == "ok"
+    g = family_graph("C01", "client")
+    ev = next(n for n in g["nodes"] if n["kind"] == "event")
+    assert a["focus"] == [f"event:{ev['ref']}"] and f"Lần áp dụng {run['id']}" in a["sources"]
+    steps = {s["label"]: s["items"] for s in a["card"]["steps"]}
+    assert steps["Sự kiện"] == [ev["label"]]  # the client's event type, never the headline
+    branches = [n["label"] for n in g["nodes"] if n["kind"] == "branch"]
+    assert set(steps["Kịch bản"]) <= set(branches) and steps["Kịch bản"][0] in a["text"]
+    assert ask("Vì sao?", role="rm")["card"]["steps"][1]["items"] != steps["Sự kiện"]  # staff read the headline
+
+
+def test_a_stress_scenario_is_the_planning_pages_and_picked_by_words():
+    from scenarios.graph import scenario_flow
+
+    a = ask("Nếu lãi suất tăng mạnh thì sao?")
+    assert a["tool"] == "kich_ban" and a["status"] == "ok"
+    r = asyncio.run(
+        Operon(scenario_flow, params={"client_id": None, "scenario": None, "params": None, "scope": None}).run(
+            inputs={"client_id": "C01", "scenario": "rates_up"}
+        )
+    )["result"]
+    assert r["title"] in a["text"]
+    figs = {x["label"]: x["value"] for x in a["card"]["items"]}
+    from copilot.tools import _vnd
+
+    assert figs["Trước"] == _vnd(r["before"]["net_worth"]) and figs["Sau cú sốc"] == _vnd(r["after"]["net_worth"])
+    assert "VN-Index giảm 30%" in ask("Tạo kịch bản chứng khoán giảm mạnh")["text"]
+    assert ask("Kịch bản bất động sản đóng băng")["card"]["title"] == "BĐS đóng băng như 2022–2023"
+
+
+def test_every_call_is_in_the_audit_chain_with_the_question_as_the_router_saw_it():
+    from control import audit, db
+
+    with db.tx() as con:
+        before = con.execute("select count(*) from audit_log").fetchone()[0]
+    q = "Nguyễn Minh Khoa có 1,8 tỷ, kịch bản lãi suất tăng?"
+    a = ask(q)
+    ask("Câu gì đó không hiểu")
+    with db.tx() as con:
+        rows = con.execute("select actor, action, object, data from audit_log order by seq").fetchall()[before:]
+        assert audit.verify(con)["ok"]
+    assert [r[1] for r in rows] == ["copilot.ask", "copilot.ask"]
+    first = json.loads(rows[0][3])
+    assert rows[0][0] == "client:C01" and rows[0][2] == "kich_ban" and first["status"] == "ok"
+    assert first["seen"] == a["seen"] and not leaks(first["seen"]) and a["audit_seq"] > 0
+    assert rows[1][2] == "-" and json.loads(rows[1][3])["status"] == "unknown"
+
+
+def test_goals_are_the_ones_the_browser_follows():
+    out = asyncio.run(
+        Operon(
+            copilot_flow,
+            params={k: None for k in ("question", "role", "client_id", "scope", "route", "confirm", "goals")},
+        ).run(
+            inputs={"question": "Mục tiêu của tôi thế nào?", "role": "client", "client_id": "C01", "goals": ["medical"]}
+        )
+    )
+    a = out["copilot"]
+    assert a["text"].startswith("1 mục tiêu") and [x["title"] for x in a["card"]["items"]] == ["Chi phí y tế lớn"]

@@ -697,3 +697,30 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .tstep.withdrawn i, .tstep.failed i { background: var(--critical); }
 .tstep time { grid-column: 2; }
 @media (max-width: 760px) { .trow { grid-template-columns: minmax(0, 1fr); } }
+/* R5: Copilot 2.0 — cards, as-of and sources, suggestion chips */
+.cp-card { margin-top: 8px; padding: 10px; border-radius: 10px; background: var(--surface); border: 1px solid var(--hair); display: grid; gap: 8px; }
+.cp-ct { font-size: 12px; font-weight: 700; color: var(--ink-2); }
+.cp-figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.cp-fig { display: grid; gap: 1px; }
+.cp-fig span, .cp-fig small, .cp-li small { color: var(--muted); font-size: 11.5px; }
+.cp-fig b { font-size: 15px; font-variant-numeric: tabular-nums; }
+.cp-card .up { color: var(--up); } .cp-card .down { color: var(--down); } .cp-card .warnc { color: var(--warning); }
+.cp-notes { margin: 0; padding-left: 16px; font-size: 12px; color: var(--ink-2); }
+.cp-list { display: grid; gap: 6px; }
+.cp-li { display: grid; gap: 2px; padding: 6px 8px; border-radius: 8px; background: var(--surface-2); }
+.cp-li[data-mark] { cursor: pointer; }
+.cp-li[data-mark]:hover { background: var(--accent-soft); }
+.cp-lt { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12.5px; }
+.cp-lt .num { margin-left: auto; }
+.cp-prog { margin-top: 2px; }
+.cp-bars { display: grid; gap: 4px; }
+.cp-bar { display: grid; grid-template-columns: minmax(0, 1fr) 70px auto; gap: 6px; align-items: center; font-size: 12px; }
+.cp-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp-bar i { height: 8px; border-radius: 4px; background: var(--out); width: var(--w); }
+.cp-chain { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; counter-reset: s; }
+.cp-chain li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 6px; font-size: 12px; align-items: start; }
+.cp-chain li > span { color: var(--muted); font-weight: 650; padding-top: 3px; }
+.cp-chain li > div { display: flex; gap: 4px; flex-wrap: wrap; }
+.cp-chain .chip { font-size: 11.5px; padding: 2px 8px; }
+.cp-meta { margin-top: 6px; font-size: 11px; color: var(--muted); display: grid; gap: 1px; }
+.cp-st { font-size: 11.5px; color: var(--muted); width: 100%; }
