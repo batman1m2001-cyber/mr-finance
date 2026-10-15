@@ -21,8 +21,17 @@ const mk = (tag, attrs, parent) => {
 };
 
 export async function render(box, ctx) {
-  const client = ctx.client(), staff = ctx.role !== "client";
-  const g = await get(`/api/families/${encodeURIComponent(client)}/graph?role=${staff ? "rm" : "client"}`);
+  const client = ctx.client(), staff = ctx.role !== "client", cio = ctx.role === "cio";
+  let g;
+  if (cio) {  // the CIO's whole run (UI redesign R4): the run named in the address, else the latest
+    const {runs} = await get("/api/runs");
+    const run = runs.find(r => r.id === ctx.param) || runs.find(r => r.status === "EFFECTIVE") || runs[0];
+    if (!run) { box.innerHTML = `<div class="panel">${empty("Chưa có lần áp dụng", "Một lần áp dụng được tạo khi CIO duyệt nhận định.")}</div>`; return; }
+    g = await get(`/api/runs/${encodeURIComponent(run.id)}/graph`);
+    g.runsList = runs;
+  } else {
+    g = await get(`/api/families/${encodeURIComponent(client)}/graph?role=${staff ? "rm" : "client"}`);
+  }
   if (!g.nodes.length) {
     box.innerHTML = `<div class="panel">${empty("Chưa có tin nào được CIO duyệt áp dụng cho gia đình này",
       "Khi một nhận định được duyệt và có hiệu lực, đồ thị cho thấy tin đi tới tài sản và mục tiêu của gia đình thế nào.")}</div>`;
@@ -36,7 +45,10 @@ export async function render(box, ctx) {
 
   box.innerHTML = `${staff ? internal() : ""}
     <div class="panel">
-      <h3>Đồ thị tác động <span class="hint">${esc(g.family || "")} · ${g.runs.length} lần áp dụng đang hiệu lực · 3 tháng</span></h3>
+      <h3>${cio ? `Đồ thị lần áp dụng <span class="hint">${esc(g.run_id)} · ${g.families} gia đình · 3 tháng</span>`
+        : `Đồ thị tác động <span class="hint">${esc(g.family || "")} · ${g.runs.length} lần áp dụng đang hiệu lực · 3 tháng</span>`}</h3>
+      ${cio ? `<div class="row tight"><label class="small muted" for="g-run">Lần áp dụng</label><select id="g-run">${g.runsList.map(r => `<option value="${esc(r.id)}" ${r.id === g.run_id ? "selected" : ""}>${esc(r.id)} · ${esc(r.status_label)}</option>`).join("")}</select>
+        <a class="btn sm" href="#/cio/ap-dung/${esc(g.run_id)}">Mở lần áp dụng</a></div>` : ""}
       <div class="row" style="gap:6px;flex-wrap:wrap">
         <div class="seg" role="group" aria-label="Cách xem"><button type="button" data-v="graph">Đồ thị</button><button type="button" data-v="list">Danh sách</button></div>
         <span class="small muted" style="margin-left:8px">Hiện:</span>
@@ -77,16 +89,47 @@ export async function render(box, ctx) {
       n.family_expected != null && `Gia đình trong nhánh này: <b class="${signClass(n.family_expected)}">${vnd(n.family_expected, true)}</b>`,
       n.contribution != null && `Đóng góp cho gia đình: <b class="${signClass(n.contribution)}">${vnd(n.contribution, true)}</b>`,
       n.net_worth != null && `Tài sản ròng: <b>${vnd(n.net_worth)}</b>`,
+      n.pre_review && `<span class="badge bad">RM xem trước</span>`,
       n.before && `Mức đáp ứng: <b>${esc(n.before)} → ${esc(n.after)}</b> (hạn ${esc(n.date)})`,
       n.url && `<a href="${esc(n.url)}" target="_blank" rel="noopener">Mở bài gốc (${esc(n.outlet || "")})</a>`,
     ].filter(Boolean);
     const rel = g.edges.filter(e => e.from === n.id || e.to === n.id);
+    if (n.kind === "event" && !cio) { el.innerHTML = impactCard(n, rel); $("#g-clear", box).onclick = () => select(null); bindJumps(el); return; }
     el.innerHTML = `<div class="card" style="padding:14px 16px"><div class="row"><span class="badge" style="border-color:${COLOR[n.kind]}">${KIND[n.kind]}</span><b>${esc(n.label)}</b>
         <button type="button" class="linkbtn small" id="g-clear" style="margin-left:auto">Bỏ chọn</button></div>
       ${facts.length ? `<div class="small mt">${facts.join(" · ")}</div>` : ""}
       <table class="table mt"><tbody>${rel.map(e => `<tr><td>${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}</td><td class="small muted">${esc(e.label)}</td><td class="r num ${signClass(e.value || 0)}">${val(e)}</td><td class="small muted">${src(e)}</td></tr>`).join("")}</tbody></table></div>`;
     $("#g-clear", box).onclick = () => select(null);
   };
+
+  // News Impact (board panel 4): the event, its direction, the chain it travels, the assets it may move — the
+  // assets' figures are this event's own share of each edge (``by_run``), against the family's net worth
+  const impactCard = (n, rel) => {
+    const on = path(n.id);
+    const fam = g.nodes.find(x => x.kind === "family");
+    const chain = g.columns.filter(c => g.nodes.some(x => x.kind === c.kind && on.has(x.id)));
+    const assets = g.edges.filter(e => on.has(e.from) && byId[e.from].kind === "asset" && byId[e.to].kind === "family" && e.by_run && e.by_run[n.run] != null)
+      .map(e => ({n: byId[e.from], v: e.by_run[n.run]})).sort((a, b) => Math.abs(b.v) - Math.abs(a.v));
+    const news = g.nodes.filter(x => x.kind === "news" && on.has(x.id));
+    const branches = g.nodes.filter(x => x.kind === "branch" && on.has(x.id)).sort((a, b) => b.probability - a.probability);
+    const goals = g.nodes.filter(x => x.kind === "goal" && on.has(x.id));
+    const v = n.expected_3m || 0;
+    return `<div class="card impactcard" style="padding:16px 18px">
+      <div class="row tight"><span class="pill ${v < 0 ? "bad" : v > 0 ? "good" : ""}">${v < 0 ? "Tiêu cực" : v > 0 ? "Tích cực" : "Trung tính"}</span>
+        <span class="small muted">${news.length} tin · ${branches.length} kịch bản CIO duyệt</span>
+        <button type="button" class="linkbtn small" id="g-clear" style="margin-left:auto">Bỏ chọn</button></div>
+      <h4>${esc(n.label)}</h4>
+      <div class="kv"><span>Tác động kỳ vọng 3 tháng</span><b class="${signClass(v)}">${vnd(v, true)}${fam && fam.net_worth ? ` · ${pct(v / fam.net_worth, true, 2)} tài sản ròng` : ""}</b></div>
+      ${branches[0] ? `<div class="kv"><span>Kịch bản chính</span><b>${esc(branches[0].label)}</b></div>` : ""}
+      <div class="subhead mt">Chuỗi tác động</div>
+      <div class="chainrow">${chain.map((c, i) => `${i ? `<span class="muted" aria-hidden="true">→</span>` : ""}<span class="chip"><i class="legend-dot" style="background:${COLOR[c.kind]}"></i>${esc(c.label)} · ${g.nodes.filter(x => x.kind === c.kind && on.has(x.id)).length}</span>`).join("")}</div>
+      <div class="subhead mt">${staff ? "Khoản" : "Nhóm tài sản"} có thể bị ảnh hưởng</div>
+      <div class="mlist">${assets.map(a => `<button type="button" class="mrow" data-jump="${esc(a.n.id)}"><span><b>${esc(a.n.label)}</b></span>
+        <span class="num ${signClass(a.v)}">${vnd(a.v, true)}${fam && fam.net_worth ? ` <span class="small muted">${Math.abs(a.v / fam.net_worth) < 5e-5 ? "≈0%" : pct(a.v / fam.net_worth, true, 2)}</span>` : ""}</span></button>`).join("") || `<p class="small muted">Không khoản nào.</p>`}</div>
+      ${goals.length ? `<div class="subhead mt">Mục tiêu</div>${goals.map(x => `<div class="kv"><span>${esc(x.label)}</span><b>${esc(x.before)} → ${esc(x.after)}</b></div>`).join("")}` : ""}
+      <div class="small muted mt">“Có thể ảnh hưởng” theo kịch bản CIO duyệt, không phải quan hệ nhân quả · nguồn: ${news.map(x => esc(x.outlet || x.label)).slice(0, 3).join(", ")}</div></div>`;
+  };
+  const bindJumps = (el) => { for (const b of el.querySelectorAll("[data-jump]")) b.onclick = () => select(b.dataset.jump); };
 
   const select = (id) => { state.sel = state.sel === id ? null : id; state.flash = !!state.sel; draw(); };
   onFocus = (keys) => {
@@ -174,5 +217,7 @@ export async function render(box, ctx) {
     if (state.sel && state.hidden.has(byId[state.sel].kind)) state.sel = null;
     draw();
   };
+  const pick = $("#g-run", box);
+  if (pick) pick.onchange = () => ctx.go(ctx.href("do-thi", pick.value));
   draw();
 }

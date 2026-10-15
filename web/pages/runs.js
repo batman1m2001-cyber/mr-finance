@@ -13,6 +13,7 @@ export async function render(box, ctx) {
     <div class="pagehead"><div><div class="eyebrow">CIO · Lần áp dụng</div><div class="h1">${esc(run.id)} ${runBadge(run.status, run.status_label)}</div>
       <div class="lede small">Nhận định <a href="#/cio/nhan-dinh/${esc(run.view_id)}">${esc(run.view_id)}</a> · ${run.families} gia đình · giá ngày ${esc(run.price_date || "—")} · mô hình ${esc(run.model ? run.model.version : "—")} · ${esc(run.engine_version || "")}</div></div>
       <div class="row">
+        <a class="btn" href="#/cio/do-thi/${esc(run.id)}">Xem đồ thị</a>
         <button type="button" class="btn" id="verify">Kiểm tra tính lại</button>
         <button type="button" class="btn" id="recompute">Thẩm định lại với dữ liệu mới</button></div></div>
     <div class="cols">

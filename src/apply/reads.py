@@ -56,6 +56,7 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
             "modelled_share": r["modelled_share"],
             "goal_impact": r.get("goal_impact"),  # FR-404; absent on runs computed before it
         }
+        item["timeline"] = _timeline(ev, view, run)
         outlets = sorted({n.get("outlet") or "Nguồn công khai" for n in ev.get("news") or []})
         item["sources"] = {"outlets": outlets, "count": len(ev.get("news") or [])}  # RULE-CONTENT-02, no headline
         if role != "client":  # the view's text may name tickers: staff only (flow 2)
@@ -81,6 +82,34 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
         cio = roles.USERS["cio"]
         out["labels"] = {"note": CLIENT_NOTE, "responsible": f"{cio['name']} — {cio['title']}", "ai": "AI hỗ trợ"}
     return out
+
+
+VIEW_STEP = {"DRAFTING": "AI soạn nhận định", "PENDING_CHALLENGE": "AI phản biện", "APPROVED": "CIO duyệt"}
+RUN_STEP = {
+    "COMPUTING": "Áp dụng cho các gia đình",
+    "EFFECTIVE": "Có hiệu lực",
+    "SUPERSEDED": "Bị thay thế",
+    "WITHDRAWN": "Bị rút lại",
+    "NEEDS_CIO_REVIEW": "Chờ CIO xem lại",
+    "FAILED": "Lỗi",
+}
+
+
+def _timeline(ev: Dict[str, Any], view: Dict[str, Any], run: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """An event's way to the family, each step with its time, read from the stored records (UI redesign R4: the
+    timeline on Tin tác động): the first news, the event, the view's draft, challenge and approval, the run."""
+    out: List[Dict[str, Any]] = []
+    published = [n["published"] for n in ev.get("news") or [] if n.get("published")]
+    if published:
+        out.append({"at": min(published), "step": "news", "label": "Tin đầu tiên", "source": "event"})
+    out.append({"at": ev["created"], "step": "event", "label": "Gom thành sự kiện", "source": "event"})
+    for h in view.get("history") or []:
+        if h["status"] in VIEW_STEP:
+            out.append({"at": h["at"], "step": h["status"].lower(), "label": VIEW_STEP[h["status"]], "source": "view"})
+    for h in run.get("history") or []:
+        if h["status"] in RUN_STEP:
+            out.append({"at": h["at"], "step": h["status"].lower(), "label": RUN_STEP[h["status"]], "source": "run"})
+    return sorted(out, key=lambda x: x["at"])
 
 
 def _type_label(event_type: str | None) -> str:

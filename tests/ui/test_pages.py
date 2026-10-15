@@ -6,6 +6,9 @@ all-clients performance opens that client."""
 import json
 import urllib.request
 
+from conftest import in_thread
+from test_apply import MARKET, approved
+
 
 def api(base, path, body=None):
     data = None if body is None else json.dumps(body).encode()
@@ -99,4 +102,56 @@ def test_a_row_of_all_clients_opens_that_client(open_page):
     p.page.wait_for_function("location.hash === '#/rm/khach-hang/hieu-qua'")
     p.page.wait_for_function("(c) => document.querySelector('#client').value === c", arg=cid)
     p.page.wait_for_function("(n) => document.querySelector('.lede')?.textContent.includes(n)", arg=name)
+    assert not p.problems()
+
+
+def test_the_overview_graph_selects_expands_and_opens_pages(open_page, base_url):
+    in_thread(approved, *MARKET)
+    p = open_page()
+    p.go("#/client/tong-quan/ban-do")
+    o = api(base_url, "/api/overview", {"client_id": "C01", "role": "client"})["overview"]
+    shown = [n for n in o["nodes"] if n["kind"] in ("family", "class", "goal", "risk", "event")]
+    assert p.page.locator(".mnode").count() == len(shown)  # sources and policy items start hidden
+    p.page.click("[data-k=alert]")
+    assert p.page.locator(".mnode").count() == len(shown) + len([n for n in o["nodes"] if n["kind"] == "alert"])
+    stock = next(n for n in o["nodes"] if n["id"] == "CL:stock")
+    node = p.page.locator('.mnode[data-n="CL:stock"]')
+    node.focus()
+    p.page.keyboard.press("Enter")  # the keyboard selects as a click does
+    assert node.get_attribute("aria-pressed") == "true"
+    p.page.click("#m-open")
+    assert p.page.locator('.mnode[data-n^="HD:"]').count() == stock["count"]
+    p.page.click("#m-open")
+    assert p.page.locator('.mnode[data-n^="HD:"]').count() == 0
+    ev = next(n for n in o["nodes"] if n["kind"] == "event")
+    p.page.locator(f'.mnode[data-n="{ev["id"]}"]').click()
+    p.page.click("[data-go]")  # an event opens its path on Đồ thị tác động, selected
+    p.page.wait_for_function("location.hash === '#/client/tin/do-thi'")
+    p.page.wait_for_selector(f'[data-focus="event:{ev["ref"]}"][aria-pressed="true"]')
+    assert not p.problems()
+
+
+def test_the_overview_graph_is_a_list_on_a_phone(open_page):
+    in_thread(approved, *MARKET)
+    p = open_page("phone")
+    p.go("#/client/tong-quan/ban-do")
+    assert p.page.locator(".mapsvg").count() == 0 and p.page.locator(".mgroup .mrow").count() > 0
+    p.page.locator(".mgroup .mrow").first.click()
+    p.page.wait_for_selector("#m-side #m-clear")
+    assert not p.problems()
+
+
+def test_the_timeline_the_news_impact_card_and_the_cio_run_graph(open_page, base_url):
+    in_thread(approved, *MARKET)
+    p = open_page()
+    p.go("#/client/tin/thi-truong")
+    items = json.load(urllib.request.urlopen(base_url + "/api/families/C01/impact?role=client"))["items"]
+    assert p.page.locator("#timeline .trow").count() == len(items)
+    assert p.page.locator("#timeline .tstep").count() == sum(len(i["timeline"]) for i in items)
+    p.go("#/client/tin/do-thi")
+    p.page.locator('.gnode[data-focus^="event:"]').first.click()
+    card = p.page.locator(".impactcard")
+    assert "Chuỗi tác động" in card.inner_text() and card.locator(".mrow").count() > 0
+    p.go("#/cio/do-thi")
+    assert p.page.locator(".gnode").count() > 0 and "gia đình" in p.page.inner_text("#page h3")
     assert not p.problems()

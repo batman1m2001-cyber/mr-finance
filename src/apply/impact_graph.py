@@ -60,6 +60,8 @@ def family_graph(family_id: str, role: str = "client", run_id: Optional[str] = N
         e = edges.setdefault((a, b), {"from": a, "to": b, "label": label, "value": None, "sources": []})
         if value is not None:
             e["value"] = (e["value"] or 0.0) + value
+            if source[0] == "run":  # one event's share of an edge several runs add to (the News Impact panel)
+                e.setdefault("by_run", {})[source[1]] = e.get("by_run", {}).get(source[1], 0.0) + value
         src = {"type": source[0], "id": source[1]}
         if src not in e["sources"]:
             e["sources"].append(src)
@@ -84,6 +86,7 @@ def family_graph(family_id: str, role: str = "client", run_id: Optional[str] = N
             "event",
             reads._type_label(ev.get("type")) if client else ev["title"],
             ref=ev["id"],
+            run=run["id"],
             expected_3m=h3["expected"],
         )
         for n in ev["news"]:
@@ -165,4 +168,113 @@ def family_graph(family_id: str, role: str = "client", run_id: Optional[str] = N
         "wording": WORDING,
         "note": "Mỗi cạnh ghi nguồn đã lưu (sự kiện, nhận định, lần áp dụng). “Có thể ảnh hưởng” theo kịch bản "
         "CIO duyệt; không phải quan hệ nhân quả.",
+    }
+
+
+RUN_COLUMNS = [
+    ("news", "Tin"),
+    ("event", "Sự kiện"),
+    ("branch", "Kịch bản"),
+    ("factor", "Yếu tố"),
+    ("asset", "Nhóm tài sản"),
+    ("family", "Gia đình"),
+]
+
+
+def run_graph(run_id: str) -> Dict[str, Any]:
+    """The CIO's whole run (UI redesign R4): news → event → scenario → factor → asset class → every family the run
+    computed, from the run's stored results. Asset class → family edges carry that family's 3-month expected change
+    by class; a factor reaches a class when a holding of that class loads on it."""
+    run = runs.get(run_id)
+    view = vstore.get(run["view_id"])
+    ev = events.get(run["event_id"])
+    model = FactorModel.from_dict(runs.snapshot(run["snapshot_id"])["factor_model"])
+    results = runs.family_results(run_id)
+    nodes: Dict[str, Dict[str, Any]] = {}
+    edges: Dict[tuple, Dict[str, Any]] = {}
+    src = ("run", run_id)
+
+    def node(nid: str, kind: str, label: str, **extra: Any) -> str:
+        nodes.setdefault(nid, {"id": nid, "kind": kind, "label": label, **extra})
+        return nid
+
+    def edge(a: str, b: str, source: tuple, label: str = WORDING, value: Optional[float] = None) -> None:
+        e = edges.setdefault((a, b), {"from": a, "to": b, "label": label, "value": None, "sources": []})
+        if value is not None:
+            e["value"] = (e["value"] or 0.0) + value
+        s = {"type": source[0], "id": source[1]}
+        if s not in e["sources"]:
+            e["sources"].append(s)
+
+    eid = node(
+        f"EV:{ev['id']}",
+        "event",
+        ev["title"],
+        ref=ev["id"],
+        run=run_id,
+        expected_3m=(run.get("totals") or {}).get("expected_3m"),
+    )
+    for n in ev["news"]:
+        nid = node(f"NW:{n['id']}", "news", n["title"], ref=n["id"], url=n.get("url"), outlet=n.get("outlet"))
+        edge(nid, eid, ("event", ev["id"]), label="thuộc sự kiện")
+    core: set = set()
+    for b in view["current"]["scenarios"]["branches"]:
+        bid = node(
+            f"BR:{view['id']}:{b['id']}",
+            "branch",
+            f"{b['name']} · {round(b['probability'] * 100)}%",
+            ref=view["id"],
+            probability=b["probability"],
+        )
+        edge(eid, bid, ("view", view["id"]), label="kịch bản CIO duyệt")
+        for s in b["core_shocks"]:
+            core.add(s["factor"])
+            fid = node(f"FA:{s['factor']}", "factor", model.factor(s["factor"]).name, ref=s["factor"])
+            arrow = "▲" if s["direction"] == "up" else "▼"
+            edge(bid, fid, ("view", view["id"]), label=f"cú sốc {arrow} {SIZE.get(s['size'], s['size'])}")
+    total: Dict[str, float] = {}
+    for fam in results.values():
+        for f, v in fam["horizons"]["3m"]["by_factor"].items():
+            total[f] = total.get(f, 0.0) + v
+    shown = core | set(sorted(total, key=lambda k: -abs(total[k]))[:TOP_FACTORS])
+    for f in shown:
+        node(f"FA:{f}", "factor", model.factor(f).name, ref=f, contribution=total.get(f, 0.0))
+    for fam_id, fam in sorted(results.items()):
+        h3 = fam["horizons"]["3m"]
+        famn = node(
+            f"FAM:{fam_id}",
+            "family",
+            fam["name"],
+            ref=fam_id,
+            net_worth=fam["net_worth"],
+            expected_3m=h3["expected"],
+            pre_review=fam["pre_review"],
+        )
+        for cls, v in h3["by_class"].items():
+            if not v:
+                continue
+            aid = node(f"AC:{cls}", "asset", CLASSES.get(cls, cls), ref=cls)
+            edge(aid, famn, src, value=v)
+            for x in fam["holdings"]:
+                if x["class"] == cls:
+                    for f in x["loads"]:
+                        if f in shown:
+                            edge(f"FA:{f}", aid, src, label="độ nhạy")
+    reach = {e["from"] for e in edges.values() if e["to"].startswith("AC:")}
+    for nid in [n for n in nodes if n.startswith("FA:") and n not in reach]:
+        if not any(e["to"] == nid for e in edges.values()):
+            del nodes[nid]
+    return {
+        "run_id": run_id,
+        "status": run["status"],
+        "family": None,
+        "role": "cio",
+        "columns": [{"kind": k, "label": label} for k, label in RUN_COLUMNS],
+        "nodes": list(nodes.values()),
+        "edges": list(edges.values()),
+        "runs": [run_id],
+        "families": len(results),
+        "wording": WORDING,
+        "note": "Toàn bộ lần áp dụng: mỗi cạnh ghi nguồn đã lưu (sự kiện, nhận định, lần áp dụng). “Có thể ảnh hưởng” "
+        "theo kịch bản CIO duyệt; không phải quan hệ nhân quả.",
     }

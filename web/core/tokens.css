@@ -651,3 +651,49 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .rowlink { cursor: pointer; }
 .rowlink:hover td, .rowlink:focus-visible td { background: var(--accent-soft); }
 :is(#page, .drawer) a.btn { text-decoration: none; }
+/* R4: the overview graph (Bản đồ tài chính) */
+.mapsvg { width: 100%; height: auto; display: block; }
+.medge { stroke: var(--axis); transition: opacity var(--dur-2) var(--ease-out); }
+.medge.on { stroke: var(--accent); }
+.mnode { cursor: pointer; transition: opacity var(--dur-2) var(--ease-out); }
+.mnode:focus { outline: none; }
+.mnode:focus-visible > circle:nth-of-type(1), .mnode.sel > circle:last-of-type { filter: drop-shadow(0 0 6px var(--band-2)); }
+.mhalo { fill: color-mix(in srgb, var(--tone) 14%, transparent); stroke: none; }
+.mapsvg .mme { fill: #fff; font-weight: 750; font-size: 15px; }
+.mapsvg .mlbl { fill: var(--ink); font-size: 12px; font-weight: 650; }
+.mapsvg .mlbl.me { fill: var(--ink-2); }
+.mapsvg .mfig { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.mapsvg .mfig.up { fill: var(--up); } .mapsvg .mfig.down { fill: var(--down); }
+.mplus circle { fill: var(--accent); }
+.mapsvg .mplus text { fill: #fff; font-size: 9.5px; font-weight: 700; }
+.mlist { display: grid; gap: 6px; }
+.mrow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; text-align: left; width: 100%;
+  padding: 8px 10px; border: 1px solid var(--hair); border-radius: 10px; background: var(--surface); color: var(--ink); font: inherit;
+  font-size: 13px; cursor: pointer; }
+.mrow > span:not(.ic-chip, .num) { display: grid; gap: 1px; min-width: 0; }
+.mgroup .mrow .num { font-size: 12.5px; }
+.mrow:not(:has(.ic-chip)) { grid-template-columns: minmax(0, 1fr) auto; }
+.mrow:hover, .mrow.on { border-color: var(--accent); }
+.mrow .num { white-space: nowrap; font-weight: 600; }
+.mgroup + .mgroup { margin-top: 14px; }
+.mgroup .subhead { display: flex; gap: 8px; align-items: center; }
+@media (prefers-reduced-motion: reduce) { .medge, .mnode { transition: none; } }
+.impactcard h4 { margin: 10px 0 6px; font-size: 16px; }
+.chainrow { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+/* R4: the event timeline on Tin tác động */
+.tline { display: grid; gap: 10px; }
+.trow { display: grid; grid-template-columns: minmax(160px, 240px) minmax(0, 1fr); gap: 14px; align-items: center; padding: 10px 12px;
+  border: 1px solid var(--hair); border-radius: 12px; }
+.trow.on { border-color: var(--accent); }
+.tlabel { display: grid; gap: 4px; }
+.tsteps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 0; }
+.tstep { display: grid; grid-template-columns: auto 1fr; column-gap: 6px; align-items: center; padding-right: 18px; position: relative; font-size: 12.5px; }
+.tstep:not(:last-child)::after { content: ""; position: absolute; right: 5px; top: 7px; width: 8px; height: 1px; background: var(--axis); }
+.tstep i { width: 9px; height: 9px; border-radius: 50%; background: var(--s7); grid-row: span 2; }
+.tstep.news i, .tstep.event i { background: var(--s5); }
+.tstep.drafting i, .tstep.pending_challenge i { background: var(--ai); }
+.tstep.approved i { background: var(--human); }
+.tstep.effective i { background: var(--good); }
+.tstep.withdrawn i, .tstep.failed i { background: var(--critical); }
+.tstep time { grid-column: 2; }
+@media (max-width: 760px) { .trow { grid-template-columns: minmax(0, 1fr); } }

@@ -33,6 +33,8 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CIO-08_phone-light.jpg` | SCR-CIO-08 Agent | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, mock agents, three approved views |
 | `SCR-CIO-09_desktop-light.jpg` | SCR-CIO-09 Cấu hình | current | desktop 1440×900, light, full page | 2026-10-16, dev server, Compliance, a restricted-list proposal waiting for the second person; thresholds v2 in force |
 | `SCR-CIO-09_phone-light.jpg` | SCR-CIO-09 Cấu hình | current | phone 390×844, light, viewport | 2026-10-16, dev server, Compliance |
+| `SCR-CIO-10_desktop-light.jpg` | SCR-CIO-10 Đồ thị lần áp dụng | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
+| `SCR-CIO-10_phone-light.jpg` | SCR-CIO-10 Đồ thị lần áp dụng | current | phone 390×844, light, the list view | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-01_desktop-light.jpg` | SCR-CL-01 Tổng quan | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
 | `SCR-CL-01_phone-light.jpg` | SCR-CL-01 Tổng quan | current | phone 390×844, light, full page | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
 | `SCR-CL-02_desktop-light.jpg` | SCR-CL-02 Tài sản | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
@@ -43,7 +45,7 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-04_phone-light-question.jpg` | SCR-CL-04 Khẩu vị rủi ro | current | phone 390×844, light, the second question | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
 | `SCR-CL-04_desktop-dark-result.jpg` | SCR-CL-04 Khẩu vị rủi ro | current | desktop 1440×900, dark, the result | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
 | `SCR-CL-05_desktop-dark.jpg` | SCR-CL-05 Tác động thị trường | current | desktop 1440×900, dark, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
-| `SCR-CL-05_desktop-light.jpg` | SCR-CL-05 Tác động thị trường | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
+| `SCR-CL-05_desktop-light.jpg` | SCR-CL-05 Tác động thị trường | current | desktop 1440×900, light, full page, with the timeline | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-05_phone-light.jpg` | SCR-CL-05 Tác động thị trường | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CL-06_desktop-light.jpg` | SCR-CL-06 Chi phí chính sách | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
 | `SCR-CL-06_phone-light.jpg` | SCR-CL-06 Chi phí chính sách | current | phone 390×844, light, full page | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
@@ -56,6 +58,7 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-09_phone-light.jpg` | SCR-CL-09 Đồ thị tác động | current | phone 390×844, light (list view), full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
 | `SCR-CL-09_desktop-dark.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, dark, full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, client C01 |
 | `SCR-CL-09_desktop-light-rm.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, three effective runs, RM, C01, a scenario node selected |
+| `SCR-CL-09_desktop-light-impact.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, light, an event selected: the News Impact panel | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-10_desktop-light.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, keyword router, client C01: a month's flow (name and number scrubbed, “Mô hình thấy gì” open) and the feed |
 | `SCR-CL-10_desktop-light-rm.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, keyword router, RM: a write waiting for Xác nhận |
 | `SCR-CL-10_phone-light.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server, keyword router, client: net worth answer |
@@ -68,6 +71,11 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-10_desktop-light-error.jpg` | SCR-CL-10 Copilot panel | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, client asks an RM task: refusal, red dot and edge |
 | `SCR-CL-10_phone-light-busy.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server, answer delayed 4 s in the page: thinking dots |
 | `SCR-CL-10_phone-light-marks.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server: the KPI marks shown after the panel closed |
+| `SCR-CL-11_desktop-light.jpg` | SCR-CL-11 Bản đồ tài chính | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
+| `SCR-CL-11_desktop-dark.jpg` | SCR-CL-11 Bản đồ tài chính | current | desktop 1440×900, dark, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
+| `SCR-CL-11_phone-light.jpg` | SCR-CL-11 Bản đồ tài chính | current | phone 390×844, light, the list view | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
+| `SCR-CL-11_desktop-light-expanded.jpg` | SCR-CL-11 Bản đồ tài chính | current | desktop 1440×900, light, Cổ phiếu opened onto its holdings | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
+| `SCR-CL-11_desktop-light-all-rm.jpg` | SCR-CL-11 Bản đồ tài chính (RM) | current | desktop 1440×900, light, every kind on | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-09_desktop-light-path.jpg` | SCR-CL-09 Đồ thị tác động | current | desktop 1440×900, light, full page | 2026-10-16, dev server, client C01: “Tin nào ảnh hưởng tới tôi?” lights the largest event's path |
 | `SCR-CMP-01_desktop-light.jpg` | SCR-CMP-01 Tin bị giữ | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_desktop-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |

@@ -17,6 +17,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/dashboard` | dashboard → `dashboard_flow` | `client_id, scope?, months?` | — | FEAT-21 |
 | `/api/flows` | flows → `flows_flow` | `client_id, scope?, month? (YYYY-MM)` | — | FEAT-29 |
 | `/api/feed` | feed → `feed_flow` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 (each item has a stable `key`, FEAT-33) |
+| `/api/overview` | overview → `overview_flow` | `client_id, scope?, role? (client\|rm), goals? (ids followed)` | — (client: event types, classes for news) | FEAT-30 (R4) |
 | `/api/search` | search → `search_flow` | `q, role, client_id?, scope?` | role decides the kinds; the client sees type labels only | FEAT-34 |
 | `/api/copilot` | copilot → `copilot_flow` | `question, role, client_id?, scope?, route?, confirm?` | per tool (and the wrapped graph's own check) | FEAT-32; an ok answer has `focus` (page element keys, FEAT-33) |
 | `/api/config/propose` | config_propose → `config_propose_flow` | `kind, data, by, note?` | the kind's owner role | FEAT-14 |
@@ -63,8 +64,9 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/agents` | — | mode, models, prompt version, demo users | FEAT-15, 12 |
 | `/api/runs` | `role? (rm), view_id?` | runs, newest first | FEAT-08 |
 | `/api/runs/{id}`, `/api/runs/{id}/verify` | — | a run; its recomputation compared to the dong | FEAT-08 |
-| `/api/families/{id}/impact` | `role (default client)` | the family's impact as that role may see it (403 for an unknown role) | FEAT-13 |
-| `/api/families/{id}/graph` | `role (default client)`, `run_id?` | news → … → goal nodes and edges with their stored sources (403 for an unknown role) | FEAT-30 |
+| `/api/families/{id}/impact` | `role (default client)` | the family's impact as that role may see it (403 for an unknown role); each item has a `timeline` of its steps with their stored times | FEAT-13, FEAT-30 |
+| `/api/families/{id}/graph` | `role (default client)`, `run_id?` | news → … → goal nodes and edges with their stored sources (403 for an unknown role); an event node names its `run`, an asset → family edge its `by_run` shares | FEAT-30 |
+| `/api/runs/{id}/graph` | — | the whole run: news → event → scenario → factor → asset class → every family (404 for an unknown run) | FEAT-30 (R4) |
 | `/api/trace/{run_id}/{family_id}` | `key?, horizon? (3m)` | the trace (404 if unknown) | FEAT-09 |
 | `/api/rm/today` | — | flagged cases and goal tasks | FEAT-13, 10 |
 | `/api/audit`, `/api/audit/verify` | `limit (≤ 1000)` | log rows; chain check | FEAT-11 |
