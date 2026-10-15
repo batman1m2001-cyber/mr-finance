@@ -60,3 +60,12 @@ def test_the_advisory_record_over_every_client():
         assert out["summary"]["advice"] > one["advice"]
         assert {a["id"] for a in out["agents"]} == {"news", "impact", "planner", "chat"}
         assert out["advice"][0]["date"] >= out["advice"][-1]["date"] and all(a["client"] for a in out["advice"])
+
+
+def test_nothing_in_the_advisory_record_is_dated_after_the_data_date():
+    import json
+    import re
+
+    raw = (SAMPLES.parent / "advisory.json").read_text(encoding="utf-8")
+    as_of = json.loads(raw)["as_of"]
+    assert [d for d in re.findall(r"\d{4}-\d{2}-\d{2}", raw) if d > as_of] == []  # DEF-05

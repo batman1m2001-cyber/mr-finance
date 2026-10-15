@@ -22,5 +22,6 @@ staff pages carry a “Nội bộ” banner.
 `tests/test_app.py::test_the_specialist_team_and_the_advisory_record`, `::test_the_advisory_record_over_every_client`.
 
 ## Limitations
-Everything shown is invented and some entries are dated after the data date (Q-19). It must not be presented
+Everything shown is invented; the page says it is illustrative and not accuracy tracking (Q-19); no entry is
+dated after the data date since 2026-10-15 (DEF-05). It must not be presented
 as accuracy tracking (FEAT-18).

@@ -26,7 +26,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-16 | gap | Brief: re-asking the risk test on triggers | open |
 | Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | open |
 | Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005) |
-| Q-19 | divergence | The advisory track record is mock, with dates after today | open |
+| Q-19 | divergence | The advisory track record is mock and could be read as BR-15 | resolved (labelled; dates fixed) |
 | Q-20 | gap | FR-603 “tab Mục tiêu”: the goal branch is not on the client's Goals/Plan tab | open |
 | Q-21 | divergence | The client view exists although the BRD puts client delivery in the pilot phase | resolved (ADR-0008) |
 | Q-22 | divergence | Factor-model parameters are assumed, not estimated | resolved (ADR-0004); estimation blocked |
@@ -114,6 +114,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 ### Q-19 — The advisory track record
 - **Fact:** “Hiệu quả tư vấn” ([SCR-RM-05](../assets/current_ui/SCR-RM-05_desktop-light.jpg)) shows recommendations, accuracy (75 %), money gained/lost, missed news and AI pipeline scores, from `data/advisory.json` (mock, labelled “Dữ liệu giả định cho demo”). Some entries are dated after the demo's date (e.g. 2026-10-24 when the data is as of 2026-10-09).
 - **Risk:** it can be mistaken for BR-15 (accuracy over time), which is **not built**. Proposed: say on the page that it is illustrative and is not BR-15; fix the dates. Owner: product.
+- **Resolution (2026-10-15):** the page note now says “minh họa, không phải số liệu theo dõi độ chính xác của nhận định”; dates clamped to the data date (DEF-05, `tests/test_app.py::test_nothing_in_the_advisory_record_is_dated_after_the_data_date`).
 
 ### Q-20 — The goal branch on the Goals tab (FR-603)
 - **Fact:** FR-603: show on the RM home, the Goals tab, and the Research page. The product shows it on RM “Hôm nay”, on “Tin tác động” (client and RM) and on “Nghiên cứu”. The client's “Mục tiêu & kịch bản → Kế hoạch” tab (goal planning) does not show it.

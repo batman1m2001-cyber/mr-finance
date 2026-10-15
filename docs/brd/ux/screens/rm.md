@@ -96,7 +96,8 @@ actions, missed news); **AI pipeline** (four AI stages with a 0–100 score, a 1
 **Nhật ký khuyến nghị**; **Tin quan trọng bị bỏ lỡ**; news-reading engagement; risk appetite over time. All mock,
 said at the bottom (“Dữ liệu giả định cho demo …”).
 
-**Caution.** Not accuracy tracking (BR-15 is not built); some log dates are after the data date (Q-19).
+**Caution.** Not accuracy tracking (BR-15 is not built); the page note says it is illustrative and not accuracy
+tracking (Q-19).
 
 ---
 

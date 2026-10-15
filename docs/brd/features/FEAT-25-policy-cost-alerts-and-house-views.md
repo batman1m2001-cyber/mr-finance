@@ -31,4 +31,3 @@ cash-cost rules stay here; price-moving ones should move to the engine (N5).
 
 ## Limitations
 - Legal statuses are a snapshot to check before any real use (BRIEF-ALERT-02; every page says so).
-- Layout defect on this page at 1440 px (DEF-01).
