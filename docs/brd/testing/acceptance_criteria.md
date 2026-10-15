@@ -14,7 +14,7 @@ Where acceptance is defined, and how the BRD's own test plan maps to this produc
 
 | BRD group (§16.1) | BRD content | Here | Gap |
 |---|---|---|---|
-| Kiểm soát | public source, timestamps, restricted list, research release gate, releaser ≠ uploader | `test_news.py::test_the_gates`, `::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it`; `test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox`, `::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | restricted-list release has no role test (DEF-03) |
+| Kiểm soát | public source, timestamps, restricted list, research release gate, releaser ≠ uploader | `test_news.py::test_the_gates`, `::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it`; `test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox`, `::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | — (restricted-list release role-tested since 2026-10-15) |
 | Quyền | an RM cannot open another family; a wrong role is refused | `test_views.py::test_only_the_cio_runs_the_agent_and_decides`; `test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox` | no RM-family assignment exists to test (Q-17) |
 | Agent | scenario format, wrong probability refused, factor outside the catalogue refused, sources must belong to the event | `test_views.py::test_the_schema_refuses`, `::test_a_bad_draft_is_sent_back_twice_then_the_run_fails`; `test_engine.py::test_wrong_branches_are_refused` | — |
 | Động cơ | propagation, mixture, duration, loans, recompute equal | `test_engine.py` (20 functions); `test_apply.py::test_a_run_recomputes_to_the_dong_and_tampering_is_found` | — |

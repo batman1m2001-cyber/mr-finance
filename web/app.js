@@ -1134,7 +1134,7 @@
   async function decideItem(id, decision) {
     const note = ($(`#note-${id}`) || {}).value || "";
     try {
-      await api("/api/review/decide", {item_id: id, decision, note});
+      await api("/api/review/decide", {item_id: id, decision, note, by: state.user});
     } catch (e) { alert("Không lưu được: " + e.message); }
     await loadQueue();
     renderScenarios();
@@ -1156,7 +1156,10 @@
 
   function renderRM() {
     const box = $("#tab-rm");
-    const head = `<div class="tabhead"><h1>Relationship specialist</h1><p>Chuyên viên quan hệ khách hàng phụ trách bạn</p></div>`;
+    const staff = state.viewer === "staff";  // only the RM decides; the client sees the queue
+    const head = staff
+      ? `<div class="tabhead"><h1>Duyệt đề xuất</h1><p>Phương án khách hàng gửi từ Kế hoạch, chờ RM duyệt</p></div>`
+      : `<div class="tabhead"><h1>Relationship specialist</h1><p>Chuyên viên quan hệ khách hàng phụ trách bạn</p></div>`;
     const a = state.advisory;
     const mine = state.queue.filter(q => q.client_id === state.client);
     const pending = mine.filter(q => q.status === "pending");
@@ -1166,7 +1169,8 @@
       <h3 style="margin:8px 0">${esc(q.title)}</h3>
       <ul>${((q.data.option || {}).actions || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>
       <div class="stats small">${(q.data.summary || []).slice(0, 4).map(l => `<div class="stat"><span class="k">${esc(l.label)}</span><span class="v">${esc(l.value)}</span></div>`).join("")}</div>
-      ${q.status === "pending" ? `<div class="chatform mt"><input id="note-${q.id}" placeholder="Ghi chú cho khách hàng (không bắt buộc)" aria-label="Ghi chú">
+      ${q.status === "pending" && !staff ? `<p class="small muted">Đang chờ chuyên gia duyệt</p>`
+        : q.status === "pending" ? `<div class="chatform mt"><input id="note-${q.id}" placeholder="Ghi chú cho khách hàng (không bắt buộc)" aria-label="Ghi chú">
         <button type="button" class="btn" data-ok="${q.id}">Duyệt</button><button type="button" class="btn ghostbtn" data-no="${q.id}">Từ chối</button></div>`
         : (q.note ? `<p class="small"><b>Ghi chú:</b> ${esc(q.note)}</p>` : "")}</div>`;
     let team = `<div class="card muted">Đang tải đội chuyên gia…</div>`;
@@ -1176,7 +1180,7 @@
       team = `<div class="grid g3 people">${person({...t.rm, id: "rm"}, true)}</div>
         <p class="note mt">${esc(a.note)}</p>`;
     }
-    box.innerHTML = `${head}${team}
+    box.innerHTML = `${head}${staff ? "" : team}
       <div class="card mt"><h2>Approval queue <span class="hint">Hàng chờ chuyên gia duyệt · ${pending.length} đang chờ</span></h2>
         <p class="muted small" style="margin-top:-6px">Mọi khuyến nghị từ Wealth Planning Advisor đều là mô phỏng cho đến khi chuyên gia duyệt.</p></div>
       <div class="grid g2 mt">${pending.map(row).join("") || `<div class="card muted">Không có đề xuất nào đang chờ.</div>`}</div>
@@ -1310,9 +1314,11 @@
     if (tab === "alerts") renderAlerts();
   }
 
-  function setViewer(v) {
-    // client or staff: what the legacy pages show (the shell maps a role to one of them)
+  function setViewer(v, user) {
+    // client or staff: what the legacy pages show (the shell maps a role to one of them); user: the
+    // demo user id sent with a staff action (the server checks its role)
     state.viewer = v === "staff" ? "staff" : "client";
+    state.user = user || null;
   }
 
   async function start() {

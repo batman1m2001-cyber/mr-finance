@@ -13,7 +13,8 @@ uv run operonx run statement_reading  # the statement-reading eval (needs MF_AI=
 
 | Date | Commit | Command | Result |
 |---|---|---|---|
-| 2026-10-15 | this change (docs/brd + checker) | `uv run pytest -q` | **173 passed** in 53 s (170 + 3 in `tests/test_brd_docs.py`); checker 0 errors, also with `--brd` (61 codes, hash ok) |
+| 2026-10-15 | fix DEF-02, DEF-03, FR-404 | `uv run pytest -q` | **175 passed** in 55 s (+2 FR-404 tests; news, review and verify tests extended); checker 0 errors |
+| 2026-10-15 | docs/brd + checker | `uv run pytest -q` | **173 passed** in 53 s (170 + 3 in `tests/test_brd_docs.py`); checker 0 errors, also with `--brd` (61 codes, hash ok) |
 | 2026-10-15 | b5e1cb1 (main, before this repository) | `uv run pytest -q` | **170 passed** in 53 s |
 
 Each change to the suite adds a row here (newest first) with what was run and the result, as reported by the tool.
@@ -55,8 +56,8 @@ Not automated beyond `tests/test_web.py`. Recorded manual/scripted checks:
 | ID | Found | Where | Defect | Requirement affected | Proposed fix | State |
 |---|---|---|---|---|---|---|
 | DEF-01 | 2026-10-15 | SCR-CL-06 (`web/app.js`, tab `alerts`) | At 1440 px the “Wealth check” card's first column is squeezed: one word per line, a narrow button | usability (BRD-NFR-11) | give the column a minimum width | open |
-| DEF-02 | 2026-10-15 | SCR-CL-07; `src/review` | The RM approval queue is reachable only from the client's “Chuyên gia” menu (the redesign's shell mapped the legacy “RM duyệt” tab to the client only); `review_flow` checks no role, so whoever opens the page can approve | BRIEF-FLOW-02 | add “Duyệt đề xuất” to the RM's “Khách hàng” section; require role `rm` in `review_flow` | open |
-| DEF-03 | 2026-10-15 | `src/news/ops.py` (`release`, `dismiss`) | Releasing a restricted-list hold and dismissing news check no role: any user id can release a held item | BRD-BR-04, BRD-FR-105, BRD-RULE-ROLE-03 | `roles.require(by, "compliance")` in `release`, `roles.require(by, "cio")` in `dismiss`, and a test for each | open |
+| DEF-02 | 2026-10-15 | SCR-CL-07; `src/review` | The RM approval queue is reachable only from the client's “Chuyên gia” menu (the redesign's shell mapped the legacy “RM duyệt” tab to the client only); `review_flow` checks no role, so whoever opens the page can approve | BRIEF-FLOW-02 | add “Duyệt đề xuất” to the RM's “Khách hàng” section; require role `rm` in `review_flow` | fixed 2026-10-15 (role `rm` in `read_decision`; RM menu “Duyệt đề xuất”; client read-only) |
+| DEF-03 | 2026-10-15 | `src/news/ops.py` (`release`, `dismiss`) | Releasing a restricted-list hold and dismissing news check no role: any user id can release a held item | BRD-BR-04, BRD-FR-105, BRD-RULE-ROLE-03 | `roles.require(by, "compliance")` in `release`, `roles.require(by, "cio")` in `dismiss`, and a test for each | fixed 2026-10-15 (`roles.require` in both; tests in `test_news.py`) |
 | DEF-04 | 2026-10-15 | `.env.example` | `AUDIT_HMAC_KEY` is read by the code but not listed | AGENTS.md rule; BRD-RULE-SEC-08 | add the name | open |
 | DEF-05 | 2026-10-15 | `data/advisory.json` | Advisory log entries dated after the data date (e.g. 2026-10-24 vs as-of 2026-10-09) | — (Q-19) | regenerate with past dates; label as illustrative | open |
 

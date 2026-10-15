@@ -90,6 +90,6 @@ def test_the_five_minute_demo(client):
         },
     ).json()["item"]
     done = client.post(
-        "/api/review/decide", json={"item_id": item["id"], "decision": "approved", "note": "Đồng ý"}
+        "/api/review/decide", json={"item_id": item["id"], "decision": "approved", "note": "Đồng ý", "by": "rm01"}
     ).json()["item"]
     assert done["status"] == "approved"

@@ -25,10 +25,12 @@ import time
 from datetime import date
 from typing import Any, Dict, List, Optional
 
+from apply.goals import goal_impacts
 from control import audit, db
 from engine import ENGINE_VERSION, FactorModel, evaluate
+from procedural import goals as procedural_goals
 from views import schema
-from wealth import fixtures
+from wealth import fixtures, profile
 from wealth.paths import DATA
 
 PRE_REVIEW_PCT = -0.05  # BR-09: the 3-month P10 at or below −5 % of net worth
@@ -61,17 +63,25 @@ async def family_holdings() -> Dict[str, Dict[str, Any]]:
     from consolidate.graph import consolidate_flow
 
     engine = Operon(consolidate_flow, params={"client_id": None, "scope": None})
+    as_of = date.fromisoformat(fixtures.market()["as_of"])
     out = {}
     for cid in fixtures.client_ids():
         got = await engine.run(inputs={"client_id": cid, "scope": "family"})
         if "$errors" in got:
             raise RunError(f"không đọc được danh mục {cid}: {got['$errors']}")
+        who = profile.build(cid, got["members"])
         out[cid] = {
             "name": fixtures.client(cid)["name"],
             "members": got["members"],
             "holdings": [
                 {k: h[k] for k in ("key", "owner", "kind", "class", "name", "value", "detail")} for h in got["holdings"]
             ],
+            # FR-404: the dated goals and the monthly surplus their level is judged against
+            "goals": [
+                {k: g[k] for k in ("goal_id", "label", "date", "amount")}
+                for g in procedural_goals.goals_of(fixtures.client(cid), as_of)
+            ],
+            "surplus_monthly": who["income_monthly"] - who["spending_monthly"],
         }
     return out
 
@@ -139,6 +149,7 @@ def compute(snapshot: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
             "modelled_share": modelled / assets if assets else 0.0,
             "pre_review": bool(nw > 0 and h3["p10"] <= PRE_REVIEW_PCT * nw),
             "model": r["model"],
+            "goal_impact": goal_impacts(fam, h3["by_holding"], snapshot["market"]["as_of"]),
         }
     return out
 
@@ -333,6 +344,7 @@ async def _compute_run(run_id: str, view: Dict[str, Any], by: str, today: Option
             totals={
                 "expected_3m": sum(r["horizons"]["3m"]["expected"] for r in results.values()),
                 "pre_review": sum(1 for r in results.values() if r["pre_review"]),
+                "goals_changed": sum(1 for r in results.values() for g in r["goal_impact"]["goals"] if g["changed"]),
             },
         )
         con.execute("update application_runs set data = ? where id = ?", (db.dumps(data), run_id))
@@ -399,6 +411,8 @@ def verify(run_id: str) -> Dict[str, Any]:
             for x in ("expected", "p5", "p10", "p50", "p90", "by_class", "by_factor", "by_holding"):
                 if new is None or new["horizons"][h][x] != r["horizons"][h][x]:
                     diffs.append(f"{fid} {h} {x}")
+        if "goal_impact" in r and (new is None or new["goal_impact"] != r["goal_impact"]):
+            diffs.append(f"{fid} goal_impact")
     return {
         "ok": not diffs,
         "run_id": run_id,

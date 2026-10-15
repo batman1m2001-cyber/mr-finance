@@ -23,7 +23,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-05](FEAT-05-challenger.md) | The independent challenger | BR-06, FR-303 | built | SCR-CIO-03 |
 | [FEAT-06](FEAT-06-view-decisions.md) | CIO decisions on a view | BR-07, BR-14, FR-304, FR-305 | built | SCR-CIO-03 |
 | [FEAT-07](FEAT-07-scenario-engine.md) | The scenario engine and factor model | BR-08, NFR-04, §9 | built (assumed parameters) | SCR-CIO-07 |
-| [FEAT-08](FEAT-08-application-runs.md) | Application runs | BR-09, BR-13, FR-401…405, FR-501, FR-503 | built, **except FR-404** | SCR-CIO-04, SCR-CIO-05 |
+| [FEAT-08](FEAT-08-application-runs.md) | Application runs | BR-09, BR-13, FR-401…405, FR-501, FR-503 | built (FR-404 on our definition, Q-11) | SCR-CIO-04, SCR-CIO-05 |
 | [FEAT-09](FEAT-09-number-trace.md) | “Cách tính” trace | BR-12, FR-406 | built (staff) | SCR-RM-03 |
 | [FEAT-10](FEAT-10-goal-branch.md) | The goal branch | BR-10, FR-601…604 | built | SCR-RM-01, SCR-CL-05, SCR-RM-02, SCR-CIO-06 |
 | [FEAT-11](FEAT-11-audit-log.md) | The audit log | BR-12, FR-702 | built, no export | SCR-CMP-03 |

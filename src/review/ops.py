@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from operonx import op
 
+from control import roles
 from wealth import fixtures, store
 
 
@@ -35,8 +36,9 @@ def propose(client_id: str, kind: str, title: str, data: dict) -> dict:
 
 
 @op
-def read_decision(item_id: str = None, decision: str = None, note: str = None) -> dict:
-    """The RM's decision, checked: approved or rejected, with a note of at most 1000 characters."""
+def read_decision(item_id: str = None, decision: str = None, note: str = None, by: str = None) -> dict:
+    """The RM's decision, checked: by an RM, approved or rejected, with a note of at most 1000 characters."""
+    roles.require(by, "rm")
     decision = str(decision or "")
     if decision not in ("approved", "rejected"):
         raise ValueError("decision is approved or rejected")

@@ -6,6 +6,7 @@ import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
 const LEVEL = {contact_now: "bad", confirm_goal: "human", remind: "warn", note: ""};
+const FUND = {"Đạt": "good", "Theo dõi": "warn", "Thiếu": "bad"};  // FR-404 levels
 
 export async function render(box, ctx) {
   const client = ctx.client();
@@ -56,6 +57,7 @@ export async function render(box, ctx) {
         <h3>Sự kiện <span class="hint">mới nhất trước</span></h3>
         <div class="list" id="events"></div>
       </div>
+      <div class="panel c12" id="goal-impact" hidden></div>
       ${staff ? `<div class="panel c12"><details class="more"><summary>Chi tiết cho RM: theo yếu tố và theo vị thế</summary>
         <div class="cols" style="margin-top:8px"><div class="c6"><div class="small muted">Theo yếu tố (3 tháng)</div><div id="by-factor"></div></div>
         <div class="c6"><div class="small muted">Vị thế góp phần nhiều nhất</div><div id="by-holding"></div></div></div></details></div>` : ""}
@@ -70,6 +72,7 @@ export async function render(box, ctx) {
     fan($("#fan", box), ["1w", "3m", "12m"].map(h => ({label: HORIZON[h], ...it.horizons[h]})),
       {label: `Dải tác động của ${it.event.title}`});
     for (const b of box.querySelectorAll("[data-run]")) b.setAttribute("aria-pressed", String(b.dataset.run === it.run_id));
+    drawGoals($("#goal-impact", box), it);
   };
   diverging($("#by-class", box), Object.entries(classes).map(([k, v]) => ({label: ASSET_CLASS[k] || k, value: v, color: CLASS_COLOR[k]})),
     {label: "Đóng góp theo nhóm tài sản"});
@@ -137,4 +140,17 @@ function wireGoals(box, ctx, client) {
       ctx.go(location.hash);
     };
   });
+}
+
+// FR-404: the selected event's effect on each dated goal — funding before and after, with its level
+function drawGoals(el, it) {
+  const g = it.goal_impact;
+  el.hidden = !(g && g.goals.length);
+  if (el.hidden) return;
+  const lvl = (x) => `<span class="num">${pct(x.ratio, false, 0)}</span> <span class="badge ${FUND[x.level] || ""}">${esc(x.level)}</span>`;
+  el.innerHTML = `<h3>Mục tiêu <span class="hint">“${esc(it.event.title)}” · 3 tháng · mức đáp ứng trước → sau</span></h3>
+    <table class="table"><thead><tr><th>Mục tiêu</th><th>Trước</th><th>Sau</th></tr></thead><tbody>
+    ${g.goals.map(x => `<tr><td>${esc(x.label)}${x.changed ? ' <span class="badge warn">đổi mức</span>' : ""}
+      <div class="small muted num">hạn ${esc(x.date)} · cần ${vnd(x.amount)}</div></td><td>${lvl(x.before)}</td><td>${lvl(x.after)}</td></tr>`).join("")}</tbody></table>
+    <div class="footnote">Mục tiêu lấy nguồn theo thứ tự hạn từ tài sản tài chính (tiền, tiền gửi, quỹ, trái phiếu, cổ phiếu, vàng, tiền số): ${vnd(g.pool.before)} → ${vnd(g.pool.after)} (${vnd(g.pool.change, true)}). Mức: tiền cần để dành mỗi tháng ÷ thặng dư hằng tháng — ≤ 0,6 Đạt, ≤ 1 Theo dõi, cao hơn Thiếu. Ngưỡng là đề xuất, chờ CIO xác nhận.</div>`;
 }

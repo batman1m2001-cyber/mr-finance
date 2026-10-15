@@ -22,10 +22,10 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/scenario` | scenario → `scenario_flow` | `client_id, scenario, params?, scope?` | — | FEAT-26 |
 | `/api/goals` | goals → `goals_flow` | `client_id, scope?` | — | FEAT-26 |
 | `/api/review/propose` | propose → `propose_flow` | `client_id, scenario, title, option` | — | FEAT-27 |
-| `/api/review/decide` | decide → `review_flow` | `item_id, decision (approved\|rejected), note?` | — (DEF-02) | FEAT-27 |
+| `/api/review/decide` | decide → `review_flow` | `item_id, decision (approved\|rejected), note?, by` | RM | FEAT-27 |
 | `/api/news/ingest` | news_fetch → `ingest_flow` | `{}` | — | FEAT-01 |
-| `/api/news/dismiss` | news_dismiss → `dismiss_flow` | `ids, by?, note?` | — (should be CIO; DEF-03) | FEAT-02 |
-| `/api/news/release` | news_release → `release_flow` | `item_id, by, note` | — (should be Compliance; DEF-03) | FEAT-02 |
+| `/api/news/dismiss` | news_dismiss → `dismiss_flow` | `ids, by?, note?` | CIO | FEAT-02 |
+| `/api/news/release` | news_release → `release_flow` | `item_id, by, note` | Compliance | FEAT-02 |
 | `/api/events` | event → `event_flow` | `news_ids, title?, by` | CIO | FEAT-02 |
 | `/api/events/run-agent` | cio_agent → `cio_agent_flow` | `event_id, by, mode? (live\|mock)` | CIO | FEAT-04, 05 |
 | `/api/views/decide` | view_decide → `decide_flow` | `view_id, action, by, reason, idem_key?, edits?, responses?` | CIO | FEAT-06 |

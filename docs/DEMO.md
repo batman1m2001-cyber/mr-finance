@@ -7,7 +7,7 @@ through the same calls, so if the tests pass, the demo runs.
 
 > **Note (2026-10-15):** the menus were renamed by the redesign; the step names below are the old ones. The
 > mapping to today's menus is in [`docs/brd/ux/user_journeys.md`](brd/ux/user_journeys.md#j6--the-briefs-five-minute-demo-client-rm)
-> (J6). Step 6 is now “Khách hàng → Chuyên gia” (not in the RM's menu: DEF-02).
+> (J6). Step 6 is now RM → “Khách hàng → Duyệt đề xuất”.
 
 ## Before you start
 

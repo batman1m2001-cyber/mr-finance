@@ -18,7 +18,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-08 | ambiguity | FR-101 “10 sources” vs §11.1's list | resolved (interpretation) |
 | Q-09 | ambiguity | FR-306 “radar chính sách” is undefined | open — business |
 | Q-10 | ambiguity | FR-402 “chi phí lãi vay” | open |
-| Q-11 | gap + ambiguity | FR-404 goal impact per run is not built; its level thresholds are undefined | open |
+| Q-11 | ambiguity | FR-404 level thresholds and funding source are undefined; built on our proposal | open — CIO |
 | Q-12 | conflict | FR-501 “the challenger writes the summary” vs F02 / §7.1 | resolved (BRD F02) |
 | Q-13 | conflict | NFR-05 exact decimals vs the BRD's own float engine (F22) | resolved (ADR-0011) |
 | Q-14 | conflict | NFR-11 “every number has cách tính” vs flow 2 (no tickers to clients) | open |
@@ -83,6 +83,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 - **Gap found 2026-10-15:** application runs do not compute goal impacts (`src/apply/run.py` has no goal step; there is no `goal_impacts` table). The news plan reported FR-401…406 as done in N3; FR-404 was not. Corrected in the matrix and in `docs/NEWS_IMPACT_PLAN.md` §9.
 - **Existing related capability:** goals planning (FEAT-26) computes each goal's need, what the client has for it (a funding share), and ON_TRACK / AT_RISK / OFF_TRACK from the monthly saving needed ÷ the monthly surplus (≤ 0.6, ≤ 1, above; `src/scenarios/_sim.py::goal`).
 - **Proposal (ours):** for each goal, apply the run's 3-month expected change to the assets set aside for it, recompute the funding share and the status before and after, and map Đạt = ON_TRACK, Theo dõi = AT_RISK, Thiếu = OFF_TRACK. Owner: CIO to confirm the mapping and thresholds.
+- **Built 2026-10-15 on this proposal** (`src/apply/goals.py`): no asset is earmarked in the data, so the dated goals draw in date order on the family's financial assets (cash, deposits, funds, bonds, stocks, gold, crypto). Consequence: for the five demo families every goal is 100 % funded and Đạt before and after (C01: 14.7 tỷ of such assets against 1.885 tỷ of goals). Still open: the funding source and the thresholds.
 
 ### Q-12 — Who writes the post-check summary (FR-501)
 - **Fact:** FR-501 says “Agent Phản biện viết tóm tắt”; the BRD's own F02 says explanations and the post-check summary use deterministic templates, and §7.1 forbids family data in the AI zone.

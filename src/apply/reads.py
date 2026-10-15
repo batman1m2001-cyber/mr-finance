@@ -54,6 +54,7 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
             "by_class": h3["by_class"],
             "classes": {k: schema.ASSET_CLASSES.get(k, k) for k in h3["by_class"]},
             "modelled_share": r["modelled_share"],
+            "goal_impact": r.get("goal_impact"),  # FR-404; absent on runs computed before it
         }
         if role != "client":  # the view's text may name tickers: staff only (flow 2)
             item["summary"] = view["current"]["summary"]

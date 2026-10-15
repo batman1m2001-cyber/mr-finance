@@ -182,12 +182,10 @@ per line and the “Mở Wealth Planning Advisor” button is a narrow column (v
 | Generation | legacy (tab `rm`) |
 | Features | [FEAT-28](../../features/FEAT-28-advisory-team-and-track-record.md), [FEAT-27](../../features/FEAT-27-rm-approval-queue.md) |
 | Requirements | BRIEF-FLOW-02 |
-| Data | `GET /api/advisory?client_id=`, `GET /api/review`, `POST /api/review/decide` |
+| Data | `GET /api/advisory?client_id=`, `GET /api/review` |
 | Screenshot | [desktop](../../assets/current_ui/SCR-CL-07_desktop-light.jpg) |
 
 **Layout.** The relationship specialist's card (name, title, phone, e-mail, office, hours — all mock, said so);
 the **Approval queue** (“Hàng chờ chuyên gia duyệt · n đang chờ”): each proposal with its actions and summary and,
-while pending, a note field with **Duyệt** / **Từ chối**; decided items with their badge and note.
-
-**Known defect DEF-02.** The approve/reject buttons are on the client's page and the RM menu has no entry to the
-queue ([information architecture](../information_architecture.md)); `review_flow` checks no role.
+while pending, “Đang chờ chuyên gia duyệt”; decided items with their badge and note. Read-only: the RM decides on
+[SCR-RM-06](rm.md#scr-rm-06--duyệt-đề-xuất-approval-queue) (DEF-02 fixed 2026-10-15).

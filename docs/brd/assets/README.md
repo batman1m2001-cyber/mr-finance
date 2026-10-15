@@ -38,17 +38,19 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-05_desktop-light.jpg` | SCR-CL-05 Tác động thị trường | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CL-05_phone-light.jpg` | SCR-CL-05 Tác động thị trường | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CL-06_desktop-light.jpg` | SCR-CL-06 Chi phí chính sách | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
-| `SCR-CL-07_desktop-light.jpg` | SCR-CL-07 Chuyên gia | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
+| `SCR-CL-07_desktop-light.jpg` | SCR-CL-07 Chuyên gia | current | desktop 1440×900, light, viewport | 2026-10-15, dev server, seeded demo data (client C01), after DEF-02: queue read-only with one pending item |
 | `SCR-CMP-01_desktop-light.jpg` | SCR-CMP-01 Tin bị giữ | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_desktop-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_phone-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-03_desktop-light.jpg` | SCR-CMP-03 Nhật ký | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-RM-01_desktop-light.jpg` | SCR-RM-01 Hôm nay | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-RM-01_phone-light.jpg` | SCR-RM-01 Hôm nay | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
-| `SCR-RM-02_desktop-light.jpg` | SCR-RM-02 Tác động tin | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
+| `SCR-RM-02_desktop-light.jpg` | SCR-RM-02 Tác động tin (with the Mục tiêu panel, FR-404) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, runs recomputed with goal impact (client C01) |
 | `SCR-RM-03_desktop-light.jpg` | SCR-RM-03 Cách tính (drawer) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-RM-04_desktop-light.jpg` | SCR-RM-04 Hiệu quả tư vấn (one client) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-RM-05_desktop-light.jpg` | SCR-RM-05 Hiệu quả tư vấn (all) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
+| `SCR-RM-02_phone-light.jpg` | SCR-RM-02 Tác động tin (staff), Mục tiêu panel (FR-404) | current | phone 390×844, light, viewport | 2026-10-15, dev server, runs recomputed with goal impact (client C01) |
+| `SCR-RM-06_desktop-light.jpg` | SCR-RM-06 Duyệt đề xuất | current | desktop 1440×900, light, viewport | 2026-10-15, dev server, one pending proposal (client C01) |
 
 ## proposed_ui/ — the redesign kit (SRC-03)
 
