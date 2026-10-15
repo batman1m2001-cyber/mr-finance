@@ -2,6 +2,9 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Agent catalogue and AI quality (FR-703, RULE-MEAS-04; SCR-CIO-08) — FEAT-15, matrix, cio.md,
+  inventory, IA, api_reference, agent_workflows, 2 screenshots.
+
 - 2026-10-16 — Copilot live router run recorded; D-03 updated (the live demo has AI on) — FEAT-32,
   REDESIGN_KIT_PLAN, docs/TO_DISCUSS.md.
 

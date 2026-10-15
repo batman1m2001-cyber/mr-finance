@@ -13,7 +13,9 @@ The language-model tasks of the product, what they may read, and how they are co
 | Internal explanation | template or in-bank model | templates: post-check summary, trace formula | none | — | deterministic |
 | Statement reading (pre-BRD) | — | `statement_flow` | `llm:assistant` | the uploaded file | AI on/off/auto, rule fallback |
 | Chat declaration (pre-BRD) | — | `declare_flow` (operonx-agents `Agent`, 6 tools) | `llm:assistant` | the client's message | AI on/off/auto, rule fallback |
-| Copilot (proposed) | — | `src/copilot` (planned) | `llm:copilot` | scrubbed question, route, tool catalogue | keyword · live (ADR-0012) |
+| Copilot | — (kit) | `copilot_flow` (`src/copilot`, FEAT-32) | `llm:copilot` (`LLM_MODEL_COPILOT`) | scrubbed question, route without ids, tool catalogue | keyword (default) · live (ADR-0012) |
+
+The same inventory is served as the agent catalogue (FR-703, FEAT-15, SCR-CIO-08).
 
 ## The CIO agent graph (BRD §8.1 → `src/views/graph.py`)
 

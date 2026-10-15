@@ -45,6 +45,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 |---|---|---|---|
 | `/healthz` | — | liveness, and each protection on or off (`protections`, `off`) | FEAT-11, 12 |
 | `/api/clients` | — | the sample clients | FEAT-20 |
+| `/api/agents/catalogue` | `days (1–365, default 7)` | FR-703 catalogue, open-source references, RULE-MEAS-04 quality | FEAT-15 |
 | `/api/scenarios` | — | the scenario catalogue (id, kind, title, question, personas) | FEAT-26 |
 | `/api/review` | `client_id?, status?` | the RM queue | FEAT-27 |
 | `/api/advisory` | `client_id` | a client's specialist team and record (mock) | FEAT-28 |

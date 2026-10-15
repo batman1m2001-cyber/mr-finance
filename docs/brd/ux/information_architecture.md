@@ -39,11 +39,13 @@ Khách hàng (client)                         RM
 CIO                                         Tuân thủ (Compliance)
 ├── Hộp tin ............. SCR-CIO-01        ├── Tin bị giữ ...................... SCR-CMP-01
 ├── Sự kiện & nhận định . SCR-CIO-02        ├── Nghiên cứu ...................... SCR-CMP-02
-│   └── /<view id> ...... SCR-CIO-03        └── Nhật ký ......................... SCR-CMP-03
+│   └── /<view id> ...... SCR-CIO-03        ├── Nhật ký ......................... SCR-CMP-03
+│                                           └── Agent ........................... SCR-CIO-08
 ├── Phơi nhiễm .......... SCR-CIO-04
 ├── Lần áp dụng ......... SCR-CIO-05
 ├── Nghiên cứu .......... SCR-CIO-06
-└── Mô hình ............. SCR-CIO-07
+├── Mô hình ............. SCR-CIO-07
+└── Agent ............... SCR-CIO-08
 ```
 
 Two page generations live in this shell ([ADR-0013](../decisions/ADR-0013-wrap-the-legacy-pages-in-the-new-shell.md)):
@@ -76,6 +78,7 @@ the client and inside the RM's “Khách hàng” section (staff view).
 | Runs, post-check, verify, recompute | FEAT-08 | — | — | Lần áp dụng | — |
 | Research upload / release | FEAT-03 | — | — | Nghiên cứu (upload) | Nghiên cứu (release) |
 | Factor model | FEAT-07, 14 | — | — | Mô hình | — |
+| Agent catalogue, AI quality | FEAT-15 | — | — | Agent | Agent |
 | Held news | FEAT-02 | — | — | — | Tin bị giữ |
 | Audit log | FEAT-11 | — | — | — | Nhật ký |
 
@@ -83,5 +86,4 @@ the client and inside the RM's “Khách hàng” section (staff view).
 legacy “RM duyệt” tab only to the client's “Chuyên gia”) and the service checked no role. Now the RM decides under
 Khách hàng → **Duyệt đề xuất** (SCR-RM-06), the server requires role `rm`, and the client sees the queue read-only.
 
-Capabilities with **no UI entry**: the scheduled news fetch (FEAT-01, a job), the agent catalogue (FEAT-15, API
-only), the statement-reading eval (CLI). Not built: FEAT-16…19.
+Capabilities with **no UI entry**: the scheduled news fetch (FEAT-01, a job), the statement-reading eval (CLI). Not built: FEAT-16…19.
