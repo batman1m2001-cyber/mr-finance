@@ -1,4 +1,5 @@
-"""Write data/advisory.json: each client's specialist team, and the advisory track record.
+"""Write data/advisory.json: the advisory track record. The people on each family's team are seeded from here
+into the people table by scripts/make_people.py (data/people/staff.json).
 
 The team is the client's RM and the five specialists around them; names, phone numbers, e-mails
 and offices are made up for the demo. The track record is twelve months of what the AI advised
@@ -298,7 +299,6 @@ def main() -> None:
     out = {
         "as_of": AS_OF,
         "note": "Dữ liệu giả định cho demo: tên, số điện thoại, e-mail, địa chỉ và kết quả tư vấn đều không có thật. Đây là minh họa, không phải số liệu theo dõi độ chính xác của nhận định.",
-        "team": {cid: team(cid) for cid in CLIENTS},
         "tracking": {cid: track(cid, rng) for cid in CLIENTS},
     }
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

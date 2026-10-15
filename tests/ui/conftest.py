@@ -2,14 +2,19 @@
 Playwright's Chromium. Each test still gets its own empty state (the autouse fixture in ../conftest.py), which
 the server reads, so a test can seed records in-process and see them in the browser.
 
+Sign-in is on here, with the demo accounts listed (BRD-RULE-SEC-01): a page signs in as the account of the
+route's role before it opens it (``Page.as_role``), the way a person would.
+
 Skipped, with the reason, when Playwright or a Chromium is not available. MF_CHROMIUM points at a Chromium
 binary; otherwise Playwright's own install is used."""
 
+import json
 import os
 import socket
 import sys
 import threading
 import time
+import urllib.request
 from pathlib import Path
 
 import pytest
@@ -19,6 +24,13 @@ uvicorn = pytest.importorskip("uvicorn")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # the seeding helpers of tests/test_apply.py
 
 SIZES = {"desktop": (1440, 900), "phone": (390, 844)}
+ACCOUNTS = {"client": "C01", "rm": "rm01", "cio": "cio", "compliance": "compliance", "admin": "admin"}
+
+
+@pytest.fixture(autouse=True)
+def sign_in_on(monkeypatch):
+    monkeypatch.setenv("MF_AUTH", "on")
+    monkeypatch.setenv("MF_DEMO_ACCOUNTS", "on")
 
 
 def pytest_collection_modifyitems(items):
@@ -63,6 +75,15 @@ def browser():
         b.close()
 
 
+def api(base, path, body=None, who="C01"):
+    """A request to the app as ``who`` (a session issued in-process: the server shares this process's state)."""
+    from people import auth
+
+    data = None if body is None else json.dumps(body).encode()
+    headers = {"content-type": "application/json", "cookie": f"{auth.COOKIE}={auth.issue(who)}"}
+    return json.load(urllib.request.urlopen(urllib.request.Request(base + path, data=data, headers=headers)))
+
+
 def in_thread(fn, *args):
     """Run a seeding helper beside Playwright's loop (its graphs call asyncio.run); returns its result."""
     out = {}
@@ -93,11 +114,23 @@ class Page:
         self.errors = []
         self.page.on("pageerror", lambda e: self.errors.append(f"pageerror: {e} @ {(e.stack or '').splitlines()[1:3]}"))
         self.page.on("console", lambda m: m.type == "error" and self.errors.append(f"console: {m.text}"))
+        self.page.on("response", lambda r: r.status in (401, 403) and self.errors.append(f"{r.status} {r.url}"))
         self.base = base_url
-        self.page.goto(f"{base_url}/#/client")
+        self.role = None
+        self.as_role("client")
+
+    def as_role(self, role, route=None):
+        """Sign in as the demo account of ``role`` (the session cookie is the context's) and open its home."""
+        r = self.ctx.request.post(f"{self.base}/api/auth/demo", data={"id": ACCOUNTS[role]})
+        assert r.ok, r.text()
+        self.role = role
+        self.page.goto(f"{self.base}/?as={role}{route or '#/' + role}")  # the query makes it a new document
         self.page.wait_for_function("document.querySelector('#nav a') && document.querySelector('#client option')")
 
     def go(self, route):
+        role = route.split("/")[1] if route.startswith("#/") else None
+        if role in ACCOUNTS and role != self.role:
+            self.as_role(role, route)
         ok = self.page.evaluate(
             """(r) => new Promise((done) => {
                  window.addEventListener('mf:page', () => done(true), {once: true});

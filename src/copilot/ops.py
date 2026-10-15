@@ -11,6 +11,7 @@ from control import audit, db, roles
 from copilot import router
 from copilot.scrub import scrub
 from copilot.tools import PAGES, PLANS, TOOLS, USER, Ctx, ToolFailed, allowed
+from people import auth
 
 HELP = {
     "client": [
@@ -42,7 +43,7 @@ def check_request(
     confirm: dict = None,
     goals: list = None,
 ) -> dict:
-    role = str(role or "client")
+    role = auth.role_for(str(role or "client"))
     if role not in USER:
         raise roles.Forbidden(f"vai trò {role!r} không có")
     question = str(question or "").strip()[:500]
@@ -144,7 +145,7 @@ def answer(result: dict, seen: str, router_info: dict, role: str = "client", cli
     """The answer, stamped with its time and written to the audit chain: who asked (the demo user), which tool,
     what came of it, how it was routed and the question as the router saw it (scrubbed)."""
     at = time.time()
-    actor = USER.get(role) or f"client:{client_id or '-'}"
+    actor = auth.acting_id(USER.get(role)) or f"client:{client_id or '-'}"
     with db.tx() as con:
         seq = audit.append(
             con,

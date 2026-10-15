@@ -11,7 +11,7 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0003](ADR-0003-keep-the-capabilities-that-predate-the-brd.md) | Keep the capabilities that predate the BRD | accepted | 2026-10-15 |
 | [ADR-0004](ADR-0004-assumed-factor-model-parameters.md) | Assumed factor-model parameters, labelled “giả định” | accepted | 2026-10-15 |
 | [ADR-0005](ADR-0005-mock-clients-and-prices-public-news.md) | Mock clients and prices, public news, a mock restricted list | accepted | 2026-10-09 (data), 2026-10-15 (news) |
-| [ADR-0006](ADR-0006-the-role-switcher-is-not-security.md) | The role switcher is a demo, not security | accepted | 2026-10-15 |
+| [ADR-0006](ADR-0006-the-role-switcher-is-not-security.md) | The role switcher is a demo, not security | superseded by ADR-0020 | 2026-10-15 |
 | [ADR-0007](ADR-0007-policy-cost-alerts-stay-outside-the-engine.md) | Policy-cost alerts stay outside the scenario engine | accepted (partly implemented) | 2026-10-15 |
 | [ADR-0008](ADR-0008-the-client-sees-asset-classes-only.md) | The client sees effective results at asset-class level only | accepted | 2026-10-15 |
 | [ADR-0009](ADR-0009-ai-barrier-by-graph-inputs-in-one-process.md) | The AI barrier is enforced by graph inputs, in one process | accepted | 2026-10-15 |
@@ -25,3 +25,4 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0017](ADR-0017-goal-impact-rule.md) | Goal impact (FR-404): goals draw on financial assets in date order; levels as in goals planning | accepted | 2026-10-16 |
 | [ADR-0018](ADR-0018-owner-decisions-public-quotes-and-ai-in-the-demo.md) | Owner decisions: BRD quotes stay public; the demo may send client text to the model | accepted | 2026-10-16 |
 | [ADR-0019](ADR-0019-every-page-is-a-module-page.md) | Every page is a module page; the pre-redesign pages are rebuilt and removed | accepted | 2026-10-16 |
+| [ADR-0020](ADR-0020-sign-in-with-own-accounts.md) | Everyone signs in with their own account; the role switcher is gone | accepted | 2026-10-16 |

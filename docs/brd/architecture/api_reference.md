@@ -43,18 +43,31 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
 | `/api/reset` | web (`reset`) | — | — | demo reset |
 
+## Sign-in (`app/web.py`, FEAT-12)
+
+Every `/api/*` path but these needs a session (401 without one); a customer gets 403 on staff routes, anyone gets
+403 on a family they may not see ([ADR-0020](../decisions/ADR-0020-sign-in-with-own-accounts.md)).
+
+| Path | Body / query | Returns |
+|---|---|---|
+| `GET /api/auth/me` | — | `user` (id, name, role, title, `family` for a customer, `families` for an RM) or null; `auth` (sign-in on); `demo_accounts` |
+| `POST /api/auth/login` | `login` (e-mail or id), `password` | `user`, and the session cookie; 401 with one answer for any failure |
+| `POST /api/auth/demo` | `id` | as login, for a listed demo account; 403 unless `MF_DEMO_ACCOUNTS=on` |
+| `POST /api/auth/logout` | — | clears the cookie |
+| `GET /api/auth/accounts` | — | the demo accounts (id, name, role, title, login), empty unless `MF_DEMO_ACCOUNTS=on` |
+
 ## Reads (GET, `app/web.py`)
 
 | Path | Query | Returns | Feature |
 |---|---|---|---|
 | `/healthz` | — | liveness, and each protection on or off (`protections`, `off`) | FEAT-11, 12 |
-| `/api/clients` | — | the sample clients | FEAT-20 |
+| `/api/clients` | — | the families the person signed in may see | FEAT-20, 12 |
 | `/api/agents/catalogue` | `days (1–365, default 7)` | FR-703 catalogue, open-source references, RULE-MEAS-04 quality | FEAT-15 |
 | `/api/config`, `/api/config/{id}` | — | every kind with its version in force, pending proposal and history; one version | FEAT-14 |
 | `/api/scenarios` | — | the scenario catalogue (id, kind, title, question, personas) | FEAT-26 |
-| `/api/review` | `client_id?, status?` | the RM queue | FEAT-27 |
+| `/api/review` | `client_id?, status?` | the RM queue, of the families the person may see | FEAT-27 |
 | `/api/advisory` | `client_id` | a client's specialist team and record (mock) | FEAT-28 |
-| `/api/advisory/all` | — | the record over all clients (mock) | FEAT-28 |
+| `/api/advisory/all` | — | the record over the person's clients (an RM: theirs; mock) | FEAT-28 |
 | `/api/views` | — | house views (mock) | FEAT-25 |
 | `/api/news/inbox` | `source, kind, status (default new), relevance, since, q, held, limit (≤ 1000)` | inbox items and feed health | FEAT-01, 02 |
 | `/api/news/config` | — | white list and restricted list | FEAT-02 |

@@ -13,6 +13,7 @@ from operonx import Operon
 from apply import reads
 from control import roles
 from news import store as news_store
+from people import auth
 from wealth import store as wealth_store
 
 USER = {"client": None, "rm": "rm01", "cio": "cio", "compliance": "compliance"}
@@ -484,7 +485,11 @@ async def review(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     from review.graph import review_flow
 
     out = await _graph(
-        review_flow, item_id=args.get("item_id"), decision=args.get("decision"), note="Qua Copilot", by=USER[ctx.role]
+        review_flow,
+        item_id=args.get("item_id"),
+        decision=args.get("decision"),
+        note="Qua Copilot",
+        by=auth.acting_id(USER[ctx.role]),
     )
     it = out["item"]
     return {

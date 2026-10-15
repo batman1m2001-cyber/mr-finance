@@ -15,6 +15,7 @@ from operonx import op
 
 from apply import reads
 from flows.ops import LABELS
+from people import auth
 from research import ops as research
 from wealth import fixtures
 
@@ -35,7 +36,7 @@ def check_request(client_id: str = None, scope: str = None, role: str = None) ->
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
-    role = role or "client"
+    role = auth.role_for(role or "client")
     if role not in ("client", "rm"):
         raise ValueError("role is client or rm")
     return {"client_id": client_id, "scope": scope or "personal", "role": role}

@@ -2,8 +2,10 @@
    pages (docs/NEWS_IMPACT_PLAN.md §5); every page is a module in pages/ rendered into #page (ADR-0019). The
    address is the route: #/cio/nhan-dinh/VW-0001-v1.
 
-   The role switcher is a demo: it sends a user id with each action and the server checks that id's
-   role. It is not security, and the footer says so. */
+   Everyone signs in with their own account (BRD-RULE-SEC-01, pages/signin.js): the shell then shows only that
+   person's role, and the client picker only the families they may see (a client: none, their own family). The
+   server takes the user from the session, never from the page. Only with sign-in switched off (MF_AUTH=off, a
+   developer's machine) does the old role switcher appear. */
 import {$, $$, esc, failed, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261016r1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
@@ -52,6 +54,14 @@ const ROLES = {
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
     ],
   },
+  admin: {
+    label: "Quản trị", user: "admin",
+    nav: [
+      {id: "cau-hinh", label: "Cấu hình", page: "config"},
+      {id: "agent", label: "Agent", page: "agents"},
+      {id: "nhat-ky", label: "Nhật ký", page: "audit"},
+    ],
+  },
   compliance: {
     label: "Tuân thủ", user: "compliance",
     nav: [
@@ -63,12 +73,12 @@ const ROLES = {
     ],
   },
 };
-const state = {role: "client", users: {}, route: null, seq: 0};
+const state = {role: "client", users: {}, route: null, seq: 0, me: null, auth: false, demo: false};
 const pages = {};
 
 function parse(hash) {
   const parts = (hash || "").replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
-  const role = ROLES[parts[0]] ? parts[0] : (localStore("mf.role") || "client");
+  const role = state.me ? state.me.role : ROLES[parts[0]] ? parts[0] : (localStore("mf.role") || "client");
   const r = ROLES[role];
   const nav = r.nav.find(n => n.id === parts[1]) || r.nav[0];
   let sub = null, param = null;
@@ -108,7 +118,8 @@ let header = null;
 
 function drawChrome(rt) {
   const r = ROLES[rt.role];
-  $("#roles").innerHTML = Object.entries(ROLES).map(([k, v]) =>
+  $(".rolebox").hidden = state.auth;
+  if (!state.auth) $("#roles").innerHTML = Object.entries(ROLES).map(([k, v]) =>
     `<button type="button" data-role="${k}" aria-pressed="${k === rt.role}">${esc(v.label)}</button>`).join("");
   $("#nav").innerHTML = r.nav.map(n =>
     `<a href="#/${rt.role}/${n.id}" ${n === rt.nav ? 'aria-current="page"' : ""}>${esc(n.label)}${n.count ? `<span class="count">${n.count}</span>` : ""}</a>`).join("");
@@ -122,14 +133,23 @@ function drawChrome(rt) {
     sub.innerHTML = "";
   }
   const pick = r.clientPick || rt.nav.clientPick;
-  $("#client-pick").hidden = !pick;
+  $("#client-pick").hidden = !pick || (state.me && state.me.role === "client");
   $("#scope-pick").hidden = !pick;
+  if (state.me) {
+    $("#whoami").innerHTML = `<span class="me"><b>${esc(state.me.name)}</b><span class="me-title">· ${esc(state.me.title || r.label)}</span>
+      <button type="button" class="linkbtn" id="signout">Đăng xuất</button></span>`;
+    $("#signout").onclick = signOut;
+    return;
+  }
   const u = r.user && state.users[r.user];
   $("#whoami").innerHTML = u ? `Đang dùng: <b>${esc(u.name)}</b> · ${esc(u.title)} <span class="badge assumed" title="Không phải cơ chế bảo mật">demo</span>` : "";
 }
 
 async function route() {
+  if (state.auth && !state.me) return signInPage();
   const rt = parse(location.hash);
+  const want = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "";
+  if (state.me && want !== state.me.role) { location.replace(`#/${state.me.role}`); return; }
   state.role = rt.role;
   state.route = rt;
   localStore("mf.role", rt.role);
@@ -166,7 +186,7 @@ function ctx(rt) {
   const r = ROLES[rt.role];
   return {
     role: rt.role,
-    user: r.user,
+    user: state.me ? state.me.id : r.user,
     users: state.users,
     param: rt.param,
     client,
@@ -187,11 +207,14 @@ function theme() {
 }
 
 async function pickers() {
-  const {clients} = await (await fetch("/api/clients")).json();
   const sel = $("#client");
+  // a client sees only themselves (their family through the scope switch): the hidden picker holds just them
+  const {clients} = state.me && state.me.role === "client"
+    ? {clients: [{id: state.me.id, name: state.me.name, persona_hint: state.me.title}]}
+    : await (await fetch("/api/clients")).json();
   sel.innerHTML = clients.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.persona_hint)}</option>`).join("");
   const saved = localStore("mf.client");
-  sel.value = clients.some(c => c.id === saved) ? saved : clients[0].id;
+  sel.value = clients.some(c => c.id === saved) ? saved : (clients[0] || {}).id || "";
   sel.addEventListener("change", () => { localStore("mf.client", sel.value); header.refresh(); route(); });
   for (const b of $$("[data-scope]")) {
     b.addEventListener("click", () => {
@@ -214,8 +237,32 @@ async function reset() {
   location.reload();
 }
 
+function signInPage() {
+  document.body.classList.add("signed-out");
+  $("#nav").innerHTML = "";
+  $("#subnav").hidden = true;
+  $("#whoami").innerHTML = "";
+  const box = document.createElement("div");
+  $("#page").replaceChildren(box);
+  import("./pages/signin.js?v=20261016r5").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
+    .catch(e => { box.innerHTML = failed(e); });
+}
+
+async function signOut() {
+  await fetch("/api/auth/logout", {method: "POST"});
+  try { for (const k of Object.keys(sessionStorage)) if (k.startsWith("mf.")) sessionStorage.removeItem(k); } catch (_) { /* private mode */ }
+  location.hash = "";
+  location.reload();
+}
+
 async function start() {
+  const me = await (await fetch("/api/auth/me")).json().catch(() => ({auth: false}));
+  state.auth = !!me.auth;
+  state.demo = !!me.demo_accounts;
+  state.me = me.user || null;
+  if (state.me && ROLES[state.me.role]) ROLES[state.me.role].user = state.me.id;
   $("#theme").onclick = theme;
+  if (state.auth && !state.me) { $("#reset").hidden = true; signInPage(); return; }
   $("#reset").onclick = reset;
   $("#roles").addEventListener("click", (e) => {
     const b = e.target.closest("[data-role]");
@@ -227,7 +274,8 @@ async function start() {
   mountCopilot();
   await Promise.all([
     pickers(),
-    fetch("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
+    state.me && state.me.role === "client" ? null  // the staff list is staff-only
+      : fetch("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
   ]);
   await route();
 }

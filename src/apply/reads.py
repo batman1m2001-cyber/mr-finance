@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from apply import run as runs
 from control import roles
@@ -79,7 +79,7 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
         "effective_count": len(effective),
     }
     if role == "client":
-        cio = roles.USERS["cio"]
+        cio = roles.users()["cio"]
         out["labels"] = {"note": CLIENT_NOTE, "responsible": f"{cio['name']} — {cio['title']}", "ai": "AI hỗ trợ"}
     return out
 
@@ -118,18 +118,24 @@ def _type_label(event_type: str | None) -> str:
     return labels.get(event_type or "", "Sự kiện thị trường")
 
 
-def rm_today() -> Dict[str, Any]:
-    """The RM's first list (BRD step 7): families flagged for pre-review in effective runs, worst first."""
+def rm_today(families: Optional[List[str]] = None) -> Dict[str, Any]:
+    """The RM's first list (BRD step 7): families flagged for pre-review in effective runs, worst first. With
+    ``families``, only those (an RM sees the families assigned to them, BRD-RULE-ROLE-02)."""
+    keep = None if families is None else set(families)
     cases = []
     for run in runs.runs(statuses=("EFFECTIVE",)):
         ev = events.get(run["event_id"])
         for row in run.get("ranking", []):
-            if row["pre_review"]:
+            if row["pre_review"] and (keep is None or row["family_id"] in keep):
                 cases.append({**row, "run_id": run["id"], "event": {"id": ev["id"], "title": ev["title"]}})
     cases.sort(key=lambda c: (c["p10_3m_pct"], c["family_id"]))
     from research.ops import matches
 
-    tasks = [m for m in matches() if m["level"] in ("contact_now", "confirm_goal", "remind")]
+    tasks = [
+        m
+        for m in matches()
+        if m["level"] in ("contact_now", "confirm_goal", "remind") and (keep is None or m["family_id"] in keep)
+    ]
     from control import config
 
     return {"cases": cases, "threshold_pct": config.data("thresholds")["pre_review_pct"], "goal_tasks": tasks}

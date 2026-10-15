@@ -60,7 +60,7 @@ These rows **cannot be finished inside a demo**, and the plan says so rather tha
 | # | Decision | Why |
 |---|---|---|
 | F-D1 | **Real market data feeds history, estimation and scoring. The demo families keep the mock price snapshot** (ADR-0005). Re-basing the portfolios is a separate owner choice | Real prices would change every demo number (mock FPT 128,000 vs real 58,000) with no requirement asking for it |
-| F-D2 | **Each source is one operonx op behind an adapter** with an ordered fallback, chosen by the new `price_sources` configuration (owner Admin, BRD §13.1). Every stored point records source, URL and fetch time. The suite never touches the network: adapters are tested on recorded responses, plus one live smoke script | The sources are unofficial and can change without notice |
+| F-D2 | **Each outside source is one operonx op in its own scheduled job, behind an adapter** with an ordered fallback, chosen by the new `price_sources` configuration (owner Admin, BRD §13.1). Every stored point records source, URL and fetch time. The suite never touches the network: adapters are tested on recorded responses, plus one live smoke script | The sources are unofficial and can change without notice |
 | F-D3 | **Factors without a free series stay “Giả định”**: RE_SPREAD, FIN_SPREAD, VN_HOUSE. VN_RATE uses the HNX 3-month government spot rate as a labelled **proxy**, because the SBV rate portal does not accept connections from this server | ENG-11 asks for per-factor provenance, which is exactly this. Nothing is invented |
 | F-D4 | **Estimation follows BRD §9.2**: 55 monthly observations and 20 % shrinkage of the correlations toward zero (the identity). The estimated model is **proposed as a new `factor_model` version and approved by a second CIO**, through the same two-person flow as any change | ENG-11, AI-02 and ADR-0016. The model change is itself audited |
 | F-D5 | Accuracy is measured two ways. First, the model's bands against history: for each month, is the realised move inside P10–P90 for each factor and horizon? This needs ≥ 24 observations, which history already gives. Second, each approved view's own bands as their horizons pass. Out-of-sample means estimating on data up to 1/2024 and testing 2/2024–8/2026, as MEAS-08 names | BR-15, MEAS-01, MEAS-02 and MEAS-08, without waiting months for views to mature |
@@ -68,6 +68,7 @@ These rows **cannot be finished inside a demo**, and the plan says so rather tha
 | F-D7 | **The AI zone is a second process** with its own SQLite file, holding only public news, released research and the approved catalogues (ZONE-01, ZONE-06). It reaches TCB through one write-only inbox endpoint that returns an id and no data. Packages are signed with HMAC-SHA256, and a 10-minute import job passes them through the same checks as live mode (ZONE-02, LC-04, SEC-07). Live mode runs as a background job, and the page follows its status (AI-13) | The BRD's architecture, built small |
 | F-D8 | **“Radar chính sách” (Q-09) is our interpretation**: the tracked policy items with their status history (draft → consultation → passed or dropped), what changed since the last look, and the agent's quoted summary of each verified document. It is labelled “đề xuất” until the owner defines it | Resolve rather than defer; the label keeps it honest |
 | F-D9 | **Q-14: the client gets “cách tính” at asset-class level**: the formula, factor moves and the class sums, with no holding names. Staff keep the full trace | NFR-11 and flow 2 together |
+| F-D11 | **SQLite is the only place the app reads data from at request time**: the outside sources through their jobs (F1), the customers and staff from the `people` tables seeded from the JSON files | Owner's re-architecture, 2026-10-16 |
 | F-D10 | Prompts and models become configuration (owner Admin, two people). A proposed change **runs the fixed eval set first** and shows its result on the proposal. Approval is refused when it fails | AI-02 and MEAS-07 |
 
 ## 3. Market data: what was found (probed 2026-10-16)
@@ -97,20 +98,57 @@ Blocked or unusable from here:
 There is one branch and one PR per phase. Each phase updates the BRD docs (feature file, matrix, changelog) and
 passes the suite and the doc checker. Screens get desktop and phone screenshots.
 
-### F1 — Market data ops (theme A, part)
+### F1 — The data layer (theme A, part; owner's re-architecture, 2026-10-16)
 
-Build `src/market/` as one operonx op per data type:
-- `equity_bars`, `fx_rates`, `world_series`, `crypto_bars`, `sjc_gold`, `gov_yields`, `foreign_flow`;
-- plus `factor_series`, which turns raw series into the 15 factors' moves in their units (pct, bp, pp, sd) with
-  the provenance label of each.
+The owner asked for one architecture for data:
+- every outside source is fetched on its own schedule and kept in SQLite;
+- the people (customers with their personal information, and staff of every role) are in SQLite too.
+
+The app reads SQLite, never the outside source or a JSON file, at request time.
+
+**People** (`src/people/`). Tables:
+- `people`: id, kind (staff or client), role, name, email, title, assigned RM, and the record;
+- `client_sources`: what each mock bank, broker, fund or housing system holds for a customer.
+
+The JSON files under `data/clients/` and a new `data/people/staff.json` become **seed files**. They are loaded
+into an empty database and again on demo reset, and are never read at request time. `wealth.fixtures`
+(`client`, `client_ids`, `summary`) and `control.roles` (`user`, `require`, the staff list) read the tables.
+Three RMs (`rm01`–`rm03`) and each customer's assigned RM are added now.
+
+**Sign-in** (pulled forward from F5 by the owner, 2026-10-16: “do the authen login”; ADR-0020). Everyone who acts
+signs in with their own account and sees only their role's pages and the families they may see; the role
+switcher is gone. **Done** in PR “F1 part 1: the people table and sign-in”.
+
+**Outside sources** (`src/market/`, with the news kept in `src/news/`):
+- one operonx op per data type: `equity_bars`, `fx_rates`, `world_series`, `crypto_bars`, `sjc_gold`,
+  `gov_yields`, `foreign_flow`;
+- each in its own graph and `Job`, with a cadence chosen from the source's rate limit and when its data changes:
+
+| Job | Source (fallback) | Cadence | Why |
+|---|---|---|---|
+| `news_ingest` (exists) | 8 white-listed RSS feeds | every 10 min | BRD FR-101 |
+| `market_equity` | VNDirect (Vietcap) | daily 15:45 | HOSE closes at 15:00; daily bars |
+| `market_flows` | cafef | daily 16:00 | end-of-day foreign trading |
+| `market_yields` | HNX curve (worldgovernmentbonds) | daily 17:30 | the curve is published at day end |
+| `market_fx` | Vietcombank (MSN) | hourly | VCB asks for at most one request per 5 min |
+| `market_world` | MSN (FRED, with a key) | hourly | world markets trade around the clock; ~12 requests a run |
+| `market_crypto` | Binance | hourly | far inside Binance's public limit |
+| `market_gold` | PNJ (giavang.org) | hourly | SJC prices move during the day |
 
 Also in this phase:
-- A `market_fetch_flow` graph with a daily `Job`, and `scripts/market_backfill.py` (from 2020-01).
-- A `market_series` table: series, date, value, source, url, fetched_at.
+- Every run of every source is recorded: `source_runs` holds source, started, finished, points, error.
+- A source registry shows each job's cadence, last success and last error. F7 alerts on it.
+- Stored data: `market_series` (series, date, value, source, url, fetched_at). An hourly run updates the day's
+  point.
+- `market_backfill`: an on-demand job (`operonx run market_backfill`) loading history from 2020-01. Sources that
+  answer by date are sampled weekly, the rest daily.
+- `factor_series` turns the stored series into the 15 factors' moves in their units (pct, bp, pp, sd), with each
+  factor's provenance label.
 - New config kinds `price_sources` and `ticker_map` (owner Admin).
-- A read API `/api/market/series` and a staff “Dữ liệu thị trường” view showing coverage, last point, source and
+- A read API `/api/market` and a staff “Dữ liệu thị trường” view: coverage, last point, source, cadence and
   failures.
-- Tests on recorded responses, plus `scripts/market_smoke.py` against the live sources.
+- Tests on synthetic responses in each source's format, plus `scripts/market_smoke.py` against the live
+  sources.
 
 ### F2 — Estimate the model and validate it (A)
 
@@ -146,9 +184,10 @@ Also in this phase:
 
 ### F5 — Identity and access (C)
 
-- Sign-in tokens (F-D6) and an email-to-role mapping.
-- A second RM, `rm02`, and an RM-to-family assignment, which is itself configuration.
-- Every read and write checks role and assignment. A test walks every served route as every role.
+- Done in F1 part 1 (ADR-0020): sign-in tokens (F-D6), accounts by e-mail, three RMs with assigned families, and
+  the checks on reads and writes.
+- Left: the RM-to-family assignment as configuration; a test that walks every served route as every role; a
+  refused `POST` answering 403 instead of 500 (an operonx status mapping).
 - An admin screen with configuration by kind, system status (feeds, agents, jobs, audit-chain check), data
   loading (market backfill) and users.
 

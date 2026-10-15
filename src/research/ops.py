@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 from operonx import op
 
 from control import roles
+from people import auth
 from procedural import goals
 from research import store
 from wealth import fixtures
@@ -40,6 +41,6 @@ def declare_outflow(family_id: str, goal_id: str, purpose: str, by: str, country
 
 def matches(family_id: Optional[str] = None, today: Optional[date] = None) -> List[Dict[str, Any]]:
     """Released regulation notes × active goals (computed on read: deterministic, from what is kept)."""
-    ids = [family_id] if family_id else fixtures.client_ids()
+    ids = [family_id] if family_id else auth.visible(fixtures.client_ids())
     fams = {fid: fixtures.client(fid) for fid in ids}
     return goals.match(store.released_notes(), fams, store.declared(), today or date.today())

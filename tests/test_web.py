@@ -33,4 +33,4 @@ def test_every_page_is_a_module_page():
     assert "legacy" not in shell and 'class="tab"' not in html
     for gone in ("app.js", "app.css", "charts.js", "fmt.js"):
         assert not (WEB / gone).exists() and gone not in html, gone
-    assert "không phải cơ chế bảo mật" in html  # the role switcher says it is a demo
+    assert "Mỗi người đăng nhập bằng tài khoản của mình" in html  # sign-in replaced the role switcher (ADR-0020)

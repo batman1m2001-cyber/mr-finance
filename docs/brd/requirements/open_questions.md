@@ -24,7 +24,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-14 | conflict | NFR-11 “every number has cách tính” vs flow 2 (no tickers to clients) | open |
 | Q-15 | conflict | §13.1 two-person rule: sentence vs ownership table | resolved for the demo (ADR-0016) |
 | Q-16 | gap | Brief: re-asking the risk test on triggers | open |
-| Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | open |
+| Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | resolved (ADR-0020) |
 | Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005) |
 | Q-19 | divergence | The advisory track record is mock and could be read as BR-15 | resolved (labelled; dates fixed) |
 | Q-20 | gap | FR-603 “tab Mục tiêu”: the goal branch is not on the client's Goals/Plan tab | resolved (shown on Kế hoạch) |
@@ -109,6 +109,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-17 — RM sees only their own families
 - **Fact:** BRD-RULE-ROLE-02 and §13.1. The demo has one RM user (`rm01`) and no family assignment; every RM read returns every family. Building it needs an assignment table and a check in each RM read. Planned with FR-701-style configuration; owner: product.
+- **Resolved 2026-10-16:** three RMs sign in with their own accounts and see only the families assigned to them (`people.rm_id`); [ADR-0020](../decisions/ADR-0020-sign-in-with-own-accounts.md).
 
 ### Q-18 — Number of families
 - **Fact:** the BRD's demo has 20 mock families; here 5 clients and 2 spouses (household scope). Ranking and BR-09 work at any count. [ADR-0005](../decisions/ADR-0005-mock-clients-and-prices-public-news.md).

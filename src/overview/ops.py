@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 from operonx import op
 
 from apply import reads
+from people import auth
 from views import schema
 from wealth import fixtures
 
@@ -59,7 +60,7 @@ def check_request(client_id: str = None, scope: str = None, role: str = None, go
     scope = scope or "personal"
     if scope not in ("personal", "family"):
         raise ValueError("scope is personal or family")
-    role = role or "client"
+    role = auth.role_for(role or "client")
     if role not in ("client", "rm"):
         raise ValueError("role is client or rm")
     followed = None if goals is None else [str(g) for g in goals]

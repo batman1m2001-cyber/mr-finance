@@ -11,6 +11,7 @@ import os
 from functools import lru_cache
 
 from starlette.applications import Starlette
+from starlette.datastructures import Headers, QueryParams
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
@@ -26,6 +27,8 @@ from control import roles
 from events import store as events_store
 from news import ops as news_ops
 from news import store as news_store
+from people import auth as people_auth
+from people import store as people_store
 from research import ops as research_ops
 from research import store as research_store
 from scenarios._sim import SCENARIOS
@@ -44,9 +47,23 @@ class Revalidated(StaticFiles):
         return response
 
 
+def viewer(request: Request):
+    """The person signed in (SignInGate), or None when sign-in is off."""
+    return request.scope.get("mf_viewer")
+
+
+def _visible_clients(v) -> list:
+    if v is None or v["role"] in ("cio", "compliance", "admin"):
+        return fixtures.client_ids()
+    if v["role"] == "rm":
+        return [c for c in fixtures.client_ids() if c in v.get("families", [])]
+    return [v["family"]]
+
+
 async def clients(request: Request) -> JSONResponse:
+    """The families the person signed in may see: a client their own, an RM the families assigned to them."""
     out = []
-    for cid in fixtures.client_ids():
+    for cid in _visible_clients(viewer(request)):
         c = fixtures.client(cid)
         out.append(
             {
@@ -95,7 +112,14 @@ async def healthz(request: Request) -> JSONResponse:
             "on": True,
             "note": f"Copilot định tuyến bằng {router_by}; mô hình không đọc dữ liệu khách",
         },
-        {"id": "sign_in", "on": False, "note": "Không có đăng nhập: bộ chuyển vai trò chỉ để demo (ADR-0006)"},
+        {
+            "id": "sign_in",
+            "on": people_auth.enabled(),
+            "note": (
+                "Đăng nhập bắt buộc; phiên ký HMAC" if people_auth.enabled() else "Đăng nhập đang tắt (MF_AUTH=off)"
+            )
+            + ("; danh sách tài khoản demo đang mở (MF_DEMO_ACCOUNTS)" if people_auth.demo_accounts_on() else ""),
+        },
     ]
     return JSONResponse({"ok": True, "protections": protections, "off": [p["id"] for p in protections if not p["on"]]})
 
@@ -115,7 +139,10 @@ async def reviews(request: Request) -> JSONResponse:
     """The RM queue (newest first), for one client or all, by status."""
     q = request.query_params
     rows = store.reviews(client_id=q.get("client_id") or None, status=q.get("status") or None)
-    names = {cid: fixtures.client(cid)["name"] for cid in fixtures.client_ids(members=True)}
+    mine = set(_visible_clients(viewer(request)))
+    heads = {cid: fixtures.client(cid).get("member_of") or cid for cid in fixtures.client_ids(members=True)}
+    rows = [r for r in rows if heads.get(r["client_id"], r["client_id"]) in mine]
+    names = {cid: fixtures.client(cid)["name"] for cid in heads}
     return JSONResponse({"items": [{**r, "client_name": names.get(r["client_id"], r["client_id"])} for r in rows]})
 
 
@@ -125,11 +152,12 @@ def _advisory() -> dict:
 
 
 async def advisory(request: Request) -> JSONResponse:
-    """A client's specialist team and advisory track record (data/advisory.json, mock), with the
+    """A client's team (the people table) and advisory track record (data/advisory.json, mock), with the
     risk test they took in the demo, if any, as the last point of their risk-appetite history."""
     cid = request.query_params.get("client_id") or ""
     data = _advisory()
-    if cid not in data["team"]:
+    team = people_store.team(cid)
+    if team is None or cid not in data["tracking"]:
         return JSONResponse({"error": f"no client {cid!r}"}, status_code=404)
     track = json.loads(json.dumps(data["tracking"][cid]))
     test = store.result(cid, "risk")
@@ -143,14 +171,15 @@ async def advisory(request: Request) -> JSONResponse:
                 "live": True,
             }
         )
-    return JSONResponse({"team": data["team"][cid], "tracking": track, "as_of": data["as_of"], "note": data["note"]})
+    return JSONResponse({"team": team, "tracking": track, "as_of": data["as_of"], "note": data["note"]})
 
 
 async def advisory_all(request: Request) -> JSONResponse:
     """The advisory track record over every client (data/advisory.json, mock): the totals, each AI's
     average score and trend, one row per client, the latest advice and the news missed for anyone."""
     data = _advisory()
-    tracks = data["tracking"]
+    mine = set(_visible_clients(viewer(request)))
+    tracks = {cid: t for cid, t in data["tracking"].items() if cid in mine}
     names = {cid: fixtures.client(cid)["name"] for cid in tracks}
     keys = next(iter(tracks.values()))["summary"].keys()
     summary = {k: sum(t["summary"][k] for t in tracks.values()) for k in keys}
@@ -295,7 +324,7 @@ async def agents_status(request: Request) -> JSONResponse:
     return JSONResponse(
         {
             **view_ops.agent_status(),
-            "users": [{"id": k, **v} for k, v in roles.USERS.items()],
+            "users": [{"id": k, **v} for k, v in roles.users().items()],
             "note": "Bộ chuyển vai trò chỉ để demo, không phải cơ chế bảo mật.",
         }
     )
@@ -305,7 +334,7 @@ async def config_list(request: Request) -> JSONResponse:
     """FR-701: every kind of configuration, its version in force, a pending proposal, the history."""
     from control import config
 
-    return JSONResponse({"kinds": config.overview(), "users": [{"id": k, **v} for k, v in roles.USERS.items()]})
+    return JSONResponse({"kinds": config.overview(), "users": [{"id": k, **v} for k, v in roles.users().items()]})
 
 
 async def config_version(request: Request) -> JSONResponse:
@@ -362,7 +391,7 @@ async def run_verify(request: Request) -> JSONResponse:
 
 
 async def family_impact(request: Request) -> JSONResponse:
-    role = request.query_params.get("role") or "client"
+    role = _role_view(request)
     try:
         return JSONResponse(apply_reads.family_impact(request.path_params["family_id"], role))
     except roles.Forbidden as exc:
@@ -374,9 +403,7 @@ async def family_graph(request: Request) -> JSONResponse:
     q = request.query_params
     try:
         return JSONResponse(
-            impact_graph.family_graph(
-                request.path_params["family_id"], q.get("role") or "client", q.get("run_id") or None
-            )
+            impact_graph.family_graph(request.path_params["family_id"], _role_view(request), q.get("run_id") or None)
         )
     except roles.Forbidden as exc:
         return JSONResponse({"error": str(exc)}, status_code=403)
@@ -399,7 +426,8 @@ async def trace(request: Request) -> JSONResponse:
 
 
 async def rm_today(request: Request) -> JSONResponse:
-    return JSONResponse(apply_reads.rm_today())
+    v = viewer(request)
+    return JSONResponse(apply_reads.rm_today(v.get("families") if v else None))
 
 
 async def audit_verify(request: Request) -> JSONResponse:
@@ -553,11 +581,156 @@ async def reset(request: Request) -> JSONResponse:
     store.reset()
     news_store.reset()
     control_db.reset()
+    people_store.reset()
+    people_auth.reset()
     return JSONResponse({"reset": True})
+
+
+def _role_view(request: Request) -> str:
+    """Which view of a family's impact: ``?role=`` for staff; a client always gets the client view (ADR-0008)."""
+    v = viewer(request)
+    if v is not None and v["role"] == "client":
+        return "client"
+    return request.query_params.get("role") or "client"
+
+
+# -- sign-in (BRD-RULE-SEC-01; src/people/auth.py) --------------------------------------------------
+
+
+def _cookie(request: Request, response: JSONResponse, token: str) -> JSONResponse:
+    https = request.url.scheme == "https" or request.headers.get("x-forwarded-proto") == "https"
+    response.set_cookie(
+        people_auth.COOKIE, token, max_age=people_auth.TTL, httponly=True, samesite="lax", secure=https, path="/"
+    )
+    return response
+
+
+def _audit_sign_in(person_id: str, how: str) -> None:
+    with control_db.tx() as con:
+        control_audit.append(con, person_id, "auth.sign_in", person_id, {"how": how})
+
+
+async def auth_me(request: Request) -> JSONResponse:
+    """Who is signed in (``user`` null when nobody), and whether the sign-in page may list demo accounts."""
+    on = people_auth.enabled()
+    v = people_auth.from_cookie_header(request.headers.get("cookie")) if on else None
+    return JSONResponse({"user": v, "auth": on, "demo_accounts": on and people_auth.demo_accounts_on()})
+
+
+async def auth_accounts(request: Request) -> JSONResponse:
+    """The demo accounts the sign-in page lists, only while MF_DEMO_ACCOUNTS is on."""
+    if not people_auth.demo_accounts_on():
+        return JSONResponse({"accounts": []})
+    rows = [a for a in people_auth.accounts()]
+    return JSONResponse(
+        {"accounts": [{k: a[k] for k in ("id", "name", "role", "title", "member_of", "login")} for a in rows]}
+    )
+
+
+async def _json(request: Request) -> dict:
+    try:
+        body = await request.json()
+    except ValueError:
+        return {}
+    return body if isinstance(body, dict) else {}
+
+
+async def auth_login(request: Request) -> JSONResponse:
+    import asyncio
+
+    body = await _json(request)
+    token = people_auth.login(str(body.get("login") or ""), str(body.get("password") or ""))
+    if token is None:
+        await asyncio.sleep(0.4)  # slows guessing; the answer is the same for an unknown login
+        return JSONResponse({"error": "Sai tên đăng nhập hoặc mật khẩu"}, status_code=401)
+    v = people_auth.verify(token)
+    _audit_sign_in(v["id"], "password")
+    return _cookie(request, JSONResponse({"user": v}), token)
+
+
+async def auth_demo(request: Request) -> JSONResponse:
+    body = await _json(request)
+    token = people_auth.demo_login(str(body.get("id") or ""))
+    if token is None:
+        return JSONResponse({"error": "Tài khoản demo không mở"}, status_code=403)
+    v = people_auth.verify(token)
+    _audit_sign_in(v["id"], "demo")
+    return _cookie(request, JSONResponse({"user": v}), token)
+
+
+async def auth_logout(request: Request) -> JSONResponse:
+    response = JSONResponse({"signed_out": True})
+    response.delete_cookie(people_auth.COOKIE, path="/")
+    return response
+
+
+# what a customer may not open, and what only an RM opens
+STAFF_ONLY = (
+    "/api/advisory/all",
+    "/api/news",
+    "/api/model",
+    "/api/events",
+    "/api/agents",
+    "/api/config",
+    "/api/runs",
+    "/api/audit",
+    "/api/research",
+    "/api/rm/",
+    "/api/trace/",
+)
+OPEN = ("/healthz", "/api/auth/")
+
+
+def _deny(status: int, message: str) -> JSONResponse:
+    return JSONResponse({"error": message, "sign_in": status == 401}, status_code=status)
+
+
+def _family_of(path: str, query: QueryParams):
+    parts = path.split("/")
+    if path.startswith("/api/families/") and len(parts) > 3:
+        return parts[3]
+    if path.startswith("/api/trace/") and len(parts) > 4:
+        return parts[4]
+    return query.get("client_id") or query.get("family_id") or None
+
+
+class SignInGate:
+    """Every /api/ read needs a session (sign-in on): a customer never opens a staff read, only an RM opens the RM
+    reads, and a family's data opens only for whoever may see it (people.auth.may_see)."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        path = scope.get("path", "")
+        if (
+            scope["type"] != "http"
+            or not path.startswith("/api/")
+            or path.startswith(OPEN)
+            or not people_auth.enabled()
+        ):
+            return await self.app(scope, receive, send)
+        v = people_auth.from_cookie_header(Headers(scope=scope).get("cookie"))
+        if v is None:
+            return await _deny(401, "Cần đăng nhập")(scope, receive, send)
+        if v["role"] == "client" and path.startswith(STAFF_ONLY):
+            return await _deny(403, "Trang này dành cho nhân viên")(scope, receive, send)
+        if path.startswith("/api/rm/") and v["role"] != "rm":
+            return await _deny(403, "Trang này dành cho RM")(scope, receive, send)
+        fam = _family_of(path, QueryParams(scope.get("query_string", b"")))
+        if fam and not people_auth.may_see(v, fam):
+            return await _deny(403, f"{v['name']} không được xem dữ liệu của khách hàng này")(scope, receive, send)
+        scope["mf_viewer"] = v
+        return await self.app(scope, receive, send)
 
 
 app = Starlette(
     routes=[
+        Route("/api/auth/me", auth_me),
+        Route("/api/auth/accounts", auth_accounts),
+        Route("/api/auth/login", auth_login, methods=["POST"]),
+        Route("/api/auth/demo", auth_demo, methods=["POST"]),
+        Route("/api/auth/logout", auth_logout, methods=["POST"]),
         Route("/healthz", healthz),
         Route("/api/clients", clients),
         Route("/api/scenarios", scenarios),
@@ -594,3 +767,4 @@ app = Starlette(
         Mount("/", app=Revalidated(directory=ROOT / "web", html=True), name="web"),
     ]
 )
+app = SignInGate(app)

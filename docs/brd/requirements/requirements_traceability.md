@@ -14,7 +14,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 |---|---|---|---|---|---|---|---|---|---|
 | BRD numbered (BR, FR, NFR) | 61 | 45 | 4 | 9 | 2 | 0 | 1 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
-| BRD rules (RULE) | 97 | 61 | 5 | 12 | 2 | 3 | 2 | 10 | 2 |
+| BRD rules (RULE) | 97 | 63 | 5 | 12 | 2 | 2 | 2 | 9 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -113,9 +113,9 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-SCOPE-04 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_proxies_are_labelled_and_cash_has_no_load` | Property by a house-price proxy, labelled |
 | BRD-RULE-SCOPE-05 | FEAT-13 | not_applicable | — | Nothing is sent; the client view exists in-app (ADR-0008, Q-21) |
 | BRD-RULE-ROLE-01 | FEAT-12 | implemented_verified | `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides` | |
-| BRD-RULE-ROLE-02 | FEAT-12, 13 | partially_implemented | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective` | Post-checked only: yes; own families only: no (Q-17) |
+| BRD-RULE-ROLE-02 | FEAT-12, 13 | implemented_verified | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`, `tests/test_auth.py::test_an_rm_sees_only_the_families_assigned_to_them`, `tests/test_auth.py::test_lists_over_every_family_show_only_the_families_the_person_may_see` | Post-checked only; own families only (people.rm_id, ADR-0020) |
 | BRD-RULE-ROLE-03 | FEAT-12 | implemented_verified | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`, `tests/test_news.py::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it` | Research release and restricted-list release both Compliance only |
-| BRD-RULE-ROLE-04 | FEAT-12 | not_implemented | — | `admin` user exists; no admin screen or rights |
+| BRD-RULE-ROLE-04 | FEAT-12 | partially_implemented | `tests/ui/test_routes.py::test_every_route_renders_without_errors` | Admin signs in and sees configuration, agents and the audit log; sources and data-loading screens are F5 |
 | BRD-RULE-ROLE-05 | — | out_of_scope_demo | — | Later phase in the BRD |
 | BRD-RULE-ROLE-06 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | Demo client view |
 | BRD-RULE-WF-01 | FEAT-01 | implemented_unverified | live demo first fetch 2 s | Schedule not asserted |
@@ -182,8 +182,8 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-LC-02 | FEAT-08 | implemented_verified | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`, `tests/test_apply.py::test_recompute_makes_a_new_run_and_supersedes_the_old` | |
 | BRD-RULE-LC-03 | FEAT-03 | implemented_verified | `tests/test_research.py::test_a_report_naming_the_restricted_list_is_not_released` | |
 | BRD-RULE-LC-04 | FEAT-19 | planned | — | News plan N5 |
-| BRD-RULE-SEC-01 | FEAT-12 | out_of_scope_demo | — | ADR-0006 |
-| BRD-RULE-SEC-02 | FEAT-12 | partially_implemented | `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides` | News-impact writes all checked; the RM decision checked (DEF-02); other pre-BRD services and all reads unchecked |
+| BRD-RULE-SEC-01 | FEAT-12 | implemented_verified | `tests/test_auth.py::test_a_session_is_signed_and_expires`, `tests/test_auth.py::test_nothing_under_api_opens_without_a_session`, `tests/ui/test_signin.py::test_sign_in_with_the_form_and_with_a_demo_account_then_sign_out` | Own accounts, signed session (ADR-0020); a bank swaps the form for SSO |
+| BRD-RULE-SEC-02 | FEAT-12 | partially_implemented | `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides`, `tests/test_auth.py::test_a_customer_sees_only_their_own_family`, `tests/test_auth.py::test_nobody_acts_in_someone_elses_name` | Every read checks the session, role and family (ADR-0020); writes check the acting person; a refused `POST` answers 500, not 403 |
 | BRD-RULE-SEC-03 | FEAT-13, 28 | implemented_unverified | — | “Nội bộ” on the advisory pages and, since 2026-10-16, on the staff views of impact, trace, graph, Toàn cảnh and Hôm nay; browser-checked |
 | BRD-RULE-SEC-04 | FEAT-03, 14 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`, `tests/test_config.py::test_a_proposal_changes_nothing_until_a_second_owner_approves_it` | Research SoD and the configuration two-person rule (factor model, thresholds, restricted list; ADR-0016); newsletter (not built) and prompts/models (not configuration) not covered |
 | BRD-RULE-SEC-05 | FEAT-14 | partially_implemented | `tests/test_config.py::test_wrong_owner_wrong_content_and_a_second_pending_are_refused`, `tests/test_config.py::test_one_person_kinds_and_rejection` | Owners enforced: CIO (factor model, thresholds), Compliance (restricted list), Admin (news sources); return assumptions, forbidden phrases, consent, prompts, models, price sources, ticker mapping not yet configuration |
