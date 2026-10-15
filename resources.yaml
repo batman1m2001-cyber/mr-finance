@@ -23,3 +23,11 @@ llm:challenger:
   api_key: ${LLM_API_KEY:not-set}
   base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL_CHALLENGER:not-set}
+
+# The Copilot's router (redesign kit K5, ADR-0012): sees only the scrubbed question, the page and the tool
+# catalogue, and picks a tool. Unset: the keyword router runs instead, labelled as a mock.
+llm:copilot:
+  api_type: openai
+  api_key: ${LLM_API_KEY:not-set}
+  base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
+  model: ${LLM_MODEL_COPILOT:not-set}

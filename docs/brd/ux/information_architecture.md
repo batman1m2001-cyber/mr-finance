@@ -56,6 +56,7 @@ the client and inside the RM's “Khách hàng” section (staff view).
 | Capability | Feature | Client | RM | CIO | Compliance |
 |---|---|---|---|---|---|
 | News → goal graph | FEAT-30 | Tin tác động → Đồ thị tác động | Khách hàng → Đồ thị tác động | — | — |
+| Ask / act / navigate (Copilot) | FEAT-32 | ✦ panel on every page | ✦ panel | ✦ panel | ✦ panel |
 | What matters now (feed) | FEAT-31 | Tổng quan → Toàn cảnh | Khách hàng → Toàn cảnh | — | — |
 | Pulse, Wealth Map, Money Flow | FEAT-29 | Tổng quan → Toàn cảnh | Khách hàng → Toàn cảnh | — | — |
 | Net worth, allocation, P&L, risk, liquidity, cash flow | FEAT-21 | Tổng quan → Chi tiết | Khách hàng → Chi tiết | — | — |
@@ -83,4 +84,4 @@ legacy “RM duyệt” tab only to the client's “Chuyên gia”) and the serv
 Khách hàng → **Duyệt đề xuất** (SCR-RM-06), the server requires role `rm`, and the client sees the queue read-only.
 
 Capabilities with **no UI entry**: the scheduled news fetch (FEAT-01, a job), the agent catalogue (FEAT-15, API
-only), the statement-reading eval (CLI). Not built: FEAT-16…19, FEAT-32.
+only), the statement-reading eval (CLI). Not built: FEAT-16…19.

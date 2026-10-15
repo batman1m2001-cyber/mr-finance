@@ -3,6 +3,7 @@
 POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──► the dashboard
 POST /api/flows     {client_id, scope?, month?} ──► flows_flow ──► a month's money in → out, with the rows
 POST /api/feed      {client_id, scope?, role?} ──► feed_flow ──► what matters now, why, and its evidence
+POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ──► copilot_flow ──► a templated answer
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
@@ -35,6 +36,7 @@ from operonx.app.jobs import Job
 
 from app import web
 from apply.graph import recompute_flow, run_decide_flow
+from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
 from events.graph import event_flow
@@ -74,6 +76,12 @@ APP = Application(
             http("POST", "/api/feed", port=PORT),
             graph=feed_flow,
             description="POST {client_id, scope, role: client|rm}: the Intelligence Feed, with why and evidence.",
+        ),
+        Service(
+            "copilot",
+            http("POST", "/api/copilot", port=PORT),
+            graph=copilot_flow,
+            description="POST {question, role, client_id, scope, route, confirm}: the Copilot (routes, never reads).",
         ),
         Service(
             "statement",

@@ -15,6 +15,7 @@ row: a replaced screen is marked `replaced by SCR-…` and keeps its capabilitie
 | [SCR-CL-07](screens/client.md#scr-cl-07--chuyên-gia-specialist-team) | Chuyên gia | client `#/client/chuyen-gia` | legacy | FEAT-28, 27 | BRIEF-FLOW-02 | current (queue read-only) | [d](../assets/current_ui/SCR-CL-07_desktop-light.jpg) |
 | [SCR-CL-08](screens/client.md#scr-cl-08--toàn-cảnh-pulse-wealth-map-money-flow) | Tổng quan → Toàn cảnh | client `#/client/tong-quan/toan-canh`; RM `…/khach-hang/toan-canh` | new | FEAT-29, 31 | KIT-UX-01…03, 05 | current | [d](../assets/current_ui/SCR-CL-08_desktop-light.jpg) [p](../assets/current_ui/SCR-CL-08_phone-light.jpg) [dark](../assets/current_ui/SCR-CL-08_desktop-dark.jpg) |
 | [SCR-CL-09](screens/client.md#scr-cl-09--đồ-thị-tác-động-intelligence-graph) | Đồ thị tác động | client `#/client/tin/do-thi`; RM `…/khach-hang/do-thi` | new | FEAT-30 | KIT-UX-04 | current | [d](../assets/current_ui/SCR-CL-09_desktop-light.jpg) [p](../assets/current_ui/SCR-CL-09_phone-light.jpg) [dark](../assets/current_ui/SCR-CL-09_desktop-dark.jpg) |
+| [SCR-CL-10](screens/client.md#scr-cl-10--onewealth-copilot-panel-all-roles) | Copilot panel | every role, every page | new | FEAT-32 | KIT-COPILOT-01…05 | current | [d](../assets/current_ui/SCR-CL-10_desktop-light.jpg) [rm](../assets/current_ui/SCR-CL-10_desktop-light-rm.jpg) [p](../assets/current_ui/SCR-CL-10_phone-light.jpg) |
 | [SCR-RM-01](screens/rm.md#scr-rm-01--hôm-nay-today) | Hôm nay | RM `#/rm/hom-nay` | new | FEAT-13, 10 | BR-09, FR-503, FR-603 | current | [d](../assets/current_ui/SCR-RM-01_desktop-light.jpg) [p](../assets/current_ui/SCR-RM-01_phone-light.jpg) |
 | [SCR-RM-02](screens/rm.md#scr-rm-02--tác-động-tin-family-impact-staff) | Tác động tin | RM `#/rm/khach-hang/tac-dong` | new | FEAT-13, 09, 10 | BR-12, FR-404, FR-406, FR-601 | current | [d](../assets/current_ui/SCR-RM-02_desktop-light.jpg) [p](../assets/current_ui/SCR-RM-02_phone-light.jpg) |
 | [SCR-RM-03](screens/rm.md#scr-rm-03--cách-tính-trace-drawer) | Cách tính (drawer) | from SCR-RM-02 | new | FEAT-09 | BR-12, FR-406 | current | [d](../assets/current_ui/SCR-RM-03_desktop-light.jpg) |
@@ -34,7 +35,7 @@ row: a replaced screen is marked `replaced by SCR-…` and keeps its capabilitie
 | SCR-PRO-01 | Financial Pulse / Wealth Map / Money Flow | client, RM | — | FEAT-29 | KIT-UX-01…03 | replaced by SCR-CL-08 (built 2026-10-16) | concept [KIT-01](../assets/proposed_ui/KIT-01_concept-board_illustrative.png) |
 | SCR-PRO-02 | Financial Intelligence Graph | client, RM, CIO | — | FEAT-30 | KIT-UX-04 | replaced by SCR-CL-09 (built 2026-10-16; CIO run view not built) | concept KIT-01 |
 | SCR-PRO-03 | Intelligence Feed | client, RM | — | FEAT-31 | KIT-UX-05 | replaced by a panel of SCR-CL-08 (built 2026-10-16) | concept KIT-01 |
-| SCR-PRO-04 | Copilot panel | all | — | FEAT-32 | KIT-COPILOT-* | proposed (K5) | concept KIT-01 |
+| SCR-PRO-04 | Copilot panel | all | — | FEAT-32 | KIT-COPILOT-* | replaced by SCR-CL-10 (built 2026-10-16) | concept KIT-01 |
 
 Screens of **BRD capabilities not built** (no row yet): agent catalogue (FEAT-15), policy agent (FEAT-16), CIO
 newsletter (FEAT-17), accuracy (FEAT-18), configuration editor (FEAT-14).

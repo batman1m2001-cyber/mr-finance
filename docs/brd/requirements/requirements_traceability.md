@@ -16,7 +16,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
 | BRD rules (RULE) | 97 | 59 | 4 | 12 | 3 | 5 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Redesign kit (KIT) | 19 | 3 | 2 | 0 | 7 | 0 | 0 | 0 | 7 |
+| Redesign kit (KIT) | 19 | 6 | 3 | 1 | 2 | 0 | 0 | 0 | 7 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -249,11 +249,11 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | KIT-UX-05 | FEAT-31 | implemented_verified | `tests/test_feed.py::test_a_news_impact_shows_with_its_run_and_its_reason`, `tests/test_feed.py::test_thresholds_and_a_spending_jump_carry_their_numbers`, `tests/test_feed.py::test_the_client_reads_the_event_type_not_the_headline` — on SCR-CL-08 (built 2026-10-16) |
 | KIT-UX-06 | FEAT-29…32 | planned | Every K phase; the skeleton already respects reduced motion |
 | KIT-UX-07 | all | planned | Every K phase |
-| KIT-COPILOT-01 | FEAT-32 | planned | K5 |
-| KIT-COPILOT-02 | FEAT-32 | planned | K5, under ADR-0012 |
-| KIT-COPILOT-03 | FEAT-32 | planned | K5 |
-| KIT-COPILOT-04 | FEAT-32 | planned | K5 |
-| KIT-COPILOT-05 | FEAT-32 | planned | K5 |
+| KIT-COPILOT-01 | FEAT-32 | implemented_unverified | Floating button and side panel on every page with page context (SCR-CL-10, built 2026-10-16); checked by screenshots and a driven browser run, no automated UI test |
+| KIT-COPILOT-02 | FEAT-32 | partially_implemented | Ask (11 tools), Act (2 writes, confirmed), Navigate, Continue (tab session) built; Investigate/Analyze only through existing reads; under ADR-0012 the model reads no data |
+| KIT-COPILOT-03 | FEAT-32 | implemented_verified | `tests/test_copilot.py::test_no_write_without_confirm_and_the_result_is_the_real_one`, `tests/test_copilot.py::test_a_client_cannot_run_a_cio_tool_even_by_confirm` — typed catalogue, role check, confirm, server checks unchanged |
+| KIT-COPILOT-04 | FEAT-32 | implemented_verified | `tests/test_copilot.py::test_the_router_prompt_carries_no_name_number_or_code`, `tests/test_copilot.py::test_the_live_router_receives_only_the_scrubbed_question` — the router gets no news, record or client data; reads are role-filtered |
+| KIT-COPILOT-05 | FEAT-32 | implemented_verified | `tests/test_copilot.py::test_a_failing_tool_is_reported_as_failed_and_unknown_questions_get_help`, `tests/test_copilot.py::test_an_answer_outside_the_catalogue_falls_back_to_keywords_said_so` |
 | KIT-COPILOT-06 | FEAT-32 | not_applicable | A test requirement; part of KIT-COPILOT-01…05's gates |
 | KIT-DOC-01 | — | not_applicable | Met by this repository (requirements/ + this matrix) |
 | KIT-DOC-02 | — | not_applicable | Met: brief_requirements.md, FEAT-20…28 |

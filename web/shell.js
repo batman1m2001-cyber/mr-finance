@@ -5,6 +5,7 @@
    The role switcher is a demo: it sends a user id with each action and the server checks that id's
    role. It is not security, and the footer says so. */
 import {$, $$, esc, failed, loading} from "./core/core.js";
+import {mount as mountCopilot} from "./copilot.js?v=20261016d";
 
 const ROLES = {
   client: {
@@ -136,7 +137,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016c`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016d`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {
@@ -189,6 +190,7 @@ async function start() {
   $("#client").addEventListener("change", () => { if (!$("#page-new").hidden) route(); });
   for (const b of $$("[data-scope]")) b.addEventListener("click", () => { if (!$("#page-new").hidden) setTimeout(route); });
   window.addEventListener("hashchange", route);
+  mountCopilot();
   try {
     const a = await (await fetch("/api/agents")).json();
     for (const u of a.users || []) state.users[u.id] = u;

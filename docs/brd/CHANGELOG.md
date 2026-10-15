@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Kit K5 built: OneWealth Copilot (SCR-CL-10; `POST /api/copilot`; scrubber, keyword and `llm:copilot`
+  routers, 11 tools, confirm for writes) — FEAT-32, ADR-0012 status, matrix (KIT-COPILOT-01…05), client.md,
+  inventory, IA, api_reference, 3 screenshots.
+
 - 2026-10-16 — Kit K4 built: Intelligence Feed (“Điều đáng chú ý” on SCR-CL-08; `POST /api/feed`) — FEAT-31,
   matrix (KIT-UX-05), client.md, inventory, IA, api_reference, SCR-CL-08 screenshots retaken.
 

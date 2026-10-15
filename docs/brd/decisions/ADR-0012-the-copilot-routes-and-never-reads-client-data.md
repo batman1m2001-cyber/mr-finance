@@ -1,6 +1,6 @@
 # ADR-0012 — The Copilot routes; it never reads client data
 
-- **Status:** accepted (planned)
+- **Status:** accepted; implemented 2026-10-16 (FEAT-32), stricter on one point: no entity id reaches the model
 - **Date:** 2026-10-15
 - **Sources:** docs/REDESIGN_KIT_PLAN.md D1–D3; Q-06
 
