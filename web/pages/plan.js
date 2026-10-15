@@ -63,7 +63,9 @@ export async function render(box, ctx) {
     <div class="plangrid mt"><div class="panel" id="list"></div><div id="panel"></div></div>`;
 
   const sentTag = (key) => {
-    const item = st.sent[key] && queue.find(x => x.id === st.sent[key]);
+    // what this page sent, else the newest queue item for the same option (sent before a reload or a new sign-in)
+    const item = (st.sent[key] && queue.find(x => x.id === st.sent[key]))
+      || queue.find(x => x.client_id === client && x.data && `${x.data.scenario}:${x.data.option?.title}` === key);
     if (!item) return "";
     const [cls, text] = QUEUE[item.status] || QUEUE.pending;
     return `<span class="pill ${cls}">${text}</span>`;

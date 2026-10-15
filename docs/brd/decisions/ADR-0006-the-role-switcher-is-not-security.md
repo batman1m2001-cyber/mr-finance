@@ -1,6 +1,6 @@
 # ADR-0006 — The role switcher is a demo, not security
 
-- **Status:** accepted
+- **Status:** superseded by [ADR-0020](ADR-0020-sign-in-with-own-accounts.md) (2026-10-16)
 - **Date:** 2026-10-15
 - **Sources:** docs/NEWS_IMPACT_PLAN.md A3
 

@@ -12,7 +12,7 @@ import unicodedata
 from functools import lru_cache
 from typing import List
 
-from wealth import fixtures
+from people import store
 
 NUM = re.compile(r"\d[\d.,/:\-]*")
 CODE = re.compile(r"\b[A-ZĐ][A-ZĐ0-9]{1,}\b")
@@ -27,8 +27,8 @@ def fold(s: str) -> str:
 def names() -> List[str]:
     """Every person in the fixtures: full names and their last two words, longest first."""
     out = set()
-    for cid in fixtures.client_ids(members=True):
-        c = fixtures.client(cid)
+    for cid in store.client_ids(members=True):  # names only, for removing them: not a read of anyone's data
+        c = store.client(cid)
         people = [c["name"]] + [d["name"] for d in c.get("dependents") or []]
         for n in people:
             out.add(n)

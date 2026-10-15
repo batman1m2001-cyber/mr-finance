@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Sign-in and the people table (BRD completion F1, first half): every person (customers, household
+  members, dependents, RMs, CIOs, Compliance, Admin, specialists) is a row in SQLite; everyone who acts signs in
+  with their own account (scrypt password, signed HttpOnly session) and sees only their role's pages and the
+  families they may see; three RMs with assigned families; the role switcher is gone; demo accounts listed with
+  `MF_DEMO_ACCOUNTS=on` — FEAT-12, ADR-0020 (supersedes ADR-0006), matrix (SEC-01, ROLE-02 verified; SEC-02,
+  ROLE-04 partial), Q-17 resolved, api_reference, screen inventory.
+
 - 2026-10-16 — UI redesign R7: regression — every route of every role on desktop and phone, light and dark, in the
   suite (254 tests); Living Interface re-measured (rest unchanged, one question 170 ms, JS 62 KB from 135 KB); an
   approved view's checklist no longer shows “Đang chờ duyệt” as failed; final report `docs/UI_REDESIGN_REPORT.md`

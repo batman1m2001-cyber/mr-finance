@@ -3,17 +3,9 @@ the risk test goes back and forth and sets the drawdown limit the dashboard uses
 hoạch is approved by the RM and the client sees the note, the policy filter keeps one side, and a row of the
 all-clients performance opens that client."""
 
-import json
-import urllib.request
 
-from conftest import in_thread
+from conftest import api, in_thread
 from test_apply import MARKET, approved
-
-
-def api(base, path, body=None):
-    data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request(base + path, data=data, headers={"content-type": "application/json"})
-    return json.load(urllib.request.urlopen(req))
 
 
 def test_a_statement_and_a_declaration_reach_the_book(open_page):
@@ -145,7 +137,7 @@ def test_the_timeline_the_news_impact_card_and_the_cio_run_graph(open_page, base
     in_thread(approved, *MARKET)
     p = open_page()
     p.go("#/client/tin/thi-truong")
-    items = json.load(urllib.request.urlopen(base_url + "/api/families/C01/impact?role=client"))["items"]
+    items = api(base_url, "/api/families/C01/impact?role=client")["items"]
     assert p.page.locator("#timeline .trow").count() == len(items)
     assert p.page.locator("#timeline .tstep").count() == sum(len(i["timeline"]) for i in items)
     p.go("#/client/tin/do-thi")

@@ -1,17 +1,8 @@
 """Toàn cảnh in the board's look (UI redesign R2): every figure comes from an API field, the small charts carry the
 same numbers, a picked band sends flow dots that respect reduced motion and a hidden tab, and nothing is lost."""
 
-import json
-import urllib.request
-
-from conftest import in_thread
+from conftest import api, in_thread
 from test_apply import MARKET, approved
-
-
-def api(base, path, body):
-    headers = {"content-type": "application/json"}
-    req = urllib.request.Request(base + path, data=json.dumps(body).encode(), headers=headers)
-    return json.load(urllib.request.urlopen(req))
 
 
 def test_the_figures_are_the_apis(open_page, base_url):

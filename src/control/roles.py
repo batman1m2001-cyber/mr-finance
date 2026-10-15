@@ -1,22 +1,27 @@
-"""Who may do what (BRD §13.1), for the demo.
+"""Who may do what (BRD §13.1).
 
-There is no sign-in here: the UI's role switcher sends a user id with each action, and the server
-checks that user's role and the separation of duties by that id. That is NOT security — anyone can
-send any id — and every screen that shows the switcher says so. In the bank this is SSO.
+Every action names its user (``by``), and the server checks that user's role and the separation of duties. Inside
+a request, ``by`` must be the person signed in (src/people/auth.py); in the bank the sign-in is SSO.
 """
 
 from __future__ import annotations
 
 from typing import Dict
 
-USERS: Dict[str, Dict[str, str]] = {
-    "cio": {"name": "Trần Quang Huy", "role": "cio", "title": "Giám đốc đầu tư (CIO)"},
-    "cio2": {"name": "Lê Thu Hà", "role": "cio", "title": "Phó giám đốc đầu tư"},
-    "rm01": {"name": "Phạm Gia Bảo", "role": "rm", "title": "Chuyên viên quan hệ khách hàng"},
-    "compliance": {"name": "Đỗ Minh Châu", "role": "compliance", "title": "Tuân thủ (tuyến 2)"},
-    "compliance2": {"name": "Vũ Hải Nam", "role": "compliance", "title": "Tuân thủ (tuyến 2)"},
-    "admin": {"name": "Quản trị demo", "role": "admin", "title": "Quản trị"},
-}
+SIGN_IN_ROLES = ("cio", "rm", "compliance", "admin")
+
+
+def users() -> Dict[str, Dict[str, str]]:
+    """The staff who act in the app, by id (the people table, src/people): CIO, RM, Compliance and Admin users.
+    The specialists of the families' teams are people too, but do not act in the app."""
+    from people import store
+
+    return {
+        p["id"]: {"name": p["name"], "role": p["role"], "title": p["title"]}
+        for p in store.staff()
+        if p["role"] in SIGN_IN_ROLES
+    }
+
 
 ROLE_LABELS = {"cio": "CIO", "rm": "RM", "compliance": "Tuân thủ", "admin": "Quản trị", "client": "Khách hàng"}
 
@@ -26,7 +31,17 @@ class Forbidden(PermissionError):
 
 
 def user(user_id: str) -> Dict[str, str]:
-    u = USERS.get(str(user_id or ""))
+    """The staff user ``user_id``. Inside a request (sign-in on), it must be the person signed in: an action is
+    never taken in someone else's name (BRD-RULE-SEC-01)."""
+    from people import auth
+
+    if auth.checking():
+        me = auth.signed_in()
+        if me is None:
+            raise Forbidden("Cần đăng nhập")
+        if me["id"] != str(user_id or ""):
+            raise Forbidden(f"Đang đăng nhập là {me['name']}: không thể thao tác thay người khác")
+    u = users().get(str(user_id or ""))
     if u is None:
         raise Forbidden(f"người dùng {user_id!r} không có trong demo")
     return {"id": str(user_id), **u}

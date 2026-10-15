@@ -84,6 +84,8 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CMP-02_desktop-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-02_phone-light.jpg` | SCR-CMP-02 Nghiên cứu (release) | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CMP-03_desktop-light.jpg` | SCR-CMP-03 Nhật ký | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
+| `SCR-SH-01_desktop-light.jpg` | SCR-SH-01 Đăng nhập | current | desktop 1440×900, light, viewport | 2026-10-16, dev server, demo accounts on |
+| `SCR-SH-01_phone-light.jpg` | SCR-SH-01 Đăng nhập | current | phone 390×844, light, viewport | 2026-10-16, dev server, demo accounts on |
 | `SCR-RM-01_desktop-light.jpg` | SCR-RM-01 Hôm nay | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-RM-01_phone-light.jpg` | SCR-RM-01 Hôm nay | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-RM-02_desktop-light.jpg` | SCR-RM-02 Tác động tin (with the Mục tiêu panel, FR-404) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, runs recomputed with goal impact (client C01) |

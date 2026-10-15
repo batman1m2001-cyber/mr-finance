@@ -15,6 +15,7 @@ from apply import reads
 from copilot.scrub import fold
 from events import store as events
 from news import store as news
+from people import auth
 from research import store as research
 from views import schema
 from wealth import fixtures
@@ -38,11 +39,13 @@ def check_request(q: str = None, role: str = None, client_id: str = None, scope:
     q = str(q or "").strip()
     if len(q) > 80:
         raise ValueError("câu tìm quá dài")
+    role = auth.role_for(role)
     if role not in ROLES:
         raise ValueError(f"vai trò {role!r} không có")
     cid = str(client_id or "")
     if cid not in fixtures.client_ids(members=True):
-        cid = fixtures.client_ids()[0]  # CIO and Compliance search without a client; holdings are not used then
+        mine = auth.visible(fixtures.client_ids())  # CIO and Compliance search without a client; holdings unused then
+        cid = (mine or fixtures.client_ids())[0]
     return {"q": q, "role": role, "client_id": cid, "scope": scope or "personal"}
 
 
@@ -81,7 +84,7 @@ def find(q: str, role: str, holdings: List[Dict[str, Any]], goals: List[Dict[str
         hits += [_hit("goal", role, g["title"], g.get("stage_label") or "", g["id"], n) for g, n in got]
     if role == "rm":
         got = _best(
-            [fixtures.client(c) for c in fixtures.client_ids()],
+            [fixtures.client(c) for c in auth.visible(fixtures.client_ids())],
             lambda c: match(c["name"], c.get("occupation"), c.get("segment")),
         )
         hits += [_hit("client", role, c["name"], c.get("segment") or "", c["id"], n, client_id=c["id"]) for c, n in got]

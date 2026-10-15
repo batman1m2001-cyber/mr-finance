@@ -1,0 +1,188 @@
+{
+ "note": "Seed of the staff in the people table (src/people): mock people, loaded into an empty database and on demo reset, never read at request time. Written by scripts/make_people.py.",
+ "staff": [
+  {
+   "id": "cio",
+   "role": "cio",
+   "name": "Trần Quang Huy",
+   "title": "Giám đốc đầu tư (CIO)",
+   "email": "huy.tran@tcbwealth.example"
+  },
+  {
+   "id": "cio2",
+   "role": "cio",
+   "name": "Lê Thu Hà",
+   "title": "Phó giám đốc đầu tư",
+   "email": "ha.le@tcbwealth.example"
+  },
+  {
+   "id": "rm01",
+   "role": "rm",
+   "name": "Hoàng Hải Yến",
+   "title": "Chuyên viên quan hệ khách hàng",
+   "title_en": "Relationship manager",
+   "email": "yen.hoang@tcbwealth.example",
+   "phone": "+84 28 3000 1101",
+   "office": "Wealth Center, tầng 9, 23 Lê Duẩn, Quận 1, TP.HCM (địa chỉ giả định)",
+   "hours": "8:00 – 18:00, thứ Hai – thứ Bảy"
+  },
+  {
+   "id": "rm02",
+   "role": "rm",
+   "name": "Ngô Minh Châu",
+   "title": "Chuyên viên quan hệ khách hàng",
+   "title_en": "Relationship manager",
+   "email": "chau.ngo@tcbwealth.example",
+   "phone": "+84 28 3000 1109",
+   "office": "Wealth Center, tầng 9, 23 Lê Duẩn, Quận 1, TP.HCM (địa chỉ giả định)",
+   "hours": "8:00 – 18:00, thứ Hai – thứ Bảy"
+  },
+  {
+   "id": "rm03",
+   "role": "rm",
+   "name": "Trần Quốc Bảo",
+   "title": "Chuyên viên quan hệ khách hàng",
+   "title_en": "Relationship manager",
+   "email": "bao.tran@tcbwealth.example",
+   "phone": "+84 24 3000 2201",
+   "office": "Wealth Center, tầng 12, 191 Bà Triệu, Hai Bà Trưng, Hà Nội (địa chỉ giả định)",
+   "hours": "8:00 – 18:00, thứ Hai – thứ Bảy"
+  },
+  {
+   "id": "compliance",
+   "role": "compliance",
+   "name": "Đỗ Minh Châu",
+   "title": "Tuân thủ (tuyến 2)",
+   "email": "chau.do@tcbwealth.example"
+  },
+  {
+   "id": "compliance2",
+   "role": "compliance",
+   "name": "Vũ Hải Nam",
+   "title": "Tuân thủ (tuyến 2)",
+   "email": "nam.vu@tcbwealth.example"
+  },
+  {
+   "id": "admin",
+   "role": "admin",
+   "name": "Quản trị demo",
+   "title": "Quản trị",
+   "email": "admin@tcbwealth.example"
+  },
+  {
+   "id": "sp_real_estate",
+   "role": "specialist",
+   "specialty": "real_estate",
+   "name": "Phan Đức Thịnh",
+   "title": "Chuyên gia bất động sản",
+   "title_en": "Real estate specialist",
+   "email": "thinh.phan@tcbwealth.example",
+   "phone": "+84 28 3000 1201",
+   "covers": [
+    "Định giá BĐS (OneHousing)",
+    "Mua, bán, cho thuê",
+    "Vay thế chấp, đòn bẩy BĐS"
+   ]
+  },
+  {
+   "id": "sp_global",
+   "role": "specialist",
+   "specialty": "global",
+   "name": "Lâm Bảo Ngọc",
+   "title": "Chuyên gia đầu tư toàn cầu",
+   "title_en": "Global investment specialist",
+   "email": "ngoc.lam@tcbwealth.example",
+   "phone": "+84 28 3000 1202",
+   "covers": [
+    "Cổ phiếu, trái phiếu, quỹ (TCBS, Techcom Capital)",
+    "Tài sản ở nước ngoài",
+    "Tỷ giá, ngoại tệ"
+   ]
+  },
+  {
+   "id": "sp_insurance",
+   "role": "specialist",
+   "specialty": "insurance",
+   "name": "Đặng Thu Trang",
+   "title": "Chuyên gia bảo hiểm",
+   "title_en": "Insurance specialist",
+   "email": "trang.dang@tcbwealth.example",
+   "phone": "+84 28 3000 1203",
+   "covers": [
+    "Bảo hiểm nhân thọ, sức khỏe",
+    "Bảo vệ khoản vay",
+    "Quỹ học vấn cho con"
+   ]
+  },
+  {
+   "id": "sp_banking",
+   "role": "specialist",
+   "specialty": "banking",
+   "name": "Vũ Hoàng Long",
+   "title": "Chuyên gia ngân hàng",
+   "title_en": "Banking specialist",
+   "email": "long.vu@tcbwealth.example",
+   "phone": "+84 28 3000 1204",
+   "covers": [
+    "Tiền gửi, thẻ, thanh toán",
+    "Tín dụng cá nhân và doanh nghiệp",
+    "Chuyển tiền quốc tế"
+   ]
+  },
+  {
+   "id": "sp_private",
+   "role": "specialist",
+   "specialty": "private",
+   "name": "Trịnh Khánh Linh",
+   "title": "Chuyên gia Private Banking",
+   "title_en": "Private specialist",
+   "email": "linh.trinh@tcbwealth.example",
+   "phone": "+84 28 3000 1205",
+   "covers": [
+    "Thừa kế, chuyển giao tài sản",
+    "Pháp lý, thuế cá nhân",
+    "Quản lý tài sản gia đình"
+   ]
+  }
+ ],
+ "teams": {
+  "C01": {
+   "rm": "rm01",
+   "lead": [
+    "sp_global",
+    "sp_insurance",
+    "sp_real_estate"
+   ]
+  },
+  "C02": {
+   "rm": "rm02",
+   "lead": [
+    "sp_private",
+    "sp_real_estate",
+    "sp_banking"
+   ]
+  },
+  "C03": {
+   "rm": "rm03",
+   "lead": [
+    "sp_global",
+    "sp_banking"
+   ]
+  },
+  "C04": {
+   "rm": "rm01",
+   "lead": [
+    "sp_insurance",
+    "sp_private",
+    "sp_banking"
+   ]
+  },
+  "C05": {
+   "rm": "rm01",
+   "lead": [
+    "sp_real_estate",
+    "sp_banking"
+   ]
+  }
+ }
+}
