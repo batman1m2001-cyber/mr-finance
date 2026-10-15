@@ -96,12 +96,61 @@ def test_a_run_recomputes_to_the_dong_and_tampering_is_found():
             "update family_impacts set data = ? where run_id = ? and family_id = ?", (json.dumps(data), run["id"], fid)
         )
     assert runs.verify(run["id"])["differences"] == [f"{fid} 3m expected"]
+    with db.tx() as con:  # change one goal's level (FR-404)
+        data["horizons"]["3m"]["expected"] -= 1
+        data["goal_impact"]["pool"]["after"] += 1
+        con.execute(
+            "update family_impacts set data = ? where run_id = ? and family_id = ?", (json.dumps(data), run["id"], fid)
+        )
+    assert runs.verify(run["id"])["differences"] == [f"{fid} goal_impact"]
     with db.tx() as con:  # change the frozen snapshot
         row = con.execute("select data from run_snapshots where id = ?", (run["snapshot_id"],)).fetchone()
         snap = json.loads(row["data"])
         snap["branches"][0]["probability"] = 0.99
         con.execute("update run_snapshots set data = ? where id = ?", (json.dumps(snap), run["snapshot_id"]))
     assert runs.verify(run["id"])["differences"] == ["snapshot đã bị sửa"]
+
+
+def test_a_run_gives_each_goal_its_funding_before_and_after_with_a_level():
+    # FR-404: every family's dated goals, funded in date order from its financial assets
+    _, run = approved(*MARKET)
+    fams = runs.family_results(run["id"])
+    c01 = fams["C01"]["goal_impact"]
+    assert [g["goal_id"] for g in c01["goals"]] == ["GL-C01-01", "GL-C01-02"]
+    pool = c01["pool"]
+    assert pool["after"] == pool["before"] + pool["change"] and pool["change"] < 0  # a market fall
+    for r in fams.values():
+        for g in r["goal_impact"]["goals"]:
+            for side in ("before", "after"):
+                assert g[side]["level"] in ("Đạt", "Theo dõi", "Thiếu") and 0 <= g[side]["ratio"] <= 1
+            assert g["changed"] == (g["before"]["level"] != g["after"]["level"])
+    assert run["totals"]["goals_changed"] == sum(g["changed"] for r in fams.values() for g in r["goal_impact"]["goals"])
+
+
+def test_goal_levels_follow_the_funding_and_the_surplus():
+    from apply.goals import goal_impacts
+
+    fam = {
+        "holdings": [
+            {"key": "s", "kind": "asset", "class": "stock", "value": 1_000.0},
+            {"key": "h", "kind": "asset", "class": "real_estate", "value": 9_000.0},  # not in the pool
+        ],
+        "goals": [
+            {"goal_id": "G1", "label": "a", "date": "2027-01-15", "amount": 800.0},
+            {"goal_id": "G2", "label": "b", "date": "2027-01-20", "amount": 200.0},
+        ],
+        "surplus_monthly": 30.0,
+    }
+    out = goal_impacts(fam, {"s": -100.0, "h": -5_000.0}, "2026-10-09")
+    assert out["pool"] == {"before": 1_000.0, "after": 900.0, "change": -100.0}
+    g1, g2 = out["goals"]
+    assert g1["before"]["level"] == g1["after"]["level"] == "Đạt"  # the earlier goal is funded first
+    # G2: 100 short over 3 months = 33.3/month against a surplus of 30 → above 1 → Thiếu
+    assert (g2["before"]["ratio"], g2["after"]["ratio"]) == (1.0, 0.5)
+    assert (g2["before"]["level"], g2["after"]["level"], g2["changed"]) == ("Đạt", "Thiếu", True)
+    fam["surplus_monthly"] = 60.0  # 33.3 / 60 = 0.56 → Đạt; 40 / 60 → Theo dõi
+    assert goal_impacts(fam, {"s": -100.0}, "2026-10-09")["goals"][1]["after"]["level"] == "Đạt"
+    assert goal_impacts(fam, {"s": -120.0}, "2026-10-09")["goals"][1]["after"]["level"] == "Theo dõi"
 
 
 def test_the_same_approval_applied_twice_is_one_run():

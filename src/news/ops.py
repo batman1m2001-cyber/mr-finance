@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional
 
 from operonx import op
 
+from control import roles
 from news import rss, rules, store
 from wealth.paths import DATA
 
@@ -132,12 +133,14 @@ def keep(rows: list, counts: dict, at: float) -> dict:
 @op
 def dismiss(ids: list, by: str = "cio", note: str = "") -> dict:
     """The CIO drops items from the inbox (FR-103)."""
+    roles.require(by, "cio")
     return {"changed": store.set_status([str(i) for i in ids], "dismissed", by=by, note=note)}
 
 
 @op
 def release(item_id: str, by: str, note: str) -> dict:
     """Compliance releases a held item; the note is required, and kept with who and when."""
+    roles.require(by, "compliance")
     if not str(note or "").strip():
         raise ValueError("Cần ghi chú lý do cho phép")
     if not store.clear_hold(str(item_id), by=str(by), note=str(note).strip()):

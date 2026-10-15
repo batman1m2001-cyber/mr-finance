@@ -78,19 +78,22 @@ def test_an_option_waits_for_the_rm_and_is_decided_once():
         assert item["status"] == "pending" and item["title"].startswith("Doanh nghiệp cần vốn gấp")
         queue = client.get("/api/review", params={"status": "pending"}).json()["items"]
         assert [q["id"] for q in queue] == [item["id"]] and queue[0]["client_name"] == "Lê Văn Phát"
+        for who in (None, "cio", "compliance"):  # only an RM decides
+            denied = client.post("/api/review/decide", json={"item_id": item["id"], "decision": "approved", "by": who})
+            assert denied.status_code != 200
         done = client.post(
-            "/api/review/decide", json={"item_id": item["id"], "decision": "approved", "note": "OK"}
+            "/api/review/decide", json={"item_id": item["id"], "decision": "approved", "note": "OK", "by": "rm01"}
         ).json()["item"]
         assert (done["status"], done["note"]) == ("approved", "OK")
-        again = client.post("/api/review/decide", json={"item_id": item["id"], "decision": "rejected"})
+        again = client.post("/api/review/decide", json={"item_id": item["id"], "decision": "rejected", "by": "rm01"})
         assert again.status_code == 500, "a decided item is not decided again"
         assert client.get("/api/scenarios").json()["scenarios"][0]["id"] == "tuition"
 
 
 def test_review_flow_refuses_an_unknown_item():
     out = asyncio.run(
-        Operon(review_flow, params={"item_id": None, "decision": None, "note": None}).run(
-            inputs={"item_id": "R-nope", "decision": "approved", "note": ""}
+        Operon(review_flow, params={"item_id": None, "decision": None, "note": None, "by": None}).run(
+            inputs={"item_id": "R-nope", "decision": "approved", "note": "", "by": "rm01"}
         )
     )
     assert "item" not in out and any(e["type"] == "ValueError" for e in out["$errors"].values())

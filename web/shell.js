@@ -26,7 +26,8 @@ const ROLES = {
       {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
         {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "tong-quan", label: "Tổng quan", legacy: "overview"},
         {id: "tai-san", label: "Tài sản", legacy: "sources"}, {id: "ke-hoach", label: "Kế hoạch", legacy: "scenarios"},
-        {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "performance"}]},
+        {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "performance"},
+        {id: "duyet", label: "Duyệt đề xuất", legacy: "rm"}]},
       {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "perfall"},
     ],
   },
@@ -117,7 +118,7 @@ async function route() {
   state.route = rt;
   localStore("mf.role", rt.role);
   drawChrome(rt);
-  window.Legacy && window.Legacy.setViewer(rt.role === "client" ? "client" : "staff");
+  window.Legacy && window.Legacy.setViewer(rt.role === "client" ? "client" : "staff", ROLES[rt.role].user);
   const target = rt.sub || rt.nav;
   const box = $("#page-new");
   if (target.legacy) {
@@ -132,7 +133,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261015`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261015b`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {

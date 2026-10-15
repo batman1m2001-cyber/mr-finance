@@ -73,6 +73,6 @@ thu hồi”).
 | 3 The overall dashboard | “Tổng quan” | Khách hàng → **Tổng quan** (SCR-CL-01) |
 | 4 An alert lands | “Cảnh báo” | Khách hàng → Tin tác động → **Chi phí chính sách** (SCR-CL-06) |
 | 5 A scenario | “Kịch bản” | Khách hàng → Mục tiêu & kịch bản → **Kế hoạch** (SCR-CL-03), “Gửi chuyên gia duyệt” |
-| 6 The RM approves | “RM duyệt” | Khách hàng → **Chuyên gia** (SCR-CL-07) — not reachable from the RM role (DEF-02) |
+| 6 The RM approves | “RM duyệt” | RM → Khách hàng → **Duyệt đề xuất** (SCR-RM-06); the client follows it on Chuyên gia (SCR-CL-07) |
 
 The demo's HTTP path is tested end to end (`tests/test_demo.py::test_the_five_minute_demo`); its click path is not.

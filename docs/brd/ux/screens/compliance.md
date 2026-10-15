@@ -17,8 +17,8 @@ Layer C. As built on 2026-10-15 (new pages). Compliance is the demo user `compli
 
 News naming a restricted organisation, each with its outlet, time and the names it mentions (“nhắc tới …”), a
 reason field (“Lý do cho phép (bắt buộc)”) and **Cho phép**; beside it **Danh sách hạn chế** (badged “giả lập”: each
-name with its ticker and aliases — Sao Mai Land, Hòa Bình Energy, Kim Phát Holdings). Releasing is audited and unblocks approval condition *g* of the events that held it. The server does not check
-that the releaser is Compliance (DEF-03).
+name with its ticker and aliases — Sao Mai Land, Hòa Bình Energy, Kim Phát Holdings). Releasing is audited and unblocks approval condition *g* of the events that held it. Only Compliance may release
+(server check; DEF-03 fixed 2026-10-15).
 Empty: “Không có tin nào bị giữ”.
 
 ---

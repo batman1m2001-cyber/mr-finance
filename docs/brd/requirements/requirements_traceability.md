@@ -4,7 +4,7 @@ The **only** place where a requirement's implementation status is stated. Chain:
 code / API → test → evidence. Status vocabulary: [README §4](../README.md#4-status-vocabulary). Every test cited
 for an `implemented_verified` row exists in `tests/` (checked by `scripts/check_brd_docs.py`) and passed in the
 latest recorded run ([regression_coverage.md](../testing/regression_coverage.md#latest-recorded-run): 2026-10-15,
-170 passed).
+175 passed).
 
 Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-256 `5ea9d8da…de1e3`.
 
@@ -12,15 +12,15 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 38 | 3 | 16 | 2 | 1 | 1 | 0 | 0 |
+| BRD numbered (BR, FR, NFR) | 61 | 41 | 3 | 14 | 2 | 0 | 1 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
-| BRD rules (RULE) | 97 | 58 | 4 | 13 | 3 | 5 | 2 | 10 | 2 |
-| Original brief (BRIEF) | 29 | 27 | 0 | 2 | 0 | 0 | 0 | 0 | 0 |
+| BRD rules (RULE) | 97 | 59 | 4 | 12 | 3 | 5 | 2 | 10 | 2 |
+| Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 0 | 0 | 0 | 12 | 0 | 0 | 0 | 7 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
-completion is not 100 %:** of the 61 numbered requirements, 38 are implemented and verified by tests; the rest are
+completion is not 100 %:** of the 61 numbered requirements, 41 are implemented and verified by tests; the rest are
 partial, unverified, planned, not implemented or blocked, each with its reason below. (The `not_applicable` KIT rows
 are the documentation rules this repository itself follows.) Counts are recomputed by the checker.
 
@@ -31,11 +31,11 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-BR-01 | §4 | Three news sources, each labelled | FEAT-01, 03 | SCR-CIO-01 | `src/news/rules.py::classify`; `src/research/store.py::_to_inbox` | `tests/test_news.py::test_classification_by_source_then_words`, `tests/test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox` | implemented_verified | “Quốc tế / Trong nước / Độc quyền” labels |
 | BRD-BR-02 | §4 | White-listed public sources; published ≤ ingested | FEAT-01 | SCR-CIO-01 | `src/news/rules.py::gate` | `tests/test_news.py::test_the_gates` | implemented_verified | The white list is a generated file, not a Compliance-approved config version (BRD-FR-701) |
 | BRD-BR-03 | §4 | Research enters only when released by another person after its time | FEAT-03 | SCR-CIO-06, SCR-CMP-02 | `src/research/store.py::decide` | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`, `tests/test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox` | implemented_verified | |
-| BRD-BR-04 | §4 | Restricted-list mentions held for Compliance | FEAT-01, 02 | SCR-CMP-01 | `src/news/rules.py`, `src/news/ops.py::release`, `src/views/decide.py` (check g) | `tests/test_news.py::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it`, `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | partially_implemented | Holding works and blocks approval; the release does not check the Compliance role (DEF-03) |
+| BRD-BR-04 | §4 | Restricted-list mentions held for Compliance | FEAT-01, 02 | SCR-CMP-01 | `src/news/rules.py`, `src/news/ops.py::release`, `src/views/decide.py` (check g) | `tests/test_news.py::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it`, `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | implemented_verified | Holding blocks approval; only Compliance may release, with a reason (DEF-03 fixed 2026-10-15) |
 | BRD-BR-05 | §4 | 2–4 scenarios with probability, shocks, sources; AI gives no numbers | FEAT-04, 07 | SCR-CIO-03 | `src/views/schema.py`, `src/engine` | `tests/test_views.py::test_the_schema_refuses`, `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node` | implemented_verified | |
 | BRD-BR-06 | §4 | Independent challenge before approval; critical findings answered | FEAT-05, 06 | SCR-CIO-03 | `src/views/ops.py::review`, `src/views/decide.py::checks` (b, c, f) | `tests/test_views.py::test_an_edit_goes_back_to_the_challenger_and_a_critical_finding_blocks_approval_until_answered` | implemented_verified | “2nd line” = different model / rules (Q-05) |
 | BRD-BR-07 | §4 | CIO approves scenarios and model parameters; nothing computed before | FEAT-06, 08, 14 | SCR-CIO-03 | `src/views/decide.py`, `src/apply/run.py::apply_view` | `tests/test_views.py::test_approval_is_idempotent_and_once_only`, `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | partially_implemented | Scenario approval verified; no approval flow for model parameters (FEAT-14) |
-| BRD-BR-08 | §4 | VND per position and loan, 3 horizons, E and P5/P10/P50/P90; summed by class, factor, family, goal; one engine for ranking, alerts, goals, explanation | FEAT-07, 08 | SCR-CL-05, SCR-RM-02 | `src/engine/scenario.py::evaluate`, `src/apply/run.py::compute` | `tests/test_engine.py::test_the_contributions_add_up_to_the_expected_change`, `tests/test_engine.py::test_bands_are_ordered_and_widen_with_the_horizon`, `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | partially_implemented | No sum per goal (FR-404); the pre-BRD alerts and stress tests use other methods (Q-03, ADR-0007) |
+| BRD-BR-08 | §4 | VND per position and loan, 3 horizons, E and P5/P10/P50/P90; summed by class, factor, family, goal; one engine for ranking, alerts, goals, explanation | FEAT-07, 08 | SCR-CL-05, SCR-RM-02 | `src/engine/scenario.py::evaluate`, `src/apply/run.py::compute` | `tests/test_engine.py::test_the_contributions_add_up_to_the_expected_change`, `tests/test_engine.py::test_bands_are_ordered_and_widen_with_the_horizon`, `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | partially_implemented | Goals: funding before/after per run (FR-404), not a VND sum per goal; the pre-BRD alerts and stress tests use other methods (Q-03, ADR-0007) |
 | BRD-BR-09 | §4 | RM pre-review at a 3-month bad case ≤ −5 % | FEAT-08, 13 | SCR-RM-01 | `src/apply/run.py` (`PRE_REVIEW_PCT`), `src/apply/reads.py::rm_today` | `tests/test_apply.py::test_the_rm_today_list_holds_the_flagged_families_worst_first` | implemented_verified | |
 | BRD-BR-10 | §4 | Regulations delaying goals abroad reach the right families, no AML data | FEAT-10 | SCR-RM-01, SCR-CL-05 | `src/procedural/goals.py` | `tests/test_research.py::test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal`, `tests/test_research.py::test_inference_from_a_goals_name` | implemented_verified | |
 | BRD-BR-11 | §4 | AI drafting reads no client data, goals, RM notes | FEAT-04 | — | `src/views/ops.py::gather`, `src/views/agents.py` | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | implemented_verified | Code-level barrier in one process (ADR-0009) |
@@ -45,9 +45,9 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-BR-15 | §4 | Accuracy over time vs the forecast band | FEAT-18 | — | — | — | blocked | Needs realised price history (Q-22); then news plan N5. Not the mock advisory record (Q-19) |
 | BRD-FR-101 | §6.1 | RSS every 10 minutes | FEAT-01 | SCR-CIO-01 | `app/main.py` Job `news_ingest` (`every="10m"`), `src/news/ops.py::fetch` | `tests/test_news.py::test_one_run_counts_each_source_keeps_refusals_aside_and_survives_a_broken_feed` | implemented_unverified | Fetching is tested; the 10-minute schedule is declared and runs on the live demo, but no test asserts it |
 | BRD-FR-102 | §6.1 | Classify, score relevance, suggest event type | FEAT-01 | SCR-CIO-01 | `src/news/rules.py::classify` | `tests/test_news.py::test_classification_by_source_then_words` | implemented_verified | |
-| BRD-FR-103 | §6.1 | CIO inbox: filter, dismiss, group | FEAT-02 | SCR-CIO-01 | `app/web.py::news_inbox`, `dismiss_flow`, `event_flow` | `tests/test_news.py::test_the_inbox_filters_and_dismiss`, `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | implemented_verified | Dismiss checks no role (DEF-03) |
+| BRD-FR-103 | §6.1 | CIO inbox: filter, dismiss, group | FEAT-02 | SCR-CIO-01 | `app/web.py::news_inbox`, `dismiss_flow`, `event_flow` | `tests/test_news.py::test_the_inbox_filters_and_dismiss`, `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | implemented_verified | Dismiss: CIO only (DEF-03 fixed) |
 | BRD-FR-104 | §6.1 | Public source and timestamps checked before an event | FEAT-01, 02 | — | `src/news/rules.py::gate`, `src/events/store.py` | `tests/test_news.py::test_the_gates` | implemented_verified | The event step's refusal of non-new items is not tested on its own |
-| BRD-FR-105 | §6.1 | Hold events naming the restricted list until Compliance allows | FEAT-02 | SCR-CMP-01, SCR-CIO-03 | `src/events/store.py`, `src/views/decide.py` (g) | `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | partially_implemented | As BR-04: the allowing step is not role-checked (DEF-03) |
+| BRD-FR-105 | §6.1 | Hold events naming the restricted list until Compliance allows | FEAT-02 | SCR-CMP-01, SCR-CIO-03 | `src/events/store.py`, `src/views/decide.py` (g) | `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it`, `tests/test_news.py::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it` | implemented_verified | Only Compliance may allow (DEF-03 fixed) |
 | BRD-FR-201 | §6.2 | Upload a report with its fields | FEAT-03 | SCR-CIO-06 | `src/research/store.py::upload` | `tests/test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox` | implemented_verified | |
 | BRD-FR-202 | §6.2 | Compliance releases/rejects, note ≥ 20, restricted list, releaser ≠ uploader | FEAT-03 | SCR-CMP-02 | `src/research/store.py::decide` | `tests/test_research.py::test_a_report_naming_the_restricted_list_is_not_released`, `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | implemented_verified | |
 | BRD-FR-203 | §6.2 | Unreleased or early research not in the inbox, not attachable | FEAT-03 | SCR-CIO-01 | `src/research/store.py` | `tests/test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox` | implemented_verified | |
@@ -62,7 +62,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-FR-401 | §6.4 | On approval: snapshot, compute all, hashed run | FEAT-08 | SCR-CIO-05 | `src/apply/run.py::apply_view`, `make_snapshot` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family`, `tests/test_apply.py::test_the_same_approval_applied_twice_is_one_run` | implemented_verified | |
 | BRD-FR-402 | §6.4 | Family result: bands, contributions to each position, loan interest, modelled share | FEAT-08 | SCR-RM-02 | `src/apply/run.py::compute` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | implemented_verified | “Loan interest cost” interpreted as the loans' 3-month contribution (Q-10) |
 | BRD-FR-403 | §6.4 | Rank all families; all-client summary by factor | FEAT-08 | SCR-CIO-04 | `src/apply/run.py::ranking`, `exposure` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family`, `tests/test_apply.py::test_the_rm_today_list_holds_the_flagged_families_worst_first` | implemented_verified | |
-| BRD-FR-404 | §6.4 | Goal impact: funding before/after, Đạt / Theo dõi / Thiếu | FEAT-08, 26 | — | — | — | not_implemented | Found 2026-10-15; the news plan had reported it done. Proposal and thresholds: Q-11 |
+| BRD-FR-404 | §6.4 | Goal impact: funding before/after, Đạt / Theo dõi / Thiếu | FEAT-08, 26 | SCR-CL-05, SCR-RM-02 | `src/apply/goals.py::goal_impacts`, `src/apply/run.py::compute` (`goal_impact` in `family_impacts`) | `tests/test_apply.py::test_a_run_gives_each_goal_its_funding_before_and_after_with_a_level`, `tests/test_apply.py::test_goal_levels_follow_the_funding_and_the_surplus`, `tests/test_apply.py::test_a_run_recomputes_to_the_dong_and_tampering_is_found` | implemented_verified | Built 2026-10-15 on our definition (Q-11: funding pool and thresholds wait for the CIO); runs computed before then have none |
 | BRD-FR-405 | §6.4 | Recompute and compare; withdraw a run | FEAT-08 | SCR-CIO-05 | `src/apply/graph.py::recompute_flow`, `run_decide_flow` | `tests/test_apply.py::test_recompute_makes_a_new_run_and_supersedes_the_old`, `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective` | implemented_verified | |
 | BRD-FR-406 | §6.4 | “Cách tính” and trace to the news | FEAT-09 | SCR-RM-03 | `src/apply/trace.py` | `tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news` | implemented_verified | Staff only (Q-14) |
 | BRD-FR-501 | §6.5 | Post-check rules; summary | FEAT-08 | SCR-CIO-05 | `src/apply/run.py::postcheck` | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective` | implemented_verified | Summary by template, not the challenger (Q-12) |
@@ -113,7 +113,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-SCOPE-05 | FEAT-13 | not_applicable | — | Nothing is sent; the client view exists in-app (ADR-0008, Q-21) |
 | BRD-RULE-ROLE-01 | FEAT-12 | implemented_verified | `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides` | |
 | BRD-RULE-ROLE-02 | FEAT-12, 13 | partially_implemented | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective` | Post-checked only: yes; own families only: no (Q-17) |
-| BRD-RULE-ROLE-03 | FEAT-12 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | Research release checked; restricted-list release not (DEF-03) |
+| BRD-RULE-ROLE-03 | FEAT-12 | implemented_verified | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`, `tests/test_news.py::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it` | Research release and restricted-list release both Compliance only |
 | BRD-RULE-ROLE-04 | FEAT-12 | not_implemented | — | `admin` user exists; no admin screen or rights |
 | BRD-RULE-ROLE-05 | — | out_of_scope_demo | — | Later phase in the BRD |
 | BRD-RULE-ROLE-06 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | Demo client view |
@@ -182,7 +182,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-LC-03 | FEAT-03 | implemented_verified | `tests/test_research.py::test_a_report_naming_the_restricted_list_is_not_released` | |
 | BRD-RULE-LC-04 | FEAT-19 | planned | — | News plan N5 |
 | BRD-RULE-SEC-01 | FEAT-12 | out_of_scope_demo | — | ADR-0006 |
-| BRD-RULE-SEC-02 | FEAT-12 | partially_implemented | `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides` | News-impact writes checked except dismiss/release (DEF-03); pre-BRD services and all reads unchecked |
+| BRD-RULE-SEC-02 | FEAT-12 | partially_implemented | `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides` | News-impact writes all checked; the RM decision checked (DEF-02); other pre-BRD services and all reads unchecked |
 | BRD-RULE-SEC-03 | FEAT-13, 28 | partially_implemented | — | “Nội bộ” banner on the advisory pages; staff impact/trace pages have no stamp |
 | BRD-RULE-SEC-04 | FEAT-03, 14 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | Research SoD only; newsletter and config two-person rules not built (Q-15) |
 | BRD-RULE-SEC-05 | FEAT-14 | not_implemented | — | No configuration ownership (Q-15) |
@@ -227,7 +227,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRIEF-DASH-07 | FEAT-21, 25 | SCR-CL-01 | implemented_verified | `tests/test_impact.py::test_every_client_gets_alerts_largest_first_and_the_latest_is_kept` | The card shows point-rule numbers (Q-03) |
 | BRIEF-SCEN-01 | FEAT-26 | SCR-CL-03 | implemented_verified | `tests/test_scenarios.py::test_every_scenario_runs_for_every_client_in_both_views` | 9 life events |
 | BRIEF-SCEN-02 | FEAT-26 | SCR-CL-03 | implemented_verified | `tests/test_scenarios.py::test_a_stress_test_measures_against_the_drawdown_limit` | 5 stress tests (not on the BRD engine) |
-| BRIEF-SCEN-03 | FEAT-26, 27 | SCR-CL-03, 07 | implemented_verified | `tests/test_scenarios.py::test_an_option_waits_for_the_rm_and_is_decided_once` | Decision not role-checked (DEF-02) |
+| BRIEF-SCEN-03 | FEAT-26, 27 | SCR-CL-03, 07 | implemented_verified | `tests/test_scenarios.py::test_an_option_waits_for_the_rm_and_is_decided_once` | Only an RM decides (DEF-02 fixed) |
 | BRIEF-IMPACT-01 | FEAT-25 | SCR-CL-06 | implemented_verified | `tests/test_impact.py::test_impact_is_exposure_times_sensitivity_times_probability` | |
 | BRIEF-IMPACT-02 | FEAT-25 | SCR-CL-06 | implemented_verified | `tests/test_impact.py::test_a_rate_rise_costs_a_floating_loan_and_bonds_by_duration` | |
 | BRIEF-IMPACT-03 | FEAT-25 | SCR-CL-06 | implemented_verified | `tests/test_impact.py::test_impact_is_exposure_times_sensitivity_times_probability` | |
@@ -236,7 +236,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRIEF-ALERT-01 | FEAT-25 | SCR-CL-06 | implemented_verified | `tests/test_impact.py::test_the_transfer_tax_change_compares_both_ways_of_counting`, `tests/test_impact.py::test_every_client_gets_alerts_largest_first_and_the_latest_is_kept` | 14 policies |
 | BRIEF-ALERT-02 | FEAT-25 | SCR-CL-06 | implemented_verified | `tests/test_impact.py::test_every_client_gets_alerts_largest_first_and_the_latest_is_kept` | Every alert carries its status and the “check before use” note |
 | BRIEF-FLOW-01 | — | J6 | implemented_verified | `tests/test_demo.py::test_the_five_minute_demo` | HTTP path; DEMO.md names outdated (J6 mapping) |
-| BRIEF-FLOW-02 | FEAT-27 | SCR-CL-07 | partially_implemented | `tests/test_scenarios.py::test_an_option_waits_for_the_rm_and_is_decided_once` | Not reachable by the RM; not role-checked (DEF-02) |
+| BRIEF-FLOW-02 | FEAT-27 | SCR-CL-07, SCR-RM-06 | implemented_verified | `tests/test_scenarios.py::test_an_option_waits_for_the_rm_and_is_decided_once` | RM: Khách hàng → Duyệt đề xuất; the client sees the queue read-only (DEF-02 fixed) |
 
 ## 4. Redesign kit (`KIT-*`)
 

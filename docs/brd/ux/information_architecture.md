@@ -60,7 +60,7 @@ the client and inside the RM's “Khách hàng” section (staff view).
 | “Cách tính” trace | FEAT-09 | — (Q-14) | from Tác động tin | — | — |
 | Goal-branch notes | FEAT-10 | in Tác động thị trường | Hôm nay; Tác động tin | Nghiên cứu | Nghiên cứu |
 | Policy costs, house views | FEAT-25 | Tin tác động → Chi phí chính sách; top 3 on Tổng quan | Khách hàng → Chi phí chính sách | — | — |
-| Specialist; the approval queue **with its Duyệt / Từ chối buttons** | FEAT-27, 28 | Chuyên gia | — (**not in the RM menu**: DEF-02) | — | — |
+| Specialist; the approval queue (read-only for the client) | FEAT-27, 28 | Chuyên gia | Khách hàng → Duyệt đề xuất (decides) | — | — |
 | Advisory track record (mock) | FEAT-28 | — | Hiệu quả tư vấn (one / all) | — | — |
 | Families to call first | FEAT-13 | — | Hôm nay | — | — |
 | News inbox, grouping | FEAT-01, 02 | — | — | Hộp tin | — |
@@ -72,11 +72,9 @@ the client and inside the RM's “Khách hàng” section (staff view).
 | Held news | FEAT-02 | — | — | — | Tin bị giữ |
 | Audit log | FEAT-11 | — | — | — | Nhật ký |
 
-**Hard to discover (found 2026-10-15):** the RM approval queue. Before the redesign it was a tab of its own
-(“RM duyệt”, docs/DEMO.md step 6); the U1 shell maps that legacy tab only to the client's “Chuyên gia”. An RM must
-switch to the client role to approve or reject, and whoever is on that page can decide (the service checks no
-role). Proposed fix: add “Duyệt đề xuất” to the RM's “Khách hàng” section and require role `rm` in
-`review_flow` (DEF-02).
+**Fixed 2026-10-15 (DEF-02):** the RM approval queue had no RM entry after the redesign (the U1 shell mapped the
+legacy “RM duyệt” tab only to the client's “Chuyên gia”) and the service checked no role. Now the RM decides under
+Khách hàng → **Duyệt đề xuất** (SCR-RM-06), the server requires role `rm`, and the client sees the queue read-only.
 
 Capabilities with **no UI entry**: the scheduled news fetch (FEAT-01, a job), the agent catalogue (FEAT-15, API
 only), the statement-reading eval (CLI). Not built: FEAT-16…19, FEAT-29…32.

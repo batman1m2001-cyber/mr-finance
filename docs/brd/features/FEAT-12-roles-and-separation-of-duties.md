@@ -19,8 +19,8 @@ two people — in a demo with no sign-in.
 - News-impact actions call `roles.require(user_id, *roles)`: CIO for grouping, agent runs, view decisions, run
   decisions and research upload; Compliance for releasing research; RM for goal declarations. A wrong role →
   `Forbidden` with the role needed.
-- **Not checked:** dismissing news and releasing a restricted-list hold (`src/news/ops.py`) take any user id
-  (DEF-03).
+- Also checked (2026-10-15): dismissing news (CIO) and releasing a restricted-list hold (Compliance) in
+  `src/news/ops.py` (DEF-03); the RM approval decision (RM) in `src/review/ops.py` (DEF-02).
 - Separation of duties implemented: research releaser ≠ uploader.
 - Reads by role: `src/apply/reads.py` (CIO/Compliance/Admin all runs; RM effective/superseded/withdrawn; client
   effective only).

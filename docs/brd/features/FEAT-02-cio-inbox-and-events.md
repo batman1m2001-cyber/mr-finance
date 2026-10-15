@@ -14,8 +14,8 @@ and keep anything naming a restricted organisation out of the process until Comp
 
 ## Preconditions and permissions
 - Grouping: role `cio`, checked on the server (`src/events/ops.py`).
-- Dismissing (CIO) and releasing a held item (Compliance) are restricted **only by the menu**: `dismiss` and
-  `release` in `src/news/ops.py` check no role — any user id can release a held item (**DEF-03**).
+- Dismissing: role `cio`; releasing a held item: role `compliance`, both checked on the server
+  (`src/news/ops.py`; DEF-03 fixed 2026-10-15).
 
 ## Behaviour
 1. **Inbox** (`GET /api/news/inbox`): newest first; filters by source, kind, status, relevance, time window and

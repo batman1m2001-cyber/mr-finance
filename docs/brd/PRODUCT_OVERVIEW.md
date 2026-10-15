@@ -34,7 +34,7 @@ flowchart LR
 
 ## What is real and what is not
 
-Real: the news (public RSS), all logic and rules, the engine, the audit chain, the tests (170 passing on
+Real: the news (public RSS), all logic and rules, the engine, the audit chain, the tests (175 passing on
 2026-10-15). Mock or assumed: clients and prices ([ADR-0005](decisions/ADR-0005-mock-clients-and-prices-public-news.md)),
 factor-model parameters ([ADR-0004](decisions/ADR-0004-assumed-factor-model-parameters.md)), the restricted list,
 identities ([ADR-0006](decisions/ADR-0006-the-role-switcher-is-not-security.md)). The agents run in mock mode unless
@@ -43,9 +43,10 @@ two models are configured ([ADR-0010](decisions/ADR-0010-two-configured-models-a
 ## Status in one paragraph
 
 Of the BRD's 61 requirements, most are implemented and verified by tests; the gaps are listed in the
-[traceability matrix](requirements/requirements_traceability.md) — notably goal impact per run (FR-404), versioned
+[traceability matrix](requirements/requirements_traceability.md) — notably versioned
 configuration (FR-701), the agent catalogue (FR-703), the policy agent (FR-306), the newsletter (FR-801), accuracy
-tracking (BR-15, blocked on data), and role checks on the restricted-list release (DEF-03). Proposed next: the
+tracking (BR-15, blocked on data); goal impact per run (FR-404) is built on our definition, awaiting the CIO
+(Q-11). Proposed next: the
 redesign kit's Pulse, Money Flow, graph, feed and Copilot ([docs/REDESIGN_KIT_PLAN.md](../REDESIGN_KIT_PLAN.md)).
 
 ## Roadmap (from the BRD §18)

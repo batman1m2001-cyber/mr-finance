@@ -295,9 +295,9 @@ and is not touched until a phase merges; each merge is followed by a restart of 
 | N4 research and goal branch | done | b1ca845 | the BRD §10 example reproduced (milestone 2026-12-07, “Nhắc trên thẻ mục tiêu”); name traps (Mỹ Linh, Nhật Minh, Minh Đức) not matched; 15 tests |
 | N5 optional | not started | — | stress tests on the engine, agent catalogue, CIO newsletter, accuracy tracking, HMAC inbox |
 
-**Correction (2026-10-15, documentation audit):** N3 did not build FR-404 (goal impact per run: funding before/after,
-Đạt / Theo dõi / Thiếu); there is no goal step in `src/apply/run.py`. Also found: the restricted-list release does not
-check the Compliance role (DEF-03). Status of every requirement now lives in
+**Correction (2026-10-15, documentation audit):** N3 did not build FR-404 (goal impact per run: funding
+before/after, Đạt / Theo dõi / Thiếu), and the restricted-list release did not check the Compliance role (DEF-03).
+Both were fixed the same day; FR-404 is built on our definition (`src/apply/goals.py`, Q-11). Status of every requirement now lives in
 `docs/brd/requirements/requirements_traceability.md`.
 
 Deviations from §4, said plainly:

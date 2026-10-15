@@ -150,7 +150,7 @@ Vietnamese is the BRD's text; the English is our faithful reading. Status: see
 - **Original:** “Tác động lên mục tiêu: tỷ lệ đáp ứng trước, sau, mức Đạt, Theo dõi, Thiếu”
 - **Meaning:** Impact on goals: funding ratio before and after, with a level On track (Đạt), Watch (Theo dõi), Short (Thiếu).
 - **Acceptance:** for each goal of each family in a run, the ratio before/after and the level.
-- **Doc status:** needs_clarification (Q-11: the thresholds of the three levels are not given)
+- **Doc status:** needs_clarification (Q-11: the thresholds of the three levels are not given; built on our proposal)
 
 ### BRD-FR-405 — Recompute and compare; withdraw a run
 - **Source:** §6.4, FR-405

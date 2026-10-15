@@ -34,7 +34,7 @@ flowchart LR
   RS[run_snapshots] --> RUN
   CV["config_versions (—)"] -.-> RUN
   RUN -- 1–n --> FI[family_impacts]
-  RUN -.-> GI["goal_impacts (— : FR-404 not built)"]
+  RUN --> GI["goal_impacts (here: family_impacts.goal_impact)"]
   FAM["families (here: fixtures + consolidation)"] --> FI
   GO["goals (here: fixture events + goal_outflows)"] -.-> GI
   AUD[audit_log — append-only, every news-impact write]
@@ -52,7 +52,7 @@ flowchart LR
 | application_runs | `application_runs` | `idem_key` unique; ranking, exposure, post-check, history in data |
 | run_snapshots | `run_snapshots` | holdings, market hash and date, whole factor model, branches, SHA-256 |
 | family_impacts | `family_impacts` | unique (run, family) |
-| goal_impacts | — | FR-404 gap |
+| goal_impacts | `family_impacts.data.goal_impact` | FR-404; our definition (Q-11) |
 | research_releases (newsletter) | — | FR-801 not built |
 | research (in news_items for the BRD) | `research_items` | released reports copied into `news_items` |
 | goals (outflow fields) | `goal_outflows` (declarations) + fixture `events` | |

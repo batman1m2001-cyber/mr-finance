@@ -46,14 +46,15 @@ The RM sees every family: no assignment (Q-17).
 | Route | `#/rm/khach-hang/tac-dong` |
 | Generation | new (`web/pages/impact.js`, staff mode) |
 | Features | [FEAT-13](../../features/FEAT-13-impact-delivery-by-role.md), [FEAT-09](../../features/FEAT-09-number-trace.md), [FEAT-10](../../features/FEAT-10-goal-branch.md) |
-| Requirements | BRD-BR-08, BRD-BR-12, BRD-BR-14, BRD-FR-402, BRD-FR-406, BRD-FR-502, BRD-FR-601, BRD-NFR-11 |
+| Requirements | BRD-BR-08, BRD-BR-12, BRD-BR-14, BRD-FR-402, BRD-FR-404, BRD-FR-406, BRD-FR-502, BRD-FR-601, BRD-NFR-11 |
 | Data | `GET /api/families/{id}/impact?role=rm`, `GET /api/goals/regulation?family_id=`, `POST /api/goals/outflow` |
-| Screenshot | [desktop (behind the drawer)](../../assets/current_ui/SCR-RM-03_desktop-light.jpg) |
+| Screenshots | [desktop](../../assets/current_ui/SCR-RM-02_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-RM-02_phone-light.jpg) |
 
 Same structure as [SCR-CL-05](client.md#scr-cl-05--tác-động-thị-trường-family-impact-client), plus: event
 **headlines** instead of types; superseded and withdrawn runs with their labels (“Đã thu hồi”); a **“Cách tính”**
 link per event (→ SCR-RM-03); “Chi tiết cho RM: theo yếu tố và theo vị thế” (contributions by factor and by
-holding); the goal panel with inferred goals (“RM xác nhận mục tiêu”) and a form “Khai dòng tiền ra nước ngoài cho
+holding); **Mục tiêu** — the selected event's effect on each dated goal (funding before → after
+with Đạt / Theo dõi / Thiếu, FR-404; also on SCR-CL-05); the goal panel with inferred goals (“RM xác nhận mục tiêu”) and a form “Khai dòng tiền ra nước ngoài cho
 mục tiêu (RM)” to declare purpose and country (FR-601).
 
 ---
@@ -111,3 +112,19 @@ said at the bottom (“Dữ liệu giả định cho demo …”).
 
 The same record summed over the five clients: KPI tiles, AI pipeline scores per client, a per-client table (a row
 opens that client's SCR-RM-04), the recommendation log, missed news, engagement. Same caution as SCR-RM-04.
+
+---
+
+## SCR-RM-06 — Duyệt đề xuất (approval queue)
+
+| | |
+|---|---|
+| Route | `#/rm/khach-hang/duyet` |
+| Generation | legacy (tab `rm`, staff mode) |
+| Feature | [FEAT-27](../../features/FEAT-27-rm-approval-queue.md) |
+| Requirements | BRIEF-FLOW-02, BRIEF-SCEN-03 |
+| Data | `GET /api/review`, `POST /api/review/decide` (`by` = the RM) |
+| Screenshot | [desktop](../../assets/current_ui/SCR-RM-06_desktop-light.jpg) |
+
+The options the picked client sent from Kế hoạch: actions, summary numbers, a note field, **Duyệt** / **Từ chối**;
+decided items below with their badge and note. Only an RM may decide (server check). Added 2026-10-15 (DEF-02).
