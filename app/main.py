@@ -51,6 +51,7 @@ from research.graph import goal_outflow_flow, research_release_flow, research_up
 from review.graph import propose_flow, review_flow
 from risk.graph import risk_flow
 from scenarios.graph import goals_flow, scenario_flow
+from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
 from views.graph import cio_agent_flow, decide_flow
@@ -90,6 +91,12 @@ APP = Application(
             http("POST", "/api/config/decide", port=PORT),
             graph=config_decide_flow,
             description="POST {version_id, action: approve|reject, by, note}: decide a proposed version.",
+        ),
+        Service(
+            "search",
+            http("POST", "/api/search", port=PORT),
+            graph=search_flow,
+            description="POST {q, role, client_id?, scope?}: the header search over what the role may open.",
         ),
         Service(
             "copilot",

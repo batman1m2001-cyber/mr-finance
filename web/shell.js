@@ -5,8 +5,9 @@
    The role switcher is a demo: it sends a user id with each action and the server checks that id's
    role. It is not security, and the footer says so. */
 import {$, $$, esc, failed, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261016i";
-import {start as startMotion} from "./motion.js?v=20261016i";
+import {mount as mountCopilot} from "./copilot.js?v=20261016r1";
+import {after, start as startMotion} from "./motion.js?v=20261016r1";
+import {mount as mountHeader} from "./header.js?v=20261016r1";
 
 const ROLES = {
   client: {
@@ -94,10 +95,22 @@ function localStore(k, v) {
   return null;
 }
 
-export function go(hash) {
+export function go(hash, focus) {
+  if (focus) after(focus);  // motion.js marks these once the page has rendered
   if (location.hash === hash) route();
   else location.hash = hash;
 }
+
+// every page of a role, for the header search: label, its parent's label, its route
+function pagesFor(role) {
+  const out = [];
+  for (const n of ROLES[role].nav) {
+    if (n.sub) for (const s of n.sub) out.push({label: s.label, parent: n.label, route: `#/${role}/${n.id}/${s.id}`});
+    else out.push({label: n.label, parent: "", route: `#/${role}/${n.id}`});
+  }
+  return out;
+}
+let header = null;
 
 function drawChrome(rt) {
   const r = ROLES[rt.role];
@@ -127,6 +140,7 @@ async function route() {
   state.route = rt;
   localStore("mf.role", rt.role);
   drawChrome(rt);
+  if (header) header.refresh();
   window.Legacy && window.Legacy.setViewer(rt.role === "client" ? "client" : "staff", ROLES[rt.role].user);
   const target = rt.sub || rt.nav;
   const box = $("#page-new");
@@ -143,7 +157,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016i`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r1`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {
@@ -199,6 +213,16 @@ async function start() {
   for (const b of $$("[data-scope]")) b.addEventListener("click", () => { if (!$("#page-new").hidden) setTimeout(route); });
   window.addEventListener("hashchange", route);
   startMotion();
+  header = mountHeader({
+    role: () => state.role,
+    client: () => (window.Legacy && window.Legacy.client()) || $("#client").value,
+    scope: () => ($("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope,
+    pages: pagesFor,
+    go,
+    setClient: (id) => { const sel = $("#client"); if (sel.value !== id) { sel.value = id; sel.dispatchEvent(new Event("change")); } },
+  });
+  $("#client").addEventListener("change", () => header.refresh());
+  for (const b of $$("[data-scope]")) b.addEventListener("click", () => setTimeout(() => header.refresh()));
   mountCopilot();
   try {
     const a = await (await fetch("/api/agents")).json();

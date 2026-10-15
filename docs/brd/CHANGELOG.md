@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — UI redesign R1: board look (tokens, header with tagline, search, bell, demo roles on the tabs row),
+  Lucide icons, icon chips, pills, small charts, one look for controls, round Copilot button; `POST /api/search`;
+  owner request recorded as OWN-UI-01…07 — FEAT-34, owner_requirements, matrix §5, sources, design_system,
+  interaction_patterns, api_reference, UI_REDESIGN_PLAN §4.
+
 - 2026-10-16 — UI redesign R0: browser tests in the suite (`tests/ui`, Playwright, `ui` marker; `.[ui]` extra); the
   shell signals `mf:page` after a failed render too — matrix (KIT-COPILOT-01, OWN-MOTION-02/04 verified, KIT-UX-07),
   regression_coverage, docs/UI_REDESIGN_PLAN.md §4.
