@@ -1,0 +1,21 @@
+# Non-functional requirements (BRD §15) — `BRD-NFR-nn`
+
+Layer A. BRD §15: “Các mục tiêu dưới đây áp dụng cho giai đoạn thí điểm; con số cụ thể cần Khối Công nghệ và
+An ninh thông tin xác nhận.” — the targets apply to the **pilot**, and the figures await confirmation by the
+Technology and Information Security divisions. Several therefore apply to a bank deployment, not to this
+public demo; the matrix says which ([`requirements_traceability.md`](requirements_traceability.md)).
+
+| ID | Group (BRD) | Original (BRD §15) | Meaning | Acceptance | Doc status |
+|---|---|---|---|---|---|
+| BRD-NFR-01 | Hiệu năng | “Tính tác động một sự kiện cho toàn bộ 6.500 gia đình trong ≤ 5 phút sau khi CIO duyệt; mở trang gia đình ≤ 2 giây” | One event for all 6,500 families in ≤ 5 min after approval; a family page opens in ≤ 2 s | timed run at 6,500 families; page-load timing | documented |
+| BRD-NFR-02 | Tốc độ tin | “Từ lúc tin đăng tới lúc vào hộp tin ≤ 10 phút; Agent CIO hoàn thành ≤ 15 phút” | Published → inbox ≤ 10 min; CIO agent done ≤ 15 min | schedule every 10 min; agent run duration recorded | documented |
+| BRD-NFR-03 | Sẵn sàng | “99,5% trong giờ làm việc; lỗi nhà cung cấp AI không làm dừng phần tính toán và xem kết quả cũ” | 99.5 % in business hours; an AI provider failure must not stop computation or viewing earlier results | uptime monitoring (bank); AI failure leaves engine, runs and reads working | documented |
+| BRD-NFR-04 | Tất định | “Cùng ảnh chụp cấu hình và giá phải ra cùng kết quả tới từng đồng” | Same snapshot → same result to the dong | recompute from a stored snapshot equals the stored result exactly | documented |
+| BRD-NFR-05 | Độ chính xác tiền | “Tính tiền bằng số thập phân chính xác, không dùng số thực dấu phẩy động cho số dư” | Money in exact decimals; no floating point for balances | balances are integers/decimals; any float maths is rounded to the dong at one place | needs_clarification (Q-13: the BRD's own engine uses floats, F22) |
+| BRD-NFR-06 | Mở rộng | “Thêm yếu tố, loại tài sản, agent mới bằng cấu hình; đổi nhà cung cấp AI không đổi kiến trúc” | New factors, asset classes and agents by configuration; changing AI provider does not change the architecture | factor model and agents defined in config; model reached through a resource key | documented |
+| BRD-NFR-07 | Bảo mật | “Mã hóa khi truyền và khi lưu; khóa trong kho bí mật; kiểm thử xâm nhập và tấn công prompt trước vận hành” | Encryption in transit and at rest; keys in a secret store; penetration and prompt-injection testing before operation | bank deployment checks; prompt-injection test in the suite | documented |
+| BRD-NFR-08 | Chủ quyền dữ liệu | “Dữ liệu khách lưu tại Việt Nam; không gửi cho nhà cung cấp AI; nhà cung cấp không lưu và không huấn luyện trên dữ liệu ngân hàng” | Client data stored in Vietnam; never sent to an AI provider; the provider neither stores nor trains on bank data | no client data in any prompt (tested); hosting and provider contract are bank matters | documented |
+| BRD-NFR-09 | Kiểm toán | “Nhật ký không sửa được; thời hạn lưu trữ theo quy định lưu trữ chứng từ của ngân hàng (chưa có quy định riêng cho nhật ký AI)” | Immutable log; retention per the bank's records rules (no specific rule for AI logs yet) | edits refused and detected; retention is a bank policy | documented |
+| BRD-NFR-10 | Chi phí AI | “Giới hạn token và ngân sách theo ngày; theo dõi chi phí trên mỗi sự kiện” | Token limits and a daily budget; cost tracked per event | per-call token caps; daily budget; cost per event recorded | documented |
+| BRD-NFR-11 | Khả năng dùng | “Tiếng Việt; mỗi con số có nút “cách tính”; chạy trên máy tính và điện thoại” | Vietnamese; every number has a “how computed” control; works on desktop and phone | UI language; “Cách tính” on numbers; screenshots at desktop and phone width | needs_clarification (Q-14: “every number” — every news-impact number, or every number in the product) |
+| BRD-NFR-12 | Quan sát | “Log tập trung, cảnh báo khi lấy tin lỗi, khi agent lỗi, khi chuỗi nhật ký bị gãy” | Central logging; alerts when news fetching fails, an agent fails, or the log chain breaks | failures surfaced and alerted | documented |

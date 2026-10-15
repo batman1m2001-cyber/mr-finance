@@ -5,6 +5,10 @@ The brief's demo (section 7 of `mr_finance_idea_final.md`), on one client: **Ngu
 number below is what the product shows on the demo data. `tests/test_demo.py` walks the same steps
 through the same calls, so if the tests pass, the demo runs.
 
+> **Note (2026-10-15):** the menus were renamed by the redesign; the step names below are the old ones. The
+> mapping to today's menus is in [`docs/brd/ux/user_journeys.md`](brd/ux/user_journeys.md#j6--the-briefs-five-minute-demo-client-rm)
+> (J6). Step 6 is now “Khách hàng → Chuyên gia” (not in the RM's menu: DEF-02).
+
 ## Before you start
 
 ```bash

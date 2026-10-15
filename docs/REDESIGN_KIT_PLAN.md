@@ -66,7 +66,7 @@ Each phase ends with its tests, desktop + phone screenshots in light and dark, a
 
 | Phase | State | Commit | Evidence |
 |---|---|---|---|
-| K1 | not started | — | — |
+| K1 | matrix done; pre-BRD inventory done | (this change) | `docs/brd/requirements/requirements_traceability.md` (61 + 7 + 97 + 29 + 19 rows), checked by `tests/test_brd_docs.py` |
 | K2 | not started | — | — |
 | K3 | not started | — | — |
 | K4 | not started | — | — |
