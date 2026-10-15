@@ -15,6 +15,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | Path | Service → graph | Body | Role checked | Feature |
 |---|---|---|---|---|
 | `/api/dashboard` | dashboard → `dashboard_flow` | `client_id, scope?, months?` | — | FEAT-21 |
+| `/api/flows` | flows → `flows_flow` | `client_id, scope?, month? (YYYY-MM)` | — | FEAT-29 |
 | `/api/statement` | statement → `statement_flow` | `client_id, filename, content` (base64) | — | FEAT-22 |
 | `/api/declare` | declare → `declare_flow` | `client_id, message, session_id` | — | FEAT-23 |
 | `/api/risk` | risk → `risk_flow` | `client_id, answers` | — | FEAT-24 |

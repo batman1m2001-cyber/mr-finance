@@ -16,7 +16,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
 | BRD rules (RULE) | 97 | 59 | 4 | 12 | 3 | 5 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Redesign kit (KIT) | 19 | 0 | 0 | 0 | 12 | 0 | 0 | 0 | 7 |
+| Redesign kit (KIT) | 19 | 1 | 2 | 0 | 9 | 0 | 0 | 0 | 7 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -242,9 +242,9 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
-| KIT-UX-01 | FEAT-29 | planned | REDESIGN_KIT_PLAN K2 |
-| KIT-UX-02 | FEAT-29 | planned | K2; transaction rows only |
-| KIT-UX-03 | FEAT-29 | planned | K2 |
+| KIT-UX-01 | FEAT-29 | implemented_unverified | SCR-CL-08 KPI strip (built 2026-10-16); checked by screenshots, no automated UI test |
+| KIT-UX-02 | FEAT-29 | implemented_verified | `tests/test_flows.py::test_the_bands_are_the_transactions_of_the_month_to_the_dong`, `tests/test_flows.py::test_the_latest_month_by_default_and_the_family_adds_the_spouse` — transaction rows only; a band opens to its rows |
+| KIT-UX-03 | FEAT-29 | implemented_unverified | SCR-CL-08 Wealth Map: values, shares, price date, drill-down to holdings; screenshots only |
 | KIT-UX-04 | FEAT-30 | planned | K3 |
 | KIT-UX-05 | FEAT-31 | planned | K4 |
 | KIT-UX-06 | FEAT-29…32 | planned | Every K phase; the skeleton already respects reduced motion |

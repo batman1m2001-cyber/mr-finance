@@ -2,8 +2,8 @@
 
 Layer C. As built on 2026-10-15; screenshots are current state with seeded demo data (three effective runs,
 EV-2026-0001…0003). The RM is the demo user `rm01` (Phạm Gia Bảo); every RM screen shows “Đang dùng … demo”.
-Inside **Khách hàng**, the client picker chooses the family, and the client pages SCR-CL-01/02/03/06 appear in staff
-mode ([client.md](client.md)).
+Inside **Khách hàng**, the client picker chooses the family, and the client pages SCR-CL-08/01/02/03/06 appear in
+staff mode ([client.md](client.md)).
 
 ---
 
