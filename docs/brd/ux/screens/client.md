@@ -136,7 +136,7 @@ tolerance and capacity on the five named levels with the level each falls in. **
 | Features | [FEAT-13](../../features/FEAT-13-impact-delivery-by-role.md), [FEAT-10](../../features/FEAT-10-goal-branch.md) |
 | Requirements | BRD-BR-08, BRD-BR-10, BRD-FR-502, BRD-RULE-CONTENT-01 (flow 2), BRD-RULE-CONTENT-02, BRD-NFR-11 |
 | Data | `GET /api/families/{id}/impact?role=client`, `GET /api/goals/regulation?family_id=&role=client` |
-| Screenshots | [desktop](../../assets/current_ui/SCR-CL-05_desktop-light.jpg) · [desktop dark](../../assets/current_ui/SCR-CL-05_desktop-dark.jpg) · [phone](../../assets/current_ui/SCR-CL-05_phone-light.jpg) |
+| Screenshots | [desktop, with the timeline](../../assets/current_ui/SCR-CL-05_desktop-light.jpg) · [desktop dark](../../assets/current_ui/SCR-CL-05_desktop-dark.jpg) · [phone](../../assets/current_ui/SCR-CL-05_phone-light.jpg) |
 
 **Journey.** After the CIO approves news and the post-check passes, the client sees what it may do to their
 wealth over the next 3 months, how wide the range is, and where it comes from — without tickers or advice.
@@ -163,6 +163,10 @@ validated palette; hover tooltips on marks.
 **Rationale.** One hero number instead of tables (the U1 target “news page ≤ 736 words”: 257 achieved). Event type
 instead of headline because a headline can name a company ([ADR-0008](../../decisions/ADR-0008-the-client-sees-asset-classes-only.md)).
 No “Cách tính” drawer for the client (Q-14).
+
+**Since R4.** A “Dòng thời gian” panel: one row per event, its steps in order — first news, event, AI draft, AI
+challenge, CIO approval, applied, effective — each with the time stored on its record; the selected event's row is
+outlined. Tests: `tests/ui/test_pages.py::test_the_timeline_the_news_impact_card_and_the_cio_run_graph`.
 
 ---
 
@@ -251,7 +255,7 @@ paused while the tab is hidden).
 | Feature | [FEAT-30](../../features/FEAT-30-financial-intelligence-graph.md) |
 | Requirements | KIT-UX-04, KIT-UX-06; BRD-RULE-CONTENT-01 (flow 2) |
 | Data | `GET /api/families/{id}/graph?role=client\|rm` |
-| Screenshots | [desktop](../../assets/current_ui/SCR-CL-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-09_phone-light.jpg) · [dark](../../assets/current_ui/SCR-CL-09_desktop-dark.jpg) · [RM, a node selected](../../assets/current_ui/SCR-CL-09_desktop-light-rm.jpg) |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CL-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-09_phone-light.jpg) · [dark](../../assets/current_ui/SCR-CL-09_desktop-dark.jpg) · [RM, a node selected](../../assets/current_ui/SCR-CL-09_desktop-light-rm.jpg) · [News Impact panel](../../assets/current_ui/SCR-CL-09_desktop-light-impact.jpg) |
 
 **Journey.** “Which news reaches my money, through what, and down to which goal?” — read left to right.
 
@@ -263,6 +267,10 @@ note that edges are potential impacts with stored sources.
 rest; again or “Bỏ chọn” clears. Tooltips on nodes and edges. Phones open on the list.
 
 **States.** No effective run: “Chưa có tin nào được CIO duyệt áp dụng cho gia đình này”.
+
+**Since R4.** Selecting an event opens the News Impact panel: direction, main scenario, the chain with a count per
+column, the classes (client) or holdings (RM) it may move with this event's own share and share of net worth, the
+goals before → after, the outlets. The CIO opens the same page on a whole run (SCR-CIO-10).
 
 ---
 
@@ -291,3 +299,32 @@ button's ✦ breathes), ✓ on the button after an answer, red after a refusal o
 and a red edge on the answer), amber while a write waits for Xác nhận. An answer that read numbers on this page
 marks them and offers **Chỉ trên trang**; otherwise **Mở … →** opens the page and marks them there. Phones: the
 marks wait until the panel is closed.
+
+
+---
+
+## SCR-CL-11 — Bản đồ tài chính (overview graph)
+
+| | |
+|---|---|
+| Route | `#/client/tong-quan/ban-do`; RM: `#/rm/khach-hang/ban-do` |
+| Generation | new in R4 (`web/pages/map.js`) |
+| Feature | [FEAT-30](../../features/FEAT-30-financial-intelligence-graph.md) |
+| Requirements | KIT-UX-04, OWN-UI-04; BRD-RULE-CONTENT-01 (flow 2), ADR-0008 |
+| Data | `POST /api/overview` |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CL-11_desktop-light.jpg) · [dark](../../assets/current_ui/SCR-CL-11_desktop-dark.jpg) · [phone (list)](../../assets/current_ui/SCR-CL-11_phone-light.jpg) · [a class opened](../../assets/current_ui/SCR-CL-11_desktop-light-expanded.jpg) · [RM, every kind on](../../assets/current_ui/SCR-CL-11_desktop-light-all-rm.jpg) |
+
+**Journey.** “What is my whole picture and what touches it?” — the client in the centre, then into a class, a
+risk, a goal or a news event, and on to the page that shows it.
+
+**Layout.** Left (c8): kind chips (Tài sản, Nguồn dữ liệu, Mục tiêu, Rủi ro, Chính sách, Tin tức — sources and
+policy start off), “Đồ thị / Danh sách”, the radial graph, the note on sources and wording. Right (c4): the news
+events and policy items by impact, or the selected node — figures, “Mở rộng n khoản” for a class, “Mở trang” /
+“Xem đường đi của tin”, and its links with their records.
+
+**Interaction.** Nodes are buttons (click, Enter, Space); a class also opens with double-click or `+`/`−`. The
+selection lights its links and hides the other labels. News edges are dashed (“có thể ảnh hưởng”). Phones open on
+the list.
+
+**Tests.** `tests/test_overview.py`; `tests/ui/test_pages.py::test_the_overview_graph_selects_expands_and_opens_pages`,
+`tests/ui/test_pages.py::test_the_overview_graph_is_a_list_on_a_phone`.

@@ -345,6 +345,14 @@ async def run_one(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc.args[0])}, status_code=404)
 
 
+async def run_graph(request: Request) -> JSONResponse:
+    """UI redesign R4: the CIO's whole run as a graph (every family it computed)."""
+    try:
+        return JSONResponse(impact_graph.run_graph(request.path_params["run_id"]))
+    except KeyError as exc:
+        return JSONResponse({"error": str(exc.args[0])}, status_code=404)
+
+
 async def run_verify(request: Request) -> JSONResponse:
     """Recompute every family from the run's frozen snapshot and compare to the dong (NFR-04)."""
     try:
@@ -570,6 +578,7 @@ app = Starlette(
         Route("/api/runs", runs_list),
         Route("/api/runs/{run_id}", run_one),
         Route("/api/runs/{run_id}/verify", run_verify),
+        Route("/api/runs/{run_id}/graph", run_graph),
         Route("/api/families/{family_id}/impact", family_impact),
         Route("/api/families/{family_id}/graph", family_graph),
         Route("/api/trace/{run_id}/{family_id}", trace),

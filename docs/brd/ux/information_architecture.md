@@ -25,9 +25,11 @@ remembered (`mf.role`).
 Khách hàng (client)                         RM
 ├── Tổng quan                               ├── Hôm nay ......................... SCR-RM-01
 │   ├── Toàn cảnh ....... SCR-CL-08         ├── Khách hàng  (client picker)
-│   └── Chi tiết ........ SCR-CL-01         │   ├── Tác động tin ................ SCR-RM-02 (+ SCR-RM-03 drawer)
+│   ├── Bản đồ tài chính  SCR-CL-11         │   ├── Tác động tin ................ SCR-RM-02 (+ SCR-RM-03 drawer)
+│   └── Chi tiết ........ SCR-CL-01         │
 ├── Tài sản ............. SCR-CL-02         │   ├── Đồ thị tác động ............. SCR-CL-09 (staff view)
 ├── Mục tiêu & kịch bản                     │   ├── Toàn cảnh ................... SCR-CL-08 (staff view)
+                                            │   ├── Bản đồ tài chính ............ SCR-CL-11 (staff view)
 │   ├── Kế hoạch ........ SCR-CL-03         │   ├── Chi tiết .................... SCR-CL-01 (staff view)
 │   └── Khẩu vị rủi ro .. SCR-CL-04         │   ├── Tài sản ..................... SCR-CL-02
 ├── Tin tác động                            │   ├── Kế hoạch .................... SCR-CL-03
@@ -44,6 +46,7 @@ CIO                                         Tuân thủ (Compliance)
 │                                           └── Cấu hình ........................ SCR-CIO-09
 ├── Phơi nhiễm .......... SCR-CIO-04
 ├── Lần áp dụng ......... SCR-CIO-05
+├── Đồ thị lần áp dụng .. SCR-CIO-10
 ├── Nghiên cứu .......... SCR-CIO-06
 ├── Mô hình ............. SCR-CIO-07
 ├── Agent ............... SCR-CIO-08
@@ -59,7 +62,8 @@ the personal / family scope and “Làm lại demo”. The same page appears for
 
 | Capability | Feature | Client | RM | CIO | Compliance |
 |---|---|---|---|---|---|
-| News → goal graph | FEAT-30 | Tin tác động → Đồ thị tác động | Khách hàng → Đồ thị tác động | — | — |
+| News → goal graph | FEAT-30 | Tin tác động → Đồ thị tác động | Khách hàng → Đồ thị tác động | Đồ thị lần áp dụng (whole run) | — |
+| Overview graph (classes, sources, goals, risks, policy, news) | FEAT-30 | Tổng quan → Bản đồ tài chính | Khách hàng → Bản đồ tài chính | — | — |
 | Ask / act / navigate (Copilot) | FEAT-32 | ✦ panel on every page | ✦ panel | ✦ panel | ✦ panel |
 | What matters now (feed) | FEAT-31 | Tổng quan → Toàn cảnh | Khách hàng → Toàn cảnh | — | — |
 | Pulse, Wealth Map, Money Flow | FEAT-29 | Tổng quan → Toàn cảnh | Khách hàng → Toàn cảnh | — | — |

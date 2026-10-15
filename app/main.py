@@ -47,6 +47,7 @@ from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from news.graph import dismiss_flow, ingest_flow, release_flow
+from overview.graph import overview_flow
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, review_flow
 from risk.graph import risk_flow
@@ -67,6 +68,12 @@ APP = Application(
             http("POST", "/api/dashboard", port=PORT),
             graph=dashboard_flow,
             description="POST {client_id, scope: personal|family, months}: the dashboard.",
+        ),
+        Service(
+            "overview",
+            http("POST", "/api/overview", port=PORT),
+            graph=overview_flow,
+            description="POST {client_id, scope, role: client|rm, goals}: the overview graph around one client.",
         ),
         Service(
             "flows",

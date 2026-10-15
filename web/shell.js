@@ -14,7 +14,8 @@ const ROLES = {
     label: "Khách hàng", user: null, clientPick: true,
     nav: [
       {id: "tong-quan", label: "Tổng quan", sub: [
-        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "chi-tiet", label: "Chi tiết", page: "detail"}]},
+        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "ban-do", label: "Bản đồ tài chính", page: "map"},
+        {id: "chi-tiet", label: "Chi tiết", page: "detail"}]},
       {id: "tai-san", label: "Tài sản", page: "holdings"},
       {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [
         {id: "ke-hoach", label: "Kế hoạch", page: "plan"}, {id: "khau-vi", label: "Khẩu vị rủi ro", page: "risktest"}]},
@@ -29,7 +30,7 @@ const ROLES = {
       {id: "hom-nay", label: "Hôm nay", page: "today"},
       {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
         {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
-        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"},
+        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "ban-do", label: "Bản đồ tài chính", page: "map"},
         {id: "tong-quan", label: "Chi tiết", page: "detail"},
         {id: "tai-san", label: "Tài sản", page: "holdings"}, {id: "ke-hoach", label: "Kế hoạch", page: "plan"},
         {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "performance"},
@@ -44,6 +45,7 @@ const ROLES = {
       {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events"},
       {id: "phoi-nhiem", label: "Phơi nhiễm", page: "exposure"},
       {id: "ap-dung", label: "Lần áp dụng", page: "runs"},
+      {id: "do-thi", label: "Đồ thị lần áp dụng", page: "graph"},
       {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
       {id: "mo-hinh", label: "Mô hình", page: "model"},
       {id: "agent", label: "Agent", page: "agents"},

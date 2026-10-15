@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — UI redesign R4: Bản đồ tài chính, the overview graph of the board (client in the centre; asset
+  classes opening onto holdings, data sources, followed goals, flagged risks, policy items, approved news events;
+  every edge names its record; node → page; `POST /api/overview`); the News Impact panel on Đồ thị tác động
+  (direction, chain, each event's own share per asset); the event timeline on Tin tác động; the CIO's whole-run graph
+  (`GET /api/runs/{id}/graph`) — FEAT-30, matrix (OWN-UI-04 verified), client.md SCR-CL-05/09/11, cio.md SCR-CIO-10,
+  inventory, IA, api_reference, assets (9 screenshots), UI_REDESIGN_PLAN §4.
+
 - 2026-10-16 — UI redesign R3: the eight pre-redesign pages rebuilt in the board's look as module pages (Chi tiết,
   Tài sản, Kế hoạch, Khẩu vị rủi ro, Chi phí chính sách, Chuyên gia / Duyệt đề xuất, Hiệu quả tư vấn one client and
   all), every block and action kept; `web/app.js`, `app.css`, `charts.js`, `fmt.js` deleted; the shell owns the client

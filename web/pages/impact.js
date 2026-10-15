@@ -57,6 +57,8 @@ export async function render(box, ctx) {
         <h3>Sự kiện <span class="hint">mới nhất trước</span></h3>
         <div class="list" id="events"></div>
       </div>
+      <div class="panel c12"><h3>Dòng thời gian <span class="hint">mỗi sự kiện từ tin đầu tiên tới khi có hiệu lực · giờ Việt Nam</span></h3>
+        <div class="tline" id="timeline"></div></div>
       <div class="panel c12" id="goal-impact" hidden></div>
       ${staff ? `<div class="panel c12"><details class="more"><summary>Chi tiết cho RM: theo yếu tố và theo vị thế</summary>
         <div class="cols" style="margin-top:8px"><div class="c6"><div class="small muted">Theo yếu tố (3 tháng)</div><div id="by-factor"></div></div>
@@ -72,6 +74,7 @@ export async function render(box, ctx) {
     fan($("#fan", box), ["1w", "3m", "12m"].map(h => ({label: HORIZON[h], ...it.horizons[h]})),
       {label: `Dải tác động của ${it.event.title}`});
     for (const b of box.querySelectorAll("[data-run]")) b.setAttribute("aria-pressed", String(b.dataset.run === it.run_id));
+    for (const r of box.querySelectorAll("[data-tl]")) r.classList.toggle("on", r.dataset.tl === it.run_id);
     drawGoals($("#goal-impact", box), it);
   };
   diverging($("#by-class", box), Object.entries(classes).map(([k, v]) => ({label: ASSET_CLASS[k] || k, value: v, color: CLASS_COLOR[k]})),
@@ -87,6 +90,16 @@ export async function render(box, ctx) {
         ${staff ? `<button type="button" class="linkbtn small" data-trace="${esc(i.run_id)}">Cách tính</button>` : ""}</div></div>
       <div style="text-align:right"><div class="num ${signClass(e)}" style="font-weight:700">${vnd(e, true)}</div><div class="small muted">${pct(i.pct["3m"].expected, true, 2)}</div></div></div>`;
   }).join("");
+  // the timeline: one row per event, its steps in order with their times, read from the stored records
+  const at = (t) => {  // dd/mm hh:mm in Vietnam time
+    const d = new Date((t + 7 * 3600) * 1000), z = (x) => String(x).padStart(2, "0");
+    return `${z(d.getUTCDate())}/${z(d.getUTCMonth() + 1)} ${z(d.getUTCHours())}:${z(d.getUTCMinutes())}`;
+  };
+  $("#timeline", box).innerHTML = [...items].sort((a, b) => (b.timeline[0] || {}).at - (a.timeline[0] || {}).at).map(i => `
+    <div class="trow" data-focus="event:${esc(i.event.id)}" data-tl="${esc(i.run_id)}">
+      <div class="tlabel"><b>${esc(i.event.title)}</b><span class="small muted">${runBadge(i.status, i.status_label)}</span></div>
+      <ol class="tsteps">${(i.timeline || []).map(x => `<li class="tstep ${esc(x.step)}"><i aria-hidden="true"></i><span>${esc(x.label)}</span><time class="small muted num" datetime="${new Date(x.at * 1000).toISOString()}">${at(x.at)}</time></li>`).join("")}</ol>
+    </div>`).join("");
   box.querySelectorAll("[data-run]").forEach(b => { b.onclick = () => drawFan(items.find(i => i.run_id === b.dataset.run)); });
   box.querySelectorAll("[data-trace]").forEach(b => { b.onclick = () => openTrace(b.dataset.trace, client); });
   drawFan(sel);

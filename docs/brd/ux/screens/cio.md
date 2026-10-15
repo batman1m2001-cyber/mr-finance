@@ -175,3 +175,20 @@ short; a pending proposal with who proposed, when, why, its content, and — for
 picker (the proposer left out where two people are required), **Duyệt** and **Từ chối**; for thresholds and the
 restricted list an “Đề xuất thay đổi” JSON editor with a reason; the history.
 
+---
+
+## SCR-CIO-10 — Đồ thị lần áp dụng (run graph)
+
+| | |
+|---|---|
+| Route | `#/cio/do-thi[/<run id>]` (also “Xem đồ thị” on SCR-CIO-05) |
+| Generation | new in R4 (`web/pages/graph.js`, CIO mode) |
+| Feature | [FEAT-30](../../features/FEAT-30-financial-intelligence-graph.md) |
+| Requirements | KIT-UX-04, OWN-UI-04 |
+| Data | `GET /api/runs`, `GET /api/runs/{id}/graph` |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CIO-10_desktop-light.jpg) · [phone (list)](../../assets/current_ui/SCR-CIO-10_phone-light.jpg) |
+
+One run (the address's, else the latest effective) as six columns — Tin, Sự kiện, Kịch bản, Yếu tố, Nhóm tài sản,
+Gia đình — every family the run computed, class → family edges valued by that family's 3-month change; a run
+picker and a link back to the run. Selection, filters and the list view as on SCR-CL-09; a family shows its net
+worth, expected change and the RM pre-review flag. **Tests.** `tests/test_graph.py::test_the_cio_run_graph_reaches_every_family_from_the_stored_results`.
