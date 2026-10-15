@@ -9,6 +9,9 @@ POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ─�
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
+every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
+POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (Compliance)
+GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
      clients, the specialist team, the advisory track record, the house views, the UI)
 
@@ -26,6 +29,7 @@ from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
+from news.graph import dismiss_flow, ingest_flow, release_flow
 from review.graph import propose_flow, review_flow
 from risk.graph import risk_flow
 from scenarios.graph import goals_flow, scenario_flow
@@ -92,6 +96,24 @@ APP = Application(
             graph=review_flow,
             description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
+        Service(
+            "news_fetch",
+            http("POST", "/api/news/ingest", port=PORT),
+            graph=ingest_flow,
+            description="POST {}: fetch every white-listed feed now, through the gates, into the inbox.",
+        ),
+        Service(
+            "news_dismiss",
+            http("POST", "/api/news/dismiss", port=PORT),
+            graph=dismiss_flow,
+            description="POST {ids, by?, note?}: the CIO drops items from the inbox.",
+        ),
+        Service(
+            "news_release",
+            http("POST", "/api/news/release", port=PORT),
+            graph=release_flow,
+            description="POST {item_id, by, note}: Compliance releases an item held by the restricted list.",
+        ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
     ],
@@ -105,6 +127,14 @@ APP = Application(
             key="client_id",
             schedule=schedule(at="07:00", port=PORT),
             description="07:00 daily: the policy sweep over every client.",
+        ),
+        # the news: every white-listed feed through the gates into the CIO's inbox, every 10 minutes
+        # (inside `operonx serve`), and on demand with `operonx run news_ingest`
+        Job(
+            "news_ingest",
+            graph=ingest_flow,
+            schedule=schedule(every="10m", port=PORT),
+            description="Every 10 minutes: the white-listed RSS feeds into the inbox (FR-101).",
         ),
         # how well statements are read: `operonx run statement_reading` (exit code: the gate's).
         # The three demo samples must pass; the free-text note needs a model (MF_AI=on).

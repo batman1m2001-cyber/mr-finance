@@ -15,6 +15,8 @@ from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
+from news import ops as news_ops
+from news import store as news_store
 from scenarios._sim import SCENARIOS
 from wealth import fixtures, store
 from wealth.paths import DATA, ROOT
@@ -161,8 +163,44 @@ async def views(request: Request) -> JSONResponse:
     return JSONResponse(_views())
 
 
+async def news_inbox(request: Request) -> JSONResponse:
+    """The CIO's inbox (FR-103): newest first, by source, kind, status, relevance, time, words; and
+    the feed-health strip: each source's last ingest and its items per hour over a day."""
+    q = request.query_params
+    try:
+        since = float(q["since"]) if q.get("since") else None
+        limit = min(int(q.get("limit") or 200), 1000)
+    except ValueError:
+        return JSONResponse({"error": "since and limit are numbers"}, status_code=400)
+    items = news_store.inbox(
+        source=q.get("source") or None,
+        kind=q.get("kind") or None,
+        status=q.get("status") or "new",
+        relevance=q.get("relevance") or None,
+        since=since,
+        query=q.get("q") or None,
+        limit=limit,
+    )
+    cfg = news_ops.config()
+    last = news_store.last_run()
+    hourly = news_store.counts_by_hour()
+    sources = [
+        {
+            "id": s["id"],
+            "outlet": s["outlet"],
+            "section": s["section"],
+            "kind": s["kind"],
+            "last": (last or {}).get("sources", {}).get(s["id"]),
+            "hourly": hourly.get(s["id"], [0] * 24),
+        }
+        for s in cfg["sources"]
+    ]
+    return JSONResponse({"items": items, "sources": sources, "last_run": last, "config_version": cfg["version"]})
+
+
 async def reset(request: Request) -> JSONResponse:
     store.reset()
+    news_store.reset()
     return JSONResponse({"reset": True})
 
 
@@ -175,6 +213,7 @@ app = Starlette(
         Route("/api/advisory", advisory),
         Route("/api/advisory/all", advisory_all),
         Route("/api/views", views),
+        Route("/api/news/inbox", news_inbox),
         Route("/api/reset", reset, methods=["POST"]),
         # the sample statements a demo uploads
         Mount("/samples", app=StaticFiles(directory=DATA / "samples"), name="samples"),
