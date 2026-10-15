@@ -130,15 +130,20 @@ status badge.
 
 | | |
 |---|---|
-| Route | `#/cio/mo-hinh` |
+| Route | `#/cio/mo-hinh/tham-so` (Mô hình → Tham số) |
 | Features | [FEAT-07](../../features/FEAT-07-scenario-engine.md), [FEAT-14](../../features/FEAT-14-versioned-configuration.md) |
-| Requirements | BRD-RULE-ENG-08…11, BRD-FR-701 (read-only) |
-| Data | `GET /api/model` |
-| Screenshot | [desktop](../../assets/current_ui/SCR-CIO-07_desktop-light.jpg) |
+| Requirements | BRD-RULE-ENG-08…11, BRD-RULE-MEAS-08, BRD-FR-701 |
+| Data | `GET /api/model`, `GET /api/model/estimate`, `POST /api/model/estimate` |
+| Screenshot | [desktop](../../assets/current_ui/SCR-CIO-07_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CIO-07_phone-light.jpg) |
 
 Version (FM-DEMO-2026-10) with “tham số giả định”; **Cách tính** (the four steps in words, the stressed-matrix
 repair figures); **15 yếu tố** — group, S/M/L sizes, realisation at 1 week / 3 months / 12 months (the BRD's), monthly
-volatility normal / stressed, each assumed value badged “giả định”. Read-only: no edit or approval (FR-701 gap).
+volatility normal / stressed, each badged “ước lượng” (hover: months, period, source) or “giả định”.
+**Ước lượng từ dữ liệu thị trường** (F2): how many factors have enough data, the correlation pairs estimated, the
+out-of-sample coverage with “đạt / chưa đạt”, and per factor the months, the assumed and the estimated volatility,
+the share of months inside the band (1 and 3 months) and the verdict (“đạt”, “dải hẹp”, “dải rộng”). A CIO sees
+**Đề xuất làm phiên bản mới**, which proposes the estimate as the next version and opens Cấu hình, where a second
+CIO approves it.
 
 ---
 
@@ -192,3 +197,24 @@ One run (the address's, else the latest effective) as six columns — Tin, Sự 
 Gia đình — every family the run computed, class → family edges valued by that family's 3-month change; a run
 picker and a link back to the run. Selection, filters and the list view as on SCR-CL-09; a family shows its net
 worth, expected change and the RM pre-review flag. **Tests.** `tests/test_graph.py::test_the_cio_run_graph_reaches_every_family_from_the_stored_results`.
+
+---
+
+## SCR-CIO-11 — Dữ liệu thị trường (market data)
+
+| | |
+|---|---|
+| Route | `#/cio/mo-hinh/du-lieu` (Mô hình → Dữ liệu thị trường); Admin `#/admin/du-lieu` |
+| Feature | [FEAT-35](../../features/FEAT-35-market-data-layer.md) |
+| Requirements | BRD-RULE-ENG-11; BRD_COMPLETION_PLAN F-D2, F-D3 |
+| Data | `GET /api/market` |
+| Screenshot | [desktop](../../assets/current_ui/SCR-CIO-11_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CIO-11_phone-light.jpg) |
+
+The lede counts the factors backed by real data (“12/15 yếu tố có dữ liệu thật”) and the jobs failing now.
+**Nguồn và lịch lấy**: each job, its schedule and why, its last success and its last error (red while it is the
+latest, “đã ổn lại” once a later run succeeded). **Yếu tố của mô hình lấy từ đâu**: each of the 15 factors, its
+unit, a provenance pill (green: market data and its source, or computed; amber: “Giả định”), the proxy note for
+VN_RATE, the months of moves and the latest month's move. **Các chuỗi đang lưu**: each series with its last value
+and day, its sources in order (the one in use in bold, “đang dùng …” when a fallback answered), points stored since
+when, and a 120-day line (green up, red down; its label gives the first and last value).
+

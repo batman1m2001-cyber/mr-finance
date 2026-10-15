@@ -14,6 +14,8 @@ POST /api/goals     {client_id, scope?} ──► goals_flow ──► every lif
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
+15:45/16:00/17:30 daily and hourly, `operonx run market_<kind>` ──► the market jobs: public sources into SQLite
+     (market_backfill on demand) · GET /api/market[/series] ──► app/web.py (the source registry, the series)
 POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (Compliance)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
 POST /api/events ──► event_flow · POST /api/events/run-agent ──► cio_agent_flow (agent + challenger)
@@ -46,6 +48,17 @@ from feed.graph import feed_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
+from market.graph import (
+    market_backfill_flow,
+    market_crypto_flow,
+    market_equity_flow,
+    market_flows_flow,
+    market_fx_flow,
+    market_gold_flow,
+    market_world_flow,
+    market_yields_flow,
+    model_estimate_flow,
+)
 from news.graph import dismiss_flow, ingest_flow, release_flow
 from overview.graph import overview_flow
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
@@ -225,6 +238,12 @@ APP = Application(
             graph=goal_outflow_flow,
             description="POST {family_id, goal_id, purpose, country?, by}: the RM declares a goal's outflow.",
         ),
+        Service(
+            "model_estimate",
+            http("POST", "/api/model/estimate", port=PORT),
+            graph=model_estimate_flow,
+            description="POST {by, end?, note?}: a CIO proposes the model estimated from market history (F2).",
+        ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
     ],
@@ -246,6 +265,64 @@ APP = Application(
             graph=ingest_flow,
             schedule=schedule(every="10m", port=PORT),
             description="Every 10 minutes: the white-listed RSS feeds into the inbox (FR-101).",
+        ),
+        # the market data (F1, data/market_sources.json): each public source on its own clock into SQLite,
+        # the cadence from its rate limit and when its data changes; `operonx run market_<kind>` runs one now
+        Job(
+            "market_equity",
+            graph=market_equity_flow,
+            schedule=schedule(at="15:45", port=PORT),
+            timeout=600,
+            description="15:45 daily: VN-Index and the stocks' closes (VNDirect, then Vietcap).",
+        ),
+        Job(
+            "market_flows",
+            graph=market_flows_flow,
+            schedule=schedule(at="16:00", port=PORT),
+            timeout=600,
+            description="16:00 daily: foreign net buying on HOSE (cafef).",
+        ),
+        Job(
+            "market_yields",
+            graph=market_yields_flow,
+            schedule=schedule(at="17:30", port=PORT),
+            timeout=600,
+            description="17:30 daily: government bond yields (HNX curve, then worldgovernmentbonds).",
+        ),
+        Job(
+            "market_fx",
+            graph=market_fx_flow,
+            schedule=schedule(every="1h", port=PORT),
+            timeout=300,
+            description="Hourly: USD/VND (Vietcombank, then MSN).",
+        ),
+        Job(
+            "market_world",
+            graph=market_world_flow,
+            schedule=schedule(every="1h", port=PORT),
+            timeout=300,
+            description="Hourly: gold, Brent, ACWI, S&P 500, US 10-year, the DXY's currencies (MSN).",
+        ),
+        Job(
+            "market_crypto",
+            graph=market_crypto_flow,
+            schedule=schedule(every="1h", port=PORT),
+            timeout=300,
+            description="Hourly: Bitcoin and Ether (Binance).",
+        ),
+        Job(
+            "market_gold",
+            graph=market_gold_flow,
+            schedule=schedule(every="1h", port=PORT),
+            timeout=300,
+            description="Hourly: SJC gold bars (PNJ's history).",
+        ),
+        # history on demand: `operonx run market_backfill [--set since=2020-01-01]`
+        Job(
+            "market_backfill",
+            graph=market_backfill_flow,
+            timeout=7200,
+            description="On demand: every series' history from 2020-01 (dated sources weekly).",
         ),
         # how well statements are read: `operonx run statement_reading` (exit code: the gate's).
         # The three demo samples must pass; the free-text note needs a model (MF_AI=on).

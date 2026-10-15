@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Type | BRD capability — built 2026-10-16 for four kinds |
+| Type | BRD capability — built 2026-10-16 for four kinds; two more with the market data (F1) |
 | Requirements | BRD-FR-701, BRD-BR-07 (model parameters), BRD-RULE-SEC-04, BRD-RULE-SEC-05, BRD-NFR-06; not yet BRD-RULE-AI-02 |
 | Users | CIO (factor model, thresholds), Compliance (restricted list), Admin (news sources) |
 | Entry points | [SCR-CIO-09 Cấu hình](../ux/screens/cio.md#scr-cio-09--cấu-hình-versioned-configuration) (CIO and Compliance); `GET /api/config`, `GET /api/config/{id}`, `POST /api/config/propose`, `POST /api/config/decide` |
@@ -18,6 +18,8 @@
 | thresholds | `pre_review_pct` −0.05, `concentration_share` 0.4, `modelled_share` 0.5, `implausible_share` 0.25 | CIO | yes |
 | restricted | `news_config.json` → `restricted` | Compliance | yes |
 | news_sources | `news_config.json` → `sources` | Admin | no |
+| price_sources | `market_sources.json` (jobs, series and their sources in order; FEAT-35) | Admin | no |
+| ticker_map | `market_sources.json` → `ticker_map` (demo ticker → exchange symbol) | Admin | no |
 
 A user of the owner's role proposes (content checked; refused if identical or if another proposal waits);
 a user of that role approves — not the proposer where two people are required — or rejects. Approval makes the

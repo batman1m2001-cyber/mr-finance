@@ -28,7 +28,10 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CIO-04_desktop-light.jpg` | SCR-CIO-04 Phơi nhiễm | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CIO-05_desktop-light.jpg` | SCR-CIO-05 Lần áp dụng | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
 | `SCR-CIO-06_desktop-light.jpg` | SCR-CIO-06 Nghiên cứu (upload) | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
-| `SCR-CIO-07_desktop-light.jpg` | SCR-CIO-07 Mô hình | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-15, dev server, seeded demo data (client C01) |
+| `SCR-CIO-07_desktop-light.jpg` | SCR-CIO-07 Mô hình | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, market history backfilled from 2020 |
+| `SCR-CIO-07_phone-light.jpg` | SCR-CIO-07 Mô hình | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, market history backfilled from 2020 |
+| `SCR-CIO-11_desktop-light.jpg` | SCR-CIO-11 Dữ liệu thị trường | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, market history backfilled from 2020 |
+| `SCR-CIO-11_phone-light.jpg` | SCR-CIO-11 Dữ liệu thị trường | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, market history backfilled from 2020 |
 | `SCR-CIO-08_desktop-light.jpg` | SCR-CIO-08 Agent | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, mock agents, three approved views |
 | `SCR-CIO-08_phone-light.jpg` | SCR-CIO-08 Agent | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, mock agents, three approved views |
 | `SCR-CIO-09_desktop-light.jpg` | SCR-CIO-09 Cấu hình | current | desktop 1440×900, light, full page | 2026-10-16, dev server, Compliance, a restricted-list proposal waiting for the second person; thresholds v2 in force |

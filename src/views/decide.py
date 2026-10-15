@@ -95,7 +95,7 @@ def apply_edit(view: Dict[str, Any], edits: Dict[str, Any], by: str, reason: str
     before = view["current"]
     after = {**copy.deepcopy(before), **copy.deepcopy(edits)}
     ev = events.get(view["event_id"])
-    errs = schema.check(after, ev["news_ids"])
+    errs = schema.check(after, ev["news_ids"], agent=False)
     if errs:
         raise DecisionError("Bản sửa không hợp lệ: " + "; ".join(errs[:5]))
     view = dict(view)

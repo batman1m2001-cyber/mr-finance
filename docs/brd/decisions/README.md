@@ -26,3 +26,4 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0018](ADR-0018-owner-decisions-public-quotes-and-ai-in-the-demo.md) | Owner decisions: BRD quotes stay public; the demo may send client text to the model | accepted | 2026-10-16 |
 | [ADR-0019](ADR-0019-every-page-is-a-module-page.md) | Every page is a module page; the pre-redesign pages are rebuilt and removed | accepted | 2026-10-16 |
 | [ADR-0020](ADR-0020-sign-in-with-own-accounts.md) | Everyone signs in with their own account; the role switcher is gone | accepted | 2026-10-16 |
+| [ADR-0021](ADR-0021-market-data-through-scheduled-jobs.md) | Market data comes from public sources through scheduled jobs into SQLite | accepted | 2026-10-16 |

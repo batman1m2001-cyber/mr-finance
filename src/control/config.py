@@ -1,6 +1,7 @@
 """Versioned, owned configuration (BRD FR-701, §13.1, ADR-0016): propose, then approve.
 
-Kinds: the factor model, alert thresholds, the restricted list, the news sources (white list). Version 1 of each
+Kinds: the factor model, alert thresholds, the restricted list, the news sources (white list), the market data
+sources and the ticker map (F1). Version 1 of each
 is the file shipped in data/ (or the defaults below); every change is a new version that is PROPOSED, then
 APPROVED (it becomes ACTIVE and the one before SUPERSEDED) or REJECTED, by a user of the owner's role. Where
 §13.1 and F14 ask for two people, the approver must not be the proposer. Every step is in the audit chain, and
@@ -79,6 +80,32 @@ def _check_sources(data: Any) -> None:
         ids.add(s["id"])
 
 
+def _check_price_sources(data: Any) -> None:
+    from market.sources import ADAPTERS
+
+    if not isinstance(data, dict) or not isinstance(data.get("series"), list) or not data["series"]:
+        raise ValueError("nguồn giá cần danh sách series khác rỗng")
+    jobs = data.get("jobs") or {}
+    ids = set()
+    for s in data["series"]:
+        if not (isinstance(s, dict) and s.get("id") and s.get("job") in jobs and s.get("sources")):
+            raise ValueError("mỗi series cần id, job (trong jobs) và sources")
+        if s["id"] in ids:
+            raise ValueError(f"series {s['id']} bị trùng")
+        ids.add(s["id"])
+        for src in s["sources"]:
+            if src.get("source") not in ADAPTERS or not src.get("symbol"):
+                raise ValueError(f"{s['id']}: nguồn {src.get('source')!r} không có (có: {sorted(ADAPTERS)})")
+
+
+def _check_ticker_map(data: Any) -> None:
+    if not isinstance(data, dict) or not data:
+        raise ValueError("bảng mã là một bảng khác rỗng")
+    for k, v in data.items():
+        if not (isinstance(k, str) and isinstance(v, str) and v.isalnum()):
+            raise ValueError(f"mã {k!r} → {v!r} không hợp lệ")
+
+
 KINDS: Dict[str, Dict[str, Any]] = {
     "factor_model": {
         "label": "Mô hình yếu tố",
@@ -107,6 +134,20 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": False,
         "base": _file("news_config.json", "sources"),
         "check": _check_sources,
+    },
+    "price_sources": {
+        "label": "Nguồn dữ liệu thị trường",
+        "owner": "admin",
+        "two_person": False,
+        "base": lambda: {k: v for k, v in _file("market_sources.json")().items() if k != "ticker_map"},
+        "check": _check_price_sources,
+    },
+    "ticker_map": {
+        "label": "Bảng mã chứng khoán",
+        "owner": "admin",
+        "two_person": False,
+        "base": _file("market_sources.json", "ticker_map"),
+        "check": _check_ticker_map,
     },
 }
 

@@ -12,9 +12,9 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 45 | 4 | 9 | 2 | 0 | 1 | 0 | 0 |
-| BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
-| BRD rules (RULE) | 97 | 63 | 5 | 12 | 2 | 2 | 2 | 9 | 2 |
+| BRD numbered (BR, FR, NFR) | 61 | 45 | 4 | 9 | 3 | 0 | 0 | 0 | 0 |
+| BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 2 | 0 | 0 | 5 | 0 |
+| BRD rules (RULE) | 97 | 66 | 4 | 11 | 4 | 2 | 0 | 8 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -43,7 +43,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-BR-12 | §4 | Every number traceable; immutable log | FEAT-09, 11 | SCR-RM-03, SCR-CMP-03 | `src/apply/trace.py`, `src/control/audit.py` | `tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news`, `tests/test_apply.py::test_the_database_refuses_to_edit_the_log_and_a_forced_edit_is_found` | implemented_verified | Log covers news-impact writes only (FEAT-11) |
 | BRD-BR-13 | §4 | CIO sees all clients' exposure by factor | FEAT-08 | SCR-CIO-04 | `src/apply/run.py::exposure` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | implemented_verified | |
 | BRD-BR-14 | §4 | CIO withdraws a view; RMs see “Đã thu hồi” | FEAT-06, 08, 13 | SCR-CIO-03, SCR-RM-02 | `src/apply/run.py::withdraw_view` | `tests/test_apply.py::test_withdrawing_the_view_withdraws_its_runs_and_rms_see_the_label` | implemented_verified | |
-| BRD-BR-15 | §4 | Accuracy over time vs the forecast band | FEAT-18 | — | — | — | blocked | Needs realised price history (Q-22); then news plan N5. Not the mock advisory record (Q-19) |
+| BRD-BR-15 | §4 | Accuracy over time vs the forecast band | FEAT-18, 35 | — | — | — | planned | Realised history now stored from public sources (FEAT-35, ADR-0021); scoring is BRD_COMPLETION_PLAN F3. Not the mock advisory record (Q-19) |
 | BRD-FR-101 | §6.1 | RSS every 10 minutes | FEAT-01 | SCR-CIO-01 | `app/main.py` Job `news_ingest` (`every="10m"`), `src/news/ops.py::fetch` | `tests/test_news.py::test_one_run_counts_each_source_keeps_refusals_aside_and_survives_a_broken_feed` | implemented_unverified | Fetching is tested; the 10-minute schedule is declared and runs on the live demo, but no test asserts it |
 | BRD-FR-102 | §6.1 | Classify, score relevance, suggest event type | FEAT-01 | SCR-CIO-01 | `src/news/rules.py::classify` | `tests/test_news.py::test_classification_by_source_then_words` | implemented_verified | |
 | BRD-FR-103 | §6.1 | CIO inbox: filter, dismiss, group | FEAT-02 | SCR-CIO-01 | `app/web.py::news_inbox`, `dismiss_flow`, `event_flow` | `tests/test_news.py::test_the_inbox_filters_and_dismiss`, `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | implemented_verified | Dismiss: CIO only (DEF-03 fixed) |
@@ -97,8 +97,8 @@ are the documentation rules this repository itself follows.) Counts are recomput
 |---|---|---|---|
 | BRD-KPI-01 | News → RM ready ≤ 2 h | out_of_scope_demo | Pilot measurement; the product records every timestamp needed |
 | BRD-KPI-02 | Important news collected ≥ 95 % | out_of_scope_demo | Pilot measurement; “important” undefined (Q-07) |
-| BRD-KPI-03 | Direction right ≥ 70 % | blocked | Needs realised history (FEAT-18) |
-| BRD-KPI-04 | Band coverage 70–90 % | blocked | Needs realised history (FEAT-18) |
+| BRD-KPI-03 | Direction right ≥ 70 % | planned | History stored (FEAT-35); measured in F3 (FEAT-18) |
+| BRD-KPI-04 | Band coverage 70–90 % | planned | History stored (FEAT-35); measured in F3 (FEAT-18) |
 | BRD-KPI-05 | Recommendations reviewed and logged 100 % | out_of_scope_demo | No recommendation is sent; views and runs are reviewed and logged (FEAT-06, 11) |
 | BRD-KPI-06 | RM contacts from system signals ≥ 50 % | out_of_scope_demo | Pilot measurement (no CRM) |
 | BRD-KPI-07 | High alerts opened ≥ 70 % | out_of_scope_demo | Pilot measurement (no client app) |
@@ -137,7 +137,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-AI-02 | FEAT-14 | not_implemented | — | Models from env, prompt version constant; no two-person change |
 | BRD-RULE-AI-03 | FEAT-04 | implemented_verified | `tests/test_views.py::test_live_mode_refuses_same_models_a_cut_reply_and_another_model` | |
 | BRD-RULE-AI-04 | FEAT-04 | implemented_verified | `tests/test_views.py::test_a_bad_draft_is_sent_back_twice_then_the_run_fails` | |
-| BRD-RULE-AI-05 | FEAT-04 | implemented_unverified | prompt text in `src/views/agents.py::synthesize` | Not enforced after the answer; no test |
+| BRD-RULE-AI-05 | FEAT-04 | implemented_verified | `tests/test_estimate.py::test_a_stressed_branch_without_vnindex_and_re_spread_is_refused` | Asked in the prompt and enforced on every agent answer by the format check (`src/views/schema.py`), all modes; a CIO edit that drops one is a critical challenger finding (R2) the CIO must answer before approving |
 | BRD-RULE-AI-06 | FEAT-04 | implemented_verified | `tests/test_views.py::test_the_schema_refuses` | |
 | BRD-RULE-AI-07 | FEAT-04 | implemented_verified | `tests/test_views.py::test_an_injection_in_the_news_stays_data` | |
 | BRD-RULE-AI-08 | FEAT-04, 07 | implemented_verified | `tests/test_views.py::test_the_schema_refuses` | |
@@ -157,7 +157,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-ENG-08 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_the_model_has_the_brds_fifteen_factors_and_both_regimes_are_valid_covariances` | Stressed volatilities assumed, not from 2022 data (ADR-0004) |
 | BRD-RULE-ENG-09 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_a_wrong_factor_model_is_refused` | |
 | BRD-RULE-ENG-10 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_the_model_has_the_brds_fifteen_factors_and_both_regimes_are_valid_covariances` | |
-| BRD-RULE-ENG-11 | FEAT-07 | partially_implemented | `tests/test_engine.py::test_proxies_are_labelled_and_cash_has_no_load` | Every parameter labelled “giả định”; none estimated (Q-22) |
+| BRD-RULE-ENG-11 | FEAT-07, 35 | implemented_verified | `tests/test_estimate.py::test_volatility_and_shrunk_correlation_come_from_55_months_and_the_rest_stays_assumed`, `tests/test_market.py::test_each_factor_says_where_it_comes_from` | “Ước lượng” from 55 months with 20 % shrinkage, else “Giả định”; per-factor source (FEAT-35); the estimate becomes the model once a second CIO approves it |
 | BRD-RULE-ENG-12 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_bonds_lose_when_yields_and_their_sector_spread_rise`, `tests/test_engine.py::test_fpt_also_moves_with_the_dollar`, `tests/test_engine.py::test_loans_move_net_worth_the_right_way` | Betas are assumed, not estimated from TCBS prices |
 | BRD-RULE-ENG-13 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_the_brd_gold_example_has_its_structure` | Structure reproduced; the example's numbers are illustrative in the BRD |
 | BRD-RULE-GOAL-01 | FEAT-10 | implemented_verified | `tests/test_research.py::test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal` | |
@@ -196,14 +196,14 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-CONTENT-02 | FEAT-13 | partially_implemented | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | AI label, responsible person, time, “không phải khuyến nghị”, RM path, per-item sources (outlets and count, no headline: `tests/test_brd_gaps.py::test_the_client_sees_outlets_not_headlines`): yes; COI disclosure: no |
 | BRD-RULE-CONTENT-03 | FEAT-03 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time` | Release-time rule enforced; COI is free text |
 | BRD-RULE-CONTENT-04 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | |
-| BRD-RULE-MEAS-01 | FEAT-18 | blocked | — | Needs realised history |
-| BRD-RULE-MEAS-02 | FEAT-18 | blocked | — | Needs realised history |
+| BRD-RULE-MEAS-01 | FEAT-18, 35 | planned | — | History stored (FEAT-35); scored in F3 |
+| BRD-RULE-MEAS-02 | FEAT-18, 35 | planned | — | History stored (FEAT-35); scored in F3 |
 | BRD-RULE-MEAS-03 | — | not_implemented | — | |
 | BRD-RULE-MEAS-04 | FEAT-04, 06, 15 | implemented_verified | `tests/test_catalogue.py::test_the_latest_run_and_the_quality_figures_come_from_the_store` | `catalogue.quality`: share of decided views the CIO edited, findings and critical ones, agent runs and errors, format retries — 7 days and all time, on SCR-CIO-08 |
 | BRD-RULE-MEAS-05 | FEAT-06 | out_of_scope_demo | — | Data recorded (decision times); pilot metric |
 | BRD-RULE-MEAS-06 | — | out_of_scope_demo | — | Pilot control group |
 | BRD-RULE-MEAS-07 | FEAT-04 | partially_implemented | — | No news-agent eval set; only the pre-BRD `statement_reading` eval exists |
-| BRD-RULE-MEAS-08 | FEAT-07 | out_of_scope_demo | — | Model Risk's validation on history |
+| BRD-RULE-MEAS-08 | FEAT-07 | implemented_verified | `tests/test_estimate.py::test_out_of_sample_coverage_is_near_80_percent_when_the_history_is_what_the_model_says`, `tests/test_estimate.py::test_a_band_too_narrow_is_said_to_be` | Out of sample 2/2024–8/2026 on real history: [model_validation.md](../testing/model_validation.md) (85 % inside P10–P90); Model Risk's conclusion is theirs |
 
 ## 3. Original brief (`BRIEF-*`)
 

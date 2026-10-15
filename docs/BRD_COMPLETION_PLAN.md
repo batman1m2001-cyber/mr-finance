@@ -150,6 +150,11 @@ Also in this phase:
 - Tests on synthetic responses in each source's format, plus `scripts/market_smoke.py` against the live
   sources.
 
+**Done** (F1 part 2, FEAT-35, ADR-0021): every job above, the backfill, `factor_series`, the two configuration
+kinds, `/api/market` and the page (CIO under Mô hình, and Admin). Tests use responses recorded from each source.
+Changes from the plan: giavang.org no longer serves data, so SJC has PNJ only; worldgovernmentbonds needs an
+Origin header; MSN's crypto prices are in VND, so BTC stays on Binance alone.
+
 ### F2 — Estimate the model and validate it (A)
 
 - Estimate volatilities and correlations from 55 months with 20 % shrinkage, for the factors that have data.
@@ -158,6 +163,10 @@ Also in this phase:
 - Validate out of sample (estimate to 1/2024, test 2/2024–8/2026) and write it up for Model Risk (MEAS-08).
 - Enforce AI-05 after the answer: a stress scenario without VNINDEX and RE_SPREAD among its core shocks is
   refused, in live, inbox and mock modes alike.
+
+**Done** (FEAT-07, model_validation.md): 12/15 factors estimated on the history of 2026-10-16; out of sample 85 %
+inside P10–P90; `POST /api/model/estimate` proposes, a second CIO approves; AI-05 in the format check. On the live
+demo the estimate is proposed by `cio` and approved by `cio2` after the backfill.
 
 ### F3 — Accuracy over time and the measurement reports (A, H)
 

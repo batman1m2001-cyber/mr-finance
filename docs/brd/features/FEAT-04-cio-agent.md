@@ -38,7 +38,8 @@ level −3…+3, direction, horizon, confidence, rationale and sources; `priced_
 2–4 branches, probability 5–95 %, sum 100 % ± 1.1; regime normal/stressed; 1–5 core shocks per branch from the
 15 factors, size S/M/L, up/down; rationale ≥ 20 characters; every source id belongs to the event.
 The live synthesis prompt requires a stressed branch to include VN-Index and real-estate credit among its core
-shocks (BRD-RULE-AI-05) — a prompt rule, not a schema check.
+shocks (BRD-RULE-AI-05), and the format check enforces it on every agent answer (a draft without them goes back to
+synthesis). A CIO edit that drops one is not refused: the challenger raises it as a critical finding (R2).
 
 ## Live-mode safeguards
 Two different models (refused if equal); a reply with `finish_reason == "length"` is refused; a reply from a

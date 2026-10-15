@@ -1,0 +1,540 @@
+{
+ "note": "Public market sources, no account needed (probed 2026-10-16); unofficial, so each series names a fallback. Version 1 of the price_sources configuration. Written by scripts/make_market_sources.py.",
+ "jobs": {
+  "market_equity": {
+   "label": "Cổ phiếu và VN-Index",
+   "at": "15:45",
+   "why": "HOSE đóng cửa 15:00; nến ngày"
+  },
+  "market_flows": {
+   "label": "Giao dịch khối ngoại",
+   "at": "16:00",
+   "why": "số liệu cuối ngày"
+  },
+  "market_yields": {
+   "label": "Lợi suất TPCP",
+   "at": "17:30",
+   "why": "HNX công bố đường cong cuối ngày"
+  },
+  "market_fx": {
+   "label": "Tỷ giá USD/VND",
+   "every": "1h",
+   "why": "Vietcombank: tối đa 1 lần / 5 phút"
+  },
+  "market_world": {
+   "label": "Thị trường thế giới",
+   "every": "1h",
+   "why": "giao dịch gần như suốt ngày; ~1 yêu cầu"
+  },
+  "market_crypto": {
+   "label": "Tiền mã hóa",
+   "every": "1h",
+   "why": "xa dưới giới hạn công khai của Binance"
+  },
+  "market_gold": {
+   "label": "Vàng SJC",
+   "every": "1h",
+   "why": "giá SJC đổi trong ngày"
+  }
+ },
+ "series": [
+  {
+   "id": "VNINDEX",
+   "name": "VN-Index",
+   "unit": "điểm",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "VNINDEX"
+    },
+    {
+     "source": "vietcap",
+     "symbol": "VNINDEX"
+    }
+   ],
+   "factor": "VNINDEX"
+  },
+  {
+   "id": "FPT",
+   "name": "Cổ phiếu FPT",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "FPT",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "FPT"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "TCB",
+   "name": "Cổ phiếu TCB",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "TCB",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "TCB"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "VCB",
+   "name": "Cổ phiếu VCB",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "VCB",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "VCB"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "MBB",
+   "name": "Cổ phiếu MBB",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "MBB",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "MBB"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "VNM",
+   "name": "Cổ phiếu VNM",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "VNM",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "VNM"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "HPG",
+   "name": "Cổ phiếu HPG",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "HPG",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "HPG"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "VHM",
+   "name": "Cổ phiếu VHM",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "VHM",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "VHM"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "MWG",
+   "name": "Cổ phiếu MWG",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "MWG",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "MWG"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "DGC",
+   "name": "Cổ phiếu DGC",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "DGC",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "DGC"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "SSI",
+   "name": "Cổ phiếu SSI",
+   "unit": "VND",
+   "job": "market_equity",
+   "sources": [
+    {
+     "source": "vndirect",
+     "symbol": "SSI",
+     "scale": 1000
+    },
+    {
+     "source": "vietcap",
+     "symbol": "SSI"
+    }
+   ],
+   "ticker": true
+  },
+  {
+   "id": "FOREIGN_NET_HOSE",
+   "name": "Khối ngoại mua ròng trên HOSE",
+   "unit": "VND",
+   "job": "market_flows",
+   "sources": [
+    {
+     "source": "cafef",
+     "symbol": "VNINDEX"
+    }
+   ],
+   "factor": "FOREIGN_FLOW"
+  },
+  {
+   "id": "VN_GOV_3M",
+   "name": "Lợi suất TPCP 3 tháng (HNX)",
+   "unit": "%",
+   "job": "market_yields",
+   "sources": [
+    {
+     "source": "hnx",
+     "symbol": "3M"
+    }
+   ],
+   "factor": "VN_RATE",
+   "note": "Thay thế cho lãi suất liên ngân hàng: cổng SBV không mở cho máy chủ này"
+  },
+  {
+   "id": "VN_GOV_1Y",
+   "name": "Lợi suất TPCP 1 năm (HNX)",
+   "unit": "%",
+   "job": "market_yields",
+   "sources": [
+    {
+     "source": "hnx",
+     "symbol": "1Y"
+    }
+   ]
+  },
+  {
+   "id": "VN_GOV_5Y",
+   "name": "Lợi suất TPCP 5 năm (HNX)",
+   "unit": "%",
+   "job": "market_yields",
+   "sources": [
+    {
+     "source": "hnx",
+     "symbol": "5Y"
+    }
+   ]
+  },
+  {
+   "id": "VN_GOV_10Y",
+   "name": "Lợi suất TPCP 10 năm",
+   "unit": "%",
+   "job": "market_yields",
+   "sources": [
+    {
+     "source": "hnx",
+     "symbol": "10Y"
+    },
+    {
+     "source": "wgb",
+     "symbol": "58"
+    }
+   ],
+   "factor": "VN_GOV"
+  },
+  {
+   "id": "USDVND",
+   "name": "Tỷ giá USD/VND (chuyển khoản)",
+   "unit": "VND",
+   "job": "market_fx",
+   "sources": [
+    {
+     "source": "vcb",
+     "symbol": "USD"
+    },
+    {
+     "source": "msn",
+     "symbol": "avyufr"
+    }
+   ],
+   "factor": "USDVND"
+  },
+  {
+   "id": "XAUUSD",
+   "name": "Vàng thế giới",
+   "unit": "USD/oz",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "ck48ur"
+    }
+   ],
+   "factor": "GOLD"
+  },
+  {
+   "id": "BRENT",
+   "name": "Dầu Brent",
+   "unit": "USD/thùng",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "auvx3m"
+    }
+   ],
+   "factor": "BRENT"
+  },
+  {
+   "id": "ACWI",
+   "name": "Cổ phiếu toàn cầu (ACWI)",
+   "unit": "USD",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "a1mupr"
+    }
+   ],
+   "factor": "GLOBAL_EQ"
+  },
+  {
+   "id": "SPX",
+   "name": "S&P 500",
+   "unit": "điểm",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "a33k6h"
+    }
+   ]
+  },
+  {
+   "id": "US10Y",
+   "name": "Lợi suất TP Mỹ 10 năm",
+   "unit": "%",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "a33knm",
+     "scale": 0.1
+    }
+   ],
+   "factor": "US10Y"
+  },
+  {
+   "id": "EURUSD",
+   "name": "EUR/USD",
+   "unit": "USD",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "av932w"
+    }
+   ]
+  },
+  {
+   "id": "USDJPY",
+   "name": "USD/JPY",
+   "unit": "JPY",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "avyomw"
+    }
+   ]
+  },
+  {
+   "id": "GBPUSD",
+   "name": "GBP/USD",
+   "unit": "USD",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "avyjhw"
+    }
+   ]
+  },
+  {
+   "id": "USDCAD",
+   "name": "USD/CAD",
+   "unit": "CAD",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "avylur"
+    }
+   ]
+  },
+  {
+   "id": "USDSEK",
+   "name": "USD/SEK",
+   "unit": "SEK",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "avyt52"
+    }
+   ]
+  },
+  {
+   "id": "USDCHF",
+   "name": "USD/CHF",
+   "unit": "CHF",
+   "job": "market_world",
+   "sources": [
+    {
+     "source": "msn",
+     "symbol": "avyt7w"
+    }
+   ]
+  },
+  {
+   "id": "BTCUSD",
+   "name": "Bitcoin",
+   "unit": "USD",
+   "job": "market_crypto",
+   "sources": [
+    {
+     "source": "binance",
+     "symbol": "BTCUSDT"
+    }
+   ],
+   "factor": "BTC"
+  },
+  {
+   "id": "ETHUSD",
+   "name": "Ethereum",
+   "unit": "USD",
+   "job": "market_crypto",
+   "sources": [
+    {
+     "source": "binance",
+     "symbol": "ETHUSDT"
+    }
+   ]
+  },
+  {
+   "id": "SJC",
+   "name": "Vàng miếng SJC (bán, TP.HCM)",
+   "unit": "VND/lượng",
+   "job": "market_gold",
+   "sources": [
+    {
+     "source": "pnj",
+     "symbol": "SJC"
+    }
+   ]
+  }
+ ],
+ "computed": {
+  "DXY": {
+   "name": "Chỉ số USD (DXY, tính theo công thức ICE)",
+   "unit": "điểm",
+   "factor": "DXY",
+   "from": [
+    "EURUSD",
+    "USDJPY",
+    "GBPUSD",
+    "USDCAD",
+    "USDSEK",
+    "USDCHF"
+   ]
+  },
+  "SJC_GAP": {
+   "name": "Chênh lệch vàng SJC so với thế giới",
+   "unit": "%",
+   "factor": "SJC_GAP",
+   "from": [
+    "SJC",
+    "XAUUSD",
+    "USDVND"
+   ]
+  }
+ },
+ "assumed": [
+  "RE_SPREAD",
+  "FIN_SPREAD",
+  "VN_HOUSE"
+ ],
+ "ticker_map": {
+  "FPT": "FPT",
+  "TCB": "TCB",
+  "VCB": "VCB",
+  "MBB": "MBB",
+  "VNM": "VNM",
+  "HPG": "HPG",
+  "VHM": "VHM",
+  "MWG": "MWG",
+  "DGC": "DGC",
+  "SSI": "SSI"
+ }
+}
