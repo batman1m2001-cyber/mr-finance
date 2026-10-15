@@ -3,8 +3,8 @@
 The **only** place where a requirement's implementation status is stated. Chain: requirement → feature → screen →
 code / API → test → evidence. Status vocabulary: [README §4](../README.md#4-status-vocabulary). Every test cited
 for an `implemented_verified` row exists in `tests/` (checked by `scripts/check_brd_docs.py`) and passed in the
-latest recorded run ([regression_coverage.md](../testing/regression_coverage.md#latest-recorded-run): 2026-10-15,
-175 passed).
+latest recorded run ([regression_coverage.md](../testing/regression_coverage.md#latest-recorded-run): 2026-10-16,
+195 passed).
 
 Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-256 `5ea9d8da…de1e3`.
 
@@ -16,7 +16,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD success metrics (KPI) | 7 | 0 | 0 | 0 | 0 | 0 | 2 | 5 | 0 |
 | BRD rules (RULE) | 97 | 59 | 4 | 12 | 3 | 5 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Redesign kit (KIT) | 19 | 6 | 3 | 1 | 2 | 0 | 0 | 0 | 7 |
+| Redesign kit (KIT) | 19 | 6 | 5 | 1 | 0 | 0 | 0 | 0 | 7 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -247,8 +247,8 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | KIT-UX-03 | FEAT-29 | implemented_unverified | SCR-CL-08 Wealth Map: values, shares, price date, drill-down to holdings; screenshots only |
 | KIT-UX-04 | FEAT-30 | implemented_verified | `tests/test_graph.py::test_every_edge_comes_from_a_stored_record_and_the_columns_chain`, `tests/test_graph.py::test_the_client_sees_no_headline_and_no_holding` — columns, filters, path highlight, detail panel, list view (built 2026-10-16) |
 | KIT-UX-05 | FEAT-31 | implemented_verified | `tests/test_feed.py::test_a_news_impact_shows_with_its_run_and_its_reason`, `tests/test_feed.py::test_thresholds_and_a_spending_jump_carry_their_numbers`, `tests/test_feed.py::test_the_client_reads_the_event_type_not_the_headline` — on SCR-CL-08 (built 2026-10-16) |
-| KIT-UX-06 | FEAT-29…32 | planned | Every K phase; the skeleton already respects reduced motion |
-| KIT-UX-07 | all | planned | Every K phase |
+| KIT-UX-06 | FEAT-29…32 | implemented_unverified | No animation added; one 0.12 s hover fade, off under reduced motion; every chart has a table or list view (Sankey table, graph list); K6 sweep |
+| KIT-UX-07 | all | implemented_unverified | Sankey bands, map segments and graph nodes are focusable (Enter/Space); responsive at 390 px; progressive disclosure (band → rows, node → path); K6 sweep, no automated UI test |
 | KIT-COPILOT-01 | FEAT-32 | implemented_unverified | Floating button and side panel on every page with page context (SCR-CL-10, built 2026-10-16); checked by screenshots and a driven browser run, no automated UI test |
 | KIT-COPILOT-02 | FEAT-32 | partially_implemented | Ask (11 tools), Act (2 writes, confirmed), Navigate, Continue (tab session) built; Investigate/Analyze only through existing reads; under ADR-0012 the model reads no data |
 | KIT-COPILOT-03 | FEAT-32 | implemented_verified | `tests/test_copilot.py::test_no_write_without_confirm_and_the_result_is_the_real_one`, `tests/test_copilot.py::test_a_client_cannot_run_a_cio_tool_even_by_confirm` — typed catalogue, role check, confirm, server checks unchanged |
