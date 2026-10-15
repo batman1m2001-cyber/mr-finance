@@ -17,7 +17,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD rules (RULE) | 97 | 61 | 5 | 12 | 2 | 3 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 7 | 4 | 1 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 7 | 4 | 2 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 14 | 6 | 2 | 1 | 4 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -274,3 +274,10 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-MOTION-05 | FEAT-33 | implemented_unverified | Nothing moves at rest with the panel closed (0 animations, 0 style/layout work in 5 s, measured); one accent colour; durations 160 ms / 240 ms / 2.6 s; screenshots |
 | OWN-MOTION-06 | FEAT-33 | implemented_verified | `tests/test_living_interface.py::test_only_transform_and_opacity_animate`, `tests/test_living_interface.py::test_hidden_tabs_pause_reduced_motion_stops_and_no_js_loop` — no library added; measured before/after in FEAT-33 (no long task; one question 57 → 144 ms main thread over 3.5 s, 80 ms under reduced motion) |
 | OWN-MOTION-07 | FEAT-33 | not_applicable | Met by this change: business logic unchanged (the answer gains `focus`, a feed item gains `key`), full suite green, docs updated (CHANGELOG 2026-10-16) |
+| OWN-UI-01 | all | partially_implemented | R1 (2026-10-16): board tokens, header, icons, controls on every new page; the old pages wait for R3 |
+| OWN-UI-02 | — | planned | UI redesign plan R3 |
+| OWN-UI-03 | FEAT-34 | implemented_verified | `tests/test_search.py::test_the_client_never_matches_a_headline_staff_do`, `tests/test_search.py::test_news_and_research_stay_with_staff`, `tests/ui/test_header.py::test_search_opens_a_holding_a_page_and_a_client`, `tests/ui/test_header.py::test_the_bell_counts_the_feed_and_opens_the_evidence` |
+| OWN-UI-04 | FEAT-30 | planned | UI redesign plan R4 |
+| OWN-UI-05 | FEAT-32 | planned | UI redesign plan R5 |
+| OWN-UI-06 | — | planned | UI redesign plan R6 |
+| OWN-UI-07 | — | implemented_verified | `tests/ui/test_routes.py::test_every_route_renders_without_errors` (R0) |

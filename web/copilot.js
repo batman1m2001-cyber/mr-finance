@@ -7,7 +7,8 @@
    the request is in flight, ok, error, pending a confirmation), and an answer marks the page elements it
    was read from (its `focus` keys) on this page, or on the evidence page once it opens. */
 import {$, esc, post} from "./core/core.js";
-import {after, focus, present} from "./motion.js?v=20261016i";
+import {icon} from "./core/icons.js?v=20261016r1";
+import {after, focus, present} from "./motion.js?v=20261016r1";
 
 const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ"};
 const START = {
@@ -34,7 +35,8 @@ function save(role, msgs) { try { sessionStorage.setItem(KEY(role), JSON.stringi
 export function mount() {
   const btn = document.createElement("button");
   btn.type = "button"; btn.className = "cp-fab"; btn.setAttribute("aria-haspopup", "dialog");
-  btn.innerHTML = `<span class="cp-glyph" aria-hidden="true"><i class="cp-star">✦</i><i class="cp-tick">✓</i></span> Hỏi OneWealth`;
+  btn.innerHTML = `<span class="cp-glyph" aria-hidden="true"><i class="cp-star">${icon("sparkles", {size: 24})}</i><i class="cp-tick">${icon("check", {size: 24})}</i></span><span class="sr-only">Hỏi OneWealth</span>`;
+  btn.title = "Hỏi OneWealth (Copilot)";
   const panel = document.createElement("aside");
   panel.className = "cp-panel"; panel.hidden = true;
   panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "OneWealth Copilot");

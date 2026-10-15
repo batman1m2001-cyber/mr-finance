@@ -17,41 +17,56 @@ the code wins and this page is corrected.
 
 ## Themes
 
-Light (white surfaces, ink text) and dark (deep indigo, lavender accent, large hero figure — the look the team
-chose on 2026-10-15). The theme follows the OS until the user toggles it (◐, stored as `mf.theme`); dark tokens are
-defined for `prefers-color-scheme: dark` unless `data-theme="light"`, and for `data-theme="dark"`.
+Light first, as on the kit's concept board (owner, 2026-10-16; [UI redesign plan](../../UI_REDESIGN_PLAN.md) R-D1):
+a pale lavender-grey plane, white cards with a soft shadow, 16 px corners, sentence-case card titles, small tinted
+icon chips, one indigo accent. Dark (deep indigo, lavender accent) is kept from 2026-10-15. The theme follows the OS
+until the user toggles it (◐, stored as `mf.theme`).
 
 ## Tokens (light → dark)
 
 | Group | Tokens | Use |
 |---|---|---|
-| Surfaces | `--plane` `--surface` `--surface-2` `--surface-3` | page, cards, nested blocks |
+| Surfaces | `--plane` #f6f6fb, `--surface` white, `--surface-2`, `--surface-3` | page, cards, nested blocks and tracks |
 | Ink | `--ink` `--ink-2` `--muted` | text levels; every text colour ≥ 4.5:1 on its surface in both themes |
-| Lines | `--hair` `--axis` `--ring` | borders, chart axes, focus ring |
-| Accent | `--accent` `--accent-soft` `--brand` `--hero` | actions, current nav, hero figure |
-| Series | `--s1`…`--s8`, `--other` | categorical series in fixed order (validated palette; asset classes have fixed colours in `CLASS_COLOR`) |
+| Lines | `--hair` (card borders), `--axis` (inputs, chart axes), `--ring` | |
+| Accent | `--accent` #5b47d6 `--accent-soft` `--brand` `--hero` | actions, current tab, hero figure; the logo and Copilot button use #7a63f0 → #4a36c4 |
+| Series | `--s1`…`--s8`, `--other` | categorical series in fixed order; asset classes have fixed colours (`CLASS_COLOR`) |
 | Status | `--good` `--warning` `--serious` `--critical` (+ `-soft`) | statuses with a label, never colour alone |
 | Money | `--up` `--down` `--flat`; `--in` `--out` | gain/loss; cash in/out |
 | Semantics from the BRD figures | `--ai` (blue), `--human` (orange), `--data` (grey) | AI step, human checkpoint, client data |
-| Band | `--band` `--band-2` | P10–P90 band of the fan chart |
-| Space, shape | `--s-1`…`--s-7` (4–48 px), `--radius` 14 px, `--radius-s` 9 px, `--shadow` | |
-| Type | `--font` system UI stack | |
+| Band | `--band` `--band-2` | fan-chart band, focus halo |
+| Elevation | `--shadow` (cards), `--shadow-pop` (menus, popovers) | |
+| Shape, space | `--radius` 16 px, `--radius-s` 10 px; `--s-1`…`--s-7` (4–48 px) | |
+| Motion | `--dur-1` `--dur-2` `--hold` `--ease-out` | see Motion below |
 
-## Components (new pages; classes scoped to `:is(#page-new, .drawer)`)
+## Shell
+
+Row 1: logo and “OneWealth / Financial Intelligence for a Better Tomorrow”, the search box (“/”), the client picker,
+the Cá nhân / Gia đình switch, the bell with its count, the theme toggle. Row 2: the role's tabs, and on the right
+“Xem với vai trò” with the demo role switcher. Below 760 px the header scrolls away instead of staying pinned, the
+tagline hides, search takes its own row ([FEAT-34](../features/FEAT-34-header-search-and-notifications.md)).
+
+## Components
 
 | Component | Where defined | Notes |
 |---|---|---|
-| Panel, grid `cols` / `c4` `c8` `c12` | tokens.css | 12-column grid, one column below 900 px |
-| Hero (`hero-panel`, `.hero`, `.eyebrow`, `.takeaway`, `.footnote`) | tokens.css | the one figure of a page |
+| Panel, grid `cols` / `c4` `c8` `c12` | tokens.css | 12-column grid, one column below 900 px; panel title 14.5 px, ink, sentence case |
+| Hero (`hero-panel`, `.hero`, `.eyebrow`, `.takeaway`, `.footnote`) | tokens.css | the one figure of a page; the eyebrow is sentence case |
+| Icons `icon(name, {size, label})`, `CLASS_ICON`, `FLOW_ICON` | core/icons.js | 59 Lucide icons inlined (ISC), decorative unless labelled |
+| Icon chip `.ic-chip` (`sm`, `lg`; `--tone`) | tokens.css | a tinted square behind an icon (asset class, category, kind) |
+| Pill `.pill` (`good` `warn` `bad` `ai`; `--tone`) | tokens.css | short status or impact label |
+| Small charts `sparkBars`, `ring`, `donut`, `gauge`, `progress` | charts/mini.js | from given numbers only, each with an aria-label |
 | Badges: `good` `warn` `bad` `human` `assumed`; `severity()`, `runBadge()`, `viewBadge()` | core.js | statuses always with text |
+| Controls: selects, inputs, checkboxes on new pages | tokens.css | one look; focus halo in `--band` |
+| Popover `.pop`, `.pop-item`, `.pop-head` | tokens.css | search results, bell |
 | Table `.table`, `.scrollx` | tokens.css | horizontal scroll inside the table on phones, never the page |
 | States `loading()`, `empty(title, hint)`, `failed(e)` | core.js | skeleton with `aria-busy`; empty with a hint of what will appear; error with `role="alert"` |
-| Drawer `drawer(title, html)` | core.js | dialog, Esc/backdrop close, focus on close |
-| Toast `toast(msg)` | core.js | the result of an action, including server refusals |
-| Charts: `fan` (band over horizons), `diverging` (contributions), `probBar` (branch probabilities), `heat` (families × factors), `spark`, `moves` (factor moves), `hover` tooltips | charts.js | SVG, no library |
+| Drawer `drawer(title, html)`, toast `toast(msg)` | core.js | dialog with Esc; the result of an action, including refusals |
+| Charts: `fan`, `diverging`, `probBar`, `heat`, `spark`, `moves`, `sankey`, `hover` | charts/charts.js | SVG, no library |
+| Copilot button | tokens.css, copilot.js | a 56 px round mark with the sparkles icon; its states are in Motion |
 
-The legacy pages (`web/app.css`, `web/app.js`) use their own classes but read the same tokens, so both generations
-share colours and themes ([ADR-0013](../decisions/ADR-0013-wrap-the-legacy-pages-in-the-new-shell.md)).
+The old pages (`web/app.css`, `web/app.js`) read the same tokens but keep their own layout until they are rebuilt
+(UI redesign plan R3).
 
 ## Data visualisation rules (applied)
 
