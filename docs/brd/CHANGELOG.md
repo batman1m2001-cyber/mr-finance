@@ -2,6 +2,12 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — UI redesign R6: the public demo runs the real models (CIO agent, challenger on another vendor, Copilot
+  router); `scripts/demo_walkthrough.py` fills a demo over HTTP from fetched news — events, agent, challenger,
+  answers to critical findings and approvals, each reason naming the script; the live demo now has two runs in
+  effect and one view waiting for the CIO — FEAT-04, matrix (OWN-UI-06), integrations, `.env.example`,
+  UI_REDESIGN_PLAN §4.
+
 - 2026-10-16 — UI redesign R5, Copilot 2.0: answers carry the data's date, the answer time and their sources, and a
   card drawn from the tool's numbers (figures, list with chips and progress, bars, chain); new tools `dieu_tra` (an
   approved event's path from the impact graph) and `kich_ban` (a stress test through `scenario_flow`, chosen by

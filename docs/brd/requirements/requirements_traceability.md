@@ -17,7 +17,7 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 | BRD rules (RULE) | 97 | 61 | 5 | 12 | 2 | 3 | 2 | 10 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 14 | 10 | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -279,5 +279,5 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-UI-03 | FEAT-34 | implemented_verified | `tests/test_search.py::test_the_client_never_matches_a_headline_staff_do`, `tests/test_search.py::test_news_and_research_stay_with_staff`, `tests/ui/test_header.py::test_search_opens_a_holding_a_page_and_a_client`, `tests/ui/test_header.py::test_the_bell_counts_the_feed_and_opens_the_evidence` |
 | OWN-UI-04 | FEAT-30 | implemented_verified | R4 (2026-10-16): `tests/test_overview.py::test_every_edge_comes_from_a_record_it_names`, `tests/test_graph.py::test_an_events_share_of_each_asset_adds_up_to_its_expected_change`, `tests/test_graph.py::test_the_cio_run_graph_reaches_every_family_from_the_stored_results`, `tests/test_graph.py::test_the_timeline_reads_each_step_from_its_record`, `tests/ui/test_pages.py::test_the_overview_graph_selects_expands_and_opens_pages`, `tests/ui/test_pages.py::test_the_timeline_the_news_impact_card_and_the_cio_run_graph` — overview with sources, risks, goals, policy and news, expand/collapse, node → page; News Impact panel; timeline; CIO whole-run graph |
 | OWN-UI-05 | FEAT-32 | implemented_verified | R5 (2026-10-16): `tests/test_copilot.py::test_an_answer_says_when_its_data_is_from_what_it_read_and_carries_its_card`, `tests/test_copilot.py::test_investigate_reads_the_events_path_from_the_impact_graph`, `tests/test_copilot.py::test_a_stress_scenario_is_the_planning_pages_and_picked_by_words`, `tests/test_copilot.py::test_every_call_is_in_the_audit_chain_with_the_question_as_the_router_saw_it`, `tests/ui/test_copilot_ui.py::test_answers_show_their_card_their_time_and_sources_and_offer_next_steps` — as-of and sources, cards, two tools, audited calls; the live router is R6 |
-| OWN-UI-06 | — | planned | UI redesign plan R6 |
+| OWN-UI-06 | FEAT-04, FEAT-32 | implemented_unverified | R6 (2026-10-16): the live demo runs the two models (`GET /api/agents` mode `live`) and the Copilot router (`router.kind` `llm`); `scripts/demo_walkthrough.py` made three live views from fetched news, two approved and applied (FEAT-04 “Live demo”); checked on the public URL by screenshots — a run against live models is not a suite test |
 | OWN-UI-07 | — | implemented_verified | `tests/ui/test_routes.py::test_every_route_renders_without_errors` (R0) |

@@ -66,4 +66,5 @@ own families only (Q-17), re-ask triggers for the risk test (Q-16), alerting on 
 | R3 | done 2026-10-16: the 8 pre-redesign pages rebuilt as module pages, app.js/app.css/charts.js/fmt.js deleted, shell owns client/scope/reset, per-route render host, UI files revalidated (`no-cache`); ADR-0019; 5 flow tests | #35 |
 | R4 | done 2026-10-16: Bản đồ tài chính (overview graph, `POST /api/overview`), News Impact panel, event timeline, CIO run graph (`GET /api/runs/{id}/graph`); 9 tests | #36 |
 | R5 | done 2026-10-16: Copilot 2.0 — as-of and sources, cards (figures, list, bars, chain), `dieu_tra` and `kich_ban`, every call audited, suggestion chips, followed goals; 6 tests | #37 |
-| R6 | next | |
+| R6 | done 2026-10-16: live models on the public demo (CIO Sonnet 5.5, challenger Gemini 3.8 Flash, Copilot router Haiku 5.5); `scripts/demo_walkthrough.py` filled it from fetched news (2 runs in effect, 1 view pending); 154 k tokens | #38 |
+| R7 | next | |

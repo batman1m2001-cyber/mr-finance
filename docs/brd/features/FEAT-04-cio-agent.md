@@ -57,7 +57,18 @@ challenger 4,000.
 `::test_live_mode_refuses_same_models_a_cut_reply_and_another_model`, `::test_only_the_cio_runs_the_agent_and_decides`.
 Live run recorded 2026-10-15 (OpenRouter): CIO agent 26 s over 7 nodes (news plan §9).
 
+## Live demo (UI redesign R6, 2026-10-16)
+The public demo runs live: CIO agent `anthropic/claude-sonnet-5.5`, challenger `google/gemini-3.8-flash` (two
+vendors, ADR-0010), through the configured OpenAI-compatible endpoint. `scripts/demo_walkthrough.py` filled it over
+HTTP from news the server fetched: three events (stock market, property, monetary); agent + challenger took 71 s,
+37 s and 86 s and 54 k, 35 k and 64 k tokens (154 k of the 300 k daily budget); the first had one critical finding,
+which the script answered (“chấp nhận”, its reason naming the script); two views approved and applied to every
+family (AR-0001-v1-1, AR-0002-v1-1), the third left pending for the CIO screen. Every decision the script took
+says so in its reason and is in the audit chain.
+
 ## Limitations
+- The mock agent writes its summary from the headlines: a headline with an action word (“bắt đáy”) fails the
+  content rule and the view ends AGENT_ERROR — the guard holds, the mock cannot recover (seen on the dev server).
 - The inbox (“hộp chờ”) run mode of FR-307 is not built (FEAT-19).
 - NFR-10 since 2026-10-16: a daily token budget (`AGENT_DAILY_TOKENS`, default 300 000) refuses calls past it;
   tokens per event in `GET /api/agents` (`budget.by_event`). No money cost (no price per token configured).
