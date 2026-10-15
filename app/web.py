@@ -25,6 +25,9 @@ from control import audit as control_audit
 from control import db as control_db
 from control import roles
 from events import store as events_store
+from market import factors as market_factors
+from market import fetch as market_fetch
+from market import store as market_store
 from news import ops as news_ops
 from news import store as news_store
 from people import auth as people_auth
@@ -473,6 +476,46 @@ async def audit_export(request: Request):
     return JSONResponse(out, headers={"content-disposition": f'attachment; filename="audit-{stamp}.json"'})
 
 
+async def market(request: Request) -> JSONResponse:
+    """The source registry and the stored market data (F1): each job's cadence, last run, last success and last
+    error; each series' coverage, last value and source; each factor's provenance (from SQLite only)."""
+    from datetime import date, timedelta
+
+    cat = market_fetch.catalogue()
+    health = market_store.job_health()
+    since = (date.today() - timedelta(days=120)).isoformat()
+    cov = market_store.coverage()
+    jobs = [{"id": j, **meta, **health.get(j, {})} for j, meta in cat["jobs"].items()]
+    series = [
+        {
+            "id": s["id"],
+            "name": s["name"],
+            "unit": s["unit"],
+            "job": s["job"],
+            "sources": [x["source"] for x in s["sources"]],
+            "factor": s.get("factor"),
+            "note": s.get("note"),
+            **{k: v for k, v in (cov.get(s["id"]) or {}).items() if k != "series"},
+            "tail": [v for _, v in market_store.points(s["id"], start=since)],
+        }
+        for s in cat["series"]
+    ]
+    return JSONResponse(
+        {"jobs": jobs, "series": series, "factors": market_factors.factor_series(), "note": cat.get("note")}
+    )
+
+
+async def market_series(request: Request) -> JSONResponse:
+    """One series' points (stored or computed), from ``from`` (ISO date) on."""
+    sid = request.query_params.get("id") or ""
+    known = {s["id"] for s in market_fetch.catalogue()["series"]} | set(market_factors.COMPUTED)
+    if sid not in known:
+        return JSONResponse({"error": f"không có chuỗi {sid!r}"}, status_code=404)
+    since = request.query_params.get("from") or ""
+    pts = [p for p in market_factors.values(sid) if p[0] >= since]
+    return JSONResponse({"id": sid, "points": pts})
+
+
 async def audit_list(request: Request) -> JSONResponse:
     try:
         limit = min(int(request.query_params.get("limit") or 100), 1000)
@@ -488,10 +531,12 @@ async def audit_list(request: Request) -> JSONResponse:
 async def model(request: Request) -> JSONResponse:
     """The factor model the engine runs on: factors, sizes, realisation, volatilities, the stressed
     repair — every assumed parameter flagged (B1)."""
+    from control import config as control_config
     from engine import ENGINE_VERSION, default_model
 
     m = default_model()
     vol_s = m.vol("stressed")
+    raw = {f["id"]: f for f in control_config.data("factor_model")["factors"]}
     return JSONResponse(
         {
             "version": m.version,
@@ -516,6 +561,7 @@ async def model(request: Request) -> JSONResponse:
                     "vol_month_stressed": round(vs, 4),
                     "brd_parameter": f.brd_parameter,
                     "assumed": f.assumed,
+                    "estimated": raw.get(f.id, {}).get("estimated"),
                 }
                 for f, vs in zip(m.factors, vol_s)
             ],
@@ -526,6 +572,20 @@ async def model(request: Request) -> JSONResponse:
             },
         }
     )
+
+
+async def model_estimate_preview(request: Request) -> JSONResponse:
+    """What estimating now would give (F2), against the model in force, and the out-of-sample check (MEAS-08):
+    computed from the stored history, nothing proposed."""
+    from control import config as control_config
+    from market import estimate
+
+    base = control_config.data("factor_model")
+    q = request.query_params
+    hist = estimate.history()
+    est = estimate.estimate(base, end=q.get("end") or None, hist=hist)
+    val = estimate.validate(base, split=q.get("split") or "2024-01", hist=hist)
+    return JSONResponse({"report": est["report"], "validation": val, "in_force": base["version"]})
 
 
 async def news_config(request: Request) -> JSONResponse:
@@ -674,6 +734,7 @@ STAFF_ONLY = (
     "/api/config",
     "/api/runs",
     "/api/audit",
+    "/api/market",
     "/api/research",
     "/api/rm/",
     "/api/trace/",
@@ -741,6 +802,7 @@ app = Starlette(
         Route("/api/news/inbox", news_inbox),
         Route("/api/news/config", news_config),
         Route("/api/model", model),
+        Route("/api/model/estimate", model_estimate_preview),
         Route("/api/events", events_list),
         Route("/api/events/{event_id}", event_one),
         Route("/api/views/{view_id}", view_one),
@@ -757,6 +819,8 @@ app = Starlette(
         Route("/api/trace/{run_id}/{family_id}", trace),
         Route("/api/rm/today", rm_today),
         Route("/api/audit", audit_list),
+        Route("/api/market", market),
+        Route("/api/market/series", market_series),
         Route("/api/research", research_list),
         Route("/api/goals/regulation", goal_regulation),
         Route("/api/audit/verify", audit_verify),

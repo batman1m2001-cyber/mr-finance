@@ -59,6 +59,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-31](FEAT-31-intelligence-feed.md) | Intelligence Feed | KIT-UX-05 | K4 — built 2026-10-16 |
 | [FEAT-32](FEAT-32-copilot.md) | OneWealth Copilot | KIT-COPILOT-01…06 | K5 — built 2026-10-16 |
 | [FEAT-34](FEAT-34-header-search-and-notifications.md) | Header search and notifications | OWN-UI-03 | R1 — built 2026-10-16 |
+| [FEAT-35](FEAT-35-market-data-layer.md) | Market data layer | ENG-11, BR-15, MEAS-01/02, KPI-03/04 (enabler) | F1 — built 2026-10-16 |
 | [FEAT-33](FEAT-33-living-interface.md) | Living Interface (states, evidence highlight, motion rules) | OWN-MOTION-01…07, KIT-UX-06 | B-01 — built 2026-10-16 |
 
 ## How features depend on each other

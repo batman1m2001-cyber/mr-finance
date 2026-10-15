@@ -1,6 +1,5 @@
 """Versioned, owned configuration (BRD FR-701, §13.1 with F14, ADR-0016): propose, then approve."""
 
-
 import pytest
 from operonx.app import Application
 from starlette.testclient import TestClient
@@ -97,7 +96,14 @@ def test_the_demo_reset_returns_to_the_shipped_files():
 def test_the_endpoints():
     with TestClient(Application.find(".").asgi()) as c:
         kinds = c.get("/api/config").json()["kinds"]
-        assert [k["kind"] for k in kinds] == ["factor_model", "thresholds", "restricted", "news_sources"]
+        assert [k["kind"] for k in kinds] == [
+            "factor_model",
+            "thresholds",
+            "restricted",
+            "news_sources",
+            "price_sources",
+            "ticker_map",
+        ]
         r = c.post(
             "/api/config/propose",
             json={"kind": "thresholds", "data": {**config.THRESHOLDS, "concentration_share": 0.5}, "by": "cio"},

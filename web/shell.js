@@ -49,7 +49,8 @@ const ROLES = {
       {id: "ap-dung", label: "Lần áp dụng", page: "runs"},
       {id: "do-thi", label: "Đồ thị lần áp dụng", page: "graph"},
       {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
-      {id: "mo-hinh", label: "Mô hình", page: "model"},
+      {id: "mo-hinh", label: "Mô hình", sub: [
+        {id: "tham-so", label: "Tham số", page: "model"}, {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"}]},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
     ],
@@ -57,6 +58,7 @@ const ROLES = {
   admin: {
     label: "Quản trị", user: "admin",
     nav: [
+      {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
@@ -251,8 +253,7 @@ function signInPage() {
 async function signOut() {
   await fetch("/api/auth/logout", {method: "POST"});
   try { for (const k of Object.keys(sessionStorage)) if (k.startsWith("mf.")) sessionStorage.removeItem(k); } catch (_) { /* private mode */ }
-  location.hash = "";
-  location.reload();
+  location.replace(location.pathname);  // one full load, no hash: the old role's page never routes again
 }
 
 async function start() {

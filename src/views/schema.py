@@ -85,8 +85,12 @@ def split_restricted(impacts: List[Dict[str, Any]], restricted_tickers: List[str
     return keep, out
 
 
-def check(view: Dict[str, Any], news_ids: List[str]) -> List[str]:
-    """Every way ``view`` breaks §8.2; [] when it is valid."""
+STRESS_CORE = {"VNINDEX", "RE_SPREAD"}
+
+
+def check(view: Dict[str, Any], news_ids: List[str], agent: bool = True) -> List[str]:
+    """Every way ``view`` breaks §8.2; [] when it is valid. ``agent``: the agent's answer, which also obeys the
+    prompt rule AI-05; a CIO's edit does not — the challenger raises it as a critical finding (R2) the CIO answers."""
     errs: List[str] = []
     cat = catalogue()
     factor_ids = {f["id"] for f in cat["factors"]}
@@ -181,6 +185,10 @@ def check(view: Dict[str, Any], news_ids: List[str]) -> List[str]:
                 errs.append(f"{w}.direction: up hoặc down")
             if s.get("size") not in ("S", "M", "L"):
                 errs.append(f"{w}.size: S, M hoặc L")
+        if agent and b.get("regime") == "stressed" and not STRESS_CORE <= seen:
+            # BRD-RULE-AI-05 (§8.1, the 2022 back-test): enforced on the agent's answer, not only asked in the prompt
+            missing = ", ".join(sorted(STRESS_CORE - seen))
+            errs.append(f"{where}.core_shocks: nhánh căng thẳng phải có VNINDEX và RE_SPREAD (thiếu {missing})")
         if not isinstance(b.get("rationale"), str) or len(b["rationale"].strip()) < 20:
             errs.append(f"{where}.rationale: lập luận từ 20 ký tự")
         elif forbidden_words(b["rationale"]):

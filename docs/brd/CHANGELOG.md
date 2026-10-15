@@ -2,6 +2,18 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Model estimated from market history (BRD completion F2): volatilities and correlations of 12/15
+  factors from 55 months with 20 % shrinkage, proposed by a CIO and approved by a second; out-of-sample check
+  2/2024–8/2026 (85 % inside P10–P90) written up for Model Risk; AI-05 enforced on every answer — FEAT-07,
+  matrix (ENG-11, MEAS-08, AI-05 verified), model_validation.md, SCR-CIO-07.
+
+- 2026-10-16 — Market data layer (BRD completion F1, second half): seven scheduled jobs fetch public sources
+  (VNDirect/Vietcap, cafef, HNX/worldgovernmentbonds, Vietcombank/MSN, MSN, Binance, PNJ) into SQLite with
+  fallbacks and a record of every fetch; `market_backfill` from 2020; the 15 factors' monthly moves with their
+  provenance; `price_sources` and `ticker_map` configuration (Admin); “Dữ liệu thị trường” for CIO and Admin —
+  FEAT-35, ADR-0021, matrix (BR-15, KPI-03/04, MEAS-01/02 unblocked → planned; ENG-11 note), integrations,
+  api_reference, SCR-CIO-11.
+
 - 2026-10-16 — Sign-in and the people table (BRD completion F1, first half): every person (customers, household
   members, dependents, RMs, CIOs, Compliance, Admin, specialists) is a row in SQLite; everyone who acts signs in
   with their own account (scrypt password, signed HttpOnly session) and sees only their role's pages and the

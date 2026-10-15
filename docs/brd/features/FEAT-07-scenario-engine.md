@@ -38,6 +38,16 @@ Stressed regime: correlations × 1.4, clipped to ±0.85, four overrides, eigenva
 outside [−1, 1], the matrix is not symmetric or not positive definite, or a realisation is outside [0, 1]. Its
 hash changes with any parameter.
 
+**Estimated from market history (F2, 2026-10-16).** `src/market/estimate.py` estimates, for each factor with at
+least 24 monthly moves in the last 55 months of stored history (FEAT-35), its monthly volatility and its correlations
+with the other estimated factors, shrunk 20 % toward zero (BRD §9.2). Factors without data (RE_SPREAD, FIN_SPREAD,
+VN_HOUSE) keep their assumed values; sizes, realisation, the stressed regime and loadings are not estimated. Each
+factor records `estimated` (months, from, to, source) and its BRD label (“Ước lượng” / “Giả định”, ENG-11). A CIO
+proposes the result as the next `factor_model` version (`POST /api/model/estimate`) and a second CIO approves it in
+Cấu hình (ADR-0016); `GET /api/model/estimate` previews it with the out-of-sample check. On the history of
+2026-10-16: 12/15 factors estimated (2022-03 → 2026-09); out of sample (estimated to 2024-01, scored 2024-02 →
+2026-08) 85 % of monthly moves fell inside P10–P90 — [model_validation.md](../testing/model_validation.md) (MEAS-08).
+
 ## Implementation
 `src/engine/linalg.py` (Cholesky, SPD solve, Jacobi eigen, `clip_to_correlation`, normal CDF),
 `src/engine/model.py`, `src/engine/loadings.py`, `src/engine/scenario.py`; `ENGINE_VERSION = "engine-1"`.
@@ -49,9 +59,12 @@ hash changes with any parameter.
 `::test_priced_in_multipliers_scale_the_move_and_its_uncertainty`, `::test_the_expected_change_is_the_probability_weighted_branch_mean`,
 `::test_the_contributions_add_up_to_the_expected_change`, `::test_the_same_inputs_give_the_same_numbers_to_the_dong`,
 `::test_the_brd_gold_example_has_its_structure`, `::test_the_model_has_the_brds_fifteen_factors_and_both_regimes_are_valid_covariances`,
-`::test_a_wrong_factor_model_is_refused`, `::test_wrong_branches_are_refused`.
+`::test_a_wrong_factor_model_is_refused`, `::test_wrong_branches_are_refused`. Estimation: `tests/test_estimate.py`
+(known synthetic volatility and correlation recovered with 20 % shrinkage, out-of-sample coverage, a too-narrow band
+flagged, proposed by one CIO and approved by another, the preview API, AI-05).
 
 ## Limitations
-- Parameters are assumed; the BRD's out-of-sample validation (§16.2) cannot be reproduced without history.
+- Until the estimated version is approved, the shipped version's parameters are assumed. Three factors have no free
+  series and stay assumed; the stressed regime's multipliers are not estimated.
 - Tails are normal (thin); P5 is shown as a reference only (BRD F09).
 - The pre-BRD stress tests and price-moving policy rules do not use this engine yet (ADR-0007).

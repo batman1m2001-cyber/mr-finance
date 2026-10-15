@@ -84,6 +84,8 @@ Every `/api/*` path but these needs a session (401 without one); a customer gets
 | `/api/rm/today` | — | flagged cases and goal tasks | FEAT-13, 10 |
 | `/api/audit`, `/api/audit/verify` | `limit (≤ 1000)` | log rows; chain check | FEAT-11 |
 | `/api/audit/export` | `format=json\|csv` | the whole chain as a download (JSON includes the check) | FEAT-11 |
+| `/api/market` | — | staff: the market jobs (cadence, last run, last success, last error), each series' coverage, last value, source and 120-day tail, each factor's provenance | FEAT-35 |
+| `/api/market/series` | `id, from?` | staff: one stored or computed (DXY, SJC_GAP) series' points | FEAT-35 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |
 | `/api/goals/regulation` | `family_id?, role?` | regulation matches, purposes, a family's goals (staff) | FEAT-10 |
 

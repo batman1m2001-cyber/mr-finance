@@ -756,3 +756,6 @@ body.signed-out .bellwrap, body.signed-out .cp-fab, body.signed-out #reset { dis
 @media (max-width: 760px) {
   .whoami:has(.me) { display: inline-flex; margin-left: auto; padding: 4px 0; }
 }
+
+/* Dữ liệu thị trường (F1): the 120-day line beside each series */
+.mk-spark { display: block; }

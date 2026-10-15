@@ -69,7 +69,6 @@ Not automated beyond `tests/test_web.py`. Recorded manual/scripted checks:
 
 ## Coverage gaps (behaviour with no automated test)
 
-- The stressed-branch prompt rule (VN-Index and real-estate credit in core shocks, BRD-RULE-AI-05).
 - Page-level click paths (J1–J6) — only HTTP paths are tested.
 - Family totals summed in the browser on SCR-RM-01 (system overview §4).
 - Feed timing (≤ 10 minutes) and agent duration (≤ 15 minutes) are measured once, not asserted.
