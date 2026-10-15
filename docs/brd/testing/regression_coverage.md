@@ -3,7 +3,8 @@
 ## How to run
 
 ```bash
-uv run pytest                         # the whole suite (offline; fake models, written feeds)
+uv run pytest                         # the whole suite (offline; fake models, written feeds), browser tests included
+uv run pytest -m "not ui"             # without the browser tests in tests/ui (about a minute faster)
 uv run pytest tests/test_brd_docs.py  # this documentation repository's checks only
 uv run python scripts/check_brd_docs.py [--brd <path to the BRD .docx>]
 uv run operonx run statement_reading  # the statement-reading eval (needs MF_AI=on and a model for 5/5)
@@ -13,6 +14,7 @@ uv run operonx run statement_reading  # the statement-reading eval (needs MF_AI=
 
 | Date | Commit | Command | Result |
 |---|---|---|---|
+| 2026-10-16 | UI redesign R0 (browser tests) | `uv run pytest -q -m "not ui"`; `uv run pytest -q -m ui` | **215 passed** in 80 s; **6 passed** in 46 s (tests/ui: every route × desktop/phone, Copilot marks, states, phone, reduced motion). Control: a page made to throw fails the route test (`#/cio/agent: console Error`) |
 | 2026-10-16 | kit K2–K5 (PR #19–#22) | `uv run pytest -q` | **195 passed** in 65 s (+ `test_flows.py` 4, `test_graph.py` 3, `test_feed.py` 5, `test_copilot.py` 7, DEF-05 1); checker 0 errors |
 | 2026-10-15 | fix DEF-02, DEF-03, FR-404 | `uv run pytest -q` | **175 passed** in 55 s (+2 FR-404 tests; news, review and verify tests extended); checker 0 errors |
 | 2026-10-15 | docs/brd + checker | `uv run pytest -q` | **173 passed** in 53 s (170 + 3 in `tests/test_brd_docs.py`); checker 0 errors, also with `--brd` (61 codes, hash ok) |

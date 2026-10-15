@@ -63,7 +63,7 @@ STATUSES = (
 )
 REQ_ID = r"(?:BRD-(?:BR-\d{2}|FR-\d{3}|NFR-\d{2}|KPI-\d{2}|RULE-[A-Z]+-\d{2})|(?:BRIEF|KIT|OWN)-[A-Z]+-\d{2})"
 LINK = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)\)|!\[[^\]]*\]\(([^)\s]+)\)")
-TEST_REF = re.compile(r"tests/(test_\w+\.py)::(test_\w+)")
+TEST_REF = re.compile(r"tests/((?:\w+/)?test_\w+\.py)::(test_\w+)")  # tests/ and tests/ui/
 
 
 def slug(heading: str) -> str:
@@ -150,8 +150,9 @@ def row_status(row: str) -> str:
 
 def tests_index() -> Dict[str, Set[str]]:
     out: Dict[str, Set[str]] = {}
-    for f in (ROOT / "tests").glob("test_*.py"):
-        out[f.name] = set(re.findall(r"^(?:async\s+)?def\s+(test_\w+)", f.read_text(encoding="utf-8"), re.M))
+    for f in (ROOT / "tests").rglob("test_*.py"):
+        names = re.findall(r"^(?:async\s+)?def\s+(test_\w+)", f.read_text(encoding="utf-8"), re.M)
+        out[f.relative_to(ROOT / "tests").as_posix()] = set(names)
     return out
 
 

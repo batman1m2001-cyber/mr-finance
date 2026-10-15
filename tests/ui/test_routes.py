@@ -1,0 +1,37 @@
+"""Every menu route of every role renders in the browser — no page error, no error panel, no horizontal scroll,
+the Copilot button present — on a desktop and a phone, with one approved event so the news-impact pages have content."""
+
+import pytest
+from conftest import in_thread
+from test_apply import MARKET, approved
+
+ROLES = ("client", "rm", "cio", "compliance")
+
+
+def routes(p):
+    """Every nav and sub-nav link, read from the shell itself (so a new page is covered without editing this)."""
+    out = []
+    for role in ROLES:
+        p.go(f"#/{role}")
+        for nav in p.page.eval_on_selector_all("#nav a", "as => as.map(a => a.getAttribute('href'))"):
+            p.go(nav)
+            subs = p.page.eval_on_selector_all("#subnav:not([hidden]) a", "as => as.map(a => a.getAttribute('href'))")
+            out += subs or [nav]
+    return out
+
+
+@pytest.mark.parametrize("size", ["desktop", "phone"])
+def test_every_route_renders_without_errors(open_page, size):
+    in_thread(approved, *MARKET)
+    p = open_page(size)
+    seen = routes(p)
+    assert len(seen) >= 29, seen
+    bad = {}
+    for r in seen:
+        p.errors.clear()
+        p.go(r)
+        if not p.page.is_visible(".cp-fab"):
+            p.errors.append("no Copilot button")
+        if p.problems():
+            bad[r] = p.problems()
+    assert not bad, bad
