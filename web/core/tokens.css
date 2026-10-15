@@ -291,3 +291,10 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .sankey .band { cursor: pointer; transition: fill-opacity .12s; }
 .sankey .band:hover, .sankey .band:focus { fill-opacity: .6; outline: none; }
 @media (prefers-reduced-motion: reduce) { .sankey .band { transition: none; } }
+/* Đồ thị tác động (kit K3) */
+.igraph .gnode { cursor: pointer; }
+.igraph .gnode:focus { outline: none; }
+.igraph .gnode:focus rect { stroke-width: 3; }
+.chip[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
+.gedge { padding: 8px 0; border-bottom: 1px solid var(--hair); overflow-wrap: anywhere; }
+.gedge .linkbtn { text-align: left; }
