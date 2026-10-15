@@ -16,13 +16,17 @@ test = [  # pip: pip install -e ".[test]"
     "pytest>=8",
     "httpx>=0.24",  # starlette's TestClient
 ]
+ui = [  # the browser tests in tests/ui (skipped without it); a Chromium: `playwright install chromium` or MF_CHROMIUM
+    "playwright>=1.44",
+]
 
 [dependency-groups]
-dev = ["mr-finance[test]"]  # uv: `uv sync` installs the test extra too
+dev = ["mr-finance[test,ui]"]  # uv: `uv sync` installs the test and browser-test extras too
 
 [tool.pytest.ini_options]
 pythonpath = ["src", "."]
 testpaths = ["tests"]
+markers = ["ui: browser tests in tests/ui (Playwright + Chromium); skip with -m 'not ui'"]
 
 [tool.ruff]
 line-length = 120  # Vietnamese prompts and data rows read better whole

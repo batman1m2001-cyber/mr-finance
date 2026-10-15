@@ -60,4 +60,5 @@ own families only (Q-17), re-ask triggers for the risk test (Q-16), alerting on 
 
 | Phase | State | PR |
 |---|---|---|
-| R0 | next | |
+| R0 | done 2026-10-16: 6 browser tests (every route × 2 sizes, Copilot) in the suite, control checked | #32 |
+| R1 | next | |

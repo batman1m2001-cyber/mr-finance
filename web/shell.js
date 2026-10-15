@@ -146,11 +146,12 @@ async function route() {
     const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016i`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
-    if (seq === state.seq) window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));  // motion.js: a waiting highlight
   } catch (e) {
     if (seq === state.seq) box.innerHTML = failed(e);
     console.error(e);
   }
+  // the route has rendered, or failed visibly: motion.js applies a waiting highlight; tests wait on it
+  if (seq === state.seq) window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
 }
 
 function ctx(rt) {
