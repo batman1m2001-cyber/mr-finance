@@ -13,6 +13,7 @@ uv run operonx run statement_reading  # the statement-reading eval (needs MF_AI=
 
 | Date | Commit | Command | Result |
 |---|---|---|---|
+| 2026-10-16 | kit K2–K5 (PR #19–#22) | `uv run pytest -q` | **195 passed** in 65 s (+ `test_flows.py` 4, `test_graph.py` 3, `test_feed.py` 5, `test_copilot.py` 7, DEF-05 1); checker 0 errors |
 | 2026-10-15 | fix DEF-02, DEF-03, FR-404 | `uv run pytest -q` | **175 passed** in 55 s (+2 FR-404 tests; news, review and verify tests extended); checker 0 errors |
 | 2026-10-15 | docs/brd + checker | `uv run pytest -q` | **173 passed** in 53 s (170 + 3 in `tests/test_brd_docs.py`); checker 0 errors, also with `--brd` (61 codes, hash ok) |
 | 2026-10-15 | b5e1cb1 (main, before this repository) | `uv run pytest -q` | **170 passed** in 53 s |
@@ -49,6 +50,8 @@ Not automated beyond `tests/test_web.py`. Recorded manual/scripted checks:
 | Date | What | Result |
 |---|---|---|
 | 2026-10-15 | 21 routes × {1440 × 900, 390 × 844} (desktop all, phone 6, dark 2) captured for this repository with Playwright against the dev server; page errors, console errors and horizontal scroll recorded per capture | 30 captures, 0 page/console errors, 0 horizontal scroll |
+| 2026-10-16 | K6 sweep: every menu route of every role (29) × {1440 × 900, 390 × 844} × {light, dark}, plus 3 CIO detail routes × the same 4, scripted with Playwright on the dev server (three effective runs) | 128 page loads: 0 page or console errors, 0 horizontal scroll, 0 error panels |
+| 2026-10-16 | K2–K5 click-throughs: Wealth Map drill-down, month switch, Sankey band → rows; feed link → evidence page; graph node → path and detail; Copilot ask, refusal, RM confirm → record approved, navigate | all as expected, no console error |
 | 2026-10-15 | U1–U2 acceptance (news plan §9): 21 routes × desktop/phone × light/dark | 84 screenshots, no horizontal scroll, no console error; 6 click-through flows, 5 passed, 1 skipped (a legacy link not shown for the test client) |
 
 ## Known defects — `DEF-nn`
