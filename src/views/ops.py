@@ -15,6 +15,7 @@ from apply import run as apply_run
 from control import roles
 from engine import default_model
 from events import store as events
+from measure import forecasts
 from news.ops import config as news_config
 from views import agents, decide, schema
 from views import store as vstore
@@ -232,6 +233,7 @@ async def decide_view(
     vstore.save(v, decide.TO[action], by, f"{dec['id']}: {reason}")
     if action == "approve":
         dec["superseded"] = decide.supersede_older(vstore.get(v["id"]), by)
+        dec["forecasts"] = forecasts.record(vstore.get(v["id"]))  # FEAT-18: scored when each horizon passes
         run = await apply_run.apply_view(vstore.get(v["id"]), by, dec["id"], idem_key=f"apply:{dec['id']}")
         dec["run"] = {k: run.get(k) for k in ("id", "status", "status_label", "totals", "snapshot_id")}
     if action == "withdraw":

@@ -230,6 +230,36 @@ def evaluate(
     }
 
 
+def factor_bands(branches: Iterable[Branch | Dict[str, Any]], model: Optional[FactorModel] = None) -> Dict[str, Any]:
+    """Each factor's own forecast per horizon, in its unit: the expected move and P10 / P50 / P90 of the branch
+    mixture — the same parts as a family's band (residual × months, core-size uncertainty), for one unit of one
+    factor. What accuracy tracking (FEAT-18) scores against the realised move."""
+    model = model or default_model()
+    branches = [b if isinstance(b, Branch) else Branch.from_dict(b) for b in branches]
+    validate(branches, model)
+    props = [propagate(b, model) for b in branches]
+    probs = [b.probability for b in branches]
+    out: Dict[str, Any] = {}
+    for h, months in model.horizons.items():
+        rows = {}
+        for i, f in enumerate(model.factors):
+            r = f.realisation[h]
+            comps = []
+            for p in props:
+                mean = r * p.moves[i]
+                var = p.residual[i][i] * months * r * r
+                if p.core:
+                    lift = [x * r for x in p.lift[i]]
+                    var += linalg.quad(p.core_cov, lift)
+                comps.append((mean, max(var, 0.0)))
+            rows[f.id] = {
+                "expected": _r(sum(pr * c[0] for pr, c in zip(probs, comps))),
+                **{name: _r(_mixture_quantile(probs, comps, q)) for name, q in PERCENTILES if name != "p5"},
+            }
+        out[h] = rows
+    return out
+
+
 def _branchwise(p: Propagation, exps: List[Exposure], ids: List[str], real: List[float], months: float) -> _Branchwise:
     n = len(ids)
     index = {f: i for i, f in enumerate(ids)}
