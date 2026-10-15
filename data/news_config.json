@@ -1,0 +1,364 @@
+{
+ "version": "NEWS-DEMO-2026-10",
+ "note": "Danh sách nguồn công khai và từ khóa cho demo; danh sách hạn chế là giả lập (tên tự đặt).",
+ "gates": {
+  "future_minutes": 10,
+  "max_age_days": 7,
+  "fetch_timeout_s": 15
+ },
+ "sources": [
+  {
+   "id": "vnexpress_kd",
+   "outlet": "VnExpress",
+   "section": "Kinh doanh",
+   "url": "https://vnexpress.net/rss/kinh-doanh.rss",
+   "kind": "domestic",
+   "approved": true
+  },
+  {
+   "id": "vnexpress_tg",
+   "outlet": "VnExpress",
+   "section": "Thế giới",
+   "url": "https://vnexpress.net/rss/the-gioi.rss",
+   "kind": "intl",
+   "approved": true
+  },
+  {
+   "id": "vneconomy_tg",
+   "outlet": "VnEconomy",
+   "section": "Kinh tế thế giới",
+   "url": "https://vneconomy.vn/kinh-te-the-gioi.rss",
+   "kind": "intl",
+   "approved": true
+  },
+  {
+   "id": "vneconomy_tc",
+   "outlet": "VnEconomy",
+   "section": "Tài chính",
+   "url": "https://vneconomy.vn/tai-chinh.rss",
+   "kind": "domestic",
+   "approved": true
+  },
+  {
+   "id": "vneconomy_ck",
+   "outlet": "VnEconomy",
+   "section": "Chứng khoán",
+   "url": "https://vneconomy.vn/chung-khoan.rss",
+   "kind": "domestic",
+   "approved": true
+  },
+  {
+   "id": "vneconomy_do",
+   "outlet": "VnEconomy",
+   "section": "Địa ốc",
+   "url": "https://vneconomy.vn/dia-oc.rss",
+   "kind": "domestic",
+   "approved": true
+  },
+  {
+   "id": "vietstock_vm",
+   "outlet": "Vietstock",
+   "section": "Vĩ mô",
+   "url": "https://vietstock.vn/761/kinh-te/vi-mo.rss",
+   "kind": "domestic",
+   "approved": true
+  },
+  {
+   "id": "vietstock_cp",
+   "outlet": "Vietstock",
+   "section": "Cổ phiếu",
+   "url": "https://vietstock.vn/830/chung-khoan/co-phieu.rss",
+   "kind": "domestic",
+   "approved": true
+  },
+  {
+   "id": "cafef_ck",
+   "outlet": "CafeF",
+   "section": "Thị trường chứng khoán",
+   "url": "https://cafef.vn/thi-truong-chung-khoan.rss",
+   "kind": "domestic",
+   "approved": true
+  },
+  {
+   "id": "fed",
+   "outlet": "Federal Reserve",
+   "section": "Press releases",
+   "url": "https://www.federalreserve.gov/feeds/press_all.xml",
+   "kind": "intl",
+   "approved": true
+  },
+  {
+   "id": "ecb",
+   "outlet": "European Central Bank",
+   "section": "Press",
+   "url": "https://www.ecb.europa.eu/rss/press.html",
+   "kind": "intl",
+   "approved": true
+  }
+ ],
+ "factor_words": {
+  "US10Y": [
+   "lợi suất trái phiếu mỹ",
+   "trái phiếu kho bạc",
+   "treasury",
+   "lợi suất mỹ",
+   "fed",
+   "fomc"
+  ],
+  "DXY": [
+   "đồng usd",
+   "chỉ số usd",
+   "dxy",
+   "đồng bạc xanh",
+   "dollar"
+  ],
+  "GLOBAL_EQ": [
+   "phố wall",
+   "s&p 500",
+   "nasdaq",
+   "dow jones",
+   "chứng khoán mỹ",
+   "chứng khoán châu á",
+   "wall street"
+  ],
+  "BRENT": [
+   "giá dầu",
+   "dầu brent",
+   "opec",
+   "dầu thô",
+   "oil"
+  ],
+  "GOLD": [
+   "giá vàng",
+   "vàng thế giới",
+   "gold"
+  ],
+  "BTC": [
+   "bitcoin",
+   "tiền số",
+   "tiền mã hóa",
+   "crypto"
+  ],
+  "USDVND": [
+   "tỷ giá",
+   "usd/vnd",
+   "tiền đồng",
+   "ngoại tệ"
+  ],
+  "VN_RATE": [
+   "lãi suất điều hành",
+   "nhnn",
+   "ngân hàng nhà nước",
+   "lãi suất liên ngân hàng",
+   "lãi suất huy động",
+   "lãi suất cho vay",
+   "lãi suất"
+  ],
+  "VN_GOV": [
+   "trái phiếu chính phủ",
+   "tpcp",
+   "kho bạc nhà nước"
+  ],
+  "RE_SPREAD": [
+   "trái phiếu doanh nghiệp bất động sản",
+   "nợ xấu bất động sản",
+   "đáo hạn trái phiếu"
+  ],
+  "FIN_SPREAD": [
+   "ngân hàng",
+   "nợ xấu",
+   "tín dụng",
+   "trái phiếu doanh nghiệp"
+  ],
+  "VNINDEX": [
+   "vn-index",
+   "vnindex",
+   "chứng khoán",
+   "cổ phiếu",
+   "hose",
+   "thị trường chứng khoán"
+  ],
+  "FOREIGN_FLOW": [
+   "khối ngoại",
+   "nhà đầu tư nước ngoài",
+   "nâng hạng",
+   "bán ròng",
+   "mua ròng"
+  ],
+  "SJC_GAP": [
+   "vàng miếng",
+   "sjc",
+   "chênh lệch giá vàng"
+  ],
+  "VN_HOUSE": [
+   "bất động sản",
+   "nhà ở",
+   "căn hộ",
+   "địa ốc",
+   "giá nhà",
+   "chung cư"
+  ]
+ },
+ "event_types": [
+  {
+   "id": "monetary",
+   "label": "Chính sách tiền tệ",
+   "words": [
+    "lãi suất",
+    "fed",
+    "fomc",
+    "nhnn",
+    "ngân hàng nhà nước",
+    "ecb",
+    "monetary policy"
+   ]
+  },
+  {
+   "id": "fx",
+   "label": "Tỷ giá",
+   "words": [
+    "tỷ giá",
+    "usd/vnd",
+    "đồng usd",
+    "ngoại tệ"
+   ]
+  },
+  {
+   "id": "gold",
+   "label": "Vàng",
+   "words": [
+    "giá vàng",
+    "vàng miếng",
+    "vàng thế giới",
+    "gold",
+    "sjc"
+   ]
+  },
+  {
+   "id": "credit",
+   "label": "Tín dụng, trái phiếu",
+   "words": [
+    "trái phiếu",
+    "tín dụng",
+    "nợ xấu"
+   ]
+  },
+  {
+   "id": "real_estate",
+   "label": "Bất động sản",
+   "words": [
+    "bất động sản",
+    "nhà ở",
+    "căn hộ",
+    "địa ốc",
+    "chung cư"
+   ]
+  },
+  {
+   "id": "regulation",
+   "label": "Chính sách, quy định",
+   "words": [
+    "nghị định",
+    "thông tư",
+    "luật",
+    "dự thảo",
+    "thuế",
+    "quyết định"
+   ]
+  },
+  {
+   "id": "commodity",
+   "label": "Hàng hóa",
+   "words": [
+    "giá dầu",
+    "opec",
+    "dầu thô",
+    "giá bạc",
+    "hàng hóa"
+   ]
+  },
+  {
+   "id": "crypto",
+   "label": "Tiền số",
+   "words": [
+    "bitcoin",
+    "tiền số",
+    "tiền mã hóa"
+   ]
+  },
+  {
+   "id": "equity",
+   "label": "Thị trường cổ phiếu",
+   "words": [
+    "chứng khoán",
+    "cổ phiếu",
+    "vn-index",
+    "khối ngoại",
+    "nâng hạng"
+   ]
+  },
+  {
+   "id": "geopolitics",
+   "label": "Địa chính trị, thương mại",
+   "words": [
+    "thuế quan",
+    "chiến tranh",
+    "trừng phạt",
+    "xung đột",
+    "tariff"
+   ]
+  }
+ ],
+ "intl_words": [
+  "mỹ",
+  "fed",
+  "trung quốc",
+  "châu âu",
+  "ecb",
+  "nhật bản",
+  "imf",
+  "opec",
+  "thế giới",
+  "toàn cầu",
+  "phố wall",
+  "anh quốc",
+  "hàn quốc",
+  "ấn độ"
+ ],
+ "domestic_words": [
+  "việt nam",
+  "nhnn",
+  "vn-index",
+  "tp hcm",
+  "tp.hcm",
+  "hà nội",
+  "hose",
+  "trong nước",
+  "sjc"
+ ],
+ "restricted": [
+  {
+   "name": "Sao Mai Land (mock)",
+   "aliases": [
+    "sao mai land",
+    "bđs sao mai"
+   ],
+   "ticker": "SML"
+  },
+  {
+   "name": "Hòa Bình Energy (mock)",
+   "aliases": [
+    "hòa bình energy",
+    "năng lượng hòa bình"
+   ],
+   "ticker": "HBE"
+  },
+  {
+   "name": "Kim Phát Holdings (mock)",
+   "aliases": [
+    "kim phát holdings"
+   ],
+   "ticker": "KPH"
+  }
+ ]
+}
