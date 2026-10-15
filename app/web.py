@@ -180,6 +180,10 @@ async def news_inbox(request: Request) -> JSONResponse:
         limit = min(int(q.get("limit") or 200), 1000)
     except ValueError:
         return JSONResponse({"error": "since and limit are numbers"}, status_code=400)
+    if q.get("held"):
+        items = [i for i in news_store.inbox(status="all", limit=5000) if i["held"]]
+        cfg = news_ops.config()
+        return JSONResponse({"items": items, "sources": [], "last_run": None, "config_version": cfg["version"]})
     items = news_store.inbox(
         source=q.get("source") or None,
         kind=q.get("kind") or None,
@@ -314,6 +318,31 @@ async def audit_list(request: Request) -> JSONResponse:
     return JSONResponse({"rows": rows})
 
 
+async def model(request: Request) -> JSONResponse:
+    """The factor model the engine runs on: factors, sizes, realisation, volatilities, the stressed
+    repair — every assumed parameter flagged (B1)."""
+    from engine import ENGINE_VERSION, default_model
+
+    m = default_model()
+    vol_s = m.vol("stressed")
+    return JSONResponse({
+        "version": m.version, "hash": m.hash, "status": m.status, "note": m.note, "engine_version": ENGINE_VERSION,
+        "horizons": m.horizons, "priced_in": m.priced_in, "core_uncertainty": m.core_uncertainty,
+        "stressed_repair": m.stressed_repair, "loadings": m.loadings,
+        "factors": [{"id": f.id, "name": f.name, "group": f.group, "unit": f.unit, "sizes": f.sizes,
+                     "realisation": f.realisation, "vol_month": f.vol_month, "vol_month_stressed": round(vs, 4),
+                     "brd_parameter": f.brd_parameter, "assumed": f.assumed} for f, vs in zip(m.factors, vol_s)],
+        "correlations": {"ids": m.ids, "normal": [[round(x, 3) for x in r] for r in m.corr["normal"]],
+                         "stressed": [[round(x, 3) for x in r] for r in m.corr["stressed"]]},
+    })
+
+
+async def news_config(request: Request) -> JSONResponse:
+    """The white list and the (mock) restricted list Compliance owns."""
+    cfg = news_ops.config()
+    return JSONResponse({k: cfg[k] for k in ("version", "note", "gates", "sources", "restricted", "event_types")})
+
+
 async def reset(request: Request) -> JSONResponse:
     store.reset()
     news_store.reset()
@@ -331,6 +360,8 @@ app = Starlette(
         Route("/api/advisory/all", advisory_all),
         Route("/api/views", views),
         Route("/api/news/inbox", news_inbox),
+        Route("/api/news/config", news_config),
+        Route("/api/model", model),
         Route("/api/events", events_list),
         Route("/api/events/{event_id}", event_one),
         Route("/api/views/{view_id}", view_one),

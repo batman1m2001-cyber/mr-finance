@@ -16,6 +16,8 @@ from engine.scenario import Branch
 from events import store as events
 from views import store as vstore
 
+HORIZON_LABEL = {"1w": "1 tuần", "3m": "3 tháng", "12m": "12 tháng"}
+
 FORMULA = (
     "Tác động kỳ vọng = Σ theo nhánh (xác suất × Σ theo vị thế (giá trị × Σ theo yếu tố (độ nhạy × tỷ lệ thể hiện "
     "theo kỳ hạn × biến động của yếu tố trong nhánh))). Biến động yếu tố: cú sốc lõi do CIO duyệt, các yếu tố khác "
@@ -41,7 +43,7 @@ def trace(run_id: str, family_id: str, key: Optional[str] = None, horizon: str =
         number = {"label": "Đóng góp của vị thế", "value": h["by_holding"].get(key, 0)}
         holdings = [x for x in fam["holdings"] if x["key"] == key]
     else:
-        number = {"label": f"Tác động kỳ vọng {horizon}", "value": h["expected"]}
+        number = {"label": f"Tác động kỳ vọng {HORIZON_LABEL.get(horizon, horizon)}", "value": h["expected"]}
     nw = fam["net_worth"]
     number.update(
         horizon=horizon, pct=number["value"] / nw if nw else 0.0, band={x: h[x] for x in ("p5", "p10", "p50", "p90")}

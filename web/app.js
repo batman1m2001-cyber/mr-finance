@@ -1,4 +1,5 @@
-/* Techcombank Wealth — the page. It only calls the services (app/main.py) and draws what they return. */
+/* OneWealth — the pages that came before the redesign (overview, assets, planning, policy costs, specialist,
+   performance). They only call the services and draw what they return; shell.js owns the navigation. */
 (function () {
   "use strict";
   const {vnd, pct, months: monthsText, monthName, esc} = window.Fmt;
@@ -1296,49 +1297,25 @@
     }
   }
 
-  function showTab(tab) {
+  function showTab(tab, fromShell) {
+    // the shell (shell.js) owns the navigation: a link inside a page asks it, so the address and the
+    // menu follow; the shell then calls back with fromShell to show the page and redraw its charts
+    if (!fromShell && window.Shell) { window.Shell.openLegacy(tab); return; }
     state.tab = tab;
-    // the pillar holding the tab shows, with only its own tabs under it
-    const pillar = (document.querySelector(`.tabs [data-tab="${tab}"]`) || {dataset: {}}).dataset.pillar;
-    for (const b of document.querySelectorAll(".pillars button")) {
-      if (b.dataset.pillar === pillar) b.setAttribute("aria-current", "true");
-      else b.removeAttribute("aria-current");
-    }
-    for (const b of document.querySelectorAll(".tabs button")) {
-      b.hidden = b.dataset.pillar !== pillar;
-      if (b.dataset.tab === tab) b.setAttribute("aria-current", "page");
-      else b.removeAttribute("aria-current");
-    }
-    // a pillar with one page needs no row of tabs under it
-    $(".tabs").hidden = document.querySelectorAll(`.tabs [data-pillar="${pillar}"]`).length < 2;
-    state.lastTab[pillar] = tab;
     for (const s of document.querySelectorAll(".tab")) s.hidden = s.id !== `tab-${tab}`;
     // a chart drawn while its tab was hidden measured no width: draw it again now it shows
     if (tab === "overview" || tab === "scenarios") drawCash();
     if (tab === "performance") drawPerf();
     if (tab === "perfall") loadAdvisoryAll();
     if (tab === "alerts") renderAlerts();
-    try { localStorage.setItem("mf.tab", tab); } catch (_) { /* private mode */ }
   }
 
   function setViewer(v) {
+    // client or staff: what the legacy pages show (the shell maps a role to one of them)
     state.viewer = v === "staff" ? "staff" : "client";
-    for (const b of document.querySelectorAll("[data-viewer]")) b.setAttribute("aria-pressed", String(b.dataset.viewer === state.viewer));
-    for (const el of document.querySelectorAll(".pillars [data-staff]")) el.hidden = state.viewer !== "staff";
-    try { localStorage.setItem("mf.viewer", state.viewer); } catch (_) { /* private mode */ }
-    // a client never stays on an internal page
-    if (state.viewer !== "staff" && document.querySelector(`.tabs [data-tab="${state.tab}"][data-staff]`)) showTab("overview");
-  }
-
-  function theme() {
-    const root = document.documentElement;
-    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-    root.dataset.theme = dark ? "light" : "dark";
-    try { localStorage.setItem("mf.theme", root.dataset.theme); } catch (_) { /* private mode */ }
   }
 
   async function start() {
-    try { const t = localStorage.getItem("mf.theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) { /* */ }
     const {clients} = await api("/api/clients");
     try { state.catalog = (await api("/api/scenarios")).scenarios; } catch (_) { state.catalog = []; }
     loadQueue();
@@ -1357,12 +1334,6 @@
         load();
       };
     }
-    for (const b of document.querySelectorAll(".tabs button")) b.onclick = () => showTab(b.dataset.tab);
-    for (const b of document.querySelectorAll(".pillars button")) {
-      b.onclick = () => showTab(state.lastTab[b.dataset.pillar] || document.querySelector(`.tabs [data-pillar="${b.dataset.pillar}"]`).dataset.tab);
-    }
-    $("#theme").onclick = theme;
-    for (const b of document.querySelectorAll("[data-viewer]")) b.onclick = () => setViewer(b.dataset.viewer);
     loadViews();
     $("#reset").onclick = async () => {
       if (!confirm("Xóa mọi dữ liệu đã tải lên, đã khai, bài test, mục tiêu và hàng chờ duyệt để làm lại demo?")) return;
@@ -1373,14 +1344,9 @@
       await loadQueue();
       load();
     };
-    let tab = "overview";
-    try { tab = localStorage.getItem("mf.tab") || tab; } catch (_) { /* */ }
-    let viewer = "client";
-    try { viewer = localStorage.getItem("mf.viewer") || viewer; } catch (_) { /* */ }
-    showTab(document.querySelector(`.tabs [data-tab="${tab}"]`) ? tab : "overview");
-    setViewer(viewer);
     load();
   }
 
-  start();
+  // what the shell (shell.js, an ES module that runs after this script) drives
+  window.Legacy = {showTab: (t) => showTab(t, true), setViewer, reload: load, client: () => state.client, ready: start()};
 })();
