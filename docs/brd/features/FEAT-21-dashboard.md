@@ -24,11 +24,11 @@ is, and the money coming in and going out over the next 12–36 months.
   transactions (salary monthly, school fees by term; a card balance paid once), maturities, coupons,
   instalments, known dated events; large payments flagged.
 - The page also shows the source groups (“Our Wealth at Techcombank”, “Custody around the world”,
-  “Self-managed”: tiers mapped to titles in `web/app.js`) and a “Headline News” card from the policy alerts
+  “Self-managed”: tiers mapped to titles in `web/pages/detail.js`) and a “Headline News” card from the policy alerts
   (FEAT-25).
 
 ## Implementation
-`src/dashboard/{graph,ops,_calendar}.py`; UI `web/app.js` (tab `overview`).
+`src/dashboard/{graph,ops,_calendar}.py`; UI `web/pages/detail.js` (Chi tiết; was tab `overview`).
 
 ## Acceptance and tests
 `tests/test_dashboard.py` (12 tests, e.g. `::test_net_worth_is_assets_less_debt_with_its_month_change_and_confidence`,

@@ -20,7 +20,7 @@
 - An option can be sent to the RM queue (FEAT-27).
 
 ## Implementation
-`src/scenarios/{graph,ops,_sim}.py` (`SCENARIOS`); UI `web/app.js` (tab `scenarios`).
+`src/scenarios/{graph,ops,_sim}.py` (`SCENARIOS`); UI `web/pages/plan.js` (Kế hoạch; was tab `scenarios`).
 
 ## Acceptance and tests
 `tests/test_scenarios.py` (10 tests, e.g. `::test_every_scenario_runs_for_every_client_in_both_views`,

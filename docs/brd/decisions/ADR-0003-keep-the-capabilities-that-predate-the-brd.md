@@ -11,7 +11,7 @@ Consolidation, the dashboard, statement reading, chat declarations, the risk tes
 ## Decision
 
 - Every pre-BRD capability is kept and documented as an **existing capability** (Layer A: [brief_requirements.md](../requirements/brief_requirements.md); Layer B: FEAT-20…FEAT-28).
-- The redesign wraps their pages in the new shell without removing any section (`tests/test_web.py::test_the_legacy_pages_keep_their_sections`).
+- The redesign wrapped their pages in the new shell without removing any section (ADR-0013); since 2026-10-16 each is a rebuilt module page with every section kept (ADR-0019, `tests/test_web.py::test_every_page_is_a_module_page`).
 - Overlaps with the BRD are recorded as conflicts (Q-03, Q-04), not resolved by deleting either side.
 
 ## Consequences

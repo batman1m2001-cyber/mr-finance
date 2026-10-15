@@ -15,7 +15,7 @@ footer disclaimer ([information architecture](../information_architecture.md#the
 | | |
 |---|---|
 | Route | `#/client/tong-quan/chi-tiet` (“Chi tiết”); RM: `#/rm/khach-hang/tong-quan` (“Chi tiết”) |
-| Generation | legacy (`web/app.js`, tab `overview`) |
+| Generation | rebuilt in R3 (`web/pages/detail.js`; was tab `overview`, ADR-0019) |
 | Features | [FEAT-21](../../features/FEAT-21-dashboard.md), [FEAT-20](../../features/FEAT-20-consolidation.md), [FEAT-25](../../features/FEAT-25-policy-cost-alerts-and-house-views.md) (Headline News card) |
 | Requirements | BRIEF-DASH-01…07, BRIEF-DATA-04, BRIEF-DATA-05 |
 | Data | `POST /api/dashboard`, `POST /api/alerts` |
@@ -54,11 +54,11 @@ replaced by the Intelligence Feed (FEAT-31).
 | | |
 |---|---|
 | Route | `#/client/tai-san`; RM: `#/rm/khach-hang/tai-san` |
-| Generation | legacy (tab `sources`) |
+| Generation | rebuilt in R3 (`web/pages/holdings.js`; was tab `sources`) |
 | Features | [FEAT-20](../../features/FEAT-20-consolidation.md), [FEAT-22](../../features/FEAT-22-statement-reading.md), [FEAT-23](../../features/FEAT-23-chat-declaration.md) |
 | Requirements | BRIEF-DATA-01…05 |
 | Data | `POST /api/dashboard`, `POST /api/statement`, `POST /api/declare` |
-| Screenshot | [desktop](../../assets/current_ui/SCR-CL-02_desktop-light.jpg) |
+| Screenshot | [desktop](../../assets/current_ui/SCR-CL-02_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CL-02_phone-light.jpg) |
 
 **Layout.** Two input cards — **Tải sao kê** (choose a PDF/Excel/CSV file, or “Dùng sao kê mẫu: vps_C01.csv”) and
 **Bổ sung tài sản** (chat, with four example sentences) — then **Tất cả tài sản và khoản nợ**: holdings grouped
@@ -70,6 +70,8 @@ what was recorded and the table grows; collapse a class.
 
 **States.** Upload/agent errors are shown inline; without a model the rule paths answer (ADR-0015 D2).
 
+**Tests.** `tests/ui/test_pages.py::test_a_statement_and_a_declaration_reach_the_book`.
+
 ---
 
 ## SCR-CL-03 — Kế hoạch (Wealth Planning Advisor)
@@ -77,11 +79,11 @@ what was recorded and the table grows; collapse a class.
 | | |
 |---|---|
 | Route | `#/client/muc-tieu/ke-hoach`; RM: `#/rm/khach-hang/ke-hoach` |
-| Generation | legacy (tab `scenarios`) |
+| Generation | rebuilt in R3 (`web/pages/plan.js`; was tab `scenarios`) |
 | Features | [FEAT-26](../../features/FEAT-26-life-scenarios-stress-tests-and-goals.md), [FEAT-27](../../features/FEAT-27-rm-approval-queue.md) |
 | Requirements | BRIEF-SCEN-01…03 |
 | Data | `POST /api/goals`, `POST /api/scenario`, `GET /api/scenarios`, `POST /api/review/propose`, `GET /api/review` |
-| Screenshot | [desktop](../../assets/current_ui/SCR-CL-03_desktop-light.jpg) |
+| Screenshot | [desktop](../../assets/current_ui/SCR-CL-03_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CL-03_phone-light.jpg) |
 
 **Layout.** “Wealth view” KPI strip (total net worth, portfolio P&L, goals funded, 12-month net cash flow), cash-flow
 chart and need-vs-have bars per goal, the monthly saving needed; then **Life goals** list (grouped: family &
@@ -99,6 +101,9 @@ queue (→ SCR-CL-07).
 **Since 2026-10-16 (FR-603, Q-20).** “Lưu ý quy định cho mục tiêu” sits under the Wealth view: each released
 regulation note that applies to a goal, with its level and milestone (the client sees only notes with a client
 message).
+
+**Tests.** `tests/ui/test_pages.py::test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it`.
+
 ---
 
 ## SCR-CL-04 — Khẩu vị rủi ro (risk test)
@@ -106,15 +111,19 @@ message).
 | | |
 |---|---|
 | Route | `#/client/muc-tieu/khau-vi` |
-| Generation | legacy (tab `risk`) |
+| Generation | rebuilt in R3 (`web/pages/risktest.js`; was tab `risk`) |
 | Feature | [FEAT-24](../../features/FEAT-24-risk-test.md) |
 | Requirements | BRIEF-RISK-01…05 |
 | Data | `POST /api/risk` |
-| Screenshot | [desktop, start state](../../assets/current_ui/SCR-CL-04_desktop-light.jpg) |
+| Screenshot | [desktop, start](../../assets/current_ui/SCR-CL-04_desktop-light.jpg), [phone, a question](../../assets/current_ui/SCR-CL-04_phone-light-question.jpg), [desktop dark, result](../../assets/current_ui/SCR-CL-04_desktop-dark-result.jpg) |
 
 **Journey.** “Bắt đầu cho <name>” → 8–12 situational questions, one at a time, each depending on the last → the
 result: tolerance, capacity, the mismatch sentence when they differ, the persona, the new drawdown limit (which
 the overview then uses).
+
+**Since R3.** A progress bar over the questions, answers as lettered cards, “← Câu trước”; the result shows
+tolerance and capacity on the five named levels with the level each falls in. **Tests.**
+`tests/ui/test_pages.py::test_the_risk_test_goes_back_and_sets_the_limit`.
 
 ---
 
@@ -162,11 +171,11 @@ No “Cách tính” drawer for the client (Q-14).
 | | |
 |---|---|
 | Route | `#/client/tin/chinh-sach`; RM: `#/rm/khach-hang/chinh-sach` |
-| Generation | legacy (tab `alerts`) |
+| Generation | rebuilt in R3 (`web/pages/policy.js`; was tab `alerts`) |
 | Feature | [FEAT-25](../../features/FEAT-25-policy-cost-alerts-and-house-views.md) |
 | Requirements | BRIEF-IMPACT-01…05, BRIEF-ALERT-01, BRIEF-ALERT-02 |
 | Data | `POST /api/alerts`, `GET /api/views`, `POST /api/goals` |
-| Screenshot | [desktop](../../assets/current_ui/SCR-CL-06_desktop-light.jpg) |
+| Screenshot | [desktop](../../assets/current_ui/SCR-CL-06_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CL-06_phone-light.jpg) |
 
 **Layout.** “Wealth check” (YTD return vs benchmark, goals tracked, required actions, link to the planning
 advisor); **Tác động lên tài sản ròng** (diverging bars per policy, filter all / risks / opportunities, the formula);
@@ -177,6 +186,9 @@ probability), holding × sensitivity × probability, the holdings touched, the s
 **DEF-01 (fixed 2026-10-15).** The “Wealth check” card was squeezed into an 18 px column at 1440 px: the new pages'
 `.check` checklist rule (`web/core/tokens.css`) also matched this legacy card. The rule is now scoped to `#page-new`.
 
+**Since R3.** The risks / opportunities filter applies to the bars and to the cards below. **Tests.**
+`tests/ui/test_pages.py::test_the_policy_filter_keeps_one_side`.
+
 ---
 
 ## SCR-CL-07 — Chuyên gia (specialist team)
@@ -184,7 +196,7 @@ probability), holding × sensitivity × probability, the holdings touched, the s
 | | |
 |---|---|
 | Route | `#/client/chuyen-gia` |
-| Generation | legacy (tab `rm`) |
+| Generation | rebuilt in R3 (`web/pages/advisor.js`; was tab `rm`) |
 | Features | [FEAT-28](../../features/FEAT-28-advisory-team-and-track-record.md), [FEAT-27](../../features/FEAT-27-rm-approval-queue.md) |
 | Requirements | BRIEF-FLOW-02 |
 | Data | `GET /api/advisory?client_id=`, `GET /api/review` |
@@ -194,6 +206,8 @@ probability), holding × sensitivity × probability, the holdings touched, the s
 the **Approval queue** (“Hàng chờ chuyên gia duyệt · n đang chờ”): each proposal with its actions and summary and,
 while pending, “Đang chờ chuyên gia duyệt”; decided items with their badge and note. Read-only: the RM decides on
 [SCR-RM-06](rm.md#scr-rm-06--duyệt-đề-xuất-approval-queue) (DEF-02 fixed 2026-10-15).
+
+**Tests.** `tests/ui/test_pages.py::test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it`.
 
 ---
 

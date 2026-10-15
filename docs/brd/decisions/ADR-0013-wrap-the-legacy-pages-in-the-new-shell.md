@@ -1,6 +1,6 @@
 # ADR-0013 — Wrap the legacy pages in the new shell instead of rewriting them
 
-- **Status:** accepted
+- **Status:** superseded by [ADR-0019](ADR-0019-every-page-is-a-module-page.md) (2026-10-16)
 - **Date:** 2026-10-15
 - **Sources:** docs/NEWS_IMPACT_PLAN.md §5, §8
 

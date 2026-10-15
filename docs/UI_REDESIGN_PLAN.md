@@ -63,4 +63,5 @@ own families only (Q-17), re-ask triggers for the risk test (Q-16), alerting on 
 | R0 | done 2026-10-16: 6 browser tests (every route × 2 sizes, Copilot) in the suite, control checked | #32 |
 | R1 | done 2026-10-16: tokens, header (search, bell), icons, small charts, controls, Copilot button; FEAT-34 | #33 |
 | R2 | done 2026-10-16: Toàn cảnh as on the board; 3 browser tests | #34 |
-| R3 | next | |
+| R3 | done 2026-10-16: the 8 pre-redesign pages rebuilt as module pages, app.js/app.css/charts.js/fmt.js deleted, shell owns client/scope/reset, per-route render host, UI files revalidated (`no-cache`); ADR-0019; 5 flow tests | #35 |
+| R4 | next | |

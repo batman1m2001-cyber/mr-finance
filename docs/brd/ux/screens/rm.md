@@ -85,11 +85,11 @@ engine).
 | | |
 |---|---|
 | Route | `#/rm/khach-hang/hieu-qua` |
-| Generation | legacy (tab `performance`) |
+| Generation | rebuilt in R3 (`web/pages/performance.js`; was tab `performance`) |
 | Feature | [FEAT-28](../../features/FEAT-28-advisory-team-and-track-record.md) |
 | Requirements | none (Q-19) |
 | Data | `GET /api/advisory?client_id=` |
-| Screenshot | [desktop](../../assets/current_ui/SCR-RM-04_desktop-light.jpg) |
+| Screenshot | [desktop](../../assets/current_ui/SCR-RM-04_desktop-light.jpg), [phone](../../assets/current_ui/SCR-RM-04_phone-light.jpg) |
 
 **Layout.** “NỘI BỘ” banner (staff only). KPI tiles (recommendations, hit rate, money gained, losses, missed
 actions, missed news); **AI pipeline** (four AI stages with a 0–100 score, a 12-month sparkline and stage counts);
@@ -106,13 +106,15 @@ tracking (Q-19).
 | | |
 |---|---|
 | Route | `#/rm/hieu-qua` |
-| Generation | legacy (tab `perfall`) |
+| Generation | rebuilt in R3 (`web/pages/perfall.js`; was tab `perfall`) |
 | Feature | [FEAT-28](../../features/FEAT-28-advisory-team-and-track-record.md) |
 | Data | `GET /api/advisory/all` |
 | Screenshot | [desktop](../../assets/current_ui/SCR-RM-05_desktop-light.jpg) |
 
 The same record summed over the five clients: KPI tiles, AI pipeline scores per client, a per-client table (a row
 opens that client's SCR-RM-04), the recommendation log, missed news, engagement. Same caution as SCR-RM-04.
+
+**Tests.** `tests/ui/test_pages.py::test_a_row_of_all_clients_opens_that_client`.
 
 ---
 
@@ -121,7 +123,7 @@ opens that client's SCR-RM-04), the recommendation log, missed news, engagement.
 | | |
 |---|---|
 | Route | `#/rm/khach-hang/duyet` |
-| Generation | legacy (tab `rm`, staff mode) |
+| Generation | rebuilt in R3 (`web/pages/advisor.js`, staff mode; was tab `rm`) |
 | Feature | [FEAT-27](../../features/FEAT-27-rm-approval-queue.md) |
 | Requirements | BRIEF-FLOW-02, BRIEF-SCEN-03 |
 | Data | `GET /api/review`, `POST /api/review/decide` (`by` = the RM) |
@@ -129,3 +131,5 @@ opens that client's SCR-RM-04), the recommendation log, missed news, engagement.
 
 The options the picked client sent from Kế hoạch: actions, summary numbers, a note field, **Duyệt** / **Từ chối**;
 decided items below with their badge and note. Only an RM may decide (server check). Added 2026-10-15 (DEF-02).
+
+**Tests.** `tests/ui/test_pages.py::test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it`.
