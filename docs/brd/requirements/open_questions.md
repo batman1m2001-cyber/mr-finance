@@ -18,7 +18,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-08 | ambiguity | FR-101 “10 sources” vs §11.1's list | resolved (interpretation) |
 | Q-09 | ambiguity | FR-306 “radar chính sách” is undefined | open — business |
 | Q-10 | ambiguity | FR-402 “chi phí lãi vay” | open |
-| Q-11 | ambiguity | FR-404 level thresholds and funding source are undefined; built on our proposal | open — CIO |
+| Q-11 | ambiguity | FR-404 level thresholds and funding source are undefined; built on our proposal | resolved (ADR-0017) |
 | Q-12 | conflict | FR-501 “the challenger writes the summary” vs F02 / §7.1 | resolved (BRD F02) |
 | Q-13 | conflict | NFR-05 exact decimals vs the BRD's own float engine (F22) | resolved (ADR-0011) |
 | Q-14 | conflict | NFR-11 “every number has cách tính” vs flow 2 (no tickers to clients) | open |
@@ -84,6 +84,8 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 - **Existing related capability:** goals planning (FEAT-26) computes each goal's need, what the client has for it (a funding share), and ON_TRACK / AT_RISK / OFF_TRACK from the monthly saving needed ÷ the monthly surplus (≤ 0.6, ≤ 1, above; `src/scenarios/_sim.py::goal`).
 - **Proposal (ours):** for each goal, apply the run's 3-month expected change to the assets set aside for it, recompute the funding share and the status before and after, and map Đạt = ON_TRACK, Theo dõi = AT_RISK, Thiếu = OFF_TRACK. Owner: CIO to confirm the mapping and thresholds.
 - **Built 2026-10-15 on this proposal** (`src/apply/goals.py`): no asset is earmarked in the data, so the dated goals draw in date order on the family's financial assets (cash, deposits, funds, bonds, stocks, gold, crypto). Consequence: for the five demo families every goal is 100 % funded and Đạt before and after (C01: 14.7 tỷ of such assets against 1.885 tỷ of goals). Still open: the funding source and the thresholds.
+- **Resolution 2026-10-16:** the owner left the choice to us (D-02); the rule above is kept and recorded in
+  [ADR-0017](../decisions/ADR-0017-goal-impact-rule.md), which says why the goals-planning pool was not used.
 
 ### Q-12 — Who writes the post-check summary (FR-501)
 - **Fact:** FR-501 says “Agent Phản biện viết tóm tắt”; the BRD's own F02 says explanations and the post-check summary use deterministic templates, and §7.1 forbids family data in the AI zone.

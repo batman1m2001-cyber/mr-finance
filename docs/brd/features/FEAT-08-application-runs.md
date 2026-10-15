@@ -50,7 +50,7 @@ Every status change is an audit row in the same transaction as the change.
 Measured: approval → run for every family in 0.44 s (5 families, news plan §9).
 
 ## Limitations
-- **FR-404 on our definition (Q-11):** each run stores `goal_impact` per family (`src/apply/goals.py`): the
+- **FR-404 on our definition ([ADR-0017](../decisions/ADR-0017-goal-impact-rule.md), Q-11 resolved):** each run stores `goal_impact` per family (`src/apply/goals.py`): the
   dated goals draw in date order on the financial assets; before = snapshot values, after = + the 3-month
   expected change; level by the goals-planning rule (≤ 0.6 Đạt, ≤ 1 Theo dõi, else Thiếu). `verify` checks it;
   runs computed before 2026-10-15 have none. Shown on SCR-CL-05 and SCR-RM-02 for the selected event.
