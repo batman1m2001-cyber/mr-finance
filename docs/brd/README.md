@@ -45,7 +45,7 @@ The single place where the chain is assembled, with a status per requirement, is
 | Why something is the way it is | [`decisions/`](decisions/) | Append-only ADRs |
 | What changed and when | [`CHANGELOG.md`](CHANGELOG.md) | One line per meaningful change |
 | How the code is laid out, how to run it | [`AGENTS.md`](../../AGENTS.md), [`README.md`](../../README.md), [`app/main.py`](../../app/main.py) | This repository links to them; it does not copy them |
-| Delivery plans and their history | [`docs/PLAN.md`](../PLAN.md), [`docs/NEWS_IMPACT_PLAN.md`](../NEWS_IMPACT_PLAN.md), [`docs/REDESIGN_KIT_PLAN.md`](../REDESIGN_KIT_PLAN.md) | Plans are history; once a plan item is built, its behaviour is documented here |
+| Delivery plans and their history | [`docs/PLAN.md`](../PLAN.md), [`docs/NEWS_IMPACT_PLAN.md`](../NEWS_IMPACT_PLAN.md), [`docs/REDESIGN_KIT_PLAN.md`](../REDESIGN_KIT_PLAN.md), [`docs/UI_REDESIGN_PLAN.md`](../UI_REDESIGN_PLAN.md), [`docs/BRD_COMPLETION_PLAN.md`](../BRD_COMPLETION_PLAN.md) | Plans are history; once a plan item is built, its behaviour is documented here |
 
 When two documents disagree, the order above decides, and the disagreement is recorded in
 [`requirements/open_questions.md`](requirements/open_questions.md) — it is never silently resolved.
