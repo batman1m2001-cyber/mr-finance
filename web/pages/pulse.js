@@ -2,7 +2,7 @@
    dashboard's (POST /api/dashboard) and the month's transactions (POST /api/flows); nothing here is
    computed that the server did not return, except sums of what it returned. The full former overview
    stays one click away (“Chi tiết”). */
-import {ASSET_CLASS, CLASS_COLOR, $, esc, pct, post, signClass, vnd} from "../core/core.js";
+import {internal, ASSET_CLASS, CLASS_COLOR, $, esc, pct, post, signClass, vnd} from "../core/core.js";
 import {hover, sankey} from "../charts/charts.js";
 
 const STATUS = {
@@ -37,7 +37,7 @@ export async function render(box, ctx) {
   const assets = map.reduce((a, g) => a + g.value, 0);
   const gname = (g) => (g === "deposit" ? "Tiền & tiền gửi" : ASSET_CLASS[g] || g);
 
-  box.innerHTML = `
+  box.innerHTML = `${staff ? internal() : ""}
     <div class="cols">
       <div class="c12 kpis" id="kpis"></div>
       <div class="panel c12" id="feed"></div>

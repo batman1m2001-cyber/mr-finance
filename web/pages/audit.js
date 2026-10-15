@@ -13,6 +13,7 @@ export async function render(box) {
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">Tuân thủ · Nhật ký</div>
       <div class="h1">${v.ok ? '<span class="up">✓</span> Chuỗi toàn vẹn' : '<span class="down">✕</span> Chuỗi bị gãy'} · ${v.count} dòng</div>
+      <div class="row" style="margin-top:8px"><a class="btn sm" href="/api/audit/export" download>Tải JSON (kèm kiểm tra chuỗi)</a><a class="btn sm ghostbtn" href="/api/audit/export?format=csv" download>Tải CSV</a></div>
       <div class="lede small">${v.ok ? `Mỗi dòng chứa mã băm của dòng trước (${esc((v.algorithms || []).join(", ") || "sha256")}); cơ sở dữ liệu chặn sửa và xóa.` : `Gãy ở dòng ${v.broken_at}: ${esc(v.reason)}`}</div></div></div>
     <div class="panel"><div class="scrollx"><table class="table"><thead><tr><th>#</th><th>Lúc</th><th>Ai</th><th>Việc</th><th>Đối tượng</th><th>Mã băm</th></tr></thead><tbody>
       ${rows.map(r => `<tr><td class="num">${r.seq}</td><td class="small num">${when(r.ts)}</td><td>${esc(r.actor)}</td><td>${esc(ACTION[r.action] || r.action)}${r.action.startsWith("decision.") ? ` <span class="badge human">${esc(r.action.slice(9))}</span>` : ""}</td>

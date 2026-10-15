@@ -209,3 +209,15 @@ def runs(subject_id: str) -> List[Dict[str, Any]]:
     with db.tx() as con:
         rows = con.execute("select * from agent_runs where subject_id = ? order by created", (subject_id,)).fetchall()
     return [db.load(r) for r in rows]
+
+
+def tokens(since: float = 0.0) -> Dict[str, Any]:
+    """NFR-10: tokens the agents used since ``since``, in total and per subject (an event): the cost per event."""
+    total, by = 0, {}
+    with db.tx() as con:
+        rows = con.execute("select subject_id, data from agent_runs where created >= ?", (since,)).fetchall()
+    for r in rows:
+        n = sum((x.get("tokens_in") or 0) + (x.get("tokens_out") or 0) for x in json.loads(r["data"])["nodes"])
+        total += n
+        by[r["subject_id"]] = by.get(r["subject_id"], 0) + n
+    return {"total": total, "by_subject": by}

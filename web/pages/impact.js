@@ -1,7 +1,7 @@
 /* Tin tác động: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {ASSET_CLASS, CLASS_COLOR, HORIZON, empty, esc, get, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
+import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, empty, esc, get, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
@@ -32,7 +32,7 @@ export async function render(box, ctx) {
   let sel = [...effective].sort((a, b) => Math.abs(b.horizons["3m"].expected) - Math.abs(a.horizons["3m"].expected))[0] || items[0];
   const flagged = staff && effective.some(i => i.pre_review);
 
-  box.innerHTML = `
+  box.innerHTML = `${staff ? internal() : ""}
     <div class="cols">
       <div class="panel hero-panel c5">
         <div class="eyebrow">Tin tác động · 3 tháng tới</div>
@@ -82,6 +82,7 @@ export async function render(box, ctx) {
       <span class="badge ${i.status === "EFFECTIVE" ? "ai" : ""}" aria-hidden="true">${esc(i.event.id.slice(-4))}</span>
       <div><div class="t">${esc(i.event.title)}</div>
         <div class="m">${runBadge(i.status, i.status_label)} · duyệt ${when(i.approved_at)} ${staff && i.pre_review ? '· <span class="badge bad">xem trước</span>' : ""}</div>
+        ${i.sources ? `<div class="small muted">Nguồn: ${esc(i.sources.outlets.join(", "))} (${i.sources.count} tin)</div>` : ""}
         <div class="row" style="margin-top:6px"><button type="button" class="btn sm" data-run="${esc(i.run_id)}" aria-pressed="false">Xem dải</button>
         ${staff ? `<button type="button" class="linkbtn small" data-trace="${esc(i.run_id)}">Cách tính</button>` : ""}</div></div>
       <div style="text-align:right"><div class="num ${signClass(e)}" style="font-weight:700">${vnd(e, true)}</div><div class="small muted">${pct(i.pct["3m"].expected, true, 2)}</div></div></div>`;

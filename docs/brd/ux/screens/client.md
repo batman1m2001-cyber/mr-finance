@@ -95,6 +95,10 @@ queue (→ SCR-CL-07).
 
 **Notes.** The regulation note of the goal branch is not shown on these goal cards (Q-20).
 
+
+**Since 2026-10-16 (FR-603, Q-20).** “Lưu ý quy định cho mục tiêu” sits under the Wealth view: each released
+regulation note that applies to a goal, with its level and milestone (the client sees only notes with a client
+message).
 ---
 
 ## SCR-CL-04 — Khẩu vị rủi ro (risk test)

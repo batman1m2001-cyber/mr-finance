@@ -24,6 +24,7 @@ from wealth import ai
 
 PROMPT_VERSION = "v1"
 MAX_TOKENS = {"analyst": 3000, "debate": 3000, "synthesize": 6000, "challenge": 4000}  # measured: analysts ~1.1–1.5k
+DAILY_TOKENS = 300_000  # NFR-10: the day's budget for all agent calls; AGENT_DAILY_TOKENS overrides
 FORMAT_RETRIES = 2
 
 
@@ -59,11 +60,25 @@ def resolve_mode(requested: Optional[str]) -> str:
 # -- the model call ----------------------------------------------------------------------------
 
 
+def budget() -> Dict[str, int]:
+    """Today's token budget (local midnight) and what the agents have used of it."""
+    day = time.localtime()
+    midnight = time.mktime((day.tm_year, day.tm_mon, day.tm_mday, 0, 0, 0, 0, 0, -1))
+    try:
+        daily = int(os.environ.get("AGENT_DAILY_TOKENS") or DAILY_TOKENS)
+    except ValueError:
+        daily = DAILY_TOKENS
+    return {"daily": daily, "used_today": vstore.tokens(midnight)["total"]}
+
+
 async def call_model(resource: str, system: str, user: str, max_tokens: int) -> Tuple[str, Dict[str, Any]]:
     """One chat call through the operonx resource ``llm:<resource>`` → (text, meta). Raises
     AgentError when the reply was cut off or came from another model than configured."""
     from operonx.providers.ops._utils import resolve_hub
 
+    b = budget()
+    if b["used_today"] + max_tokens > b["daily"]:
+        raise AgentError(f"Vượt ngân sách token trong ngày ({b['used_today']:,}/{b['daily']:,})".replace(",", "."))
     llm = resolve_hub().get(f"llm:{resource}")
     expected = models()[resource]
     resp = await llm.generate(

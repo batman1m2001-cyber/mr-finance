@@ -100,3 +100,14 @@ def verify(con: sqlite3.Connection) -> Dict[str, Any]:
             return {"ok": False, "count": n, "broken_at": row["seq"], "reason": "Mã băm không khớp nội dung"}
         prev = row["hash"]
     return {"ok": True, "count": n, "head": prev, "algorithms": sorted(algs), "broken_at": None, "reason": ""}
+
+
+def export(con: sqlite3.Connection) -> Dict[str, Any]:
+    """FR-702: the whole chain in order, with the check of it, for an auditor to keep and re-verify."""
+    rows = []
+    for r in con.execute("select * from audit_log order by seq"):
+        rows.append(
+            {k: r[k] for k in ("seq", "ts", "actor", "action", "object", "alg", "prev_hash", "hash")}
+            | {"data": json.loads(r["data"])}
+        )
+    return {"exported": time.time(), "verify": verify(con), "genesis": GENESIS, "rows": rows}
