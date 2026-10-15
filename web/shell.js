@@ -14,10 +14,10 @@ const ROLES = {
     label: "Khách hàng", user: null, clientPick: true,
     nav: [
       {id: "tong-quan", label: "Tổng quan", sub: [
-        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "chi-tiet", label: "Chi tiết", legacy: "overview"}]},
-      {id: "tai-san", label: "Tài sản", legacy: "sources"},
+        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "chi-tiet", label: "Chi tiết", page: "detail"}]},
+      {id: "tai-san", label: "Tài sản", page: "holdings"},
       {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [
-        {id: "ke-hoach", label: "Kế hoạch", legacy: "scenarios"}, {id: "khau-vi", label: "Khẩu vị rủi ro", legacy: "risk"}]},
+        {id: "ke-hoach", label: "Kế hoạch", page: "plan"}, {id: "khau-vi", label: "Khẩu vị rủi ro", legacy: "risk"}]},
       {id: "tin", label: "Tin tác động", sub: [
         {id: "thi-truong", label: "Tác động thị trường", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}]},
       {id: "chuyen-gia", label: "Chuyên gia", legacy: "rm"},
@@ -30,8 +30,8 @@ const ROLES = {
       {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
         {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
         {id: "toan-canh", label: "Toàn cảnh", page: "pulse"},
-        {id: "tong-quan", label: "Chi tiết", legacy: "overview"},
-        {id: "tai-san", label: "Tài sản", legacy: "sources"}, {id: "ke-hoach", label: "Kế hoạch", legacy: "scenarios"},
+        {id: "tong-quan", label: "Chi tiết", page: "detail"},
+        {id: "tai-san", label: "Tài sản", page: "holdings"}, {id: "ke-hoach", label: "Kế hoạch", page: "plan"},
         {id: "chinh-sach", label: "Chi phí chính sách", legacy: "alerts"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "performance"},
         {id: "duyet", label: "Duyệt đề xuất", legacy: "rm"}]},
       {id: "hieu-qua", label: "Hiệu quả tư vấn", legacy: "perfall"},
