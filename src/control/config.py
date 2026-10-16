@@ -162,6 +162,27 @@ def _check_consent(data: Any) -> None:
         raise ValueError(f"require: đúng các khóa {sorted(CONSENT['require'])}, giá trị true/false")
 
 
+def _assignment_base() -> Dict[str, str]:
+    from people import store
+
+    return {fam: t["rm"] for fam, t in sorted(store._seed_staff()["teams"].items())}
+
+
+def _check_assignment(data: Any) -> None:
+    from people import store
+
+    if not isinstance(data, dict):
+        raise ValueError("cần {mã gia đình: mã RM}")
+    families = set(store.client_ids())
+    missing, extra = sorted(families - set(data)), sorted(set(data) - families)
+    if missing or extra:
+        raise ValueError(f"mỗi gia đình đúng một RM; thiếu {missing}, không có {extra}")
+    rms = {p["id"] for p in store.staff("rm")}
+    bad = sorted(f"{f}: {r}" for f, r in data.items() if r not in rms)
+    if bad:
+        raise ValueError(f"không phải RM: {bad}")
+
+
 def _models_base() -> Dict[str, str]:
     import os
 
@@ -263,6 +284,13 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": False,
         "base": _file("market_sources.json", "ticker_map"),
         "check": _check_ticker_map,
+    },
+    "rm_assignment": {
+        "label": "Phân công RM",
+        "owner": "admin",
+        "two_person": False,
+        "base": _assignment_base,
+        "check": _check_assignment,
     },
     "prompts": {
         "label": "Lời nhắc của agent",

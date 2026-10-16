@@ -211,6 +211,24 @@ def runs(subject_id: str) -> List[Dict[str, Any]]:
     return [db.load(r) for r in rows]
 
 
+def run_health(days: int = 7) -> List[Dict[str, Any]]:
+    """Per agent over the last ``days``: runs, failures, the last run's time, status and error (Hệ thống)."""
+    since = time.time() - days * 86400
+    with db.tx() as con:
+        rows = con.execute(
+            "select agent, created, json_extract(data, '$.status') as status, json_extract(data, '$.error') as error "
+            "from agent_runs where created >= ? order by created",
+            (since,),
+        ).fetchall()
+    out: Dict[str, Dict[str, Any]] = {}
+    for r in rows:
+        a = out.setdefault(r["agent"], {"agent": r["agent"], "runs": 0, "failed": 0})
+        a["runs"] += 1
+        a["failed"] += r["status"] == "error"
+        a.update(last=r["created"], last_status=r["status"], last_error=r["error"] or None)
+    return sorted(out.values(), key=lambda a: a["agent"])
+
+
 def tokens(since: float = 0.0) -> Dict[str, Any]:
     """NFR-10: tokens the agents used since ``since``, in total and per subject (an event): the cost per event."""
     total, by = 0, {}

@@ -106,6 +106,7 @@ def test_the_endpoints():
             "news_sources",
             "price_sources",
             "ticker_map",
+            "rm_assignment",
             "prompts",
             "models",
         ]

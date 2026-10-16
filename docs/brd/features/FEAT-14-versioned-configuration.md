@@ -4,7 +4,7 @@
 |---|---|
 | Type | BRD capability — every item of the BRD's §13.1 table (11 kinds; F1, F4) |
 | Requirements | BRD-FR-701, BRD-BR-07 (model parameters), BRD-RULE-SEC-04, BRD-RULE-SEC-05, BRD-RULE-AI-02, BRD-RULE-MEAS-07, BRD-NFR-06 |
-| Users | CIO (factor model, thresholds, return assumptions), Compliance (restricted list, forbidden phrases, consent), Admin (news and price sources, ticker map, prompts, models) |
+| Users | CIO (factor model, thresholds, return assumptions), Compliance (restricted list, forbidden phrases, consent), Admin (news and price sources, ticker map, RM assignment, prompts, models) |
 | Entry points | [SCR-CIO-09 Cấu hình](../ux/screens/cio.md#scr-cio-09--cấu-hình-versioned-configuration) (CIO, Compliance, Admin); `GET /api/config`, `GET /api/config/{id}`, `POST /api/config/propose`, `POST /api/config/decide` |
 | Decision | [ADR-0016](../decisions/ADR-0016-configuration-two-person-rule.md) |
 | Status | see [traceability](../requirements/requirements_traceability.md) |
@@ -20,6 +20,7 @@
 | news_sources | `news_config.json` → `sources` | Admin | no |
 | price_sources | `market_sources.json` (jobs, series and their sources in order; FEAT-35) | Admin | no |
 | ticker_map | `market_sources.json` → `ticker_map` (demo ticker → exchange symbol) | Admin | no |
+| rm_assignment | `data/people/staff.json` → `teams` (family → RM) | Admin | no |
 | return_assumptions | `config.RETURNS`: deposit 5 %, balanced portfolio 7 %, inflation 4 %, withdrawal 4 %, rental yield 3.5 %, best deposit 6.5 % | CIO | no |
 | forbidden_phrases | `recommendation` (buy/sell wording a view must not use, §8.2) and `compliance` (wording a client-facing regulation note must not use, FR-604) | Compliance | no |
 | consent | the consent text and version, and whether Open API reads and the family view need each person's consent | Compliance | no |

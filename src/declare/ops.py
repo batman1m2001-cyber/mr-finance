@@ -8,6 +8,7 @@ from typing import Any, Dict, List
 from operonx import op
 
 from declare import _rules
+from people import auth
 from wealth import ai, fixtures, store
 from wealth.money import vnd
 
@@ -21,6 +22,7 @@ def check_request(client_id: str = None, message: str = None, session_id: str = 
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
+    auth.require_client(client_id)  # their family, their RM, or the desk (ROLE-02)
     message = str(message or "").strip()
     if not message:
         raise ValueError("an empty message")

@@ -44,7 +44,7 @@ export async function render(box, ctx) {
   box.querySelector("#recompute").onclick = async (e) => {
     e.target.disabled = true;
     try {
-      const r = await post("/api/runs/recompute", {run_id: run.id, by: ctx.user});
+      const r = await post("/api/runs/recompute", {run: run.id, by: ctx.user});
       const moved = r.compare.filter(c => c.delta).length;
       toast(`Tạo ${r.run.id}; ${moved} gia đình thay đổi`);
       ctx.go(ctx.href("ap-dung", r.run.id));
@@ -52,7 +52,7 @@ export async function render(box, ctx) {
   };
   box.querySelectorAll("[data-act]").forEach(b => {
     b.onclick = async () => {
-      try { await post("/api/runs/decide", {run_id: run.id, action: b.dataset.act, by: ctx.user, reason: box.querySelector("#reason").value.trim()}); toast("Đã ghi"); }
+      try { await post("/api/runs/decide", {run: run.id, action: b.dataset.act, by: ctx.user, reason: box.querySelector("#reason").value.trim()}); toast("Đã ghi"); }
       catch (e) { toast(e.message); }
       ctx.go(location.hash);
     };

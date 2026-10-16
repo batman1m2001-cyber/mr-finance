@@ -8,6 +8,7 @@ import re
 
 from operonx import op
 
+from people import auth
 from statements import _parse
 from wealth import ai, fixtures, store, valuation
 
@@ -20,6 +21,7 @@ def check_request(client_id: str = None, filename: str = None, content: str = No
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
+    auth.require_client(client_id)  # their family, their RM, or the desk (ROLE-02)
     filename = str(filename or "statement.txt")
     if not re.search(r"\.(csv|xlsx|xlsm|pdf|txt)$", filename.lower()):
         raise ValueError(f"{filename!r}: a statement is a PDF, an Excel or a CSV file")

@@ -36,6 +36,7 @@ from research import ops as research_ops
 from research import store as research_store
 from scenarios._sim import SCENARIOS
 from views import ops as view_ops
+from views import store as views_store
 from wealth import fixtures, store
 from wealth.paths import DATA, ROOT
 
@@ -476,6 +477,64 @@ async def audit_export(request: Request):
     return JSONResponse(out, headers={"content-disposition": f'attachment; filename="audit-{stamp}.json"'})
 
 
+JOBS: list = []  # filled by app/main.py: {id, description, when: {every|at}}
+
+
+async def system(request: Request) -> JSONResponse:
+    """Hệ thống (Admin; BRD-RULE-ROLE-04, NFR-12): the jobs and how each last went, the news feeds, the agents,
+    the audit chain's check, the loads of market history, the configuration waiting, the people and their accounts.
+    Read from the stored records only."""
+    from control import config
+
+    market_health = market_store.job_health()
+    news = news_store.last_run() or {}
+    pending = config.pending_evals()
+    loads = market_store.loads()
+    jobs = []
+    for j in JOBS:
+        last = None
+        if j["id"] in market_health:
+            h = market_health[j["id"]]
+            last = {
+                "at": h["last_run"],
+                "ok": h["last_error_at"] is None or h["last_ok"] >= h["last_error_at"],
+                "error": h["last_error"],
+            }
+        elif j["id"] == "news_ingest" and news:
+            errs = [f"{k}: {v['error']}" for k, v in (news.get("sources") or {}).items() if v.get("error")]
+            last = {"at": news["at"], "ok": not errs, "error": "; ".join(errs) or None}
+        elif j["id"] == "market_load" and loads:
+            last = {
+                "at": loads[0].get("finished") or loads[0]["asked"],
+                "ok": loads[0]["status"] != "failed",
+                "error": loads[0].get("error"),
+            }
+        jobs.append({**j, "last": last})
+    with control_db.tx() as con:
+        chain = control_audit.verify(con)
+    accounts = people_auth.accounts()
+    families = {a["id"]: people_store.families_of(a["id"]) for a in accounts if a["role"] == "rm"}
+    return JSONResponse(
+        {
+            "jobs": jobs,
+            "feeds": [{"id": k, **v} for k, v in (news.get("sources") or {}).items()],
+            "news_at": news.get("at"),
+            "agents": view_ops.agent_status(),
+            "agent_runs": views_store.run_health(),
+            "evals_waiting": [{"id": v["id"], "kind": v["kind"]} for v in pending],
+            "config_waiting": [
+                {"kind": k["kind"], "label": k["label"], "id": k["pending"]["id"]}
+                for k in config.overview()
+                if k.get("pending")
+            ],
+            "chain": chain,
+            "loads": loads,
+            "people": [{**a, "families": families.get(a["id"])} for a in accounts if a["role"] != "client"],
+            "clients": sum(1 for a in accounts if a["role"] == "client"),
+        }
+    )
+
+
 async def market(request: Request) -> JSONResponse:
     """The source registry and the stored market data (F1): each job's cadence, last run, last success and last
     error; each series' coverage, last value and source; each factor's provenance (from SQLite only)."""
@@ -596,19 +655,46 @@ async def accuracy(request: Request) -> JSONResponse:
     rows = forecasts.all_rows()
     views = {}
     for r in rows:
-        v = views.setdefault(r["view_id"], {"view_id": r["view_id"], "event_id": r.get("event_id"),
-                                            "origin": r["origin"], "late": r.get("late"), "model": r.get("model"),
-                                            "forecasts": []})
-        v["forecasts"].append({k: r.get(k) for k in ("factor", "horizon", "due", "expected", "p10", "p50", "p90",
-                                                      "unit", "result", "realised", "inside", "direction_hit")})
-    return JSONResponse({
-        "history": backtest.cached(),
-        "views": forecasts.summary(rows),
-        "recorded": sorted(views.values(), key=lambda v: v["origin"], reverse=True),
-        "min_obs": backtest.MIN_OBS,
-        "accept": list(backtest.ACCEPT),
-        "direction_target": backtest.DIRECTION_TARGET,
-    })
+        v = views.setdefault(
+            r["view_id"],
+            {
+                "view_id": r["view_id"],
+                "event_id": r.get("event_id"),
+                "origin": r["origin"],
+                "late": r.get("late"),
+                "model": r.get("model"),
+                "forecasts": [],
+            },
+        )
+        v["forecasts"].append(
+            {
+                k: r.get(k)
+                for k in (
+                    "factor",
+                    "horizon",
+                    "due",
+                    "expected",
+                    "p10",
+                    "p50",
+                    "p90",
+                    "unit",
+                    "result",
+                    "realised",
+                    "inside",
+                    "direction_hit",
+                )
+            }
+        )
+    return JSONResponse(
+        {
+            "history": backtest.cached(),
+            "views": forecasts.summary(rows),
+            "recorded": sorted(views.values(), key=lambda v: v["origin"], reverse=True),
+            "min_obs": backtest.MIN_OBS,
+            "accept": list(backtest.ACCEPT),
+            "direction_target": backtest.DIRECTION_TARGET,
+        }
+    )
 
 
 async def measure_reports(request: Request) -> JSONResponse:
@@ -755,23 +841,39 @@ async def auth_logout(request: Request) -> JSONResponse:
     return response
 
 
-# what a customer may not open, and what only an RM opens
-STAFF_ONLY = (
-    "/api/advisory/all",
-    "/api/news",
-    "/api/model",
-    "/api/events",
-    "/api/agents",
-    "/api/config",
-    "/api/runs",
-    "/api/audit",
-    "/api/market",
-    "/api/accuracy",
-    "/api/measure",
-    "/api/research",
-    "/api/rm/",
-    "/api/trace/",
-)
+# Who may open each read (BRD §4 roles, BRD-RULE-SEC-02; F5): the longest matching prefix decides, and a read
+# that matches none is open to everyone signed in (a family's data is then checked by people.auth.may_see). Each
+# role's pages use a subset of its row (tests/test_access.py walks every route as every role).
+STAFF = ("cio", "rm", "compliance", "admin")
+OVERSIGHT = ("cio", "compliance", "admin")  # the news-impact desk and those who check it
+ROUTE_ROLES = {
+    "/api/advisory/all": STAFF,
+    "/api/model": STAFF,
+    "/api/agents": STAFF,
+    "/api/trace/": STAFF,  # “Cách tính” is for staff (Q-14)
+    "/api/agents/catalogue": OVERSIGHT,
+    "/api/news": OVERSIGHT,  # the inbox and held items: an RM sees news only once applied (FR-502)
+    "/api/events": OVERSIGHT,
+    "/api/views/": OVERSIGHT,  # one view with its drafts and findings
+    "/api/runs": OVERSIGHT,  # an RM reads a family's runs through /api/families/…/impact, post-checked only
+    "/api/config": OVERSIGHT,
+    "/api/accuracy": OVERSIGHT,
+    "/api/measure": OVERSIGHT,
+    "/api/research": ("cio", "compliance"),  # unreleased research (FR-203)
+    "/api/market": ("cio", "admin"),
+    "/api/audit": ("compliance", "admin"),
+    "/api/system": ("admin",),
+    "/api/rm/": ("rm",),
+}
+ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị"}
+
+
+def allowed_roles(path: str):
+    """The roles that may open ``path``, or None when every signed-in person may."""
+    hit = max((p for p in ROUTE_ROLES if path.startswith(p)), key=len, default=None)
+    return ROUTE_ROLES[hit] if hit else None
+
+
 OPEN = ("/healthz", "/api/auth/")
 
 
@@ -789,8 +891,8 @@ def _family_of(path: str, query: QueryParams):
 
 
 class SignInGate:
-    """Every /api/ read needs a session (sign-in on): a customer never opens a staff read, only an RM opens the RM
-    reads, and a family's data opens only for whoever may see it (people.auth.may_see)."""
+    """Every /api/ read needs a session (sign-in on), the role its path allows (:data:`ROUTE_ROLES`), and a family's
+    data opens only for whoever may see it (people.auth.may_see)."""
 
     def __init__(self, app):
         self.app = app
@@ -807,10 +909,10 @@ class SignInGate:
         v = people_auth.from_cookie_header(Headers(scope=scope).get("cookie"))
         if v is None:
             return await _deny(401, "Cần đăng nhập")(scope, receive, send)
-        if v["role"] == "client" and path.startswith(STAFF_ONLY):
-            return await _deny(403, "Trang này dành cho nhân viên")(scope, receive, send)
-        if path.startswith("/api/rm/") and v["role"] != "rm":
-            return await _deny(403, "Trang này dành cho RM")(scope, receive, send)
+        who = allowed_roles(path)
+        if who is not None and v["role"] not in who:
+            names = ", ".join(ROLE_LABEL[r] for r in who)
+            return await _deny(403, f"Chỉ {names} mở được mục này")(scope, receive, send)
         fam = _family_of(path, QueryParams(scope.get("query_string", b"")))
         if fam and not people_auth.may_see(v, fam):
             return await _deny(403, f"{v['name']} không được xem dữ liệu của khách hàng này")(scope, receive, send)
@@ -853,6 +955,7 @@ app = Starlette(
         Route("/api/rm/today", rm_today),
         Route("/api/audit", audit_list),
         Route("/api/market", market),
+        Route("/api/system", system),
         Route("/api/accuracy", accuracy),
         Route("/api/measure", measure_reports),
         Route("/api/market/series", market_series),

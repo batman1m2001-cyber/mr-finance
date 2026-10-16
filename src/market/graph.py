@@ -3,6 +3,7 @@
 from operonx import END, START, graph
 
 from market.ops import (
+    ask_load,
     backfill,
     crypto_bars,
     equity_bars,
@@ -10,6 +11,7 @@ from market.ops import (
     fx_rates,
     gov_yields,
     propose_estimate,
+    run_loads,
     sjc_gold,
     world_series,
 )
@@ -75,4 +77,18 @@ def market_backfill_flow(since="2020-01-01", only=None):
 def model_estimate_flow(by, end=None, note=""):
     """POST /api/model/estimate: the estimated model proposed as the next factor_model version."""
     done = propose_estimate(by=by, end=end, note=note)
+    START >> done >> END
+
+
+@graph
+def market_load_ask_flow(by, since="2020-01-01"):
+    """POST /api/market/load: an Admin queues a load of the history (Hệ thống)."""
+    asked = ask_load(by=by, since=since)
+    START >> asked >> END
+
+
+@graph
+def market_load_flow(tick=None, at=None):
+    """The ``market_load`` job (every minute): the load an Admin asked for."""
+    done = run_loads(tick=tick, at=at)
     START >> done >> END

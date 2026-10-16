@@ -99,14 +99,14 @@ def test_a_sign_in_is_in_the_audit_chain(http):
 
 
 def test_nothing_under_api_opens_without_a_session(http):
-    from app.web import STAFF_ONLY
+    from app.web import ROUTE_ROLES
 
     for path in ("/api/clients", "/api/events", "/api/families/C01/impact", "/api/advisory?client_id=C01") + tuple(
-        p.rstrip("/") for p in STAFF_ONLY
+        p.rstrip("/") for p in ROUTE_ROLES
     ):
         assert http.get(path).status_code == 401, path
     assert http.get("/healthz").status_code == 200
-    assert http.post("/api/dashboard", json={"client_id": "C01"}).status_code != 200
+    assert http.post("/api/dashboard", json={"client_id": "C01"}).status_code == 401
 
 
 def test_a_customer_sees_only_their_own_family(http):
@@ -117,7 +117,7 @@ def test_a_customer_sees_only_their_own_family(http):
     assert http.get("/api/advisory", params={"client_id": "C01"}).status_code == 403
     assert http.get("/api/events").status_code == 403
     assert http.post("/api/dashboard", json={"client_id": "C02"}).status_code == 200
-    assert http.post("/api/dashboard", json={"client_id": "C01"}).status_code != 200
+    assert http.post("/api/dashboard", json={"client_id": "C01"}).status_code == 403
     as_(http, "C02S")  # a household member sees their family
     assert http.post("/api/dashboard", json={"client_id": "C02", "scope": "family"}).status_code == 200
 
@@ -133,7 +133,7 @@ def test_an_rm_sees_only_the_families_assigned_to_them(http):
     assert [c["id"] for c in http.get("/api/clients").json()["clients"]] == ["C03"]
     assert http.get("/api/families/C03/impact", params={"role": "rm"}).status_code == 200
     assert http.get("/api/families/C01/impact", params={"role": "rm"}).status_code == 403
-    assert http.post("/api/dashboard", json={"client_id": "C01"}).status_code != 200
+    assert http.post("/api/dashboard", json={"client_id": "C01"}).status_code == 403
     assert http.get("/api/rm/today").status_code == 200
     as_(http, "cio")
     assert http.get("/api/rm/today").status_code == 403

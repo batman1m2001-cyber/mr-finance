@@ -14,6 +14,7 @@ from operonx import op
 
 from control import roles
 from news import rss, rules, store
+from people import auth
 from wealth.paths import DATA
 
 USER_AGENT = "OneWealth-demo/0.1 (+https://github.com/batman1m2001-cyber/mr-finance)"
@@ -41,7 +42,12 @@ def _get(url: str, timeout: float) -> bytes:
 @op
 async def fetch(feeds: Optional[dict] = None, now: Optional[float] = None) -> dict:
     """Every approved source's feed, at once. ``feeds`` ({source id: XML}) replaces the network
-    (tests, replays); ``now`` the clock."""
+    (tests, replays); ``now`` the clock. Asked over HTTP, only the CIO fetches, and from the network.
+
+    The scheduled job runs without a request."""
+    if auth.checking():
+        roles.require_signed_in("cio")
+        feeds, now = None, None  # a caller does not supply the news
     cfg = config()
     at = float(now) if now else time.time()
     sources = [s for s in cfg["sources"] if s.get("approved")]

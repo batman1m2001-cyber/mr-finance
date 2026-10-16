@@ -5,6 +5,8 @@ never the outside sources.
   updates the day's point.
 - ``source_runs``: every fetch of every series by every job (job, series, source used, sources tried, start, end,
   points, error), for the source registry and its alerts.
+- ``load_requests``: an Admin's request to load the history again (Hệ thống, BRD-RULE-ROLE-04): who, from when,
+  and the ``market_load`` job's progress (asked → running → done or failed, the points kept, the error).
 """
 
 from __future__ import annotations
@@ -25,6 +27,9 @@ create table if not exists source_runs (
   id integer primary key autoincrement, job text not null, series text not null, source text,
   tried text not null, started real not null, finished real not null, points integer not null, error text);
 create index if not exists source_runs_job on source_runs (job, started);
+create table if not exists load_requests (
+  id integer primary key autoincrement, by text not null, since text not null, asked real not null,
+  status text not null, started real, finished real, points integer, error text);
 """
 
 
@@ -140,3 +145,55 @@ def job_health() -> Dict[str, Dict[str, Any]]:
 
 def reset() -> None:
     """Demo reset keeps the market data: it is fetched, not made by the demo."""
+
+
+# -- loading the history on request (the market_load job) ------------------------------------------------------
+
+LOAD_STALE_S = 3 * 3600  # a load "running" longer than this died with its worker: asked again
+
+
+def request_load(by: str, since: str) -> Dict[str, Any]:
+    """Queue a load; one at a time (a load waiting or running is returned instead of a second)."""
+    now = time.time()
+    with _db() as con:
+        open_ = con.execute(
+            "select * from load_requests where status = 'asked' or (status = 'running' and started > ?) "
+            "order by id desc limit 1",
+            (now - LOAD_STALE_S,),
+        ).fetchone()
+        if open_:
+            return {**dict(open_), "queued": False}
+        cur = con.execute(
+            "insert into load_requests (by, since, asked, status) values (?, ?, ?, 'asked')", (by, since, now)
+        )
+        row = con.execute("select * from load_requests where id = ?", (cur.lastrowid,)).fetchone()
+    return {**dict(row), "queued": True}
+
+
+def next_load() -> Optional[Dict[str, Any]]:
+    """The oldest load waiting (or one whose worker died), marked running."""
+    now = time.time()
+    with _db() as con:
+        row = con.execute(
+            "select * from load_requests where status = 'asked' or (status = 'running' and started <= ?) "
+            "order by id limit 1",
+            (now - LOAD_STALE_S,),
+        ).fetchone()
+        if row is None:
+            return None
+        con.execute("update load_requests set status = 'running', started = ? where id = ?", (now, row["id"]))
+    return {**dict(row), "status": "running", "started": now}
+
+
+def finish_load(load_id: int, points: int, error: Optional[str], failed: bool = False) -> None:
+    """Done (with a note when some series failed), or failed when nothing was kept."""
+    with _db() as con:
+        con.execute(
+            "update load_requests set status = ?, finished = ?, points = ?, error = ? where id = ?",
+            ("failed" if failed else "done", time.time(), points, error, load_id),
+        )
+
+
+def loads(limit: int = 5) -> List[Dict[str, Any]]:
+    with _db() as con:
+        return [dict(r) for r in con.execute("select * from load_requests order by id desc limit ?", (limit,))]

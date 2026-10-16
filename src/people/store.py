@@ -33,7 +33,7 @@ STAFF_ROLES = ("cio", "rm", "compliance", "admin", "specialist")
 SCHEMA = """
 create table if not exists people (
   id text primary key, seq integer not null, kind text not null, role text not null, name text not null,
-  email text, member_of text, rm_id text, data text not null);
+  email text, member_of text, rm_id text, data text not null);  -- rm_id: the seed's; rm_assignment decides
 create index if not exists people_kind on people (kind, role);
 create index if not exists people_member on people (member_of);
 create table if not exists client_sources (
@@ -204,19 +204,24 @@ def client_ids(members: bool = False) -> List[str]:
 
 
 def assigned_rm(client_id: str) -> Optional[str]:
-    """The RM a family is assigned to (a household member: their family's)."""
+    """The RM a family is assigned to (a household member: their family's), from the ``rm_assignment``
+    configuration in force (Admin, FEAT-14; BRD-RULE-ROLE-02)."""
     with _db() as con:
-        row = con.execute("select rm_id from people where id = ?", (str(client_id),)).fetchone()
-    return row["rm_id"] if row else None
+        row = con.execute("select member_of from people where id = ? and kind = 'client'", (str(client_id),)).fetchone()
+    if row is None:
+        return None
+    return _assignment().get(row["member_of"] or str(client_id))
 
 
 def families_of(rm_id: str) -> List[str]:
     """The main clients an RM is assigned to."""
-    with _db() as con:
-        rows = con.execute(
-            "select id from people where kind = 'client' and member_of is null and rm_id = ? order by id", (rm_id,)
-        )
-        return [r["id"] for r in rows]
+    return sorted(f for f, rm in _assignment().items() if rm == rm_id)
+
+
+def _assignment() -> Dict[str, str]:
+    from control import config
+
+    return config.data("rm_assignment")
 
 
 # -- staff -------------------------------------------------------------------------------------
@@ -248,7 +253,7 @@ def team(client_id: str) -> Optional[Dict[str, Any]]:
         ).fetchall()
     if not rows:
         return None
-    rm = next(_person(r) for r in rows if r["link"] == "rm")
+    rm = person(assigned_rm(client_id) or "") or next(_person(r) for r in rows if r["link"] == "rm")
     office = rm.get("office")
     out_rm = {
         "id": rm["id"],
@@ -285,5 +290,6 @@ def team(client_id: str) -> Optional[Dict[str, Any]]:
 def everyone() -> List[Dict[str, Any]]:
     """Every person, in seed order, without the clients' records (the admin screen's list)."""
     with _db() as con:
-        rows = con.execute("select id, kind, role, name, email, member_of, rm_id from people order by seq").fetchall()
-    return [dict(r) for r in rows]
+        rows = con.execute("select id, kind, role, name, email, member_of from people order by seq").fetchall()
+    rm = _assignment()
+    return [{**dict(r), "rm_id": rm.get(r["member_of"] or r["id"]) if r["kind"] == "client" else None} for r in rows]
