@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The assistant's tool registry (ASSISTANT_PLAN A1): the Copilot's 13 tools moved into
+  `src/assistant/` and 12 more wrapped from served graphs (reads: forces on wealth, search, the review queue, events,
+  system alerts, contacts; writes: send a scenario option, log a contact, recommend, specialist decision, flag an
+  event urgent, acknowledge an alert), each with roles, a timeout and, for writes, a plan and a verifier that reads
+  the state back; operonx-agents 0.2.3 (`@tool(verify=)`, upstream) — assistant.md §4/§9, FEAT-32, matrix
+  OWN-AS-03…06.
+
 - 2026-10-16 — The assistant's architecture (ASSISTANT_PLAN A0): audit of the Copilot, agents, storage and OperonX;
   the owner's brief registered (SRC-05) and split into OWN-AS-01…25; the target architecture with the storage
   measured (`scripts/bench_chat_store.py`: chat in its own SQLite WAL file, ~127 turns/s against ~10 at the BRD's busy

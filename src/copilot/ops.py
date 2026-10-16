@@ -7,10 +7,12 @@ from typing import Any, Dict
 
 from operonx import op
 
+from assistant.base import NotConfirmed, execute
+from assistant.registry import plan as plan_of
 from control import audit, db, roles
 from copilot import router
 from copilot.scrub import scrub
-from copilot.tools import PAGES, PLANS, TOOLS, USER, Ctx, ToolFailed, allowed
+from copilot.tools import PAGES, TOOLS, USER, Ctx, ToolFailed, allowed
 from people import auth
 
 HELP = {
@@ -97,7 +99,14 @@ async def act(
 
 
 async def run_tool(tool, args, confirmed, role, client_id, scope, question, followed=None) -> Dict[str, Any]:
-    ctx = Ctx(role=role, client_id=client_id, scope=scope, question=question, followed=followed)
+    ctx = Ctx(
+        role=role,
+        client_id=client_id,
+        scope=scope,
+        question=question,
+        followed=followed,
+        user=auth.acting_id(USER.get(role)),
+    )
     if not tool:
         return {
             "status": "unknown",
@@ -110,7 +119,7 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question, foll
     try:
         allowed(t, role)
         if t.write and not confirmed:
-            plan = PLANS[t.name](ctx, args)
+            plan = await plan_of(t, ctx, args)
             return {
                 "status": "pending",
                 "text": plan["summary"] + " Cần bạn xác nhận.",
@@ -119,9 +128,11 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question, foll
             }
         if t.write:
             args = {k: v for k, v in args.items() if k in ("item_id", "decision")}
-        out = await t.run(ctx, args)
+        out = await execute(t, ctx, args)  # within its timeout; a write read back after
     except roles.Forbidden as exc:
         return {"status": "forbidden", "text": str(exc), "tool": t.name, "suggest": HELP[role]}
+    except NotConfirmed as exc:
+        return {"status": "failed", "text": str(exc), "tool": t.name}
     except (ToolFailed, ValueError, KeyError) as exc:
         return {"status": "failed", "text": f"Không thực hiện được: {exc}", "tool": t.name}
     page = PAGES.get(t.page or "")

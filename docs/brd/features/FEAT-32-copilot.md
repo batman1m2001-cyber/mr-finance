@@ -41,7 +41,14 @@
   idle / busy / ok / error / pending from the request itself; an ok answer carries `focus`, the keys of the page
   elements it was read from, which the page marks for 2.6 s (“Chỉ trên trang” shows them again).
 
-## Next: the assistant (ASSISTANT_PLAN A1–A2, OWN-AS-01…09)
+- **One tool registry** (ASSISTANT_PLAN A1, 2026-10-17, ADR-0032): the thirteen tools moved into
+  `src/assistant/` unchanged and 12 more wrapped from served graphs (six reads, six writes; 25 in all, by role).
+  Every write has a plan (the line confirmed, arguments resolved on the server; it writes nothing) and a verifier
+  that reads the state back: a write that answered but did not land is said as “Đã gửi nhưng chưa xác nhận được
+  kết quả: …”, never as done — in the Copilot too. Each tool has a timeout. `agent_tools(role)` gives the role's
+  tools to an operonx-agents agent: writes park the run until the person approves (assistant.md §4).
+
+## Next: the assistant (ASSISTANT_PLAN A2, OWN-AS-01…09)
 
 The Copilot becomes the assistant's front end ([assistant.md](../architecture/assistant.md), ADR-0026, ADR-0032):
 one tool registry by role, multi-step turns on `operonx-agents`, writes confirmed (the run parks) and verified,
@@ -49,7 +56,8 @@ answers citing tools, pages, passages and web sources; `POST /api/copilot` stays
 fallback. Conversations: FEAT-37; knowledge and web: FEAT-38.
 
 ## Implementation
-`src/copilot/{scrub,tools,router,ops,graph}.py`; service `copilot` in `app/main.py`; resource `llm:copilot`
+`src/copilot/{scrub,tools,router,ops,graph}.py` (`tools.py` now names its thirteen in the registry);
+`src/assistant/{base,tools,actions,registry}.py` (A1); service `copilot` in `app/main.py`; resource `llm:copilot`
 (`resources.yaml`), `LLM_MODEL_COPILOT` in `.env.example`; `web/copilot.js`, mounted by `web/shell.js`;
 `.cp-*` styles in `web/core/tokens.css`.
 
@@ -62,6 +70,12 @@ tool and an unknown question; the endpoint. R5: an answer's as-of, sources and c
 graph (event type for the client, headline for staff); kich_ban equals scenario_flow and picks the scenario by
 words; every call is in the audit chain, which verifies, with the scrubbed question; the followed goals.
 `tests/ui/test_copilot_ui.py::test_answers_show_their_card_their_time_and_sources_and_offer_next_steps`.
+A1: `tests/test_assistant_tools.py` — the catalogue is whole (every write has a setup in the test, a plan and a
+verifier); every tool refused to every role it is not for (not offered, and refused when its function is called
+with that person); every read answers or says why not; every write: planning writes nothing, the confirmed write
+changes the records and its verifier confirms, and the same answer without its effect is NotConfirmed; the Copilot
+reports an unconfirmed write as failed; an agent's write parks, Approve runs it verified and Deny runs nothing; with
+the barrier off the model reads only statuses.
 
 ## Limitations
 - **One live run recorded (2026-10-16)** with the model configured for the live demo (`anthropic/claude-haiku-5.5`

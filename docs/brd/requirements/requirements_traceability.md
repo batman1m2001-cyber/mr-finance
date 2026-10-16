@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 39 | 10 | 3 | 0 | 25 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 39 | 12 | 3 | 2 | 21 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -269,10 +269,10 @@ are the documentation rules this repository itself follows.) Counts are recomput
 |---|---|---|---|
 | OWN-AS-01 | FEAT-32 | planned | A2: the panel calls the assistant |
 | OWN-AS-02 | FEAT-38 | planned | A5: `help` tool over the product collection |
-| OWN-AS-03 | FEAT-32 | planned | A1: every tool runs the page's own graph or read with the person's context |
-| OWN-AS-04 | FEAT-32 | planned | A1: `src/assistant/registry.py` (ADR-0032) |
-| OWN-AS-05 | FEAT-32 | planned | A1–A2: verifiers; multi-step turns |
-| OWN-AS-06 | FEAT-32 | planned | A1–A2: writes park until confirmed |
+| OWN-AS-03 | FEAT-32 | implemented_verified | A1: every tool runs the page's own graph or read as the person — `tests/test_assistant_tools.py::test_a_read_answers_or_says_why_not`, `::test_a_write_asks_first_changes_nothing_then_is_read_back` |
+| OWN-AS-04 | FEAT-32 | implemented_verified | A1: `src/assistant/registry.py`, 25 tools (ADR-0032) — `tests/test_assistant_tools.py::test_the_catalogue_is_whole`, `::test_a_tool_is_refused_to_a_role_it_is_not_for` (every tool × every other role) |
+| OWN-AS-05 | FEAT-32 | partially_implemented | A1: every write read back — `tests/test_assistant_tools.py::test_a_write_that_did_not_land_is_not_said_done`, `::test_the_copilot_says_an_unconfirmed_write_failed`; multi-step turns in A2 |
+| OWN-AS-06 | FEAT-32 | partially_implemented | A1: a write parks the agent's run; Approve runs and verifies it, Deny runs nothing — `tests/test_assistant_tools.py::test_an_agent_write_waits_for_the_person`; the panel's confirm in A2 |
 | OWN-AS-07 | FEAT-38 | planned | A5: `web_search` on OpenRouter (ADR-0030; measured in A0: 8 s, US$0.012) |
 | OWN-AS-08 | FEAT-32 | planned | A2: refusal with what it can do |
 | OWN-AS-09 | FEAT-32 | planned | A2: barrier per `client_ai` mode, template mode when `off` (ADR-0026) |
