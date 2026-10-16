@@ -8,7 +8,8 @@
 
 Rotation: ``--new k2``, put ``k2=…`` first in MF_DATA_KEYS (the secret store, a file or .env), restart, run this,
 ``--check`` until ``k1`` holds nothing, then remove ``k1``. Works on the database ``MF_STATE`` names (default
-data/state.db); a server may keep running: the rotation is one write transaction.
+data/state.db) and the assistant's ``assistant.db`` beside it; a server may keep running: each file's rotation is
+one write transaction.
 """
 
 import argparse
@@ -19,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from assistant import conversations  # noqa: E402
 from control import crypto  # noqa: E402
 from wealth.paths import state_path  # noqa: E402
 
@@ -32,16 +34,28 @@ def main() -> None:
         print(f"{a.new}={crypto.new_key()}")
         return
     con = sqlite3.connect(state_path(), timeout=30, isolation_level=None)
+    chat = None
+    if conversations.db_path().exists():  # the assistant's conversations (A3), a file of their own
+        with conversations.db():  # its tables, if an older file lacks one
+            pass
+        chat = sqlite3.connect(conversations.db_path(), timeout=30, isolation_level=None)
     try:
         if a.check:
-            print(json.dumps(crypto.census(con)))
+            print(json.dumps({**crypto.census(con), "assistant": conversations.census(chat) if chat else {}}))
             return
         con.execute("begin immediate")
         out = crypto.rotate(con)
         con.execute("commit")
-        print(json.dumps({"key": crypto.current(), "written": out, "now": crypto.census(con)}))
+        if chat:
+            chat.execute("begin immediate")
+            out["assistant"] = conversations.rotate(chat)
+            chat.execute("commit")
+        now = {**crypto.census(con), "assistant": conversations.census(chat) if chat else {}}
+        print(json.dumps({"key": crypto.current(), "written": out, "now": now}))
     finally:
         con.close()
+        if chat:
+            chat.close()
 
 
 if __name__ == "__main__":

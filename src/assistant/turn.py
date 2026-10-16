@@ -15,25 +15,36 @@ from __future__ import annotations
 
 import asyncio
 import json
-import sqlite3
 import time
-from contextlib import contextmanager
 from functools import lru_cache
-from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, List, Optional
 
-from operonx_agents import Agent, Approve, Deny, Model, ModelSettings, RunContext, Runner, SQLiteStateStore, UsageLimits
+from operonx_agents import (
+    Agent,
+    Approve,
+    ContextPolicy,
+    Deny,
+    Model,
+    ModelSettings,
+    RunContext,
+    Runner,
+    UsageLimits,
+)
 
+from assistant import conversations as conv
 from assistant import registry
 from assistant.base import Ctx
 from control import barrier
 from copilot import router
 from copilot.scrub import scrub
 from wealth import ai
-from wealth.paths import state_path
 
 LIMITS = UsageLimits(turns=8, tool_calls=12, total_tokens=60_000, wall_s=60)
 APPROVAL_TTL = 600.0  # a write left unanswered for 10 minutes no longer runs
+# Short-term memory (OWN-AS-11): once a prompt reaches 75 % of this budget, the older exchanges become one summary
+# (written by the same model) and the last ones stay verbatim; the session keeps every item. The budget sits far
+# below the model's window, so a request that finds it passed still fits.
+CONTEXT = ContextPolicy(window=24_000, compact_at=0.75, keep_recent=8, summarizer=Model("copilot", deadline=30))
 ROLE_NAMES = {
     "client": "khách hàng",
     "rm": "chuyên viên quan hệ khách hàng (RM)",
@@ -84,6 +95,7 @@ def agent(role: str) -> Agent:
         limits=LIMITS,
         settings=ModelSettings(temperature=0, max_tokens=1200),
         approval_ttl=APPROVAL_TTL,
+        context=CONTEXT,
     )
 
 
@@ -101,49 +113,20 @@ def model_reads() -> bool:
 # -- parked runs: whose they are ---------------------------------------------------------------------------------
 
 
-def db_path() -> Path:
-    return state_path().with_name("assistant.db")
-
-
-@contextmanager
-def _db() -> Iterator[sqlite3.Connection]:
-    con = sqlite3.connect(db_path(), timeout=10, isolation_level=None)
-    con.row_factory = sqlite3.Row
-    try:
-        con.execute("pragma journal_mode=wal")
+def park(run_id: str, ctx: Ctx, cid: str, calls: List[str]) -> None:
+    with conv.db() as con:
         con.execute(
-            "create table if not exists parked (run_id text primary key, owner text not null, role text not null,"
-            " client_id text, scope text, reads integer not null, calls text not null, created real not null)"
-        )
-        yield con
-    finally:
-        con.close()
-
-
-_STORES: Dict[str, SQLiteStateStore] = {}
-
-
-def store() -> SQLiteStateStore:
-    """One state store per file (one connection: operonx-agents' per-instance connection, ADR-0027)."""
-    p = str(db_path())
-    if p not in _STORES:
-        _STORES[p] = SQLiteStateStore(p)
-    return _STORES[p]
-
-
-def park(run_id: str, ctx: Ctx, calls: List[str]) -> None:
-    with _db() as con:
-        con.execute(
-            "insert or replace into parked values (?, ?, ?, ?, ?, ?, ?, ?)",
-            (run_id, owner(ctx), ctx.role, ctx.client_id, ctx.scope, int(ctx.reads), json.dumps(calls), time.time()),
-        )
+            "insert or replace into parked values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (run_id, conv.owner(ctx), ctx.role, cid, ctx.client_id, ctx.scope, int(ctx.reads), json.dumps(calls),
+             time.time()),
+        )  # fmt: skip
 
 
 def parked(run_id: str, ctx: Ctx) -> Dict[str, Any]:
     """The parked run, when it is this person's and still fresh; else ValueError (nothing runs)."""
-    with _db() as con:
+    with conv.db() as con:
         row = con.execute("select * from parked where run_id = ?", (str(run_id or ""),)).fetchone()
-    if row is None or row["owner"] != owner(ctx) or row["role"] != ctx.role:
+    if row is None or row["owner"] != conv.owner(ctx) or row["role"] != ctx.role:
         raise ValueError("Không có việc nào đang chờ bạn xác nhận")
     if time.time() - row["created"] > APPROVAL_TTL:
         raise ValueError("Việc chờ xác nhận đã quá 10 phút: hãy hỏi lại")
@@ -151,22 +134,30 @@ def parked(run_id: str, ctx: Ctx) -> Dict[str, Any]:
 
 
 def unpark(run_id: str) -> None:
-    with _db() as con:
+    with conv.db() as con:
         con.execute("delete from parked where run_id = ?", (run_id,))
 
 
-def owner(ctx: Ctx) -> str:
-    return ctx.user or f"client:{ctx.client_id or '-'}"
+def session(cid: str, ctx: Ctx) -> conv.Session:
+    """The conversation's model side, one per mode: what a template-mode model saw (scrubbed, statuses) never meets
+    what a model allowed to read was sent, so closing the barrier mid-conversation sends no earlier client data."""
+    return conv.Session(cid, "read" if ctx.reads else "template")
 
 
 # -- the run -----------------------------------------------------------------------------------------------------
 
 
-async def run(ctx: Ctx, message: str) -> Dict[str, Any]:
-    """A fresh turn. The message is scrubbed when the model may not read client data."""
+async def run(ctx: Ctx, message: str, cid: str) -> Dict[str, Any]:
+    """A fresh turn of conversation ``cid``. The message is scrubbed when the model may not read client data."""
     said = message if ctx.reads else scrub(message)
-    res = await asyncio.wait_for(Runner.run(agent(ctx.role), said, deps=ctx, store=store()), LIMITS.wall_s + 5)
-    return await reply(res, ctx, said, fresh=True)
+    s = session(cid, ctx)
+    try:
+        res = await asyncio.wait_for(
+            Runner.run(agent(ctx.role), said, deps=ctx, store=conv.RUNS, session=s), LIMITS.wall_s + 5
+        )
+    finally:
+        s.close()
+    return await reply(res, ctx, said, fresh=True, cid=cid)
 
 
 async def resume(ctx: Ctx, run_id: str, approvals: Dict[str, str]) -> Dict[str, Any]:
@@ -175,10 +166,16 @@ async def resume(ctx: Ctx, run_id: str, approvals: Dict[str, str]) -> Dict[str, 
     ctx.asked.update(json.loads(row["calls"]))
     said = {str(k): Approve() if v == "approve" else Deny("Người dùng không xác nhận") for k, v in approvals.items()}
     unpark(run_id)  # answered once: a second answer finds nothing waiting
-    res = await asyncio.wait_for(
-        Runner.resume(agent(ctx.role), run_id, store=store(), approvals=said, deps=ctx), LIMITS.wall_s + 5
-    )
-    return await reply(res, ctx, None, fresh=False)
+    cid = row["conversation_id"]
+    s = session(cid, ctx)
+    try:
+        res = await asyncio.wait_for(
+            Runner.resume(agent(ctx.role), run_id, store=conv.RUNS, approvals=said, deps=ctx, session=s),
+            LIMITS.wall_s + 5,
+        )
+    finally:
+        s.close()
+    return await reply(res, ctx, None, fresh=False, cid=cid)
 
 
 def steps_of(res, ctx: Ctx, fresh: bool) -> List[Dict[str, Any]]:
@@ -219,7 +216,7 @@ def steps_of(res, ctx: Ctx, fresh: bool) -> List[Dict[str, Any]]:
     return out
 
 
-async def reply(res, ctx: Ctx, said: Optional[str], fresh: bool) -> Dict[str, Any]:
+async def reply(res, ctx: Ctx, said: Optional[str], fresh: bool, cid: str) -> Dict[str, Any]:
     steps = steps_of(res, ctx, fresh)
     usage = res.usage
     base = {
@@ -234,6 +231,9 @@ async def reply(res, ctx: Ctx, said: Optional[str], fresh: bool) -> Dict[str, An
             "cost_usd": usage.cost_usd,
         },
         "turn_id": res.run_id,
+        "conversation_id": cid,
+        # older exchanges became one summary in this turn (ContextPolicy): the panel says so (FEAT-37)
+        "compacted": any(i.get("role") == "summary" for i in res.new_items or []),
     }
     if res.status == "interrupted":
         waits = []
@@ -244,7 +244,7 @@ async def reply(res, ctx: Ctx, said: Optional[str], fresh: bool) -> Dict[str, An
             except Exception as exc:  # noqa: BLE001 - a plan that cannot be made: say why; approving runs nothing new
                 summary = f"{t.description} — chưa lập được: {exc}"
             waits.append({"id": i.id, "tool": i.tool, "summary": summary})
-        park(res.run_id, ctx, [i.call_id for i in res.interruptions])
+        park(res.run_id, ctx, cid, [i.call_id for i in res.interruptions])
         return {**base, "status": "pending", "waits": waits, "text": " ".join(w["summary"] for w in waits)}
     if res.status == "completed":
         text = str(res.output or "").strip() if ctx.reads else ""

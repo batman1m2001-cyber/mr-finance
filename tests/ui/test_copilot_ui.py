@@ -52,7 +52,7 @@ def test_busy_lasts_exactly_as_long_as_the_request(open_page):
     p.go("#/client/tong-quan/toan-canh")
     p.page.evaluate(
         """() => { const f0 = window.fetch; window.__hold = null;
-             window.fetch = (u, o) => String(u).includes('/api/assistant')
+             window.fetch = (u, o) => String(u).endsWith('/api/assistant')
                ? new Promise(r => { window.__hold = () => r(f0(u, o)); }) : f0(u, o); }"""
     )
     p.page.click(".cp-fab")
@@ -105,3 +105,32 @@ def test_the_assistant_asks_before_a_write_and_shows_its_steps(open_page, monkey
         done = p.page.locator("#cp-msgs .cp-bot").last
         assert "Đã ghi cuộc gọi." in done.inner_text() and len(contacts.recent()) == 1
     assert not p.problems()
+
+
+def test_a_conversation_is_picked_up_on_another_device_listed_and_deleted(open_page):
+    """A3: the conversation lives on the server — a second browser (another device) opens the panel on it; the list
+    opens and deletes it; “Mới” starts another. Nothing is left in the browser's storage."""
+    p = open_page()
+    p.go("#/client/tong-quan/toan-canh")
+    ask(p, "Tài sản của tôi thế nào?")
+    cid = p.page.get_attribute("#cp-msgs", "data-conversation")
+    assert cid and p.page.evaluate("Object.keys(sessionStorage).filter(k => k.startsWith('mf.copilot')).length") == 0
+    q = open_page("phone")  # another device, the same person
+    q.go("#/client/tong-quan/toan-canh")
+    q.page.click(".cp-fab")
+    q.page.wait_for_function(f"document.querySelector('#cp-msgs').dataset.conversation === '{cid}'")
+    assert q.page.inner_text("#cp-msgs .cp-me") == "Tài sản của tôi thế nào?"
+    assert q.page.locator("#cp-msgs .cp-bot .cp-figs").count() == 1  # the answer's card, as first shown
+    q.page.click("#cp-new")
+    assert q.page.locator("#cp-msgs .cp-me").count() == 0
+    q.page.click("#cp-hist")
+    q.page.wait_for_selector(".cp-convs li")
+    assert "Tài sản của tôi thế nào?" in q.page.inner_text(".cp-convs") and "1 lượt" in q.page.inner_text(".cp-convs")
+    q.page.click(f"[data-open='{cid}']")
+    q.page.wait_for_function("document.querySelectorAll('#cp-msgs .cp-me').length === 1")
+    q.page.click("#cp-hist")
+    q.page.wait_for_selector(".cp-convs li")
+    q.page.once("dialog", lambda d: d.accept())
+    q.page.click(f"[data-del='{cid}']")
+    q.page.wait_for_selector("text=Chưa có cuộc trò chuyện nào.")
+    assert not p.problems() and not q.problems()

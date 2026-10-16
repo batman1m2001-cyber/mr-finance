@@ -2,6 +2,16 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Conversations on the server (ASSISTANT_PLAN A3).
+  - Every assistant turn belongs to a conversation in `assistant.db`; the panel resumes the latest on any device,
+    lists, opens and deletes them (`POST /api/assistant/conversations`); owner-only, deletion audited without text.
+  - The model's side is an operonx-agents session per mode (the barrier closing mid-conversation sends nothing read
+    before), compacted past 75 % of a 24k-token budget into a summary, every turn kept; the panel says when.
+  - Sealed with the data keys; key rotation covers `assistant.db`. The tab's `sessionStorage` copy is dropped.
+  - Upstream: operonx-agents 0.2.4 (one SQLite connection per file, reads without a write lock; 50 sessions: lock
+    errors before, none now) and 0.2.5 (compaction across runs: a conversation of plain answers never compacted).
+  - Documents: assistant.md §5/§9/§10, FEAT-37, matrix OWN-AS-10/11.
+
 - 2026-10-17 — The assistant (ASSISTANT_PLAN A2): the Copilot panel now asks `POST /api/assistant`.
   - An operonx-agents run over the role's tools, several steps a turn.
   - Writes wait with their plan for the person who asked, then run once and are read back.

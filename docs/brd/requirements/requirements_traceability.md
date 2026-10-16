@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 39 | 17 | 3 | 0 | 18 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 39 | 19 | 3 | 0 | 16 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -276,8 +276,8 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-AS-07 | FEAT-38 | planned | A5: `web_search` on OpenRouter (ADR-0030; measured in A0: 8 s, US$0.012) |
 | OWN-AS-08 | FEAT-32 | implemented_verified | A2: no tool for it → said plainly, with what it can do; a tool the role lacks is not offered — `tests/test_assistant.py::test_a_tool_the_role_does_not_have_is_not_there_to_call`; eval refuse-01/02 on the real model (docs/brd/testing/assistant_eval.md) |
 | OWN-AS-09 | FEAT-32 | implemented_verified | A2: `demo` (or onprem with the model inside) the model reads tool results; otherwise template mode: scrubbed question, statuses only, the tools' texts as the answer — `tests/test_assistant.py::test_with_the_barrier_off_the_model_sees_no_client_data_and_the_tools_write_the_answer` |
-| OWN-AS-10 | FEAT-37 | planned | A3: `data/assistant.db` (ADR-0027; storage measured in A0, assistant.md §8) |
-| OWN-AS-11 | FEAT-37 | planned | A3: sessions with compaction |
+| OWN-AS-10 | FEAT-37 | implemented_verified | A3: conversations in `assistant.db` (ADR-0027), listed, opened, deleted by their owner only, picked up on another device, sealed with the data keys — `tests/test_assistant_conversations.py::test_a_conversation_carries_on_and_opens_again_as_it_was_shown`, `::test_nobody_else_opens_continues_or_deletes_it`, `::test_with_keys_set_nothing_said_is_stored_in_clear`, `tests/ui/test_copilot_ui.py::test_a_conversation_is_picked_up_on_another_device_listed_and_deleted` |
+| OWN-AS-11 | FEAT-37 | implemented_verified | A3: the session carries the conversation; past 75 % of a 24k-token budget older exchanges become one summary, nothing is deleted, the panel says so (operonx-agents 0.2.5) — `tests/test_assistant_conversations.py::test_a_long_conversation_compacts_instead_of_dropping_and_the_transcript_keeps_every_turn`, `::test_a_write_waits_inside_its_conversation_and_its_answer_joins_it` |
 | OWN-AS-12 | FEAT-37, FEAT-39 | planned | A4/A6: typed items, consolidator |
 | OWN-AS-13 | FEAT-37 | planned | A4: archive search |
 | OWN-AS-14 | FEAT-37 | planned | A4: memory tools and the Bộ nhớ page |
