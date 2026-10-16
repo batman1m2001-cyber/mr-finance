@@ -61,3 +61,23 @@ def test_a_past_conversation_is_found_and_opened_in_the_panel(open_page):
     p.page.wait_for_function("document.querySelectorAll('#cp-msgs .cp-me').length === 1")
     assert p.page.evaluate("[document.documentElement.scrollWidth, innerWidth]") == [390, 390]
     assert not p.problems()
+
+
+def test_a_document_is_added_found_and_deleted(open_page):
+    from assistant import knowledge
+
+    p = open_page()
+    p.go("#/client/bo-nho")
+    p.page.wait_for_selector("#doc-add")
+    assert "Chưa có tài liệu nào." in p.page.inner_text("#page")
+    note = "# Hợp đồng bảo hiểm\n\nQuyền lợi nằm viện: chi trả tối đa ba mươi ngày mỗi năm.\n".encode()
+    p.page.set_input_files("#doc-file", files=[{"name": "bao-hiem.md", "mimeType": "text/markdown", "buffer": note}])
+    p.page.click("#doc-add button[type=submit]")
+    p.page.wait_for_selector("[data-doc='C01/bao-hiem.md']")
+    hits = in_thread(lambda: asyncio.run(knowledge.search_materials(ctx("C01"), "quyền lợi nằm viện")))
+    assert hits and "ba mươi ngày" in hits[0]["text"]
+    p.page.once("dialog", lambda d: d.accept())
+    p.page.click("[data-deldoc='C01/bao-hiem.md']")
+    p.page.wait_for_selector("text=Chưa có tài liệu nào.")
+    assert in_thread(lambda: asyncio.run(knowledge.search_materials(ctx("C01"), "quyền lợi nằm viện"))) == []
+    assert not p.problems()

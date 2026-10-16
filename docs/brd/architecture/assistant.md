@@ -197,21 +197,39 @@ conversations — open, search, delete.
   `assistant_retention` job (02:30 daily) deletes conversations whose last turn is older, with their turns, model
   items and run states, purges expired items, scrubs, and audits the counts.
 
-## 6. Knowledge *(target, A5)* — ADR-0029, ADR-0030
+## 6. Knowledge *(built in A5, 2026-10-17)* — ADR-0029, ADR-0030
 
-`operonx-kb` with its catalog in `data/kb.db` (lexical FTS5; no embedding service is configured, so `hybrid` is not
-available — measured in A5 on the product questions):
+`operonx-kb` (0.2.6) in `data/kb/` beside the state file: catalog, blobs and a lexical index (FTS5, Vietnamese
+bigrams with accents folded). Both collections are **lexical only**, so nothing is sent to an embedding service:
 
-| Collection | Holds | ACL | Answering |
+| Collection | Holds | Who reads | Tool |
 |---|---|---|---|
-| `product` | A Vietnamese user guide per page and role (written in A5 from the screen specs), the glossary, the “Cách tính” catalogue (`src/explain/catalogue.py`) | every signed-in role | `help` tool → passages with quotes checked against the text |
-| `materials` | Documents a person uploads in the panel (PDF/DOCX/MD) | the owner and, for a client, their assigned RM | `materials` tool; deleted with the owner's data |
-| — (web) | Never stored | — | `web_search` results are cited and dropped |
+| `product` | The Vietnamese guide `docs/huong-dan/` (a file per role and `chung.md` for everyone, a section per page with its route), the “Cách tính” formulas (`src/explain`, 103) and the glossary (16 terms), a section each | the person's role's pages and the shared ones | `huong_dan` (every role): the 3 best pages plus the best formula or term; the first page's route becomes the step's link |
+| `materials` | Documents a person adds on the Bộ nhớ page (text, Markdown, HTML, Word, PowerPoint, Excel, PDF; ≤ 5 MB) | the owner and, for a client, the RM assigned to them | `tai_lieu` (on the Bộ nhớ page's roles); deleted by the owner only, for good (purge) |
+| — (web) | Never stored | — | `tim_tren_web` |
 
-**Web search** (ADR-0030): OpenRouter's `web` plugin on the existing key (measured 2026-10-16: 8 s, US$0.012, three
-cited Vietnamese sources for a policy-rate question). The query sent is the person's question scrubbed as for the
-router (no names, numbers, codes); results are cited by URL with “theo các nguồn tìm được” and a certainty line; daily
-cap per person (20) and in total (500).
+### As built (A5, 2026-10-17)
+
+- **Embeddings exist; we chose not to use them.** A0 said no embedding service was configured. OpenRouter does
+  serve them (33 models; `baai/bge-m3`, 1024-d, US$0.01 per million tokens). Measured on 24 product questions
+  (`data/assistant_guide_questions.json`, paraphrased, some without accents): lexical finds the right page in the
+  first three 24/24, first 20/24, MRR 0.91, 35 ms; hybrid with bge-m3 24/24, 21/24, MRR 0.93, 1,040 ms (31 embedding
+  requests for the measurement). One more first place is not worth a second per question, and lexical-only means a
+  client's document never leaves the server.
+- **Two searches for `huong_dan`.** With the 103 short formulas in the same ranking the right page fell to 22/24 in
+  the first three and 17/24 first; pages and references are searched apart (pages: 24/24, 20/24, unchanged; the
+  reference asked about: 10/10 on `data/assistant_reference_questions.json`).
+- **Sync**: on the first question of a process the guide files are added; an unchanged file is skipped (first sync
+  1.4 s, unchanged 0.27 s), a removed one deleted. The resources are registered for the process only
+  (`ResourceHub.register(..., persist=False)`, operonx 1.30.1), never written to `resources.yaml`.
+- **Materials**: key `<owner>/<file name>`, tags `owner:` and `client:`, ACL `owner:<owner>` (+ `rm:<assigned RM>` for
+  a client). An RM reads the picked client's documents and their own. Adding and deleting are audited with the size
+  and the action, never the content. The Bộ nhớ service is not traced (`operonx.toml`: documents and item text would
+  be in the trace in clear).
+- **Web search** (ADR-0030): OpenRouter's `web` plugin on the copilot model, 3 results. Only the question leaves,
+  scrubbed as for the router, its placeholders dropped. URLs are cited, “Theo các nguồn tìm được,” opens the answer
+  and a “Mức độ chắc chắn” line closes it. Caps: 20 per person and 500 in total per day, counted before the call.
+  Measured on the real model 2026-10-17: 9.1 s, US$0.012, two dated sources whose disagreement the answer named.
 
 ## 7. Agents *(target, A6–A7)* — ADR-0031, ADR-0033
 
@@ -261,7 +279,8 @@ behind interfaces; `RedisSession` exists); a new database for the demo is not ju
 | A conversation whose runs are one request each compacts (the flag was per run) | `operonx-agents` runner — **done**, 0.2.5 (Operonx #188) | A3 |
 | Long-term memory items (typed, sourced, expiring) with a store protocol and SQLite store (sealing codec); search; memory tools (recall, remember, forget, with verifiers) | `operonx-agents` `memory/` — **done**, 0.3.0 (Operonx #189). The archive search stays in OneWealth: its archive is the panel's `turns`, not a session store | A4 |
 | Tool verifiers: a check run after a tool, its verdict in the tool message and the trace | `operonx-agents` tools — **done**, 0.2.3 (`@tool(verify=)`, Operonx #186) | A1 |
-| Anything the KB needs for per-owner collections (if A5 finds a gap) | `operonx-kb` | A5 |
+| A lexical-only collection (no embedder) that can add, delete and collect garbage; documents with key, tags, ACL, metadata | `operonx-kb` — **done**, 0.2.6 (Operonx #193) | A5 |
+| Register a resource for this process only, without rewriting `resources.yaml` | `operonx` `ResourceHub.register(persist=False)` — **done**, 1.30.1 (Operonx #194) | A5 |
 
 OneWealth keeps only its rules: which tools, which roles, the barrier, what a memory item may hold, retention values.
 

@@ -1,6 +1,7 @@
 /* Bộ nhớ (A4, FEAT-37; ADR-0028): what the assistant remembers about the person signed in — a few items they asked
    it to keep, each with its kind, when, from which conversation, and when it expires — to correct or forget, one or
-   all; and their past conversations with it, searchable, to open in the panel or delete. Everything is theirs
+   all; their past conversations with it, searchable, to open in the panel or delete; and the documents they add
+   for it to read (A5: searched on the server only; a client's are readable by their RM). Everything is theirs
    only: the server keys every read and write by who is signed in (POST /api/assistant/memory, /conversations). */
 import {esc, post, toast, when} from "../core/core.js";
 
@@ -10,7 +11,7 @@ export async function render(box, ctx) {
   const who = {role: ctx.role, client_id: ctx.role === "client" || ctx.role === "rm" ? ctx.client() : null};
   const mem = (action, body = {}) => post("/api/assistant/memory", {...who, action, ...body}).then(r => r.memory);
   const convs = (action, body = {}) => post("/api/assistant/conversations", {...who, action, ...body}).then(r => r.conversations);
-  const [m, c] = await Promise.all([mem("list"), convs("list")]);
+  const [m, c, d] = await Promise.all([mem("list"), convs("list"), mem("materials")]);
   if (!box.isConnected) return;
 
   const item = (i) => `<li class="mem-item" data-item="${esc(i.id)}">
@@ -21,9 +22,12 @@ export async function render(box, ctx) {
   const conv = (x) => `<li class="mem-conv"><div><b>${esc(x.title || "Cuộc trò chuyện")}</b><div class="small muted">${esc(when(x.updated))} · ${x.turns} lượt</div></div>
       <div class="row"><button type="button" class="btn sm ghostbtn" data-open="${esc(x.id)}">Mở</button><button type="button" class="btn sm ghostbtn" data-delconv="${esc(x.id)}">Xoá</button></div></li>`;
 
+  const doc = (x) => `<li class="mem-conv" data-doc="${esc(x.key)}"><div><b>${esc(x.name)}</b><div class="small muted">${x.added ? esc(when(x.added)) : ""}${x.own ? "" : " · của khách hàng"}</div></div>
+      ${x.own ? `<div class="row"><button type="button" class="btn sm ghostbtn" data-deldoc="${esc(x.key)}">Xoá</button></div>` : ""}</li>`;
+
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">Trợ lý OneWealth</div><h1 class="h1">Bộ nhớ</h1>
-      <p class="lede">Những điều bạn nhờ trợ lý ghi nhớ, và các cuộc trò chuyện của bạn với trợ lý. Chỉ bạn thấy; bạn sửa hoặc xoá được mọi thứ ở đây. Trợ lý không ghi số tiền, số tài khoản hay thông tin của người ngoài gia đình.</p></div></div>
+      <p class="lede">Những điều bạn nhờ trợ lý ghi nhớ, các cuộc trò chuyện của bạn với trợ lý và tài liệu bạn thêm. Điều ghi nhớ và cuộc trò chuyện chỉ bạn thấy; bạn sửa hoặc xoá được mọi thứ ở đây. Trợ lý không ghi số tiền, số tài khoản hay thông tin của người ngoài gia đình.</p></div></div>
     <div class="cols">
       <section class="panel c6" aria-labelledby="mem-h">
         <div class="sechead"><h2 class="h2" id="mem-h">Điều trợ lý ghi nhớ</h2><span class="small muted"><b>${m.items.length}</b> mục</span></div>
@@ -37,6 +41,13 @@ export async function render(box, ctx) {
           <button type="submit" class="btn sm">Tìm</button></form>
         <div id="mem-hits"></div>
         ${c.items.length ? `<ul class="mem-list mt">${c.items.map(conv).join("")}</ul>` : `<p class="muted mt">Chưa có cuộc trò chuyện nào.</p>`}
+      </section>
+      <section class="panel c12" aria-labelledby="doc-h">
+        <div class="sechead"><h2 class="h2" id="doc-h">Tài liệu của bạn</h2><span class="small muted"><b>${d.materials.length}</b> tệp</span></div>
+        <p class="small muted">Thêm tài liệu để hỏi trợ lý về nó (Word, PDF, Excel, PowerPoint, văn bản; tối đa 5 MB). ${ctx.role === "client" ? "Chỉ bạn và RM phụ trách bạn đọc được." : "Chỉ bạn đọc được."} Tệp được tìm ngay trên máy chủ OneWealth, không gửi sang dịch vụ khác để xử lý; trợ lý chỉ đọc đoạn khớp câu hỏi.</p>
+        <form class="row mt-xs" id="doc-add"><input type="file" id="doc-file" accept=".txt,.md,.html,.htm,.docx,.pptx,.xlsx,.pdf" aria-label="Chọn tài liệu" style="flex:1;min-width:0">
+          <button type="submit" class="btn sm">Thêm</button></form>
+        ${d.materials.length ? `<ul class="mem-list mt">${d.materials.map(doc).join("")}</ul>` : `<p class="muted mt">Chưa có tài liệu nào.</p>`}
       </section>
     </div>`;
 
@@ -66,6 +77,20 @@ export async function render(box, ctx) {
   for (const b of box.querySelectorAll("[data-delconv]")) b.onclick = async () => {
     if (!confirm("Xoá cuộc trò chuyện này? Không lấy lại được.")) return;
     try { await convs("delete", {conversation_id: b.dataset.delconv}); toast("Đã xoá"); } catch (e) { toast(e.message); }
+    again();
+  };
+  for (const b of box.querySelectorAll("[data-deldoc]")) b.onclick = async () => {
+    if (!confirm("Xoá tài liệu này? Không lấy lại được.")) return;
+    try { await mem("material_delete", {key: b.dataset.deldoc}); toast("Đã xoá"); } catch (e) { toast(e.message); }
+    again();
+  };
+  box.querySelector("#doc-add").onsubmit = async (e) => {
+    e.preventDefault();
+    const f = box.querySelector("#doc-file").files[0];
+    if (!f) { toast("Chọn một tệp"); return; }
+    if (f.size > 5 * 1024 * 1024) { toast("Tệp quá 5 MB"); return; }
+    const data = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",", 2)[1] || ""); r.onerror = no; r.readAsDataURL(f); });
+    try { await mem("material_add", {file_name: f.name, data}); toast("Đã thêm " + f.name); } catch (err) { toast(err.message); }
     again();
   };
   box.querySelector("#mem-search").onsubmit = async (e) => {

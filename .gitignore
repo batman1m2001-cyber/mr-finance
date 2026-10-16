@@ -18,6 +18,8 @@ data/state.db*
 # the assistant's conversations and memory, the declaring chat's history: people's own words
 data/assistant.db*
 data/chat.db*
+# the assistant's knowledge base (A5): the documents people added, and the guide's index
+data/kb/
 # the audit log's write-once segments (src/control/worm.py), beside the state file
 data/audit-worm/
 .operonx/jobs/

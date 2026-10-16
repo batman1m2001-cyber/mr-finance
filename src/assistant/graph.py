@@ -45,9 +45,12 @@ def assistant_conversations_flow(action="list", conversation_id=None, role="clie
 
 
 @graph
-def assistant_memory_flow(action="list", item_id=None, text=None, kind=None, query=None, role="client", client_id=None):
-    """The Bộ nhớ page: what the assistant remembers about the person, and their past conversations' search."""
-    got = memory_page(action=action, item_id=item_id, text=text, kind=kind, query=query, role=role, client_id=client_id)
+def assistant_memory_flow(action="list", item_id=None, text=None, kind=None, query=None, role="client", client_id=None,
+                          file_name=None, data=None, key=None):  # fmt: skip
+    """The Bộ nhớ page: what the assistant remembers about the person, their past conversations' search, and the
+    documents they added (A5)."""
+    got = memory_page(action=action, item_id=item_id, text=text, kind=kind, query=query, role=role, client_id=client_id,
+                      file_name=file_name, data=data, key=key)  # fmt: skip
     START >> got >> END
 
 
