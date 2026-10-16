@@ -3,7 +3,7 @@
    approval queue read-only: what they sent from Kế hoạch, pending or decided with the note. The RM sees the same
    queue for the picked client and decides each pending proposal, with a note (POST /api/review/decide; the
    server checks the user's role). Data: GET /api/advisory?client_id=, GET /api/review. */
-import {internal, esc, get, post, toast} from "../core/core.js";
+import {internal, esc, get, n as how, post, toast} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 
 const STATUS = {pending: ["ai", "Chờ chuyên gia duyệt"], approved: ["good", "Đã duyệt"], rejected: ["bad", "Từ chối"]};
@@ -36,12 +36,12 @@ export async function render(box, ctx) {
     return `<div class="panel qitem" data-focus="review:${esc(x.id)}">
       <div class="row tight"><b>${esc(x.client_name)}</b><span class="small muted">${new Date(x.created * 1000).toLocaleString("vi-VN")}</span>
         <span class="pill ${tone}" style="margin-left:auto">${text}</span></div>
-      <h4>${esc(x.title)}</h4>
-      <ul class="ul">${((x.data.option || {}).actions || []).map(a => `<li>${esc(a)}</li>`).join("")}</ul>
-      ${(x.data.summary || []).slice(0, 4).map(l => `<div class="kv"><span>${esc(l.label)}</span><b>${esc(l.value)}</b></div>`).join("")}
+      <div data-explains><h4>${esc(x.title)}</h4>
+      <ul class="ul">${((x.data.option || {}).actions || []).map(a => `<li>${esc(a)}</li>`).join("")}</ul></div>
+      ${(x.data.summary || []).slice(0, 4).map(l => `<div class="kv"><span data-explains>${esc(l.label)}</span><b>${how(esc(l.value), "scenario.line", {scenario: x.title, line: l.label})}</b></div>`).join("")}
       ${decide ? `<div class="decide mt"><input id="note-${esc(x.id)}" placeholder="Ghi chú cho khách hàng (không bắt buộc)" aria-label="Ghi chú cho ${esc(x.title)}">
           <button type="button" class="btn primary" data-ok="${esc(x.id)}">Duyệt</button><button type="button" class="btn danger" data-no="${esc(x.id)}">Từ chối</button></div>`
-        : x.note ? `<p class="small mt-xs"><b>Ghi chú:</b> ${esc(x.note)}</p>` : ""}</div>`;
+        : x.note ? `<p class="small mt-xs" data-quote><b>Ghi chú:</b> ${esc(x.note)}</p>` : ""}</div>`;
   };
 
   const team = staff ? "" : adv.error ? `<div class="notice bad" role="alert">Không tải được: ${esc(adv.error)}</div>`

@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — “Cách tính” on every number (BRD_REMAINING_PLAN G1, NFR-11): one server catalogue of about 95
+  formulas (`src/explain/`, `GET /api/how`), each naming the function that computes it; every money or percent
+  figure of every page and role opens the drawer with its formula and inputs (and the code, for staff); settings,
+  parameters and demo sample data say what they are; a browser test walks every route, the states a click reveals
+  and the detail pages, and fails on any figure without a formula — FEAT-09, matrix (NFR-11 verified), Q-14
+  resolved, design_system, non_functional_requirements, BRD_COMPLETION_REPORT.md.
+
 - 2026-10-16 — The remaining rules and the scale test (BRD completion F10): each goal's VND impact at every
   horizon and band, its share of the goals' pool run through the same engine (BR-08; the overview card of policy
   and project items relabelled as their own rules, Q-03); the client's own “Cách tính” per effective event (F-D9);

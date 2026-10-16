@@ -21,7 +21,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-11 | ambiguity | FR-404 level thresholds and funding source are undefined; built on our proposal | resolved (ADR-0017) |
 | Q-12 | conflict | FR-501 “the challenger writes the summary” vs F02 / §7.1 | resolved (BRD F02) |
 | Q-13 | conflict | NFR-05 exact decimals vs the BRD's own float engine (F22) | resolved (ADR-0011) |
-| Q-14 | conflict | NFR-11 “every number has cách tính” vs flow 2 (no tickers to clients) | open |
+| Q-14 | conflict | NFR-11 “every number has cách tính” vs flow 2 (no tickers to clients) | resolved (FEAT-09, G1) |
 | Q-15 | conflict | §13.1 two-person rule: sentence vs ownership table | resolved for the demo (ADR-0016) |
 | Q-16 | gap | Brief: re-asking the risk test on triggers | open |
 | Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | resolved (ADR-0020) |
@@ -100,6 +100,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 - **Fact:** NFR-11: every number has a “cách tính” button. Flow 2 (§14): client content has no ticker names.
 - **Fact:** the trace (FR-406) names holdings, so the product shows it to staff only; the client sees the formula sentence and the asset-class breakdown but no trace button ([SCR-CL-05](../assets/current_ui/SCR-CL-05_desktop-light.jpg)).
 - **Open:** a client-level “cách tính” at asset-class granularity. Owner: product + Compliance.
+- **Resolved 2026-10-16 (F10, G1):** both. The client has its own “cách tính” of a news-impact number by asset class (F-D9), and since G1 every money or percent figure of every page, for every role, opens its formula and inputs from one catalogue ([FEAT-09](../features/FEAT-09-number-trace.md)); the holding-level trace stays staff-only, so flow 2 holds.
 
 ### Q-15 — Two-person rule
 - **Fact:** §13.1 sentence: “cần hai người cho prompt, mô hình AI, mô hình yếu tố, ngưỡng cảnh báo và danh sách hạn chế”. §13.1 table: two people only for prompts and AI models; thresholds, factor model, restricted list “Không”. F14 says the factor model, thresholds and restricted list *were changed* to need two people.

@@ -771,3 +771,13 @@ body.signed-out .bellwrap, body.signed-out .cp-fab, body.signed-out #reset { dis
   box-shadow: 0 0 0 2px var(--surface); }
 .good-text { color: var(--good); }
 @media (max-width: 560px) { .cov { width: 56px; } .covcell { gap: 6px; } }
+
+/* cách tính (BRD-NFR-11): a number is a quiet button; dotted underline on hover/focus, the drawer explains it */
+.how-n { cursor: help; text-decoration: underline dotted transparent; text-underline-offset: 3px; }
+.how-n:hover, .how-n:focus-visible { text-decoration-color: currentColor; }
+.how-n:focus-visible, .num-svg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.num-svg { cursor: help; }
+.how { display: grid; gap: 10px; }
+.how .how-value { font-size: 28px; font-weight: 700; }
+.how h4 { margin: 8px 0 0; }
+.how td.r { text-align: right; white-space: nowrap; }

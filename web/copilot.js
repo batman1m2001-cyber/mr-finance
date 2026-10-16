@@ -8,7 +8,7 @@
    was read from (its `focus` keys) on this page, or on the evidence page once it opens. */
 import {$, esc, followedIds, post} from "./core/core.js";
 import {icon} from "./core/icons.js?v=20261016r1";
-import {progress} from "./charts/mini.js?v=20261016r1";
+import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
 
 const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ"};

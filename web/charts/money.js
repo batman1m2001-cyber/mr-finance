@@ -49,7 +49,7 @@ export function cashflow(months, large, width) {
   for (let v = -step; v >= -bot; v -= step) ticks.push(v);
   for (const v of ticks) {
     svg("line", {x1: L, x2: W - R, y1: y(v), y2: y(v)}, grid);
-    svg("text", {x: L - 8, y: y(v) + 4, "text-anchor": "end", class: "lbl"}, s).textContent = (v > 0 ? "+" : "−") + vnd(Math.abs(v));
+    svg("text", {x: L - 8, y: y(v) + 4, "text-anchor": "end", class: "lbl", "data-axis": ""}, s).textContent = (v > 0 ? "+" : "−") + vnd(Math.abs(v));
   }
   svg("line", {x1: L, x2: W - R, y1: zero, y2: zero, class: "base"}, s);
   const n = months.length, band = (W - L - R) / n, bw = Math.min(22, band * 0.6);

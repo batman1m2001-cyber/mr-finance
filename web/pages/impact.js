@@ -1,7 +1,7 @@
 /* Tin tác động: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, drawer, empty, esc, get, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
+import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
@@ -36,11 +36,11 @@ export async function render(box, ctx) {
     <div class="cols">
       <div class="panel hero-panel c5">
         <div class="eyebrow">Tin tác động · 3 tháng tới</div>
-        <div class="hero ${signClass(total)}" style="margin-top:10px">${vnd(total, true)}</div>
-        <div class="takeaway">${effective.length ? `${effective.length} sự kiện đang có hiệu lực${topClass ? `; chủ yếu qua <b>${esc(ASSET_CLASS[topClass[0]] || topClass[0])}</b> (${vnd(topClass[1], true)})` : ""}.` : "Chưa có sự kiện nào đang hiệu lực."}</div>
+        <div class="hero ${signClass(total)}" style="margin-top:10px">${how(vnd(total, true), "impact.expected_3m", {event: `${effective.length} sự kiện đang hiệu lực`})}</div>
+        <div class="takeaway">${effective.length ? `${effective.length} sự kiện đang có hiệu lực${topClass ? `; chủ yếu qua <b>${esc(ASSET_CLASS[topClass[0]] || topClass[0])}</b> (${how(vnd(topClass[1], true), "impact.by_class", {part: ASSET_CLASS[topClass[0]] || topClass[0]})})` : ""}.` : "Chưa có sự kiện nào đang hiệu lực."}</div>
         <div class="row" style="margin-top:12px">
-          <span class="chip">${pct(nw ? total / nw : 0, true, 2)} tài sản ròng</span>
-          ${flagged ? '<span class="badge bad">RM xem trước: P10 3 tháng ≤ −5%</span>' : ""}
+          <span class="chip">${how(pct(nw ? total / nw : 0, true, 2), "impact.expected_3m", {event: `${effective.length} sự kiện đang hiệu lực`})} tài sản ròng</span>
+          ${flagged ? '<span class="badge bad" data-explains>RM xem trước: P10 3 tháng ≤ −5%</span>' : ""}
           <span class="badge ai">AI hỗ trợ · CIO duyệt</span>
         </div>
         <div class="footnote">Kỳ vọng = trung bình theo xác suất các kịch bản CIO duyệt. Giá ngày ${esc(sel.price_date || "—")} · ${sel.model && sel.model.assumed === false ? `mô hình ${esc(sel.model.version)} ước lượng từ dữ liệu thị trường` : "tham số mô hình là giả định"}${d.labels ? ` · ${esc(d.labels.responsible)}` : ""}.</div>
@@ -89,7 +89,7 @@ export async function render(box, ctx) {
         <div class="row" style="margin-top:6px"><button type="button" class="btn sm" data-run="${esc(i.run_id)}" aria-pressed="false">Xem dải</button>
         ${staff ? `<button type="button" class="linkbtn small" data-trace="${esc(i.run_id)}">Cách tính</button>`
           : i.status === "EFFECTIVE" ? `<button type="button" class="linkbtn small" data-how="${esc(i.run_id)}">Cách tính</button>` : ""}</div></div>
-      <div style="text-align:right"><div class="num ${signClass(e)}" style="font-weight:700">${vnd(e, true)}</div><div class="small muted">${pct(i.pct["3m"].expected, true, 2)}</div></div></div>`;
+      <div style="text-align:right"><div class="num ${signClass(e)}" style="font-weight:700">${how(vnd(e, true), "impact.expected_3m", {event: i.event.title})}</div><div class="small muted">${how(pct(i.pct["3m"].expected, true, 2), "impact.expected_3m", {event: i.event.title})}</div></div></div>`;
   }).join("");
   // the timeline: one row per event, its steps in order with their times, read from the stored records
   const at = (t) => {  // dd/mm hh:mm in Vietnam time
@@ -110,7 +110,7 @@ export async function render(box, ctx) {
     const nm = await names();
     const factors = {};
     for (const i of effective) for (const [k, v] of Object.entries(i.by_factor || {})) factors[k] = (factors[k] || 0) + v;
-    diverging($("#by-factor", box), Object.entries(factors).map(([k, v]) => ({label: nm[k] || k, value: v})), {label: "Theo yếu tố"});
+    diverging($("#by-factor", box), Object.entries(factors).map(([k, v]) => ({label: nm[k] || k, value: v})), {label: "Theo yếu tố", metric: "impact.by_factor"});
     const hold = {};
     for (const i of effective) for (const h of i.holdings || []) {
       if (!h.contribution) continue;
@@ -119,7 +119,7 @@ export async function render(box, ctx) {
     }
     const rows = Object.entries(hold).sort((a, b) => Math.abs(b[1].v) - Math.abs(a[1].v)).slice(0, 8);
     $("#by-holding", box).innerHTML = rows.length ? `<table class="table"><tbody>${rows.map(([k, h]) =>
-      `<tr class="click" data-key="${esc(k)}" title="${esc(h.method)}"><td>${esc(h.name)}${h.modelled ? ' <span class="badge assumed">mô hình</span>' : ""}</td><td class="r ${signClass(h.v)}">${vnd(h.v, true)}</td></tr>`).join("")}</tbody></table>` : `<div class="small muted">—</div>`;
+      `<tr class="click" data-key="${esc(k)}" title="${esc(h.method)}"><td>${esc(h.name)}${h.modelled ? ' <span class="badge assumed">mô hình</span>' : ""}</td><td class="r ${signClass(h.v)}">${how(vnd(h.v, true), "impact.holding")}</td></tr>`).join("")}</tbody></table>` : `<div class="small muted">—</div>`;
     box.querySelectorAll("[data-key]").forEach(r => { r.onclick = () => openTrace(sel.run_id, client, r.dataset.key); });
   }
 }
@@ -130,13 +130,13 @@ function goalsPanel(g, staff) {
     if (!rows.length) return "";
     return `<div class="panel c12"><h3>Lưu ý cho mục tiêu của bạn <span class="hint">quy định mới về chuyển tiền ra nước ngoài</span></h3>
       ${rows.map(m => `<div style="padding:8px 0;border-bottom:1px solid var(--hair)"><b>${esc(m.goal)}</b> <span class="badge ${LEVEL[m.level]}">${esc(m.level_label)}</span>
-        <div class="small">${esc(m.client_message)}</div><div class="small muted">Nên chuẩn bị trước ${esc(m.milestone)}${m.documents.length ? ` · hồ sơ: ${m.documents.map(esc).join(", ")}` : ""}</div></div>`).join("")}</div>`;
+        <div class="small" data-explains>${esc(m.client_message)}</div><div class="small muted">Nên chuẩn bị trước ${esc(m.milestone)}${m.documents.length ? ` · hồ sơ: ${m.documents.map(esc).join(", ")}` : ""}</div></div>`).join("")}</div>`;
   }
   const goalsList = g.goals || [];
   if (!goalsList.length && !rows.length) return "";
   const opts = Object.entries(g.purposes || {}).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
   return `<div class="panel c12"><h3>Mục tiêu và quy định <span class="hint">nhánh mục tiêu: mốc thời gian và hồ sơ, không phải tiền</span></h3>
-    ${rows.length ? rows.map(m => `<div style="padding:6px 0"><span class="badge ${LEVEL[m.level]}">${esc(m.level_label)}</span> <b>${esc(m.goal)}</b> · ${esc(m.note_title)} · mốc <span class="num">${esc(m.milestone)}</span><div class="small muted">${esc(m.rm_hint || "")}</div></div>`).join("") : '<div class="small muted">Chưa có ghi chú quy định nào khớp mục tiêu của gia đình này.</div>'}
+    ${rows.length ? rows.map(m => `<div style="padding:6px 0"><span class="badge ${LEVEL[m.level]}">${esc(m.level_label)}</span> <b>${esc(m.goal)}</b> · ${esc(m.note_title)} · mốc <span class="num">${esc(m.milestone)}</span><div class="small muted" data-explains>${esc(m.rm_hint || "")}</div></div>`).join("") : '<div class="small muted">Chưa có ghi chú quy định nào khớp mục tiêu của gia đình này.</div>'}
     <details class="more" style="margin-top:8px"><summary>Khai dòng tiền ra nước ngoài cho mục tiêu (RM)</summary>
       ${goalsList.map(x => `<div class="row" style="margin:6px 0"><span style="min-width:220px"><b>${esc(x.label)}</b><div class="small muted">${esc(x.date)}${x.declared ? ` · đã khai: ${esc((g.purposes || {})[x.declared.purpose] || x.declared.purpose)} ${esc(x.declared.country || "")}` : " · chưa khai"}</div></span>
         <select data-purpose="${esc(x.goal_id)}">${opts}</select><input data-country="${esc(x.goal_id)}" placeholder="Nước đến" style="width:110px;padding:6px 9px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
@@ -163,13 +163,14 @@ function drawGoals(el, it) {
   const g = it.goal_impact;
   el.hidden = !(g && g.goals.length);
   if (el.hidden) return;
-  const lvl = (x) => `<span class="num">${pct(x.ratio, false, 0)}</span> <span class="badge ${FUND[x.level] || ""}">${esc(x.level)}</span>`;
+  const fe = {event: it.event.title};
+  const lvl = (x) => `<span class="num">${how(pct(x.ratio, false, 0), "goal.funding", fe)}</span> <span class="badge ${FUND[x.level] || ""}">${esc(x.level)}</span>`;
   el.innerHTML = `<h3>Mục tiêu <span class="hint">“${esc(it.event.title)}” · 3 tháng · mức đáp ứng trước → sau</span></h3>
     <table class="table"><thead><tr><th>Mục tiêu</th><th>Trước</th><th>Sau</th>${g.pool.bands ? "<th>Tác động 3 tháng (VND)</th>" : ""}</tr></thead><tbody>
     ${g.goals.map(x => `<tr><td>${esc(x.label)}${x.changed ? ' <span class="badge warn">đổi mức</span>' : ""}
-      <div class="small muted num">hạn ${esc(x.date)} · cần ${vnd(x.amount)}</div></td><td>${lvl(x.before)}</td><td>${lvl(x.after)}</td>
-      ${x.impact ? `<td class="num">${vnd(x.impact["3m"].expected, true)}<div class="small muted">P10 ${vnd(x.impact["3m"].p10, true)} · P90 ${vnd(x.impact["3m"].p90, true)}</div></td>` : g.pool.bands ? "<td></td>" : ""}</tr>`).join("")}</tbody></table>
-    <div class="footnote">Mục tiêu lấy nguồn theo thứ tự hạn từ tài sản tài chính (tiền, tiền gửi, quỹ, trái phiếu, cổ phiếu, vàng, tiền số): ${vnd(g.pool.before)} → ${vnd(g.pool.after)} (${vnd(g.pool.change, true)}). Mức: tiền cần để dành mỗi tháng ÷ thặng dư hằng tháng — ≤ 0,6 Đạt, ≤ 1 Theo dõi, cao hơn Thiếu. Đây là quy tắc của bản demo, không phải chính sách của ngân hàng.${g.pool.bands ? ` Tác động theo mục tiêu: tác động của cả nhóm tài sản đó (cùng bộ máy, mọi kỳ hạn, kỳ vọng và P5–P90) chia theo phần mỗi mục tiêu đang chiếm trước sự kiện; phần chưa gắn mục tiêu ${pct(g.unallocated.share, false, 0)} (${vnd(g.unallocated.impact["3m"].expected, true)}).` : ""}</div>`;
+      <div class="small muted num">hạn ${esc(x.date)} · cần ${how(vnd(x.amount), "goal.need")}</div></td><td>${lvl(x.before)}</td><td>${lvl(x.after)}</td>
+      ${x.impact ? `<td class="num">${how(vnd(x.impact["3m"].expected, true), "goal.event_impact", {...fe, stat: "Kỳ vọng"})}<div class="small muted">P10 ${how(vnd(x.impact["3m"].p10, true), "goal.event_impact", {...fe, stat: "P10"})} · P90 ${how(vnd(x.impact["3m"].p90, true), "goal.event_impact", {...fe, stat: "P90"})}</div></td>` : g.pool.bands ? "<td></td>" : ""}</tr>`).join("")}</tbody></table>
+    <div class="footnote">Mục tiêu lấy nguồn theo thứ tự hạn từ tài sản tài chính (tiền, tiền gửi, quỹ, trái phiếu, cổ phiếu, vàng, tiền số): ${how(vnd(g.pool.before), "goal.pool", fe)} → ${how(vnd(g.pool.after), "goal.pool", fe)} (${how(vnd(g.pool.change, true), "goal.pool", fe)}). Mức: tiền cần để dành mỗi tháng ÷ thặng dư hằng tháng — ≤ 0,6 Đạt, ≤ 1 Theo dõi, cao hơn Thiếu. Đây là quy tắc của bản demo, không phải chính sách của ngân hàng.${g.pool.bands ? ` Tác động theo mục tiêu: tác động của cả nhóm tài sản đó (cùng bộ máy, mọi kỳ hạn, kỳ vọng và P5–P90) chia theo phần mỗi mục tiêu đang chiếm trước sự kiện; phần chưa gắn mục tiêu ${how(pct(g.unallocated.share, false, 0), "goal.event_impact", fe)} (${how(vnd(g.unallocated.impact["3m"].expected, true), "goal.event_impact", {...fe, stat: "Kỳ vọng"})}).` : ""}</div>`;
 }
 
 // F-D9 (Q-14, NFR-11): the client's “cách tính” — the formula, the scenarios with the market's moves and the family's
@@ -180,6 +181,7 @@ async function openHow(runId, client) {
     const d = await get(`/api/families/${encodeURIComponent(client)}/how?run=${encodeURIComponent(runId)}`);
     const UNIT = {pct: "%", bp: " điểm cơ bản", pp: " điểm %", sd: " độ lệch chuẩn"};
     const n = d.number, mv = (m) => `${m.move > 0 ? "+" : "−"}${Math.abs(m.move).toLocaleString("vi-VN", {maximumFractionDigits: m.unit === "bp" ? 0 : 1})}${UNIT[m.unit] || ""}`;
+    body.setAttribute("data-explains", "");
     body.innerHTML = `
       <div class="eyebrow">${esc(d.event)} · giá ngày ${esc(d.run.price_date)} · CIO duyệt ${when(d.approved)}</div>
       <div class="num ${signClass(n.value)}" style="font-size:28px;font-weight:700;margin-top:6px">${vnd(n.value, true)}</div>

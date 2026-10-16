@@ -1,11 +1,21 @@
 /* The charts of the new pages: one tooltip, one legend model, thin marks, a 2px surface gap between
    fills, direct labels on the few marks that matter, a table view next to every chart. Colours come
    from the tokens (validated palette); a sign is gain/loss, a series is its slot, never its rank. */
-import {esc, vnd, pct} from "../core/core.js";
+import {esc, n, vnd, pct} from "../core/core.js";
 import {iconPaths} from "../core/icons.js?v=20261016r1";
 import {track} from "../motion.js?v=20261016r1";
 
 const NS = "http://www.w3.org/2000/svg";
+// BRD-NFR-11: an SVG number opens its “cách tính” like any other (core.explainOn reads these attributes)
+function howOn(node, metric, inputs) {
+  node.setAttribute("data-metric", metric);
+  if (inputs) node.setAttribute("data-in", JSON.stringify(inputs));
+  node.setAttribute("tabindex", "0");
+  node.setAttribute("role", "button");
+  node.classList.add("num-svg");
+  return node;
+}
+
 function el(tag, attrs, parent) {
   const n = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs || {})) if (v != null) n.setAttribute(k, v);
@@ -63,7 +73,7 @@ export function fan(box, horizons, opts = {}) {
   for (let v = lo; v <= hi + step / 2; v += step) {
     el("line", {x1: pad.l, x2: width - pad.r, y1: y(v), y2: y(v), class: Math.abs(v) < step / 2 ? "zero" : null,
       stroke: Math.abs(v) < step / 2 ? "var(--axis)" : null}, grid);
-    el("text", {x: pad.l - 8, y: y(v) + 4, "text-anchor": "end"}, svg).textContent = vnd(v, true);
+    el("text", {x: pad.l - 8, y: y(v) + 4, "text-anchor": "end", "data-axis": ""}, svg).textContent = vnd(v, true);
   }
   pts.forEach((p, i) => { el("text", {x: x(i), y: height - 8, "text-anchor": "middle"}, svg).textContent = p.label; });
   const path = (key) => pts.map((p, i) => `${i ? "L" : "M"}${x(i)},${y(p[key])}`).join("");
@@ -77,10 +87,13 @@ export function fan(box, horizons, opts = {}) {
   // keep the direct labels apart
   const ys = labels.map(l => y(l[1]));
   for (let i = 1; i < ys.length; i++) if (ys[i] - ys[i - 1] < 13) ys[i] = ys[i - 1] + 13;
+  const direct = [];
   labels.forEach((l, i) => {
     const t = el("text", {x: lx, y: ys[i] + 4, class: "lbl"}, svg);
+    direct.push(t);
     t.textContent = `${l[0]} ${short(l[1])}`;
     t.style.fill = l[2];
+    howOn(t, opts.metric || "impact.band", {...(opts.inputs || {}), stat: l[0], horizon: last.label});
   });
   pts.forEach((p, i) => {
     if (!i) return;
@@ -88,6 +101,7 @@ export function fan(box, horizons, opts = {}) {
     const hit = el("rect", {x: x(i) - 28, y: pad.t, width: 56, height: height - pad.t - pad.b, fill: "transparent", tabindex: 0}, svg);
     hover(hit, `<b>${esc(p.label)}</b><br>Kỳ vọng ${vnd(p.expected, true)}<br>P90 ${vnd(p.p90, true)} · P50 ${vnd(p.p50, true)}<br>P10 ${vnd(p.p10, true)} · P5 ${vnd(p.p5, true)}`);
   });
+  for (const t of direct) svg.appendChild(t);  // above the hover strips
   box.innerHTML = "";
   box.appendChild(svg);
   const legend = document.createElement("div");
@@ -118,8 +132,10 @@ export function diverging(box, rows, opts = {}) {
       fill: r.color || (r.value < 0 ? "var(--down)" : "var(--up)"), opacity: r.color ? 1 : 0.85}, svg);
     const v = el("text", {x: width, y: yy + 17, "text-anchor": "end", class: "val"}, svg);
     v.textContent = vnd(r.value, true);
+    howOn(v, opts.metric || "impact.by_class", {...(opts.inputs || {}), part: r.label});
     const hit = el("rect", {x: 0, y: yy, width, height: row, fill: "transparent", tabindex: 0}, svg);
     hover(hit, `<b>${esc(r.label)}</b><br>${vnd(r.value, true)}${r.title ? "<br>" + esc(r.title) : ""}`);
+    svg.appendChild(v);  // above the hover strip, so the value itself opens its “cách tính”
   });
   box.innerHTML = "";
   box.appendChild(svg);
@@ -130,8 +146,8 @@ const SLOTS = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s7)"];
 export function probBar(box, branches) {
   const total = branches.reduce((s, b) => s + b.probability, 0) || 1;
   box.innerHTML = `<div style="display:flex;gap:2px;height:26px;border-radius:8px;overflow:hidden">${branches.map((b, i) =>
-    `<div tabindex="0" data-i="${i}" style="flex:${b.probability / total};background:${SLOTS[i % 4]};min-width:4px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700">${b.probability / total >= 0.12 ? pct(b.probability / total, false, 0) : ""}</div>`).join("")}</div>
-    <div class="legend">${branches.map((b, i) => `<span><i style="background:${SLOTS[i % 4]}"></i>${esc(b.name)} ${pct(b.probability / total, false, 0)}${b.regime === "stressed" ? " · căng thẳng" : ""}</span>`).join("")}</div>`;
+    `<div tabindex="0" data-i="${i}" style="flex:${b.probability / total};background:${SLOTS[i % 4]};min-width:4px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700">${b.probability / total >= 0.12 ? n(pct(b.probability / total, false, 0), "scenario.probability") : ""}</div>`).join("")}</div>
+    <div class="legend">${branches.map((b, i) => `<span><i style="background:${SLOTS[i % 4]}"></i>${esc(b.name)} ${n(pct(b.probability / total, false, 0), "scenario.probability")}${b.regime === "stressed" ? " · căng thẳng" : ""}</span>`).join("")}</div>`;
   box.querySelectorAll("[data-i]").forEach((n) => {
     const b = branches[+n.dataset.i];
     hover(n, `<b>${esc(b.name)}</b> · ${pct(b.probability / total, false, 0)}<br>${b.regime === "stressed" ? "Chế độ căng thẳng" : "Chế độ bình thường"}`);
@@ -143,14 +159,16 @@ export const slot = (i) => SLOTS[i % 4];
 export function heat(box, cols, rows, opts = {}) {
   // rows: [{label, values: {col: number}, title?}], values as shares (−0.02 = −2 %)
   const maxAbs = Math.max(1e-9, ...rows.flatMap(r => cols.map(c => Math.abs(r.values[c] || 0))));
-  const cell = (v) => {
+  // opts.metric: the cells' “cách tính” (opts.inputs(row, col) its inputs)
+  const cell = (v, r, c) => {
     if (!v) return `<td class="cell muted">·</td>`;
     const a = Math.min(1, Math.abs(v) / maxAbs);
     const color = v < 0 ? "var(--down)" : "var(--up)";
-    return `<td class="cell" style="background:color-mix(in srgb, ${color} ${Math.round(8 + a * 52)}%, transparent)" title="${esc(pct(v, true, 2))}">${pct(v, true, 1)}</td>`;
+    const text = opts.metric ? n(pct(v, true, 1), opts.metric, opts.inputs ? opts.inputs(r, c) : null) : pct(v, true, 1);
+    return `<td class="cell" style="background:color-mix(in srgb, ${color} ${Math.round(8 + a * 52)}%, transparent)" title="${esc(pct(v, true, 2))}">${text}</td>`;
   };
   box.innerHTML = `<div class="scrollx"><table class="table heat"><thead><tr><th>${esc(opts.corner || "")}</th>${cols.map(c => `<th class="r" title="${esc(opts.colTitle ? opts.colTitle(c) : c)}">${esc(opts.colLabel ? opts.colLabel(c) : c)}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map(r => `<tr><td>${esc(r.label)}</td>${cols.map(c => cell(r.values[c])).join("")}</tr>`).join("")}</tbody></table></div>`;
+    <tbody>${rows.map(r => `<tr><td>${esc(r.label)}</td>${cols.map(c => cell(r.values[c], r, c)).join("")}</tr>`).join("")}</tbody></table></div>`;
 }
 
 // ── sparkline: items per hour ────────────────────────────────────────────────
@@ -161,8 +179,8 @@ export function spark(values, w = 96, h = 22) {
 }
 
 // ── factor moves of a branch, as a share of one month's usual move ───────────
-export function moves(box, rows) {
-  // rows: [{name, text, z, core}] — z = move / monthly volatility (comparable across units)
+export function moves(box, rows, opts = {}) {
+  // rows: [{name, text, z, core}] — z = move / monthly volatility (comparable across units); opts.metric, opts.inputs
   const max = Math.max(1, ...rows.map(r => Math.abs(r.z)));
   box.innerHTML = rows.map(r => {
     const w = Math.round((Math.abs(r.z) / max) * 50);
@@ -171,7 +189,7 @@ export function moves(box, rows) {
       <span style="position:relative;height:12px;background:var(--surface-2);border-radius:6px">
         <span style="position:absolute;top:0;bottom:0;${r.z < 0 ? `right:50%` : `left:50%`};width:${w}%;background:${r.z < 0 ? "var(--down)" : "var(--up)"};border-radius:6px"></span>
         <span style="position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--axis)"></span></span>
-      <span class="num" style="text-align:right">${esc(r.text)}</span></div>`;
+      <span class="num" style="text-align:right">${opts.metric ? n(esc(r.text), opts.metric, opts.inputs) : esc(r.text)}</span></div>`;
   }).join("");
 }
 
@@ -272,6 +290,7 @@ export function sankey(box, f, opts = {}) {
     t.textContent = b.label.length > max ? b.label.slice(0, max - 1) + "…" : b.label;
     const v = el("text", {x, y: y + 15, "text-anchor": anchor, class: "val"}, svg);
     v.textContent = fmt(b.amount);
+    howOn(v, b.rows ? "flow.band" : "flow.left", b.rows ? {rows: String(b.rows.length)} : {total_in: vnd(f.total_in), total_out: vnd(f.total_out)});
   };
   for (const b of left) {
     el("rect", {x: x0, y: b.y, width: nodeW, height: b.h, rx: 4, fill: b.color}, svg);

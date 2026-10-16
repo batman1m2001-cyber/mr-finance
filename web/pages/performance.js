@@ -3,9 +3,9 @@
    missed, news missed), each AI in the pipeline with its score, metrics and a twelve-month accuracy line, the
    advice log, the important news it missed, how much the client reads, and the risk tests over time (tolerance
    against capacity). Data: GET /api/advisory?client_id=. perfall.js shows the same over every client. */
-import {internal, esc, get, pct, vnd} from "../core/core.js";
+import {internal, esc, get, n as how, pct, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
-import {columns, lines, sparkline} from "../charts/money.js?v=20261016r3";
+import {columns, lines, sparkline} from "../charts/money.js?v=20261016r4";
 
 export const OUTCOME = {right: ["good", "Đúng"], wrong: ["bad", "Sai"], missed: ["warn", "Bỏ lỡ"], avoided: ["", "Không làm · đúng"], open: ["ai", "Đang theo dõi"]};
 const AGENT_NAME = {news: "AI News Reader", impact: "AI Impact Assessor", planner: "AI Planning Advisor", chat: "AI Client Chat"};
@@ -21,10 +21,10 @@ export function tiles(sm, newsSub) {
   const decided = sm.right + sm.wrong;
   return `<div class="kpis six">
     ${kpi("list", "var(--accent)", "Khuyến nghị", sm.advice, `${sm.right} đúng · ${sm.wrong} sai · ${sm.open} đang theo dõi`)}
-    ${kpi("target", "var(--accent)", "Tỷ lệ đúng", decided ? pct(sm.right / decided, false, 0) : "—", "trên các khuyến nghị đã thực hiện")}
-    ${kpi("stock", "var(--good)", "Tiền mang lại", vnd(sm.gained, true), "từ các khuyến nghị đúng", "up")}
-    ${kpi("down", "var(--critical)", "Sai, thiệt hại", vnd(sm.lost, true), `${sm.wrong} khuyến nghị sai`, "down")}
-    ${kpi("clock", "var(--warning)", "Hành động bỏ lỡ", sm.missed, `khách hàng không thực hiện · đã có thể thêm ${vnd(sm.missed_value)}`)}
+    ${kpi("target", "var(--accent)", "Tỷ lệ đúng", decided ? how(pct(sm.right / decided, false, 0), "advisory.hit_rate", {right: String(sm.right), wrong: String(sm.wrong)}) : "—", "trên các khuyến nghị đã thực hiện")}
+    ${kpi("stock", "var(--good)", "Tiền mang lại", how(vnd(sm.gained, true), "advisory.value", {count: String(sm.right)}), "từ các khuyến nghị đúng", "up")}
+    ${kpi("down", "var(--critical)", "Sai, thiệt hại", how(vnd(sm.lost, true), "advisory.value", {count: String(sm.wrong)}), `${sm.wrong} khuyến nghị sai`, "down")}
+    ${kpi("clock", "var(--warning)", "Hành động bỏ lỡ", sm.missed, `khách hàng không thực hiện · đã có thể thêm ${how(vnd(sm.missed_value), "advisory.value", {count: String(sm.missed)})}`)}
     ${kpi("news", "var(--warning)", "Tin quan trọng bị miss", sm.missed_news, newsSub)}
   </div>`;
 }
@@ -34,23 +34,23 @@ export function pipeline(agents, hint, sub) {
   return `<div class="panel mt"><h3>AI pipeline <span class="hint">${hint}</span></h3>
     <div class="pipe">${agents.map((g, i) => `<div class="agent">
       <div class="row tight one"><span class="ic-chip sm">${icon(AGENT_ICON[g.id] || "bot", {size: 14})}</span>
-        <div><b>${i + 1}. ${esc(g.name)}</b><div class="small muted">${esc(g.name_vi)}</div></div><span class="score">${g.score}</span></div>
+        <div><b>${i + 1}. ${esc(g.name)}</b><div class="small muted">${esc(g.name_vi)}</div></div><span class="score">${how(String(g.score), "advisory.agent_metric")}</span></div>
       <div class="spark" data-spark="${i}"></div>${sub(g)}</div>`).join("")}</div></div>`;
 }
 
 export function adviceTable(rows, who) {
   return `<table class="table"><thead><tr><th>Ngày</th><th>Khuyến nghị</th><th>Kết quả</th><th class="r">Giá trị</th></tr></thead><tbody>
-    ${rows.map(x => `<tr><td class="nowrap">${esc(x.date)}</td><td>${esc(x.text)}<div class="small muted">${who ? esc(x.client) + " · " : ""}${esc(AGENT_NAME[x.agent] || x.agent)}</div></td>
+    ${rows.map(x => `<tr><td class="nowrap">${esc(x.date)}</td><td><span data-explains>${esc(x.text)}</span><div class="small muted">${who ? esc(x.client) + " · " : ""}${esc(AGENT_NAME[x.agent] || x.agent)}</div></td>
       <td><span class="pill ${OUTCOME[x.outcome][0]}">${OUTCOME[x.outcome][1]}</span></td>
-      <td class="r ${x.value > 0 && x.outcome === "right" ? "up" : x.value < 0 ? "down" : ""}">${x.value ? vnd(x.value, x.outcome !== "missed") : "—"}</td></tr>`).join("")}
+      <td class="r ${x.value > 0 && x.outcome === "right" ? "up" : x.value < 0 ? "down" : ""}">${x.value ? how(vnd(x.value, x.outcome !== "missed"), "advisory.value") : "—"}</td></tr>`).join("")}
   </tbody></table>`;
 }
 
 export function missedList(news) {
-  return `<ul class="missed">${news.map(n => `<li><div class="row spread"><b>${esc(n.title)}</b><span class="down nowrap">${vnd(n.impact, true)}</span></div>
-    <div class="small"><span class="muted">Xảy ra:</span> ${esc(n.date)} · <span class="muted">Tín hiệu sớm:</span> ${esc(n.signal)}</div>
+  return `<ul class="missed">${news.map(n => `<li><div class="row spread"><b data-quote>${esc(n.title)}</b><span class="down nowrap">${how(vnd(n.impact, true), "advisory.missed_news")}</span></div>
+    <div class="small"><span class="muted">Xảy ra:</span> ${esc(n.date)} · <span class="muted">Tín hiệu sớm:</span> <span data-quote>${esc(n.signal)}</span></div>
     ${n.clients ? `<div class="small"><span class="muted">Khách hàng bị ảnh hưởng:</span> ${n.clients.map(esc).join(", ")}</div>` : ""}
-    <div class="small muted">Vì sao bỏ lỡ: ${esc(n.why)}</div></li>`).join("")}</ul>`;
+    <div class="small muted" data-explains>Vì sao bỏ lỡ: ${esc(n.why)}</div></li>`).join("")}</ul>`;
 }
 
 export const engSeg = () => `<div class="seg" role="group" aria-label="Chỉ số">${ENG.map(([k, l]) => `<button type="button" data-eng="${k}" aria-pressed="${eng.view === k}">${l}</button>`).join("")}</div>`;
@@ -85,9 +85,9 @@ export async function render(box, ctx) {
     <div class="pagehead"><div><div class="eyebrow">Khách hàng</div><h1 class="h1">Advisory performance</h1>
       <p class="lede">Hiệu quả tư vấn và AI cho khách hàng ${esc(me.name || client)} · 12 tháng</p></div>
       <a class="btn sm" href="#/rm/hieu-qua">Tất cả khách hàng ${icon("arrow", {size: 14})}</a></div>
-    ${tiles(t.summary, `đã có tín hiệu sớm · tác động ${vnd(t.summary.missed_news_value, true)}`)}
+    ${tiles(t.summary, `đã có tín hiệu sớm · tác động ${how(vnd(t.summary.missed_news_value, true), "advisory.missed_news")}`)}
     ${pipeline(t.agents, "hiệu quả từng AI · điểm 0–100 · xu hướng độ chính xác 12 tháng",
-      g => g.metrics.map(m => `<div class="kv"><span>${esc(m.label)}</span><b class="${m.tone === "bad" ? "down" : ""}">${esc(m.value)}</b></div>`).join(""))}
+      g => g.metrics.map(m => `<div class="kv"><span>${esc(m.label)}</span><b class="${m.tone === "bad" ? "down" : ""}">${how(esc(m.value), "advisory.agent_metric")}</b></div>`).join(""))}
     <div class="cols mt">
       <div class="panel c7"><h3>Nhật ký khuyến nghị <span class="hint">${t.advice.length} khuyến nghị</span></h3>${adviceTable(t.advice)}</div>
       <div class="panel c5"><h3>Tin quan trọng bị bỏ lỡ <span class="hint">đã có thể dự đoán</span></h3>${missedList(t.missed_news)}</div>
@@ -95,14 +95,14 @@ export async function render(box, ctx) {
         <div class="kpis three">
           <div class="kpi"><div class="k">Thời gian đọc</div><div class="v">${avg(e.minutes)} phút</div><div class="s muted">trung bình mỗi tuần</div></div>
           <div class="kpi"><div class="k">Số ngày đọc</div><div class="v">${avg(e.days)} ngày</div><div class="s muted">trung bình mỗi tháng</div></div>
-          <div class="kpi"><div class="k">Cảnh báo đã mở</div><div class="v">${esc(e.alerts_opened)}</div><div class="s muted">chuỗi ${e.streak} ngày liền</div></div>
+          <div class="kpi"><div class="k">Cảnh báo đã mở</div><div class="v">${how(esc(e.alerts_opened), "advisory.alerts_opened")}</div><div class="s muted">chuỗi ${e.streak} ngày liền</div></div>
         </div>
         <div class="mt">${engSeg()}</div><div id="eng-chart" class="mt"></div></div>
       <div class="panel c6"><h3>Khẩu vị rủi ro theo thời gian <span class="hint">${tests.length} lần làm bài test</span></h3>
         <div class="legend"><span><i style="background:var(--s2)"></i>Mức chấp nhận rủi ro (khách hàng muốn)</span><span><i style="background:var(--s1)"></i>Khả năng chịu rủi ro (dữ liệu cho thấy)</span></div>
         <div id="risk-chart" class="mt"></div>
         <p class="small">Mức chấp nhận ${drift >= 0 ? "tăng" : "giảm"} <b>${Math.abs(drift)} điểm</b> từ ${esc(first.date)} · hồ sơ hiện tại <b>${esc(last.profile || "—")}</b>${last.live ? " (bài test vừa làm)" : ""}.</p>
-        ${over > 15 ? `<div class="notice warn">${icon("alert", {size: 15})} Khách hàng muốn chịu rủi ro cao hơn khả năng ${over} điểm: chuyên gia nên trao đổi lại trước khi tăng tỷ trọng rủi ro.</div>` : ""}</div>
+        ${over > 15 ? `<div class="notice warn" data-explains>${icon("alert", {size: 15})} Khách hàng muốn chịu rủi ro cao hơn khả năng ${over} điểm: chuyên gia nên trao đổi lại trước khi tăng tỷ trọng rủi ro.</div>` : ""}</div>
     </div>
     <p class="small muted mt">${icon("info", {size: 14})} ${esc(a.note)}</p>`;
   drawSparks(box, t.agents, "độ chính xác 12 tháng");

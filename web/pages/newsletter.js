@@ -32,7 +32,7 @@ async function renderList(box, ctx) {
     ${cio ? `<div class="panel" style="margin-bottom:16px"><details class="more" ${d.newsletters.length ? "" : "open"}><summary>Soạn bản tin mới</summary>
       ${d.approved_views.length ? `<form id="nl" class="cols" style="margin-top:8px">
         <div class="field c12">Nhận định đã duyệt (1–6)<div class="list">${d.approved_views.map(v => `<label class="item" style="grid-template-columns:auto 1fr;cursor:pointer">
-          <input type="checkbox" name="views" value="${esc(v.id)}"><div><div class="t mono">${esc(v.id)}</div><div class="m">${esc(v.summary)}</div></div></label>`).join("")}</div></div>
+          <input type="checkbox" name="views" value="${esc(v.id)}"><div><div class="t mono">${esc(v.id)}</div><div class="m" data-quote>${esc(v.summary)}</div></div></label>`).join("")}</div></div>
         <label class="field c6">Tiêu đề<input name="title" placeholder="Bản tin thị trường (để trống: theo ngày)"></label>
         <label class="field c3">Phần mở đầu<select name="mode"><option value="template">Theo mẫu</option><option value="agent">CIO agent viết (qua kiểm tra nội dung)</option></select></label>
         <label class="field c3">Gửi lúc<input name="send_at" type="datetime-local" value="${tomorrow8()}" required></label>

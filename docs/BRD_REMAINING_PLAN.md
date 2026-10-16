@@ -41,7 +41,10 @@ pilot can supply.
 One branch and PR per phase, in this order; each merged, deployed and its docs and matrix rows updated before
 the next.
 
-- **G1 — Cách tính everywhere (NFR-11).** The `how` contract; the drawer; every page; the route test.
+- **G1 — Cách tính everywhere (NFR-11).** The `how` contract; the drawer; every page; the route test. **Done**
+  (2026-10-16): about 95 metrics in `src/explain/metrics.py`; 1,171 unexplained figures on the dev data → 0;
+  `tests/ui/test_how.py`, `tests/test_explain.py`. G-D1 as built: the formula is the server's (the catalogue), the
+  inputs come with the number from the same answer; the attribute is `data-metric`, not `data-num`.
 - **G2 — The client-data barrier (NFR-08).** `client_ai`; the barrier; `llm:onprem`; the recorded-provider test.
 - **G3 — Encryption and secrets (NFR-07).** `control.secrets`; column encryption and rotation; headers and
   cookies; the attack suite.

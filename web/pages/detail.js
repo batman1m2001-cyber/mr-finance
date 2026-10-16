@@ -3,11 +3,11 @@
    opening onto its sources), allocation with profit against cost, portfolio profit and loss against the
    benchmark, risk against the accepted drawdown with concentration warnings, the liquidity reserve, cash flow
    (six months past, 12/24/36 ahead) with large payments and recurring items, and the top news by impact. */
-import {internal, $, esc, pct, post, vnd} from "../core/core.js";
+import {internal, n, nAttrs, $, esc, pct, post, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {hover} from "../charts/charts.js";
-import {donut, gauge} from "../charts/mini.js?v=20261016r1";
-import {cashSeries, cashflow, monthName, monthsText} from "../charts/money.js?v=20261016r3";
+import {donut, gauge} from "../charts/mini.js?v=20261016r2";
+import {cashSeries, cashflow, monthName, monthsText} from "../charts/money.js?v=20261016r4";
 
 const GROUP_COLOR = {
   "Bất động sản": "var(--s1)", "Cổ phiếu": "var(--s2)", "Tiền & tiền gửi": "var(--s3)", "Vàng": "var(--s4)",
@@ -35,6 +35,7 @@ export async function render(box, ctx) {
   ]);
   const nw = d.net_worth, pf = d.performance, rk = d.risk, lq = d.liquidity, cf = d.cashflow;
   const up = nw.month_change >= 0;
+  const chg = {now: vnd(nw.value), prev: vnd(nw.prev_value)};
   const holdingsHref = staff ? ctx.href("khach-hang", "tai-san") : ctx.href("tai-san");
   const policyHref = staff ? ctx.href("khach-hang", "chinh-sach") : ctx.href("tin", "chinh-sach");
   const who = d.members.map(m => `<span class="chip">${esc(m.name)} · ${esc(m.relation)}</span>`).join("")
@@ -45,46 +46,46 @@ export async function render(box, ctx) {
       <div class="panel c12 nwhero">
         <div>
           <div class="pc-head"><span class="ic-chip sm" style="--tone:var(--accent)">${icon("wallet", {size: 14})}</span><span class="k">Tài sản ròng · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></div>
-          <div class="hero-v">${vnd(nw.value)}</div>
-          <div><span class="${up ? "up" : "down"}">${up ? "▲" : "▼"} ${pct(nw.month_change_pct, true)}</span> <span class="muted">so với tháng trước (${vnd(nw.month_change, true)})</span></div>
-          <div class="small muted mt-xs">Tài sản ${vnd(nw.assets)} · Nợ ${vnd(nw.liabilities)} · cập nhật ${esc(d.as_of)}</div>
+          <div class="hero-v">${n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</div>
+          <div><span class="${up ? "up" : "down"}">${up ? "▲" : "▼"} ${n(pct(nw.month_change_pct, true), "net_worth.month_change", chg)}</span> <span class="muted">so với tháng trước (${n(vnd(nw.month_change, true), "net_worth.month_change", chg)})</span></div>
+          <div class="small muted mt-xs">Tài sản ${n(vnd(nw.assets), "assets.total")} · Nợ ${n(vnd(nw.liabilities), "liabilities.total")} · cập nhật ${esc(d.as_of)}</div>
           <div class="row tight mt">${who}</div>
         </div>
         <div id="srcmix"></div>
       </div>
       <div class="panel c6"><h3>Phân bổ tài sản <span class="hint">lãi/lỗ: % so với giá vốn</span></h3><div id="alloc"></div></div>
       <div class="panel c6"><h3>Lãi / lỗ danh mục <span class="hint">cổ phiếu, quỹ, trái phiếu</span></h3>
-        <div class="kv"><span>Đã chốt (từ đầu năm)</span><b class="${pf.realized_ytd >= 0 ? "up" : "down"}">${vnd(pf.realized_ytd, true)}</b></div>
-        <div class="kv"><span>Chưa chốt</span><b>${vnd(pf.unrealized, true)} <span class="muted">(${pct(pf.unrealized_pct, true)})</span></b></div>
-        <div class="kv"><span>Lợi nhuận từ đầu năm</span><b>${pct(pf.ytd_return, true)}</b></div>
-        <div class="kv"><span>So với ${esc(pf.benchmark_name)} (${pct(pf.benchmark_ytd, true)})</span><b class="${pf.vs_benchmark >= 0 ? "up" : "down"}">${pct(pf.vs_benchmark, true)}</b></div>
+        <div class="kv"><span>Đã chốt (từ đầu năm)</span><b class="${pf.realized_ytd >= 0 ? "up" : "down"}">${n(vnd(pf.realized_ytd, true), "perf.realized_ytd")}</b></div>
+        <div class="kv"><span>Chưa chốt</span><b>${n(vnd(pf.unrealized, true), "perf.unrealized", {cost: vnd(pf.invested_cost)})} <span class="muted">(${n(pct(pf.unrealized_pct, true), "perf.unrealized", {cost: vnd(pf.invested_cost)})})</span></b></div>
+        <div class="kv"><span>Lợi nhuận từ đầu năm</span><b>${n(pct(pf.ytd_return, true), "perf.ytd_return")}</b></div>
+        <div class="kv"><span>So với ${esc(pf.benchmark_name)} (${n(pct(pf.benchmark_ytd, true), "perf.benchmark_ytd", {benchmark: pf.benchmark_name})})</span><b class="${pf.vs_benchmark >= 0 ? "up" : "down"}">${n(pct(pf.vs_benchmark, true), "perf.vs_benchmark", {mine: pct(pf.ytd_return, true), bench: pct(pf.benchmark_ytd, true)})}</b></div>
         ${pf.by_class.length ? `<table class="table mt"><thead><tr><th>Loại</th><th class="r">Giá trị</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
-          ${pf.by_class.map(c => `<tr><td>${esc(c.label)}</td><td class="r">${vnd(c.value)}</td><td class="r"><span class="${c.pnl >= 0 ? "up" : "down"}">${vnd(c.pnl, true)}</span> <span class="muted small">${pct(c.return, true)}</span></td></tr>`).join("")}
+          ${pf.by_class.map(c => `<tr><td>${esc(c.label)}</td><td class="r">${n(vnd(c.value), "class.value")}</td><td class="r"><span class="${c.pnl >= 0 ? "up" : "down"}">${n(vnd(c.pnl, true), "perf.class", {value: vnd(c.value), cost: vnd(c.cost)})}</span> <span class="muted small">${n(pct(c.return, true), "perf.class", {value: vnd(c.value), cost: vnd(c.cost)})}</span></td></tr>`).join("")}
         </tbody></table>` : ""}
       </div>
       <div class="panel c6"><h3>Rủi ro</h3>
         ${d.profile.risk_profile ? `<div class="kv"><span>Hồ sơ rủi ro (bài test)</span><b>${esc(d.profile.risk_profile)} · ${esc(d.profile.risk_persona)}</b></div>` : `<p class="small muted" style="margin:0 0 8px">Chưa làm bài test rủi ro: ngưỡng lấy theo hồ sơ.</p>`}
-        <div class="kv"><span>Ngưỡng sụt giảm chấp nhận</span><b>${pct(rk.limit, false, 0)}</b></div>
-        <div class="kv"><span>Mức sụt giảm ước tính khi thị trường xấu</span><b>${pct(rk.current)}</b></div>
+        <div class="kv"><span>Ngưỡng sụt giảm chấp nhận</span><b>${n(pct(rk.limit, false, 0), "risk.limit")}</b></div>
+        <div class="kv"><span>Mức sụt giảm ước tính khi thị trường xấu</span><b>${n(pct(rk.current), "risk.current", {loss: vnd(rk.stress_loss), net_worth: vnd(nw.value)})}</b></div>
         ${gauge(rk.current, rk.limit, {status: rk.status, max: Math.max(rk.limit * 1.6, rk.current * 1.1), label: `Sụt giảm ước tính ${pct(rk.current)} so với ngưỡng ${pct(rk.limit, false, 0)}`})}
-        <div class="mt-xs">${pill(rk.status)} <span class="muted small">mất ${vnd(rk.stress_loss)} trong kịch bản xấu</span></div>
-        ${d.concentration.warnings.length ? `<ul class="warns">${d.concentration.warnings.map(w => `<li>${icon("alert", {size: 14})}<span>Tập trung: ${esc(w)}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản nào tập trung quá ngưỡng.</p>`}
+        <div class="mt-xs">${pill(rk.status)} <span class="muted small">mất ${n(vnd(rk.stress_loss), "risk.loss")} trong kịch bản xấu</span></div>
+        ${d.concentration.warnings.length ? `<ul class="warns">${d.concentration.warnings.map(w => `<li>${icon("alert", {size: 14})}<span data-explains>Tập trung: ${esc(w)}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản nào tập trung quá ngưỡng.</p>`}
       </div>
       <div class="panel c6"><h3>Thanh khoản dự phòng</h3>
-        <div class="row spread"><span>${vnd(lq.value)} tiền và tài sản rút được ngay</span><b>đủ chi ${monthsText(lq.months)} ${pill(lq.status)}</b></div>
+        <div class="row spread"><span>${n(vnd(lq.value), "liquidity.value", {count: String(lq.items.length)})} tiền và tài sản rút được ngay</span><b>đủ chi ${n(monthsText(lq.months), "liquidity.months", {value: vnd(lq.value), spending: vnd(lq.spending_monthly)})} ${pill(lq.status)}</b></div>
         ${gauge(Math.min(lq.months, Math.max(12, Math.min(lq.months, 36))), 6, {status: lq.status === "ok" ? "ok" : lq.status === "low" ? "near" : "over", max: Math.max(12, Math.min(lq.months, 36)), label: `Đủ chi ${monthsText(lq.months)}, mốc an toàn 6 tháng`})}
-        <div class="small muted">Chi tiêu ${vnd(lq.spending_monthly)}/tháng · mốc an toàn: 6 tháng</div>
+        <div class="small muted">Chi tiêu ${n(vnd(lq.spending_monthly), "spending.monthly")}/tháng · mốc an toàn: 6 tháng</div>
       </div>
       <div class="panel c12">
-        <h3>Dòng tiền · ${PAST} tháng qua và ${cf.months.length} tháng tới <span class="hint">dự báo ${cf.months.length} tháng tới: vào ${vnd(cf.total_in)} · ra ${vnd(cf.total_out)}</span>
+        <h3>Dòng tiền · ${PAST} tháng qua và ${cf.months.length} tháng tới <span class="hint">dự báo ${cf.months.length} tháng tới: vào ${n(vnd(cf.total_in), "cashflow.forecast", {months: String(cf.months.length)})} · ra ${n(vnd(cf.total_out), "cashflow.forecast", {months: String(cf.months.length)})}</span>
           <span class="seg" role="group" aria-label="Số tháng" style="margin-left:auto">${[12, 24, 36].map(n => `<button type="button" data-months="${n}" aria-pressed="${months === n}">${n} tháng</button>`).join("")}</span></h3>
         <div class="legend"><span><i style="background:var(--in)"></i>Tiền vào</span><span><i style="background:var(--out)"></i>Tiền ra</span>
           <span><i style="background:var(--in);opacity:.42"></i><i style="background:var(--out);opacity:.42"></i>Dự báo (màu nhạt)</span><span><b class="down">⚠</b> Khoản phải trả lớn</span></div>
         <div id="cash" class="mt"></div>
         <div class="cols mt">
-          <div class="c6"><div class="subhead">Khoản phải trả lớn</div>${cf.large.length ? `<ul class="warns">${cf.large.map(l => `<li>${icon("alert", {size: 14})}<span><b>${monthName(l.month)}</b> · ${esc(l.label)} · ${vnd(l.amount)}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản lớn nào trong ${cf.months.length} tháng tới.</p>`}</div>
+          <div class="c6"><div class="subhead">Khoản phải trả lớn</div>${cf.large.length ? `<ul class="warns">${cf.large.map(l => `<li>${icon("alert", {size: 14})}<span><b>${monthName(l.month)}</b> · ${esc(l.label)} · ${n(vnd(l.amount), "cashflow.large", {month: monthName(l.month)})}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản lớn nào trong ${cf.months.length} tháng tới.</p>`}</div>
           <div class="c6"><div class="subhead">Khoản định kỳ tìm thấy trong giao dịch</div>
-            <div class="list">${cf.recurring.map(r => `<div class="kv"><span><span class="legend-dot" style="background:${r.direction === "in" ? "var(--in)" : "var(--out)"}"></span> ${esc(r.label)} <span class="muted small">· ${r.cadence === "monthly" ? "hằng tháng" : "theo kỳ"}</span></span><b>${r.direction === "in" ? "+" : "−"}${vnd(r.amount)}</b></div>`).join("")}</div></div>
+            <div class="list">${cf.recurring.map(r => `<div class="kv"><span><span class="legend-dot" style="background:${r.direction === "in" ? "var(--in)" : "var(--out)"}"></span> ${esc(r.label)} <span class="muted small">· ${r.cadence === "monthly" ? "hằng tháng" : "theo kỳ"}</span></span><b>${n(`${r.direction === "in" ? "+" : "−"}${vnd(r.amount)}`, "cashflow.recurring")}</b></div>`).join("")}</div></div>
         </div>
       </div>
       <div class="panel c12" id="news"></div>
@@ -99,18 +100,18 @@ export async function render(box, ctx) {
       return {...t, src, value: src.reduce((a, s) => a + s.assets, 0), on: src.filter(s => s.count).length};
     });
     const share = (v) => pct(v / total, false, v / total < 0.1 ? 1 : 0);
-    $("#srcmix", box).innerHTML = `<div class="k">Tài sản theo nguồn dữ liệu <span class="hint">% tổng tài sản ${vnd(nw.assets)} · bấm để xem từng nguồn</span></div>
+    $("#srcmix", box).innerHTML = `<div class="k">Tài sản theo nguồn dữ liệu <span class="hint">% tổng tài sản ${n(vnd(nw.assets), "assets.total")} · bấm để xem từng nguồn</span></div>
       <div class="sbar mt-xs">${tiers.filter(t => t.value > 0).map(t => `<button type="button" data-tier="${t.n}" style="flex:${t.value / total} 1 0;background:${t.color}" aria-label="${esc(t.vi)} ${share(t.value)}"></button>`).join("")}</div>
       <div class="tiers">${tiers.map(t => `<div class="tier${open === t.n ? " on" : ""}">
         <button type="button" class="tierhead" data-tier="${t.n}" aria-expanded="${open === t.n}">
           <span class="ic-chip sm" style="--tone:${t.color}">${icon(t.icon, {size: 13})}</span>
           <span class="pop-t"><b>${esc(t.title)}</b><small>${esc(t.vi)} · ${t.on}/${t.src.length} nguồn đã kết nối</small></span>
-          <span class="tv"><b>${share(t.value)}</b><small class="muted">${vnd(t.value)}</small></span>
+          <span class="tv"><b>${n(share(t.value), "tier.value", {assets: vnd(nw.assets)})}</b><small class="muted">${n(vnd(t.value), "tier.value", {assets: vnd(nw.assets)})}</small></span>
           <span aria-hidden="true">${icon("chevron", {size: 14})}</span></button>
         ${open === t.n ? `<div class="tierlist">${t.src.map(s => `<div class="srcrow">
             <span class="${s.status === "connected" ? "up" : "muted"}" aria-hidden="true">${s.status === "connected" ? "✓" : "○"}</span>
             <span><b>${esc(s.label)}</b><div class="small muted">${esc(s.what)} · ${s.count ? `${s.count} khoản · ${s.trust.map(esc).join(", ")}` : "chưa có dữ liệu"}</div></span>
-            <span class="r">${s.count ? `${vnd(s.assets - s.liabilities)} <span class="muted small">· ${share(s.assets)}</span>` : "—"}</span></div>`).join("")}
+            <span class="r">${s.count ? `${n(vnd(s.assets - s.liabilities), "source.net")} <span class="muted small">· ${n(share(s.assets), "source.net")}</span>` : "—"}</span></div>`).join("")}
           <a class="small" href="${holdingsHref}">Xem từng khoản →</a></div>` : ""}
       </div>`).join("")}</div>`;
     for (const b of box.querySelectorAll("[data-tier]")) b.onclick = () => {
@@ -122,11 +123,11 @@ export async function render(box, ctx) {
   const drawAlloc = () => {
     const rows = d.allocation;
     $("#alloc", box).innerHTML = `<div class="allocgrid"><div class="center">${donut(rows.map(a => ({key: a.group, value: a.value, color: GROUP_COLOR[a.group] || "var(--other)", label: `${a.group}: ${vnd(a.value)}, ${pct(a.share)}`})),
-        {size: 148, stroke: 20, center: vnd(rows.reduce((x, a) => x + a.value, 0)), sub: "tài sản", label: "Phân bổ tài sản"})}</div>
+        {size: 148, stroke: 20, center: vnd(rows.reduce((x, a) => x + a.value, 0)), sub: "tài sản", label: "Phân bổ tài sản", how: nAttrs("assets.total")})}</div>
       <table class="table"><thead><tr><th>Loại tài sản</th><th class="r">Giá trị</th><th class="r">Tỷ trọng</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
       ${rows.map(a => `<tr><td><span class="ic-chip sm" style="--tone:${GROUP_COLOR[a.group] || "var(--other)"}">${icon(GROUP_ICON[a.group] || "wallet", {size: 12})}</span> ${esc(a.group)}</td>
-        <td class="r">${vnd(a.value)}</td><td class="r"><b>${pct(a.share, false, a.share < 0.1 ? 1 : 0)}</b></td>
-        <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${pct(a.return, true)}</span>`}</td></tr>`).join("")}</tbody></table></div>`;
+        <td class="r">${n(vnd(a.value), "class.value")}</td><td class="r"><b>${n(pct(a.share, false, a.share < 0.1 ? 1 : 0), "class.share", {value: vnd(a.value), assets: vnd(nw.assets)})}</b></td>
+        <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${n(pct(a.return, true), "class.return", {pnl: vnd(a.pnl, true)})}</span>`}</td></tr>`).join("")}</tbody></table></div>`;
     for (const s of box.querySelectorAll("#alloc .seg")) {
       const a = rows.find(x => x.group === s.dataset.key);
       hover(s, `<b>${esc(a.group)}</b><br>${vnd(a.value)} · ${pct(a.share)}`);
@@ -149,8 +150,8 @@ export async function render(box, ctx) {
       <p class="small muted">Ước tính theo quy tắc riêng của từng chính sách (thuế, phí, vùng dự án), không phải bộ máy kịch bản. Tác động của tin thị trường: <a href="${marketHref}">Tác động thị trường</a>.</p>
       <div class="list">${top.map(a => `<div class="item"><span class="ic-chip" style="--tone:${a.opportunity ? "var(--good)" : "var(--critical)"}">${icon(a.opportunity ? "stock" : "down")}</span>
         <div><div class="t">${esc(a.title)}</div><div class="row tight mt-xs"><span class="pill ${a.opportunity ? "good" : "bad"}">${a.opportunity ? "Cơ hội" : "Rủi ro"} · ${SEV[a.severity].toLowerCase()}</span></div>
-          <div class="m mt-xs">${esc(a.message)}</div></div>
-        <b class="num ${a.impact >= 0 ? "up" : "down"}">${vnd(a.impact, true)}</b></div>`).join("")}</div>`;
+          <div class="m mt-xs" data-explains>${esc(a.message)}</div></div>
+        <b class="num ${a.impact >= 0 ? "up" : "down"}">${n(vnd(a.impact, true), "policy.impact", {exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, false, 2), probability: pct(a.probability, false, 0)})}</b></div>`).join("")}</div>`;
   };
 
   drawTiers(); drawAlloc(); drawCash(); drawNews();

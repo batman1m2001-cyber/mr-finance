@@ -4,7 +4,7 @@
    the data comes from. From POST /api/overview: every edge names the records it was read from. Select a node to
    light its links and read them; a node opens its page; an event opens its path on Đồ thị tác động. The list view
    is the same graph as rows (the default on a phone). */
-import {internal, $, esc, followedIds, pct, post, signClass, vnd} from "../core/core.js";
+import {internal, n as how, $, esc, followedIds, pct, post, signClass, vnd} from "../core/core.js";
 import {CLASS_ICON, icon, iconPaths} from "../core/icons.js?v=20261016r1";
 import {hover} from "../charts/charts.js";
 
@@ -59,6 +59,20 @@ export async function render(box, ctx) {
   const links = (id) => shownEdges().filter(e => e.from === id || e.to === id);
   const other = (e, id) => byId[e.from === id ? e.to : e.from];
   const srcText = (e) => [...new Set(e.sources.map(s => SRC[s.type] || s.type))].join(", ") + ` · ${e.sources.length} bản ghi`;
+  // BRD-NFR-11: which formula a node's number follows, and the inputs it carries
+  const howOf = (n) => ({
+    family: ["net_worth", {assets: vnd(n.assets), liabilities: vnd(n.liabilities)}],
+    class: [n.liability ? "liabilities.total" : "class.value", {count: String(n.count)}],
+    holding: ["holding.value", {}], goal: ["goal.need", {}], event: ["impact.expected_3m", {event: n.label}],
+    alert: ["policy.impact", {probability: pct(n.probability, false, 0)}],
+    risk: [n.id === "RK:drawdown" ? "risk.loss" : n.id === "RK:liquidity" ? "liquidity.value" : "concentration.value", {}],
+  }[n.kind] || ["holding.value", {}]);
+  const fig = (n, text) => (n.kind === "source" || !text ? text : how(text, ...howOf(n)));
+  const edgeHow = (e, text) => (e.sources.some(x => x.type === "run") ? how(text, "impact.by_class", {part: (byId[e.to] || {}).label || ""})
+    : how(text, e.parent ? "holding.value" : "class.value"));
+  // a news event's title is the outlets' words; a policy item's is the catalogue's name for it
+  const titled = {event: "data-quote", alert: "data-explains"};
+  const nameOf = (n, text) => (n.id === "RK:drawdown" ? how(text, "risk.current") : titled[n.kind] ? `<span ${titled[n.kind]}>${text}</span>` : text);
   const figure = (n) => (n.kind === "goal" ? `cần ${vnd(n.need)} · ${n.status_label}` : n.kind === "source" ? `${n.count} khoản · ${esc(n.status === "connected" ? "đã kết nối" : n.status)}`
     : n.value == null ? "" : ["event", "alert"].includes(n.kind) ? vnd(n.value, true) : vnd(Math.abs(n.value)));
 
@@ -90,26 +104,26 @@ export async function render(box, ctx) {
       el.innerHTML = `<h3>Tin tức & chính sách liên quan <span class="hint">theo mức tác động</span></h3>
         <div class="mlist">${moving.map(x => `<button type="button" class="mrow" data-n="${esc(x.id)}">
           <span class="ic-chip sm" style="--tone:${LOOK[x.kind][0]}">${icon(LOOK[x.kind][1], {size: 13})}</span>
-          <span><b>${esc(short(x.label, 70))}</b><span class="small muted">${x.kind === "event" ? "Tin tức · CIO duyệt" : esc(x.status_label)}</span></span>
-          <span class="num ${signClass(x.value)}">${vnd(x.value, true)}</span></button>`).join("") || `<p class="muted">Chưa có tin hay chính sách nào chạm tới tài sản này.</p>`}</div>
+          <span><b>${nameOf(x, esc(short(x.label, 70)))}</b><span class="small muted">${x.kind === "event" ? "Tin tức · CIO duyệt" : esc(x.status_label)}</span></span>
+          <span class="num ${signClass(x.value)}">${fig(x, vnd(x.value, true))}</span></button>`).join("") || `<p class="muted">Chưa có tin hay chính sách nào chạm tới tài sản này.</p>`}</div>
         <p class="small muted">Bấm một nút trên đồ thị để xem liên kết và nguồn của nó.</p>`;
     } else {
       const es = links(n.id);
       const kids = n.kind === "class" ? g.nodes.filter(x => x.parent === n.id).length : 0;
       const facts = [
-        n.kind === "family" && `Tài sản ròng <b>${vnd(n.value)}</b> · tài sản ${vnd(n.assets)} · nợ ${vnd(n.liabilities)}`,
-        n.kind === "class" && `${n.liability ? "Dư nợ" : "Giá trị"} <b>${vnd(n.value)}</b> · ${n.count} khoản`,
-        n.kind === "holding" && `Giá trị <b>${vnd(n.value)}</b>${n.owner ? ` · ${esc(n.owner)}` : ""}`,
+        n.kind === "family" && `Tài sản ròng <b>${fig(n, vnd(n.value))}</b> · tài sản ${how(vnd(n.assets), "assets.total")} · nợ ${how(vnd(n.liabilities), "liabilities.total")}`,
+        n.kind === "class" && `${n.liability ? "Dư nợ" : "Giá trị"} <b>${fig(n, vnd(n.value))}</b> · ${n.count} khoản`,
+        n.kind === "holding" && `Giá trị <b>${fig(n, vnd(n.value))}</b>${n.owner ? ` · ${esc(n.owner)}` : ""}`,
         n.kind === "source" && `${esc(n.what)} · ${n.count} khoản · ${esc((n.trust || []).join(", "))}`,
-        n.kind === "goal" && `Cần <b>${vnd(n.need)}</b> · đang có ${vnd(n.have)} · ${n.gap > 0 ? `thiếu ${vnd(n.gap)}` : "đủ"}${n.by ? ` · mốc ${esc(n.by)}` : ""}`,
-        n.kind === "risk" && esc(n.detail),
-        n.kind === "alert" && `Tác động ước tính <b class="${signClass(n.value)}">${vnd(n.value, true)}</b> · xác suất ${pct(n.probability, false, 0)} · ${esc(n.status_label)}`,
-        n.kind === "event" && `Tác động kỳ vọng 3 tháng <b class="${signClass(n.value)}">${vnd(n.value, true)}</b>${n.approved_at ? ` · CIO duyệt ${new Date(n.approved_at * 1000).toLocaleDateString("vi-VN")}` : ""}`,
+        n.kind === "goal" && `Cần <b>${how(vnd(n.need), "goal.need")}</b> · đang có ${how(vnd(n.have), "goal.have")} · ${n.gap > 0 ? `thiếu ${how(vnd(n.gap), "goal.gap", {need: vnd(n.need), have: vnd(n.have)})}` : "đủ"}${n.by ? ` · mốc ${esc(n.by)}` : ""}`,
+        n.kind === "risk" && `${fig(n, vnd(Math.abs(n.value)))} · <span data-explains>${esc(n.detail)}</span>`,
+        n.kind === "alert" && `Tác động ước tính <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b> · xác suất ${how(pct(n.probability, false, 0), "policy.probability")} · ${esc(n.status_label)}`,
+        n.kind === "event" && `Tác động kỳ vọng 3 tháng <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b>${n.approved_at ? ` · CIO duyệt ${new Date(n.approved_at * 1000).toLocaleDateString("vi-VN")}` : ""}`,
         n.kind === "event" && n.outlets && n.outlets.length && `Nguồn: ${n.outlets.map(esc).join(", ")}`,
         n.kind === "alert" && n.source_text && `Nguồn: ${esc(n.source_text)}`,
       ].filter(Boolean);
       el.innerHTML = `<div class="row tight"><span class="ic-chip" style="--tone:${LOOK[n.kind][0]}">${icon(n.kind === "class" ? CLASS_ICON[n.ref] || "layers" : LOOK[n.kind][1], {size: 16})}</span>
-          <div><div class="small muted">${esc(KIND[n.kind])}</div><b>${esc(n.label)}</b></div>
+          <div><div class="small muted">${esc(KIND[n.kind])}</div><b>${nameOf(n, esc(n.label))}</b></div>
           <button type="button" class="linkbtn small" id="m-clear" style="margin-left:auto">Bỏ chọn</button></div>
         ${facts.map(f => `<p class="small mt-xs">${f}</p>`).join("")}
         <div class="row tight mt">
@@ -119,8 +133,8 @@ export async function render(box, ctx) {
         <h3 class="mt">Liên kết <span class="hint">${es.length}</span></h3>
         <div class="mlist">${es.map(e => { const o = other(e, n.id); return `<button type="button" class="mrow" data-n="${esc(o.id)}">
           <span class="ic-chip sm" style="--tone:${LOOK[o.kind][0]}">${icon(LOOK[o.kind][1], {size: 13})}</span>
-          <span><b>${esc(short(o.label, 60))}</b><span class="small muted">${esc(e.label)} · ${srcText(e)}</span></span>
-          <span class="num ${e.label === WORDING ? signClass(e.value) : ""}">${e.value == null ? "" : e.label === WORDING ? vnd(e.value, true) : vnd(Math.abs(e.value))}</span></button>`; }).join("")}</div>`;
+          <span><b>${nameOf(o, esc(short(o.label, 60)))}</b><span class="small muted">${esc(e.label)} · ${srcText(e)}</span></span>
+          <span class="num ${e.label === WORDING ? signClass(e.value) : ""}">${e.value == null ? "" : edgeHow(e, e.label === WORDING ? vnd(e.value, true) : vnd(Math.abs(e.value)))}</span></button>`; }).join("")}</div>`;
       $("#m-clear", box).onclick = () => select(null);
       const open = $("#m-open", box);
       if (open) open.onclick = () => toggle(n.id);
@@ -200,10 +214,14 @@ export async function render(box, ctx) {
       const label = mk("text", {x: lx, y: ly, "text-anchor": anchor, class: `mlbl${me ? " me" : ""}`}, grp);
       // a node outside the selection keeps its mark but not its words: the lit links stay readable
       label.textContent = me ? (staff ? short(n.label, 26) : "") : on ? short(n.label, n.kind === "holding" ? 20 : n.kind === "source" ? 13 : 26) : "";
+      if (titled[n.kind]) label.setAttribute(titled[n.kind], "");
       if (!me && on && n.kind !== "source" && figure(n)) {  // a source's count is in its tooltip and panel
         const f = mk("text", {x: lx, y: ly + 13, "text-anchor": anchor, class: `mfig ${["event", "alert"].includes(n.kind) ? signClass(n.value) : ""}`}, grp);
         f.textContent = figure(n).replace(/<[^>]+>/g, "");
+        const [m, i] = howOf(n);
+        f.setAttribute("data-metric", m); f.setAttribute("data-in", JSON.stringify(i)); f.setAttribute("tabindex", "0"); f.setAttribute("role", "button"); f.classList.add("num-svg");
       }
+      if (n.id === "RK:drawdown" && label.textContent) { label.setAttribute("data-metric", "risk.current"); label.classList.add("num-svg"); }
       hover(grp, `<b>${esc(n.label)}</b><br>${esc(KIND[n.kind])}${figure(n) ? " · " + figure(n) : ""}`);
       grp.addEventListener("click", () => select(n.id));
       grp.addEventListener("dblclick", () => { if (n.kind === "class") toggle(n.id); });
@@ -226,8 +244,8 @@ export async function render(box, ctx) {
       <div class="mgroup"><div class="subhead"><span class="ic-chip sm" style="--tone:${LOOK[k.kind][0]}">${icon(LOOK[k.kind][1], {size: 13})}</span> ${esc(k.label)}</div>
         <div class="mlist">${g.nodes.filter(n => n.kind === k.kind && shown(n)).map(n => `<button type="button" class="mrow${st.sel === n.id ? " on" : ""}" data-n="${esc(n.id)}"
           ${n.kind === "event" ? `data-focus="event:${esc(n.ref)}"` : ""}>
-          <span><b>${esc(n.label)}</b><span class="small muted">${n.kind === "goal" ? `${esc(n.status_label)} · ` : ""}${links(n.id).length} liên kết${n.kind === "class" && g.nodes.some(x => x.parent === n.id) ? ` · ${n.count} khoản` : ""}</span></span>
-          <span class="num ${["event", "alert"].includes(n.kind) ? signClass(n.value) : ""}">${n.kind === "goal" ? vnd(n.need) : figure(n)}</span></button>`).join("")}</div></div>`).join("");
+          <span><b>${nameOf(n, esc(n.label))}</b><span class="small muted">${n.kind === "goal" ? `${esc(n.status_label)} · ` : ""}${links(n.id).length} liên kết${n.kind === "class" && g.nodes.some(x => x.parent === n.id) ? ` · ${n.count} khoản` : ""}</span></span>
+          <span class="num ${["event", "alert"].includes(n.kind) ? signClass(n.value) : ""}">${n.kind === "goal" ? how(vnd(n.need), "goal.need") : fig(n, figure(n))}</span></button>`).join("")}</div></div>`).join("");
     for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => { select(b.dataset.n); if (narrow) $("#m-side", box).scrollIntoView({block: "start", behavior: "smooth"}); };
   };
 

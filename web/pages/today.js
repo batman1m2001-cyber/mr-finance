@@ -1,6 +1,6 @@
 /* RM · Hôm nay: the families to look at first — flagged for pre-review by an effective run
    (3-month P10 at or below −5 % of net worth), worst first. */
-import {internal, empty, esc, get, pct, signClass, vnd} from "../core/core.js";
+import {internal, empty, esc, get, pct, signClass, vnd, n as how} from "../core/core.js";
 
 const LEVEL = {contact_now: "bad", confirm_goal: "human", remind: "warn", note: ""};
 
@@ -22,19 +22,19 @@ export async function render(box, ctx) {
       <div class="panel hero-panel c4">
         <div class="eyebrow">Hôm nay · cần xem trước</div>
         <div class="hero" style="margin-top:10px">${families.size}</div>
-        <div class="takeaway">gia đình có kịch bản xấu 3 tháng (P10) chạm ngưỡng ${pct(d.threshold_pct, true, 0)} tài sản ròng.</div>
+        <div class="takeaway">gia đình có kịch bản xấu 3 tháng (P10) chạm ngưỡng ${how(pct(d.threshold_pct, true, 0), "threshold.pre_review")} tài sản ròng.</div>
         <div class="footnote">Chỉ tính các lần áp dụng đã qua hậu kiểm và đang hiệu lực. Liên hệ khách theo thứ tự dưới đây.</div>
       </div>
       <div class="panel c8">
         <h3>Danh sách <span class="hint">xấu nhất trước</span></h3>
         ${cases.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Gia đình</th><th>Sự kiện chạm ngưỡng</th><th class="r">Kỳ vọng 3 tháng</th><th class="r">P10 xấu nhất</th><th></th></tr></thead><tbody>
           ${cases.map(c => `<tr class="click" data-family="${esc(c.family_id)}" data-focus="family:${esc(c.family_id)}">
-            <td><b>${esc(c.name)}</b><div class="small muted">${vnd(c.net_worth)} tài sản ròng</div></td>
-            <td class="small">${c.events.map(esc).join("<br>")}</td>
-            <td class="r ${signClass(c.expected_3m)}">${vnd(c.expected_3m, true)}<div class="small muted">${pct(c.net_worth ? c.expected_3m / c.net_worth : 0, true, 2)}</div></td>
-            <td class="r down"><b>${pct(c.worst.p10_3m_pct, true, 1)}</b><div class="small muted">${esc(c.worst.event.title)}</div></td>
+            <td><b>${esc(c.name)}</b><div class="small muted">${how(vnd(c.net_worth), "net_worth")} tài sản ròng</div></td>
+            <td class="small" data-quote>${c.events.map(esc).join("<br>")}</td>
+            <td class="r ${signClass(c.expected_3m)}">${how(vnd(c.expected_3m, true), "impact.expected_3m", {event: c.events.join(", ")})}<div class="small muted">${how(pct(c.net_worth ? c.expected_3m / c.net_worth : 0, true, 2), "impact.expected_3m", {event: c.events.join(", ")})}</div></td>
+            <td class="r down"><b>${how(pct(c.worst.p10_3m_pct, true, 1), "impact.p10_3m", {event: c.worst.event.title})}</b><div class="small muted" data-quote>${esc(c.worst.event.title)}</div></td>
             <td><span class="btn sm">Mở</span></td></tr>`).join("")}
-        </tbody></table></div>` : empty("Không có ca nào cần xem trước", "Khi một lần áp dụng có gia đình chạm ngưỡng −5%, ca đó hiện ở đây.")}
+        </tbody></table></div>` : empty("Không có ca nào cần xem trước", `Khi một lần áp dụng có gia đình chạm ngưỡng ${how(pct(d.threshold_pct, true, 0), "threshold.pre_review")}, ca đó hiện ở đây.`)}
       </div>
       <div class="panel c12"><h3>Việc theo mục tiêu <span class="hint">quy định mới làm chậm mục tiêu chuyển tiền ra nước ngoài</span></h3>
         ${d.goal_tasks.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Mức</th><th>Gia đình · mục tiêu</th><th>Văn bản</th><th>Mốc chuẩn bị</th><th>Việc của RM</th></tr></thead><tbody>
