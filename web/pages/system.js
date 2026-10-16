@@ -15,11 +15,16 @@ const JOB = {  // what each job does, in the product's language (the declaration
   market_crypto: "Bitcoin và Ether (Binance)",
   market_gold: "Vàng miếng SJC (lịch sử giá PNJ)",
   market_load: "Lần nạp lại lịch sử mà Quản trị yêu cầu ở trang này",
+  agent_worker: "Chạy lần lượt các yêu cầu “Chạy Agent CIO” đang xếp hàng (AI-13)",
+  inbox_import: "Nhập các gói từ vùng AI qua cùng các kiểm tra, hoặc từ chối kèm lý do (ZONE-03)",
+  zone_sync: "Gửi vùng AI danh mục đã duyệt và nghiên cứu đã phát hành (chế độ hộp chờ)",
   agent_eval: "Bộ đánh giá cố định cho đề xuất lời nhắc và mô hình AI (MEAS-07)",
   accuracy_score: "Chấm độ chính xác các dự báo đã đến hạn (FEAT-18)",
   market_backfill: "Lịch sử mọi chuỗi từ 2020 (chạy bằng dòng lệnh)",
   statement_reading: "Đánh giá việc đọc sao kê (chạy bằng dòng lệnh)",
 };
+const MODE = {live: "Mô hình thật", mock: "Mô phỏng", inbox: "Hộp chờ (vùng AI)"};
+const INBOX = {READY: ["warn", "Chờ nhập"], PROCESSING: ["warn", "Đang nhập"], IMPORTED: ["good", "Đã nhập"], REJECTED: ["bad", "Từ chối"]};
 const LOAD = {asked: ["warn", "Đang chờ"], running: ["warn", "Đang nạp"], done: ["good", "Xong"], failed: ["bad", "Lỗi"]};
 
 function when(w) {
@@ -50,7 +55,7 @@ export async function render(box, ctx) {
 
     <div class="cols">
       ${tile("Chuỗi nhật ký", d.chain.ok ? "Toàn vẹn" : "Gãy", `${num(d.chain.count)} dòng${d.chain.ok ? "" : " · " + esc(d.chain.reason)}`, d.chain.ok ? "" : "bad-text")}
-      ${tile("Agent", d.agents.mode === "live" ? "Mô hình thật" : "Mô phỏng", esc(d.agents.reason || [d.agents.models?.cio, d.agents.models?.challenger].filter(Boolean).join(" · ")))}
+      ${tile("Agent", MODE[d.agents.mode] || esc(d.agents.mode), `${esc(d.agents.reason || [d.agents.models?.cio, d.agents.models?.challenger].filter(Boolean).join(" · "))}${d.agent_queue ? ` · ${d.agent_queue} lần chạy đang xếp hàng` : ""}`)}
       ${tile("Tin tức", d.news_at ? esc(ago(d.news_at)) : "Chưa lấy", `${d.feeds.length} nguồn · ${d.feeds.filter(f => f.error).length} lỗi lần gần nhất`)}
       ${tile("Cấu hình chờ duyệt", d.config_waiting.length, d.config_waiting.map(c => esc(c.label)).join(", ") || "không có")}
     </div>
@@ -74,6 +79,19 @@ export async function render(box, ctx) {
         <td class="small">${esc(ago(a.last))} · ${esc(a.last_status || "")}${a.last_error ? ` · <span class="bad-text">${esc(a.last_error)}</span>` : ""}</td></tr>`).join("") || `<tr><td colspan="4" class="muted">Không có lần chạy nào.</td></tr>`}
       </tbody></table></div>
       ${d.evals_waiting.length ? `<p class="small">Bộ đánh giá đang chờ chạy: ${d.evals_waiting.map(e => esc(e.id)).join(", ")}</p>` : ""}</section>
+
+    <section class="panel mt" id="zone"><div class="h3">Vùng AI và hộp chờ</div>
+      <p class="small muted">Chế độ chạy AI: <b>${esc(MODE[d.agents.configured] || d.agents.configured)}</b> (cấu hình “Chế độ chạy AI” ở trang <a href="#/admin/cau-hinh">Cấu hình</a>).
+        Ở chế độ hộp chờ, vùng AI là một tiến trình riêng với cơ sở dữ liệu riêng, chỉ có tin công khai, nghiên cứu đã phát hành và danh mục đã duyệt; nó gửi gói đã ký vào hộp chờ và không đọc lại gì.</p>
+      <div class="scrollx"><table class="table"><thead><tr><th>Gói</th><th>Nhận</th><th>Chữ ký</th><th>Trạng thái</th><th>Kết quả</th></tr></thead><tbody>
+      ${d.inbox.map(p => `<tr><td class="mono">${esc(p.id)}</td><td class="small">${esc(ago(p.received))}</td>
+        <td>${p.signed ? `<span class="badge good">hợp lệ</span>` : `<span class="badge bad">không</span>`}</td>
+        <td><span class="badge ${INBOX[p.status][0]}">${INBOX[p.status][1]}</span></td>
+        <td class="small">${p.view_id ? `<a href="#/cio/nhan-dinh/${esc(p.view_id)}">${esc(p.view_id)}</a> · ${esc(p.event_id)}` : p.error ? `<span class="bad-text">${esc(p.error)}</span>` : p.waiting ? `<span class="muted">${esc(p.waiting)}</span>` : "—"}</td></tr>`).join("")
+        || `<tr><td colspan="5" class="muted">Chưa nhận gói nào.</td></tr>`}
+      </tbody></table></div>
+      ${d.zone_syncs.length ? `<p class="small mt">Lần gửi vùng AI gần nhất: ${d.zone_syncs[0].status === "ok" ? `<span class="badge good">ổn</span>` : `<span class="badge bad">lỗi</span> ${esc(d.zone_syncs[0].error || "")}`}
+        ${esc(ago(d.zone_syncs[0].at))}${d.zone_syncs[0].applied?.length ? ` · áp dụng ${d.zone_syncs[0].applied.map(esc).join(", ")}` : ""}</p>` : ""}</section>
 
     <section class="panel mt" id="load"><div class="h3">Nạp lại lịch sử thị trường</div>
       <p class="small muted">Lấy lại mọi chuỗi từ ngày đã chọn (các nguồn công khai, có thể mất vài phút). Việc <span class="mono">market_load</span> chạy yêu cầu trong vòng một phút; mỗi lần một yêu cầu.</p>

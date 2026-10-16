@@ -54,6 +54,18 @@ create table if not exists forecasts (
   id text primary key, view_id text not null, factor text not null, horizon text not null, origin text not null,
   due text not null, created real not null, scored real, data text not null);
 create index if not exists forecasts_open on forecasts (scored, due);
+create table if not exists agent_jobs (
+  id text primary key, event_id text not null, status text not null, created real not null, data text not null);
+create index if not exists agent_jobs_open on agent_jobs (status, created);
+create table if not exists external_outputs (
+  id text primary key, status text not null, received real not null, signed integer not null,
+  package_hash text not null, body text not null, data text not null);
+create index if not exists external_outputs_open on external_outputs (status, received);
+create table if not exists zone_syncs (
+  id text primary key, at real not null, status text not null, bundle_hash text not null, data text not null);
+create table if not exists zone_outbox (
+  id text primary key, event_id text not null, status text not null, created real not null, data text not null);
+create index if not exists zone_outbox_open on zone_outbox (status, created);
 """
 
 TABLES = (
@@ -67,6 +79,10 @@ TABLES = (
     "family_impacts",
     "config_versions",
     "forecasts",
+    "agent_jobs",
+    "external_outputs",
+    "zone_syncs",
+    "zone_outbox",
     "counters",
 )
 

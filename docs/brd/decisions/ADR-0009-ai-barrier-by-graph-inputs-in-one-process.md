@@ -1,6 +1,6 @@
 # ADR-0009 — The AI barrier is enforced by graph inputs, in one process
 
-- **Status:** accepted
+- **Status:** superseded in part by [ADR-0022](ADR-0022-the-ai-zone-is-a-second-process.md) (the zone and the inbox are built; the graph-input barrier stays)
 - **Date:** 2026-10-15
 - **Sources:** docs/NEWS_IMPACT_PLAN.md A4; Q-23
 

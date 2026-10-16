@@ -19,7 +19,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-01](FEAT-01-news-ingestion.md) | News ingestion and gates | BR-01, BR-02, BR-04, FR-101, FR-102, FR-104 | built | SCR-CIO-01, SCR-CMP-01 |
 | [FEAT-02](FEAT-02-cio-inbox-and-events.md) | CIO inbox and events | FR-103, FR-104, FR-105 | built | SCR-CIO-01, SCR-CIO-02, SCR-CMP-01 |
 | [FEAT-03](FEAT-03-research-and-regulation-notes.md) | Exclusive research and regulation notes | BR-03, FR-201…204 | built | SCR-CIO-06, SCR-CMP-02 |
-| [FEAT-04](FEAT-04-cio-agent.md) | The CIO agent | BR-05, BR-11, FR-301, FR-302, FR-307, FR-704 | built (live + mock; no inbox mode) | SCR-CIO-02, SCR-CIO-03 |
+| [FEAT-04](FEAT-04-cio-agent.md) | The CIO agent | BR-05, BR-11, FR-301, FR-302, FR-307, FR-704 | built (live queued, mock, inbox via FEAT-19) | SCR-CIO-02, SCR-CIO-03 |
 | [FEAT-05](FEAT-05-challenger.md) | The independent challenger | BR-06, FR-303 | built | SCR-CIO-03 |
 | [FEAT-06](FEAT-06-view-decisions.md) | CIO decisions on a view | BR-07, BR-14, FR-304, FR-305 | built | SCR-CIO-03 |
 | [FEAT-07](FEAT-07-scenario-engine.md) | The scenario engine and factor model | BR-08, NFR-04, §9 | built (assumed parameters) | SCR-CIO-07 |
@@ -34,7 +34,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-16](FEAT-16-policy-agent.md) | Policy agent | FR-306 | not built | — |
 | [FEAT-17](FEAT-17-cio-newsletter.md) | CIO newsletter | FR-801 | not built | — |
 | [FEAT-18](FEAT-18-accuracy-tracking.md) | Accuracy over time and the measurement reports | BR-15, KPI-01/03/04, MEAS-01/02/03/05, NFR-02 | built (F3) | SCR-CIO-12, SCR-CIO-13 |
-| [FEAT-19](FEAT-19-external-ai-inbox.md) | External AI zone and signed inbox | FR-307, §7.1 | not built | — |
+| [FEAT-19](FEAT-19-external-ai-inbox.md) | External AI zone and signed inbox | FR-307, AI-13, ZONE-01…03, ZONE-06, LC-04, SEC-07 | built | SCR-ADM-01 |
 
 ## Existing capabilities (original brief, PR #13)
 

@@ -162,6 +162,21 @@ def test_runs_no_request_started_are_not_checked():
     assert [fixtures.client(c)["id"] for c in fixtures.client_ids()] == fixtures.client_ids()
 
 
+def test_a_job_run_on_the_server_is_not_a_request(monkeypatch):
+    """`operonx run news_ingest` runs the job with a job session (meta ``job``): someone on the server or the schedule
+    started it, never a browser, so it is not checked; a served request still is."""
+    import operonx.app.serve.protocol as protocol
+
+    class Session:
+        def __init__(self, meta):
+            self.meta = meta
+
+    monkeypatch.setattr(protocol, "current_session", lambda: Session({"job": "news_ingest", "key": "x"}))
+    assert auth.checking() is False
+    monkeypatch.setattr(protocol, "current_session", lambda: Session({"path": "/api/news/ingest"}))
+    assert auth.checking() is True
+
+
 def test_lists_over_every_family_show_only_the_families_the_person_may_see(http):
     """Search, the review queue and the advisory record read every family for the CIO, and only an RM's own
     families for that RM (a run over every family no longer fails for them)."""

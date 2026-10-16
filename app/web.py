@@ -25,6 +25,8 @@ from control import audit as control_audit
 from control import db as control_db
 from control import roles
 from events import store as events_store
+from inbox import sign as inbox_sign
+from inbox import store as inbox_store
 from market import factors as market_factors
 from market import fetch as market_fetch
 from market import store as market_store
@@ -36,9 +38,11 @@ from research import ops as research_ops
 from research import store as research_store
 from scenarios._sim import SCENARIOS
 from views import ops as view_ops
+from views import queue as agent_queue
 from views import store as views_store
 from wealth import fixtures, store
 from wealth.paths import DATA, ROOT
+from zone import sync as zone_sync
 
 
 class Revalidated(StaticFiles):
@@ -312,7 +316,7 @@ async def event_one(request: Request) -> JSONResponse:
         ev = events_store.get(request.path_params["event_id"])
     except events_store.EventError as exc:
         return JSONResponse({"error": str(exc)}, status_code=404)
-    return JSONResponse({"event": ev, "views": view_ops.event_views(ev["id"])})
+    return JSONResponse({"event": ev, "views": view_ops.event_views(ev["id"]), "jobs": agent_queue.for_event(ev["id"])})
 
 
 async def view_one(request: Request) -> JSONResponse:
@@ -477,6 +481,23 @@ async def audit_export(request: Request):
     return JSONResponse(out, headers={"content-disposition": f'attachment; filename="audit-{stamp}.json"'})
 
 
+async def inbox_receive(request: Request) -> JSONResponse:
+    """The AI zone's one way in (BRD-RULE-ZONE-02, SEC-07): a package is kept as READY and only its id is answered;
+    nothing is read back. Open only in inbox mode; signed with ``MF_INBOX_KEY`` (an unsigned package is kept and
+    then REJECTED when the key is set, LC-04)."""
+    from views import agents
+
+    if agents.configured_mode() != "inbox":
+        return JSONResponse({"error": "Không ở chế độ hộp chờ"}, status_code=409)
+    body = await request.body()
+    if len(body) > inbox_store.MAX_BYTES:
+        return JSONResponse({"error": "Gói quá lớn"}, status_code=413)
+    if inbox_store.waiting() >= inbox_store.MAX_WAITING:
+        return JSONResponse({"error": "Hộp chờ đầy"}, status_code=429)
+    signed = inbox_sign.valid(body, request.headers.get(inbox_sign.HEADER))
+    return JSONResponse({"id": inbox_store.receive(body, signed)}, status_code=202)
+
+
 JOBS: list = []  # filled by app/main.py: {id, description, when: {every|at}}
 
 
@@ -529,6 +550,9 @@ async def system(request: Request) -> JSONResponse:
             ],
             "chain": chain,
             "loads": loads,
+            "inbox": inbox_store.recent(),
+            "agent_queue": agent_queue.waiting(),
+            "zone_syncs": zone_sync.recent(5),
             "people": [{**a, "families": families.get(a["id"])} for a in accounts if a["role"] != "client"],
             "clients": sum(1 for a in accounts if a["role"] == "client"),
         }
@@ -874,7 +898,7 @@ def allowed_roles(path: str):
     return ROUTE_ROLES[hit] if hit else None
 
 
-OPEN = ("/healthz", "/api/auth/")
+OPEN = ("/healthz", "/api/auth/", "/api/inbox")  # the inbox is signed, not signed in
 
 
 def _deny(status: int, message: str) -> JSONResponse:
@@ -956,6 +980,7 @@ app = Starlette(
         Route("/api/audit", audit_list),
         Route("/api/market", market),
         Route("/api/system", system),
+        Route("/api/inbox", inbox_receive, methods=["POST"]),
         Route("/api/accuracy", accuracy),
         Route("/api/measure", measure_reports),
         Route("/api/market/series", market_series),

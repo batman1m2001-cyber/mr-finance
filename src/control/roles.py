@@ -23,6 +23,9 @@ def users() -> Dict[str, Dict[str, str]]:
     }
 
 
+ZONE_ACTOR = "agent:zone"  # who acts in the AI zone (app/zone.py): its jobs only, and only there
+
+
 ROLE_LABELS = {"cio": "CIO", "rm": "RM", "compliance": "Tuân thủ", "admin": "Quản trị", "client": "Khách hàng"}
 
 
@@ -36,7 +39,10 @@ def user(user_id: str) -> Dict[str, str]:
     """The staff user ``user_id``. Inside a request (sign-in on), it must be the person signed in: an action is
     never taken in someone else's name (BRD-RULE-SEC-01)."""
     from people import auth
+    from wealth.paths import in_zone
 
+    if in_zone() and user_id == ZONE_ACTOR and not auth.checking():
+        return {"id": ZONE_ACTOR, "name": "Agent vùng AI", "role": "cio", "title": "Vùng AI (F-D7)"}
     if auth.checking():
         me = auth.signed_in()
         if me is None:

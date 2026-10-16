@@ -64,6 +64,7 @@ READS = {
     "/api/rm/today": {"rm01", "rm03"},
 }
 OPEN = {"/healthz", "/api/auth/me", "/api/auth/accounts", "/api/auth/login", "/api/auth/demo", "/api/auth/logout"}
+OPEN |= {"/api/inbox"}  # the AI zone's door: signed (MF_INBOX_KEY), not signed in; answers an id only
 DEMO = {"/api/reset"}  # anyone signed in starts the public demo over
 
 

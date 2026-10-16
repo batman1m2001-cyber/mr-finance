@@ -32,7 +32,8 @@ async function renderList(box, ctx) {
 }
 
 async function renderEvent(box, ctx, id) {
-  const [{event: ev, views}, agents] = await Promise.all([get(`/api/events/${encodeURIComponent(id)}`), get("/api/agents")]);
+  const [{event: ev, views, jobs}, agents] = await Promise.all([get(`/api/events/${encodeURIComponent(id)}`), get("/api/agents")]);
+  const job = jobs[jobs.length - 1], busy = job && ["queued", "running"].includes(job.status);
   box.innerHTML = `
     <div class="pagehead"><div><a class="small" href="${ctx.href("nhan-dinh")}">← Sự kiện</a>
       <div class="eyebrow" style="margin-top:6px">${esc(ev.id)} · ${esc(EVENT_TYPE[ev.type] || "Chưa phân loại")}</div><div class="h1">${esc(ev.title)}</div></div></div>
@@ -42,10 +43,12 @@ async function renderEvent(box, ctx, id) {
           <div class="small muted">${esc(n.outlet)} · ${esc(n.label)} · ${when(n.published)}${n.held ? ' · <span class="badge bad">bị giữ chờ Tuân thủ</span>' : ""}</div></div>`).join("")}</div>
       <div class="panel c5"><h3>Agent CIO</h3>
         ${ev.blocked ? `<div class="notice bad">Sự kiện đang bị giữ vì tin nhắc tới tổ chức trong danh sách hạn chế. Tuân thủ cần cho phép trước khi chạy agent.</div>` : `
-        <div class="small">Chế độ hiện có: ${agents.mode === "live" ? `<span class="badge ai">Trực tiếp</span> ${esc(agents.models.cio)} soạn, ${esc(agents.models.challenger)} phản biện` : `<span class="badge">Mô phỏng</span> theo từ khóa, không gọi AI`}</div>
-        <div class="row" style="margin-top:12px"><button type="button" class="btn primary" id="run">Chạy Agent CIO</button></div>
+        <div class="small">Chế độ hiện có: ${agents.mode === "live" ? `<span class="badge ai">Trực tiếp</span> ${esc(agents.models.cio)} soạn, ${esc(agents.models.challenger)} phản biện`
+          : agents.mode === "inbox" ? `<span class="badge ai">Hộp chờ</span> nhận định đến từ vùng AI, qua hộp chờ có chữ ký` : `<span class="badge">Mô phỏng</span> theo từ khóa, không gọi AI`}</div>
+        ${agents.mode === "inbox" ? "" : `<div class="row" style="margin-top:12px"><button type="button" class="btn primary" id="run" ${busy ? "disabled" : ""}>${busy ? "Agent đang chạy…" : "Chạy Agent CIO"}</button></div>`}
+        <div class="small" style="margin-top:8px" id="job">${job ? jobLine(job) : ""}</div>
         <div class="small muted" style="margin-top:8px">Bốn nhóm phân tích chạy song song → tranh luận → tổng hợp và kiểm tra định dạng → Agent Phản biện. Agent chỉ đọc tin và danh mục thị trường, không đọc dữ liệu khách.</div>`}
-        ${views.length ? `<h3 style="margin-top:16px">Các phiên bản</h3>${views.map(v => `<div class="row spread" style="margin:6px 0"><a href="${ctx.href("nhan-dinh", v.id)}">${esc(v.id)}</a><span>${viewBadge(v.status)} <span class="badge">${v.mode === "live" ? "AI" : "mô phỏng"}</span></span></div>`).join("")}` : ""}
+        ${views.length ? `<h3 style="margin-top:16px">Các phiên bản</h3>${views.map(v => `<div class="row spread" style="margin:6px 0"><a href="${ctx.href("nhan-dinh", v.id)}">${esc(v.id)}</a><span>${viewBadge(v.status)} <span class="badge">${MODE_LABEL[v.mode] || "mô phỏng"}</span></span></div>`).join("")}` : ""}
       </div>
     </div>`;
   const run = box.querySelector("#run");
@@ -53,9 +56,32 @@ async function renderEvent(box, ctx, id) {
     run.disabled = true; run.textContent = "Agent đang chạy…";
     try {
       const r = await post("/api/events/run-agent", {event_id: ev.id, by: ctx.user});
-      ctx.go(ctx.href("nhan-dinh", r.result.view.id));
+      follow(box, ctx, ev.id, r.job.id);
     } catch (e) { toast(e.message); run.disabled = false; run.textContent = "Chạy Agent CIO"; }
   };
+  if (busy) follow(box, ctx, ev.id, job.id);
+}
+
+const MODE_LABEL = {live: "AI", inbox: "vùng AI", mock: "mô phỏng"};
+const JOB = {queued: "Đang chờ trong hàng đợi", running: "Agent đang chạy", done: "Xong", failed: "Lỗi"};
+
+function jobLine(j) {
+  const tone = {done: "good", failed: "bad"}[j.status] || "warn";
+  return `<span class="badge ${tone}">${JOB[j.status]}</span> ${esc(j.id)} · ${MODE_LABEL[j.mode] || "mô phỏng"} · ${when(j.created)}${j.error ? `<div class="bad-text">${esc(j.error)}</div>` : ""}`;
+}
+
+// The run is queued (AI-13): follow the job until the worker is done, then open the view it wrote.
+async function follow(box, ctx, eventId, jobId) {
+  const here = location.hash;
+  for (let i = 0; i < 900 && location.hash === here; i++) {
+    const {jobs} = await get(`/api/events/${encodeURIComponent(eventId)}`);
+    const j = jobs.find(x => x.id === jobId);
+    const line = box.querySelector("#job");
+    if (line && j) line.innerHTML = jobLine(j);
+    if (j && j.status === "done" && j.view_id) return ctx.go(ctx.href("nhan-dinh", j.view_id));
+    if (j && j.status === "failed") { toast("Agent không chạy xong: " + (j.error || "")); return renderEvent(box, ctx, eventId); }
+    await new Promise(r => setTimeout(r, 2000));
+  }
 }
 
 function stepper(status) {
@@ -84,14 +110,14 @@ async function renderView(box, ctx, id) {
 
   box.innerHTML = `
     <div class="pagehead"><div><a class="small" href="${ctx.href("nhan-dinh", v.event_id)}">← ${esc(v.event_id)}</a>
-      <div class="eyebrow" style="margin-top:6px">Nhận định ${esc(v.id)} · ${v.mode === "live" ? `AI: ${esc(v.models.cio)}` : "Mô phỏng, không gọi AI"}</div>
+      <div class="eyebrow" style="margin-top:6px">Nhận định ${esc(v.id)} · ${v.mode === "live" ? `AI: ${esc(v.models.cio)}` : v.mode === "inbox" ? `Từ vùng AI qua hộp chờ có chữ ký · ${v.models.cio === "mock" ? "vùng AI chạy mô phỏng" : `AI: ${esc(v.models.cio)}`}` : "Mô phỏng, không gọi AI"}</div>
       <div style="margin-top:8px">${stepper(v.status)}</div></div>
       <div>${viewBadge(v.status)}</div></div>
     ${v.status === "AGENT_ERROR" ? `<div class="notice bad" style="margin-bottom:16px"><b>Agent lỗi:</b> ${esc((v.error || []).join("; "))}. Chạy lại ở trang sự kiện để tạo phiên bản mới.</div>` : ""}
     ${v.challenge_error ? `<div class="notice warn" style="margin-bottom:16px"><b>Agent Phản biện lỗi:</b> ${esc(v.challenge_error)} <button type="button" class="btn sm" id="rechallenge">Chạy lại phản biện</button></div>` : ""}
     ${cur ? `
     <div class="cols">
-      <div class="panel c7"><h3>Nhận định <span class="badge ai">${v.mode === "live" ? "AI soạn" : "mô phỏng"}</span></h3>
+      <div class="panel c7"><h3>Nhận định <span class="badge ai">${v.mode === "live" ? "AI soạn" : v.mode === "inbox" ? "vùng AI soạn" : "mô phỏng"}</span></h3>
         <div style="font-size:15px">${esc(cur.summary)}</div>
         <div class="small muted" style="margin-top:8px">Đã vào giá: <b>${{none: "chưa", partial: "một phần", full: "đã hết"}[cur.scenarios.priced_in]}</b> · nội dung ${esc(v.content_hash.slice(0, 10))}</div></div>
       <div class="panel c5"><h3>Điều kiện duyệt${decided ? ` <span class="hint">đã quyết: ${esc(viewLabel(v.status))}</span>` : ""}</h3>

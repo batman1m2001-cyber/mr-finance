@@ -85,7 +85,24 @@ def lenses() -> Dict[str, Dict[str, Any]]:
     return prompt_set()["lenses"]
 
 
+def configured_mode() -> str:
+    """The ``ai_mode`` configuration in force (FR-307): live (falls back to mock until two different models are
+    set), inbox (views come from the AI zone through the signed inbox; nothing is run here) or mock."""
+    from control import config
+
+    return config.data("ai_mode")["mode"]
+
+
 def resolve_mode(requested: Optional[str]) -> str:
+    """The mode one run uses: the configured one, or mock when asked for (a CIO may always try the keyword agent,
+    and the tests do). In inbox mode nothing runs here."""
+    configured = configured_mode()
+    if configured == "inbox" and requested != "mock":
+        raise AgentError("Chế độ hộp chờ: nhận định đến từ vùng AI qua hộp chờ, không chạy agent tại đây")
+    if configured == "mock" and requested in (None, "", "mock"):
+        return "mock"
+    if configured == "mock":
+        raise AgentError("Chế độ chạy AI đang là mô phỏng (Cấu hình › Chế độ chạy AI)")
     m = models()
     ready = ai.enabled() and m["cio"] and m["challenger"] and m["cio"] != m["challenger"]
     if requested == "mock":

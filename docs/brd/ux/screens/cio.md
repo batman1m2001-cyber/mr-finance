@@ -51,7 +51,7 @@ hint, relevance badge (Thấp / Vừa / Liên quan cao, “Độc quyền” for
 | Features | [FEAT-04](../../features/FEAT-04-cio-agent.md), [FEAT-05](../../features/FEAT-05-challenger.md), [FEAT-06](../../features/FEAT-06-view-decisions.md) |
 | Requirements | BRD-BR-05, BRD-BR-06, BRD-BR-07, BRD-BR-14, BRD-FR-302…305, BRD-FR-704, BRD-RULE-LC-01 |
 | Data | `GET /api/views/{id}`, `POST /api/views/decide` |
-| Screenshots | [desktop](../../assets/current_ui/SCR-CIO-03_desktop-light.jpg) · [desktop dark](../../assets/current_ui/SCR-CIO-03_desktop-dark.jpg) · [phone](../../assets/current_ui/SCR-CIO-03_phone-light.jpg) |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CIO-03_desktop-light.jpg) · [desktop dark](../../assets/current_ui/SCR-CIO-03_desktop-dark.jpg) · [phone](../../assets/current_ui/SCR-CIO-03_phone-light.jpg) · [a view from the AI zone, desktop](../../assets/current_ui/SCR-CIO-03-inbox_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-03-inbox_phone-light.jpg) |
 
 **Journey.** Read the view, see what the challenger found, answer it, check the market preview, decide.
 

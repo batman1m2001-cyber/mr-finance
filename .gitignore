@@ -17,3 +17,7 @@ __pycache__/
 data/state.db*
 .operonx/jobs/
 evals/
+
+# the AI zone (app/zone.py): its own state and catalogue-only data folder (scripts/make_zone_data.py)
+data/zone.db*
+data/zone/

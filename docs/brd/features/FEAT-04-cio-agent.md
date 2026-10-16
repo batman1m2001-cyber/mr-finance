@@ -5,7 +5,7 @@
 | Type | BRD capability |
 | Requirements | BRD-BR-05, BRD-BR-11, BRD-FR-301, BRD-FR-302, BRD-FR-307, BRD-FR-704, BRD-RULE-AI-01…14, BRD-RULE-WF-03, BRD-RULE-LC-01, BRD-NFR-10 |
 | Users | CIO runs it; the result is reviewed by the challenger (FEAT-05) and decided by the CIO (FEAT-06) |
-| Entry points | [SCR-CIO-02/03](../ux/screens/cio.md#scr-cio-03--nhận-định-view-detail) “Chạy Agent CIO”; `POST /api/events/run-agent {event_id, by, mode?}` |
+| Entry points | [SCR-CIO-02/03](../ux/screens/cio.md#scr-cio-03--nhận-định-view-detail) “Chạy Agent CIO”; `POST /api/events/run-agent {event_id, by, mode?}` → a queued job; the `agent_worker` job runs it |
 | Status | see [traceability](../requirements/requirements_traceability.md) |
 
 ## Purpose
@@ -16,7 +16,15 @@ money figure and never sees client data.
 ## Preconditions and permissions
 Role `cio`. The event exists and is not held for the agent run itself (approval is what holds are checked
 against). Mode: `live` only when the two models of the `models` configuration (version 1: `LLM_MODEL_CIO` and `LLM_MODEL_CHALLENGER`) are both set and differ; else
-`mock` ([ADR-0010](../decisions/ADR-0010-two-configured-models-and-a-labelled-mock.md)).
+`mock` ([ADR-0010](../decisions/ADR-0010-two-configured-models-and-a-labelled-mock.md)). Admin's `ai_mode`
+configuration (FR-307) can force `mock`, or set `inbox`: then nothing runs here and the views come from the AI zone
+([FEAT-19](FEAT-19-external-ai-inbox.md)).
+
+## Queued runs (BRD-RULE-AI-13)
+“Chạy Agent CIO” checks who, the event (not held) and the mode, then writes a job `AJ-nnnnnn` (`agent_jobs`) and
+answers at once; asking again while one is open returns it. The `agent_worker` job (every 5 seconds, one at a time)
+runs `cio_agent_flow` and records the view or why it failed; a job left running for 30 minutes by a worker that
+died is failed. The event page shows the job and follows it, then opens the view.
 
 ## Behaviour (graph `cio_agent_flow`, BRD §8.1)
 1. `gather` — deterministic packet: the event's news (wrapped “DỮ_LIỆU … HẾT_DỮ_LIỆU”), released research, the
@@ -55,7 +63,9 @@ challenger 4,000.
 `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node`,
 `::test_a_bad_draft_is_sent_back_twice_then_the_run_fails`, `::test_the_schema_refuses`,
 `::test_an_injection_in_the_news_stays_data`, `::test_live_mode_uses_two_models_and_no_client_data_reaches_them`,
-`::test_live_mode_refuses_same_models_a_cut_reply_and_another_model`, `::test_only_the_cio_runs_the_agent_and_decides`.
+`::test_live_mode_refuses_same_models_a_cut_reply_and_another_model`, `::test_only_the_cio_runs_the_agent_and_decides`;
+`tests/test_queue.py` (queued and answered at once, one open job per event, checks when queued, a failed run, a dead
+worker's job, the three modes).
 Live run recorded 2026-10-15 (OpenRouter): CIO agent 26 s over 7 nodes (news plan §9).
 
 ## Live demo (UI redesign R6, 2026-10-16)

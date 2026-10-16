@@ -162,6 +162,14 @@ def _check_consent(data: Any) -> None:
         raise ValueError(f"require: đúng các khóa {sorted(CONSENT['require'])}, giá trị true/false")
 
 
+AI_MODES = ("live", "inbox", "mock")
+
+
+def _check_ai_mode(data: Any) -> None:
+    if not isinstance(data, dict) or set(data) != {"mode"} or data["mode"] not in AI_MODES:
+        raise ValueError(f"cần {{'mode': một trong {list(AI_MODES)}}}")
+
+
 def _assignment_base() -> Dict[str, str]:
     from people import store
 
@@ -291,6 +299,13 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": False,
         "base": _assignment_base,
         "check": _check_assignment,
+    },
+    "ai_mode": {
+        "label": "Chế độ chạy AI",
+        "owner": "admin",
+        "two_person": False,
+        "base": lambda: {"mode": "live"},
+        "check": _check_ai_mode,
     },
     "prompts": {
         "label": "Lời nhắc của agent",
@@ -476,6 +491,47 @@ def decide(version_id: str, action: str, by: str, note: str = "") -> Dict[str, A
         audit.append(con, by, f"config.{action}", version_id, {"kind": v["kind"], "hash": v["hash"]})
     clear_cache()
     return next(x for x in versions(v["kind"]) if x["id"] == version_id)
+
+
+def mirror(kind: str, new: Any, source_id: str, by: str = "tcb:sync") -> Optional[Dict[str, Any]]:
+    """The AI zone only (F-D7, ZONE-06): a version TCB approved, put in force here as it is, with TCB's id. None when
+    it is the one already in force. Elsewhere a version comes in force only through propose and decide."""
+    from wealth.paths import in_zone
+
+    if not in_zone():
+        raise roles.Forbidden("Chỉ vùng AI nhận cấu hình đã duyệt từ TCB")
+    k = _kind(kind)
+    k["check"](new)
+    h = _hash(new)
+    if h == active(kind)["hash"]:
+        return None
+    now = time.time()
+    with db.tx() as con:
+        row = con.execute("select max(version) as v from config_versions where kind = ?", (kind,)).fetchone()
+        version = max(1, row["v"] or 1) + 1
+        vid = f"CF-{kind}-v{version}"
+        for old in con.execute("select id, data from config_versions where kind = ? and status = 'ACTIVE'", (kind,)):
+            d = json.loads(old["data"])
+            d["history"].append({"at": now, "by": by, "status": "SUPERSEDED", "note": vid})
+            con.execute(
+                "update config_versions set status = 'SUPERSEDED', data = ? where id = ?", (db.dumps(d), old["id"])
+            )
+        note = f"Bản {source_id} đã duyệt ở TCB"
+        body = {
+            "data": new,
+            "hash": h,
+            "proposed_by": by,
+            "decided_by": by,
+            "note": note,
+            "mirrored_from": source_id,
+            "history": [{"at": now, "by": by, "status": "ACTIVE", "note": note}],
+        }
+        con.execute(
+            "insert into config_versions values (?, ?, ?, ?, ?, ?)", (vid, kind, version, "ACTIVE", now, db.dumps(body))
+        )
+        audit.append(con, by, "config.mirror", vid, {"kind": kind, "hash": h, "from": source_id})
+    clear_cache()
+    return next(v for v in versions(kind) if v["id"] == vid)
 
 
 def get(version_id: str) -> Dict[str, Any]:

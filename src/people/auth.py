@@ -263,7 +263,7 @@ def _session() -> Any:
     if session is None:
         return None
     meta = getattr(session, "meta", None) or {}
-    if meta.get("trigger") == "schedule":
+    if meta.get("trigger") == "schedule" or meta.get("job"):  # a schedule, or `operonx run <job>` on the server
         return None
     return session
 

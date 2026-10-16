@@ -12,9 +12,9 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 49 | 3 | 7 | 2 | 0 | 0 | 0 | 0 |
+| BRD numbered (BR, FR, NFR) | 61 | 50 | 3 | 6 | 2 | 0 | 0 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 2 | 0 | 1 | 0 | 0 | 0 | 4 | 0 |
-| BRD rules (RULE) | 97 | 76 | 4 | 6 | 2 | 0 | 0 | 7 | 2 |
+| BRD rules (RULE) | 97 | 82 | 4 | 5 | 0 | 0 | 0 | 4 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -59,7 +59,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-FR-304 | §6.3 | CIO edits, answers, approves/returns/rejects/withdraws with reasons | FEAT-06 | SCR-CIO-03 | `src/views/decide.py` | `tests/test_views.py::test_return_withdraw_and_supersede`, `tests/test_views.py::test_an_invalid_edit_is_refused_and_changes_nothing` | implemented_verified | |
 | BRD-FR-305 | §6.3 | Market-level preview per branch before approval | FEAT-06 | SCR-CIO-03 | `src/views/preview.py` | `tests/test_views.py::test_the_reads` | implemented_verified | |
 | BRD-FR-306 | §6.3 | Policy agent and policy radar | FEAT-16 | — | — | — | planned | News plan N5 (optional); “radar” undefined (Q-09) |
-| BRD-FR-307 | §6.3 | Three run modes: live, inbox, mock | FEAT-04, 19 | SCR-CIO-02 | `src/views/agents.py::resolve_mode` | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them`, `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node` | partially_implemented | Live and mock built; inbox mode not (FEAT-19, N5) |
+| BRD-FR-307 | §6.3 | Three run modes: live, inbox, mock | FEAT-04, 19 | SCR-CIO-02, SCR-ADM-01 | `src/views/agents.py::resolve_mode`, `src/control/config.py` (`ai_mode`) | `tests/test_queue.py::test_admin_sets_the_mode_inbox_runs_nothing_here_mock_never_calls_a_model`, `tests/test_zone.py::test_the_round_trip_tcb_to_the_zone_and_back_through_the_inbox`, `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | implemented_verified | Admin's `ai_mode` configuration; inbox mode imports the AI zone's packages (ADR-0022) |
 | BRD-FR-401 | §6.4 | On approval: snapshot, compute all, hashed run | FEAT-08 | SCR-CIO-05 | `src/apply/run.py::apply_view`, `make_snapshot` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family`, `tests/test_apply.py::test_the_same_approval_applied_twice_is_one_run` | implemented_verified | |
 | BRD-FR-402 | §6.4 | Family result: bands, contributions to each position, loan interest, modelled share | FEAT-08 | SCR-RM-02 | `src/apply/run.py::compute` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | implemented_verified | “Loan interest cost” interpreted as the loans' 3-month contribution (Q-10) |
 | BRD-FR-403 | §6.4 | Rank all families; all-client summary by factor | FEAT-08 | SCR-CIO-04 | `src/apply/run.py::ranking`, `exposure` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family`, `tests/test_apply.py::test_the_rm_today_list_holds_the_flagged_families_worst_first` | implemented_verified | |
@@ -127,12 +127,12 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-WF-07 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_rm_today_list_holds_the_flagged_families_worst_first` | |
 | BRD-RULE-WF-08 | — | out_of_scope_demo | — | Specialist process is a later phase |
 | BRD-RULE-WF-09 | FEAT-04, 08 | implemented_verified | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them`, `tests/test_accuracy.py::test_the_reports_read_approval_time_edits_and_news_to_rm_time` | Barrier verified; end-to-end time measured per event (KPI-01) |
-| BRD-RULE-ZONE-01 | FEAT-19 | out_of_scope_demo | — | One process (ADR-0009) |
-| BRD-RULE-ZONE-02 | FEAT-19 | planned | — | Signed inbox, news plan N5 |
-| BRD-RULE-ZONE-03 | FEAT-04 | implemented_verified | `tests/test_views.py::test_the_schema_refuses` | Same checks applied to live and mock output |
+| BRD-RULE-ZONE-01 | FEAT-19 | implemented_verified | `tests/test_zone.py::test_the_round_trip_tcb_to_the_zone_and_back_through_the_inbox` | A second process with its own state file and a catalogue-only data folder; `MF_ZONE=on` makes a people read raise (ADR-0022) |
+| BRD-RULE-ZONE-02 | FEAT-19 | implemented_verified | `tests/test_inbox.py::test_a_signed_package_is_imported_as_a_view_waiting_for_the_cio`, `tests/test_zone.py::test_the_round_trip_tcb_to_the_zone_and_back_through_the_inbox` | `POST /api/inbox` answers 202 with an id only |
+| BRD-RULE-ZONE-03 | FEAT-04, 19 | implemented_verified | `tests/test_views.py::test_the_schema_refuses`, `tests/test_inbox.py::test_a_package_that_fails_a_check_is_rejected_with_why_and_changes_nothing` | Same checks applied to live, mock and imported output |
 | BRD-RULE-ZONE-04 | FEAT-08, 09 | implemented_verified | `tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news` | Templates only; no AI on family data |
 | BRD-RULE-ZONE-05 | FEAT-04, 08, 11 | implemented_verified | `tests/test_apply.py::test_every_step_is_in_the_audit_chain_and_it_verifies` | |
-| BRD-RULE-ZONE-06 | FEAT-19 | out_of_scope_demo | — | |
+| BRD-RULE-ZONE-06 | FEAT-19 | implemented_verified | `tests/test_zone.py::test_the_zones_door_takes_only_a_signed_bundle_of_the_catalogues` | `zone_sync`: approved catalogues and released research only |
 | BRD-RULE-AI-01 | FEAT-04, 05, 16 | partially_implemented | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | CIO agent, challenger, templates built; policy agent not |
 | BRD-RULE-AI-02 | FEAT-14 | implemented_verified | `tests/test_config_f4.py::test_a_prompt_change_runs_the_eval_set_and_needs_a_second_admin`, `tests/test_config_f4.py::test_the_models_in_force_are_the_configured_ones` | `prompts` and `models` kinds (Admin, two people); every node records the prompts version id; version 1 of the models is .env |
 | BRD-RULE-AI-03 | FEAT-04 | implemented_verified | `tests/test_views.py::test_live_mode_refuses_same_models_a_cut_reply_and_another_model` | |
@@ -145,7 +145,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-AI-10 | FEAT-04, 05 | implemented_verified | `tests/test_views.py::test_live_mode_refuses_same_models_a_cut_reply_and_another_model` | |
 | BRD-RULE-AI-11 | FEAT-04 | implemented_verified | `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node` | |
 | BRD-RULE-AI-12 | FEAT-04 | implemented_verified | `tests/test_views.py::test_live_mode_refuses_same_models_a_cut_reply_and_another_model` | |
-| BRD-RULE-AI-13 | FEAT-04, 19 | partially_implemented | `tests/test_views.py::test_the_mock_agent_writes_a_valid_view_and_records_every_node` | Live runs synchronously in the request; no job queue; no inbox |
+| BRD-RULE-AI-13 | FEAT-04, 19 | implemented_verified | `tests/test_queue.py::test_the_run_is_queued_and_answered_at_once`, `tests/test_queue.py::test_a_run_left_running_by_a_dead_worker_is_failed_and_the_event_can_run_again` | Live runs queued for the `agent_worker` job; inbox mode via FEAT-19 |
 | BRD-RULE-AI-14 | FEAT-04 | implemented_verified | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | Pre-BRD AI steps are outside the BRD's agents (NFR-08 row) |
 | BRD-RULE-ENG-01 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_the_same_inputs_give_the_same_numbers_to_the_dong` | |
 | BRD-RULE-ENG-02 | FEAT-07 | implemented_verified | `tests/test_engine.py::test_priced_in_multipliers_scale_the_move_and_its_uncertainty` | |
@@ -181,14 +181,14 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-LC-01 | FEAT-06 | implemented_verified | `tests/test_views.py::test_return_withdraw_and_supersede` | |
 | BRD-RULE-LC-02 | FEAT-08 | implemented_verified | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`, `tests/test_apply.py::test_recompute_makes_a_new_run_and_supersedes_the_old` | |
 | BRD-RULE-LC-03 | FEAT-03 | implemented_verified | `tests/test_research.py::test_a_report_naming_the_restricted_list_is_not_released` | |
-| BRD-RULE-LC-04 | FEAT-19 | planned | — | News plan N5 |
+| BRD-RULE-LC-04 | FEAT-19 | implemented_verified | `tests/test_inbox.py::test_unsigned_or_wrongly_signed_is_rejected_when_the_key_is_set` | HMAC-SHA256, `MF_INBOX_KEY` |
 | BRD-RULE-SEC-01 | FEAT-12 | implemented_verified | `tests/test_auth.py::test_a_session_is_signed_and_expires`, `tests/test_auth.py::test_nothing_under_api_opens_without_a_session`, `tests/ui/test_signin.py::test_sign_in_with_the_form_and_with_a_demo_account_then_sign_out` | Own accounts, signed session (ADR-0020); a bank swaps the form for SSO |
 | BRD-RULE-SEC-02 | FEAT-12 | implemented_verified | `tests/test_access.py::test_every_read_as_every_person`, `tests/test_access.py::test_every_action_as_every_person`, `tests/test_access.py::test_every_read_the_app_serves_has_a_decision_here`, `tests/test_auth.py::test_nobody_acts_in_someone_elses_name` | Every served route walked as seven people (two families, an assigned and an unassigned RM, CIO, Compliance, Admin): reads by role (`ROUTE_ROLES`) and family; actions by the acting person, role and family; refused 403, signed out 401 (operonx 1.27) |
 | BRD-RULE-SEC-03 | FEAT-13, 28 | implemented_unverified | — | “Nội bộ” on the advisory pages and, since 2026-10-16, on the staff views of impact, trace, graph, Toàn cảnh and Hôm nay; browser-checked |
 | BRD-RULE-SEC-04 | FEAT-03, 14 | partially_implemented | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`, `tests/test_config.py::test_a_proposal_changes_nothing_until_a_second_owner_approves_it`, `tests/test_config_f4.py::test_a_prompt_change_runs_the_eval_set_and_needs_a_second_admin` | Research SoD and the two-person rule for the factor model, thresholds, restricted list, prompts and models (ADR-0016); the newsletter is not built (F8) |
 | BRD-RULE-SEC-05 | FEAT-14 | implemented_verified | `tests/test_config.py::test_wrong_owner_wrong_content_and_a_second_pending_are_refused`, `tests/test_config.py::test_one_person_kinds_and_rejection`, `tests/test_config_f4.py::test_the_new_kinds_have_the_brd_owners_and_two_people_for_prompts_and_models` | Owners as the §13.1 table: CIO (factor model, thresholds, return assumptions), Compliance (restricted list, forbidden phrases, consent), Admin (news and price sources, ticker map, prompts, models) |
 | BRD-RULE-SEC-06 | FEAT-03, 04 | implemented_verified | `tests/test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox` | |
-| BRD-RULE-SEC-07 | FEAT-19 | out_of_scope_demo | — | No inbox mode |
+| BRD-RULE-SEC-07 | FEAT-19 | implemented_verified | `tests/test_inbox.py::test_the_door_opens_only_in_inbox_mode_and_refuses_floods`, `tests/test_inbox.py::test_news_tcb_has_not_fetched_waits_then_is_rejected_after_an_hour` | Write-only door, size and queue limits, news matched to the bank's own fetch |
 | BRD-RULE-SEC-08 | FEAT-11 | implemented_verified | `tests/test_apply.py::test_hmac_chain_and_no_downgrade` | WORM anchoring is the bank's |
 | BRD-RULE-SEC-09 | FEAT-09, 11 | implemented_verified | `tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news` | |
 | BRD-RULE-SEC-10 | FEAT-11, 12 | implemented_verified | `tests/test_brd_gaps.py::test_health_lists_the_protections_that_are_off` | `/healthz` lists each protection and which are off (HMAC, two models, client text kept from AI, Copilot router, sign-in) |

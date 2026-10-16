@@ -7,6 +7,7 @@ Served as is: POST /api/events/run-agent and POST /api/views/decide (app/main.py
 from operonx import END, START, graph
 
 from views.ops import analyse, analyse_more, compose, decide_view, discuss, gather, review, run_evals, save_view
+from views.worker import queue_agent, work_queue
 
 
 @graph
@@ -70,4 +71,18 @@ def decide_flow(view_id, action, by, reason="", idem_key=None, edits=None, respo
 def agent_eval_flow(tick=None, at=None):
     """The eval set on pending prompt and model proposals (the ``agent_eval`` job, every minute)."""
     done = run_evals(tick=tick, at=at)
+    START >> done >> END
+
+
+@graph
+def agent_queue_flow(event_id, by="cio", mode=None):
+    """POST /api/events/run-agent: the CIO's run, queued for the ``agent_worker`` job (AI-13)."""
+    queued = queue_agent(event_id=event_id, by=by, mode=mode)
+    START >> queued >> END
+
+
+@graph
+def agent_worker_flow(tick=None, at=None):
+    """The ``agent_worker`` job (every 5 seconds): the oldest queued run."""
+    done = work_queue(tick=tick, at=at)
     START >> done >> END
