@@ -38,6 +38,9 @@ class Ctx:
     followed: Optional[List[str]] = None  # goal ids the client follows in this browser (None: the persona's)
     user: Optional[str] = None  # who acts: the person signed in, else the role's demo user; writes name them
     reads: bool = True  # the model may read tool results (the barrier's client_ai allows it; ADR-0026)
+    route: str = ""  # the page asked from (its sections only reach the model)
+    trail: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)  # this request's tool results, by call id
+    asked: set = field(default_factory=set)  # call ids of the writes a resumed request answers
 
 
 @dataclass

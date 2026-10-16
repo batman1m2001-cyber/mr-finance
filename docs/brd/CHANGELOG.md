@@ -2,6 +2,15 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The assistant (ASSISTANT_PLAN A2): the Copilot panel now asks `POST /api/assistant`.
+  - An operonx-agents run over the role's tools, several steps a turn.
+  - Writes wait with their plan for the person who asked, then run once and are read back.
+  - Answers cite their pages, sources and date, and say how they were written (model / template behind the barrier /
+    keyword fallback when no model answers).
+  - Real-model eval subset 10/10 twice (p50 ≈ 5.4 s). Its first run found the model asking for a confirmation in
+    prose instead of calling the write; fixed.
+  - Documents: assistant.md §3, FEAT-32, testing/assistant_eval.md, matrix OWN-AS-01/05/06/08/09.
+
 - 2026-10-17 — The assistant's tool registry (ASSISTANT_PLAN A1): the Copilot's 13 tools moved into
   `src/assistant/` and 12 more wrapped from served graphs (reads: forces on wealth, search, the review queue, events,
   system alerts, contacts; writes: send a scenario option, log a contact, recommend, specialist decision, flag an
