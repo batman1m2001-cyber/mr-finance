@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — The policy agent and the policy radar (BRD completion F9): Compliance adds a policy document from
+  the Official Gazette (the server reads the gazette's signed PDF, extracts the text, keeps its hash) or an
+  official page; a second Compliance person verifies the source; the policy agent (live on `llm:cio` with the new
+  `policy` prompt, or mock) summarises only verified text, every quote checked word for word inside the article it
+  names, a failing answer sent back at most twice; it sees one document and no client data; the radar (our
+  reading of Q-09, labelled “Đề xuất”) keeps each document's status path and marks what changed since the last
+  look — FEAT-16, catalogue (FEAT-15), matrix (FR-306, AI-01 verified), api_reference, compliance.md (SCR-CMP-05).
+
 - 2026-10-16 — The newsletter and conflict of interest (BRD completion F8): the CIO drafts a general letter from
   1–6 approved views (impacts in words, tickers counted not named, scenarios, outlets), the opening by template or
   the CIO agent under a content guard (forbidden wording, tickers, restricted names, the CONTENT-02 labels) with the

@@ -60,9 +60,9 @@ ENTRIES: List[Dict[str, Any]] = [
         "risk": "trung bình",
         "risk_why": "không xem danh mục, không kết luận cho gia đình cụ thể",
         "brd_model": "Claude Opus 5.5, nỗ lực vừa",
-        "resource": None,
-        "reads": "văn bản chính sách đã xác nhận nguồn",
-        "built": False,
+        "resource": "llm:cio",
+        "reads": "một văn bản chính sách đã xác nhận nguồn — không danh mục, không dữ liệu khách",
+        "built": True,
     },
     {
         "id": "explain",
@@ -121,7 +121,7 @@ def catalogue() -> Dict[str, Any]:
     now = {
         "cio": ("live", st["cio"]) if mode == "live" else ("mock", "từ khóa (mô phỏng)"),
         "challenger": ("live", st["challenger"]) if mode == "live" else ("mock", "luật R1–R7"),
-        "policy": ("not_built", "—"),
+        "policy": ("live", st["cio"]) if mode == "live" else ("mock", "trích câu đầu mỗi điều (mô phỏng)"),
         "explain": ("template", "mẫu tất định"),
         "copilot": ("live", copilot_router.model()) if copilot_router.live() else ("keyword", "từ khóa (mô phỏng)"),
     }
@@ -133,7 +133,7 @@ def catalogue() -> Dict[str, Any]:
                 **e,
                 "mode": m,
                 "model": model,
-                "latest_run": _latest_run(e["id"]) if e["id"] in ("cio", "challenger") else None,
+                "latest_run": _latest_run(e["id"]) if e["id"] in ("cio", "challenger", "policy") else None,
             }
         )
     return {"agents": out, "references": REFS, "prompt_version": agents.prompt_version()}

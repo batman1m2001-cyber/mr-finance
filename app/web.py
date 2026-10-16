@@ -521,6 +521,28 @@ async def newsletter_one(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc)}, status_code=404)
 
 
+async def policy_radar(request: Request) -> JSONResponse:
+    """The policy radar (FR-306, F-D8): every tracked document by its last change, ``?since=`` the reader's last
+    look."""
+    from policy import store as policy_store
+
+    try:
+        since = float(request.query_params.get("since") or 0)
+    except ValueError:
+        since = 0.0
+    return JSONResponse(policy_store.radar(since))
+
+
+async def policy_one(request: Request) -> JSONResponse:
+    """One policy document with its text, articles, history and the agent's summary."""
+    from policy import store as policy_store
+
+    try:
+        return JSONResponse({"document": policy_store.get(request.path_params["document_id"])})
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=404)
+
+
 async def system_alerts(request: Request) -> JSONResponse:
     """The bell's alerts (BRD-NFR-12): the open and acknowledged ones of the kinds the signed-in role looks after
     (sign-in off: ``?role=``)."""
@@ -924,6 +946,7 @@ ROUTE_ROLES = {
     "/api/system": ("admin",),
     "/api/system/alerts": OVERSIGHT,  # the bell: each role its kinds of alert
     "/api/newsletters": ("cio", "compliance"),  # the CIO writes, Compliance approves (FR-801)
+    "/api/policy": ("cio", "compliance"),  # Compliance keeps the radar, the CIO reads it (FR-306)
     "/api/rm/": ("rm",),
 }
 ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị"}
@@ -1031,6 +1054,8 @@ app = Starlette(
         Route("/api/system/alerts", system_alerts),
         Route("/api/newsletters", newsletters),
         Route("/api/newsletters/{newsletter_id}", newsletter_one),
+        Route("/api/policy", policy_radar),
+        Route("/api/policy/{document_id}", policy_one),
         Route("/api/inbox", inbox_receive, methods=["POST"]),
         Route("/api/accuracy", accuracy),
         Route("/api/measure", measure_reports),

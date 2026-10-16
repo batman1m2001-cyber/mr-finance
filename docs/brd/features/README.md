@@ -31,7 +31,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-13](FEAT-13-impact-delivery-by-role.md) | Impact delivery by role | BR-09, FR-502, FR-503, §14 | built | SCR-RM-01, SCR-RM-02, SCR-CL-05 |
 | [FEAT-14](FEAT-14-versioned-configuration.md) | Versioned configuration | FR-701 | partial | SCR-CIO-07 (read-only) |
 | [FEAT-15](FEAT-15-agent-catalogue.md) | Agent catalogue | FR-703 | partial | — |
-| [FEAT-16](FEAT-16-policy-agent.md) | Policy agent | FR-306 | not built | — |
+| [FEAT-16](FEAT-16-policy-agent.md) | Policy agent and radar | FR-306, AI-01 | F9 — built 2026-10-16 | SCR-CMP-05 |
 | [FEAT-17](FEAT-17-cio-newsletter.md) | CIO newsletter | FR-801, CONTENT-01/02/03, SEC-04 | F8 — built 2026-10-16 | SCR-CIO-14, SCR-CMP-04 |
 | [FEAT-18](FEAT-18-accuracy-tracking.md) | Accuracy over time and the measurement reports | BR-15, KPI-01/03/04, MEAS-01/02/03/05, NFR-02 | built (F3) | SCR-CIO-12, SCR-CIO-13 |
 | [FEAT-19](FEAT-19-external-ai-inbox.md) | External AI zone and signed inbox | FR-307, AI-13, ZONE-01…03, ZONE-06, LC-04, SEC-07 | built | SCR-ADM-01 |

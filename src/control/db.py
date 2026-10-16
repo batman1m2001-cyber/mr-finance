@@ -72,6 +72,8 @@ create table if not exists alerts (
 create index if not exists alerts_open on alerts (kind, key, status);
 create table if not exists newsletters (
   id text primary key, status text not null, created real not null, data text not null);
+create table if not exists policy_documents (
+  id text primary key, status text not null, created real not null, data text not null);
 """
 
 TABLES = (
@@ -91,6 +93,7 @@ TABLES = (
     "zone_outbox",
     "alerts",
     "newsletters",
+    "policy_documents",
     "counters",
 )
 

@@ -737,6 +737,9 @@ body.signed-out .bellwrap, body.signed-out .cp-fab, body.signed-out #reset { dis
 .fld input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .bad-text { color: var(--critical); }
 .warn-text { color: var(--warning); }
+.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent, inherit); text-align: left; cursor: pointer; text-decoration: underline dotted; }
+#page mark { background: var(--warning-soft); color: var(--ink); border-radius: 3px; padding: 0 2px; }
+#page mark.flash { outline: 2px solid var(--warning); }
 .h3 { font-size: 15px; font-weight: 700; }
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
 .signin-demo { display: grid; gap: 14px; }

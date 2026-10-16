@@ -14,7 +14,7 @@ def test_one_entry_per_agent_with_the_six_fields():
         assert all(a[k] for k in ("purpose", "owner", "risk", "brd_model", "model", "mode"))
     assert {r["name"] for r in out["references"]} >= {"TradingAgents", "FinRobot"}
     policy = next(a for a in out["agents"] if a["id"] == "policy")
-    assert policy["built"] is False and policy["mode"] == "not_built"
+    assert policy["built"] is True and policy["mode"] == "mock" and policy["resource"] == "llm:cio"  # F9
 
 
 def test_the_latest_run_and_the_quality_figures_come_from_the_store():

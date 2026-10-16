@@ -12,16 +12,16 @@ Last full review: **2026-10-15**, against commit b5e1cb1 and the BRD with SHA-25
 
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 52 | 3 | 5 | 1 | 0 | 0 | 0 | 0 |
+| BRD numbered (BR, FR, NFR) | 61 | 53 | 3 | 5 | 0 | 0 | 0 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 2 | 0 | 1 | 0 | 0 | 0 | 4 | 0 |
-| BRD rules (RULE) | 97 | 86 | 4 | 1 | 0 | 0 | 0 | 4 | 2 |
+| BRD rules (RULE) | 97 | 87 | 4 | 0 | 0 | 0 | 0 | 4 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
-completion is not 100 %:** of the 61 numbered requirements, 52 are implemented and verified by tests; the rest are
+completion is not 100 %:** of the 61 numbered requirements, 53 are implemented and verified by tests; the rest are
 partial, unverified, planned, not implemented or blocked, each with its reason below. (The `not_applicable` KIT rows
 are the documentation rules this repository itself follows.) Counts are recomputed by the checker.
 
@@ -58,7 +58,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-FR-303 | §6.3 | Challenger before approval and on edits; 3 severities | FEAT-05 | SCR-CIO-03 | `src/views/ops.py::review`, `src/views/challenger.py` | `tests/test_views.py::test_an_edit_goes_back_to_the_challenger_and_a_critical_finding_blocks_approval_until_answered` | implemented_verified | |
 | BRD-FR-304 | §6.3 | CIO edits, answers, approves/returns/rejects/withdraws with reasons | FEAT-06 | SCR-CIO-03 | `src/views/decide.py` | `tests/test_views.py::test_return_withdraw_and_supersede`, `tests/test_views.py::test_an_invalid_edit_is_refused_and_changes_nothing` | implemented_verified | |
 | BRD-FR-305 | §6.3 | Market-level preview per branch before approval | FEAT-06 | SCR-CIO-03 | `src/views/preview.py` | `tests/test_views.py::test_the_reads` | implemented_verified | |
-| BRD-FR-306 | §6.3 | Policy agent and policy radar | FEAT-16 | — | — | — | planned | News plan N5 (optional); “radar” undefined (Q-09) |
+| BRD-FR-306 | §6.3 | Policy agent and policy radar | FEAT-16 | SCR-CMP-05 | `src/policy/agent.py::summarise`, `src/policy/text.py::check`, `src/policy/source.py::gazette`, `src/policy/store.py::radar`; `POST /api/policy[/verify\|/status\|/summarise]`, `GET /api/policy` | `tests/test_policy.py::test_the_check_takes_the_documents_own_words_inside_the_named_article_only`, `tests/test_policy.py::test_the_agent_reads_only_verified_text_and_mock_quotes_pass_the_check`, `tests/test_policy.py::test_live_a_paraphrased_quote_goes_back_with_why_and_no_client_data_reaches_the_model`, `tests/test_policy.py::test_the_radar_keeps_each_documents_status_history_and_what_changed` | implemented_verified | Documents from the Official Gazette's signed PDF or an official page, verified by a second Compliance person; every quote checked word for word inside its article, ≤ 2 retries; the radar is our reading (F-D8, labelled “Đề xuất”, Q-09 still open for the owner) |
 | BRD-FR-307 | §6.3 | Three run modes: live, inbox, mock | FEAT-04, 19 | SCR-CIO-02, SCR-ADM-01 | `src/views/agents.py::resolve_mode`, `src/control/config.py` (`ai_mode`) | `tests/test_queue.py::test_admin_sets_the_mode_inbox_runs_nothing_here_mock_never_calls_a_model`, `tests/test_zone.py::test_the_round_trip_tcb_to_the_zone_and_back_through_the_inbox`, `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | implemented_verified | Admin's `ai_mode` configuration; inbox mode imports the AI zone's packages (ADR-0022) |
 | BRD-FR-401 | §6.4 | On approval: snapshot, compute all, hashed run | FEAT-08 | SCR-CIO-05 | `src/apply/run.py::apply_view`, `make_snapshot` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family`, `tests/test_apply.py::test_the_same_approval_applied_twice_is_one_run` | implemented_verified | |
 | BRD-FR-402 | §6.4 | Family result: bands, contributions to each position, loan interest, modelled share | FEAT-08 | SCR-RM-02 | `src/apply/run.py::compute` | `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | implemented_verified | “Loan interest cost” interpreted as the loans' 3-month contribution (Q-10) |
@@ -133,7 +133,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-ZONE-04 | FEAT-08, 09 | implemented_verified | `tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news` | Templates only; no AI on family data |
 | BRD-RULE-ZONE-05 | FEAT-04, 08, 11 | implemented_verified | `tests/test_apply.py::test_every_step_is_in_the_audit_chain_and_it_verifies` | |
 | BRD-RULE-ZONE-06 | FEAT-19 | implemented_verified | `tests/test_zone.py::test_the_zones_door_takes_only_a_signed_bundle_of_the_catalogues` | `zone_sync`: approved catalogues and released research only |
-| BRD-RULE-AI-01 | FEAT-04, 05, 16 | partially_implemented | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | CIO agent, challenger, templates built; policy agent not |
+| BRD-RULE-AI-01 | FEAT-04, 05, 15, 16 | implemented_verified | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them`, `tests/test_policy.py::test_live_a_paraphrased_quote_goes_back_with_why_and_no_client_data_reaches_the_model`, `tests/test_catalogue.py::test_one_entry_per_agent_with_the_six_fields` | All four tasks: CIO agent, challenger, the policy agent (F9: owner Compliance, sees one document, no portfolio), and the internal explanation, which is a deterministic template inside the bank (no model, so no family data leaves) — the catalogue records each one's owner, risk and model |
 | BRD-RULE-AI-02 | FEAT-14 | implemented_verified | `tests/test_config_f4.py::test_a_prompt_change_runs_the_eval_set_and_needs_a_second_admin`, `tests/test_config_f4.py::test_the_models_in_force_are_the_configured_ones` | `prompts` and `models` kinds (Admin, two people); every node records the prompts version id; version 1 of the models is .env |
 | BRD-RULE-AI-03 | FEAT-04 | implemented_verified | `tests/test_views.py::test_live_mode_refuses_same_models_a_cut_reply_and_another_model` | |
 | BRD-RULE-AI-04 | FEAT-04 | implemented_verified | `tests/test_views.py::test_a_bad_draft_is_sent_back_twice_then_the_run_fails` | |

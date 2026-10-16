@@ -269,6 +269,11 @@ and SEC-04 verified.
 - The radar (F-D8).
 - Owner Compliance. The fourth LLM task, internal explanation, is already a template; recorded as such (AI-01).
 
+**Done** (FEAT-16): `src/policy/` — documents from the Official Gazette's signed PDF (or an official page),
+verified by a second Compliance person; the policy agent (live `llm:cio` + the `policy` prompt, or mock) with every
+quote checked word for word inside its article and ≤ 2 retries; the radar “Chính sách” for Compliance and the CIO,
+labelled “Đề xuất”. FR-306 and AI-01 verified; Q-09 stays open for the owner to define the radar.
+
 ### F10 — The remaining rules and verification (H), then the report
 
 - BR-08: VND impact per goal (Q-03 recorded).
