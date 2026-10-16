@@ -25,7 +25,7 @@ export async function render(box, ctx) {
         <div class="eyebrow">Hôm nay · cần xem trước</div>
         <div class="hero" style="margin-top:10px">${families.size}</div>
         <div class="takeaway">gia đình có kịch bản xấu 3 tháng (P10) chạm ngưỡng ${how(pct(d.threshold_pct, true, 0), "threshold.pre_review")} tài sản ròng.</div>
-        <div class="footnote">Chỉ tính các lần áp dụng đã qua hậu kiểm và đang hiệu lực. Liên hệ khách theo thứ tự dưới đây.</div>
+        <div class="footnote">Chỉ tính các lần áp dụng đã qua hậu kiểm và đang hiệu lực. Liên hệ khách theo thứ tự dưới đây.${d.control.length ? ` ${d.control.length} gia đình của bạn thuộc nhóm đối chứng (BRD-RULE-MEAS-06): hệ thống không đưa tín hiệu cho họ, bạn vẫn phục vụ như thường.` : ""}</div>
       </div>
       <div class="panel c8">
         <h3>Danh sách <span class="hint">xấu nhất trước</span></h3>

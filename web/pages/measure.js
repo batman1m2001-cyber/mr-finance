@@ -1,7 +1,8 @@
 /* CIO and Tuân thủ · Đo lường (F3): the monthly measurement reports, read from what the product records —
    misses with causes (MEAS-03), rubber-stamping (MEAS-05), news to RM (KPI-01, WF-09), inbox and agent timing
    (NFR-02), availability in business hours (NFR-03), recommendations reviewed and logged (KPI-05), RM contacts from a
-   signal (KPI-06), high-level alerts the client opened (KPI-07). GET /api/measure. */
+   signal (KPI-06), high-level alerts the client opened (KPI-07), the business effect against a control group
+   (MEAS-06). GET /api/measure. */
 import {esc, get, n as how, num, pct} from "../core/core.js";
 
 const n1 = (x) => x == null ? "—" : Number(x).toLocaleString("vi-VN", {maximumFractionDigits: 1});
@@ -18,7 +19,13 @@ function stats(s, unit) {
 export async function render(box) {
   const d = await get("/api/measure");
   const m = d.misses, r = d.rubber_stamp, s = d.speed, t = d.timing, a = d.availability, im = d.important, u = s.urgent;
-  const rv = d.reviewed, ct = d.contacts, op = d.opens;
+  const rv = d.reviewed, ct = d.contacts, op = d.opens, ef = d.effect;
+  const n2 = (x, d) => x == null ? "—" : Number(x).toLocaleString("vi-VN", {maximumFractionDigits: d});
+  const EFFECT = [["contacts", "Liên hệ mỗi gia đình mỗi tháng", (x) => n2(x, 2)], ["goals", "Mục tiêu “Đạt”", (x) => x == null ? "—" : pct(x, false, 0)],
+    ["actions", "Khuyến nghị hành động được duyệt mỗi gia đình", (x) => n2(x, 2)]];
+  const cell = (x, f, q, group) => x == null ? "—" : how(f(x), "measure.control_effect", {quarter: q, group});
+  const band = (r, f, q) => r.low == null ? `<span class="muted">chưa đủ gia đình</span>`
+    : how(`${f(r.diff)} [${f(r.low)}; ${f(r.high)}]`, "measure.control_effect", {quarter: q, tool: r.n_tool, control: r.n_control});
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">Đo lường</div><h1 class="h1">Báo cáo đo lường hằng tháng</h1>
       <p class="lede">Đọc từ những gì hệ thống ghi lại: tin và sự kiện bị bỏ sót, thời gian CIO xem trước khi duyệt, thời gian từ tin đến RM, tốc độ hộp tin và Agent, mức sẵn sàng trong giờ làm việc.</p></div></div>
@@ -95,6 +102,15 @@ export async function render(box) {
           <td>${stats(x.hours, "giờ")}</td></tr>`).join("")}
       </tbody></table></div>`
       : empty("Chưa có cảnh báo mức cao nào đến khách.")}
+    </section>
+
+    <section class="panel mt"><h3>Hiệu quả kinh doanh: có và không có công cụ <span class="hint">BRD-RULE-MEAS-06 · theo quý</span></h3>
+      <p class="small">Nhóm đối chứng: ${how(pct(ef.share, false, 0), "measure.control_effect")} số gia đình, rút trong từng tầng (${esc(ef.strata.join(" × "))}) theo seed “${esc(ef.seed)}” — ai có cấu hình cũng rút lại được. RM không nhận tín hiệu nào cho nhóm này; khách vẫn được phục vụ đủ. Chênh lệch = có công cụ − đối chứng, trong ngoặc là khoảng tin cậy ${how("90 %", "measure.control_effect")}. Hiện có <b>${ef.control.length}</b> trên ${ef.families} gia đình${ef.control.length ? `: ${esc(ef.control.join(", "))}` : ""}.${ef.families < 50 ? " Với số gia đình của bản demo, chênh lệch không nói lên hiệu quả: cần thí điểm." : ""}</p>
+      ${ef.quarters.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Quý</th><th>Chỉ số</th><th class="num">Có công cụ</th><th class="num">Đối chứng</th><th class="num">Chênh lệch [khoảng]</th></tr></thead><tbody>
+        ${ef.quarters.map(q => EFFECT.map(([k, label, f], i) => `<tr>${i === 0 ? `<td rowspan="3">${esc(q.quarter)}</td>` : ""}<td>${label}</td>
+          <td class="num">${cell(q[k].tool, f, q.quarter, "tool")}<div class="small muted">${q[k].n_tool} gia đình</div></td><td class="num">${cell(q[k].control, f, q.quarter, "control")}<div class="small muted">${q[k].n_control} gia đình</div></td>
+          <td class="num">${band(q[k], f, q.quarter)}</td></tr>`).join("")).join("")}
+      </tbody></table></div>` : empty("Chưa có quý nào có số liệu.")}
     </section>
 
     <section class="panel mt"><h3>Tốc độ hộp tin và Agent <span class="hint">BRD-NFR-02</span></h3>

@@ -99,6 +99,14 @@ the next.
   /api/review/recommend`), through the same gate; one approved by its author alone counts as a KPI-05 miss.
 - **G9 — The control group (MEAS-06).** Then the report updated: what is verified, what only a pilot or the bank
   can show.
+  **Done** (2026-10-16): `src/measure/control.py` draws the group within each stratum (segment × RM) from the
+  configuration `control_group` (Compliance, two people; 10 %, seed, strata), by SHA-256 order and randomised
+  rounding, so it is drawn again by anyone. Their RM gets no Hôm nay case or goal task and no news or regulation
+  item; a contact cannot cite a signal; the client sees everything. Đo lường compares contacts, goals “Đạt” and
+  approved actions per family by quarter with 90 % intervals. The demo's 10 % of five families draws none; the
+  report (§4) now says, row by row, what is verified and what only the bank or a pilot can show.
+
+**The plan is complete** (G1–G9, #54–#62): 163 of 165 rows verified, 2 not applicable, nothing partial.
 
 ## 4. What the owner may be asked
 

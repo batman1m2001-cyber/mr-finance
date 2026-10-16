@@ -18,6 +18,9 @@
   Target ≥ 50 %.
 - **High-level alerts opened (KPI-07).** The client's high-level items delivered in the app and opened by the
   client (feed/opens.py). Target ≥ 70 %.
+- **Business effect (MEAS-06).** The families with the tool against a seeded, stratified control group whose RM
+  gets no signal for them: contacts, goals “Đạt” and approved action recommendations per family, by quarter, with
+  90 % intervals (measure/control.py).
 - **Availability (NFR-03).** Business minutes with a heartbeat ÷ business minutes, per month, with the outages
   (control/uptime.py). Target ≥ 99.5 %.
 
@@ -282,7 +285,7 @@ def all_reports() -> Dict[str, Any]:
     from contacts import store as contacts
     from control import uptime
     from feed import opens
-    from measure import reviewed
+    from measure import control, reviewed
     from news import reference
 
     return {
@@ -295,4 +298,5 @@ def all_reports() -> Dict[str, Any]:
         "reviewed": reviewed.rate(),
         "contacts": contacts.share(),
         "opens": opens.rate(),
+        "effect": control.effect(),
     }

@@ -14,7 +14,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 |---|---|---|---|---|---|---|---|---|---|
 | BRD numbered (BR, FR, NFR) | 61 | 61 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| BRD rules (RULE) | 97 | 94 | 0 | 0 | 0 | 0 | 0 | 1 | 2 |
+| BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -201,7 +201,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-MEAS-03 | FEAT-18 | implemented_verified | `tests/test_accuracy.py::test_an_event_without_an_approved_view_is_a_miss_after_a_day` | `src/measure/reports.py::misses` on SCR-CIO-13: high-relevance news not grouped (dismissed, held, > 1 day in the inbox) and events with no effective run, by cause and month. “Important” = relevance high (Q-07) |
 | BRD-RULE-MEAS-04 | FEAT-04, 06, 15 | implemented_verified | `tests/test_catalogue.py::test_the_latest_run_and_the_quality_figures_come_from_the_store` | `catalogue.quality`: share of decided views the CIO edited, findings and critical ones, agent runs and errors, format retries — 7 days and all time, on SCR-CIO-08 |
 | BRD-RULE-MEAS-05 | FEAT-06, 18 | implemented_verified | `tests/test_accuracy.py::test_the_reports_read_approval_time_edits_and_news_to_rm_time` | `src/measure/reports.py::rubber_stamp` on SCR-CIO-13: CIO minutes from ready to approved, share without edits, approvals under 2 min (our signal) |
-| BRD-RULE-MEAS-06 | — | out_of_scope_demo | — | Pilot control group |
+| BRD-RULE-MEAS-06 | FEAT-18 | implemented_verified | `tests/test_control_group.py::test_the_group_is_drawn_again_from_the_seed_within_each_stratum`, `tests/test_control_group.py::test_the_control_group_is_two_person_compliance_configuration`, `tests/test_control_group.py::test_the_rm_gets_no_signal_for_a_control_family_and_the_client_loses_nothing`, `tests/test_control_group.py::test_the_effect_compares_the_groups_by_quarter_with_an_interval` | G9 (G-D8): a seeded, stratified control group (Compliance, two people; default 10 %) whose RM gets no signal while the client loses nothing; contacts, goals “Đạt” and approved actions per family by quarter with 90 % intervals (`src/measure/control.py`). The measure is verified; the effect needs a pilot's families |
 | BRD-RULE-MEAS-07 | FEAT-04, 14 | implemented_verified | `tests/test_config_f4.py::test_a_prompt_change_runs_the_eval_set_and_needs_a_second_admin`, `tests/test_config_f4.py::test_a_proposal_that_fails_the_eval_set_cannot_be_approved`, `tests/test_config_f4.py::test_without_the_ai_the_eval_set_does_not_run_and_nothing_is_approved` | `data/agent_eval.json` (6 news samples with expected direction, one injection) runs on every prompt or model proposal (job `agent_eval`, every minute); approval refused until it passed |
 | BRD-RULE-MEAS-08 | FEAT-07 | implemented_verified | `tests/test_estimate.py::test_out_of_sample_coverage_is_near_80_percent_when_the_history_is_what_the_model_says`, `tests/test_estimate.py::test_a_band_too_narrow_is_said_to_be` | Out of sample 2/2024–8/2026 on real history: [model_validation.md](../testing/model_validation.md) (85 % inside P10–P90); Model Risk's conclusion is theirs |
 

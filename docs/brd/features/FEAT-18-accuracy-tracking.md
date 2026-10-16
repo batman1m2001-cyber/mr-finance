@@ -60,6 +60,8 @@ after the due day. A view withdrawn or superseded later stays scored: the record
 - KPI-06: the RMs' contacts recorded on Hôm nay that started from a signal (`contacts/store.py`), against 50 %.
 - KPI-07: high-level items delivered to the client in the app and opened by the client (`feed/opens.py`), against
   70 %.
+- MEAS-06: the families with the tool against a seeded, stratified control group whose RM gets no signal
+  (`measure/control.py`): contacts, goals “Đạt” and approved actions per family, by quarter, with 90 % intervals.
 - NFR-02: minutes from publication to the inbox (news published after the ingest job started), and each CIO agent
   run's duration, with the share meeting 10 and 15 minutes.
 

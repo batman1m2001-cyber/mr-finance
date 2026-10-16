@@ -207,6 +207,13 @@ def build(client_id: str, scope: str, role: str, dashboard: Dict[str, Any], tran
     items = (
         _impacts(family_id, role, nw) + _regulation(family_id, role) + _thresholds(dashboard) + _spending(transactions)
     )
+    withheld = 0
+    if role == "rm":
+        from measure import control
+
+        if control.is_control(family_id):  # the control group: no news or regulation signal to the RM (MEAS-06)
+            kept = [i for i in items if i["type"] not in ("impact", "goal")]
+            withheld, items = len(items) - len(kept), kept
     items.sort(key=lambda x: (RANK[x["severity"]], -abs(x.get("value") or 0)))
     for i in items:  # a stable handle for the page and the Copilot's highlight
         i["key"] = "feed:" + ":".join(str(v) for v in i["evidence"].values())
@@ -217,6 +224,7 @@ def build(client_id: str, scope: str, role: str, dashboard: Dict[str, Any], tran
         "role": role,
         "as_of": dashboard["as_of"],
         "items": items,
+        "withheld": withheld,
         "rules": "Tác động ≥ 0,5% tài sản ròng hoặc RM xem trước; mục tiêu đổi mức hoặc có quy định áp dụng; "
         "rủi ro, thanh khoản qua ngưỡng; chi tiêu tăng ≥ 30% và 5 triệu; tài sản ròng đổi ≥ 3%.",
     }
