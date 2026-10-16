@@ -15,6 +15,8 @@ from operonx import op
 
 from apply import reads
 from control.errors import BadRequest
+from control.roles import Forbidden
+from feed import opens
 from flows.ops import LABELS
 from people import auth
 from research import ops as research
@@ -181,8 +183,22 @@ def _spending(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 @op
 def feed(client_id: str, scope: str, role: str, dashboard: dict, transactions: list) -> dict:
-    """The items, most important first, each with why and its evidence."""
-    return {"feed": build(client_id, scope, role, dashboard, transactions)}
+    """The items, most important first, each with why and its evidence. Read by the client themselves, its
+    high-level items are kept as delivered to them (BRD-KPI-07, feed/opens.py)."""
+    out = build(client_id, scope, role, dashboard, transactions)
+    if role == "client" and opens.as_client():
+        opens.delivered(client_id, out["family_id"], out["items"])
+    return {"feed": out}
+
+
+@op
+def open_item(client_id: str = None, key: str = None) -> dict:
+    """POST /api/feed/open: the client opened a high-level item (a click in the bell or on its evidence)."""
+    client_id = str(client_id or "")
+    auth.require_client(client_id)
+    if not opens.as_client():
+        raise Forbidden("Chỉ khách hàng mở mục của mình mới được ghi")
+    return {"opened": opens.opened(client_id, str(key or ""))}
 
 
 def build(client_id: str, scope: str, role: str, dashboard: Dict[str, Any], transactions: list) -> Dict[str, Any]:

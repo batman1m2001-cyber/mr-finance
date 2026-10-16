@@ -21,5 +21,5 @@ def review_flow(item_id, decision, note=None, by=None):
     """An RM approves or rejects a pending proposal."""
     ask = read_decision(item_id=item_id, decision=decision, note=note, by=by)
     pending = check_pending(item_id=ask["item_id"])
-    done = decide(item_id=pending["item_id"], decision=ask["decision"], note=ask["note"])
+    done = decide(item_id=pending["item_id"], decision=ask["decision"], note=ask["note"], by=ask["by"])
     START >> ask >> pending >> done >> END

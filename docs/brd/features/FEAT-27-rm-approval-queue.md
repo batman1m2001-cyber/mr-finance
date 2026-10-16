@@ -19,5 +19,5 @@
 `tests/test_scenarios.py::test_an_option_waits_for_the_rm_and_is_decided_once`, `::test_review_flow_refuses_an_unknown_item`.
 
 ## Limitations
-Who decided is checked but not stored (the `reviews` table has no column for it); decisions are not in the audit
-chain (FEAT-11).
+Since G7 (2026-10-16) the item keeps who decided (`decided_by`) and the decision is in the audit chain
+(`review.decide`, counted by BRD-KPI-05); decisions made before name no one.

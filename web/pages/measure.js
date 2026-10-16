@@ -1,6 +1,7 @@
 /* CIO and Tuân thủ · Đo lường (F3): the monthly measurement reports, read from what the product records —
    misses with causes (MEAS-03), rubber-stamping (MEAS-05), news to RM (KPI-01, WF-09), inbox and agent timing
-   (NFR-02), availability in business hours (NFR-03). GET /api/measure. */
+   (NFR-02), availability in business hours (NFR-03), recommendations reviewed and logged (KPI-05), RM contacts from a
+   signal (KPI-06), high-level alerts the client opened (KPI-07). GET /api/measure. */
 import {esc, get, n as how, num, pct} from "../core/core.js";
 
 const n1 = (x) => x == null ? "—" : Number(x).toLocaleString("vi-VN", {maximumFractionDigits: 1});
@@ -17,6 +18,7 @@ function stats(s, unit) {
 export async function render(box) {
   const d = await get("/api/measure");
   const m = d.misses, r = d.rubber_stamp, s = d.speed, t = d.timing, a = d.availability, im = d.important, u = s.urgent;
+  const rv = d.reviewed, ct = d.contacts, op = d.opens;
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">Đo lường</div><h1 class="h1">Báo cáo đo lường hằng tháng</h1>
       <p class="lede">Đọc từ những gì hệ thống ghi lại: tin và sự kiện bị bỏ sót, thời gian CIO xem trước khi duyệt, thời gian từ tin đến RM, tốc độ hộp tin và Agent, mức sẵn sàng trong giờ làm việc.</p></div></div>
@@ -62,6 +64,37 @@ export async function render(box) {
       ${im.misses.length ? `<details style="margin-top:8px"><summary class="small">Tin quan trọng chưa thu thập (${im.misses.length})</summary>
         <ul class="small">${im.misses.map(x => `<li><span data-quote>${esc(x.title)}</span> — <span class="muted">${esc(x.outlets.slice(0, 4).join(", "))}${x.followed ? "" : " · không báo nào trong danh sách trắng"}</span></li>`).join("")}</ul></details>` : ""}`
       : empty("Chưa có câu chuyện nào được chấm: việc đối chiếu chạy mỗi 2 giờ, mỗi câu chuyện được chấm một ngày sau khi xuất hiện.")}
+    </section>
+
+    <section class="panel mt"><h3>Khuyến nghị có người duyệt và nhật ký <span class="hint">BRD-KPI-05 · mục tiêu ${how(pct(rv.target, false, 0), "measure.reviewed_share")}</span></h3>
+      <p class="small">Khuyến nghị đã đưa ra: lần áp dụng đã hiệu lực (RM và khách đọc tác động), bản tin đã duyệt, đề xuất của khách RM đã duyệt. Mỗi khuyến nghị cần một người duyệt (nhân viên, không phải agent, khác người soạn) và các dòng duyệt trong chuỗi nhật ký. <span class="badge warn">Đề xuất</span> cách hiểu của chúng tôi. Đề xuất RM duyệt trước ngày 16/10/2026 không ghi người duyệt nên được tính là thiếu.</p>
+      ${rv.by_month.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Tháng</th><th class="num">Áp dụng</th><th class="num">Bản tin</th><th class="num">Đề xuất RM</th><th class="num">Đủ duyệt và nhật ký</th></tr></thead><tbody>
+        ${rv.by_month.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${x.by_kind.run}</td><td class="num">${x.by_kind.newsletter}</td><td class="num">${x.by_kind.rm_item}</td>
+          <td class="num"><span class="${x.share >= rv.target ? "good-text" : "bad-text"}">${how(pct(x.share, false, 0), "measure.reviewed_share", {month: x.month, recommendations: x.recommendations, ok: x.ok})}</span></td></tr>`).join("")}
+      </tbody></table></div>
+      ${rv.misses.length ? `<details style="margin-top:8px"><summary class="small">Khuyến nghị thiếu người duyệt hoặc nhật ký (${rv.misses.length})</summary>
+        <ul class="small">${rv.misses.map(x => `<li>${esc(x.kind_label)} <span class="mono">${esc(x.id)}</span> — <span class="bad-text">${esc(x.missing.join(", "))}</span></li>`).join("")}</ul></details>` : ""}`
+      : empty("Chưa có khuyến nghị nào được đưa ra.")}
+    </section>
+
+    <section class="panel mt"><h3>Liên hệ bắt đầu từ tín hiệu hệ thống <span class="hint">BRD-KPI-06 · mục tiêu ≥ ${how(pct(ct.target, false, 0), "measure.contact_signal_share")}</span></h3>
+      <p class="small">RM ghi mỗi lần liên hệ khách ở trang Hôm nay, kèm tín hiệu khởi đầu (gia đình cần xem trước, việc theo mục tiêu) hoặc không. Tín hiệu được kiểm khi ghi. Hành vi thật của RM chỉ đo được khi thí điểm.</p>
+      ${ct.by_month.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Tháng</th><th class="num">Liên hệ</th><th class="num">Từ tín hiệu</th><th class="num">Tỷ lệ</th></tr></thead><tbody>
+        ${ct.by_month.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${x.contacts}</td><td class="num">${x.from_signal}</td>
+          <td class="num"><span class="${x.share >= ct.target ? "good-text" : "bad-text"}">${how(pct(x.share, false, 0), "measure.contact_signal_share", {month: x.month, contacts: x.contacts, from_signal: x.from_signal})}</span></td></tr>`).join("")}
+      </tbody></table></div>
+      ${ct.by_rm.length > 1 ? `<p class="small muted">Theo RM: ${ct.by_rm.map(x => `${esc(x.by)} ${x.from_signal}/${x.contacts}`).join(" · ")}</p>` : ""}`
+      : empty("Chưa có liên hệ nào được ghi.")}
+    </section>
+
+    <section class="panel mt"><h3>Khách mở cảnh báo mức cao <span class="hint">BRD-KPI-07 · mục tiêu ≥ ${how(pct(op.target, false, 0), "measure.alert_open_share")}</span></h3>
+      <p class="small">Không gửi gì ra ngoài: cảnh báo đến khách trong ứng dụng, là mục mức cao của “Điều đáng chú ý” (chuông, Toàn cảnh). Đến: lần đầu chính khách xem thấy. Mở: khách bấm vào mục. Tháng gần nhất còn đang tính. Hành vi thật của khách chỉ đo được khi thí điểm.</p>
+      ${op.by_month.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Tháng</th><th class="num">Đã đến khách</th><th class="num">Khách đã mở</th><th class="num">Tỷ lệ</th><th>Thời gian tới khi mở</th></tr></thead><tbody>
+        ${op.by_month.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${x.delivered}</td><td class="num">${x.opened}</td>
+          <td class="num"><span class="${x.share >= op.target ? "good-text" : "bad-text"}">${how(pct(x.share, false, 0), "measure.alert_open_share", {month: x.month, delivered: x.delivered, opened: x.opened})}</span></td>
+          <td>${stats(x.hours, "giờ")}</td></tr>`).join("")}
+      </tbody></table></div>`
+      : empty("Chưa có cảnh báo mức cao nào đến khách.")}
     </section>
 
     <section class="panel mt"><h3>Tốc độ hộp tin và Agent <span class="hint">BRD-NFR-02</span></h3>

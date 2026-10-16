@@ -82,6 +82,13 @@ the next.
   month, and over the stories an outlet we follow carried. On a dev copy: 4 of 7 (57 %), followed outlets 80 %.
 - **G7 — Control and behaviour measures (KPI-05, KPI-06, KPI-07).** The review rate, the RM contact log, client
   opens.
+  **Done** (2026-10-16): KPI-05 is computed from the records (`src/measure/reviewed.py`): an effective run, an
+  approved newsletter and an approved RM queue item each need a staff reviewer other than the author and their
+  approval rows in the chain. Found on the way: the RM queue never stored who decided nor audited the decision —
+  now it does (`review.decide`); older decisions show as misses. KPI-06: the RM records each contact on Hôm nay
+  with the signal it started from (a pre-review case or a goal task, checked when recorded) or none
+  (`src/contacts/`). KPI-07: a high-level item is delivered when the client themselves first reads it and opened
+  when the client clicks it (`src/feed/opens.py`). All three monthly on Đo lường.
 - **G8 — The certified specialist (ROLE-05, WF-08).**
 - **G9 — The control group (MEAS-06).** Then the report updated: what is verified, what only a pilot or the bank
   can show.

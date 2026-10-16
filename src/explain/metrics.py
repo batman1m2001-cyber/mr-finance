@@ -697,6 +697,39 @@ metric(
     followed="Có báo đang theo dõi",
 )
 metric(
+    "measure.reviewed_share",
+    "Khuyến nghị có người duyệt và nhật ký",
+    "Tỷ lệ = khuyến nghị có người duyệt và có nhật ký ÷ khuyến nghị đã đưa ra trong tháng. Khuyến nghị (Đề xuất): lần "
+    "áp dụng đã hiệu lực, bản tin đã duyệt, đề xuất của khách RM đã duyệt. Người duyệt là một người trong danh sách nhân "
+    "viên, không phải agent hay hệ thống, khác người soạn; nhật ký là các dòng duyệt trong chuỗi nhật ký. Mục tiêu 100 %.",
+    "src/measure/reviewed.py::rate",
+    month="Tháng",
+    recommendations="Khuyến nghị",
+    ok="Đủ người duyệt và nhật ký",
+)
+metric(
+    "measure.contact_signal_share",
+    "Liên hệ bắt đầu từ tín hiệu hệ thống",
+    "Tỷ lệ = số liên hệ RM ghi là bắt đầu từ một tín hiệu ÷ tổng số liên hệ RM ghi trong tháng. Tín hiệu: một dòng ở "
+    "Hôm nay (gia đình cần xem trước sau một lần áp dụng, hoặc việc theo mục tiêu do quy định mới), được kiểm khi ghi. "
+    "Mục tiêu ≥ 50 %.",
+    "src/contacts/store.py::share",
+    month="Tháng",
+    contacts="Liên hệ",
+    from_signal="Từ tín hiệu",
+)
+metric(
+    "measure.alert_open_share",
+    "Khách mở cảnh báo mức cao",
+    "Tỷ lệ = số cảnh báo mức cao khách đã mở ÷ số cảnh báo mức cao đã đến khách, theo tháng đến. Đến: lần đầu mục mức "
+    "cao có trong “Điều đáng chú ý” khi chính khách xem (chuông, Toàn cảnh). Mở: khách bấm mục trong chuông hoặc bằng "
+    "chứng của nó. Mục tiêu ≥ 70 %.",
+    "src/feed/opens.py::rate",
+    month="Tháng gửi",
+    delivered="Đã đến khách",
+    opened="Khách đã mở",
+)
+metric(
     "uptime.availability",
     "Sẵn sàng trong giờ làm việc",
     "Sẵn sàng = số phút làm việc có nhịp ÷ số phút làm việc trong tháng, từ nhịp đầu tiên đến phút hiện tại. Phút "

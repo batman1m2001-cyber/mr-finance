@@ -37,6 +37,7 @@ COLUMNS: List[Tuple[str, Tuple[str, ...], Tuple[str, ...], Optional[str]]] = [
     ("results", ("client_id", "kind"), ("data",), None),
     ("reviews", ("id",), ("title", "data", "note"), None),
     ("family_impacts", ("id",), ("data",), None),
+    ("rm_contacts", ("id",), ("data",), None),
 ]
 # table, the JSON column, the fields of it sealed (the rest stays plain: SQL reads it)
 FIELDS: List[Tuple[str, str, Tuple[str, ...]]] = [

@@ -12,6 +12,12 @@
   on our topics, the share we collected (news/reference.py), by day and month. Target ≥ 95 %.
 - **Agent and news timing (NFR-02).** News published → in the inbox (≤ 10 min), for news published after the
   ingest job was already running; each CIO agent run's duration (≤ 15 min).
+- **Reviewed and logged (KPI-05).** Each recommendation delivered (an effective run, an approved newsletter, an
+  approved RM queue item) with a person as reviewer and its log in the audit chain (measure/reviewed.py). Target 100 %.
+- **Contacts from a signal (KPI-06).** The RMs' contacts that started from a Hôm nay signal (contacts/store.py).
+  Target ≥ 50 %.
+- **High-level alerts opened (KPI-07).** The client's high-level items delivered in the app and opened by the
+  client (feed/opens.py). Target ≥ 70 %.
 - **Availability (NFR-03).** Business minutes with a heartbeat ÷ business minutes, per month, with the outages
   (control/uptime.py). Target ≥ 99.5 %.
 
@@ -273,7 +279,10 @@ def timing() -> Dict[str, Any]:
 
 
 def all_reports() -> Dict[str, Any]:
+    from contacts import store as contacts
     from control import uptime
+    from feed import opens
+    from measure import reviewed
     from news import reference
 
     return {
@@ -283,4 +292,7 @@ def all_reports() -> Dict[str, Any]:
         "timing": timing(),
         "availability": uptime.by_month(),
         "important": reference.coverage(),
+        "reviewed": reviewed.rate(),
+        "contacts": contacts.share(),
+        "opens": opens.rate(),
     }

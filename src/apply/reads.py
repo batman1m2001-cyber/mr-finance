@@ -146,6 +146,20 @@ def rm_today(families: Optional[List[str]] = None) -> Dict[str, Any]:
         for m in matches()
         if m["level"] in ("contact_now", "confirm_goal", "remind") and (keep is None or m["family_id"] in keep)
     ]
+    from contacts import store as contacts
     from control import config
+    from wealth import fixtures
 
-    return {"cases": cases, "threshold_pct": config.data("thresholds")["pre_review_pct"], "goal_tasks": tasks}
+    for c in cases:  # what an RM's contact cites as the signal it started from (BRD-KPI-06)
+        c["signal"] = f"pre_review:{c['run_id']}"
+    for t in tasks:
+        t["signal"] = f"goal:{t['note_id']}:{t['goal_id']}"
+    mine = sorted(keep) if keep is not None else fixtures.client_ids()
+    return {
+        "cases": cases,
+        "threshold_pct": config.data("thresholds")["pre_review_pct"],
+        "goal_tasks": tasks,
+        "contacts": contacts.recent(mine),
+        "families": [{"id": f, "name": fixtures.client(f)["name"]} for f in mine],
+        "channels": contacts.CHANNELS,
+    }

@@ -55,6 +55,11 @@ after the due day. A view withdrawn or superseded later stays scored: the record
   effective, against 2 h; events the CIO flagged urgent against 30 min (`news/urgent.py` proposes; the CIO decides).
 - KPI-02: important stories in an independent reference (`news/reference.py`) collected by our feeds, by day and
   month, against 95 %.
+- KPI-05: recommendations delivered (effective runs, approved newsletters, approved RM queue items) with a staff
+  reviewer and their approval rows in the audit chain (`measure/reviewed.py`), against 100 %.
+- KPI-06: the RMs' contacts recorded on Hôm nay that started from a signal (`contacts/store.py`), against 50 %.
+- KPI-07: high-level items delivered to the client in the app and opened by the client (`feed/opens.py`), against
+  70 %.
 - NFR-02: minutes from publication to the inbox (news published after the ingest job started), and each CIO agent
   run's duration, with the share meeting 10 and 15 minutes.
 
