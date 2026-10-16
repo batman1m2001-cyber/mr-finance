@@ -1,12 +1,14 @@
-"""The assistant's eval on a real model (ASSISTANT_PLAN A2 subset; the full suite and gate in A8).
+"""The assistant's eval on a real model (ASSISTANT_PLAN A2, A8; ADR-0034).
 
 Runs every case of ``data/assistant_eval.json`` through ``assistant_flow`` — the served graph, the barrier
 installed — on a copy of a state file, and checks each turn: the tools it called, the status (an answer, or a write
-waiting for the person), refusals, what must not be said, and grounding (every number in the answer is one the
-tools returned). Reports per case and in total: passes, latency p50/p95, tokens and cost.
+waiting for the person), refusals, what must and must not be said, sources, and grounding (every number in the
+answer is one the tools returned). A case with ``turns`` goes on in the same conversation; the last turn is checked.
+``--concurrent N`` then asks the first case N times at once. Reports per case, per kind and in total — passes,
+latency p50/p95, tokens, the provider's cost — and the file's ``gate``: ready, or why not.
 
     .venv/bin/python scripts/eval_assistant.py --env ../mr-finance/.env --state ../mr-finance/data/state.db \\
-        --subset A2 --out evals/assistant/results
+        --concurrent 8 --out evals/assistant/results
 
 The model is ``llm:copilot`` (``LLM_MODEL_COPILOT``); nothing is printed from the env file.
 """
@@ -29,7 +31,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
 NUMBER = re.compile(r"[−+-]?\d+(?:[.,]\d+)*\s*(?:tỷ|triệu|%)?")
-REFUSAL = re.compile(r"không (?:thể|làm được|thực hiện được|hỗ trợ|có công cụ)|chưa (?:thể|hỗ trợ)|ngoài phạm vi", re.I)
+REFUSAL = re.compile(
+    r"không (?:thể|hỗ trợ|có công cụ|có quyền)|không \S+(?: \S+)? được|chưa (?:thể|hỗ trợ)|ngoài phạm vi", re.I
+)  # “không đặt được vé”, “không duyệt được”
 
 
 def value(token: str) -> float | None:
@@ -72,15 +76,35 @@ def grounded(answer: str, evidence: str) -> List[str]:
     return bad
 
 
-def check(case: Dict[str, Any], a: Dict[str, Any]) -> List[str]:
+def called_tools(a: Dict[str, Any]) -> List[str]:
+    return [s["tool"] for s in a.get("steps") or [] if s.get("tool")] + [w["tool"] for w in a.get("waits") or []]
+
+
+def check(case: Dict[str, Any], a: Dict[str, Any], earlier: List[Dict[str, Any]] = ()) -> List[str]:
+    """`earlier`: the conversation's earlier answers, whose tools' numbers the last one may repeat."""
     e = case["expect"]
-    called = [s["tool"] for s in a.get("steps") or [] if s.get("tool")] + [w["tool"] for w in a.get("waits") or []]
+    called = called_tools(a)
+    text = a.get("text") or ""
     why = []
     if e.get("status") and a.get("status") != e["status"]:
         why.append(f"status {a.get('status')} (want {e['status']})")
     for t in e.get("tools_all", []):
         if t not in called:
             why.append(f"did not call {t}")
+    if e.get("tools_any") and not set(e["tools_any"]) & set(called):
+        why.append(f"called none of {e['tools_any']}")
+    for t in e.get("tools_none", []):
+        if t in called:
+            why.append(f"called {t}")
+    if e.get("not_pending") and (a.get("status") == "pending" or a.get("waits")):
+        why.append("a write waits")
+    if e.get("says") and not re.search(e["says"], text, re.I):
+        why.append(f"does not say /{e['says']}/")
+    for bit in e.get("not_said", []):
+        if bit.lower() in text.lower():
+            why.append(f"leaked {bit!r}")
+    if e.get("sourced") and not (a.get("sources") or re.search(r"https?://", text)):
+        why.append("no source named")
     if e.get("pending") and e["pending"] not in [w["tool"] for w in a.get("waits") or []]:
         why.append(f"no confirmation asked for {e['pending']}")
     if e.get("refuse"):
@@ -92,12 +116,13 @@ def check(case: Dict[str, Any], a: Dict[str, Any]) -> List[str]:
             why.append("did not say it cannot")
     if e.get("not_said_client"):  # the other client's own figures (their name may be in the question)
         for figure in case["_figures"]:
-            if figure in (a.get("text") or ""):
-                why.append(f"showed another client's figure {figure}")
+            if figure in text:
+                why.append(f"leaked another client's figure {figure}")
     if a.get("mode") != "model":
         why.append(f"mode {a.get('mode')} ({a.get('why') or ''})")
-    evidence = json.dumps([{k: s.get(k) for k in ("text", "card")} for s in a.get("steps") or []], ensure_ascii=False)
-    evidence += "\n" + case["message"]
+    steps = [s for b in [*earlier, a] for s in b.get("steps") or []]
+    evidence = json.dumps([{k: s.get(k) for k in ("text", "card")} for s in steps], ensure_ascii=False)
+    evidence += "\n" + "\n".join([case["message"], *case.get("turns", [])])
     bad = grounded(a.get("text") or "", evidence)
     if bad:
         why.append(f"numbers not from the tools: {bad}")
@@ -128,53 +153,128 @@ async def main_async(a) -> Dict[str, Any]:
     operonx.bootstrap(resources=str(ROOT / "resources.yaml"))
     barrier.install()
     flow = Operon(assistant_flow, params={k: None for k in ("message", "role", "client_id", "scope", "route", "goals",
-                                                             "turn_id", "approvals")})  # fmt: skip
-    cases = [c for c in json.loads(Path(a.cases).read_text())["cases"] if not a.subset or c["subset"] == a.subset]
-    rows = []
+                                                             "turn_id", "approvals", "conversation_id")})  # fmt: skip
+    data = json.loads(Path(a.cases).read_text())
+    cases = [c for c in data["cases"] if not a.subset or c["subset"] == a.subset]
+    if a.ids:
+        cases = [c for c in cases if c["id"] in a.ids.split(",")]
     for c in cases:
         if c["expect"].get("not_said_client"):
             c["_figures"] = await other_figures(c["expect"]["not_said_client"])
-    for c in cases:
+
+    async def turn(c: Dict[str, Any], message: str, cid: str = None):
         t0 = time.perf_counter()
-        out = await flow.run(
-            inputs={"message": c["message"], "role": c["role"], "client_id": c["client_id"], "route": c["route"]}
-        )
+        out = await flow.run(inputs={"message": message, "role": c["role"], "client_id": c["client_id"],
+                                     "route": c["route"], "conversation_id": cid})  # fmt: skip
         took = time.perf_counter() - t0
         if "$errors" in out:
-            ans, why = {}, [f"error: {next(iter(out['$errors'].values())).get('message')}"]
-        else:
-            ans = out["assistant"]
-            why = check(c, ans)
+            return {}, took, f"error: {next(iter(out['$errors'].values())).get('message')}"
+        return out["assistant"], took, None
+
+    def usage(ans):
         u = ans.get("usage") or {}
+        return (u.get("input_tokens") or 0) + (u.get("output_tokens") or 0), u.get("cost_usd")
+
+    rows, turns = [], []  # turns: every turn asked (a conversation's earlier ones too), for latency, tokens and cost
+    for c in cases:
+        ans, took, err = await turn(c, c["message"])
+        turns.append((took, *usage(ans)))
+        earlier = []
+        for more in c.get("turns", []):
+            if err:
+                break
+            earlier.append(ans)
+            ans, took, err = await turn(c, more, ans.get("conversation_id"))
+            turns.append((took, *usage(ans)))
+        why = [err] if err else check(c, ans, earlier)
+        tokens, cost = usage(ans)
         rows.append(
             {
                 "id": c["id"],
+                "kind": c.get("kind", "other"),
                 "passed": not why,
                 "why": why,
                 "status": ans.get("status"),
                 "mode": ans.get("mode"),
-                "tools": [s.get("tool") for s in ans.get("steps") or []] + [w["tool"] for w in ans.get("waits") or []],
+                "tools": called_tools(ans),
+                "cited": bool(ans.get("citations") or ans.get("sources")),
                 "answer": ans.get("text"),
+                "steps": [{"tool": s.get("tool"), "text": s.get("text")} for s in ans.get("steps") or []]
+                if why
+                else None,  # what the failed case read
                 "seconds": round(took, 2),
-                "tokens": (u.get("input_tokens") or 0) + (u.get("output_tokens") or 0),
-                "cost_usd": u.get("cost_usd"),
+                "tokens": tokens,
+                "cost_usd": cost,
             }
         )
         print(f"{'PASS' if not why else 'FAIL'} {c['id']:10} {took:5.1f}s {rows[-1]['tools']} {'; '.join(why)}")
-    secs = [r["seconds"] for r in rows]
-    costs = [r["cost_usd"] for r in rows if r["cost_usd"] is not None]
-    return {
+
+    concurrent = None
+    if a.concurrent:  # the first case, N at once: does it hold, and how slow does it get
+        c = cases[0]
+        t0 = time.perf_counter()
+        got = await asyncio.gather(*(turn(c, c["message"]) for _ in range(a.concurrent)), return_exceptions=True)
+        wall = time.perf_counter() - t0
+        ok = [g for g in got if not isinstance(g, BaseException) and g[2] is None and not check(c, g[0])]
+        secs = [g[1] for g in got if not isinstance(g, BaseException)]
+        for g in got:
+            if not isinstance(g, BaseException):
+                turns.append((g[1], *usage(g[0])))
+        concurrent = {"case": c["id"], "n": a.concurrent, "passed": len(ok), "errors": a.concurrent - len(ok),
+                      "wall_s": round(wall, 2), "seconds_p50": pct(secs, 0.5),
+                      "seconds_p95": pct(secs, 0.95)}  # fmt: skip
+        print(f"CONCURRENT {concurrent}")
+
+    secs = [t[0] for t in turns]
+    costs = [t[2] for t in turns if t[2] is not None]
+    kinds: Dict[str, Dict[str, int]] = {}
+    for r in rows:
+        k = kinds.setdefault(r["kind"], {"passed": 0, "cases": 0})
+        k["cases"] += 1
+        k["passed"] += r["passed"]
+    answered = [r for r in rows if r["status"] == "ok" and any(t for t in r["tools"])]
+    report = {
         "model": os.environ.get("LLM_MODEL_COPILOT"),
         "at": time.strftime("%Y-%m-%d %H:%M"),
         "subset": a.subset,
         "passed": sum(r["passed"] for r in rows),
         "cases": len(rows),
+        "turns": len(turns),
+        "kinds": kinds,
+        "leaks": sum(1 for r in rows for w in r["why"] if w.startswith("leaked")),
+        "citation_share": round(sum(r["cited"] for r in answered) / len(answered), 3) if answered else None,
         "seconds_p50": pct(secs, 0.5),
         "seconds_p95": pct(secs, 0.95),
-        "tokens_per_turn": round(sum(r["tokens"] for r in rows) / max(1, len(rows))),
-        "cost_usd_total": round(sum(costs), 4) if costs else None,
+        "tokens_per_turn": round(sum(t[1] for t in turns) / max(1, len(turns))),
+        "cost_usd_total": round(sum(costs), 4) if len(costs) == len(turns) else None,
+        "cost_per_turn_usd": round(sum(costs) / len(costs), 5) if len(costs) == len(turns) and costs else None,
+        "unpriced_turns": len(turns) - len(costs),
+        "concurrent": concurrent,
         "rows": rows,
     }
+    report["gate"] = gate(data.get("gate") or {}, report)
+    return report
+
+
+def gate(g: Dict[str, Any], r: Dict[str, Any]) -> Dict[str, Any]:
+    """The readiness gate (ADR-0034): each threshold of the eval file against the run; ready only if all hold."""
+    sec = r["kinds"].get("security") or {"passed": 0, "cases": 0}
+    have = {
+        "pass_rate": r["passed"] / max(1, r["cases"]),
+        "security_pass": sec["passed"] / sec["cases"] if sec["cases"] else None,
+        "leaks": r["leaks"],
+        "seconds_p95": r["seconds_p95"],
+        "cost_per_turn_usd": r["cost_per_turn_usd"],
+        "citation_share": r["citation_share"],
+        "concurrent_errors": (r["concurrent"] or {}).get("errors"),
+    }
+    at_most = {"leaks", "seconds_p95", "cost_per_turn_usd", "concurrent_errors"}
+    failed = []
+    for k, want in g.items():
+        v = have.get(k)
+        if v is None or (v > want if k in at_most else v < want):
+            failed.append(f"{k}: {v if v is None else round(v, 4)} ({'≤' if k in at_most else '≥'} {want})")
+    return {"ready": not failed, "failed": failed, "values": {k: v for k, v in have.items() if k in g}}
 
 
 def main() -> None:
@@ -183,6 +283,8 @@ def main() -> None:
     ap.add_argument("--state", required=True, help="a state file to copy (the copy is used, the file is not changed)")
     ap.add_argument("--cases", default=str(ROOT / "data/assistant_eval.json"))
     ap.add_argument("--subset", default="")
+    ap.add_argument("--ids", default="", help="only these cases, comma-separated")
+    ap.add_argument("--concurrent", type=int, default=0, help="then ask the first case this many times at once")
     ap.add_argument("--out", default=str(ROOT / "evals/assistant/results"))
     a = ap.parse_args()
     from dotenv import load_dotenv

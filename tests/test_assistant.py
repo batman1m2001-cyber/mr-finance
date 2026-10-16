@@ -137,3 +137,21 @@ def test_the_endpoint():
 def test_a_long_message_is_refused():
     out = asyncio.run(ASK.run(inputs={"message": "x" * 2001, "role": "client", "client_id": "C01"}))
     assert "$errors" in out
+
+
+def test_a_turn_costs_what_the_provider_charged_its_model_and_its_tools(monkeypatch):
+    """operonx-agents 0.3.1 takes OpenRouter's reported cost; the web search adds its own call's (A8)."""
+    from assistant import web
+
+    async def search(ctx, question):
+        return {"text": "Lãi suất điều hành giữ nguyên.", "query": question, "sources": [{"url": "https://sbv.gov.vn"}],
+                "cost_usd": 0.012}  # fmt: skip
+
+    monkeypatch.setattr(web, "search", search)
+    llm = ScriptedLLM(asks(("tim_tren_web", {"q": "lãi suất điều hành"}), cost=0.001), says("Giữ nguyên.", cost=0.002))
+    with scripted(copilot=llm):
+        a = ask("Lãi suất điều hành hiện nay là bao nhiêu?")
+    assert a["usage"]["cost_usd"] == pytest.approx(0.015) and a["usage"]["tools_cost_usd"] == 0.012
+    with db.tx() as con:
+        row = con.execute("select data from audit_log where action = 'assistant.turn' order by seq desc").fetchone()
+    assert json.loads(row["data"])["cost_usd"] == pytest.approx(0.015)  # the audit records it, as the map shows

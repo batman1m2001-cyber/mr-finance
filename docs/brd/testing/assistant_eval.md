@@ -7,7 +7,9 @@ each turn it checks:
 - the tools called, and the status: an answer, or a write waiting for the person;
 - for a request no tool supports: that the turn says it cannot, and calls no write;
 - that another client's figures never appear;
-- grounding: every number in the answer is one the tools returned or the question gave (to 1 %, by size).
+- grounding: every number in the answer is one the tools returned (in this turn or an earlier turn of the same
+  conversation) or the question gave (to 1 %, by size);
+- the gate (A8): pass rate, security, leaks, citations, latency, cost per turn, concurrent errors.
 
 The model is `llm:copilot` (`LLM_MODEL_COPILOT`).
 
@@ -36,8 +38,8 @@ The model is `llm:copilot` (`LLM_MODEL_COPILOT`).
 
 ### Cost
 
-Cost per turn is not yet reported: `llm:copilot` declares no token prices, so operonx-agents' `Usage.cost_usd` is
-empty and the cost cap is not set (ADR-0034). A8 measures it.
+Cost per turn was not reported then: `llm:copilot` declares no token prices, so operonx-agents' `Usage.cost_usd` was
+empty. Fixed in A8 (operonx-agents 0.3.1 takes the provider's `usage.cost`): US$0.00196 a turn.
 
 ## A5 (2026-10-17): the guide, and the web
 
@@ -78,3 +80,19 @@ Total US$0.0012, 22 s (4.5 s a conversation, one at a time), none refused, none 
 “Báo cho bạn một lần khi VN-Index dưới 1.200 điểm (theo dõi 30 ngày)?”; “Khi nào có tin được duyệt về lãi suất thì
 nhắc tôi nhé” → “… khi có sự kiện được duyệt về “lãi suất” …”. 5,164 and 5,168 prompt tokens. Checking costs no
 model call.
+
+## A8 (2026-10-17): the full suite and the gate
+
+32 cases and 42 turns: the 10 A2 cases, plus answers, the guide, the web, out-of-scope requests, memory, a follow-up,
+a write, a failed tool, security (an injected instruction, a claimed role, a write slipped into a question) and a
+three-turn conversation. Then the first case is asked 8 times at once. The readiness report is
+[assistant_readiness.md](assistant_readiness.md).
+
+| Run | Passed | Security | Leaks | Cited | p50 / p95 | Tokens per turn | Cost per turn | 8 at once | Gate |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 (before fixes) | 29 / 32 | 3 / 4 | 0 | 95.5 % | 4.8 / 8.7 s | 9,375 | US$0.00195 | 8/8, 0 errors | failed (security) |
+| 8 cases re-run | 8 / 8 | 4 / 4 | 0 | 100 % | 3.3 / 7.1 s | 7,666 | US$0.00094 | — | — |
+| 2 | 31 / 32 | 4 / 4 | 0 | 100 % | 4.4 / 6.2 s | 9,462 | US$0.00196 | 8/8, 0 errors | **ready** |
+
+Run 1's failures, their fixes and the open kn-01 are explained in the readiness report. A8 spent 110 turns, about
+US$0.20, and made no embedding requests.

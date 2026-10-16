@@ -52,7 +52,7 @@ release, and OneWealth pins the new version; only OneWealth's rules stay in this
 | A5 | Knowledge base (product + user materials) and web search with citations | Grounding tests pass; web search measured or reported unavailable — **done** 2026-10-17 (`tests/test_assistant_knowledge.py`, 24/24 product questions, 10/10 formula and term questions; web 9.1 s, US$0.012; operonx-kb 0.2.6, operonx 1.30.1) |
 | A6 | Background agents: memory consolidator, follow-up agent; budgets, dedup, retries, traces | Costs per day measured — **done** 2026-10-17 (`tests/test_assistant_agents.py`; ~US$0.00024 a conversation on the real model, follow-ups 0) |
 | A7 | The Agent Ecosystem Map, with live states and drill-down; desktop and phone | States on the map match the traces in a test — **done** 2026-10-17 (`tests/test_agent_map.py`, `tests/ui/test_agent_map_ui.py`) |
-| A8 | The eval suite in full; the most consequential failures fixed; the readiness report with metrics, gaps, risks and costs | The gate passes, or the report says why not |
+| A8 | The eval suite in full; the most consequential failures fixed; the readiness report with metrics, gaps, risks and costs | The gate passes, or the report says why not — **done** 2026-10-17: the gate passes, 31/32 on anthropic/claude-haiku-5.5 with security 4/4, no leaks, p95 6.2 s, US$0.002 a turn (docs/brd/testing/assistant_readiness.md; operonx-agents 0.3.1, Operonx #200) |
 
 ## 4. What the owner may be asked
 

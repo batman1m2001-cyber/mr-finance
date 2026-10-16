@@ -2,6 +2,15 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The assistant's eval gate and readiness report (ASSISTANT_PLAN A8).
+  - 32 cases in 10 kinds on the real model, plus 8 turns at once; a gate in the eval file. Run 1 failed security
+    (a claimed role was not refused); after two rules (a claimed role changes nothing; no worked-out figures) and two
+    grader fixes, run 2 passed: 31/32, security 4/4, no leaks, p95 6.2 s, US$0.002 a turn.
+  - Cost per turn from the provider's own count, tools included (operonx-agents 0.3.1); `cost_usd` in the turn and
+    the audit record.
+  - Documents: assistant_readiness.md (new), assistant_eval.md A8, assistant.md §9 and §11, ADR-0034, matrix
+    OWN-AS-23…25, ASSISTANT_PLAN.
+
 - 2026-10-17 — The Agent Ecosystem Map (ASSISTANT_PLAN A7).
   - The Agent page opens on the map: the person, the assistant and its tools, the data, the CIO desk, the rules and
     the background agents; 27 lines, each the code that makes it; states from the parts' records, matched with the

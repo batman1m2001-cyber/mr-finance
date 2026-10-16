@@ -25,3 +25,11 @@ The live demo already runs real models through OpenRouter.
 ## Consequences
 
 Each eval run spends a few dollars; prompt or model changes must pass the gate before shipping.
+
+## As built (A8, 2026-10-17)
+
+- The cases are `data/assistant_eval.json` (committed; `evals/` is gitignored), each with a `kind`; the gate is in the same
+  file. Results go to `--out`, outside the repository.
+- A full run costs about US$0.1, not a few dollars: 42 turns plus 8 at once, US$0.002 a turn on Haiku 5.5.
+- Run 2 passed the gate; the report is docs/brd/testing/assistant_readiness.md. The grader is held by free tests
+  (`tests/test_eval_checker.py`).

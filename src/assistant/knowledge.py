@@ -269,7 +269,7 @@ async def _web(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
     got = await web.search(ctx, _question(args))
     return {"text": got["text"], "data": {"query": got["query"], "results": len(got["sources"])},
-            "sources": [s["url"] for s in got["sources"]]}  # fmt: skip
+            "sources": [s["url"] for s in got["sources"]], "cost_usd": got["cost_usd"]}  # fmt: skip
 
 
 def _catalogue():

@@ -334,7 +334,7 @@ gives multi-second tails and lock errors, and would slow the business writes: re
 failure is fixed upstream (§9) before A3 uses it. PostgreSQL stays the bank path (the session and memory stores sit
 behind interfaces; `RedisSession` exists); a new database for the demo is not justified by these numbers.
 
-## 9. Upstream into OperonX *(target)*
+## 9. Upstream into OperonX *(built A1–A8)*
 
 | Need | Where | Phase |
 |---|---|---|
@@ -344,6 +344,9 @@ behind interfaces; `RedisSession` exists); a new database for the demo is not ju
 | Tool verifiers: a check run after a tool, its verdict in the tool message and the trace | `operonx-agents` tools — **done**, 0.2.3 (`@tool(verify=)`, Operonx #186) | A1 |
 | A lexical-only collection (no embedder) that can add, delete and collect garbage; documents with key, tags, ACL, metadata | `operonx-kb` — **done**, 0.2.6 (Operonx #193) | A5 |
 | Register a resource for this process only, without rewriting `resources.yaml` | `operonx` `ResourceHub.register(persist=False)` — **done**, 1.30.1 (Operonx #194) | A5 |
+| A model's cost where the provider reports it (OpenRouter's `usage.cost`) and no prices are declared — `Usage.cost_usd` was empty, so no cost per turn and no cost cap | `operonx-agents` `Usage.from_completion` — **done**, 0.3.1 (Operonx #199) | A8 |
+| A served graph with an input called `name` gets that input (the serve layer named the run with it) | `operonx` serve `compile_graph` — **done** (Operonx #200, unreleased; OneWealth's flow input is `message`, so not affected) | A8 |
+| `operonx_kb.__version__` reported 0.2.3 through 0.2.6 | `operonx-kb` 0.2.7 (Operonx #200) | A8 |
 
 OneWealth keeps only its rules: which tools, which roles, the barrier, what a memory item may hold, retention values.
 
@@ -357,9 +360,17 @@ OneWealth keeps only its rules: which tools, which roles, the barrier, what a me
 4. A4–A7 add memory, knowledge, agents and the map without changing earlier contracts.
 5. A8: the eval gate decides readiness; the report states what passed, what failed and what it costs.
 
-## 11. Costs *(to be measured in A8)*
+## 11. Costs *(measured in A8, 2026-10-17)*
 
-Inputs known now: Haiku 5.5 through OpenRouter; a web search US$0.012 (measured, A5); the consolidator
-~US$0.00024 a conversation (measured, A6; ≤ 8,000 tokens); follow-up checks 0 tokens. A8 measures tokens and
-cost per conversation and per day from the runs' usage records (`operonx-agents` `Usage` carries the provider's own
-counts and cost).
+The provider's own `usage.cost`, per turn (operonx-agents 0.3.1). A turn's cost includes the cost of its tools that call a
+model (the web search); it is in the turn's `usage.cost_usd` and the audit record.
+
+| What | Cost |
+|---|---|
+| An assistant turn (42 eval turns, Haiku 5.5) | US$0.00196, 9,462 tokens |
+| A turn with a web search | US$0.012–0.024 |
+| The consolidator, one conversation | ~US$0.00024 |
+| Follow-up checks, the guide and materials search | 0 |
+
+A modelled day for 100 clients asking 5 questions each (1 in 20 on the web) is about US$1.5. The full figures
+and the gate are in [assistant_readiness.md](../testing/assistant_readiness.md).
