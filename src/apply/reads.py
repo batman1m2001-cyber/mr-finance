@@ -14,6 +14,7 @@ from apply import run as runs
 from control import roles
 from events import store as events
 from news.ops import config as news_config
+from research import conflict
 from views import schema
 from views import store as vstore
 
@@ -60,6 +61,9 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
         item["timeline"] = _timeline(ev, view, run)
         outlets = sorted({n.get("outlet") or "Nguồn công khai" for n in ev.get("news") or []})
         item["sources"] = {"outlets": outlets, "count": len(ev.get("news") or [])}  # RULE-CONTENT-02, no headline
+        item["conflicts"] = [  # CONTENT-02: the research behind the event that concerns a related party, disclosed
+            conflict.disclosure(n["conflict"]) for n in ev.get("news") or [] if (n.get("conflict") or {}).get("related")
+        ]
         if role != "client":  # the view's text may name tickers: staff only (flow 2)
             item["summary"] = view["current"]["summary"]
             item.update(
@@ -81,7 +85,12 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
     }
     if role == "client":
         cio = roles.users()["cio"]
-        out["labels"] = {"note": CLIENT_NOTE, "responsible": f"{cio['name']} — {cio['title']}", "ai": "AI hỗ trợ"}
+        out["labels"] = {
+            "note": CLIENT_NOTE,
+            "responsible": f"{cio['name']} — {cio['title']}",
+            "ai": "AI hỗ trợ",
+            "conflicts": sorted({c for i in items for c in i["conflicts"]}) or [conflict.NONE],
+        }
     return out
 
 

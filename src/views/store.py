@@ -66,6 +66,13 @@ def get(view_id: str) -> Dict[str, Any]:
     return v
 
 
+def approved() -> List[Dict[str, Any]]:
+    """Every view in force (APPROVED), newest first: what a newsletter may be made from (FR-801)."""
+    with db.tx() as con:
+        rows = con.execute("select * from views where status = 'APPROVED' order by created desc").fetchall()
+    return [db.load(r) for r in rows]
+
+
 def for_event(event_id: str) -> List[Dict[str, Any]]:
     with db.tx() as con:
         rows = con.execute("select * from views where event_id = ? order by version", (event_id,)).fetchall()

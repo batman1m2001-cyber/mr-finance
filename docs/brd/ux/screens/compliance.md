@@ -52,3 +52,20 @@ release, release time not reached, restricted-list mention.
 The verification result on top (intact, with the algorithms in use, and the note that the database blocks edits
 and deletes — or “Gãy ở dòng n” with the reason), then the latest 200 rows: #, Lúc, Ai, Việc, Đối tượng, the first
 12 characters of the hash. **Tải JSON (kèm kiểm tra chuỗi)** and **Tải CSV** download the whole chain (2026-10-16).
+
+---
+
+## SCR-CMP-04 — Bản tin (newsletter approval)
+
+| | |
+|---|---|
+| Route | `#/compliance/ban-tin`, one letter `#/compliance/ban-tin/NL-0001` |
+| Feature | [FEAT-17](../../features/FEAT-17-cio-newsletter.md) |
+| Requirements | BRD-FR-801, BRD-RULE-SEC-04 |
+| Data | `GET /api/newsletters`, `GET /api/newsletters/{id}`, `POST /api/newsletters/act` |
+| Screenshots | [an approved letter, desktop](../../assets/current_ui/SCR-CMP-04_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CMP-04_phone-light.jpg) |
+
+The CIO's list without the form, and the same letter page; while a letter waits, **Tuân thủ duyệt** has a note
+(“trả lại: từ 10 ký tự”) with **Duyệt** and **Trả lại**. An earlier send to Private shows as a warning badge with
+both times and the CIO's reason. Refusals come back as messages: the author cannot approve, the check fails, the
+note is too short.

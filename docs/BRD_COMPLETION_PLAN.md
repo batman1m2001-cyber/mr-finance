@@ -255,6 +255,12 @@ NFR-12 verified; NFR-03 stays partial for its availability figure (deployment).
 - Conflict of interest becomes a structured field on research and newsletters, shown on client content
   (CONTENT-02, CONTENT-03).
 
+**Done** (FEAT-17): Bản tin for CIO and Compliance (`src/newsletter/`), the guard and its labels, the agent's
+opening with the template as fallback (also in inbox mode), editable section headings for headlines that carry
+banned words, same-time distribution, SEC-04; `conflict {related, parties, statement}` on research with
+Compliance's `related_parties`, disclosed on the client's impact page and in the letter. FR-801, CONTENT-01/02/03
+and SEC-04 verified.
+
 ### F9 — The policy agent (G)
 
 - FR-306: summarises source-verified policy documents and quotes their articles exactly (each quote is checked

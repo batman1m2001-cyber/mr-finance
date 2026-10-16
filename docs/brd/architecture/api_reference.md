@@ -38,8 +38,10 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/views/decide` | view_decide → `decide_flow` | `view_id, action, by, reason, idem_key?, edits?, responses?` | CIO | FEAT-06 |
 | `/api/runs/recompute` | run_recompute → `recompute_flow` | `run, by, idem_key?` | CIO | FEAT-08 |
 | `/api/runs/decide` | run_decide → `run_decide_flow` | `run, action (make_effective\|withdraw), by, reason` | CIO | FEAT-08 |
-| `/api/research` | research_upload → `research_upload_flow` | `item {kind, report_no, title, summary, release_at, conflicts?, regulation?}, by` | CIO | FEAT-03 |
+| `/api/research` | research_upload → `research_upload_flow` | `item {kind, report_no, title, summary, release_at, conflict? {related, parties, statement}, regulation?}, by` (naming a related party needs `conflict`) | CIO | FEAT-03 |
 | `/api/research/release` | research_release → `research_release_flow` | `item_id, decision (release\|reject), by, note` | Compliance, ≠ uploader | FEAT-03 |
+| `/api/newsletters` | newsletter_draft → `newsletter_draft_flow` | `view_ids (1–6 approved), by, title?, mode (template\|agent)?, distribution? {send_at, private_early_hours, early_reason}, conflict?` | CIO | FEAT-17 |
+| `/api/newsletters/act` | newsletter_act → `newsletter_act_flow` | `newsletter_id, action (edit\|submit\|withdraw: CIO; approve\|return: Compliance, ≠ author), by, note?, changes? {title, intro, headings, distribution, conflict}` | CIO, Compliance | FEAT-17 |
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
 | `/api/system/alerts/ack` | alert_ack → `alert_ack_flow` | `alert_id, by, note?` | a role the alert's kind is for (CIO, Compliance, Admin); 409 if not open | FEAT-36 |
 | `/api/market/load` | market_load_ask → `market_load_ask_flow` | `by, since? (YYYY-MM-DD, from 2015-01-01; default 2020-01-01)` | Admin | FEAT-12 (SCR-ADM-01) |
@@ -103,6 +105,8 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `/api/accuracy` | — | staff: the model walked forward over history (per horizon and factor: observations, share inside P10–P90, verdict, direction hit rate; KPI-03), the approved views' forecasts summarised and listed with their scores | FEAT-18 |
 | `/api/measure` | — | staff: the monthly reports — misses with causes, approvals (minutes, without edits, under 2 min), news to RM hours, inbox and CIO agent minutes | FEAT-18 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |
+| `/api/newsletters` | — | CIO, Compliance: the letters (without their sections) and the approved views to draft from | FEAT-17 |
+| `/api/newsletters/{id}` | — | CIO, Compliance: one letter — sections, labels, the guard's result, distribution, history | FEAT-17 |
 | `/api/goals/regulation` | `family_id?, role?` | regulation matches, purposes, a family's goals (staff) | FEAT-10 |
 
 ## Differences from the BRD's endpoint list (§12.3)

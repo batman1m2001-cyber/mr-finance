@@ -119,7 +119,7 @@ time).
 | Screenshot | [desktop](../../assets/current_ui/SCR-CIO-06_desktop-light.jpg) |
 
 **Layout.** “<n> chờ phát hành · <m> đã xử lý” and the rules in one paragraph; a folded **Nạp báo cáo mới** form
-(kind, number, release time, conflicts, title, summary; for a regulation note: document, status, effective date,
+(kind, number, release time, conflict of interest — related or not, the parties and a statement —, title, summary; for a regulation note: document, status, effective date,
 prep weeks, purposes, countries, documents, client message, RM hint); the list — kind, title, number, release time,
 uploader, decider, summary, the regulation's details, “<n> mục tiêu bị ảnh hưởng” (matches with level badges), the
 status badge.
@@ -260,3 +260,26 @@ from ready to approved (median, P90, longest), approvals under 2 minutes (our si
 approved without an edit. **Từ tin đến RM**: hours from the event's first news to the effective run, against 2 h;
 “urgent ≤ 30 min” is said to be unmeasurable. **Tốc độ hộp tin và Agent**: minutes from publication to the inbox
 (≤ 10) and CIO agent run time (≤ 15), with the share meeting each.
+
+---
+
+## SCR-CIO-14 — Bản tin (newsletter, CIO)
+
+| | |
+|---|---|
+| Route | `#/cio/ban-tin`, one letter `#/cio/ban-tin/NL-0001` |
+| Feature | [FEAT-17](../../features/FEAT-17-cio-newsletter.md) |
+| Requirements | BRD-FR-801, BRD-RULE-CONTENT-01, BRD-RULE-CONTENT-02, BRD-RULE-CONTENT-03 |
+| Data | `GET /api/newsletters`, `GET /api/newsletters/{id}`, `POST /api/newsletters`, `POST /api/newsletters/act` |
+| Screenshots | [list, desktop](../../assets/current_ui/SCR-CIO-14_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-14_phone-light.jpg) · [a draft](../../assets/current_ui/FEAT-17-draft_desktop-light.jpg) |
+
+**List.** “<n> bản tin · <m> chờ Tuân thủ duyệt” and the rules in one paragraph; a folded **Soạn bản tin mới** form
+(the approved views as checkboxes, title, opening by template or the CIO agent, send time, Private-early hours with
+its reason, conflict of interest); the letters with id, title, views, author, time, “Private sớm <n> giờ” when set,
+and the status badge.
+
+**One letter.** The preview as a client would read it (banner “Bản xem trước — không gửi thật trong demo”, title,
+time, responsible person, AI label, opening, sections, the footer of labels), and beside it: **Kiểm tra nội dung**
+(Đạt, or each finding; the agent's fallback reason), **Phân phối** (same time, or both times with the reason),
+**Sửa** while a draft or returned (title, opening, each section's heading; **Lưu**, **Gửi Tuân thủ duyệt** only
+when the check passes), **Rút bản tin**, and **Lịch sử**.

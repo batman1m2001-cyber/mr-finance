@@ -22,7 +22,13 @@ export async function render(box, ctx) {
         <label class="field c3">Loại<select name="kind">${Object.entries(kinds).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select></label>
         <label class="field c3">Số báo cáo<input name="report_no" required></label>
         <label class="field c3">Giờ phát hành<input name="release_at" type="datetime-local" required></label>
-        <label class="field c3">Xung đột lợi ích<input name="conflicts" placeholder="Không có / mô tả"></label>
+        <label class="field c3">Xung đột lợi ích<select name="related"><option value="">Không liên quan bên liên quan</option><option value="1">Có: liên quan bên liên quan của ngân hàng</option></select></label>
+        <fieldset class="c12 coi" style="border:1px dashed var(--axis);border-radius:10px;padding:10px 12px" hidden>
+          <legend class="small muted">Công bố xung đột lợi ích (khách hàng đọc nguyên văn)</legend>
+          <div class="cols">
+            <label class="field c4">Bên liên quan<input name="parties" placeholder="Techcombank, TCBS"></label>
+            <label class="field c8">Lời công bố (từ 20 ký tự)<input name="statement" placeholder="Báo cáo nhắc tới TCBS, công ty con của ngân hàng."></label>
+          </div></fieldset>
         <label class="field c12">Tiêu đề<input name="title" required></label>
         <label class="field c12">Tóm tắt luận điểm<textarea name="summary" required></textarea></label>
         <fieldset class="c12 reg" style="border:1px dashed var(--axis);border-radius:10px;padding:10px 12px" hidden>
@@ -48,6 +54,7 @@ export async function render(box, ctx) {
         <div><div class="t">${esc(i.title)}</div>
           <div class="m">${esc(i.report_no)} · phát hành ${when(i.release_at)} · nạp bởi ${esc(i.uploaded_by)}${i.decided_by ? ` · xử lý bởi ${esc(i.decided_by)}` : ""}</div>
           <div class="small" style="margin-top:4px">${esc(i.summary)}</div>
+          <div class="small ${i.conflict && i.conflict.related ? "warn-text" : "muted"}" style="margin-top:4px">${i.conflict && i.conflict.related ? `Xung đột lợi ích (${esc(i.conflict.parties.join(", "))}): ${esc(i.conflict.statement)}` : "Không có xung đột lợi ích cần công bố"}</div>
           ${i.regulation ? `<div class="small muted" style="margin-top:4px">${esc(i.regulation.status === "issued" ? "Đã ban hành" : "Dự thảo")} · ${i.regulation.purposes.map(p => esc(purposes[p])).join(", ")} · chuẩn bị thêm ${i.regulation.prep_weeks} tuần</div>` : ""}
           ${m.length ? `<details class="more"><summary>${m.length} mục tiêu bị ảnh hưởng</summary>${m.map(x => `<div class="small" style="margin:4px 0"><span class="badge ${LEVEL[x.level]}">${esc(x.level_label)}</span> ${esc(x.family_name)} · ${esc(x.goal)} · mốc ${esc(x.milestone)}</div>`).join("")}</details>` : ""}
           ${isCompliance && i.status === "PENDING_RELEASE" ? `<div class="row" style="margin-top:8px"><input data-note="${esc(i.id)}" placeholder="Ghi chú của Tuân thủ (từ 20 ký tự)" style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
@@ -60,12 +67,15 @@ export async function render(box, ctx) {
   if (form) {
     const kind = form.querySelector("[name=kind]");
     kind.onchange = () => { form.querySelector(".reg").hidden = kind.value !== "regulation"; };
+    const rel = form.querySelector("[name=related]");
+    rel.onchange = () => { form.querySelector(".coi").hidden = !rel.value; };
     form.onsubmit = async (e) => {
       e.preventDefault();
       const f = new FormData(form);
       const local = f.get("release_at");
       const item = {kind: f.get("kind"), report_no: f.get("report_no"), title: f.get("title"), summary: f.get("summary"),
-        release_at: local ? `${local}:00+07:00` : "", conflicts: f.get("conflicts")};
+        release_at: local ? `${local}:00+07:00` : "",
+        conflict: {related: !!f.get("related"), parties: String(f.get("parties") || "").split(",").map(s => s.trim()).filter(Boolean), statement: f.get("statement") || ""}};
       if (item.kind === "regulation") {
         const list = (k) => String(f.get(k) || "").split(",").map(s => s.trim()).filter(Boolean);
         item.regulation = {document: f.get("document"), status: f.get("status"), effective_date: f.get("effective_date") || null,

@@ -17,7 +17,7 @@ Upload: role `cio`. Release/reject: role `compliance`, a different user from the
 
 ## Inputs → outputs
 - **Upload** `POST /api/research {item, by}`: `kind` (`research`, `house_view`, `regulation`), `report_no`,
-  `title`, `summary`, `release_at`, `conflicts`; for `regulation` also `regulation{document, status
+  `title`, `summary`, `release_at`, `conflict`; for `regulation` also `regulation{document, status
   (draft|issued), effective_date, purposes[], countries[], prep_weeks, documents[], client_message, rm_hint}`.
 - **Decide** `POST /api/research/release {item_id, decision: release|reject, by, note}`.
 - **Out:** `research_items` row `RS-nnnn`, status `PENDING_RELEASE` → `RELEASED` | `REJECTED`.
@@ -46,3 +46,12 @@ Upload: role `cio`. Release/reject: role `compliance`, a different user from the
 - Conflicts of interest are a free-text field; there is no list of TCB/TCBS-related organisations to check
   against (BRD-RULE-CONTENT-03).
 - No connection to a research repository (BRD §11.1, pilot).
+
+## Conflict of interest (BRD completion F8; CONTENT-02, CONTENT-03)
+`conflict` is a structured field: `{related, parties, statement}` (`src/research/conflict.py`). Compliance keeps
+the list of related parties (configuration `related_parties`, one person: Techcombank, TCB, TCBS, Techcom
+Securities, Techcom Capital, Techcom Life by default). A report whose title or summary names one of them is refused
+unless it is declared (`related: true`, the parties, a statement of at least 20 characters). The disclosure travels
+with the item into the inbox and every event that uses it, and the client reads it on Tác động thị trường
+([FEAT-13](FEAT-13-impact-delivery-by-role.md)) and in the newsletter ([FEAT-17](FEAT-17-cio-newsletter.md)).
+Items kept before F8 with a free-text `conflicts` are read as that statement.

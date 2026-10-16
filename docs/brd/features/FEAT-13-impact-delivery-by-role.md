@@ -41,3 +41,7 @@ and not a recommendation.
 - Client content does not name each news source (BRD-RULE-CONTENT-02 asks for “nguồn cho từng tin”): showing
   outlets could reveal the headline; open with Compliance (Q-14 family).
 - The internal-explanation stamp “Nội bộ” (BRD-RULE-SEC-03) exists only on the pre-BRD advisory page banner.
+
+## Conflict-of-interest disclosure (BRD completion F8)
+The client's labels carry `conflicts`: the disclosure of each related-party research item behind the events shown,
+or “Không có xung đột lợi ích cần công bố.” (CONTENT-02). See [FEAT-03](FEAT-03-research-and-regulation-notes.md).
