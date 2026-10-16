@@ -512,7 +512,7 @@ dev = [
 requires-dist = [
     { name = "httpx", marker = "extra == 'test'", specifier = ">=0.24" },
     { name = "openpyxl", specifier = ">=3.1.5" },
-    { name = "operonx", extras = ["serve", "openai"], specifier = ">=1.27.0" },
+    { name = "operonx", extras = ["serve", "openai"], specifier = ">=1.28.0" },
     { name = "operonx-agents", specifier = ">=0.2.0" },
     { name = "playwright", marker = "extra == 'ui'", specifier = ">=1.44" },
     { name = "pypdf", specifier = ">=6.19.0" },
@@ -567,7 +567,7 @@ wheels = [
 
 [[package]]
 name = "operonx"
-version = "1.27.0"
+version = "1.28.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "orjson" },
@@ -576,9 +576,9 @@ dependencies = [
     { name = "rich" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f7/f5/dea5c7c1bc6d5d565dc32a8896bab90d6af993aa91889af436a5b4126b7d/operonx-1.27.0.tar.gz", hash = "sha256:e05354f30d65d5eb3f5d19792232981214b864125196bb615384a5488e09907c", size = 795822, upload-time = "2026-10-16T05:50:06.882Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8f/a2/133cbdd72b346192db184520eb1028bcc8edcffabb5ffc3b606863fc2ee1/operonx-1.28.0.tar.gz", hash = "sha256:47fce5dec14454383a24f604fcc1047d41ae3f063a8e14dc668639ffcd89c945", size = 797248, upload-time = "2026-10-16T11:57:21.944Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/37/7c/4dc9d681b9ea9615fd4a625aee04bcfe685865abf969d4142c23dbcb501c/operonx-1.27.0-py3-none-any.whl", hash = "sha256:7f7492fd1e2d297d6eaffea6d63c113f1ae1dd903ab0df3f1e133a51edc1b688", size = 973229, upload-time = "2026-10-16T05:50:05.274Z" },
+    { url = "https://files.pythonhosted.org/packages/54/78/39362c6ea9c13a040efe7a69080bf71051925d12c89bbc610302df4305b0/operonx-1.28.0-py3-none-any.whl", hash = "sha256:5b821f36cbb0d6d460d9a5f04d1af6d92e650712ae8c482289ae32475748e2f0", size = 975489, upload-time = "2026-10-16T11:57:20.062Z" },
 ]
 
 [package.optional-dependencies]

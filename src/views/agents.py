@@ -165,7 +165,7 @@ async def call_model(
     b = budget()
     if b["used_today"] + max_tokens > b["daily"]:
         raise AgentError(f"Vượt ngân sách token trong ngày ({b['used_today']:,}/{b['daily']:,})".replace(",", "."))
-    llm = _llm(resolve_hub().get(f"llm:{resource}"), models()[resource])
+    llm = _llm(resolve_hub().get(f"llm:{resource}"), models()[resource], f"llm:{resource}")
     expected = models()[resource]
     try:
         resp = await asyncio.wait_for(
@@ -198,9 +198,10 @@ async def call_model(
 _LLMS: Dict[Tuple[int, str], Any] = {}
 
 
-def _llm(base: Any, model: str) -> Any:
+def _llm(base: Any, model: str, resource: str = "llm:cio") -> Any:
     """The resource's client for the configured model: the same provider, key and address, another model name
-    when the configuration says so (NFR-06: a model change is configuration, not code)."""
+    when the configuration says so (NFR-06: a model change is configuration, not code). Built outside the hub, so
+    guarded here as the hub's own clients are (the client-data barrier, BRD-NFR-08)."""
     cfg = getattr(base, "config", None)
     if cfg is None or not model or getattr(cfg, "model", model) == model:
         return base
@@ -208,7 +209,9 @@ def _llm(base: Any, model: str) -> Any:
     if key not in _LLMS:
         from operonx.providers.llms.factory import create_llm
 
-        _LLMS[key] = create_llm(cfg.model_copy(update={"model": model}))
+        from control import barrier
+
+        _LLMS[key] = barrier.guard(create_llm(cfg.model_copy(update={"model": model})), resource)
     return _LLMS[key]
 
 

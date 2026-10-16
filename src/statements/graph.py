@@ -37,7 +37,7 @@ def read_flow(filename, content):
     file = read_file(filename=filename, content=content)
     mode = ai_mode()
     model = LLMOp.of(
-        resource="assistant",
+        resource=mode["resource"],  # llm:assistant (demo) or llm:onprem (BRD-NFR-08)
         prompt=READ_PROMPT,
         fields=["holdings: list"],
         parser="json",

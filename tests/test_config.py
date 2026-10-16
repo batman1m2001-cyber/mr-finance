@@ -109,6 +109,7 @@ def test_the_endpoints():
             "ticker_map",
             "rm_assignment",
             "ai_mode",
+            "client_ai",
             "prompts",
             "models",
         ]

@@ -31,3 +31,12 @@ llm:copilot:
   api_key: ${LLM_API_KEY:not-set}
   base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL_COPILOT:not-set}
+
+# The bank's own model for the two client steps (reading a statement, the declaring chat) when the Admins set
+# client_ai to onprem (BRD-NFR-08, control/barrier.py): its host must be on client_ai.onprem_hosts, or every call to
+# it is refused. Unset (LLM_ONPREM_MODEL), the two steps take their rules in onprem mode.
+llm:onprem:
+  api_type: openai          # vLLM, TGI, Ollama… anything that speaks the OpenAI chat API
+  api_key: ${LLM_ONPREM_API_KEY:not-set}
+  base_url: ${LLM_ONPREM_BASE_URL:http://localhost:8000/v1}
+  model: ${LLM_ONPREM_MODEL:not-set}

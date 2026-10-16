@@ -23,9 +23,9 @@ from apply import run as apply_run
 from apply import trace as apply_trace
 from control import alerts as control_alerts
 from control import audit as control_audit
+from control import barrier, roles
 from control import db as control_db
 from control import log as control_log
-from control import roles
 from events import store as events_store
 from inbox import sign as inbox_sign
 from inbox import store as inbox_store
@@ -94,6 +94,7 @@ async def healthz(request: Request) -> JSONResponse:
     agents = view_ops.agent_status()
     hmac_on = bool((os.environ.get("AUDIT_HMAC_KEY") or "").strip())
     router_by = "mô hình " + copilot_router.model() if copilot_router.live() else "từ khóa"
+    client_ai = barrier.mode()
     protections = [
         {
             "id": "audit_hmac",
@@ -111,11 +112,19 @@ async def healthz(request: Request) -> JSONResponse:
         },
         {
             "id": "client_text_off_ai",
-            "on": not ai.enabled(),
-            "note": "Bước đọc sao kê và chat khai báo không gửi dữ liệu khách cho AI"
-            if not ai.enabled()
-            else "AI đang bật: bước đọc sao kê và chat khai báo gửi nội dung của khách cho mô hình "
-            "(docs/TO_DISCUSS.md D-03)",
+            "on": client_ai != "demo" or ai.client_model() is None,
+            "note": {
+                "off": "AI với dữ liệu khách: tắt — đọc sao kê và chat khai báo chạy bằng quy tắc; rào chắn chặn "
+                "dữ liệu khách tới mọi mô hình bên ngoài",
+                "onprem": "AI với dữ liệu khách: trong ngân hàng (llm:onprem); rào chắn chặn dữ liệu khách tới "
+                "mọi mô hình bên ngoài",
+            }.get(client_ai)
+            or (
+                "AI với dữ liệu khách: demo — bước đọc sao kê và chat khai báo gửi nội dung của khách cho mô hình "
+                "bên ngoài (ADR-0018)"
+                if ai.client_model()
+                else "AI với dữ liệu khách: demo, AI đang tắt — hai bước của khách chạy bằng quy tắc"
+            ),
         },
         {
             "id": "copilot_router",

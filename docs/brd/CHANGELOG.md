@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — The client-data barrier (BRD_REMAINING_PLAN G2, NFR-08): a `client_ai` setting (Admin, two people):
+  `demo` (today's, the public demo), `onprem` (the statement reader and the declaring chat on `llm:onprem`, whose host
+  must be on `onprem_hosts`), `off` (their rules); one guard on every `llm:` call (operonx 1.28.0
+  `ResourceHub.guard`) refuses, in onprem and off, a call bound outside the bank carrying any client's id, name,
+  dependent or account number, before anything is sent, and audits it; `/healthz` reports the setting; a test with a
+  recording OpenAI-compatible server proves it at the wire — ADR-0023, FEAT-22, FEAT-23, matrix (NFR-08 verified),
+  non_functional_requirements, BRD_COMPLETION_REPORT.md.
+
 - 2026-10-16 — “Cách tính” on every number (BRD_REMAINING_PLAN G1, NFR-11): one server catalogue of about 95
   formulas (`src/explain/`, `GET /api/how`), each naming the function that computes it; every money or percent
   figure of every page and role opens the drawer with its formula and inputs (and the code, for staff); settings,

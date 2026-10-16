@@ -24,6 +24,8 @@ DECLARER = Agent(
     tools=TOOLS,
     limits=UsageLimits(turns=6, tool_calls=12),
 )
+# the same agent on the bank's own model, for client_ai = onprem (BRD-NFR-08, control/barrier.py)
+DECLARER_ONPREM = DECLARER.clone(model=Model("onprem", deadline=45))
 
 
 @graph
@@ -33,12 +35,18 @@ def declare_flow(client_id, message, session_id=None):
     client_id, message, session_id = ask["client_id"], ask["message"], ask["session_id"]
     mode = ai_mode()
     agent = AgentOp.of(agent=DECLARER, input=message, session_id=session_id, deps=client_id, sessions=chat_session)
+    onprem = AgentOp.of(
+        agent=DECLARER_ONPREM, input=message, session_id=session_id, deps=client_id, sessions=chat_session
+    )
     said = agent_answer(
         client_id=client_id,
         message=message,
         output=agent["output"],
         status=agent["status"],
         error=agent["error"],
+        onprem_output=onprem["output"],
+        onprem_status=onprem["status"],
+        onprem_error=onprem["error"],
     )
     rules = rule_declare(client_id=client_id, message=message)
     turn = recorded(
@@ -49,7 +57,9 @@ def declare_flow(client_id, message, session_id=None):
         ai_method=said["method"],
         rule_method=rules["method"],
     )
-    START >> ask >> mode >> if_(mode["ai"] == True, agent).else_(rules)  # noqa: E712
-    agent >> said >> turn
+    START >> ask >> mode >> if_(mode["assistant"] == True, agent).if_(mode["onprem"] == True, onprem).else_(rules)  # noqa: E712
+    agent >> said
+    onprem >> said
+    said >> turn
     rules >> turn
     turn >> END

@@ -28,3 +28,4 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0020](ADR-0020-sign-in-with-own-accounts.md) | Everyone signs in with their own account; the role switcher is gone | accepted | 2026-10-16 |
 | [ADR-0021](ADR-0021-market-data-through-scheduled-jobs.md) | Market data comes from public sources through scheduled jobs into SQLite | accepted | 2026-10-16 |
 | [ADR-0022](ADR-0022-the-ai-zone-is-a-second-process.md) | The AI zone is a second process with its own database, reaching the bank through a signed inbox | accepted | 2026-10-16 |
+| [ADR-0023](ADR-0023-client-data-barrier-by-configuration.md) | The client-data barrier is one guard on every model call, set by configuration (`client_ai`) | accepted | 2026-10-16 |

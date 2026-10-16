@@ -22,4 +22,5 @@ size is valued by its area.
 `tests/test_declare.py` (7 tests, incl. `::test_the_same_call_twice_in_one_turn_is_recorded_once`).
 
 ## Limitations
-As FEAT-22: client data reaches the model when AI is on (bank deployment: in-bank model only).
+As FEAT-22: in `demo` (the public demo, ADR-0018) client text reaches the configured model when AI is on; a bank sets
+`client_ai` to `onprem` (the agent runs on `llm:onprem`) or `off` (the rules answer) — ADR-0023, `tests/test_barrier.py`.
