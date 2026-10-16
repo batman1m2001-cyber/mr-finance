@@ -10,6 +10,7 @@ from typing import Any, Dict, List
 
 from operonx import op
 
+from control.errors import BadRequest
 from wealth import fixtures
 
 LABELS = {
@@ -30,7 +31,7 @@ def check_request(client_id: str = None, scope: str = None, month: str = None) -
     """A known client, personal or family, and a month as YYYY-MM (or none: the latest with rows)."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     scope = scope or "personal"
     if scope not in ("personal", "family"):
         raise ValueError("scope is personal or family")

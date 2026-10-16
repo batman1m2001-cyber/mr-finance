@@ -93,9 +93,9 @@ def identifiers() -> List[str]:
         for r in con.execute("select id, name, kind from people where kind in ('client', 'dependent')"):
             if r["kind"] == "client":
                 out.add(r["id"])
-            out.add(r["name"])
-        for r in con.execute("select data from client_sources"):
-            _numbers(json.loads(r["data"]), out)
+            out.add(people._open(r["name"], r["id"], "name"))
+        for r in con.execute("select client_id, source, data from client_sources"):
+            _numbers(json.loads(people._open_source(r["data"], r["client_id"], r["source"])), out)
     for cid in people.client_ids(members=True):
         for d in store.profile(cid, "dependent"):
             if d.get("name"):

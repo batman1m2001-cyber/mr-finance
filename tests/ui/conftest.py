@@ -10,6 +10,7 @@ binary; otherwise Playwright's own install is used."""
 
 import json
 import os
+import re
 import socket
 import sys
 import threading
@@ -24,6 +25,30 @@ uvicorn = pytest.importorskip("uvicorn")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # the seeding helpers of tests/test_apply.py
 
 SIZES = {"desktop": (1440, 900), "phone": (390, 844)}
+_FUNCTION = re.compile(r"^\s*(?:async\s+)?(?:function\b|\([^)]*\)\s*=>|\w+\s*=>)")
+
+
+def _wait_for_function(self, expression, arg=None, timeout=None, polling=None):
+    """``Page.wait_for_function`` polled from here with ``evaluate``: the app's Content-Security-Policy has no
+    ``unsafe-eval`` (BRD-NFR-07), and Playwright's in-page polling compiles the predicate with ``eval``, which the
+    page then refuses. ``evaluate`` goes through DevTools, which the policy does not cover. The policy stays on, so
+    these tests also see any violation by the app itself."""
+    fn = expression if _FUNCTION.match(expression) else f"() => ({expression})"
+    check = f"(a) => !!(({fn})(a))"
+    deadline = time.monotonic() + (30_000 if timeout is None else timeout) / 1000
+    while True:
+        try:
+            if self.evaluate(check, arg):
+                return True
+        except sync_api.Error as e:  # the page is navigating: not yet
+            if "context was destroyed" not in str(e) and "navigat" not in str(e):
+                raise
+        if time.monotonic() > deadline:
+            raise sync_api.TimeoutError(f"wait_for_function timed out: {expression}")
+        self.wait_for_timeout(polling if isinstance(polling, (int, float)) else 50)
+
+
+sync_api.Page.wait_for_function = _wait_for_function
 ACCOUNTS = {"client": "C01", "rm": "rm01", "cio": "cio", "compliance": "compliance", "admin": "admin"}
 
 

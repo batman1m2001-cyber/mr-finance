@@ -26,7 +26,7 @@ from datetime import date
 from typing import Any, Dict, List, Optional
 
 from apply.goals import POOL, goal_impacts
-from control import audit, config, db
+from control import audit, config, crypto, db
 from engine import ENGINE_VERSION, FactorModel, evaluate
 from people import store as people_store
 from procedural import goals as procedural_goals
@@ -337,11 +337,15 @@ async def _compute_run(run_id: str, view: Dict[str, Any], by: str, today: Option
     pc = postcheck(results, snap, today)
     model = FactorModel.from_dict(snap["factor_model"])
     with db.tx() as con:
-        con.execute("insert or ignore into run_snapshots values (?, ?, ?)", (snap["id"], time.time(), db.dumps(snap)))
+        kept = {
+            **snap,
+            "families": crypto.seal_json(snap["families"], crypto.where("run_snapshots", snap["id"], "families")),
+        }
+        con.execute("insert or ignore into run_snapshots values (?, ?, ?)", (snap["id"], time.time(), db.dumps(kept)))
         for fid, r in results.items():
-            con.execute(
-                "insert into family_impacts values (?, ?, ?, ?)", (f"FI-{run_id[3:]}-{fid}", run_id, fid, db.dumps(r))
-            )
+            fi = f"FI-{run_id[3:]}-{fid}"
+            sealed = crypto.seal(db.dumps(r), crypto.where("family_impacts", fi, "data"))
+            con.execute("insert into family_impacts values (?, ?, ?, ?)", (fi, run_id, fid, sealed))
         row = con.execute("select data from application_runs where id = ?", (run_id,)).fetchone()
         data = json.loads(row["data"])
         data.update(
@@ -352,8 +356,10 @@ async def _compute_run(run_id: str, view: Dict[str, Any], by: str, today: Option
             engine_version=ENGINE_VERSION,
             view_content_hash=snap["view_content_hash"],
             families=len(results),
-            ranking=ranking(results),
-            exposure=exposure(results, model.ids),
+            ranking=crypto.seal_json(ranking(results), crypto.where("application_runs", run_id, "ranking")),
+            exposure=crypto.seal_json(
+                exposure(results, model.ids), crypto.where("application_runs", run_id, "exposure")
+            ),
             postcheck=pc,
             totals={
                 "expected_3m": sum(r["horizons"]["3m"]["expected"] for r in results.values()),
@@ -449,13 +455,21 @@ def verify(run_id: str) -> Dict[str, Any]:
 # -- reads -------------------------------------------------------------------------------------
 
 
+def _opened(r: Dict[str, Any]) -> Dict[str, Any]:
+    """A run with its per-family fields opened (control/crypto.py FIELDS)."""
+    for f in ("ranking", "exposure"):
+        if f in r:
+            r[f] = crypto.open_json(r[f], crypto.where("application_runs", r["id"], f))
+    return r
+
+
 def get(run_id: str) -> Dict[str, Any]:
     with db.tx() as con:
         r = db.load(con.execute("select * from application_runs where id = ?", (run_id,)).fetchone())
     if r is None:
         raise KeyError(f"không có lần áp dụng {run_id}")
     r["status_label"] = STATUS_LABEL.get(r["status"], r["status"])
-    return r
+    return _opened(r)
 
 
 def runs(view_id: Optional[str] = None, statuses: Optional[tuple] = None) -> List[Dict[str, Any]]:
@@ -471,7 +485,7 @@ def runs(view_id: Optional[str] = None, statuses: Optional[tuple] = None) -> Lis
         sql += " where " + " and ".join(where)
     with db.tx() as con:
         rows = con.execute(sql + " order by created desc", args).fetchall()
-    out = [db.load(r) for r in rows]
+    out = [_opened(db.load(r)) for r in rows]
     for r in out:
         r["status_label"] = STATUS_LABEL.get(r["status"], r["status"])
     return out
@@ -482,7 +496,9 @@ def snapshot(snapshot_id: str) -> Dict[str, Any]:
         row = con.execute("select data from run_snapshots where id = ?", (snapshot_id,)).fetchone()
     if row is None:
         raise KeyError(f"không có ảnh chụp {snapshot_id}")
-    return json.loads(row["data"])
+    snap = json.loads(row["data"])
+    snap["families"] = crypto.open_json(snap["families"], crypto.where("run_snapshots", snapshot_id, "families"))
+    return snap
 
 
 def snapshot_head(snapshot_id: str) -> Dict[str, Any]:
@@ -499,16 +515,19 @@ def snapshot_head(snapshot_id: str) -> Dict[str, Any]:
 
 def family_results(run_id: str) -> Dict[str, Dict[str, Any]]:
     with db.tx() as con:
-        rows = con.execute("select family_id, data from family_impacts where run_id = ?", (run_id,)).fetchall()
-    return {r["family_id"]: json.loads(r["data"]) for r in rows}
+        rows = con.execute("select id, family_id, data from family_impacts where run_id = ?", (run_id,)).fetchall()
+    return {
+        r["family_id"]: json.loads(crypto.open_(r["data"], crypto.where("family_impacts", r["id"], "data")))
+        for r in rows
+    }
 
 
 def family_result(run_id: str, family_id: str) -> Dict[str, Any]:
     """One family's result: its row only (NFR-01: decoding every family's to pick one took 2.4 s at 6,500)."""
     with db.tx() as con:
         row = con.execute(
-            "select data from family_impacts where run_id = ? and family_id = ?", (run_id, family_id)
+            "select id, data from family_impacts where run_id = ? and family_id = ?", (run_id, family_id)
         ).fetchone()
     if row is None:
         raise KeyError(f"không có kết quả {family_id} trong {run_id}")
-    return json.loads(row["data"])
+    return json.loads(crypto.open_(row["data"], crypto.where("family_impacts", row["id"], "data")))

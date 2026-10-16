@@ -6,6 +6,7 @@ from typing import Any, Dict
 
 from operonx import op
 
+from control.errors import BadRequest
 from scenarios import _sim
 from wealth import fixtures, profile
 
@@ -17,7 +18,7 @@ def check_request(client_id: str = None, scenario: str = None, params: dict = No
     """What a caller sent, checked: a known client and scenario, ``params`` an object."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     scenario = str(scenario or "")
     if scenario not in _sim.SCENARIOS:
         raise ValueError(f"no scenario {scenario!r}; one of {sorted(_sim.SCENARIOS)}")
@@ -78,7 +79,7 @@ def check_client(client_id: str = None, scope: str = None) -> dict:
     """What a caller sent, checked: a known client, a scope."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     return {"client_id": client_id, "scope": scope or "personal"}
 
 

@@ -34,6 +34,7 @@ def _scaled(x, k):
 
 def clone(n: int) -> int:
     """n synthetic households from the demo ones; returns how many exist after."""
+    from control import crypto
     from people import store
 
     with store._db(write=True) as con:
@@ -50,17 +51,34 @@ def clone(n: int) -> int:
             h = heads[i % len(heads)]
             k = 0.5 + 1.5 * ((i * 7919) % 1000) / 1000  # ×0.5–×2, fixed by the clone's number
             cid = f"S{i + 1:05d}"
-            rec = json.loads(h["data"])
+            rec = json.loads(store._open(h["data"], h["id"], "data"))  # sealed when MF_DATA_KEYS is set
             rec.update(id=cid, name=f"Gia đình thử {i + 1}")
             seq += 1
             con.execute(
                 "insert into people values (?, ?, 'client', 'client', ?, null, null, ?, ?)",
-                (cid, seq, rec["name"], rms[i % len(rms)], json.dumps(_scaled(rec, k), ensure_ascii=False)),
+                (
+                    cid,
+                    seq,
+                    store._seal(rec["name"], cid, "name"),
+                    rms[i % len(rms)],
+                    store._seal(json.dumps(_scaled(rec, k), ensure_ascii=False), cid, "data"),
+                ),
             )
             for s in srcs[h["id"]]:
                 con.execute(
                     "insert into client_sources values (?, ?, ?, ?)",
-                    (cid, s["source"], s["pos"], json.dumps(_scaled(json.loads(s["data"]), k), ensure_ascii=False)),
+                    (
+                        cid,
+                        s["source"],
+                        s["pos"],
+                        crypto.seal(
+                            json.dumps(
+                                _scaled(json.loads(store._open_source(s["data"], h["id"], s["source"])), k),
+                                ensure_ascii=False,
+                            ),
+                            store._src_where(cid, s["source"]),
+                        ),
+                    ),
                 )
             con.execute("insert into teams values (?, ?, 'rm', 0, 0)", (cid, rms[i % len(rms)]))
         return con.execute("select count(*) from people where kind = 'client' and member_of is null").fetchone()[0]

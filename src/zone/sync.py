@@ -47,7 +47,9 @@ def zone_url() -> str:
 
 
 def zone_key() -> Optional[bytes]:
-    k = (os.environ.get("MF_ZONE_KEY") or "").strip()
+    from control import secrets
+
+    k = secrets.get("MF_ZONE_KEY") or ""  # the secret store, a file or the environment (BRD-NFR-07)
     return k.encode("utf-8") if k else None
 
 

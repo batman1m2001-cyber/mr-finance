@@ -153,7 +153,7 @@ def test_the_services_answer_over_http():
         assert board.json()["dashboard"]["client_id"] == "C04"
         assert client.post("/api/dashboard", json={"client": "C04"}).json()["field"] == "client"  # not a parameter: 400
         bad = client.post("/api/dashboard", json={"client_id": "nobody"})
-        assert bad.status_code == 500
+        assert bad.status_code == 400 and "no client" in bad.json()["error"]  # the caller's mistake, said (G3)
         assert client.get("/").status_code == 200
 
 

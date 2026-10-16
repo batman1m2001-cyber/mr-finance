@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterator, List
 
 from operonx import op
 
+from control.errors import BadRequest
 from impact import _rules
 from wealth import fixtures, profile, store
 
@@ -17,7 +18,7 @@ def check_request(client_id: str = None, scope: str = None) -> dict:
     """What a caller sent, checked: a known client, and a scope."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     return {"client_id": client_id, "scope": scope or "personal"}
 
 

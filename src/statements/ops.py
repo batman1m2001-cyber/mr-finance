@@ -8,6 +8,7 @@ import re
 
 from operonx import op
 
+from control.errors import BadRequest
 from people import auth
 from statements import _parse
 from wealth import ai, fixtures, store, valuation
@@ -20,11 +21,11 @@ def check_request(client_id: str = None, filename: str = None, content: str = No
     """What a caller sent, checked: a known client, a statement's file name, base64 content."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     auth.require_client(client_id)  # their family, their RM, or the desk (ROLE-02)
     filename = str(filename or "statement.txt")
     if not re.search(r"\.(csv|xlsx|xlsm|pdf|txt)$", filename.lower()):
-        raise ValueError(f"{filename!r}: a statement is a PDF, an Excel or a CSV file")
+        raise BadRequest(f"{filename!r}: a statement is a PDF, an Excel or a CSV file")
     return {"client_id": client_id, "filename": filename, "content": str(content or "")}
 
 
@@ -34,9 +35,9 @@ def read_file(filename: str, content: str) -> dict:
     try:
         raw = base64.b64decode(content, validate=True)
     except (binascii.Error, ValueError) as e:
-        raise ValueError("the file is not base64") from e
+        raise BadRequest("the file is not base64") from e
     if len(raw) > MAX_BYTES:
-        raise ValueError("a statement is at most 5 MB")
+        raise BadRequest("a statement is at most 5 MB")
     kind, text, rows = _parse.read_file(filename, raw)
     return {
         "kind": kind,

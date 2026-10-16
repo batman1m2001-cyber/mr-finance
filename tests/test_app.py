@@ -26,7 +26,7 @@ def test_upload_then_chat_then_the_dashboard_shows_both():
         assert client.get("/samples/vps_C01.csv").status_code == 200
         assert (
             client.post("/api/statement", json={"client_id": "C01", "filename": "x.exe", "content": ""}).status_code
-            == 500
+            == 400  # a request the caller got wrong: said, not a crash (G3)
         )
         assert client.post("/api/reset").json() == {"reset": True}
 

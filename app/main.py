@@ -47,6 +47,7 @@ from operonx.app.evals import Gate
 from operonx.app.jobs import Job
 
 from app import web
+from app.http import SecurityHeaders
 from apply.graph import recompute_flow, run_decide_flow
 from control import barrier
 from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow
@@ -94,6 +95,7 @@ PORT = env("PORT", 8030)
 APP = Application(
     "mr-finance",
     description="Consolidate every asset a client holds, anywhere, into one picture — and say what is moving it.",
+    middleware=[SecurityHeaders],  # every response: security headers, no cross-site writes (BRD-NFR-07)
     services=[
         Service(
             "dashboard",

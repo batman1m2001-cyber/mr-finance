@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Encryption, secrets and the attack suite (BRD_REMAINING_PLAN G3, NFR-07): client data sealed at rest
+  per column with AES-256-GCM (row-bound, rotating keys, `scripts/rotate_keys.py`), chosen by scanning a populated
+  database; keys from a Vault-compatible store, a secrets folder or the environment; security headers (CSP by hash,
+  no framing, nosniff, HSTS over TLS, no-store on the API) and cross-site writes refused on every response (operonx
+  1.29.0 middleware); an attack suite (at rest, rotation, secrets, headers, CSRF, forged sessions, another family,
+  SQL, paths, upload size, stored markup); request checks answer 400, not 500 — ADR-0024, matrix (NFR-07 verified),
+  non_functional_requirements, BRD_COMPLETION_REPORT.md.
+
 - 2026-10-16 — The client-data barrier (BRD_REMAINING_PLAN G2, NFR-08): a `client_ai` setting (Admin, two people):
   `demo` (today's, the public demo), `onprem` (the statement reader and the declaring chat on `llm:onprem`, whose host
   must be on `onprem_hosts`), `off` (their rules); one guard on every `llm:` call (operonx 1.28.0

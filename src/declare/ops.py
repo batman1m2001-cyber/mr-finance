@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 
 from operonx import op
 
+from control.errors import BadRequest
 from declare import _rules
 from people import auth
 from wealth import ai, fixtures, store
@@ -21,11 +22,11 @@ def check_request(client_id: str = None, message: str = None, session_id: str = 
     chat's session (the client's own by default)."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     auth.require_client(client_id)  # their family, their RM, or the desk (ROLE-02)
     message = str(message or "").strip()
     if not message:
-        raise ValueError("an empty message")
+        raise BadRequest("an empty message")
     return {
         "client_id": client_id,
         "message": message[:2000],
@@ -81,12 +82,14 @@ def by_rules(client_id: str, message: str) -> str:
 
 
 def chat_session(session_id: str):
-    """Each chat's conversation, kept beside the state (so the agent remembers the last turns)."""
+    """Each chat's conversation, kept beside the state (so the agent remembers the last turns), sealed when column
+    keys are set (BRD-NFR-07, control/crypto.py)."""
     from operonx.agents import SQLiteSession
 
+    from control.crypto import SealedSession
     from wealth.paths import state_path
 
-    return SQLiteSession(session_id, state_path().with_name("chat.db"))
+    return SealedSession(SQLiteSession(session_id, state_path().with_name("chat.db")), session_id)
 
 
 @op

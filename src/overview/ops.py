@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 from operonx import op
 
 from apply import reads
+from control.errors import BadRequest
 from people import auth
 from views import schema
 from wealth import fixtures
@@ -56,7 +57,7 @@ def _pct(x: float, digits: int = 1) -> str:
 def check_request(client_id: str = None, scope: str = None, role: str = None, goals: list = None) -> dict:
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     scope = scope or "personal"
     if scope not in ("personal", "family"):
         raise ValueError("scope is personal or family")

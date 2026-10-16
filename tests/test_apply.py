@@ -15,7 +15,7 @@ from starlette.testclient import TestClient
 from apply import reads, trace
 from apply import run as runs
 from apply.graph import recompute_flow, run_decide_flow
-from control import audit, db
+from control import audit, crypto, db
 from events.graph import event_flow
 from news.graph import ingest_flow
 from views.graph import cio_agent_flow, decide_flow
@@ -83,26 +83,30 @@ def test_approval_applies_the_view_to_every_family():
     assert ex["rows"][0]["vnd"].keys() == set(ex["factors"])
 
 
+def _edit_impact(run_id, family_id, change):
+    """Change one stored family result as someone holding the key would (sealed when MF_DATA_KEYS is set)."""
+    with db.tx() as con:
+        row = con.execute(
+            "select id, data from family_impacts where run_id = ? and family_id = ?", (run_id, family_id)
+        ).fetchone()
+        at = crypto.where("family_impacts", row["id"], "data")
+        d = json.loads(crypto.open_(row["data"], at))
+        change(d)
+        con.execute("update family_impacts set data = ? where id = ?", (crypto.seal(db.dumps(d), at), row["id"]))
+
+
 def test_a_run_recomputes_to_the_dong_and_tampering_is_found():
     _, run = approved(*MARKET)
     assert runs.verify(run["id"])["ok"]
     fid = next(iter(runs.family_results(run["id"])))
-    with db.tx() as con:  # change one stored number
-        row = con.execute(
-            "select data from family_impacts where run_id = ? and family_id = ?", (run["id"], fid)
-        ).fetchone()
-        data = json.loads(row["data"])
-        data["horizons"]["3m"]["expected"] += 1
-        con.execute(
-            "update family_impacts set data = ? where run_id = ? and family_id = ?", (json.dumps(data), run["id"], fid)
-        )
+    _edit_impact(run["id"], fid, lambda d: d["horizons"]["3m"].update(expected=d["horizons"]["3m"]["expected"] + 1))
     assert runs.verify(run["id"])["differences"] == [f"{fid} 3m expected"]
-    with db.tx() as con:  # change one goal's level (FR-404)
-        data["horizons"]["3m"]["expected"] -= 1
-        data["goal_impact"]["pool"]["after"] += 1
-        con.execute(
-            "update family_impacts set data = ? where run_id = ? and family_id = ?", (json.dumps(data), run["id"], fid)
-        )
+
+    def goal_level(d):  # change one goal's level instead (FR-404)
+        d["horizons"]["3m"]["expected"] -= 1
+        d["goal_impact"]["pool"]["after"] += 1
+
+    _edit_impact(run["id"], fid, goal_level)
     assert runs.verify(run["id"])["differences"] == [f"{fid} goal_impact"]
     with db.tx() as con:  # change the frozen snapshot
         row = con.execute("select data from run_snapshots where id = ?", (run["snapshot_id"],)).fetchone()
@@ -353,27 +357,15 @@ def test_br08_a_run_sums_the_vnd_impact_by_goal_from_the_same_engine_and_old_run
         }
         assert g["impact"]["3m"]["p5"] <= g["impact"]["3m"]["p50"] <= g["impact"]["3m"]["p90"]
     assert runs.verify(run["id"])["ok"]
-    with db.tx() as con:  # a run stored before F10: no per-goal impact; it still verifies on what it holds
-        rows = con.execute("select family_id, data from family_impacts where run_id = ?", (run["id"],)).fetchall()
-        for r in rows:
-            d = json.loads(r["data"])
-            for g in (d.get("goal_impact") or {}).get("goals", []):
-                g.pop("impact", None), g.pop("share", None)
-            con.execute(
-                "update family_impacts set data = ? where run_id = ? and family_id = ?",
-                (db.dumps(d), run["id"], r["family_id"]),
-            )
+
+    def before_f10(d):  # a run stored before F10: no per-goal impact; it still verifies on what it holds
+        for g in (d.get("goal_impact") or {}).get("goals", []):
+            g.pop("impact", None), g.pop("share", None)
+
+    for fid in runs.family_results(run["id"]):
+        _edit_impact(run["id"], fid, before_f10)
     assert runs.verify(run["id"])["ok"]
-    with db.tx() as con:
-        d = json.loads(
-            con.execute(
-                "select data from family_impacts where run_id = ? and family_id = 'C01'", (run["id"],)
-            ).fetchone()[0]
-        )
-        d["goal_impact"]["goals"][0]["after"]["ratio"] = 0.0
-        con.execute(
-            "update family_impacts set data = ? where run_id = ? and family_id = 'C01'", (db.dumps(d), run["id"])
-        )
+    _edit_impact(run["id"], "C01", lambda d: d["goal_impact"]["goals"][0]["after"].update(ratio=0.0))
     assert "C01 goal_impact" in runs.verify(run["id"])["differences"]
 
 

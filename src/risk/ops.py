@@ -7,6 +7,7 @@ from typing import Any, Dict
 
 from operonx import op
 
+from control.errors import BadRequest
 from risk import _bank
 from wealth import fixtures, store
 
@@ -18,7 +19,7 @@ def check_request(client_id: str = None, answers: dict = None) -> dict:
     """What a caller sent, checked: a known client, and ``answers`` as {question: option}."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     answers = answers or {}
     if not isinstance(answers, dict):
         raise ValueError("answers is an object: {question: option}")
