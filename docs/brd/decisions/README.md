@@ -17,7 +17,7 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0009](ADR-0009-ai-barrier-by-graph-inputs-in-one-process.md) | The AI barrier is enforced by graph inputs, in one process | superseded in part (ADR-0022) | 2026-10-15 |
 | [ADR-0010](ADR-0010-two-configured-models-and-a-labelled-mock.md) | Two configured models, refused if equal; a labelled mock | accepted | 2026-10-15 |
 | [ADR-0011](ADR-0011-engine-in-floats-rounded-to-the-dong.md) | The engine computes in floats and rounds to the dong once | accepted | 2026-10-15 |
-| [ADR-0012](ADR-0012-the-copilot-routes-and-never-reads-client-data.md) | The Copilot routes; it never reads client data | accepted (planned) | 2026-10-15 |
+| [ADR-0012](ADR-0012-the-copilot-routes-and-never-reads-client-data.md) | The Copilot routes; it never reads client data | accepted, amended by ADR-0026 | 2026-10-15 |
 | [ADR-0013](ADR-0013-wrap-the-legacy-pages-in-the-new-shell.md) | Wrap the legacy pages in the new shell instead of rewriting them | superseded by ADR-0019 | 2026-10-15 |
 | [ADR-0014](ADR-0014-docs-brd-is-the-living-product-repository.md) | docs/brd is the living product knowledge repository | accepted | 2026-10-15 |
 | [ADR-0015](ADR-0015-decisions-of-the-first-build-plan.md) | Decisions of the first build plan (D1–D9) | accepted | 2026-10-09 |
@@ -31,3 +31,12 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0023](ADR-0023-client-data-barrier-by-configuration.md) | The client-data barrier is one guard on every model call, set by configuration (`client_ai`) | accepted | 2026-10-16 |
 | [ADR-0024](ADR-0024-encryption-at-rest-secrets-and-headers.md) | Client data sealed per column (AES-256-GCM, rotating keys), keys from a secret store, every response hardened | accepted | 2026-10-16 |
 | [ADR-0025](ADR-0025-postgresql-export-and-worm-audit.md) | The move to the bank proven by a checked PostgreSQL export; the audit log on write-once segments | accepted | 2026-10-16 |
+| [ADR-0026](ADR-0026-the-assistant-reads-client-data-only-where-client-ai-allows.md) | The assistant's model reads client data only where `client_ai` allows it; template mode otherwise (amends ADR-0012) | accepted | 2026-10-16 |
+| [ADR-0027](ADR-0027-conversations-in-their-own-sqlite-wal-file.md) | Conversations and memory in their own SQLite file in WAL mode, chosen by measurement | accepted | 2026-10-16 |
+| [ADR-0028](ADR-0028-three-memory-layers.md) | Three memory layers: the conversation, a few sourced long-term items, the archive | accepted | 2026-10-16 |
+| [ADR-0029](ADR-0029-knowledge-base-on-operonx-kb.md) | The knowledge base on operonx-kb, product and personal collections apart | accepted | 2026-10-16 |
+| [ADR-0030](ADR-0030-web-search-through-openrouter.md) | Web search through the existing OpenRouter key, the query scrubbed, results cited and not stored | accepted | 2026-10-16 |
+| [ADR-0031](ADR-0031-two-new-agents-only.md) | Two new background agents only: the memory consolidator and the follow-up watcher | accepted | 2026-10-16 |
+| [ADR-0032](ADR-0032-one-tool-registry.md) | One tool registry: roles, writes confirmed and verified, timeouts, costs | accepted | 2026-10-16 |
+| [ADR-0033](ADR-0033-the-ecosystem-map-on-the-agent-page.md) | The Agent Ecosystem Map lives on the Agent page, drawn from real records | accepted | 2026-10-16 |
+| [ADR-0034](ADR-0034-readiness-by-an-eval-gate-on-real-models.md) | Readiness is an eval gate on real models, with measured costs | accepted | 2026-10-16 |

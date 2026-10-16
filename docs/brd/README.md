@@ -143,7 +143,8 @@ docs/brd/
 ├── requirements/                Layer A: extracted requirements, open questions, the traceability matrix
 ├── features/                    Layer B: one file per feature
 ├── ux/                          Layer C: IA, journeys, screens, design system, interaction patterns
-├── architecture/                system, domain model, data flows, agents, integrations, API, the move to the bank
+├── architecture/                system, domain model, data flows, agents, integrations, API, the move to the bank,
+│                                the assistant (memory, knowledge, agents, storage measurement)
 ├── decisions/                   ADRs
 ├── testing/                     acceptance criteria, regression coverage, known defects
 ├── assets/                      screenshots and mockups, registered

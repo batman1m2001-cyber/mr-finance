@@ -2,6 +2,12 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — The assistant's architecture (ASSISTANT_PLAN A0): audit of the Copilot, agents, storage and OperonX;
+  the owner's brief registered (SRC-05) and split into OWN-AS-01…25; the target architecture with the storage
+  measured (`scripts/bench_chat_store.py`: chat in its own SQLite WAL file, ~127 turns/s against ~10 at the BRD's busy
+  hour; inside `state.db`, lock errors and multi-second tails) and web search proven on the existing OpenRouter key;
+  nine decisions — assistant.md, ADR-0026…ADR-0034 (ADR-0012 amended), FEAT-37…39, FEAT-15/32 next steps, matrix §5.
+
 - 2026-10-16 — Pages switch at once: a page's reads are kept in the tab's memory, so going back to a page draws it
   from what it had (6–45 ms, was 20–480 ms) while the same reads go to the server again and the page is drawn once
   more if an answer changed; any change made in the tab forgets them; every page module of the role is imported

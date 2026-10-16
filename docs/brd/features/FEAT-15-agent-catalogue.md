@@ -16,6 +16,12 @@ open-source references the BRD names (TradingAgents, FinRobot; operonx in place 
 `quality(days)` counts, from stored views, challenges and agent runs, for the period and all time: views decided,
 the share the CIO edited, challenger findings and critical ones, agent runs and errors, format retries (§16.3).
 
+## Next: the Agent Ecosystem Map (ASSISTANT_PLAN A7, OWN-AS-20…22)
+
+The page opens on a map of the person, the assistant, the agents (FEAT-04, 05, 16, 17, 39) with their tools, and the
+stores they read and write, each node's state from real records, drill-down to the run's trace (ADR-0033). The
+catalogue table stays below it.
+
 ## Implementation
 `src/views/catalogue.py`; route in `app/web.py`; `web/pages/agents.js`; nav “Agent” for CIO and Compliance.
 

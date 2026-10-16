@@ -62,6 +62,9 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-35](FEAT-35-market-data-layer.md) | Market data layer | ENG-11, BR-15, MEAS-01/02, KPI-03/04 (enabler) | F1 — built 2026-10-16 |
 | [FEAT-36](FEAT-36-alerts-and-central-log.md) | Alerts and the central log | NFR-12, NFR-03 | F7 — built 2026-10-16 |
 | [FEAT-33](FEAT-33-living-interface.md) | Living Interface (states, evidence highlight, motion rules) | OWN-MOTION-01…07, KIT-UX-06 | B-01 — built 2026-10-16 |
+| [FEAT-37](FEAT-37-conversations-and-memory.md) | Conversations and memory (short-term, long-term, archive; Bộ nhớ page) | OWN-AS-10…16 | A3–A4 — planned |
+| [FEAT-38](FEAT-38-knowledge-and-web-search.md) | Knowledge base and web search | OWN-AS-02, 07, 16, 17 | A5 — planned |
+| [FEAT-39](FEAT-39-assistant-background-agents.md) | The assistant's background agents: memory consolidator, follow-ups | OWN-AS-12, 18, 19 | A6 — planned |
 
 ## How features depend on each other
 
