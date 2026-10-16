@@ -1,8 +1,9 @@
 /* The header (UI redesign R1, R-D5): one search box and a notifications bell, both over existing reads.
    Search: the role's pages (from the shell) and POST /api/search (holdings, goals, clients, events, news,
    research the role may open). The bell: the client's or RM's “Điều đáng chú ý” (POST /api/feed), the CIO's new
-   news, Compliance's held news. Keyboard: “/” focuses search, arrows move, Enter opens, Esc closes. */
-import {$, esc, get, post, vnd} from "./core/core.js";
+   news, Compliance's held news; first, for every role, a follow-up the person set that fired and they have not
+   opened (A6, POST /api/assistant/memory follow_ups). Keyboard: “/” focuses search, arrows move, Enter opens, Esc closes. */
+import {$, esc, get, post, read, vnd} from "./core/core.js";
 import {icon} from "./core/icons.js?v=20261016r1";
 
 const KIND = {page: ["Trang", "layers"], holding: ["Tài sản", "wallet"], goal: ["Mục tiêu", "target"], client: ["Khách hàng", "user"],
@@ -106,6 +107,13 @@ export function mount(shell) {
         items.total = alerts.length + total;
       }
     } catch (_) { items = []; }
+    try {  // the person's own follow-ups that fired (A6): first, until opened
+      const who = {role, client_id: role === "client" || role === "rm" ? client : null};
+      const fired = (await read("/api/assistant/memory", {...who, action: "follow_ups"})).memory.unseen;
+      const fu = fired.map(f => ({title: `Theo dõi: ${f.text}`, sub: f.fired_text,
+        tone: "warn", route: `#/${role}/bo-nho`, followUp: f.id}));
+      if (fu.length) { const total = items.total; items = [...fu, ...items]; if (total != null) items.total = total + fu.length; }
+    } catch (_) { /* the bell without them */ }
     const count = items.total != null ? items.total : items.length;
     bell.dataset.count = count ? String(Math.min(count, 99)) : "";
     bell.setAttribute("aria-label", count ? `Thông báo: ${count}` : "Thông báo: không có");
@@ -137,6 +145,11 @@ export function mount(shell) {
     const it = items[Number(a.dataset.b)];
     // the client opened a high-level item (BRD-KPI-07): recorded, never in the way of opening it
     if (shell.role() === "client" && it.high) post("/api/feed/open", {client_id: shell.client(), key: it.focus}).catch(() => {});
+    if (it.followUp) {  // opened: it leaves the bell (A6)
+      const role = shell.role();
+      post("/api/assistant/memory", {role, client_id: role === "client" || role === "rm" ? shell.client() : null, action: "follow_up_seen", key: it.followUp})
+        .then(() => { key = ""; load(); }).catch(() => {});
+    }
     shell.go(it.route, it.focus ? [it.focus] : null);
   });
   document.addEventListener("click", (e) => { if (!bpop.hidden && !bpop.contains(e.target)) { bpop.hidden = true; bell.setAttribute("aria-expanded", "false"); } });

@@ -14,11 +14,11 @@ import pydantic
 from operonx_agents import RunContext
 from operonx_agents import tool as agent_tool
 
-from assistant import actions, knowledge, memory, tools
+from assistant import actions, followups, knowledge, memory, tools
 from assistant.base import Ctx, Tool, allowed
 
 REGISTRY: Dict[str, Tool] = {**tools.CATALOGUE}
-for _name, _t in {**actions.CATALOGUE, **memory.CATALOGUE, **knowledge.CATALOGUE}.items():
+for _name, _t in {**actions.CATALOGUE, **memory.CATALOGUE, **knowledge.CATALOGUE, **followups.CATALOGUE}.items():
     assert _name not in REGISTRY, f"two tools named {_name!r}"
     REGISTRY[_name] = _t
 LABELS = {  # what a step is called in the panel ("Các bước")
@@ -54,6 +54,9 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "huong_dan": "Hướng dẫn sử dụng",
     "tai_lieu": "Tài liệu của bạn",
     "tim_tren_web": "Tìm trên web",
+    "theo_doi": "Đặt theo dõi",
+    "theo_doi_cua_toi": "Việc theo dõi của bạn",
+    "huy_theo_doi": "Huỷ theo dõi",
 }
 DEMO_USER = {**tools.USER, "admin": "admin", "specialist": "sp_global"}  # who acts when sign-in is off
 

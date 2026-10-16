@@ -9,7 +9,7 @@
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261017r4";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261016r28";
+import {mount as mountHeader} from "./header.js?v=20261017r2";
 
 const ROLES = {
   client: {
@@ -199,7 +199,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261017r1`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261017r2`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

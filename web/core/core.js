@@ -77,6 +77,10 @@ export function get(path) {
   return keptOr(`GET ${path}`, () => fetchGet(path));
 }
 
+// A POST that only reads the person's own records (the bell's follow-ups, the Bộ nhớ page's lists): not kept, since
+// it changes elsewhere, and it forgets nothing.
+export const read = (path, body) => fetchPost(path, body);
+
 export async function post(path, body) {
   if (READS.has(path)) return keptOr(`POST ${path}${JSON.stringify(body || {})}`, () => fetchPost(path, body));
   try {

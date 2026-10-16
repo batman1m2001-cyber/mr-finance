@@ -5,7 +5,7 @@ and its own endpoint."""
 
 from operonx import END, START, graph
 
-from assistant.ops import answer, check_request, conversations, memory_page, retention_sweep, turn
+from assistant.ops import answer, check_request, consolidate_due, conversations, memory_page, retention_sweep, turn
 
 
 @graph
@@ -59,3 +59,10 @@ def assistant_retention_flow():
     """Daily: conversations past Compliance's retention, and expired memory items, deleted."""
     swept = retention_sweep()
     START >> swept >> END
+
+
+@graph
+def assistant_consolidate_flow(tick=None, at=None):
+    """Every 5 minutes: idle conversations distilled into long-term memory (A6)."""
+    done = consolidate_due(tick=tick, at=at)
+    START >> done >> END

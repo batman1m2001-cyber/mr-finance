@@ -298,7 +298,25 @@ async def memory_page(
         if ok:
             audited("material_delete", str(key), {})
         return {"memory": {"deleted": int(ok)}}
-    raise ValueError("action là list, search, update, delete, clear, materials, material_add hoặc material_delete")
+    if action == "follow_ups":  # the person's follow-ups (A6): open, fired; what the bell shows
+        from assistant import followups
+
+        return {"memory": {"follow_ups": followups.listing(ctx), "unseen": followups.unseen(ctx)}}
+    if action == "follow_up_cancel":
+        from assistant import followups
+
+        ok = followups.cancel(ctx, str(key or ""))
+        if ok:
+            audited("follow_up_cancel", str(key), {})
+        return {"memory": {"cancelled": int(ok)}}
+    if action == "follow_up_seen":
+        from assistant import followups
+
+        return {"memory": {"seen": int(followups.seen(ctx, str(key or "")))}}
+    raise ValueError(
+        "action là list, search, update, delete, clear, materials, material_add, material_delete, follow_ups, "
+        "follow_up_cancel hoặc follow_up_seen"
+    )
 
 
 @op
@@ -307,3 +325,27 @@ async def retention_sweep() -> dict:
     from assistant.retention import sweep
 
     return {"swept": await sweep()}
+
+
+@op
+async def consolidate_due(tick: str = None, at: str = None) -> dict:
+    """The memory consolidator's tick (A6): every conversation idle 15 minutes whose turns changed, distilled."""
+    from assistant.consolidate import run_due
+
+    return {"consolidated": await run_due()}
+
+
+@op
+def follow_ups_market(job: str = None, after: dict = None) -> dict:
+    """After a market job: the open follow-ups on the series it loads, against their latest close (A6, no model)."""
+    from assistant import followups
+
+    return {"follow_ups": followups.check_market(followups.job_series(job) if job else None)}
+
+
+@op
+def follow_ups_topics(after: dict = None) -> dict:
+    """After the news job: the open topic follow-ups against the events made effective since (A6, no model)."""
+    from assistant import followups
+
+    return {"follow_ups": followups.check_topics()}

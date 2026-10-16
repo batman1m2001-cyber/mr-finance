@@ -81,3 +81,33 @@ def test_a_document_is_added_found_and_deleted(open_page):
     p.page.wait_for_selector("text=Chưa có tài liệu nào.")
     assert in_thread(lambda: asyncio.run(knowledge.search_materials(ctx("C01"), "quyền lợi nằm viện"))) == []
     assert not p.problems()
+
+
+def test_a_fired_follow_up_rings_once_and_an_open_one_is_cancelled(open_page):
+    from assistant import followups
+    from market import store as market
+
+    fired = in_thread(lambda: followups.create(ctx("C01"), "market", series_id="VNINDEX", op="below", level=1200))
+    in_thread(lambda: followups.create(ctx("C01"), "topic", topic="lãi suất"))
+    in_thread(lambda: market.put("VNINDEX", "test", "https://example.test", [("2026-10-16", 1180.0)]))
+    in_thread(lambda: followups.check_market(["VNINDEX"]))
+    p = open_page()
+    p.go("#/client/bo-nho")
+    p.page.wait_for_selector("[data-fu]")
+    text = p.page.inner_text("#page")
+    assert "VN-Index dưới 1.200 điểm" in text and "Đã báo" in text and "Đang theo dõi" in text
+    p.page.click("#bell")
+    item = p.page.locator(".pop-item", has_text="Theo dõi: VN-Index dưới 1.200 điểm")
+    item.wait_for()
+    item.click()  # opened: it leaves the bell
+    for _ in range(50):
+        if in_thread(lambda: followups.get(ctx("C01"), fired["id"]))["seen"]:
+            break
+        p.page.wait_for_timeout(100)
+    assert in_thread(lambda: followups.unseen(ctx("C01"))) == []
+    p.go("#/client/bo-nho")
+    p.page.wait_for_selector("[data-cancelfu]")
+    p.page.click("[data-cancelfu]")
+    p.page.wait_for_function("document.querySelectorAll('[data-cancelfu]').length === 0")
+    assert [f["status"] for f in in_thread(lambda: followups.listing(ctx("C01")))] == ["fired"]
+    assert not p.problems()

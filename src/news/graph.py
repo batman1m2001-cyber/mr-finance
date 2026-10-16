@@ -7,6 +7,7 @@ sends and are not used."""
 
 from operonx import END, START, graph
 
+from assistant.ops import follow_ups_topics
 from news.ops import dismiss, fetch, keep, reference_check, release, screen
 
 
@@ -16,7 +17,9 @@ def ingest_flow(feeds=None, now=None, tick=None, at=None):
     got = fetch(feeds=feeds, now=now)
     seen = screen(fetched=got["fetched"], at=got["at"])
     kept = keep(rows=seen["rows"], counts=seen["counts"], at=got["at"])
-    START >> got >> seen >> kept >> END
+    topics = follow_ups_topics(after=kept["ingest"])  # the follow-ups on approved events (A6)
+    START >> got >> seen >> kept >> topics >> END
+    kept >> END  # the ingest stays the graph's answer (POST /api/news/ingest)
 
 
 @graph

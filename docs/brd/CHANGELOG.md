@@ -2,6 +2,20 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Background agents (ASSISTANT_PLAN A6).
+  - The memory consolidator (`assistant_consolidate`, every 5 minutes): an idle conversation that changed becomes
+    ≤ 5 long-term items (checked like a person's own, repeats merged, “trợ lý tự rút ra” on the Bộ nhớ page), only
+    where the model may read it; ≤ 8,000 tokens; two retries; tokens and cost per run and per day. Real model:
+    ~US$0.00024 a conversation.
+  - Follow-ups: `theo_doi`, `theo_doi_cua_toi`, `huy_theo_doi` (35 tools): a market series above or below a level,
+    or a topic in an approved event; checked by the market and news jobs with no model; fired once, in the bell for
+    every role; the Bộ nhớ page lists and cancels them.
+  - Fixed before release: the token estimate (3 characters a token assumed, 1.64–1.70 counted).
+  - `read()` in `web/core/core.js`: a POST that only reads (the bell's follow-ups, the Bộ nhớ page's lists) no
+    longer clears the tab cache (it made every page wait for the server: `tests/ui/test_speed.py`).
+  - `.operonx/guide`: the kb pages and operonx 1.30.1 (what `operonx serve` already wrote on the server).
+  - Documents: assistant.md §7/§11, ADR-0031, FEAT-39, matrix OWN-AS-12/18/19, assistant_eval.md, ASSISTANT_PLAN.
+
 - 2026-10-17 — Knowledge and the web (ASSISTANT_PLAN A5).
   - `huong_dan`: a Vietnamese user guide per role and page (`docs/huong-dan/`), the “Cách tính” formulas and the
     glossary in an operonx-kb collection; the answer links the page to open. 24/24 product questions find their

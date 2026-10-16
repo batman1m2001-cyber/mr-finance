@@ -59,3 +59,22 @@ The formula or term asked about came first among the references on 10 / 10. Asse
 prompt and 1,225 completion tokens, one search request, two cited sources (one dated October 2026) whose different
 figures the answer named; certainty “trung bình”. Building it took five real calls, about US$0.06. The outside-topic
 cases of the full suite are A8.
+
+## A6 (2026-10-17): the consolidator and follow-ups
+
+**Consolidator**, five client conversations (2–11 turns) on `anthropic/claude-haiku-5.5`, one tick:
+
+| Conversation | Prompt / answer tokens | Cost (US$) | Items kept |
+|---|---|---|---|
+| a preference, a goal, a constraint (4 turns) | 906 / 359 | 0.00027 | 3 |
+| a job, a reserve (3 turns) | 774 / 279 | 0.00022 | 2 |
+| a rates question and “cảm ơn” (2 turns) | 531 / 39 | 0.00007 | 0 |
+| ten spending questions and one standing request (11 turns) | 2,372 / 115 | 0.00029 | 1 (the request) |
+| retirement, risk, a spouse, travel (3 turns) | 658 / 607 | 0.00037 | 5 (the spouse's name not kept) |
+Total US$0.0012, 22 s (4.5 s a conversation, one at a time), none refused, none failed. Characters per prompt token
+1.64–1.70: the budget's estimate was corrected from 3 to 1.6 before release.
+
+**Follow-ups**, two requests on the real model: “Báo tôi khi VN-Index xuống dưới 1.200 điểm” → the confirm line
+“Báo cho bạn một lần khi VN-Index dưới 1.200 điểm (theo dõi 30 ngày)?”; “Khi nào có tin được duyệt về lãi suất thì
+nhắc tôi nhé” → “… khi có sự kiện được duyệt về “lãi suất” …”. 5,164 and 5,168 prompt tokens. Checking costs no
+model call.
