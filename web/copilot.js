@@ -270,11 +270,12 @@ export function mount() {
   const fresh = () => { cid = null; msgs = []; shown = 0; listing = null; setState("idle"); draw(); sugg(); $("#cp-q", panel).focus(); };
   const drawList = (box) => {
     const rows = listing.items || [];
-    box.innerHTML = `<div class="cp-st">Các cuộc trò chuyện của bạn (${ROLE_LABEL[role]})</div>` + (rows.length
+    box.innerHTML = `<div class="cp-st row">Các cuộc trò chuyện của bạn (${ROLE_LABEL[role]})<a class="small" style="margin-left:auto" href="#/${role}/bo-nho" data-memory>Bộ nhớ →</a></div>` + (rows.length
       ? `<ul class="cp-convs">${rows.map(c => `<li${c.id === cid ? ' aria-current="true"' : ""}><button type="button" class="cp-conv" data-open="${esc(c.id)}"><b>${esc(c.title || "Cuộc trò chuyện")}</b><small>${esc(when(c.updated))} · ${c.turns} lượt</small></button>
           <button type="button" class="linkbtn small" data-del="${esc(c.id)}" title="Xoá cuộc trò chuyện này">${icon("x", {size: 16})}<span class="sr-only">Xoá</span></button></li>`).join("")}</ul>`
       : `<div class="small muted">Chưa có cuộc trò chuyện nào.</div>`);
     for (const b of box.querySelectorAll("[data-open]")) b.onclick = () => openConv(b.dataset.open);
+    for (const a of box.querySelectorAll("[data-memory]")) a.onclick = () => { if (covers()) close(); };  // phone: the page shows
     for (const b of box.querySelectorAll("[data-del]")) b.onclick = async () => {
       if (!confirm("Xoá cuộc trò chuyện này? Không lấy lại được.")) return;
       try { await convs("delete", b.dataset.del); } catch (e) { alert(`Không xoá được: ${e.message}`); }
@@ -288,6 +289,13 @@ export function mount() {
     draw();
   };
   $("#cp-new", panel).onclick = () => { if (!busy) fresh(); };
+  // the Bộ nhớ page opens a conversation here (A4)
+  window.addEventListener("mf:open-conversation", (e) => {
+    if (busy) return;
+    drawCtx(); resumed = true;
+    if (panel.hidden) { panel.hidden = false; btn.setAttribute("aria-expanded", "true"); }
+    openConv(e.detail.id);
+  });
   $("#cp-hist", panel).onclick = () => { if (listing) { listing = null; draw(); } else showList(); };
 
   const open = () => { drawCtx(); draw(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); resume(); };

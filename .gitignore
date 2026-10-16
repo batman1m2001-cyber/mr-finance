@@ -15,6 +15,9 @@ __pycache__/
 
 # what clients added in the demo (docs/PLAN.md D6)
 data/state.db*
+# the assistant's conversations and memory, the declaring chat's history: people's own words
+data/assistant.db*
+data/chat.db*
 # the audit log's write-once segments (src/control/worm.py), beside the state file
 data/audit-worm/
 .operonx/jobs/

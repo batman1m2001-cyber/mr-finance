@@ -191,6 +191,14 @@ def _check_client_ai(data: Any) -> None:
         raise ValueError("chế độ onprem cần ít nhất một máy chủ trong onprem_hosts")
 
 
+def _check_assistant_retention(data: Any) -> None:
+    if not isinstance(data, dict) or set(data) != {"archive_days"}:
+        raise ValueError("cần {'archive_days': số ngày}")
+    n = data["archive_days"]
+    if not isinstance(n, int) or isinstance(n, bool) or not 30 <= n <= 3650:
+        raise ValueError("archive_days: số ngày nguyên từ 30 đến 3.650")
+
+
 def _check_related(data: Any) -> None:
     if not isinstance(data, list) or not 1 <= len(data) <= 100:
         raise ValueError("một danh sách 1–100 tên bên liên quan")
@@ -403,6 +411,13 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": True,
         "base": lambda: json.loads(json.dumps(CONTROL_GROUP)),
         "check": _check_control_group,
+    },
+    "assistant_retention": {
+        "label": "Lưu giữ hội thoại với trợ lý",
+        "owner": "compliance",
+        "two_person": True,
+        "base": lambda: {"archive_days": 365},  # a conversation is deleted this long after its last turn (A4)
+        "check": _check_assistant_retention,
     },
     "ai_mode": {
         "label": "Chế độ chạy AI",

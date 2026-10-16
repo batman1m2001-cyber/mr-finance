@@ -8,7 +8,8 @@
   what it was sent and what it said, one session per mode (``read``: a model allowed to read client data;
   ``template``: the scrubbed question and the tools' statuses). When a prompt passes the budget
   (``ContextPolicy``), older exchanges become a summary item; nothing is deleted.
-- ``assistant_runs``: a run parked on a write (operonx-agents' run state).
+- ``assistant_runs``: a run's state while it runs or waits on a write (operonx-agents' run state), with its
+  session; deleted when the run ends (it holds the whole conversation).
 
 With ``MF_DATA_KEYS`` set, the text is sealed (control/crypto.py): titles, turns, session items, run states; each
 with its conversation (or run) as its place, so it does not open elsewhere. Every read and write is keyed by the
@@ -38,7 +39,8 @@ create table if not exists conversations (id text primary key, owner text not nu
 create index if not exists conversations_owner on conversations (owner, role, updated);
 create table if not exists turns (conversation_id text not null, seq integer not null, at real not null,
     question text, answer text not null, primary key (conversation_id, seq));
-create table if not exists assistant_runs (run_id text primary key, state text not null, updated real not null);
+create table if not exists assistant_runs (run_id text primary key, state text not null, updated real not null,
+    session_id text);
 create table if not exists parked (run_id text primary key, owner text not null, role text not null,
     conversation_id text not null, client_id text, scope text, reads integer not null, calls text not null,
     created real not null);
@@ -65,6 +67,8 @@ def db() -> Iterator[sqlite3.Connection]:
                 con.execute("drop table parked")  # and their run states, stored unsealed
                 con.execute("drop table if exists operonx_agents_runs")
             con.executescript(SCHEMA)
+            if "session_id" not in {r[1] for r in con.execute("pragma table_info(assistant_runs)")}:  # A3's
+                con.execute("alter table assistant_runs add column session_id text")
             _READY.add(p)
         yield con
     finally:
@@ -147,6 +151,25 @@ def record(cid: str, question: Optional[str], answer: Dict[str, Any]) -> int:
     return seq
 
 
+def archive(ctx: Ctx) -> Iterator[Dict[str, Any]]:
+    """Every turn of the person's conversations in this role, opened, with its conversation's id and title: one
+    query for the archive search (memory.search_history)."""
+    with db() as con:
+        rows = con.execute(
+            "select c.id cid, c.title, t.seq, t.at, t.question, t.answer from conversations c"
+            " join turns t on t.conversation_id = c.id where c.owner = ? and c.role = ?",
+            (owner(ctx), ctx.role),
+        ).fetchall()
+    titles: Dict[str, str] = {}
+    for r in rows:
+        cid = r["cid"]
+        if cid not in titles:
+            titles[cid] = crypto.open_(r["title"], _place("conversations", cid, "title"))
+        place = _place("turns", (cid, r["seq"]), "turn")
+        yield {"conversation_id": cid, "title": titles[cid], "seq": r["seq"], "at": r["at"],
+               "question": crypto.open_(r["question"], place), "answer": _open_json(r["answer"], place)}  # fmt: skip
+
+
 def turns_of(cid: str) -> List[Dict[str, Any]]:
     with db() as con:
         rows = con.execute("select * from turns where conversation_id = ? order by seq", (cid,)).fetchall()
@@ -184,6 +207,7 @@ def erase(con: sqlite3.Connection, cid: str) -> int:
         con.execute("delete from operonx_agents_items where session_id like ?", (session_id(cid, "%"),))
     for (rid,) in con.execute("select run_id from parked where conversation_id = ?", (cid,)).fetchall():
         con.execute("delete from assistant_runs where run_id = ?", (rid,))
+    con.execute("delete from assistant_runs where session_id like ?", (session_id(cid, "%"),))
     con.execute("delete from parked where conversation_id = ?", (cid,))
     con.execute("delete from conversations where id = ?", (cid,))
     return n
@@ -227,8 +251,13 @@ class Runs:
         text = state.dumps()
         with db() as con:
             con.execute(
-                "insert or replace into assistant_runs values (?, ?, ?)",
-                (state.run_id, crypto.seal(text, _place("assistant_runs", state.run_id, "state")), time.time()),
+                "insert or replace into assistant_runs values (?, ?, ?, ?)",
+                (
+                    state.run_id,
+                    crypto.seal(text, _place("assistant_runs", state.run_id, "state")),
+                    time.time(),
+                    state.session_id,
+                ),
             )
 
     async def load(self, run_id: str) -> Optional[RunState]:

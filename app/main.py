@@ -9,6 +9,7 @@ POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ─�
 POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, route?, conversation_id?} ──►
                     assistant_flow ──► an answer from the role's tools in several steps; writes wait for the person
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
+                    · POST /api/assistant/memory ──► the Bộ nhớ page (A4) · 02:30 daily ──► assistant_retention
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
@@ -59,7 +60,12 @@ from operonx.app.jobs import Job
 from app import web
 from app.http import SecurityHeaders
 from apply.graph import recompute_flow, run_decide_flow
-from assistant.graph import assistant_conversations_flow, assistant_flow
+from assistant.graph import (
+    assistant_conversations_flow,
+    assistant_flow,
+    assistant_memory_flow,
+    assistant_retention_flow,
+)
 from contacts.graph import contact_flow
 from control import barrier
 from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow, heartbeat_flow
@@ -184,6 +190,13 @@ APP = Application(
             graph=assistant_conversations_flow,
             description="POST {action: list | open | delete, conversation_id, role, client_id}: the person's "
             "conversations with the assistant (A3).",
+        ),
+        Service(
+            "assistant_memory",
+            http("POST", "/api/assistant/memory", port=PORT),
+            graph=assistant_memory_flow,
+            description="POST {action: list | search | update | delete | clear, item_id, text, kind, query, role, "
+            "client_id}: the Bộ nhớ page (A4).",
         ),
         Service(
             "statement",
@@ -391,6 +404,13 @@ APP = Application(
         ),
         # the news: every white-listed feed through the gates into the CIO's inbox, every 10 minutes
         # (inside `operonx serve`), and on demand with `operonx run news_ingest`
+        # the assistant's retention (A4): conversations past Compliance's assistant_retention, expired memory items
+        Job(
+            "assistant_retention",
+            graph=assistant_retention_flow,
+            schedule=schedule(at="02:30", port=PORT),
+            description="02:30 daily: the assistant's conversations past retention and expired memory items deleted.",
+        ),
         Job(
             "news_ingest",
             graph=ingest_flow,

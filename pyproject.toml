@@ -5,7 +5,7 @@ description = "An agent with one tool (operonx-agents), served over HTTP."
 requires-python = ">=3.10"
 dependencies = [
     "operonx[serve,openai]>=1.30.0",
-    "operonx-agents>=0.2.5",
+    "operonx-agents>=0.3.0",
     "python-dotenv>=1.0",  # operonx.bootstrap() reads .env with it
     "pypdf>=6.19.0",
     "openpyxl>=3.1.5",

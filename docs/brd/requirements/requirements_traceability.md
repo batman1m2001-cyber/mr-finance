@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 39 | 19 | 3 | 0 | 16 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 39 | 22 | 3 | 2 | 11 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -278,11 +278,11 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-AS-09 | FEAT-32 | implemented_verified | A2: `demo` (or onprem with the model inside) the model reads tool results; otherwise template mode: scrubbed question, statuses only, the tools' texts as the answer — `tests/test_assistant.py::test_with_the_barrier_off_the_model_sees_no_client_data_and_the_tools_write_the_answer` |
 | OWN-AS-10 | FEAT-37 | implemented_verified | A3: conversations in `assistant.db` (ADR-0027), listed, opened, deleted by their owner only, picked up on another device, sealed with the data keys — `tests/test_assistant_conversations.py::test_a_conversation_carries_on_and_opens_again_as_it_was_shown`, `::test_nobody_else_opens_continues_or_deletes_it`, `::test_with_keys_set_nothing_said_is_stored_in_clear`, `tests/ui/test_copilot_ui.py::test_a_conversation_is_picked_up_on_another_device_listed_and_deleted` |
 | OWN-AS-11 | FEAT-37 | implemented_verified | A3: the session carries the conversation; past 75 % of a 24k-token budget older exchanges become one summary, nothing is deleted, the panel says so (operonx-agents 0.2.5) — `tests/test_assistant_conversations.py::test_a_long_conversation_compacts_instead_of_dropping_and_the_transcript_keeps_every_turn`, `::test_a_write_waits_inside_its_conversation_and_its_answer_joins_it` |
-| OWN-AS-12 | FEAT-37, FEAT-39 | planned | A4/A6: typed items, consolidator |
-| OWN-AS-13 | FEAT-37 | planned | A4: archive search |
-| OWN-AS-14 | FEAT-37 | planned | A4: memory tools and the Bộ nhớ page |
-| OWN-AS-15 | FEAT-37 | planned | A4: `assistant_retention` configuration |
-| OWN-AS-16 | FEAT-37, FEAT-38 | planned | A4–A5: owner-keyed stores, KB ACLs |
+| OWN-AS-12 | FEAT-37, FEAT-39 | partially_implemented | A4: typed items (Sở thích, Mục tiêu, Thông tin 180 days, Giới hạn), ≤ 200 characters, each with its conversation, time and confidence, kept only when the person asks and confirms; the turn's instructions carry ≤ 15 (operonx-agents 0.3.0 `memory`) — `tests/test_assistant_memory.py::test_kept_only_when_asked_and_confirmed_then_carried_into_the_next_conversation`, `::test_what_is_never_kept`. The consolidator (A6) is not built |
+| OWN-AS-13 | FEAT-37 | implemented_verified | A4: every message of the person's conversations searchable, folded, with conversation, time and author (`tim_lich_su`, the Bộ nhớ page); a year of daily 10-turn conversations sealed: 0.5 s — `tests/test_assistant_memory.py::test_the_archive_is_searchable_by_its_owner_with_conversation_time_and_author`, `tests/ui/test_memory_ui.py::test_a_past_conversation_is_found_and_opened_in_the_panel` |
+| OWN-AS-14 | FEAT-37 | implemented_verified | A4: tools `nho_lai`, `ghi_nho`, `quen`, `tim_lich_su` (writes confirmed and read back) and the Bộ nhớ page (`POST /api/assistant/memory`: list, search, correct, forget one or all, audited without text) — `tests/test_assistant_memory.py::test_the_page_lists_corrects_and_forgets_audited_without_text`, `tests/ui/test_memory_ui.py::test_the_memory_page_shows_corrects_and_forgets`, `tests/test_assistant_tools.py` (29 tools) |
+| OWN-AS-15 | FEAT-37 | implemented_verified | A4: Compliance's `assistant_retention` (two-person, 30–3650 days, default 365); the daily job deletes older conversations and expired items; deleted text is overwritten on disk (VACUUM) — `tests/test_assistant_memory.py::test_retention_deletes_old_conversations_and_stale_facts`, `::test_forgetting_leaves_nothing_readable_on_disk` |
+| OWN-AS-16 | FEAT-37, FEAT-38 | partially_implemented | A4: memory items and the archive keyed by the owner the server resolved, no tool takes an owner; template mode never sends items to the model — `tests/test_assistant_memory.py::test_one_persons_memory_is_never_anothers`, `::test_template_mode_keeps_the_items_from_the_model`. KB materials (A5) not built |
 | OWN-AS-17 | FEAT-38 | planned | A5: operonx-kb collections (ADR-0029) |
 | OWN-AS-18 | FEAT-39 | planned | A6: consolidator and follow-up watcher (ADR-0031) |
 | OWN-AS-19 | FEAT-39 | planned | A6: budgets, dedup, retries, cost per day |

@@ -7,7 +7,7 @@
    server takes the user from the session, never from the page. Only with sign-in switched off (MF_AUTH=off, a
    developer's machine) does the old role switcher appear. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261017r2";
+import {mount as mountCopilot} from "./copilot.js?v=20261017r3";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261016r28";
 
@@ -24,6 +24,7 @@ const ROLES = {
       {id: "tin", label: "Tin tác động", sub: [
         {id: "thi-truong", label: "Tác động thị trường", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}]},
       {id: "chuyen-gia", label: "Chuyên gia", page: "advisor"},
+      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   rm: {
@@ -38,6 +39,7 @@ const ROLES = {
         {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "performance"},
         {id: "duyet", label: "Duyệt đề xuất", page: "advisor"}]},
       {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "perfall"},
+      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   cio: {
@@ -57,6 +59,7 @@ const ROLES = {
       {id: "do-luong", label: "Đo lường", page: "measure"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
+      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   admin: {
@@ -67,12 +70,14 @@ const ROLES = {
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
+      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   specialist: {
     label: "Chuyên gia", user: "sp_global",
     nav: [
       {id: "duyet", label: "Duyệt khuyến nghị", page: "specialist"},
+      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   compliance: {
@@ -86,6 +91,7 @@ const ROLES = {
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
+      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
 };
@@ -140,7 +146,7 @@ function drawChrome(rt) {
   $(".rolebox").hidden = state.auth;
   if (!state.auth) $("#roles").innerHTML = Object.entries(ROLES).map(([k, v]) =>
     `<button type="button" data-role="${k}" aria-pressed="${k === rt.role}">${esc(v.label)}</button>`).join("");
-  $("#nav").innerHTML = r.nav.map(n =>
+  $("#nav").innerHTML = r.nav.filter(n => !n.hidden).map(n =>
     `<a href="#/${rt.role}/${n.id}" ${n === rt.nav ? 'aria-current="page"' : ""}>${esc(n.label)}${n.count ? `<span class="count">${n.count}</span>` : ""}</a>`).join("");
   const sub = $("#subnav");
   if (rt.nav.sub) {
@@ -156,6 +162,7 @@ function drawChrome(rt) {
   scopeSwitch(pick);
   if (state.me) {
     $("#whoami").innerHTML = `<span class="me"><b>${esc(state.me.name)}</b><span class="me-title">· ${esc(state.me.title || r.label)}</span>
+      <a class="linkbtn" href="#/${rt.role}/bo-nho"${rt.nav.id === "bo-nho" ? ' aria-current="page"' : ""}>Bộ nhớ</a>
       <button type="button" class="linkbtn" id="signout">Đăng xuất</button></span>`;
     $("#signout").onclick = signOut;
     return;

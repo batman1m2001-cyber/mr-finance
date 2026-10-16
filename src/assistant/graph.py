@@ -5,7 +5,7 @@ and its own endpoint."""
 
 from operonx import END, START, graph
 
-from assistant.ops import answer, check_request, conversations, turn
+from assistant.ops import answer, check_request, conversations, memory_page, retention_sweep, turn
 
 
 @graph
@@ -42,3 +42,17 @@ def assistant_conversations_flow(action="list", conversation_id=None, role="clie
     """The person's conversations with the assistant: list, open one, delete one."""
     got = conversations(action=action, conversation_id=conversation_id, role=role, client_id=client_id)
     START >> got >> END
+
+
+@graph
+def assistant_memory_flow(action="list", item_id=None, text=None, kind=None, query=None, role="client", client_id=None):
+    """The Bộ nhớ page: what the assistant remembers about the person, and their past conversations' search."""
+    got = memory_page(action=action, item_id=item_id, text=text, kind=kind, query=query, role=role, client_id=client_id)
+    START >> got >> END
+
+
+@graph
+def assistant_retention_flow():
+    """Daily: conversations past Compliance's retention, and expired memory items, deleted."""
+    swept = retention_sweep()
+    START >> swept >> END

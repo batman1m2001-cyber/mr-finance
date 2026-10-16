@@ -9,7 +9,7 @@ from operonx import op
 from operonx.core.loggings import LOGGER
 
 from assistant import conversations as conv
-from assistant import registry
+from assistant import memory, registry
 from assistant import turn as turns
 from assistant.base import Ctx
 from control import audit, db, roles
@@ -232,3 +232,56 @@ def conversations(action: str = None, conversation_id: str = None, role: str = N
             )
         return {"conversations": {"deleted": conversation_id, "turns": n}}
     raise ValueError("action là list, open hoặc delete")
+
+
+# -- the Bộ nhớ page (A4): list, correct, forget, forget all, search the archive ---------------------------------
+
+
+@op
+async def memory_page(
+    action: str = None,
+    item_id: str = None,
+    text: str = None,
+    kind: str = None,
+    query: str = None,
+    role: str = None,
+    client_id: str = None,
+) -> dict:
+    """The person's long-term items and archive in this role. Changes are audited with what changed, not the text."""
+    r = {**who(role, client_id), "message": "", "route": "", "followed": None}
+    ctx = context(r)
+    action = str(action or "list")
+    actor = auth.acting_id(registry.DEMO_USER.get(r["role"])) or f"client:{r['client_id'] or '-'}"
+
+    def audited(what: str, obj: str, data: dict) -> None:
+        with db.tx() as con:
+            audit.append(con, actor, f"assistant.memory.{what}", obj, {"role": r["role"], **data})
+
+    if action == "list":
+        return {"memory": {"items": await memory.items(ctx), "kinds": memory.KINDS}}
+    if action == "search":
+        return {"memory": {"hits": memory.search_history(ctx, str(query or ""))}}
+    if action == "update":
+        item = await memory.correct(ctx, str(item_id or ""), str(text or ""), kind or None)
+        audited("update", item.id, {"kind": item.kind})
+        return {"memory": {"item": memory.view(item)}}
+    if action == "delete":
+        n = int(await memory.forget(ctx, str(item_id or "")))
+        if n:
+            conv.scrub()
+            audited("delete", str(item_id), {})
+        return {"memory": {"deleted": n}}
+    if action == "clear":
+        n = await memory.forget_all(ctx)
+        conv.scrub()
+        audited("clear", "-", {"deleted": n})
+        return {"memory": {"deleted": n}}
+    raise ValueError("action là list, search, update, delete hoặc clear")
+
+
+@op
+async def retention_sweep() -> dict:
+    """Compliance's retention: conversations past ``assistant_retention`` and expired items deleted (A4)."""
+    from assistant.retention import sweep
+
+    return {"swept": await sweep()}

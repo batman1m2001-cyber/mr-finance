@@ -416,6 +416,16 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .cp-head > b { white-space: nowrap; }
 .cp-head #cp-router { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cp-head .cp-tools .linkbtn[aria-pressed="true"] { background: var(--accent-soft); }
+.mem-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.mem-list.mt { margin-top: 12px; }
+.mem-list.mt-xs { margin-top: 4px; }
+.mem-item, .mem-conv, .mem-hit { border: 1px solid var(--hair); border-radius: 10px; padding: 10px 12px; }
+.mem-top { display: grid; gap: 6px; justify-items: start; }
+.mem-text { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.mem-input { width: 100%; box-sizing: border-box; }
+.mem-input { flex: 1; min-width: 0; padding: 6px 10px; border: 1px solid var(--axis); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; }
+#mem-hits:not(:empty) { padding-bottom: 12px; border-bottom: 1px solid var(--hair); }
+.mem-conv { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .cp-convs { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .cp-convs li { display: flex; gap: 4px; align-items: center; border: 1px solid var(--hair); border-radius: 10px; }
 .cp-convs li[aria-current] { border-color: var(--accent); }

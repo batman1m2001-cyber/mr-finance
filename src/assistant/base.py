@@ -39,6 +39,8 @@ class Ctx:
     user: Optional[str] = None  # who acts: the person signed in, else the role's demo user; writes name them
     reads: bool = True  # the model may read tool results (the barrier's client_ai allows it; ADR-0026)
     route: str = ""  # the page asked from (its sections only reach the model)
+    conversation: str = ""  # the conversation the turn is in (A3): what a memory item names as its source
+    remembered: List[str] = field(default_factory=list)  # the person's active memory items (A4), for the prompt
     trail: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)  # this request's tool results, by call id
     asked: set = field(default_factory=set)  # call ids of the writes a resumed request answers
 
