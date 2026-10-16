@@ -138,13 +138,20 @@ def rm_today(families: Optional[List[str]] = None) -> Dict[str, Any]:
         for row in run.get("ranking", []):
             if row["pre_review"] and (keep is None or row["family_id"] in keep):
                 cases.append({**row, "run_id": run["id"], "event": {"id": ev["id"], "title": ev["title"]}})
+    from measure import control
+
+    withheld = set(control.members())  # the control group: their RM gets no signal for them (MEAS-06, G9)
+    held = sorted({c["family_id"] for c in cases if c["family_id"] in withheld})
+    cases = [c for c in cases if c["family_id"] not in withheld]
     cases.sort(key=lambda c: (c["p10_3m_pct"], c["family_id"]))
     from research.ops import matches
 
     tasks = [
         m
         for m in matches()
-        if m["level"] in ("contact_now", "confirm_goal", "remind") and (keep is None or m["family_id"] in keep)
+        if m["level"] in ("contact_now", "confirm_goal", "remind")
+        and (keep is None or m["family_id"] in keep)
+        and m["family_id"] not in withheld
     ]
     from contacts import store as contacts
     from control import config
@@ -162,4 +169,6 @@ def rm_today(families: Optional[List[str]] = None) -> Dict[str, Any]:
         "contacts": contacts.recent(mine),
         "families": [{"id": f, "name": fixtures.client(f)["name"]} for f in mine],
         "channels": contacts.CHANNELS,
+        "control": sorted(f for f in withheld if keep is None or f in keep),
+        "control_withheld": held,
     }

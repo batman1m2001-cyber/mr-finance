@@ -730,6 +730,19 @@ metric(
     opened="Khách đã mở",
 )
 metric(
+    "measure.control_effect",
+    "Hiệu quả kinh doanh: có và không có công cụ",
+    "Chênh lệch = trung bình nhóm có công cụ − trung bình nhóm đối chứng, theo quý; khoảng tin cậy 90 % = chênh lệch ± "
+    "1,645 × sai số chuẩn (Welch). Nhóm đối chứng: tỷ lệ gia đình do Tuân thủ cấu hình (mặc định 10 %), rút trong từng "
+    "tầng (phân khúc × RM) theo seed; RM không nhận tín hiệu nào cho họ, khách vẫn được phục vụ đủ. Chỉ số: liên hệ "
+    "mỗi gia đình mỗi tháng, tỷ lệ mục tiêu “Đạt” sau lần áp dụng cuối quý, khuyến nghị hành động được duyệt mỗi gia "
+    "đình. Dưới hai gia đình một nhóm thì không tính khoảng.",
+    "src/measure/control.py::effect",
+    quarter="Quý",
+    tool="Có công cụ",
+    control="Đối chứng",
+)
+metric(
     "uptime.availability",
     "Sẵn sàng trong giờ làm việc",
     "Sẵn sàng = số phút làm việc có nhịp ÷ số phút làm việc trong tháng, từ nhịp đầu tiên đến phút hiện tại. Phút "

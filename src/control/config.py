@@ -257,6 +257,23 @@ def _check_certifications(data: Any) -> None:
             raise ValueError(f"{sid}: valid_until là ngày YYYY-MM-DD") from None
 
 
+# The control group (BRD-RULE-MEAS-06; BRD_REMAINING_PLAN G9, G-D8): a share of the families, stratified, drawn
+# from a seed so anyone can draw it again (measure/control.py).
+CONTROL_GROUP = {"share": 0.1, "seed": "MEAS-06-2026", "strata": ["segment", "rm"]}
+
+
+def _check_control_group(data: Any) -> None:
+    if not isinstance(data, dict) or set(data) != {"share", "seed", "strata"}:
+        raise ValueError("cần {share, seed, strata}")
+    share = data["share"]
+    if not isinstance(share, (int, float)) or isinstance(share, bool) or not 0 <= share <= 0.5:
+        raise ValueError("share là tỷ lệ từ 0 đến 0,5")
+    if not isinstance(data["seed"], str) or not data["seed"].strip():
+        raise ValueError("cần seed (chuỗi) để rút lại được nhóm")
+    if not isinstance(data["strata"], list) or not set(data["strata"]) <= {"segment", "rm"}:
+        raise ValueError("strata là các mục trong segment, rm")
+
+
 def _models_base() -> Dict[str, str]:
     import os
 
@@ -379,6 +396,13 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": True,
         "base": lambda: json.loads(json.dumps(CERTIFICATIONS)),
         "check": _check_certifications,
+    },
+    "control_group": {
+        "label": "Nhóm đối chứng",
+        "owner": "compliance",
+        "two_person": True,
+        "base": lambda: json.loads(json.dumps(CONTROL_GROUP)),
+        "check": _check_control_group,
     },
     "ai_mode": {
         "label": "Chế độ chạy AI",

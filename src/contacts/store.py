@@ -32,6 +32,10 @@ def signal(family_id: str, signal_id: Optional[str]) -> Optional[Dict[str, Any]]
     """The signal ``signal_id`` as the product gave it for ``family_id``; BadRequest when it never did."""
     if not signal_id:
         return None
+    from measure import control
+
+    if control.is_control(family_id):
+        raise BadRequest(f"Gia đình {family_id} thuộc nhóm đối chứng: hệ thống không đưa tín hiệu nào cho gia đình này")
     kind, _, rest = str(signal_id).partition(":")
     if kind == "pre_review":
         from apply import run as runs

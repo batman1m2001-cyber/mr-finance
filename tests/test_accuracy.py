@@ -159,6 +159,7 @@ def test_the_pages_api_is_for_staff(monkeypatch):
         "reviewed",
         "contacts",
         "opens",
+        "effect",
     }
 
 
