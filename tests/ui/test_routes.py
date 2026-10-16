@@ -26,7 +26,7 @@ def routes(p):
 def test_every_route_renders_without_errors(open_page, size, theme):
     in_thread(approved, *MARKET)
     p = open_page(size, theme=theme)
-    assert p.page.evaluate("matchMedia('(prefers-color-scheme: dark)').matches") == (theme == "dark")
+    assert p.page.evaluate("document.documentElement.dataset.theme") == theme
     seen = routes(p)
     assert len(seen) >= 36, seen  # 33 before R4; + Bản đồ tài chính (client, RM) and the CIO run graph
     bad = {}

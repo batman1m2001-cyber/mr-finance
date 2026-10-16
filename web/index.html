@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OneWealth</title>
 <meta name="description" content="Bức tranh toàn cảnh tài sản của khách hàng, và tin tức đang tác động tới nó.">
-<script>try { const t = localStorage.getItem("mf.theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}</script>
-<link rel="stylesheet" href="core/tokens.css?v=20261016r27">
+<script>let t = null; try { t = localStorage.getItem("mf.theme"); } catch (_) {} document.documentElement.dataset.theme = t === "light" ? "light" : "dark";</script>
+<link rel="stylesheet" href="core/tokens.css?v=20261016r28">
 </head>
 <body>
 <header class="shell-top">
@@ -25,9 +25,14 @@
       <span class="sr">Khách hàng</span>
       <select id="client"></select>
     </label>
-    <div class="seg" role="group" aria-label="Phạm vi" id="scope-pick">
-      <button type="button" data-scope="personal" aria-pressed="true">Cá nhân</button>
-      <button type="button" data-scope="family" aria-pressed="false">Gia đình</button>
+    <div class="scopewrap" id="scope-wrap">
+      <div class="seg" role="group" aria-label="Phạm vi" id="scope-pick">
+        <button type="button" data-scope="personal" aria-pressed="true">Cá nhân</button>
+        <button type="button" data-scope="family" aria-pressed="false">Gia đình</button>
+      </div>
+      <button type="button" class="helpbtn" id="scope-help" aria-label="Cá nhân và Gia đình khác nhau thế nào?" aria-expanded="false"
+        aria-controls="scope-tip">?</button>
+      <div class="pop right scopetip" id="scope-tip" role="tooltip" hidden></div>
     </div>
     <div class="bellwrap">
       <button type="button" id="bell" class="iconbtn" aria-haspopup="true" aria-expanded="false" aria-label="Thông báo">
@@ -50,6 +55,6 @@
 <footer class="foot">Dữ liệu khách hàng và giá là mô phỏng; tin tức và chuỗi thị trường lấy từ nguồn công khai; trang Mô hình ghi rõ tham số nào ước lượng, tham số nào giả định.
   Nội dung không phải khuyến nghị đầu tư. Mỗi người đăng nhập bằng tài khoản của mình; tài khoản demo chỉ mở trên bản demo công khai.
   <button type="button" id="reset" class="linkbtn">Làm lại demo</button></footer>
-<script type="module" src="shell.js?v=20261016r27"></script>
+<script type="module" src="shell.js?v=20261016r28"></script>
 </body>
 </html>

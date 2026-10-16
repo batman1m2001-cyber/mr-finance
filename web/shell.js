@@ -6,10 +6,10 @@
    person's role, and the client picker only the families they may see (a client: none, their own family). The
    server takes the user from the session, never from the page. Only with sign-in switched off (MF_AUTH=off, a
    developer's machine) does the old role switcher appear. */
-import {$, $$, esc, explainOn, failed, howAudience, loading} from "./core/core.js";
+import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261016r1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261016r27";
+import {mount as mountHeader} from "./header.js?v=20261016r28";
 
 const ROLES = {
   client: {
@@ -89,11 +89,11 @@ const ROLES = {
     ],
   },
 };
-const state = {role: "client", users: {}, route: null, seq: 0, me: null, auth: false, demo: false};
+const state = {role: "client", users: {}, clients: {}, route: null, seq: 0, me: null, auth: false, demo: false};
 let leaving = false;
 window.addEventListener("pagehide", () => { leaving = true; });
 window.addEventListener("beforeunload", () => { leaving = true; });
-const pages = {};
+const pages = {};  // page name → its module (a promise)
 
 function parse(hash) {
   const parts = (hash || "").replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
@@ -153,7 +153,7 @@ function drawChrome(rt) {
   }
   const pick = r.clientPick || rt.nav.clientPick;
   $("#client-pick").hidden = !pick || (state.me && state.me.role === "client");
-  $("#scope-pick").hidden = !pick;
+  scopeSwitch(pick);
   if (state.me) {
     $("#whoami").innerHTML = `<span class="me"><b>${esc(state.me.name)}</b><span class="me-title">· ${esc(state.me.title || r.label)}</span>
       <button type="button" class="linkbtn" id="signout">Đăng xuất</button></span>`;
@@ -176,23 +176,64 @@ async function route() {
   drawChrome(rt);
   if (header) header.refresh();
   const target = rt.sub || rt.nav;
-  // each render gets its own element: a page still drawing for an earlier route (a late fetch, a timer) writes
+  const seq = ++state.seq;
+  const ok = await draw(target, rt, seq, false);
+  // a page drawn from what was kept: its reads went to the server again; when an answer changed, it is drawn once
+  // more from the new answers, unless the person has started using it (their next visit shows the new answers)
+  if (ok && ok.changed && seq === state.seq && !used) {
+    const y = scrollY;
+    await draw(target, rt, seq, true);
+    if (seq === state.seq) scrollTo(0, y);
+  }
+  // the route has rendered, or failed visibly: motion.js applies a waiting highlight; tests wait on it
+  if (seq === state.seq) window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
+  warm(rt.role);
+}
+
+// a page module, imported once; a failed import is asked again next time
+function page(name) {
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261016r28`).catch((e) => { delete pages[name]; throw e; });
+  return pages[name];
+}
+
+// every page of the role, imported while the browser is idle: a first visit then waits for its data only
+const warmed = new Set();
+function warm(role) {
+  if (warmed.has(role)) return;
+  warmed.add(role);
+  const names = new Set();
+  for (const n of ROLES[role].nav) {
+    if (n.page) names.add(n.page);
+    for (const s of n.sub || []) if (s.page) names.add(s.page);
+  }
+  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 300));
+  idle(() => { for (const name of names) page(name).catch(() => { /* drawn with its error when visited */ }); });
+}
+
+// whether the person has used the page drawn now: a click, a key or an input in it
+let used = false;
+for (const t of ["pointerdown", "keydown", "input"]) $("#page").addEventListener(t, () => { used = true; }, true);
+
+async function draw(target, rt, seq, again) {
+  // each drawing gets its own element: a page still drawing for an earlier route (a late fetch, a timer) writes
   // into a node that has left the document, never into the page shown now
   const box = document.createElement("div");
   $("#page").replaceChildren(box);
-  const seq = ++state.seq;
+  if (!again) used = false;
   box.innerHTML = loading();
+  const r = keep.begin(again);
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r27`));
-    if (seq !== state.seq) return;
+    const mod = await page(target.page);
+    if (seq !== state.seq) { keep.end(r); return null; }
     await mod.render(box, ctx(rt));
   } catch (e) {
     if (seq === state.seq) box.innerHTML = failed(e);
     // a fetch the browser cut because the document is being left is not a failure of the page
     if (box.isConnected && !leaving) console.error(e);
+    keep.end(r);
+    return null;
   }
-  // the route has rendered, or failed visibly: motion.js applies a waiting highlight; tests wait on it
-  if (seq === state.seq) window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
+  return {changed: await keep.end(r)};
 }
 
 // the picked client and scope: every page reads them through ctx; a change redraws the page
@@ -227,16 +268,50 @@ function theme() {
   route(); // charts read their colours when drawn
 }
 
+// Cá nhân / Gia đình: only where the family has someone else to add; the “?” says whose assets each view counts
+function scopeSwitch(pick) {
+  const c = state.clients[client()] || {household: []};
+  const show = !!pick && c.household.length > 0;
+  $("#scope-wrap").hidden = !show;
+  if (!show) {
+    $("#scope-tip").hidden = true;
+    if (scope() === "family") for (const o of $$("[data-scope]")) o.setAttribute("aria-pressed", String(o.dataset.scope === "personal"));
+    return;
+  }
+  const inn = c.household.filter(m => m.counted), out = c.household.filter(m => !m.counted);
+  const who = (ms) => ms.map(m => `<b>${esc(m.name)}</b> (${esc(m.relation)})`).join(", ");
+  $("#scope-tip").innerHTML = `<div class="pop-head">Cá nhân và Gia đình</div><div class="tipbody">
+    <p><b>Cá nhân</b>: chỉ tài sản, dòng tiền và mục tiêu đứng tên ${esc(c.name || "khách")}.</p>
+    <p><b>Gia đình</b>: ${inn.length ? `cộng thêm của ${who(inn)}, người đã đồng ý chia sẻ.` : "giống Cá nhân, vì chưa có ai được cộng."}</p>
+    ${out.length ? `<p>${who(out)} chưa đồng ý chia sẻ nên chưa được cộng; khi họ đồng ý, Gia đình sẽ có thêm tài sản của họ.</p>` : ""}
+    <p class="muted">Mọi trang có số liệu đều đổi theo lựa chọn này.</p></div>`;
+}
+
 async function pickers() {
   const sel = $("#client");
-  // a client sees only themselves (their family through the scope switch): the hidden picker holds just them
-  const {clients} = state.me && state.me.role === "client"
-    ? {clients: [{id: state.me.id, name: state.me.name, persona_hint: state.me.title}]}
-    : await (await fetch("/api/clients")).json();
+  // a client gets only themselves (their family through the scope switch): the hidden picker holds just them
+  const {clients} = await (await fetch("/api/clients")).json();
+  for (const c of clients) state.clients[c.id] = c;
   sel.innerHTML = clients.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.persona_hint)}</option>`).join("");
   const saved = localStore("mf.client");
   sel.value = clients.some(c => c.id === saved) ? saved : (clients[0] || {}).id || "";
-  sel.addEventListener("change", () => { localStore("mf.client", sel.value); header.refresh(); route(); });
+  sel.addEventListener("change", () => { localStore("mf.client", sel.value); scopeSwitch(true); header.refresh(); route(); });
+  const help = $("#scope-help"), tip = $("#scope-tip"), wrap = $("#scope-wrap");
+  let hover = 0, pinned = false;  // hover waits a little, so the pointer passing over does not flash it open
+  const show = (on) => { tip.hidden = !on; help.setAttribute("aria-expanded", String(on)); if (!on) pinned = false; };
+  // hover opens it; a click, a tap or Enter keeps it open (a phone has no hover), and a second one closes it;
+  // leaving it unpinned, a click elsewhere or Escape closes it
+  help.addEventListener("click", (e) => {
+    e.stopPropagation();
+    clearTimeout(hover);
+    if (!tip.hidden && pinned) return show(false);
+    show(true);
+    pinned = true;
+  });
+  wrap.addEventListener("mouseenter", () => { if (matchMedia("(hover: hover)").matches) hover = setTimeout(() => show(true), 350); });
+  wrap.addEventListener("mouseleave", () => { clearTimeout(hover); if (!pinned) show(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") show(false); });
+  document.addEventListener("click", (e) => { if (!wrap.contains(e.target)) show(false); });
   for (const b of $$("[data-scope]")) {
     b.addEventListener("click", () => {
       for (const o of $$("[data-scope]")) o.setAttribute("aria-pressed", String(o === b));

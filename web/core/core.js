@@ -3,19 +3,87 @@
    pages receive status, severity and labels already decided. */
 
 // ── api ──────────────────────────────────────────────────────────────────────
-export async function get(path) {
+// What a page read is kept for the tab: going back to a page draws it at once from what it had, while the same reads
+// go to the server again; when an answer differs, the shell draws the page once more (`keep`). A POST that is not a
+// read forgets everything kept, so a page never shows what was true before the person's own change.
+const READS = new Set(["/api/dashboard", "/api/overview", "/api/flows", "/api/feed", "/api/goals", "/api/alerts", "/api/scenario"]);
+const KEPT_MAX = 80;
+const kept = new Map();  // "GET /api/…" or "POST /api/…{body}" → the answer's JSON text, oldest first
+let round = null;  // the page being drawn: {used, pending, changed, again}
+let generation = 0;  // counts the changes: an answer asked for before one is never kept
+
+function forget() {
+  kept.clear();
+  generation++;
+}
+
+function remember(key, text, gen) {
+  if (gen !== generation) return;
+  kept.delete(key);
+  kept.set(key, text);
+  if (kept.size > KEPT_MAX) kept.delete(kept.keys().next().value);
+}
+
+async function keptOr(key, load) {
+  const r = round, gen = generation;
+  // a page reads each thing once from what was kept, during its own drawing only: a later read (a poll, a click)
+  // is always the server's answer
+  if (r && !r.used.has(key) && kept.has(key)) {
+    r.used.add(key);
+    const text = kept.get(key);
+    if (!r.again) {
+      r.pending.push(load().then((fresh) => {
+        const t = JSON.stringify(fresh);
+        remember(key, t, gen);
+        if (t !== text && gen === generation) r.changed = true;
+      }, () => { /* the page already shows what it had; the next visit asks again */ }));
+    }
+    return JSON.parse(text);
+  }
+  if (r) r.used.add(key);
+  const fresh = await load();
+  remember(key, JSON.stringify(fresh), gen);
+  return fresh;
+}
+
+// the shell around one drawing of a page: `begin` before it, `end` after it, which waits for the reads asked again
+// and says whether any answer changed; `again` draws from what is kept, asking nothing (the redraw after a change)
+export const keep = {
+  begin(again = false) { round = {used: new Set(), pending: [], changed: false, again}; return round; },
+  async end(r) {
+    if (round === r) round = null;
+    await Promise.all(r.pending);
+    return r.changed;
+  },
+  forget,
+};
+
+async function fetchGet(path) {
   const r = await fetch(path);
   const body = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(body.error || `${path}: ${r.status}`);
   return body;
 }
 
-export async function post(path, body) {
+async function fetchPost(path, body) {
   const r = await fetch(path, {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(body || {})});
   const out = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(errorText(out) || `${path}: ${r.status}`);
   if (out && out.$errors) throw new Error(errorText(out));
   return out;
+}
+
+export function get(path) {
+  return keptOr(`GET ${path}`, () => fetchGet(path));
+}
+
+export async function post(path, body) {
+  if (READS.has(path)) return keptOr(`POST ${path}${JSON.stringify(body || {})}`, () => fetchPost(path, body));
+  try {
+    return await fetchPost(path, body);
+  } finally {
+    forget();  // a change, made or tried: nothing kept is sure any more
+  }
 }
 
 function errorText(out) {
