@@ -14,12 +14,13 @@ POST /api/goals     {client_id, scope?} ──► goals_flow ──► every lif
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
+every 2 h ──► news_reference: the independent reference's stories, judged collected a day later (KPI-02)
 15:45/16:00/17:30 daily and hourly, `operonx run market_<kind>` ──► the market jobs: public sources into SQLite
      (market_backfill on demand) · GET /api/market[/series] ──► app/web.py (the source registry, the series)
 POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (Compliance)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
-POST /api/events ──► event_flow · POST /api/events/run-agent ──► agent_queue_flow, then the agent_worker job
-     ──► cio_agent_flow (agent + challenger)
+POST /api/events ──► event_flow · POST /api/events/urgent ──► event_urgent_flow (KPI-01) · POST /api/events/run-agent
+     ──► agent_queue_flow, then the agent_worker job ──► cio_agent_flow (agent + challenger)
 POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, newsletter_act_flow (FR-801: the CIO drafts from
      approved views, Compliance approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
 POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: Compliance adds a document from the Official
@@ -56,7 +57,7 @@ from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, 
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
-from events.graph import event_flow
+from events.graph import event_flow, event_urgent_flow
 from feed.graph import feed_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
@@ -76,7 +77,7 @@ from market.graph import (
     model_estimate_flow,
 )
 from measure.graph import accuracy_flow
-from news.graph import dismiss_flow, ingest_flow, release_flow
+from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
@@ -220,6 +221,13 @@ APP = Application(
             description="POST {news_ids, title?, by}: the CIO groups news into an event.",
         ),
         Service(
+            "event_urgent",
+            http("POST", "/api/events/urgent", port=PORT),
+            graph=event_urgent_flow,
+            description="POST {event_id, urgent, reason, by}: the CIO flags an event urgent, or takes the flag off "
+            "(KPI-01).",
+        ),
+        Service(
             "cio_agent",
             http("POST", "/api/events/run-agent", port=PORT),
             graph=agent_queue_flow,
@@ -336,6 +344,15 @@ APP = Application(
             graph=ingest_flow,
             schedule=schedule(every="10m", port=PORT),
             description="Every 10 minutes: the white-listed RSS feeds into the inbox (FR-101).",
+        ),
+        # important news collected (KPI-02, news/reference.py): the independent reference every 2 hours
+        Job(
+            "news_reference",
+            graph=reference_flow,
+            schedule=schedule(every="2h", port=PORT),
+            timeout=120,
+            description="Every 2 hours: Google News' business stories kept; a day later, each important one judged "
+            "collected or not (KPI-02).",
         ),
         # the market data (F1, data/market_sources.json): each public source on its own clock into SQLite,
         # the cadence from its rate limit and when its data changes; `operonx run market_<kind>` runs one now

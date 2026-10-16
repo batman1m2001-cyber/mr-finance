@@ -677,10 +677,24 @@ metric(
     "measure.on_time",
     "Tỷ lệ đạt thời hạn",
     "Tỷ lệ = số lần trong hạn ÷ số lần đo trong tháng: từ tin sớm nhất đến "
-    "lần áp dụng có hiệu lực cho RM ≤ mục tiêu giờ; tin → hộp tin và lần chạy agent CIO ≤ mục tiêu phút.",
+    "lần áp dụng có hiệu lực cho RM ≤ mục tiêu giờ (sự kiện CIO đánh dấu khẩn: ≤ 30 phút); tin → hộp tin và lần chạy "
+    "agent CIO ≤ mục tiêu phút.",
     R + "speed",
     month="Tháng",
     step="Bước",
+)
+metric(
+    "news.important_share",
+    "Tỷ lệ tin quan trọng được thu thập",
+    "Tỷ lệ = số câu chuyện quan trọng đã thu thập ÷ số câu chuyện quan trọng trong ngày. Quan trọng: tiêu đề nhắc một "
+    "yếu tố của mô hình và nguồn đối chiếu (Google News, mục Kinh doanh) đưa từ ít nhất 2 báo. Đã thu thập: trong 36 "
+    "giờ quanh câu chuyện, Hộp tin có tin có tiêu đề trùng ít nhất 40 % từ (Jaccard, bỏ số và từ đệm) với một tiêu đề "
+    "của câu chuyện; chấm một lần, một ngày sau khi câu chuyện xuất hiện. Mục tiêu ≥ 95 %.",
+    "src/news/reference.py::coverage",
+    period="Ngày",
+    important="Tin quan trọng",
+    collected="Đã thu thập",
+    followed="Có báo đang theo dõi",
 )
 metric(
     "uptime.availability",

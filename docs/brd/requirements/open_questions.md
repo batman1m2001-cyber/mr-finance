@@ -66,6 +66,10 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-07 — “Important news” (KPI-02)
 - **Fact:** “Tin quan trọng được thu thập ≥ 95 %” — the BRD does not define important news or how to count the denominator. Owner: CIO / Private Banking.
+- **Interpretation (ours, applied; G-D6, labelled “Đề xuất”):** important = a story in an independent reference
+  (Google News' Business section for Vietnam) whose title names one of the engine's factors and that ≥ 2 outlets
+  carry; collected = one of our items matches it by title, judged once a day later (`src/news/reference.py`). The
+  same reading defines urgent for KPI-01: the CIO's flag, with the product's proposals (`src/news/urgent.py`).
 
 ### Q-08 — How many sources (FR-101)
 - **Fact:** FR-101 says “hiện 10 nguồn: VnExpress, VnEconomy, Báo Đầu tư, Vietstock, Nhân Dân, VTV, Fed…”; §11.1 lists six domestic and two international outlets.

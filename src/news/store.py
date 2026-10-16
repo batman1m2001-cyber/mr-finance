@@ -28,6 +28,9 @@ create index if not exists news_items_published on news_items (published);
 create index if not exists news_items_title on news_items (title_key);
 create table if not exists news_runs (
   id integer primary key autoincrement, at real not null, data text not null);
+create table if not exists reference_stories (
+  id text primary key, published real, first_seen real not null, judged real, collected integer, data text not null);
+create index if not exists reference_stories_open on reference_stories (judged, first_seen);
 """
 
 

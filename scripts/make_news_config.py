@@ -104,6 +104,69 @@ RESTRICTED = [
     {"name": "Kim Phát Holdings (mock)", "aliases": ["kim phát holdings"], "ticker": "KPH"},
 ]
 
+# “Urgent” (BRD-KPI-01, G-D6) — our reading until the bank defines it, labelled “Đề xuất”: the CIO flags an event
+# urgent with a reason; the product proposes it for an SBV policy-rate or FX-band decision, and for a move past
+# ``sigma`` standard deviations of the factor's daily moves over the last ``window_days`` market days.
+URGENT = {
+    "note": "Cách hiểu của chúng tôi (Đề xuất) cho tới khi ngân hàng định nghĩa tin khẩn",
+    "target_minutes": 30,
+    "actor_words": ["nhnn", "ngân hàng nhà nước", "sbv"],
+    "decisions": [
+        {
+            "id": "sbv_rate",
+            "label": "NHNN quyết định lãi suất điều hành",
+            "words": ["lãi suất điều hành", "lãi suất tái cấp vốn", "lãi suất tái chiết khấu"],
+        },
+        {
+            "id": "fx_band",
+            "label": "NHNN quyết định biên độ tỷ giá",
+            "words": ["biên độ tỷ giá", "biên độ giao dịch", "tỷ giá trung tâm"],
+        },
+    ],
+    "sigma": 3.0,
+    "window_days": 250,
+}
+
+# “Important” (BRD-KPI-02, G-D6): a story on our topics (it names one of the engine's factors) that an independent
+# reference carries from ``min_outlets`` outlets or more — Google News' Business section for Vietnam, which groups each
+# story with the outlets covering it. Collected: one of our items within ``match_hours`` of it whose title shares
+# ``match`` (Jaccard, numbers and filler words left out) with one of the story's titles. Judged once, a day after the
+# story was first seen; the reference is read every 2 hours.
+REFERENCE = {
+    "note": "Cách hiểu của chúng tôi (Đề xuất) cho tới khi ngân hàng định nghĩa tin quan trọng",
+    "url": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=vi&gl=VN&ceid=VN:vi",
+    "outlet": "Google News (Kinh doanh, Việt Nam)",
+    "min_outlets": 2,
+    "match": 0.4,
+    "match_hours": 36,
+    "judge_after_hours": 24,
+    "target": 0.95,
+    "stopwords": [
+        "hôm",
+        "nay",
+        "ngày",
+        "và",
+        "của",
+        "các",
+        "những",
+        "có",
+        "là",
+        "được",
+        "cho",
+        "với",
+        "trong",
+        "về",
+        "thế",
+        "nào",
+        "sẽ",
+        "đã",
+        "này",
+        "từ",
+        "khi",
+        "một",
+    ],
+}
+
 CONFIG = {
     "version": "NEWS-DEMO-2026-10",
     "note": "Danh sách nguồn công khai và từ khóa cho demo; danh sách hạn chế là giả lập (tên tự đặt).",
@@ -116,6 +179,8 @@ CONFIG = {
     "intl_words": INTL_WORDS,
     "domestic_words": DOMESTIC_WORDS,
     "restricted": RESTRICTED,
+    "urgent": URGENT,
+    "reference": REFERENCE,
 }
 
 

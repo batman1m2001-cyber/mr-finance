@@ -19,6 +19,7 @@ const JOB = {  // what each job does, in the product's language (the declaration
   inbox_import: "Nhập các gói từ vùng AI qua cùng các kiểm tra, hoặc từ chối kèm lý do (ZONE-03)",
   zone_sync: "Gửi vùng AI danh mục đã duyệt và nghiên cứu đã phát hành (chế độ hộp chờ)",
   audit_check: "Kiểm tra chuỗi nhật ký kiểm toán và chép dòng mới vào đoạn chỉ-ghi-một-lần; gãy thì báo Tuân thủ và Quản trị",
+  news_reference: "Đọc nguồn đối chiếu độc lập (Google News) mỗi 2 giờ; một ngày sau, chấm tin quan trọng đã thu thập hay chưa (KPI-02)",
   heartbeat: "Ghi nhịp của máy chủ; đo mức sẵn sàng trong giờ làm việc, dưới mục tiêu thì báo Quản trị (NFR-03)",
   agent_eval: "Bộ đánh giá cố định cho đề xuất lời nhắc và mô hình AI (MEAS-07)",
   accuracy_score: "Chấm độ chính xác các dự báo đã đến hạn (FEAT-18)",

@@ -6,8 +6,10 @@
 - **Rubber-stamping (MEAS-05).** For each approval: the CIO's time from the view being ready for approval to the
   approval, and whether the CIO approved it without an edit.
 - **Speed (KPI-01, WF-09).** For each event that reached the RMs: from its earliest news being published to the
-  application run being effective. Target ≤ 2 h. The BRD's “urgent ≤ 30 min” has no definition of urgent in the
-  product (no news or event carries it), so it is not measured.
+  application run being effective. Target ≤ 2 h; ≤ 30 min for the events the CIO flagged urgent (news/urgent.py:
+  our reading of “urgent”, proposed for SBV decisions and 3-sigma moves, labelled “Đề xuất”).
+- **Important news collected (KPI-02).** Of the stories an independent reference carries from two outlets or more
+  on our topics, the share we collected (news/reference.py), by day and month. Target ≥ 95 %.
 - **Agent and news timing (NFR-02).** News published → in the inbox (≤ 10 min), for news published after the
   ingest job was already running; each CIO agent run's duration (≤ 15 min).
 - **Availability (NFR-03).** Business minutes with a heartbeat ÷ business minutes, per month, with the outages
@@ -29,6 +31,7 @@ from news import store as news_store
 
 DAY = 86400
 KPI01_TARGET_H = 2.0
+URGENT_TARGET_MIN = 30.0  # BRD-KPI-01 “tin khẩn ≤ 30 phút”; urgent = the CIO's flag (news/urgent.py)
 INBOX_TARGET_MIN = 10.0
 AGENT_TARGET_MIN = 15.0
 FAST_MIN = 2.0  # our signal, not a BRD threshold: an approval this quick is counted as “duyệt rất nhanh”
@@ -183,6 +186,7 @@ def speed() -> Dict[str, Any]:
         if not pub:
             continue
         hours = (eff - min(pub)) / 3600
+        urgent = bool((e.get("urgent") or {}).get("flag"))
         rows.append(
             {
                 "run": r["id"],
@@ -190,6 +194,8 @@ def speed() -> Dict[str, Any]:
                 "month": _month(eff),
                 "hours": round(hours, 2),
                 "met": hours <= KPI01_TARGET_H,
+                "urgent": urgent,
+                "urgent_met": hours * 60 <= URGENT_TARGET_MIN if urgent else None,
             }
         )
     months = []
@@ -202,7 +208,29 @@ def speed() -> Dict[str, Any]:
                 "met_share": round(sum(x["met"] for x in mine) / len(mine), 3),
             }
         )
-    return {"runs": rows, "by_month": months, "target_hours": KPI01_TARGET_H, "urgent": "chưa có định nghĩa"}
+    urgent_months = []
+    for m in sorted({x["month"] for x in rows if x["urgent"]}):
+        mine = [x for x in rows if x["month"] == m and x["urgent"]]
+        urgent_months.append(
+            {
+                "month": m,
+                "minutes": _stats([x["hours"] * 60 for x in mine]),
+                "met_share": round(sum(x["urgent_met"] for x in mine) / len(mine), 3),
+            }
+        )
+    flagged = sum(bool((e.get("urgent") or {}).get("flag")) for e in events.values())
+    proposed = sum(bool(e.get("urgent_proposed")) for e in events.values())
+    return {
+        "runs": rows,
+        "by_month": months,
+        "target_hours": KPI01_TARGET_H,
+        "urgent": {
+            "by_month": urgent_months,
+            "target_minutes": URGENT_TARGET_MIN,
+            "flagged": flagged,
+            "proposed": proposed,
+        },
+    }
 
 
 def timing() -> Dict[str, Any]:
@@ -246,6 +274,7 @@ def timing() -> Dict[str, Any]:
 
 def all_reports() -> Dict[str, Any]:
     from control import uptime
+    from news import reference
 
     return {
         "misses": misses(),
@@ -253,4 +282,5 @@ def all_reports() -> Dict[str, Any]:
         "speed": speed(),
         "timing": timing(),
         "availability": uptime.by_month(),
+        "important": reference.coverage(),
     }

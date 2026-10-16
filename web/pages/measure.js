@@ -16,7 +16,7 @@ function stats(s, unit) {
 
 export async function render(box) {
   const d = await get("/api/measure");
-  const m = d.misses, r = d.rubber_stamp, s = d.speed, t = d.timing, a = d.availability;
+  const m = d.misses, r = d.rubber_stamp, s = d.speed, t = d.timing, a = d.availability, im = d.important, u = s.urgent;
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">Đo lường</div><h1 class="h1">Báo cáo đo lường hằng tháng</h1>
       <p class="lede">Đọc từ những gì hệ thống ghi lại: tin và sự kiện bị bỏ sót, thời gian CIO xem trước khi duyệt, thời gian từ tin đến RM, tốc độ hộp tin và Agent, mức sẵn sàng trong giờ làm việc.</p></div></div>
@@ -43,10 +43,25 @@ export async function render(box) {
     </section>
 
     <section class="panel mt"><h3>Từ tin đến RM <span class="hint">BRD-KPI-01 · BRD-RULE-WF-09 · mục tiêu ≤ ${n1(s.target_hours)} giờ</span></h3>
-      <p class="small">Từ lúc tin sớm nhất của sự kiện được đăng đến lúc lần áp dụng có hiệu lực cho RM. “Tin khẩn ≤ 30 phút” chưa đo được: hệ thống chưa có định nghĩa tin khẩn.</p>
+      <p class="small">Từ lúc tin sớm nhất của sự kiện được đăng đến lúc lần áp dụng có hiệu lực cho RM. Tin khẩn (mục tiêu ≤ ${n1(u.target_minutes)} phút) là sự kiện CIO đánh dấu khẩn kèm lý do; hệ thống đề xuất khẩn khi NHNN quyết định lãi suất điều hành, biên độ tỷ giá, hoặc khi một yếu tố biến động quá 3 lần độ lệch chuẩn trong ngày — <span class="badge warn">Đề xuất</span> cách hiểu của chúng tôi cho tới khi ngân hàng định nghĩa. ${u.flagged} sự kiện đã đánh dấu khẩn, ${u.proposed} sự kiện được đề xuất.</p>
       ${s.by_month.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Tháng</th><th class="num">Lần áp dụng</th><th>Thời gian (trung vị)</th><th class="num">Đạt ≤ ${n1(s.target_hours)} giờ</th></tr></thead><tbody>
         ${s.by_month.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${x.hours.n}</td><td>${stats(x.hours, "giờ")}</td><td class="num">${met(x.met_share, {month: x.month, step: "Tin → RM"})}</td></tr>`).join("")}
       </tbody></table></div>` : empty("Chưa có lần áp dụng nào có hiệu lực.")}
+      ${u.by_month.length ? `<div class="scrollx" style="margin-top:12px"><table class="table"><thead><tr><th>Tháng</th><th class="num">Sự kiện khẩn</th><th>Thời gian (trung vị)</th><th class="num">Đạt ≤ ${n1(u.target_minutes)} phút</th></tr></thead><tbody>
+        ${u.by_month.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${x.minutes.n}</td><td>${stats(x.minutes, "phút")}</td><td class="num">${met(x.met_share, {month: x.month, step: "Tin khẩn → RM"})}</td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="small muted">Chưa có sự kiện khẩn nào đến RM.</p>`}
+    </section>
+
+    <section class="panel mt"><h3>Tin quan trọng được thu thập <span class="hint">BRD-KPI-02 · mục tiêu ≥ ${how(pct(im.target, false, 0), "news.important_share")}</span></h3>
+      <p class="small">Tin quan trọng: câu chuyện về các yếu tố của mô hình mà nguồn đối chiếu độc lập (${esc(im.reference)}) đưa từ ít nhất hai báo. Đã thu thập: trong vòng một ngày, Hộp tin có tin cùng câu chuyện. <span class="badge warn">Đề xuất</span> cách hiểu của chúng tôi cho tới khi ngân hàng định nghĩa. Cột “Báo đang theo dõi” chỉ tính câu chuyện có ít nhất một báo thuộc danh sách trắng.</p>
+      ${im.by_day.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Ngày</th><th class="num">Tin quan trọng</th><th class="num">Đã thu thập</th><th class="num">Tỷ lệ</th><th class="num">Báo đang theo dõi</th></tr></thead><tbody>
+        ${im.by_day.map(x => `<tr><td>${esc(x.period)}</td><td class="num">${x.important}</td><td class="num">${x.collected}</td>
+          <td class="num"><span class="${x.share >= im.target ? "good-text" : "bad-text"}">${how(pct(x.share, false, 0), "news.important_share", {period: x.period, important: x.important, collected: x.collected})}</span></td>
+          <td class="num">${x.followed ? how(pct(x.followed_share, false, 0), "news.important_share", {period: x.period, followed: x.followed}) : "—"}</td></tr>`).join("")}
+      </tbody></table></div>
+      ${im.misses.length ? `<details style="margin-top:8px"><summary class="small">Tin quan trọng chưa thu thập (${im.misses.length})</summary>
+        <ul class="small">${im.misses.map(x => `<li><span data-quote>${esc(x.title)}</span> — <span class="muted">${esc(x.outlets.slice(0, 4).join(", "))}${x.followed ? "" : " · không báo nào trong danh sách trắng"}</span></li>`).join("")}</ul></details>` : ""}`
+      : empty("Chưa có câu chuyện nào được chấm: việc đối chiếu chạy mỗi 2 giờ, mỗi câu chuyện được chấm một ngày sau khi xuất hiện.")}
     </section>
 
     <section class="panel mt"><h3>Tốc độ hộp tin và Agent <span class="hint">BRD-NFR-02</span></h3>

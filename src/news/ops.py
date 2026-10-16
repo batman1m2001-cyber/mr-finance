@@ -164,3 +164,40 @@ def release(item_id: str, by: str, note: str) -> dict:
     if not store.clear_hold(str(item_id), by=str(by), note=str(note).strip()):
         raise ValueError(f"{item_id} không bị giữ")
     return {"released": str(item_id)}
+
+
+@op
+async def reference_check(feed: Optional[str] = None, now: Optional[float] = None) -> dict:
+    """The ``news_reference`` job (BRD-KPI-02, news/reference.py): the independent reference read (``feed`` replaces
+    the network), its stories kept, the ones a day old judged collected or not. A reference that cannot be read
+    raises a feed alert; reading again resolves it."""
+    from control import alerts
+    from news import reference
+
+    ref = config()["reference"]
+    at = float(now) if now else time.time()
+    try:
+        raw = (
+            feed
+            if feed is not None
+            else await asyncio.to_thread(_get, ref["url"], config()["gates"]["fetch_timeout_s"])
+        )
+        stories = reference.parse(raw)
+    except Exception as exc:  # noqa: BLE001 — recorded and alerted, the next run tries again
+        alerts.raise_("news_feed", "reference", f"Không đọc được nguồn đối chiếu {ref['outlet']}", str(exc)[:300])
+        return {
+            "error": f"{type(exc).__name__}: {exc}"[:200],
+            "stories": 0,
+            "added": 0,
+            "grown": 0,
+            "judged": reference.judge(at),
+        }
+    alerts.resolve("news_feed", "reference", f"Đọc lại được nguồn đối chiếu ({len(stories)} tin)")
+    kept = reference.keep(stories, at)
+    return {
+        "error": None,
+        "stories": len(stories),
+        "added": kept["added"],
+        "grown": kept["grown"],
+        "judged": reference.judge(at),
+    }
