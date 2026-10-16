@@ -2,6 +2,15 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The Agent Ecosystem Map (ASSISTANT_PLAN A7).
+  - The Agent page opens on the map: the person, the assistant and its tools, the data, the CIO desk, the rules and
+    the background agents; 27 lines, each the code that makes it; states from the parts' records, matched with the
+    traces of the same runs in a test; a part's runs and a run's steps in drawers; a list per group on a phone; the
+    panel links to it (CIO, Compliance, Admin). `GET /api/agents/map`, `GET /api/agents/map/<part>`.
+  - Privacy: the `assistant`, `copilot` and `assistant_conversations` services no longer write traces (their inputs
+    held the question in clear); the map reads turns from the audit log.
+  - Documents: assistant.md §7, ADR-0033, FEAT-15, SCR-CIO-08 (screenshots), matrix OWN-AS-20…22, ASSISTANT_PLAN.
+
 - 2026-10-17 — Background agents (ASSISTANT_PLAN A6).
   - The memory consolidator (`assistant_consolidate`, every 5 minutes): an idle conversation that changed becomes
     ≤ 5 long-term items (checked like a person's own, repeats merged, “trợ lý tự rút ra” on the Bộ nhớ page), only

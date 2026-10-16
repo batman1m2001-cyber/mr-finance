@@ -421,6 +421,24 @@ async def agent_catalogue(request: Request) -> JSONResponse:
     return JSONResponse({**catalogue.catalogue(), "quality": catalogue.quality(days)})
 
 
+async def agent_map(request: Request) -> JSONResponse:
+    """The Agent Ecosystem Map (A7, ADR-0033): nodes with their state from records, edges with their code."""
+    from views import ecosystem
+
+    return JSONResponse(ecosystem.ecosystem())
+
+
+async def agent_map_node(request: Request) -> JSONResponse:
+    """A node's last runs (?run=<id>: that run's steps — ops, agent nodes or tools, never text)."""
+    from views import ecosystem
+
+    node, run_id = request.path_params["node"], request.query_params.get("run")
+    try:
+        return JSONResponse(ecosystem.run(node, run_id) if run_id else ecosystem.runs(node))
+    except KeyError:
+        return JSONResponse({"error": "không có lần chạy này"}, status_code=404)
+
+
 async def runs_list(request: Request) -> JSONResponse:
     """Application runs, newest first (CIO: all; ?role=rm: only those that passed post-check)."""
     q = request.query_params
@@ -1007,6 +1025,7 @@ ROUTE_ROLES = {
     "/api/agents": STAFF,
     "/api/trace/": STAFF,  # “Cách tính” is for staff (Q-14)
     "/api/agents/catalogue": OVERSIGHT,
+    "/api/agents/map": OVERSIGHT,  # A7: the ecosystem map and its runs
     "/api/news": OVERSIGHT,  # the inbox and held items: an RM sees news only once applied (FR-502)
     "/api/events": OVERSIGHT,
     "/api/views/": OVERSIGHT,  # one view with its drafts and findings
@@ -1112,6 +1131,8 @@ app = Starlette(
         Route("/api/views/{view_id}", view_one),
         Route("/api/agents", agents_status),
         Route("/api/agents/catalogue", agent_catalogue),
+        Route("/api/agents/map", agent_map),
+        Route("/api/agents/map/{node}", agent_map_node),
         Route("/api/config", config_list),
         Route("/api/config/{version_id}", config_version),
         Route("/api/runs", runs_list),

@@ -51,7 +51,7 @@ release, and OneWealth pins the new version; only OneWealth's rules stay in this
 | A4 | Long-term and archive memory: extraction rules, the “Bộ nhớ” page (see, correct, forget), retention, isolation tests | Isolation and deletion tests pass — **done** 2026-10-17 (`tests/test_assistant_memory.py`, `tests/ui/test_memory_ui.py`; operonx-agents 0.3.0 `memory`) |
 | A5 | Knowledge base (product + user materials) and web search with citations | Grounding tests pass; web search measured or reported unavailable — **done** 2026-10-17 (`tests/test_assistant_knowledge.py`, 24/24 product questions, 10/10 formula and term questions; web 9.1 s, US$0.012; operonx-kb 0.2.6, operonx 1.30.1) |
 | A6 | Background agents: memory consolidator, follow-up agent; budgets, dedup, retries, traces | Costs per day measured — **done** 2026-10-17 (`tests/test_assistant_agents.py`; ~US$0.00024 a conversation on the real model, follow-ups 0) |
-| A7 | The Agent Ecosystem Map, with live states and drill-down; desktop and phone | States on the map match the traces in a test |
+| A7 | The Agent Ecosystem Map, with live states and drill-down; desktop and phone | States on the map match the traces in a test — **done** 2026-10-17 (`tests/test_agent_map.py`, `tests/ui/test_agent_map_ui.py`) |
 | A8 | The eval suite in full; the most consequential failures fixed; the readiness report with metrics, gaps, risks and costs | The gate passes, or the report says why not |
 
 ## 4. What the owner may be asked

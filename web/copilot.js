@@ -17,6 +17,7 @@ import {icon} from "./core/icons.js?v=20261016r1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
 
+const DESK = new Set(["cio", "compliance", "admin"]);  // A7: the panel links to the Agent page's map
 const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ", specialist: "Chuyên gia", admin: "Quản trị"};
 const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
@@ -273,7 +274,7 @@ export function mount() {
   const fresh = () => { cid = null; msgs = []; shown = 0; listing = null; setState("idle"); draw(); sugg(); $("#cp-q", panel).focus(); };
   const drawList = (box) => {
     const rows = listing.items || [];
-    box.innerHTML = `<div class="cp-st row">Các cuộc trò chuyện của bạn (${ROLE_LABEL[role]})<a class="small" style="margin-left:auto" href="#/${role}/bo-nho" data-memory>Bộ nhớ →</a></div>` + (rows.length
+    box.innerHTML = `<div class="cp-st row">Các cuộc trò chuyện của bạn (${ROLE_LABEL[role]})<a class="small" style="margin-left:auto" href="#/${role}/bo-nho" data-memory>Bộ nhớ →</a>${DESK.has(role) ? `<a class="small" href="#/${role}/agent" data-memory>Bản đồ agent →</a>` : ""}</div>` + (rows.length
       ? `<ul class="cp-convs">${rows.map(c => `<li${c.id === cid ? ' aria-current="true"' : ""}><button type="button" class="cp-conv" data-open="${esc(c.id)}"><b>${esc(c.title || "Cuộc trò chuyện")}</b><small>${esc(when(c.updated))} · ${c.turns} lượt</small></button>
           <button type="button" class="linkbtn small" data-del="${esc(c.id)}" title="Xoá cuộc trò chuyện này">${icon("x", {size: 16})}<span class="sr-only">Xoá</span></button></li>`).join("")}</ul>`
       : `<div class="small muted">Chưa có cuộc trò chuyện nào.</div>`);

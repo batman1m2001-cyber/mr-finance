@@ -273,7 +273,43 @@ and a click opens that run's trace drawer.
   Shown in the bell for every role until opened (“Theo dõi: …”, with the close or the event), and in a “Việc theo
   dõi” panel on the Bộ nhớ page (Huỷ). On the real model both kinds were asked for correctly in one request each.
 - **Cost per day** = conversations consolidated × ~US$0.00024: 1,000 a day would cost about US$0.24.
-  `consolidate.costs()` reads it from the runs per day (A7 shows it on the map).
+  `consolidate.costs()` reads it from the runs per day; the map shows the last day's on the consolidator.
+
+### As built (A7, 2026-10-17) — the map
+
+- **Where**: the Agent page (CIO, Compliance, Admin) opens on it; the catalogue and AI quality stay below. The
+  panel's conversation list links to it for those roles. One endpoint, `GET /api/agents/map`
+  (`src/views/ecosystem.py`), and `GET /api/agents/map/<part>` for a part's runs (`?run=<id>` for one run's steps).
+- **Parts** (21, in six groups): the person; the front door (the assistant, the keyword fallback, its 35 tools in
+  four families by the module that holds them — app, memory, follow-ups, guide/documents/web); the data (news,
+  application data, market, conversations and memory, knowledge, web); the CIO desk (queue, CIO agent, challenger,
+  policy agent); the rules (follow-up checks, the 07:00 policy sweep); the background (consolidator, retention).
+- **Lines** (27) are only what the code does: each names a file and a symbol (`app/main.py::assistant_flow`,
+  `src/views/ops.py::review`, …), listed in the part's drawer; a test fails if one is missing, if a part has no
+  line, or if a registry tool is in no family.
+- **States** come from what each part recorded, never from guesses: the assistant's turns from the audit log
+  (`assistant.turn`: role, mode, tools and their statuses, tokens, cost — no text) and the writes waiting on a
+  person (`parked`); the queue (`agent_jobs`); the agents' runs (`agent_runs`); the consolidator's runs
+  (`consolidations`) over its job; the follow-ups (`follow_ups`); every scheduled job's own run records
+  (`.operonx/jobs/<job>/<run>/run.json`). *Đang chạy* — a run not finished; *Đang chờ* — queued, or waiting on a
+  person or a condition; *Hoàn tất* / *Lỗi* — the last run; *Chưa chạy* — none yet. A part with several jobs (the
+  market) is as well as the worst of their last runs.
+- **Drill-down**: a part's last 20 runs; a run's steps — for a job, each item's ops with status and time read from
+  its trace (`nodes.jsonl`), the error's last line; for an agent run, its nodes (model, tokens, attempts); for a
+  turn, its tools. Never a prompt, a question, an answer, an input or an output.
+- **States match the traces** (`tests/test_agent_map.py`): the real jobs run into a folder of the test's own; the
+  policy sweep's state follows its traces (a failing client → *Lỗi*, the failed op in the drawer is the one the trace
+  names); the consolidator shows *Lỗi* when its trace reports a failed conversation though the job itself ended
+  well, and *Hoàn tất* after the retry; the CIO desk's states follow the worker's trace.
+- **Privacy fix**: the `assistant`, `copilot` and `assistant_conversations` services no longer write traces
+  (`[tracing.services.*] sinks = []`, like `assistant_memory` in A5): their ops' inputs held the person's question in
+  clear under `.operonx/runs`. The map reads turns from the audit log instead. Traces already written on the server
+  (six, all test questions from this work) were left in place.
+- **Speed**: a day of job runs is ~500 small run records; the map takes 19 ms warm (a finished run's record is read once per
+  process).
+- **Found by the map**: the server's 07:00 policy sweep of 16/10 failed for all five clients (“Cần đăng nhập”): it
+  ran code from before scheduled runs were exempted from sign-in (0cc1c83); the current code passes
+  `tests/test_auth.py`; the next morning's run confirms it on the server.
 
 ## 8. Storage measurement (A0, 2026-10-16) — ADR-0027
 
