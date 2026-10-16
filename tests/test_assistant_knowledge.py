@@ -154,7 +154,8 @@ class FakeHub:
             annotations=[{"type": "url_citation", "url_citation": {"url": "https://sbv.gov.vn/a", "title": "NHNN"}},
                          {"type": "url_citation", "url_citation": {"url": "https://vnexpress.net/b", "title": "VE"}}],
         )  # fmt: skip
-        return SimpleNamespace(choices=[SimpleNamespace(message=msg)])
+        usage = {"prompt_tokens": 14911, "completion_tokens": 1225, "cost": 0.012}  # as OpenRouter reports it
+        return SimpleNamespace(choices=[SimpleNamespace(message=msg)], usage=usage)
 
 
 @pytest.fixture
@@ -175,6 +176,7 @@ def test_the_web_gets_only_the_scrubbed_question_and_answers_with_sources(online
     assert sent["plugins"] == [{"id": "web", "max_results": 3}] and "extra_body" not in sent
     assert out["sources"] == ["https://sbv.gov.vn/a", "https://vnexpress.net/b"]
     assert out["text"].startswith("Theo các nguồn tìm được") and "Mức độ chắc chắn" in out["text"]
+    assert out["cost_usd"] == 0.012  # the search's own model call, added to the turn's cost
 
 
 def test_the_web_is_capped_per_person_and_unavailable_without_a_model(online, monkeypatch):

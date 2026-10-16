@@ -93,4 +93,7 @@ async def search(ctx: Ctx, question: str) -> Dict[str, Any]:
     text = (msg.content or "").strip()
     if not text:
         raise ToolFailed("Tìm kiếm web không có kết quả")
-    return {"text": text, "query": q, "sources": cites}
+    from operonx_agents import Usage
+
+    cost = Usage.from_completion(getattr(resp, "usage", None)).cost_usd  # what OpenRouter charged (A8)
+    return {"text": text, "query": q, "sources": cites, "cost_usd": cost}
