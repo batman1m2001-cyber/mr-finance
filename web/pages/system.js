@@ -1,7 +1,7 @@
 /* Quản trị · Hệ thống (BRD-RULE-ROLE-04, NFR-12; F5): the jobs and how each last went, the news feeds, the agents,
    the audit chain's check, a load of the market history on request, and the people with their accounts. Read from
    the stored records (GET /api/system); the load is queued for the market_load job (POST /api/market/load). */
-import {ago, esc, get, num, post, toast} from "../core/core.js";
+import {ago, esc, get, n as how, num, pct, post, toast} from "../core/core.js";
 
 const ROLE = {cio: "CIO", rm: "RM", compliance: "Tuân thủ", admin: "Quản trị"};
 const JOB = {  // what each job does, in the product's language (the declaration in app/main.py is for developers)
@@ -18,7 +18,8 @@ const JOB = {  // what each job does, in the product's language (the declaration
   agent_worker: "Chạy lần lượt các yêu cầu “Chạy Agent CIO” đang xếp hàng (AI-13)",
   inbox_import: "Nhập các gói từ vùng AI qua cùng các kiểm tra, hoặc từ chối kèm lý do (ZONE-03)",
   zone_sync: "Gửi vùng AI danh mục đã duyệt và nghiên cứu đã phát hành (chế độ hộp chờ)",
-  audit_check: "Kiểm tra chuỗi nhật ký kiểm toán; gãy thì báo Tuân thủ và Quản trị",
+  audit_check: "Kiểm tra chuỗi nhật ký kiểm toán và chép dòng mới vào đoạn chỉ-ghi-một-lần; gãy thì báo Tuân thủ và Quản trị",
+  heartbeat: "Ghi nhịp của máy chủ; đo mức sẵn sàng trong giờ làm việc, dưới mục tiêu thì báo Quản trị (NFR-03)",
   agent_eval: "Bộ đánh giá cố định cho đề xuất lời nhắc và mô hình AI (MEAS-07)",
   accuracy_score: "Chấm độ chính xác các dự báo đã đến hạn (FEAT-18)",
   market_backfill: "Lịch sử mọi chuỗi từ 2020 (chạy bằng dòng lệnh)",
@@ -41,8 +42,16 @@ function last(l) {
     ${l.error ? `<div class="small ${l.ok ? "muted" : "bad-text"}">${esc(l.error)}</div>` : ""}`;
 }
 
-function tile(label, value, note, tone = "") {
-  return `<div class="panel c3"><div class="small muted">${label}</div><div class="h2 ${tone}">${value}</div><div class="small muted">${note}</div></div>`;
+function tile(label, value, note, tone = "", span = "c3") {
+  return `<div class="panel ${span}"><div class="small muted">${label}</div><div class="h2 ${tone}">${value}</div><div class="small muted">${note}</div></div>`;
+}
+
+// BRD-NFR-03: business minutes with a heartbeat ÷ business minutes, this month (control/uptime.py)
+function availability(a) {
+  if (!a || !a.measured || a.availability == null) return tile("Sẵn sàng (giờ làm việc)", "Chưa đo", "chưa có nhịp nào trong giờ làm việc", "", "c4");
+  const value = how(pct(a.availability, false, 2), "uptime.availability", {month: a.month, business_minutes: a.business_minutes, up_minutes: a.up_minutes});
+  const note = `tháng ${esc(a.month)} · mục tiêu ${how(pct(a.target, false, 1), "uptime.availability", {month: a.month})} · ${a.outages.length ? `${a.outages.length} lần gián đoạn, ${num(a.down_minutes)} phút` : "không gián đoạn"}`;
+  return tile("Sẵn sàng (giờ làm việc)", value, note, a.met ? "" : "bad-text", "c4");
 }
 
 export async function render(box, ctx) {
@@ -57,10 +66,11 @@ export async function render(box, ctx) {
         · chuỗi nhật ký ${d.chain.ok ? "toàn vẹn" : `<span class="bad-text">gãy ở dòng ${d.chain.broken_at}</span>`}.</p></div></div>
 
     <div class="cols">
-      ${tile("Chuỗi nhật ký", d.chain.ok && d.worm.ok ? "Toàn vẹn" : "Gãy", `${num(d.chain.count)} dòng${d.chain.ok ? "" : " · " + esc(d.chain.reason)}${!d.worm.on ? "" : d.worm.ok ? ` · ${num(d.worm.segments)} đoạn chỉ-ghi-một-lần tới dòng ${num(d.worm.last)}` : ` · <span class="bad-text">${esc(d.worm.reason)}</span>`}`, d.chain.ok && d.worm.ok ? "" : "bad-text")}
-      ${tile("Agent", MODE[d.agents.mode] || esc(d.agents.mode), `${esc(d.agents.reason || [d.agents.models?.cio, d.agents.models?.challenger].filter(Boolean).join(" · "))}${d.agent_queue ? ` · ${d.agent_queue} lần chạy đang xếp hàng` : ""}`)}
-      ${tile("Tin tức", d.news_at ? esc(ago(d.news_at)) : "Chưa lấy", `${d.feeds.length} nguồn · ${d.feeds.filter(f => f.error).length} lỗi lần gần nhất`)}
-      ${tile("Cấu hình chờ duyệt", d.config_waiting.length, d.config_waiting.map(c => esc(c.label)).join(", ") || "không có")}
+      ${tile("Chuỗi nhật ký", d.chain.ok && d.worm.ok ? "Toàn vẹn" : "Gãy", `${num(d.chain.count)} dòng${d.chain.ok ? "" : " · " + esc(d.chain.reason)}${!d.worm.on ? "" : d.worm.ok ? ` · ${num(d.worm.segments)} đoạn chỉ-ghi-một-lần tới dòng ${num(d.worm.last)}` : ` · <span class="bad-text">${esc(d.worm.reason)}</span>`}`, d.chain.ok && d.worm.ok ? "" : "bad-text", "c4")}
+      ${availability(d.availability)}
+      ${tile("Agent", MODE[d.agents.mode] || esc(d.agents.mode), `${esc(d.agents.reason || [d.agents.models?.cio, d.agents.models?.challenger].filter(Boolean).join(" · "))}${d.agent_queue ? ` · ${d.agent_queue} lần chạy đang xếp hàng` : ""}`, "", "c4")}
+      ${tile("Tin tức", d.news_at ? esc(ago(d.news_at)) : "Chưa lấy", `${d.feeds.length} nguồn · ${d.feeds.filter(f => f.error).length} lỗi lần gần nhất`, "", "c6")}
+      ${tile("Cấu hình chờ duyệt", d.config_waiting.length, d.config_waiting.map(c => esc(c.label)).join(", ") || "không có", "", "c6")}
     </div>
 
     <section class="panel mt" id="alerts"><div class="h3">Cảnh báo</div>

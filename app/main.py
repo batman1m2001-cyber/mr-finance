@@ -24,8 +24,10 @@ POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, new
      approved views, Compliance approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
 POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: Compliance adds a document from the Official
      Gazette, a second person verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
-Hourly ──► audit_check: the audit chain walked · POST /api/system/alerts/ack ──► alert_ack_flow; GET
-     /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the inbox (NFR-12)
+Every 20 s ──► heartbeat: the minute recorded, availability in business hours (NFR-03)
+Hourly ──► audit_check: the audit chain walked, new rows to write-once segments · POST /api/system/alerts/ack ──►
+     alert_ack_flow; GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
+     inbox, availability (NFR-12)
 POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
      the zone_sync job sends the zone the approved catalogues and released research (inbox mode, F-D7)
 POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
@@ -50,7 +52,7 @@ from app import web
 from app.http import SecurityHeaders
 from apply.graph import recompute_flow, run_decide_flow
 from control import barrier
-from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow
+from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow, heartbeat_flow
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
@@ -391,6 +393,7 @@ APP = Application(
             graph=market_load_flow,
             schedule=schedule(every="1m", port=PORT),
             timeout=7200,
+            keep_runs=200,
             description="Every minute: the market history load an Admin asked for in Hệ thống, if any.",
         ),
         Job(
@@ -398,6 +401,7 @@ APP = Application(
             graph=agent_worker_flow,
             schedule=schedule(every="5s", port=PORT),
             timeout=1800,
+            keep_runs=500,
             description="Every 5 seconds: the oldest queued CIO agent run (AI-13), one at a time.",
         ),
         Job(
@@ -419,13 +423,24 @@ APP = Application(
             graph=audit_check_flow,
             schedule=schedule(every="1h", port=PORT),
             timeout=600,
-            description="Hourly: the audit chain walked; an alert for Compliance and Admin when it is broken.",
+            description="Hourly: the audit chain walked and new rows copied to write-once segments; an alert for "
+            "Compliance and Admin when either is broken.",
+        ),
+        Job(
+            "heartbeat",
+            graph=heartbeat_flow,
+            schedule=schedule(every="20s", port=PORT),
+            timeout=30,
+            keep_runs=200,
+            description="Every 20 seconds: this minute recorded as up; availability in business hours against "
+            "99.5 %, an alert for Admin below it (NFR-03).",
         ),
         Job(
             "agent_eval",
             graph=agent_eval_flow,
             schedule=schedule(every="1m", port=PORT),
             timeout=3600,
+            keep_runs=200,
             description="Every minute: the fixed eval set on prompt and model proposals waiting for it (MEAS-07).",
         ),
         Job(

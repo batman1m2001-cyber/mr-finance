@@ -27,6 +27,7 @@ from control import crypto as control_crypto
 from control import db as control_db
 from control import log as control_log
 from control import secrets as control_secrets
+from control import uptime as control_uptime
 from control import worm as control_worm
 from events import store as events_store
 from inbox import sign as inbox_sign
@@ -653,6 +654,7 @@ async def system(request: Request) -> JSONResponse:
             ],
             "chain": chain,
             "worm": kept,
+            "availability": control_uptime.month(),
             "loads": loads,
             "inbox": inbox_store.recent(),
             "agent_queue": agent_queue.waiting(),

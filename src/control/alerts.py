@@ -19,6 +19,7 @@ KINDS: Dict[str, Dict[str, Any]] = {
     "audit_chain": {"label": "Chuỗi nhật ký kiểm toán gãy", "roles": ("compliance", "admin"), "severity": "high"},
     "inbox": {"label": "Gói từ vùng AI bị từ chối", "roles": ("cio", "admin"), "severity": "medium"},
     "zone_sync": {"label": "Không gửi được vùng AI", "roles": ("admin",), "severity": "medium"},
+    "availability": {"label": "Sẵn sàng trong giờ làm việc dưới 99,5 %", "roles": ("admin",), "severity": "high"},
 }
 ACTOR = "system:alerts"
 
@@ -31,6 +32,12 @@ def _open(con, kind: str, key: str) -> Optional[Dict[str, Any]]:
 def _save(con, a: Dict[str, Any]) -> None:
     data = {k: v for k, v in a.items() if k not in ("id", "kind", "key", "status", "created")}
     con.execute("update alerts set status = ?, data = ? where id = ?", (a["status"], db.dumps(data), a["id"]))
+
+
+def is_open(kind: str, key: str) -> bool:
+    """Whether the thing has an alert not yet resolved (open or acknowledged)."""
+    with db.tx() as con:
+        return _open(con, kind, key) is not None
 
 
 def raise_(kind: str, key: str, title: str, detail: str = "") -> Dict[str, Any]:

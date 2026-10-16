@@ -67,6 +67,12 @@ the next.
   the whole chain recomputed. The application stays on SQLite (G-D4);
   [bank_migration.md](brd/architecture/bank_migration.md) lists what the port changes.
 - **G5 — Availability (NFR-03).** Heartbeat, the business-hours measure, the alert.
+  **Done** (2026-10-16): `src/control/uptime.py`, the `heartbeat` job every 20 s (three beats a minute: the
+  scheduler's `every=` is not clock-aligned, so a 60 s beat drifts and would lose a minute that was up), business
+  minutes Mon–Fri 08:00–17:30 Vietnam time, holidays counted (the BRD names none). Hệ thống shows the month so far,
+  Đo lường each month with its outages, an Admin alert below 99.5 % raised once and resolved when back. Found on the
+  way: operonx kept every job run forever — the 5 s agent worker left ~17,000 run folders (~200 MB) a day on the
+  demo; operonx 1.30.0 adds `Job(keep_runs=N)`, set on the four short-clock jobs.
 - **G6 — Urgent and important news (KPI-01, KPI-02).** The flag, the reference feed job, the two measures.
 - **G7 — Control and behaviour measures (KPI-05, KPI-06, KPI-07).** The review rate, the RM contact log, client
   opens.
