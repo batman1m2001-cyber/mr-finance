@@ -492,8 +492,13 @@ async def review(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         by=auth.acting_id(USER[ctx.role]),
     )
     it = out["item"]
+    said = {
+        "approved": "duyệt",
+        "pending_specialist": "duyệt, chờ chuyên gia có chứng chỉ duyệt tiếp",  # BRD-RULE-WF-08 (G8)
+        "rejected": "từ chối",
+    }[it["status"]]
     return {
-        "text": f"Đã ghi: {'duyệt' if it['status'] == 'approved' else 'từ chối'} “{it['title']}”.",
+        "text": f"Đã ghi: {said} “{it['title']}”.",
         "data": {"id": it["id"]},
     }
 

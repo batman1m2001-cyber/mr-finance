@@ -84,6 +84,9 @@ export function mount(shell) {
         const where = role === "client" ? {impact: "#/client/tin/thi-truong", detail: "#/client/tong-quan/chi-tiet", flow: "#/client/tong-quan/toan-canh"}
           : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/toan-canh"};
         items = f.items.map(i => ({title: i.title, sub: i.why, tone: SEV[i.severity], route: where[i.link] || where.detail, focus: i.key, high: i.severity === "high"}));
+      } else if (role === "specialist") {  // the action recommendations waiting for this specialist (G8)
+        const q = (await get("/api/review?status=pending_specialist")).items;
+        items = q.map(x => ({title: x.title, sub: x.client_name, tone: "warn", route: "#/specialist/duyet", focus: `review:${x.id}`}));
       } else {
         // staff: the alerts of the kinds the role looks after first (NFR-12), then the role's own queue
         const al = (await get("/api/system/alerts")).alerts.filter(a => a.status === "open");
@@ -115,7 +118,7 @@ export function mount(shell) {
     compliance: {audit_chain: "#/compliance/nhat-ky"},
   };
   const TITLE = {client: "Điều đáng chú ý", rm: "Điều đáng chú ý · khách đang chọn", cio: "Cảnh báo và tin mới trong hộp tin",
-    compliance: "Cảnh báo và tin đang bị giữ", admin: "Cảnh báo hệ thống"};
+    compliance: "Cảnh báo và tin đang bị giữ", admin: "Cảnh báo hệ thống", specialist: "Khuyến nghị chờ bạn duyệt"};
   const drawBell = () => {
     bpop.innerHTML = `<div class="pop-head">${TITLE[shell.role()]}</div>${items.length ? items.map((i, n) =>
       `<a class="pop-item" href="${esc(i.route)}" data-b="${n}"><span class="dot ${i.tone}"></span><span class="pop-t"><b>${esc(i.title)}</b><small>${esc(i.sub)}</small></span>${i.alert ? `<button type="button" class="btn sm" data-ack="${esc(i.alert)}" title="Đánh dấu đã xem (ghi vào nhật ký)">Đã xem</button>` : ""}</a>`).join("")

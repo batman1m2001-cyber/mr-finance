@@ -14,7 +14,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 |---|---|---|---|---|---|---|---|---|---|
 | BRD numbered (BR, FR, NFR) | 61 | 61 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| BRD rules (RULE) | 97 | 92 | 0 | 0 | 0 | 0 | 0 | 3 | 2 |
+| BRD rules (RULE) | 97 | 94 | 0 | 0 | 0 | 0 | 0 | 1 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -116,7 +116,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-ROLE-02 | FEAT-12, 13 | implemented_verified | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`, `tests/test_auth.py::test_an_rm_sees_only_the_families_assigned_to_them`, `tests/test_access.py::test_admin_reassigns_a_family_and_access_follows`, `tests/test_auth.py::test_lists_over_every_family_show_only_the_families_the_person_may_see` | Post-checked only; own families only (the `rm_assignment` configuration, Admin; ADR-0020) |
 | BRD-RULE-ROLE-03 | FEAT-12 | implemented_verified | `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`, `tests/test_news.py::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it` | Research release and restricted-list release both Compliance only |
 | BRD-RULE-ROLE-04 | FEAT-12 | implemented_verified | `tests/test_system.py::test_the_system_read_lists_the_jobs_the_chain_and_the_people`, `tests/test_system.py::test_an_admin_asks_for_a_load_and_the_job_runs_it`, `tests/test_access.py::test_admin_reassigns_a_family_and_access_follows`, `tests/ui/test_routes.py::test_every_route_renders_without_errors` | Hệ thống (SCR-ADM-01): jobs, feeds, agents, audit chain, history loads, accounts; configuration including sources and the RM assignment (Cấu hình); no password form on the public demo |
-| BRD-RULE-ROLE-05 | — | out_of_scope_demo | — | Later phase in the BRD |
+| BRD-RULE-ROLE-05 | FEAT-12, FEAT-27 | implemented_verified | `tests/test_specialist.py::test_an_rm_approval_waits_for_the_familys_certified_specialist`, `tests/test_specialist.py::test_a_lapsed_certificate_cannot_approve`, `tests/test_specialist.py::test_certifications_are_checked_configuration`, `tests/test_specialist.py::test_a_specialist_signs_in_and_sees_only_the_families_assigned_to_them` | G8 (G-D7): specialists sign in and see the families assigned to them (the team's leads); certificates are configuration (Compliance, two people), checked again when the specialist decides |
 | BRD-RULE-ROLE-06 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels` | Demo client view |
 | BRD-RULE-WF-01 | FEAT-01 | implemented_verified | `tests/test_schedules.py::test_the_news_is_fetched_every_10_minutes_and_the_other_brd_cadences`; live median 600 s between runs | |
 | BRD-RULE-WF-02 | FEAT-02, 04 | implemented_verified | `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it` | |
@@ -125,7 +125,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-WF-05 | FEAT-06 | implemented_verified | `tests/test_views.py::test_return_withdraw_and_supersede` | SLA is organisational |
 | BRD-RULE-WF-06 | FEAT-08 | implemented_verified | `tests/test_apply.py::test_approval_applies_the_view_to_every_family` | 0.44 s for 5 families |
 | BRD-RULE-WF-07 | FEAT-13 | implemented_verified | `tests/test_apply.py::test_the_rm_today_list_holds_the_flagged_families_worst_first` | |
-| BRD-RULE-WF-08 | — | out_of_scope_demo | — | Specialist process is a later phase |
+| BRD-RULE-WF-08 | FEAT-27 | implemented_verified | `tests/test_specialist.py::test_an_rm_approval_waits_for_the_familys_certified_specialist`, `tests/test_specialist.py::test_a_family_with_no_certified_specialist_is_approved_by_the_rm_alone`, `tests/test_specialist.py::test_the_rms_own_recommendation_waits_for_the_specialist_and_alone_has_no_second_person` | G8: an RM queue item the RM approves waits for the family's certified specialist (`pending_specialist`); a family with none is approved by the RM alone (“if any”); the RM's own recommendation goes through the same gate |
 | BRD-RULE-WF-09 | FEAT-04, 08 | implemented_verified | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them`, `tests/test_accuracy.py::test_the_reports_read_approval_time_edits_and_news_to_rm_time` | Barrier verified; end-to-end time measured per event (KPI-01) |
 | BRD-RULE-ZONE-01 | FEAT-19 | implemented_verified | `tests/test_zone.py::test_the_round_trip_tcb_to_the_zone_and_back_through_the_inbox` | A second process with its own state file and a catalogue-only data folder; `MF_ZONE=on` makes a people read raise (ADR-0022) |
 | BRD-RULE-ZONE-02 | FEAT-19 | implemented_verified | `tests/test_inbox.py::test_a_signed_package_is_imported_as_a_view_waiting_for_the_cio`, `tests/test_zone.py::test_the_round_trip_tcb_to_the_zone_and_back_through_the_inbox` | `POST /api/inbox` answers 202 with an id only |

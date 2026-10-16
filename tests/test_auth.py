@@ -33,12 +33,12 @@ def as_(c, person_id):
 # -- accounts and sessions ---------------------------------------------------------------------
 
 
-def test_every_client_and_every_acting_staff_member_has_an_account_and_specialists_do_not():
+def test_every_client_and_every_acting_staff_member_has_an_account_and_dependents_do_not():
     have = {a["id"] for a in auth.accounts()}
     people = store.everyone()
     assert have == {p["id"] for p in people if p["role"] in auth.ACCOUNT_ROLES}
-    assert {"C01", "C01S", "rm01", "rm03", "cio2", "compliance", "admin"} <= have
-    assert not have & {p["id"] for p in people if p["role"] in ("specialist", "dependent")}
+    assert {"C01", "C01S", "rm01", "rm03", "cio2", "compliance", "admin", "sp_global"} <= have  # specialists: G8
+    assert not have & {p["id"] for p in people if p["role"] == "dependent"}
 
 
 def test_a_password_is_kept_as_a_salted_hash():

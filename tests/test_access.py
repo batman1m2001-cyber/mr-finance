@@ -5,7 +5,8 @@ called signed out (401), by each person it refuses (403, never a 500), and by ea
 route the app serves that is not in the matrix fails the test, so a new one needs a decision here.
 
 The people: two customers (C01's family, and C02, another family), the RM assigned to C01 (rm01) and one who is
-not (rm03), the CIO, Compliance and Admin.
+not (rm03), the CIO, Compliance and Admin, and two specialists: sp_global, assigned to C01 and certified, and
+sp_banking, assigned to other families (G8).
 """
 
 import pytest
@@ -17,13 +18,13 @@ from control import config
 from people import auth
 from wealth import store
 
-PEOPLE = ("C01", "C02", "rm01", "rm03", "cio", "compliance", "admin")
+PEOPLE = ("C01", "C02", "rm01", "rm03", "cio", "compliance", "admin", "sp_global", "sp_banking")
 ALL = set(PEOPLE)
-FAMILY = {"C01", "rm01", "cio", "compliance", "admin"}  # who may see C01's family (ROLE-02)
+FAMILY = {"C01", "rm01", "cio", "compliance", "admin", "sp_global"}  # who may see C01's family (ROLE-02, ROLE-05)
 STAFF = {"rm01", "rm03", "cio", "compliance", "admin"}
 DESK = {"cio", "compliance", "admin"}  # the news-impact desk and those who check it
-HOME = {"C02": "C02", "rm03": "C03"}  # a family each person may see (C01 otherwise)
-ROLE = {"C01": "client", "C02": "client", "rm01": "rm", "rm03": "rm"}
+HOME = {"C02": "C02", "rm03": "C03", "sp_banking": "C02"}  # a family each person may see (C01 otherwise)
+ROLE = {"C01": "client", "C02": "client", "rm01": "rm", "rm03": "rm", "sp_global": "rm", "sp_banking": "rm"}
 
 # -- reads (app/web.py) -----------------------------------------------------------------------------
 READS = {
@@ -121,6 +122,8 @@ def actions(vid, item):
         ("/api/policy/summarise", {"document_id": "PD-0000", "by": "BY"}, {"compliance"}),
         ("/api/rm/contacts", {"family_id": "C01", "channel": "call", "by": "BY"}, {"rm01"}),
         ("/api/feed/open", {"client_id": "C01", "key": "feed:x"}, {"C01"}),
+        ("/api/review/recommend", {"client_id": "C01", "title": "x", "actions": ["y"], "by": "BY"}, {"rm01"}),
+        ("/api/review/specialist", {"item_id": item, "decision": "approved", "by": "BY"}, {"sp_global"}),
         ("/api/goals/outflow", {"family_id": "C01", "goal_id": "G1", "purpose": "học", "by": "BY"}, {"rm01"}),
         ("/api/model/estimate", {"by": "BY"}, {"cio"}),
         ("/api/market/load", {"by": "BY", "since": "2026-01-01"}, {"admin"}),

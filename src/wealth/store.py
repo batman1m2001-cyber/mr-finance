@@ -164,9 +164,10 @@ def propose(client_id: str, kind: str, title: str, data: Dict[str, Any]) -> str:
 
 
 def decide(item_id: str, status: str, note: str = "", by: Optional[str] = None) -> Optional[Dict[str, Any]]:
-    """The decision, once. With ``by`` (the RM deciding), the item keeps who decided and the decision goes into the
-    audit chain (``review.decide``, BRD-KPI-05); without it, as the queue did before (a test of the old records)."""
-    if status not in ("approved", "rejected"):
+    """The RM's decision, once. With ``by`` (the RM deciding), the item keeps who decided and the decision goes into
+    the audit chain (``review.decide``, BRD-KPI-05); without it, as the queue did before (a test of the old records).
+    The review module decides whether an approval goes on to a specialist (``pending_specialist``)."""
+    if status not in ("approved", "rejected", "pending_specialist"):
         raise ValueError(f"a decision is approved or rejected, not {status!r}")
     if by is None:
         with _db() as con:
@@ -177,26 +178,41 @@ def decide(item_id: str, status: str, note: str = "", by: Optional[str] = None) 
             if not cur.rowcount:
                 return None
         return review(item_id)
+    return move(item_id, "pending", status, by, "review.decide", {"decided_by": by}, note=note)
+
+
+def move(
+    item_id: str,
+    was: str,
+    status: str,
+    by: str,
+    action: str,
+    data: Dict[str, Any],
+    note: Optional[str] = None,
+    audit_data: Optional[Dict[str, Any]] = None,
+) -> Optional[Dict[str, Any]]:
+    """An item from ``was`` to ``status``, ``data`` merged into its record, ``note`` (when given) as its note, and
+    the step in the audit chain as ``action``; None when the item is not ``was`` (any more)."""
     from control import audit, db
 
     item = review(item_id)
-    if item is None or item["status"] != "pending":
+    if item is None or item["status"] != was:
         return None
-    data = json.dumps({**item["data"], "decided_by": by}, ensure_ascii=False)
+    body = json.dumps({**item["data"], **data}, ensure_ascii=False)
+    sets, args = "status = ?, data = ?", [status, _seal("reviews", item_id, "data", body)]
+    if note is not None:
+        sets += ", note = ?"
+        args.append(_seal("reviews", item_id, "note", note))
+    if status in ("approved", "rejected"):
+        sets += ", decided = ?"
+        args.append(time.time())
     with db.tx() as con:
-        cur = con.execute(
-            "update reviews set status = ?, note = ?, decided = ?, data = ? where id = ? and status = 'pending'",
-            (
-                status,
-                _seal("reviews", item_id, "note", note),
-                time.time(),
-                _seal("reviews", item_id, "data", data),
-                item_id,
-            ),
-        )
+        cur = con.execute(f"update reviews set {sets} where id = ? and status = ?", (*args, item_id, was))
         if not cur.rowcount:
             return None
-        audit.append(con, by, "review.decide", item_id, {"client_id": item["client_id"], "decision": status})
+        audit.append(
+            con, by, action, item_id, {"client_id": item["client_id"], "from": was, "to": status, **(audit_data or {})}
+        )
     return review(item_id)
 
 

@@ -10,6 +10,7 @@ const GROUPS = [
   ["cio", "Giám đốc đầu tư (CIO)", "activity"],
   ["compliance", "Tuân thủ", "shield"],
   ["admin", "Quản trị", "settings"],
+  ["specialist", "Chuyên gia (duyệt khuyến nghị)", "check"],
 ];
 
 export async function render(box, ctx) {

@@ -49,7 +49,14 @@ def _wait_for_function(self, expression, arg=None, timeout=None, polling=None):
 
 
 sync_api.Page.wait_for_function = _wait_for_function
-ACCOUNTS = {"client": "C01", "rm": "rm01", "cio": "cio", "compliance": "compliance", "admin": "admin"}
+ACCOUNTS = {
+    "client": "C01",
+    "rm": "rm01",
+    "cio": "cio",
+    "compliance": "compliance",
+    "admin": "admin",
+    "specialist": "sp_global",
+}
 
 
 @pytest.fixture(autouse=True)

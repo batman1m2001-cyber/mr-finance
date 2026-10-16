@@ -12,11 +12,20 @@
 `propose_flow` puts a scenario option in the queue (`pending`); `review_flow` records an RM's decision once (role `rm`, sent as `by`)
 (`approved` / `rejected`, with a note); a second decision is refused. The client sees “chờ RM duyệt” until then.
 
+**The certified specialist (G8, BRD-RULE-ROLE-05, WF-08).** When the family has a specialist on its team holding a
+certificate in force (configuration `certifications`, Compliance), the RM's approval moves the item to
+`pending_specialist`; that specialist approves or rejects it (with a reason) on Chuyên gia · Duyệt khuyến nghị
+(`POST /api/review/specialist`, `src/review/specialist.py`). A family with none: the RM's approval stands. The RM can
+also write a recommendation for the family (`POST /api/review/recommend`, kind `rm_note`), which goes through the
+same gate and reaches the client only once approved.
+
 ## Implementation
-`src/review/{graph,ops}.py`; `src/wealth/store.py` (`reviews`); reads `app/web.py::reviews`.
+`src/review/{graph,ops,specialist}.py`, `web/pages/specialist.js`; `src/wealth/store.py` (`reviews`); reads `app/web.py::reviews`.
 
 ## Acceptance and tests
 `tests/test_scenarios.py::test_an_option_waits_for_the_rm_and_is_decided_once`, `::test_review_flow_refuses_an_unknown_item`.
+`tests/test_specialist.py` (7): the specialist step, a family without one, a lapsed certificate, the configuration, the
+RM's own recommendation, sign-in and what a specialist sees.
 
 ## Limitations
 Since G7 (2026-10-16) the item keeps who decided (`decided_by`) and the decision is in the audit chain

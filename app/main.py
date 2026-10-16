@@ -14,6 +14,8 @@ POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
+POST /api/review/specialist ──► specialist_flow (certified specialist, G8)
+POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
 every 2 h ──► news_reference: the independent reference's stories, judged collected a day later (KPI-02)
@@ -85,7 +87,7 @@ from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
-from review.graph import propose_flow, review_flow
+from review.graph import propose_flow, recommend_flow, review_flow, specialist_flow
 from risk.graph import risk_flow
 from scenarios.graph import goals_flow, scenario_flow
 from search.graph import search_flow
@@ -210,7 +212,22 @@ APP = Application(
             "decide",
             http("POST", "/api/review/decide", port=PORT),
             graph=review_flow,
-            description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
+            description="POST {item_id, decision: approved|rejected, note?}: the RM's decision; an approval of a "
+            "family with a certified specialist waits for them (WF-08).",
+        ),
+        Service(
+            "specialist_decide",
+            http("POST", "/api/review/specialist", port=PORT),
+            graph=specialist_flow,
+            description="POST {item_id, decision, note?, by}: the family's certified specialist approves or rejects "
+            "an action recommendation (ROLE-05, WF-08).",
+        ),
+        Service(
+            "recommend",
+            http("POST", "/api/review/recommend", port=PORT),
+            graph=recommend_flow,
+            description="POST {client_id, title, actions, note?, by}: the RM writes an action recommendation for a "
+            "family; it waits for the family's certified specialist, if any.",
         ),
         Service(
             "news_fetch",

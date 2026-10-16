@@ -134,9 +134,22 @@ def _top_up(con: sqlite3.Connection) -> None:
     if not have:
         return  # an empty database is seeded whole
     missing = [s for s in _seed_staff()["staff"] if s["id"] not in have]
-    if not missing:
-        return
     from people import auth
+
+    # staff whose role gained an account after the database was made (specialists, G8)
+    accounts = con.execute("select 1 from accounts limit 1").fetchone() is not None
+    marks = ",".join("?" * len(auth.ACCOUNT_ROLES))
+    no_account = (
+        con.execute(
+            f"select id, email from people where kind = 'staff' and role in ({marks}) "
+            "and id not in (select person_id from accounts)",
+            auth.ACCOUNT_ROLES,
+        ).fetchall()
+        if accounts
+        else []
+    )
+    if not missing and not no_account:
+        return
 
     con.execute("begin immediate")
     seq = con.execute("select coalesce(max(seq), 0) from people").fetchone()[0]
@@ -153,6 +166,12 @@ def _top_up(con: sqlite3.Connection) -> None:
                 "insert or ignore into accounts values (?, ?, ?, ?, null)",
                 (s["id"], (s.get("email") or s["id"]).lower(), auth.hash_password(demo) if demo else None, time.time()),
             )
+    demo_pw = auth.hash_password(demo) if demo and no_account else None
+    for r in no_account:
+        con.execute(
+            "insert or ignore into accounts values (?, ?, ?, ?, null)",
+            (r["id"], (r["email"] or r["id"]).lower(), demo_pw, time.time()),
+        )
     con.execute("commit")
 
 
@@ -275,6 +294,28 @@ def assigned_rm(client_id: str) -> Optional[str]:
     if row is None:
         return None
     return _assignment().get(row["member_of"] or str(client_id))
+
+
+def specialists_of(client_id: str) -> List[str]:
+    """The specialists assigned to a family (a household member: their family's): the team's leads for it."""
+    with _db() as con:
+        row = con.execute("select member_of from people where id = ? and kind = 'client'", (str(client_id),)).fetchone()
+        if row is None:
+            return []
+        head = row["member_of"] or str(client_id)
+        rows = con.execute(
+            "select person_id from teams where client_id = ? and role = 'specialist' and lead = 1 order by pos", (head,)
+        ).fetchall()
+    return [r[0] for r in rows]
+
+
+def families_of_specialist(person_id: str) -> List[str]:
+    """The main clients a specialist is assigned to."""
+    with _db() as con:
+        rows = con.execute(
+            "select client_id from teams where person_id = ? and role = 'specialist' and lead = 1", (str(person_id),)
+        ).fetchall()
+    return sorted(r[0] for r in rows)
 
 
 def families_of(rm_id: str) -> List[str]:

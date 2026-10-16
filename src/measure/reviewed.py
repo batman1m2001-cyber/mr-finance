@@ -8,8 +8,10 @@ What the product delivers as a recommendation (our reading, labelled “Đề xu
   in the audit chain.
 - **a newsletter approved** — Compliance's approval of the CIO's letter. Reviewer: the approver, never the
   author. Log: the approval in the audit chain.
-- **an RM queue item approved** — an option the client proposed, approved by the RM (FEAT-27). Reviewer: the RM
-  who decided. Log: the decision in the audit chain (recorded from G7; earlier decisions name no one).
+- **an RM queue item approved** — an option the client proposed, or a recommendation the RM wrote, approved by the
+  family's certified specialist when it has one, else by the RM (FEAT-27, G8). Reviewer: the specialist, else the
+  RM who decided. Log: the decisions in the audit chain (recorded from G7; earlier decisions name no one). An RM's
+  own recommendation approved by that RM alone has no second person and is counted as a miss.
 
 A recommendation counts when its reviewer is a person on the staff list (not an agent, not the system), other
 than its author, and its log entries are in the chain. Each one that does not is listed with what is missing.
@@ -31,7 +33,7 @@ def _logged(con) -> Set[Tuple[str, str]]:
     out = set()
     for r in con.execute(
         "select action, object, data from audit_log where action in "
-        "('decision.approve', 'run.status', 'newsletter.approve', 'review.decide')"
+        "('decision.approve', 'run.status', 'newsletter.approve', 'review.decide', 'review.specialist')"
     ):
         action = r["action"]
         if action == "run.status":
@@ -76,16 +78,12 @@ def rows() -> List[Dict[str, Any]]:
                 ("newsletter", n["id"], at, n.get("approved_by"), n.get("author"), [("newsletter.approve", n["id"])])
             )
     for item in wealth.reviews(status="approved"):
-        out.append(
-            (
-                "rm_item",
-                item["id"],
-                item["decided"],
-                item["data"].get("decided_by"),
-                None,
-                [("review.decide", item["id"])],
-            )
-        )
+        d = item["data"]
+        need = [("review.decide", item["id"])] + ([("review.specialist", item["id"])] if d.get("specialist_by") else [])
+        # the reviewer: the certified specialist when one approved (G8), else the RM; an RM's own recommendation
+        # approved by that RM alone has no second person
+        reviewer = d.get("specialist_by") or d.get("decided_by")
+        out.append(("rm_item", item["id"], item["decided"], reviewer, d.get("author"), need))
     result = []
     for kind, rid, at, reviewer, author, need in out:
         missing = _check(reviewer, author, need, logged)

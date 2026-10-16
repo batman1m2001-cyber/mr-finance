@@ -159,7 +159,8 @@ a { color: var(--accent); }
   .search { order: 10; flex-basis: 100%; max-width: none; margin-right: 0; }
   .shell-bar .pick { flex: 1 1 140px; min-width: 0; } .shell-bar .pick select { width: 100%; max-width: none; }
   .shell-nav { padding: 0 12px; gap: 4px; }
-  .rolebox { margin-left: 0; order: -1; width: 100%; } .rolebox > span { display: none; }
+  .rolebox { margin-left: 0; order: -1; width: 100%; min-width: 0; } .rolebox > span { display: none; }
+  .roles { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
   .pop.right { position: fixed; top: 64px; left: 12px; right: 12px; width: auto; }
 }
 .nav { display: flex; gap: 2px; min-width: 0; flex: 1 1 auto; overflow-x: auto; scrollbar-width: none; }
