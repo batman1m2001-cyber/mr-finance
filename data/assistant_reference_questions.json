@@ -1,0 +1,12 @@
+[
+  {"q": "tài sản ròng được tính thế nào", "role": "client", "want": "Tài sản ròng"},
+  {"q": "so thang chi tieu du phong tinh ra sao", "role": "client", "want": "Số tháng chi tiêu dự phòng"},
+  {"q": "tỷ lệ để dành của tôi là gì, tính thế nào", "role": "client", "want": "Tỷ lệ để dành"},
+  {"q": "tiến độ mục tiêu được đo như thế nào", "role": "client", "want": "Tiến độ mục tiêu"},
+  {"q": "giá mua bình quân nghĩa là gì", "role": "client", "want": "Giá mua bình quân"},
+  {"q": "lãi lỗ chưa chốt tính sao", "role": "rm", "want": "Lãi/lỗ chưa chốt"},
+  {"q": "cú sốc lõi là gì", "role": "rm", "want": "Cú sốc lõi"},
+  {"q": "hau kiem la gi", "role": "cio", "want": "Hậu kiểm"},
+  {"q": "chế độ căng thẳng nghĩa là gì", "role": "cio", "want": "Chế độ căng thẳng"},
+  {"q": "tipping-off là gì", "role": "compliance", "want": "Tipping-off"}
+]

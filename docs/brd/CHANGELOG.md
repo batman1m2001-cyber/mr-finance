@@ -2,6 +2,22 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Knowledge and the web (ASSISTANT_PLAN A5).
+  - `huong_dan`: a Vietnamese user guide per role and page (`docs/huong-dan/`), the “Cách tính” formulas and the
+    glossary in an operonx-kb collection; the answer links the page to open. 24/24 product questions find their
+    page in the first three, 10/10 formula and term questions.
+  - “Tài liệu của bạn” on the Bộ nhớ page and `tai_lieu`: a person's documents (Word, PDF, Excel, PowerPoint, text;
+    ≤ 5 MB), read by them and, for a client, their RM; deleted for good; audited without content.
+  - `tim_tren_web`: OpenRouter's web search on the scrubbed question, URLs cited, certainty stated, 20 per person and
+    500 a day; 9.1 s and US$0.012 a search on the real model.
+  - Lexical only: embeddings measured (bge-m3 hybrid one more first place out of 24, a second slower), not used;
+    nothing goes to an embedding service. ADR-0029 amended.
+  - Fixed: a graph input named `name` broke the served Bộ nhớ service (the serve layer passes `name`), now
+    `file_name`; `data/kb/` gitignored.
+  - Upstream: operonx-kb 0.2.6 (lexical-only collections), operonx 1.30.1 (`register(persist=False)`).
+  - Documents: assistant.md §6/§9, ADR-0029, ADR-0030, FEAT-38, matrix OWN-AS-02/07/16/17, assistant_eval.md,
+    ASSISTANT_PLAN.
+
 - 2026-10-17 — Memory and the archive (ASSISTANT_PLAN A4).
   - Long-term items (Sở thích, Mục tiêu, Thông tin 180 days, Giới hạn), kept only when the person asks and confirms,
     never an amount, an account number or someone outside the family; the reading model's instructions carry them.

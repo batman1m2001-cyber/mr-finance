@@ -38,3 +38,8 @@ sinks = []
 sinks = []
 [tracing.services.search]
 sinks = []
+
+# The Bộ nhớ page (A4–A5): its writes are audited without their text; a trace would copy what a person keeps — a
+# memory item, or a document of up to 5 MB — into .operonx/runs in clear.
+[tracing.services.assistant_memory]
+sinks = []

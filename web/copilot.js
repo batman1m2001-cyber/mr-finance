@@ -95,7 +95,10 @@ const clock = (t) => { const x = new Date(t * 1000); return `${String(x.getHours
 const when = (t) => { const x = new Date(t * 1000); const d = new Date(); return x.toDateString() === d.toDateString() ? clock(t) : `${String(x.getDate()).padStart(2, "0")}/${String(x.getMonth() + 1).padStart(2, "0")} ${clock(t)}`; };
 function meta(m) {
   const bits = [m.as_of && `Số liệu ${day(m.as_of)}`, m.at && `trả lời lúc ${clock(m.at)}`].filter(Boolean).join(" · ");
-  const src = (m.sources || []).length ? `<div>Nguồn: ${m.sources.map(esc).join(" · ")}</div>` : "";
+  // a web source (A5) is a link showing its host; anything else is text
+  const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
+  const source = (s) => /^https?:\/\//.test(s) ? `<a href="${esc(s)}" target="_blank" rel="noopener noreferrer" title="${esc(s)}">${esc(host(s))}</a>` : esc(s);
+  const src = (m.sources || []).length ? `<div>Nguồn: ${m.sources.map(source).join(" · ")}</div>` : "";
   return bits || src ? `<div class="cp-meta">${bits ? `<div>${esc(bits)}</div>` : ""}${src}</div>` : "";
 }
 

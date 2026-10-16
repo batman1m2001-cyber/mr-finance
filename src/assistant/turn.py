@@ -228,7 +228,9 @@ def steps_of(res, ctx: Ctx, fresh: bool) -> List[Dict[str, Any]]:
                 step["text"] = "Không thực hiện được: " + content.split(":", 1)[-1].strip()[:300]
         page = tool and registry.tools.PAGES.get(tool.page or "")
         link = page and page[1].get(ctx.role)
-        if link:
+        if got is not None and got.get("evidence"):  # the page the result itself names (the guide's section)
+            step["evidence"] = got["evidence"]
+        elif link:
             step["evidence"] = {"label": page[0], "route": link}
         out.append(step)
     return out

@@ -38,3 +38,24 @@ The model is `llm:copilot` (`LLM_MODEL_COPILOT`).
 
 Cost per turn is not yet reported: `llm:copilot` declares no token prices, so operonx-agents' `Usage.cost_usd` is
 empty and the cost cap is not set (ADR-0034). A8 measures it.
+
+## A5 (2026-10-17): the guide, and the web
+
+**The guide** (free, in the test suite): `data/assistant_guide_questions.json`, 24 product questions over every
+role, paraphrased and some without accents, each with the page that answers it; and
+`data/assistant_reference_questions.json`, 10 questions on a formula or a term.
+
+| Search | First three | First | MRR | Median search | Paid calls |
+|---|---|---|---|---|---|
+| Lexical (FTS5, Vietnamese bigrams, accents folded) — **chosen** | 24 / 24 | 20 / 24 | 0.91 | 35 ms | 0 |
+| Hybrid, + `baai/bge-m3` embeddings via OpenRouter | 24 / 24 | 21 / 24 | 0.93 | 1,040 ms | 31 embedding requests |
+| Lexical, formulas and glossary in the same ranking | 22 / 24 | 17 / 24 | — | — | 0 |
+| Lexical, pages and references searched apart — **built** | 24 / 24 | 20 / 24 | — | — | 0 |
+
+The formula or term asked about came first among the references on 10 / 10. Asserted in
+`tests/test_assistant_knowledge.py` (first three 24/24, first ≥ 20; references 10/10).
+
+**The web** (one question, the State Bank's policy rate, after the two fixes in ADR-0030): 9.1 s, US$0.012, 14,911
+prompt and 1,225 completion tokens, one search request, two cited sources (one dated October 2026) whose different
+figures the answer named; certainty “trung bình”. Building it took five real calls, about US$0.06. The outside-topic
+cases of the full suite are A8.

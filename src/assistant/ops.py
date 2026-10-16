@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 import time
 from typing import Any, Dict, List, Optional
 
@@ -9,7 +11,7 @@ from operonx import op
 from operonx.core.loggings import LOGGER
 
 from assistant import conversations as conv
-from assistant import memory, registry
+from assistant import knowledge, memory, registry
 from assistant import turn as turns
 from assistant.base import Ctx
 from control import audit, db, roles
@@ -246,8 +248,13 @@ async def memory_page(
     query: str = None,
     role: str = None,
     client_id: str = None,
+    file_name: str = None,
+    data: str = None,
+    key: str = None,
 ) -> dict:
-    """The person's long-term items and archive in this role. Changes are audited with what changed, not the text."""
+    """The person's long-term items, archive and documents in this role. Changes are audited with what changed, not
+    the text. A document arrives base64-encoded (``file_name``, ``data``; not ``name``: the serve layer passes
+    ``name`` to every graph)."""
     r = {**who(role, client_id), "message": "", "route": "", "followed": None}
     ctx = context(r)
     action = str(action or "list")
@@ -276,7 +283,22 @@ async def memory_page(
         conv.scrub()
         audited("clear", "-", {"deleted": n})
         return {"memory": {"deleted": n}}
-    raise ValueError("action là list, search, update, delete hoặc clear")
+    if action == "materials":
+        return {"memory": {"materials": knowledge.materials(ctx)}}
+    if action == "material_add":
+        try:
+            raw = base64.b64decode(str(data or ""), validate=True)
+        except (binascii.Error, ValueError):
+            raise ValueError("Tệp không đọc được") from None
+        got = await knowledge.add_material(ctx, str(file_name or ""), raw)
+        audited("material_add", got["key"], {"bytes": len(raw), "action": got["action"]})
+        return {"memory": {"material": got}}
+    if action == "material_delete":
+        ok = await knowledge.delete_material(ctx, str(key or ""))
+        if ok:
+            audited("material_delete", str(key), {})
+        return {"memory": {"deleted": int(ok)}}
+    raise ValueError("action là list, search, update, delete, clear, materials, material_add hoặc material_delete")
 
 
 @op
