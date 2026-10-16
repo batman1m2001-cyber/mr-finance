@@ -20,7 +20,9 @@ before anyone else sees them; rank families and flag those the RM must look at f
    stored in `run_snapshots`.
 3. **Compute** (`compute`, pure): the engine per family → net worth, three-horizon bands, contributions by
    class, factor and holding, `loan_interest_3m`, `modelled_share`, `pre_review` (3-month P10 ≤ −5 % of net
-   worth).
+   worth), and per goal (BR-08) the VND impact: the goals' pool (cash, deposits, funds, bonds, shares, gold,
+   savings) runs through the same engine and each goal takes its share of the pool's bands at every horizon,
+   the rest kept as `unallocated`.
 4. **Post-check** (`postcheck`, rules, summary by template) → `POST_CHECKING`:
    P1 a holding > 40 % of net worth (medium) · P2 price date older than 3 days (low; > 14 medium; > 45 critical) ·
    P3 > 50 % of assets model-valued (medium) · P4 |3-month expected| > 25 % of net worth (critical) ·
@@ -47,12 +49,24 @@ Every status change is an audit row in the same transaction as the change.
 `::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`,
 `::test_withdrawing_the_view_withdraws_its_runs_and_rms_see_the_label`,
 `::test_the_rm_today_list_holds_the_flagged_families_worst_first`, `::test_the_endpoints`.
-Measured: approval → run for every family in 0.44 s (5 families, news plan §9).
+`::test_br08_each_goal_gets_its_vnd_share_of_the_pools_impact_at_every_horizon`,
+`::test_br08_a_run_sums_the_vnd_impact_by_goal_from_the_same_engine_and_old_runs_still_verify`,
+`::test_nfr01_one_familys_page_reads_its_row_and_the_snapshot_head_only`,
+`::test_nfr01_one_read_reads_each_client_from_the_database_once_and_still_hands_out_copies`.
+
+**NFR-01, measured** (`scripts/scale_test.py --families 6500`, 2026-10-16, 24 CPUs, SQLite): the demo households
+cloned to 6,500 families with their amounts scaled ×0.5–×2; one approval applied to all of them in **167.3 s**
+(BRD ≤ 300 s); with them all stored, a family's impact read 0.26 s, cách tính 0.28 s, trace 0.29 s, graph 0.29 s
+(BRD ≤ 2 s). What it took: a family read decodes its own result row and the snapshot without its families
+(`family_result`, `snapshot_head`; the snapshot is 27 MB at 6,500), the consolidation reads each client from the
+database once per run (`people.store.one_read`), and the stores create their tables once per file
+(`wealth.paths.ensure_schema`).
 
 ## Limitations
 - **FR-404 on our definition ([ADR-0017](../decisions/ADR-0017-goal-impact-rule.md), Q-11 resolved):** each run stores `goal_impact` per family (`src/apply/goals.py`): the
   dated goals draw in date order on the financial assets; before = snapshot values, after = + the 3-month
   expected change; level by the goals-planning rule (≤ 0.6 Đạt, ≤ 1 Theo dõi, else Thiếu). `verify` checks it;
-  runs computed before 2026-10-15 have none. Shown on SCR-CL-05 and SCR-RM-02 for the selected event.
+  runs computed before 2026-10-15 have none. Shown on SCR-CL-05 and SCR-RM-02 for the selected event, with
+  the VND column (runs from 2026-10-16; older runs show the levels only).
 - `loan_interest_3m` is the loans' 3-month contribution, not the extra annual interest cost (Q-10).
-- Scale: 7 people, not 6,500 families (NFR-01 untested).
+- Scale is measured on one machine with SQLite; the bank's database and hardware are a deployment matter.

@@ -40,9 +40,10 @@ reads `app/web.py::goal_regulation` (`?role=client` keeps declared remind/contac
 `tests/test_research.py::test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal` (milestone 2026-12-07,
 `confirm_goal` → after declaring, `remind` with a client message), `::test_inference_from_a_goals_name` (7 cases),
 `::test_an_issued_rule_close_to_the_milestone_means_contact_now_and_late_rules_are_a_note`,
-`::test_country_limits_and_past_goals`, `::test_the_reads_and_the_rm_list`.
+`::test_country_limits_and_past_goals`, `::test_the_reads_and_the_rm_list`;
+`tests/ui/test_brd_pages.py::test_fr603_the_goal_branch_is_on_the_rm_home_the_goals_tab_the_impact_page_and_research`
+(in a browser: RM Hôm nay, the client's Kế hoạch and Tác động thị trường, CIO and Compliance research).
 
 ## Limitations
 - Goals are the fixtures' dated outflows; goals planning (FEAT-26) has its own goal list, not yet unified.
-- Not shown on the client's “Kế hoạch” goal cards (Q-20).
 - No “closed” goal flag is set by any screen (supported in the data: `closed`).

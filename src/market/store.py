@@ -17,7 +17,7 @@ import time
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
-from wealth.paths import state_path
+from wealth.paths import ensure_schema, state_path
 
 SCHEMA = """
 create table if not exists market_series (
@@ -40,7 +40,7 @@ def _db() -> Iterator[sqlite3.Connection]:
     con = sqlite3.connect(path, timeout=30)
     con.row_factory = sqlite3.Row
     try:
-        con.executescript(SCHEMA)
+        ensure_schema(con, path, "market", SCHEMA)
         yield con
         con.commit()
     finally:

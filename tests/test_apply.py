@@ -9,6 +9,7 @@ from email.utils import format_datetime
 
 import pytest
 from operonx import Operon
+from operonx.app import Application
 from starlette.testclient import TestClient
 
 from apply import reads, trace
@@ -312,3 +313,118 @@ def test_the_endpoints():
     assert client.get("/api/audit/verify").json()["ok"]
     assert client.get("/api/audit?limit=5").json()["rows"][0]["seq"] > 1
     assert "cases" in client.get("/api/rm/today").json()
+
+
+def test_br08_each_goal_gets_its_vnd_share_of_the_pools_impact_at_every_horizon():
+    from apply.goals import goal_impacts
+
+    fam = {
+        "holdings": [{"key": "s", "kind": "asset", "class": "stock", "value": 1_000.0}],
+        "goals": [
+            {"goal_id": "G1", "label": "a", "date": "2027-01-15", "amount": 600.0},
+            {"goal_id": "G2", "label": "b", "date": "2027-01-20", "amount": 300.0},
+        ],
+        "surplus_monthly": 30.0,
+    }
+    bands = {"3m": {"expected": -100.0, "p5": -300.0, "p10": -250.0, "p50": -90.0, "p90": 40.0}}
+    out = goal_impacts(fam, {"s": -100.0}, "2026-10-09", bands)
+    g1, g2 = out["goals"]
+    assert (g1["share"], g2["share"], out["unallocated"]["share"]) == (0.6, 0.3, pytest.approx(0.1))
+    assert g1["impact"]["3m"] == {"expected": -60, "p5": -180, "p10": -150, "p50": -54, "p90": 24}
+    for x in ("expected", "p5", "p10", "p50", "p90"):  # the goals and the rest add up to the pool
+        total = g1["impact"]["3m"][x] + g2["impact"]["3m"][x] + out["unallocated"]["impact"]["3m"][x]
+        assert abs(total - bands["3m"][x]) <= 2
+
+
+def test_br08_a_run_sums_the_vnd_impact_by_goal_from_the_same_engine_and_old_runs_still_verify():
+    _, run = approved(*MARKET)
+    fams = runs.family_results(run["id"])
+    gi = fams["C01"]["goal_impact"]
+    pool3 = gi["pool"]["bands"]["3m"]
+    assert set(gi["pool"]["bands"]) == {"1w", "3m", "12m"}
+    assert abs(pool3["expected"] - gi["pool"]["change"]) <= len(fams["C01"]["holdings"])  # one engine, two cuts
+    for g in gi["goals"]:
+        assert set(g["impact"]) == {"1w", "3m", "12m"} and set(g["impact"]["3m"]) == {
+            "expected",
+            "p5",
+            "p10",
+            "p50",
+            "p90",
+        }
+        assert g["impact"]["3m"]["p5"] <= g["impact"]["3m"]["p50"] <= g["impact"]["3m"]["p90"]
+    assert runs.verify(run["id"])["ok"]
+    with db.tx() as con:  # a run stored before F10: no per-goal impact; it still verifies on what it holds
+        rows = con.execute("select family_id, data from family_impacts where run_id = ?", (run["id"],)).fetchall()
+        for r in rows:
+            d = json.loads(r["data"])
+            for g in (d.get("goal_impact") or {}).get("goals", []):
+                g.pop("impact", None), g.pop("share", None)
+            con.execute(
+                "update family_impacts set data = ? where run_id = ? and family_id = ?",
+                (db.dumps(d), run["id"], r["family_id"]),
+            )
+    assert runs.verify(run["id"])["ok"]
+    with db.tx() as con:
+        d = json.loads(
+            con.execute(
+                "select data from family_impacts where run_id = ? and family_id = 'C01'", (run["id"],)
+            ).fetchone()[0]
+        )
+        d["goal_impact"]["goals"][0]["after"]["ratio"] = 0.0
+        con.execute(
+            "update family_impacts set data = ? where run_id = ? and family_id = 'C01'", (db.dumps(d), run["id"])
+        )
+    assert "C01 goal_impact" in runs.verify(run["id"])["differences"]
+
+
+def test_fd9_the_client_reads_how_its_number_is_made_by_asset_class_with_no_holding_named():
+    _, run = approved(*MARKET)
+    how = trace.client_how(run["id"], "C01")
+    fam = runs.family_result(run["id"], "C01")
+    assert how["number"]["value"] == fam["horizons"]["3m"]["expected"] and how["formula"].startswith("Tác động kỳ vọng")
+    assert sum(c["contribution"] for c in how["classes"]) == pytest.approx(
+        how["number"]["value"], abs=len(how["classes"])
+    )
+    assert sum(b["probability"] for b in how["branches"]) == pytest.approx(1.0)
+    assert all(b["moves"] and b["family_expected"] is not None for b in how["branches"])
+    text = json.dumps(how, ensure_ascii=False)
+    for h in fam["holdings"]:  # no holding, ticker or account by name
+        assert f'"{h["key"]}"' not in text and (not h.get("name") or h["name"] not in text)
+    from events import store as events
+    from views import store as vstore
+
+    ev = events.get(vstore.get(run["view_id"])["event_id"])
+    assert ev["title"] not in text and not any(n["title"] in text for n in ev["news"])  # outlets, not headlines
+    with TestClient(Application.find(".").asgi()) as c:
+        r = c.get(f"/api/families/C01/how?run={run['id']}")
+        assert r.status_code == 200 and r.json()["classes"]
+        assert c.get("/api/families/C01/how?run=AR-9999").status_code == 404
+
+
+def test_nfr01_one_familys_page_reads_its_row_and_the_snapshot_head_only():
+    _, run = approved(*MARKET)
+    full = runs.snapshot(run["snapshot_id"])
+    head = runs.snapshot_head(run["snapshot_id"])
+    assert "families" not in head and head == {k: v for k, v in full.items() if k != "families"}
+    every = runs.family_results(run["id"])
+    for fid in every:
+        assert runs.family_result(run["id"], fid) == every[fid]
+    with pytest.raises(KeyError):
+        runs.family_result(run["id"], "C99")
+
+
+def test_nfr01_one_read_reads_each_client_from_the_database_once_and_still_hands_out_copies(monkeypatch):
+    from people import store as people_store
+
+    a = people_store.client("C01")
+    with people_store.one_read():
+        b, c = people_store.client("C01"), people_store.client("C01")
+        b["name"] = "đổi"
+        assert c["name"] == a["name"] and people_store.client("C01") == a
+        with monkeypatch.context() as m:  # inside one_read a second read never reaches the database
+            m.setattr(people_store, "_client_rows", None)
+            assert people_store.client("C01") == a
+    with monkeypatch.context() as m:  # outside it every read does
+        m.setattr(people_store, "_client_rows", None)
+        with pytest.raises(TypeError):
+            people_store.client("C01")

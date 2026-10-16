@@ -31,8 +31,9 @@ Critical finding of that challenge is answered; *f* the challenge is independent
 
 ## Acceptance and tests
 `tests/test_views.py::test_an_edit_goes_back_to_the_challenger_and_a_critical_finding_blocks_approval_until_answered`,
-`::test_a_failed_challenger_keeps_the_draft_and_can_run_again`. Live run 2026-10-15: 13 s, 8 findings of which 3
-critical.
+`::test_a_failed_challenger_keeps_the_draft_and_can_run_again`,
+`tests/test_deadlines.py::test_a_challenger_past_its_limit_leaves_the_draft_with_its_error` (5 minutes,
+BRD-RULE-WF-04). Live run 2026-10-15: 13 s, 8 findings of which 3 critical.
 
 ## Limitations
 - In mock mode the “independent” challenger is a rule set (Q-05).

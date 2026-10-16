@@ -24,7 +24,8 @@ and not a recommendation.
 - **Client form** (flow 2): asset classes only (no holding, no ticker), the event's **type** label instead of its
   headline, the approver's name and title, the price date, “tham số mô hình là giả định”, and the note
   `CLIENT_NOTE` (“Nội dung có sự hỗ trợ của AI, do CIO duyệt kịch bản; … không phải khuyến nghị đầu tư. Liên
-  hệ chuyên viên quan hệ khách hàng …”).
+  hệ chuyên viên quan hệ khách hàng …”). Per goal, the VND impact at 3 months with its P10–P90 (BR-08), and a
+  **“Cách tính”** drawer per effective event (FEAT-09, F-D9).
 
 ## Implementation
 `src/apply/reads.py` (`VISIBLE`, `family_impact`, `rm_today`, `CLIENT_NOTE`); `app/web.py` (`family_impact`,
@@ -34,13 +35,15 @@ and not a recommendation.
 `tests/test_apply.py::test_the_client_reads_asset_classes_only_with_the_labels`,
 `::test_the_rm_today_list_holds_the_flagged_families_worst_first`,
 `::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`,
-`::test_withdrawing_the_view_withdraws_its_runs_and_rms_see_the_label`.
+`::test_withdrawing_the_view_withdraws_its_runs_and_rms_see_the_label`,
+`::test_fd9_the_client_reads_how_its_number_is_made_by_asset_class_with_no_holding_named`;
+`tests/ui/test_brd_pages.py::test_sec03_every_rm_explanation_page_is_stamped_internal_and_the_clients_are_not`.
 
 ## Limitations
 - Nothing is sent to a client (BRD-RULE-SCOPE-05); the client view is an in-app page.
-- Client content does not name each news source (BRD-RULE-CONTENT-02 asks for “nguồn cho từng tin”): showing
-  outlets could reveal the headline; open with Compliance (Q-14 family).
-- The internal-explanation stamp “Nội bộ” (BRD-RULE-SEC-03) exists only on the pre-BRD advisory page banner.
+- Client content names each event's outlets and their count, never a headline (BRD-RULE-CONTENT-02).
+- “Nội bộ” (BRD-RULE-SEC-03) stamps every staff explanation page (advisory, impact, trace, graph, Toàn cảnh,
+  Hôm nay) and none of the client's, checked in a browser.
 
 ## Conflict-of-interest disclosure (BRD completion F8)
 The client's labels carry `conflicts`: the disclosure of each related-party research item behind the events shown,

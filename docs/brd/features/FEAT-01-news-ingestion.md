@@ -61,7 +61,11 @@ Outbound HTTPS to the feeds ([integrations](../architecture/integrations.md)). F
   `::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it`,
   `::test_rss_with_a_bom_cdata_and_html_reads_as_plain_text`, `::test_dates_with_two_digit_years_and_atom_feeds_read`,
   `::test_a_page_that_is_not_a_feed_is_an_error`.
-- Measured live on 2026-10-15: first fetch 2 s, 361 items kept, 34 duplicates dropped (news plan §9).
+- `tests/test_schedules.py::test_the_news_is_fetched_every_10_minutes_and_the_other_brd_cadences` (the Jobs as
+  served: news every 10 min, agent worker, inbox import, audit check),
+  `::test_each_scheduled_run_reads_every_source_and_one_broken_feed_stops_none_of_the_others`.
+- Measured live on 2026-10-15: first fetch 2 s, 361 items kept, 34 duplicates dropped (news plan §9). 15–16/10:
+  130 scheduled runs, median 600 s apart, 89 % within 11 min (the longer gaps are deploy restarts).
 
 ## Limitations
 - The white list is a generated file, not versioned configuration with an approval step (FR-701, FEAT-14).

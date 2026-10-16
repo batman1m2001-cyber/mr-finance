@@ -99,6 +99,7 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `/api/families/{id}/graph` | `role (default client)`, `run_id?` | news → … → goal nodes and edges with their stored sources (403 for an unknown role); an event node names its `run`, an asset → family edge its `by_run` shares | FEAT-30 |
 | `/api/runs/{id}/graph` | — | the whole run: news → event → scenario → factor → asset class → every family (404 for an unknown run) | FEAT-30 (R4) |
 | `/api/trace/{run_id}/{family_id}` | `key?, horizon? (3m)` | the trace (404 if unknown) | FEAT-09 |
+| `/api/families/{id}/how` | `run` | the client's “Cách tính” for one effective run: number and band, formula, scenarios with factor moves, asset classes, event type, outlets; no holding or headline (404 if the run is not effective or has no such family) | FEAT-09, FEAT-13 |
 | `/api/rm/today` | — | flagged cases and goal tasks | FEAT-13, 10 |
 | `/api/audit`, `/api/audit/verify` | `limit (≤ 1000)` | log rows; chain check | FEAT-11 |
 | `/api/audit/export` | `format=json\|csv` | the whole chain as a download (JSON includes the check) | FEAT-11 |

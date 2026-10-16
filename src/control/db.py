@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from typing import Any, Dict, Iterator, Optional
 
 from control.audit import SCHEMA as AUDIT_SCHEMA
-from wealth.paths import state_path
+from wealth.paths import ensure_schema, forget_schema, state_path
 
 SCHEMA = """
 create table if not exists counters (name text primary key, value integer not null);
@@ -105,7 +105,7 @@ def tx() -> Iterator[sqlite3.Connection]:
     con = sqlite3.connect(path, timeout=10, isolation_level=None)
     con.row_factory = sqlite3.Row
     try:
-        con.executescript(SCHEMA + AUDIT_SCHEMA)
+        ensure_schema(con, path, "control", SCHEMA + AUDIT_SCHEMA)
         con.execute("begin immediate")
         yield con
         con.execute("commit")
@@ -145,6 +145,7 @@ def reset() -> None:
         for t in TABLES:
             con.execute(f"delete from {t}")
         con.execute("drop table if exists audit_log")
+    forget_schema()  # the next connection creates the audit log again
     from control import config
 
     config.clear_cache()

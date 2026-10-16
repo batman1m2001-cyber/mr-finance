@@ -6,12 +6,17 @@ after = the same plus the run's 3-month expected change of each of those holding
 goals-planning rule (``scenarios._sim.goal``): the monthly saving that would close the gap by the goal's
 date, over the family's monthly surplus — ≤ 0.6 Đạt, ≤ 1 Theo dõi, above (or no surplus) Thiếu; no gap
 is Đạt. Pure: the same snapshot gives the same numbers.
+
+BR-08 (VND summed by goal): the pool's own impact — the engine run on the pooled holdings, so every horizon with
+its expected value and P5 / P10 / P50 / P90 — is shared out by each goal's slice of the pool before the run
+(``have ÷ pool``); what no goal takes is ``unallocated``. Scaling by a fixed share keeps the percentiles exact,
+and the goals plus the unallocated part add up to the pool's change.
 """
 
 from __future__ import annotations
 
 from datetime import date
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from scenarios import _sim
 
@@ -36,15 +41,21 @@ def _fund(goals: List[Dict[str, Any]], pool: float, surplus: float, as_of: date)
     return out
 
 
-def goal_impacts(family: Dict[str, Any], by_holding: Dict[str, float], as_of: str) -> Dict[str, Any]:
-    """The family's goals before and after the run's 3-month expected change (empty without goals)."""
+STATS = ("expected", "p5", "p10", "p50", "p90")
+
+
+def goal_impacts(
+    family: Dict[str, Any], by_holding: Dict[str, float], as_of: str, pool_bands: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """The family's goals before and after the run's 3-month expected change (empty without goals); with
+    ``pool_bands`` (the engine's horizons for the pooled holdings) each goal's VND impact by horizon (BR-08)."""
     goals = sorted((g for g in family.get("goals") or [] if g.get("amount")), key=lambda g: (g["date"], g["goal_id"]))
     pooled = [h for h in family["holdings"] if h["kind"] == "asset" and h["class"] in POOL]
     before = sum(h["value"] for h in pooled)
     change = sum(by_holding.get(h["key"], 0.0) for h in pooled)
     day, surplus = date.fromisoformat(as_of), float(family.get("surplus_monthly") or 0.0)
     pre, post = _fund(goals, before, surplus, day), _fund(goals, before + change, surplus, day)
-    return {
+    out = {
         "pool": {"before": before, "after": before + change, "change": change},
         "goals": [
             {
@@ -56,3 +67,16 @@ def goal_impacts(family: Dict[str, Any], by_holding: Dict[str, float], as_of: st
             for g, a, b in zip(goals, pre, post)
         ],
     }
+    if pool_bands is not None and goals:
+        share = [a["have"] / before if before > 0 else 0.0 for a in pre]
+        bands = {h: {x: float(v[x]) for x in STATS} for h, v in pool_bands.items()}
+        for g, s in zip(out["goals"], share):
+            g["share"] = s
+            g["impact"] = {h: {x: round(s * v[x]) for x in STATS} for h, v in bands.items()}
+        rest = max(0.0, 1.0 - sum(share))
+        out["pool"]["bands"] = {h: {x: round(v[x]) for x in STATS} for h, v in bands.items()}
+        out["unallocated"] = {
+            "share": rest,
+            "impact": {h: {x: round(rest * v[x]) for x in STATS} for h, v in bands.items()},
+        }
+    return out

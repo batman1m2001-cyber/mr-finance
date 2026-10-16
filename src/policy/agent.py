@@ -81,7 +81,7 @@ async def _attempts(d, given, mode, model, run_id):
                 user += "\nLần trước chưa đạt, sửa đúng các lỗi sau:\n- " + "\n- ".join(findings)
             prompt = {"system": system, "user": user}
             try:
-                reply, meta = await agents.call_model("cio", system, user, MAX_TOKENS)
+                reply, meta = await agents.call_model("cio", system, user, MAX_TOKENS, run_id=run_id)
                 raw = agents._json(reply)
             except agents.AgentError as exc:  # cut off, another model, the provider: the run fails, recorded
                 agents._record(

@@ -35,6 +35,7 @@ READS = {
     "/api/goals/regulation?client_id=C01": FAMILY,
     "/api/families/C01/impact": FAMILY,
     "/api/families/C01/graph": FAMILY,
+    "/api/families/C01/how?run=AR-0000": FAMILY,
     "/api/trace/AR-0000/C01": FAMILY & STAFF,  # “Cách tính” is for staff (Q-14)
     "/api/advisory/all": STAFF,
     "/api/model": STAFF,
