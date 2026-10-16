@@ -23,3 +23,7 @@ confirmed first. The assistant needs many more, chosen by a model.
 
 Adding a capability to the assistant is adding a registry entry with its tests (role refusal, confirmation,
 verification). The model can only do what a page can do for that person.
+
+**Built 2026-10-17 (A1):** 25 tools (`src/assistant/`); the verifier runs in operonx-agents (`@tool(verify=)`, 0.2.3,
+upstream) for the agent and in `assistant.base.execute` for the Copilot. Governance decisions stay on their pages
+(assistant.md §4). `tests/test_assistant_tools.py` fails when a write is added without its test setup.

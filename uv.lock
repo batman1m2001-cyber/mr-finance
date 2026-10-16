@@ -695,7 +695,7 @@ requires-dist = [
     { name = "httpx", marker = "extra == 'test'", specifier = ">=0.24" },
     { name = "openpyxl", specifier = ">=3.1.5" },
     { name = "operonx", extras = ["serve", "openai"], specifier = ">=1.30.0" },
-    { name = "operonx-agents", specifier = ">=0.2.0" },
+    { name = "operonx-agents", specifier = ">=0.2.3" },
     { name = "playwright", marker = "extra == 'ui'", specifier = ">=1.44" },
     { name = "pypdf", specifier = ">=6.19.0" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8" },
@@ -782,7 +782,7 @@ serve = [
 
 [[package]]
 name = "operonx-agents"
-version = "0.2.0"
+version = "0.2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -790,9 +790,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ed/c7/5fc64d26c964216a6aa65c19ddb756d786d5f114fbd38deac93e9d5f0723/operonx_agents-0.2.0.tar.gz", hash = "sha256:ee73ee72f1861918f53181b6f599fb99a76199ca4aa9be224a32a8443a7dd1bb", size = 130891, upload-time = "2026-10-09T07:54:39.35Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e7/2a/65b4735ed7b8db6f1f3bd515cc02002581aaedc5022adec6ec351c6e944f/operonx_agents-0.2.3.tar.gz", hash = "sha256:bf9ff8a8f5629a752ef72432648a2961fc3c1d19ef308fa9745b72b9c187abe1", size = 131920, upload-time = "2026-10-16T16:55:52.888Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2c/a0/9b22d9b828dddcce394c1f481dd64c2ff078abb4d94d9fe18df9a6deaab1/operonx_agents-0.2.0-py3-none-any.whl", hash = "sha256:618cbf1d89fb7ae4bbd41f18c4de1b7fbeff4e778b3f3f6b9d0f4443bb2a2e63", size = 140897, upload-time = "2026-10-09T07:54:38.242Z" },
+    { url = "https://files.pythonhosted.org/packages/2c/bc/ab67f32c54048f61415cbc89a54fbbfea5c22a04bd8e600c85eec54c838d/operonx_agents-0.2.3-py3-none-any.whl", hash = "sha256:caff684b93153c482333f9d4d16ae5e74469a7e0153dd5c8b5dd01af7d384fe7", size = 141866, upload-time = "2026-10-16T16:55:51.682Z" },
 ]
 
 [[package]]

@@ -66,26 +66,41 @@ With `client_ai = off` the same loop runs in **template mode** (ADR-0026): the m
 tool *statuses* (never their data), chains tools, and the answer is the tools' own templated texts in order —
 today's Copilot quality, multi-step.
 
-## 4. Tools *(target, A1)* — ADR-0032
+## 4. Tools *(built in A1, 2026-10-17)* — ADR-0032
 
-`src/assistant/registry.py`: one `Tool` record per capability, turned into `operonx_agents` tools per request:
+`src/assistant/registry.py`: one `Tool` record per capability (`src/assistant/base.py`), turned into `operonx_agents`
+tools per role (`agent_tools(role)`, the person in `RunContext.deps`):
 
 | Field | Meaning |
 |---|---|
 | `name`, `description` | What the model reads to choose; Vietnamese, no data |
 | `roles` | Who may see and call it; the registry given to a turn is filtered by role (an unseen tool cannot be called) |
 | `kind` | `read` / `write` / `external` (web) / `memory` |
-| `args` | A pydantic model: enumerations and ids the server resolves, never free SQL or URLs |
+| `args`, `params` | Enumerations the model picks from, and typed free arguments (a title, a note, an id a read tool listed); operonx-agents validates them from the generated signature. Never a path, a query language or a URL |
 | `run` | The served graph or read the page uses (the Copilot's `_graph` helper), with the person's context |
-| `plan` | For writes: the one-line summary the person confirms |
-| `verify` | For writes: re-read after the call; failing verification is reported |
+| `plan` | For writes: the one-line summary the person confirms, and the arguments resolved on the server (which pending item, which family); it writes nothing |
+| `verify` | For writes: reads the state back after the call (`True`, or what is not there); operonx-agents 0.2.3 `@tool(verify=)` turns anything else into an error the model reads — “ran, but its effect could not be confirmed” — and the Copilot into a failed answer |
 | `timeout`, `cost` | Seconds; `free` / `llm` / `paid` (web search, the CIO agent) — paid tools count against a daily cap |
 
-Families: today's 13 Copilot tools; app reads (dashboard, flows, feed, goals, alerts, impact, investigate,
-scenario, overview, search, RM today, advisory track record, measurement); app writes (approve/reject a review,
-specialist decision, client proposal, RM recommendation, RM contact log, CIO news fetch, policy note, configuration
-proposal — each only for its roles); `help` (product KB); `materials` (user KB); memory tools; `web_search`;
-`follow_up` (create, list, cancel); `navigate`. No tool takes a raw path, query or URL.
+Built in A1 (25 tools): the Copilot's 13 (`src/assistant/tools.py`: tong_quan, dong_tien, chu_y, muc_tieu,
+tac_dong, dieu_tra, kich_ban, hom_nay, hop_tin, tin_bi_giu, mo_trang; writes duyet_de_xuat, lay_tin) and the served
+graphs wrapped (`src/assistant/actions.py`) — reads `dong_luc` (alerts_flow: policies, macro, projects in VND),
+`tim_kiem` (search_flow), `de_xuat` (the review queue; the specialist's waiting items), `su_kien` (events),
+`canh_bao_he_thong` (the bell's alerts), `lien_he` (the RM's contacts); writes `gui_de_xuat` (propose_flow, client
+and RM), `ghi_lien_he` (contact_flow), `khuyen_nghi` (recommend_flow), `chuyen_gia_duyet` (specialist_flow),
+`danh_dau_khan` (event_urgent_flow), `da_xem_canh_bao` (alert_ack_flow). The dashboard, flows, feed, goals, impact,
+investigate, scenario and RM-today reads are the Copilot's tools.
+
+Left to their pages, deliberately: the four-eyes governance decisions (configuration versions, CIO views and runs,
+newsletters, policy documents, research release, the market model), grouping news into events, releasing held news,
+the client's own uploads and risk test, the advisory track record (mock data) and the measurement reports (tables,
+not sentences). Each needs the person to read evidence there; the assistant opens the page (`mo_trang`).
+
+To come: `help` (product KB) and `materials` (user KB) in A5; memory tools in A4; `web_search` in A5;
+`follow_up` (create, list, cancel) in A6.
+
+With the barrier off (`ctx.reads` false) the model reads only a tool's status and page, never its text or data
+(`registry.Seen`); the answer is then the tools' own templated texts (ADR-0026).
 
 ## 5. Conversations and memory *(target, A3–A4)* — ADR-0027, ADR-0028
 
@@ -170,7 +185,7 @@ behind interfaces; `RedisSession` exists); a new database for the demo is not ju
 |---|---|---|
 | Sessions and stores on one SQLite file share one connection (the lock errors in §8); reads without a write lock | `operonx-agents` `_storage.py` | A3 |
 | Long-term memory items (typed, sourced, expiring) with a store protocol and SQLite store; archive search over a session store; memory tools (search, recall, remember, forget) | `operonx-agents` `memory/` | A4 |
-| Tool verifiers: a check run after a tool, its verdict in the tool message and the trace | `operonx-agents` tools | A1 |
+| Tool verifiers: a check run after a tool, its verdict in the tool message and the trace | `operonx-agents` tools — **done**, 0.2.3 (`@tool(verify=)`, Operonx #186) | A1 |
 | Anything the KB needs for per-owner collections (if A5 finds a gap) | `operonx-kb` | A5 |
 
 OneWealth keeps only its rules: which tools, which roles, the barrier, what a memory item may hold, retention values.
