@@ -54,8 +54,9 @@ def test_a_broken_audit_chain_alerts_compliance_and_admin_and_resolves_when_whol
         con.execute("drop trigger audit_log_no_update")  # someone with the database file edits a row
         con.execute("update audit_log set actor = 'ai-đó' where seq = 1")
     assert not run()["ok"]
-    [a] = alerts.for_role("compliance")
-    assert a["kind"] == "audit_chain" and a["severity"] == "high" and alerts.for_role("cio") == []
+    got = alerts.for_role("compliance")
+    assert {a["key"] for a in got} == {"chain", "worm"}  # the chain, and the write-once segment holding row 1
+    assert all(a["kind"] == "audit_chain" and a["severity"] == "high" for a in got) and alerts.for_role("cio") == []
 
 
 def _chain_check():

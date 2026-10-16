@@ -21,19 +21,26 @@ def decide(version_id: str = None, action: str = None, by: str = None, note: str
 
 @op
 def check_chain(tick: int = None, at: str = None) -> dict:
-    """The ``audit_check`` job: walk the audit chain; broken raises an alert for Compliance and Admin, whole again
-    resolves it (BRD-NFR-12)."""
-    from control import alerts, db, log
+    """The ``audit_check`` job: walk the audit chain and the write-once segments; broken raises an alert for
+    Compliance and Admin, whole again resolves it (BRD-NFR-12). When both hold, the rows added since the last
+    segment are written to a new one (BRD-RULE-DATA-10, control/worm.py)."""
+    from control import alerts, db, log, worm
     from control.audit import verify
 
     with db.tx() as con:
         got = verify(con)
+        kept = worm.verify(con)
+        added = worm.write(con) if got["ok"] and kept["ok"] else None
     if got["ok"]:
         alerts.resolve("audit_chain", "chain", f"Chuỗi toàn vẹn ({got['count']} dòng)")
-        log.write("info", "audit.check", ok=True, count=got["count"])
+        log.write("info", "audit.check", ok=True, count=got["count"], segment=added)
     else:
         alerts.raise_("audit_chain", "chain", f"Chuỗi nhật ký gãy ở dòng {got['broken_at']}", got["reason"])
-    return {"chain": got}
+    if kept["ok"]:
+        alerts.resolve("audit_chain", "worm", f"Các đoạn chỉ-ghi-một-lần khớp ({kept['rows']} dòng)")
+    else:
+        alerts.raise_("audit_chain", "worm", f"Đoạn nhật ký {kept['broken']} không khớp", kept["reason"])
+    return {"chain": got, "worm": kept, "segment": added}
 
 
 @op

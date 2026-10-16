@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — The move to the bank (BRD_REMAINING_PLAN G4, RULE-DATA-10): `scripts/export_postgres.py` maps every
+  table to PostgreSQL, the fields queries read made columns and the JSON lists and maps made 15 child tables, client
+  values still sealed, loaded into a real PostgreSQL 16 and checked row for row (counts, sums, every row rebuilt);
+  the audit log copied hourly to write-once segments, chained and checked against the database, so a history
+  rewritten with its chain recomputed is caught; `/healthz` and the System page show them; the migration guide —
+  ADR-0025, bank_migration.md, matrix (RULE-DATA-10 verified), BRD_COMPLETION_REPORT.md.
+
 - 2026-10-16 — Encryption, secrets and the attack suite (BRD_REMAINING_PLAN G3, NFR-07): client data sealed at rest
   per column with AES-256-GCM (row-bound, rotating keys, `scripts/rotate_keys.py`), chosen by scanning a populated
   database; keys from a Vault-compatible store, a secrets folder or the environment; security headers (CSP by hash,

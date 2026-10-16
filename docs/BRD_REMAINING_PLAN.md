@@ -58,6 +58,14 @@ the next.
   answered 500 (now 400). NFR-01 with keys on, 6,500 families, same machine: apply 165.6 s (167.3 s plain), the
   slowest family read 0.43 s (0.31 s plain) — BRD ≤ 300 s and ≤ 2 s.
 - **G4 — Moving to the bank (DATA-10).** PostgreSQL export proven in Docker; WORM audit segments; the guide.
+  **Done** (2026-10-16, ADR-0025): `scripts/export_postgres.py` maps the 35 tables, makes 5 queried fields columns
+  and 15 lists or maps child tables (histories, an event's news, a run's families and ranking, holdings,
+  transactions), and checks a real PostgreSQL 16 row for row by rebuilding every row — the demo's development
+  database (49,309 rows) loads in 2.8 s and checks in 25 s, plain or sealed; no client name in a dump of the sealed
+  one. Sealed values move as they are (bound to the primary key, not a SQLite row number); split ones are sealed again
+  at the child's place. `audit_check` writes the audit log to write-once segments and catches a row rewritten with
+  the whole chain recomputed. The application stays on SQLite (G-D4);
+  [bank_migration.md](brd/architecture/bank_migration.md) lists what the port changes.
 - **G5 — Availability (NFR-03).** Heartbeat, the business-hours measure, the alert.
 - **G6 — Urgent and important news (KPI-01, KPI-02).** The flag, the reference feed job, the two measures.
 - **G7 — Control and behaviour measures (KPI-05, KPI-06, KPI-07).** The review rate, the RM contact log, client

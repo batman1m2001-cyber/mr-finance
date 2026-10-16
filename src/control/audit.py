@@ -17,7 +17,7 @@ import hmac
 import json
 import sqlite3
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterable, Optional
 
 SCHEMA = """
 create table if not exists audit_log (
@@ -74,24 +74,30 @@ def append(con: sqlite3.Connection, actor: str, action: str, obj: str, data: Opt
 
 def verify(con: sqlite3.Connection) -> Dict[str, Any]:
     """Walk the chain: every row's prev_hash is the row before's hash, and its hash recomputes."""
+    return walk(con.execute("select * from audit_log order by seq"))
+
+
+def walk(rows: Iterable[Any], prev: str = GENESIS, first: int = 1) -> Dict[str, Any]:
+    """``verify`` over any run of rows (database rows, or a write-once segment's: control/worm.py) starting at
+    ``first`` after a row whose hash is ``prev``."""
     key = _key()
-    prev = GENESIS
     n = 0
     algs = set()
-    for row in con.execute("select * from audit_log order by seq"):
+    for row in rows:
         n += 1
         algs.add(row["alg"])
-        if row["seq"] != n:
+        if row["seq"] != first + n - 1:
             return {"ok": False, "count": n, "broken_at": row["seq"], "reason": "Thiếu dòng trong chuỗi"}
         if row["prev_hash"] != prev:
             return {"ok": False, "count": n, "broken_at": row["seq"], "reason": "prev_hash không khớp dòng trước"}
+        data = row["data"]
         body = {
             "seq": row["seq"],
             "ts": row["ts"],
             "actor": row["actor"],
             "action": row["action"],
             "object": row["object"],
-            "data": json.loads(row["data"]),
+            "data": json.loads(data) if isinstance(data, str) else data,
         }
         try:
             h = _digest(row["alg"], prev, body, key)

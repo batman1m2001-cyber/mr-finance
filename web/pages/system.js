@@ -57,7 +57,7 @@ export async function render(box, ctx) {
         · chuỗi nhật ký ${d.chain.ok ? "toàn vẹn" : `<span class="bad-text">gãy ở dòng ${d.chain.broken_at}</span>`}.</p></div></div>
 
     <div class="cols">
-      ${tile("Chuỗi nhật ký", d.chain.ok ? "Toàn vẹn" : "Gãy", `${num(d.chain.count)} dòng${d.chain.ok ? "" : " · " + esc(d.chain.reason)}`, d.chain.ok ? "" : "bad-text")}
+      ${tile("Chuỗi nhật ký", d.chain.ok && d.worm.ok ? "Toàn vẹn" : "Gãy", `${num(d.chain.count)} dòng${d.chain.ok ? "" : " · " + esc(d.chain.reason)}${!d.worm.on ? "" : d.worm.ok ? ` · ${num(d.worm.segments)} đoạn chỉ-ghi-một-lần tới dòng ${num(d.worm.last)}` : ` · <span class="bad-text">${esc(d.worm.reason)}</span>`}`, d.chain.ok && d.worm.ok ? "" : "bad-text")}
       ${tile("Agent", MODE[d.agents.mode] || esc(d.agents.mode), `${esc(d.agents.reason || [d.agents.models?.cio, d.agents.models?.challenger].filter(Boolean).join(" · "))}${d.agent_queue ? ` · ${d.agent_queue} lần chạy đang xếp hàng` : ""}`)}
       ${tile("Tin tức", d.news_at ? esc(ago(d.news_at)) : "Chưa lấy", `${d.feeds.length} nguồn · ${d.feeds.filter(f => f.error).length} lỗi lần gần nhất`)}
       ${tile("Cấu hình chờ duyệt", d.config_waiting.length, d.config_waiting.map(c => esc(c.label)).join(", ") || "không có")}
