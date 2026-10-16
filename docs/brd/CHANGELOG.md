@@ -2,6 +2,16 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Memory and the archive (ASSISTANT_PLAN A4).
+  - Long-term items (Sở thích, Mục tiêu, Thông tin 180 days, Giới hạn), kept only when the person asks and confirms,
+    never an amount, an account number or someone outside the family; the reading model's instructions carry them.
+  - Tools `nho_lai`, `ghi_nho`, `quen`, `tim_lich_su` (29 in the registry); the Bộ nhớ page on every role: correct,
+    forget one or all, open or delete a conversation, search the archive (0.5 s for a year of daily conversations).
+  - Compliance's `assistant_retention` (two-person, default 365 days) and its daily job; every deletion overwrites
+    the file (VACUUM, 0.7 s on 25 MB); a finished run's state no longer outlives its turn.
+  - Upstream: operonx-agents 0.3.0 `memory` (store protocol, SQLite store with a sealing codec, tools with verifiers).
+  - Documents: assistant.md §5/§9, FEAT-37, matrix OWN-AS-12…16, ASSISTANT_PLAN.
+
 - 2026-10-17 — Conversations on the server (ASSISTANT_PLAN A3).
   - Every assistant turn belongs to a conversation in `assistant.db`; the panel resumes the latest on any device,
     lists, opens and deletes them (`POST /api/assistant/conversations`); owner-only, deletion audited without text.

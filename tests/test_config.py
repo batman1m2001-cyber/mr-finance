@@ -110,6 +110,7 @@ def test_the_endpoints():
             "rm_assignment",
             "certifications",
             "control_group",
+            "assistant_retention",
             "ai_mode",
             "client_ai",
             "prompts",

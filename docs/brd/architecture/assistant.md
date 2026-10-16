@@ -118,7 +118,7 @@ To come: `help` (product KB) and `materials` (user KB) in A5; memory tools in A4
 With the barrier off (`ctx.reads` false) the model reads only a tool's status and page, never its text or data
 (`registry.Seen`); the answer is then the tools' own templated texts (ADR-0026).
 
-## 5. Conversations and memory *(target, A3–A4)* — ADR-0027, ADR-0028
+## 5. Conversations and memory *(built in A3–A4, 2026-10-17)* — ADR-0027, ADR-0028
 
 **Store.** `data/assistant.db`, SQLite in WAL mode, separate from `state.db` (§8). Tables: the `operonx-agents`
 session items (`operonx_agents_items`) and state store, plus OneWealth's own: `conversations` (id, owner, role,
@@ -163,6 +163,39 @@ conversations — open, search, delete.
 - **The panel** resumes the latest conversation of the role when it moved within a day (on any device), lists them
   (clock button), starts another (“+ Mới”). The old `sessionStorage` copy is removed, not uploaded: it held one tab's
   messages and the server could not tell whose they were.
+
+### As built (A4, 2026-10-17)
+
+- **Items** are operonx-agents 0.3.0's `MemoryItem` in its `SQLiteMemoryStore` (table `operonx_agents_memory` in
+  `assistant.db`), text sealed with the data keys bound to the row. Kinds: Sở thích, Mục tiêu, Thông tin (expires
+  after 180 days), Giới hạn; the source is the conversation. Until the consolidator (A6), an item is kept only when
+  the person asks (“hãy nhớ…”): `ghi_nho` is a write, so the panel shows “Ghi nhớ (Sở thích): “…”?” and nothing is
+  kept before Xác nhận; the write is read back.
+- **What is never kept** (`memory.refused`, every write, the page's corrections too): an amount or percentage, an
+  account, card or document number, or a client's name or id outside the person's own family (the barrier's
+  identifier list; the family read is limited to what the person may see). Staff keep no client's name.
+- **In the prompt**: the reading model's instructions carry the person's ≤ 15 active items (“Điều người dùng đã nhờ
+  ghi nhớ”); template mode never does — the items are the person's words, as private as the question.
+- **Tools** (all roles, 29 in the registry): `nho_lai` (recall, with ids), `ghi_nho`, `quen` (confirmed, read back,
+  and the file scrubbed), `tim_lich_su` (the archive).
+- **The archive** is the `turns` table (what the panel showed): `conversations.archive` reads the person's turns in
+  one query and `search_history` folds each message (Vietnamese accents, case, spacing) and keeps those holding
+  every word of the query, newest first, with conversation, time and author. Measured on a year of one
+  conversation a day, 10 turns each, sealed (3,650 turns): 1.1 s first; 0.5 s after reading in one query and folding
+  in one regex pass (`fast_fold`, equal to the upstream `fold` on Vietnamese — the per-character fold was half the
+  time). Linear in the person's own archive only; no plain-text index exists because the text is sealed.
+- **Bộ nhớ page** (`#/<role>/bo-nho`, every role; from the panel's history and the header): items with kind, when,
+  expiry and a link to their conversation — Sửa, Quên, Quên tất cả; conversations — Mở (in the panel), Xoá, and the
+  archive search. `POST /api/assistant/memory` (list, search, update, delete, clear): the owner is the server's;
+  writes are audited (`assistant.memory.*`) without the text.
+- **Deletion is real.** Forgetting an item, clearing, deleting a conversation and the retention sweep end with
+  `conversations.scrub()` (WAL checkpoint, VACUUM, checkpoint), so the deleted text is not left in free pages or the
+  log; a finished run's state is deleted at the end of its turn and a conversation's run states with it (they held
+  its text). Measured: 0.7 s on a 25 MB `assistant.db` (21 people, 2,365 conversations) — once per deletion, never
+  on a turn.
+- **Retention**: Compliance's `assistant_retention` (two-person, `archive_days` 30–3650, default 365); the
+  `assistant_retention` job (02:30 daily) deletes conversations whose last turn is older, with their turns, model
+  items and run states, purges expired items, scrubs, and audits the counts.
 
 ## 6. Knowledge *(target, A5)* — ADR-0029, ADR-0030
 
@@ -226,7 +259,7 @@ behind interfaces; `RedisSession` exists); a new database for the demo is not ju
 |---|---|---|
 | Sessions and stores on one SQLite file share one connection (the lock errors in §8); reads without a write lock | `operonx-agents` `_storage.py` — **done**, 0.2.4 (Operonx #187) | A3 |
 | A conversation whose runs are one request each compacts (the flag was per run) | `operonx-agents` runner — **done**, 0.2.5 (Operonx #188) | A3 |
-| Long-term memory items (typed, sourced, expiring) with a store protocol and SQLite store; archive search over a session store; memory tools (search, recall, remember, forget) | `operonx-agents` `memory/` | A4 |
+| Long-term memory items (typed, sourced, expiring) with a store protocol and SQLite store (sealing codec); search; memory tools (recall, remember, forget, with verifiers) | `operonx-agents` `memory/` — **done**, 0.3.0 (Operonx #189). The archive search stays in OneWealth: its archive is the panel's `turns`, not a session store | A4 |
 | Tool verifiers: a check run after a tool, its verdict in the tool message and the trace | `operonx-agents` tools — **done**, 0.2.3 (`@tool(verify=)`, Operonx #186) | A1 |
 | Anything the KB needs for per-owner collections (if A5 finds a gap) | `operonx-kb` | A5 |
 

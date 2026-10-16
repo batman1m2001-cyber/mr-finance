@@ -24,15 +24,16 @@ FEAT-39). Any stored message → archive search results with conversation, time 
 2. Each turn's items are committed when the turn ends; a cut turn writes nothing.
 3. When the prompt passes the context window, older exchanges become a summary item (`ContextPolicy`); the panel
    says so.
-4. The assistant's instructions carry the person's active long-term items (≤ 15); the `recall`, `search_history`,
-   `remember` and `forget` tools read and change them.
+4. The assistant's instructions carry the person's active long-term items (≤ 15; reading mode only); the tools
+   `nho_lai`, `tim_lich_su`, `ghi_nho` and `quen` read and change them (writes confirmed in the panel).
 5. The Bộ nhớ page lists the items with their source message and expiry, and the conversations; each can be
    corrected or deleted, or all at once.
 6. Compliance's `assistant_retention` (two-person) deletes archived messages past their age (default 365 days) and
    expired facts.
 
 ## States
-Conversation: `active` → `idle` (15 min without a turn) → consolidated; deleted. Item: `active` → `expired` | deleted.
+Conversation: `active` → `idle` (15 min without a turn) → consolidated (A6); deleted. Item: `active` → `expired` |
+deleted.
 
 ## Rules and validation
 Items are ≤ 200 characters, typed (`preference`, `goal`, `fact`, `constraint`), never an amount, an account number
@@ -43,14 +44,17 @@ A storage failure fails the turn visibly; nothing is half-written.
 
 ## API and data
 `data/assistant.db` (WAL): `conversations`, `turns` (what the panel showed), `operonx_agents_items` (the model's side,
-one session per mode), `assistant_runs` (parked runs), `parked`; A4 adds `memory_items`. See
-[assistant.md §5](../architecture/assistant.md#5-conversations-and-memory-target-a3a4--adr-0027-adr-0028).
+one session per mode), `assistant_runs` (parked runs, with their session), `parked`, `operonx_agents_memory` (items,
+A4). See
+[assistant.md §5](../architecture/assistant.md#5-conversations-and-memory-built-in-a3a4-2026-10-17--adr-0027-adr-0028).
 
 ## Implementation
 A3 (2026-10-17): `src/assistant/conversations.py` (the store, sealed), `src/assistant/turn.py` (`ContextPolicy`, a
 session per mode), `assistant_conversations_flow` (`POST /api/assistant/conversations`: list, open, delete), the
 panel's history (`web/copilot.js`). operonx-agents 0.2.4 (one SQLite connection per file) and 0.2.5 (compaction
-across runs). A4: memory, with the generic parts in `operonx-agents` (`memory/`).
+across runs). A4 (2026-10-17): `src/assistant/memory.py` (the rules, the tools, the archive search),
+`src/assistant/retention.py` (the daily sweep), `assistant_memory_flow` (`POST /api/assistant/memory`), the Bộ nhớ
+page (`web/pages/memory.js`); the generic store and tools are operonx-agents 0.3.0 `memory` (Operonx #189).
 
 ## Dependencies
 FEAT-32 (the assistant), FEAT-39 (the consolidator), FEAT-14 (retention configuration).
@@ -60,7 +64,12 @@ A3: `tests/test_assistant_conversations.py` — carry-on and reopen as shown, ow
 deletion removes turns and the model's side (audited without text), a parked write inside its conversation, a
 30-turn conversation compacting twice with every turn kept, sealing and key rotation, the barrier closing
 mid-conversation; `tests/ui/test_copilot_ui.py::test_a_conversation_is_picked_up_on_another_device_listed_and_deleted`.
-A4: isolation of memory items, retention.
+A4: `tests/test_assistant_memory.py` — what is never kept, kept only when asked and confirmed then carried into the
+next conversation, template mode never sends items, the page's corrections audited without text, one person's
+memory never another's, the archive searched with conversation, time and author, nothing readable on disk after
+forgetting, sealing, retention; `tests/ui/test_memory_ui.py` (the page: correct, forget, forget all; find a past
+conversation and open it in the panel, phone).
 
 ## Limitations
-Archive search scans one person's messages (sealed content has no plain index).
+Archive search scans one person's messages (sealed content has no plain index): 0.5 s for a year of daily 10-turn
+conversations. Items are kept only on request until the consolidator (FEAT-39, A6).

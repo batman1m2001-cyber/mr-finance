@@ -1,0 +1,63 @@
+"""The Bộ nhớ page (A4, FEAT-37): the person sees what the assistant remembers, corrects it, forgets one or all;
+finds a past conversation and opens it in the panel; the page is reached from the panel and the header."""
+
+import asyncio
+
+from conftest import in_thread
+
+from assistant import memory
+from assistant.base import Ctx
+
+
+def ctx(client_id="C01"):  # the client signed in (the browser's session): their own id is the owner
+    return Ctx(role="client", client_id=client_id, scope="personal", question="", user=client_id)
+
+
+def keep(client_id, kind, text):  # beside Playwright's loop
+    return in_thread(lambda: asyncio.run(memory.remember(ctx(client_id), kind, text)))
+
+
+def test_the_memory_page_shows_corrects_and_forgets(open_page):
+    keep("C01", "preference", "Thích báo cáo ngắn")
+    keep("C01", "goal", "Mua nhà năm 2028")
+    keep("C02", "goal", "Của gia đình khác")
+    p = open_page()
+    p.go("#/client/bo-nho")
+    p.page.wait_for_selector(".mem-item")
+    text = p.page.inner_text("#page")
+    assert "Thích báo cáo ngắn" in text and "Mua nhà năm 2028" in text and "Của gia đình khác" not in text
+    assert "Sở thích" in text and "không hết hạn" in text
+    iid = p.page.locator(".mem-item", has_text="Thích báo cáo ngắn").get_attribute("data-item")
+    item = p.page.locator(f".mem-item[data-item='{iid}']")
+    item.locator("[data-edit]").click()
+    p.page.fill(".mem-input", "Thích báo cáo thật ngắn")
+    item.locator("[data-edit]").click()
+    p.page.wait_for_selector("text=Thích báo cáo thật ngắn")
+    p.page.locator(".mem-item", has_text="Mua nhà").locator("[data-forget]").click()
+    p.page.wait_for_function("document.querySelectorAll('.mem-item').length === 1")
+    p.page.once("dialog", lambda d: d.accept())
+    p.page.click("#mem-clear")
+    p.page.wait_for_selector("text=Chưa có gì.")
+    assert in_thread(lambda: asyncio.run(memory.store().items("C01"))) == []
+    assert not p.problems()
+
+
+def test_a_past_conversation_is_found_and_opened_in_the_panel(open_page):
+    p = open_page("phone")
+    p.go("#/client/tong-quan/toan-canh")
+    p.page.click(".cp-fab")
+    p.page.fill("#cp-q", "Tài sản của tôi thế nào?")
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_function("document.querySelectorAll('#cp-msgs .cp-bot:not([data-busy])').length > 0")
+    p.page.click("#cp-hist")
+    p.page.click("text=Bộ nhớ →")  # the page from the panel
+    p.page.wait_for_selector(".mem-conv")
+    p.page.fill("#mem-q", "tai san")
+    p.page.press("#mem-q", "Enter")
+    p.page.wait_for_selector(".mem-hit")
+    assert "bạn" in p.page.inner_text(".mem-hit")
+    p.page.locator(".mem-hit [data-open]").first.click()
+    p.page.wait_for_function("!document.querySelector('.cp-panel').hidden")
+    p.page.wait_for_function("document.querySelectorAll('#cp-msgs .cp-me').length === 1")
+    assert p.page.evaluate("[document.documentElement.scrollWidth, innerWidth]") == [390, 390]
+    assert not p.problems()

@@ -5,6 +5,7 @@ verifies it, Deny runs nothing."""
 
 import asyncio
 import hashlib
+import inspect
 import sqlite3
 from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
@@ -97,6 +98,12 @@ def _an_alert(mp):
     return {"alert_id": alerts.raise_("news_feed", "vneconomy_ck", "Nguồn tin không lấy được")["id"]}
 
 
+def _an_item(mp):
+    from assistant import memory
+
+    return {"item_id": run(memory.remember(ctx("client"), "goal", "Mua nhà năm sau")).id}
+
+
 SETUP = {  # write → (who asks, what must exist first → the model's arguments)
     "duyet_de_xuat": ("rm", _review_pending),
     "lay_tin": ("cio", _feeds),
@@ -106,21 +113,31 @@ SETUP = {  # write → (who asks, what must exist first → the model's argument
     "chuyen_gia_duyet": ("specialist", _waiting_for_specialist),
     "danh_dau_khan": ("cio", _an_event),
     "da_xem_canh_bao": ("cio", _an_alert),
+    "ghi_nho": ("client", lambda mp: {"kind": "preference", "text": "Thích báo cáo ngắn"}),
+    "quen": ("client", _an_item),
 }
+DELETES = ("quen",)  # writes whose effect is an absence
 BUSINESS = ("reviews", "rm_contacts", "events", "alerts", "news_items", "audit_log")
 
 
 def fingerprint(path):
-    """The rows of the tables a write changes (the business records and the audit chain)."""
+    """The rows of the tables a write changes (the business records and the audit chain; the memory items)."""
+    h = hashlib.sha256(_rows(path, BUSINESS).encode())
+    h.update(_rows(path.with_name("assistant.db"), ("operonx_agents_memory",)).encode())
+    return h.hexdigest()
+
+
+def _rows(path, tables):
+    if not path.exists():
+        return ""
     con = sqlite3.connect(path)
     have = {r[0] for r in con.execute("select name from sqlite_master where type = 'table'")}
-    h = hashlib.sha256()
-    for t in BUSINESS:
+    out = []
+    for t in tables:
         if t in have:
-            for row in con.execute(f"select * from {t} order by rowid"):  # noqa: S608 - fixed names
-                h.update(repr(row).encode())
+            out += [repr(row) for row in con.execute(f"select * from {t} order by rowid")]  # noqa: S608 - fixed
     con.close()
-    return h.hexdigest()
+    return "\n".join(out)
 
 
 # -- the catalogue ------------------------------------------------------------------------------
@@ -201,7 +218,8 @@ def test_a_write_asks_first_changes_nothing_then_is_read_back(name, monkeypatch,
     assert plan["summary"].endswith("?") and fingerprint(state) == before  # planning wrote nothing
     out = run(execute(t, ctx(role), plan["args"]))  # confirmed: runs, then its verifier reads it back
     assert out["text"].startswith("Đã") and fingerprint(state) != before
-    assert t.verify(ctx(role), out) is True
+    verdict = t.verify(ctx(role), out)
+    assert (run(verdict) if inspect.isawaitable(verdict) else verdict) is True
 
 
 @pytest.mark.parametrize("name", WRITES)
@@ -209,9 +227,14 @@ def test_a_write_that_did_not_land_is_not_said_done(name, monkeypatch, state, tm
     t = registry.REGISTRY[name]
     role, setup = SETUP[name]
     plan = run(registry.plan(t, ctx(role), setup(monkeypatch)))
-    out = run(execute(t, ctx(role), plan["args"]))
-    # the same answer, from a write whose effect is not there (an empty state: the row, the status never written)
-    monkeypatch.setenv("MF_STATE", str(tmp_path / "elsewhere.db"))
+    if name in DELETES:  # a deletion that did not land: the same answer, the item still there
+        out = {"text": "Đã quên mục này.", "data": {"id": plan["args"]["item_id"]}}
+    else:
+        out = run(execute(t, ctx(role), plan["args"]))
+        # the same answer, from a write whose effect is not there (an empty state, in a folder of its own: the
+        # row, the status, the memory item never written)
+        (tmp_path / "elsewhere").mkdir()
+        monkeypatch.setenv("MF_STATE", str(tmp_path / "elsewhere" / "state.db"))
 
     async def answered(c, a):
         return out

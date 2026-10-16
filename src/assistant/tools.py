@@ -34,6 +34,7 @@ PAGES = {  # page key → (label, route per role); the router may name a key, ne
     ),
     "su-kien": ("Sự kiện & nhận định", {"cio": "#/cio/nhan-dinh"}),
     "he-thong": ("Hệ thống", {"admin": "#/admin/he-thong"}),
+    "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "compliance", "admin", "specialist")}),
 }
 
 
