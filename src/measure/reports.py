@@ -10,6 +10,8 @@
   product (no news or event carries it), so it is not measured.
 - **Agent and news timing (NFR-02).** News published → in the inbox (≤ 10 min), for news published after the
   ingest job was already running; each CIO agent run's duration (≤ 15 min).
+- **Availability (NFR-03).** Business minutes with a heartbeat ÷ business minutes, per month, with the outages
+  (control/uptime.py). Target ≥ 99.5 %.
 
 Months are local (Asia/Ho_Chi_Minh, the server's zone).
 """
@@ -243,4 +245,12 @@ def timing() -> Dict[str, Any]:
 
 
 def all_reports() -> Dict[str, Any]:
-    return {"misses": misses(), "rubber_stamp": rubber_stamp(), "speed": speed(), "timing": timing()}
+    from control import uptime
+
+    return {
+        "misses": misses(),
+        "rubber_stamp": rubber_stamp(),
+        "speed": speed(),
+        "timing": timing(),
+        "availability": uptime.by_month(),
+    }

@@ -2,6 +2,12 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Availability measured (BRD_REMAINING_PLAN G5, NFR-03): a heartbeat every 20 seconds inside the
+  server; availability = business minutes (Mon–Fri 08:00–17:30, Vietnam time) with a beat ÷ business minutes, from
+  the first beat; Hệ thống shows the month so far, the monthly report each month with its outages and “Cách tính”;
+  an Admin alert below 99.5 %; job run records bounded (operonx 1.30.0 `keep_runs`) — matrix (NFR-03 verified),
+  BRD_COMPLETION_REPORT.md.
+
 - 2026-10-16 — The move to the bank (BRD_REMAINING_PLAN G4, RULE-DATA-10): `scripts/export_postgres.py` maps every
   table to PostgreSQL, the fields queries read made columns and the JSON lists and maps made 15 child tables, client
   values still sealed, loaded into a real PostgreSQL 16 and checked row for row (counts, sums, every row rebuilt);

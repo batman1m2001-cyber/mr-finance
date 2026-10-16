@@ -683,6 +683,18 @@ metric(
     step="Bước",
 )
 metric(
+    "uptime.availability",
+    "Sẵn sàng trong giờ làm việc",
+    "Sẵn sàng = số phút làm việc có nhịp ÷ số phút làm việc trong tháng, từ nhịp đầu tiên đến phút hiện tại. Phút "
+    "làm việc: thứ Hai–thứ Sáu, 08:00–17:30 giờ Việt Nam (ngày lễ vẫn tính). Một phút có nhịp khi máy chủ ghi được "
+    "nhịp vào cơ sở dữ liệu trong phút đó (ba lần mỗi phút); khởi động lại khi triển khai tính là không sẵn sàng. "
+    "Mục tiêu ≥ 99,5 %.",
+    "src/control/uptime.py::measure",
+    month="Tháng",
+    business_minutes="Phút làm việc",
+    up_minutes="Phút có nhịp",
+)
+metric(
     "agent.edited_share",
     "Tỷ lệ CIO sửa kịch bản",
     "Tỷ lệ = số nhận định CIO đã sửa kịch bản trước khi quyết ÷ số nhận định đã quyết, trong khoảng đang xem.",

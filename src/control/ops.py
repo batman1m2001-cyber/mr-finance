@@ -44,6 +44,17 @@ def check_chain(tick: int = None, at: str = None) -> dict:
 
 
 @op
+def heartbeat(tick: int = None, at: str = None) -> dict:
+    """The ``heartbeat`` job (BRD-NFR-03, control/uptime.py): this minute recorded; on the minute's first beat, the
+    month so far checked against 99.5 % (an alert for Admin below it)."""
+    from control import uptime
+
+    got = uptime.beat()
+    month = uptime.check() if got["new"] else None
+    return {"beat": got, "availability": month and month.get("availability")}
+
+
+@op
 def ack_alert(alert_id: str, by: str, note: str = "") -> dict:
     """POST /api/system/alerts/ack: “Đã xem” on an alert, by a role it is for; audited."""
     from control import alerts

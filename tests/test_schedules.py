@@ -19,6 +19,7 @@ def test_the_news_is_fetched_every_10_minutes_and_the_other_brd_cadences():
     assert j["agent_worker"]["when"]["every"] in ("5s", "10s")  # a queued run starts at once (AI-13)
     assert j["inbox_import"]["when"] == {"every": "10m"}  # the AI zone's packages, same cadence as the news
     assert j["audit_check"]["when"] == {"every": "1h"}  # NFR-12
+    assert j["heartbeat"]["when"] == {"every": "20s"}  # NFR-03: three beats a minute
 
 
 def test_each_scheduled_run_reads_every_source_and_one_broken_feed_stops_none_of_the_others():

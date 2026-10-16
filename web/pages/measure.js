@@ -1,10 +1,12 @@
 /* CIO and Tuân thủ · Đo lường (F3): the monthly measurement reports, read from what the product records —
    misses with causes (MEAS-03), rubber-stamping (MEAS-05), news to RM (KPI-01, WF-09), inbox and agent timing
-   (NFR-02). GET /api/measure. */
-import {esc, get, n as how, pct} from "../core/core.js";
+   (NFR-02), availability in business hours (NFR-03). GET /api/measure. */
+import {esc, get, n as how, num, pct} from "../core/core.js";
 
 const n1 = (x) => x == null ? "—" : Number(x).toLocaleString("vi-VN", {maximumFractionDigits: 1});
 const met = (share, inputs) => share == null ? "—" : `<span class="${share >= 1 ? "good-text" : share === 0 ? "bad-text" : ""}">${how(pct(share, false, 0), "measure.on_time", inputs)}</span>`;
+
+const stamp = (t) => new Date(t * 1000).toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"});
 
 function empty(text) { return `<p class="muted small">${text}</p>`; }
 
@@ -14,10 +16,10 @@ function stats(s, unit) {
 
 export async function render(box) {
   const d = await get("/api/measure");
-  const m = d.misses, r = d.rubber_stamp, s = d.speed, t = d.timing;
+  const m = d.misses, r = d.rubber_stamp, s = d.speed, t = d.timing, a = d.availability;
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">Đo lường</div><h1 class="h1">Báo cáo đo lường hằng tháng</h1>
-      <p class="lede">Đọc từ những gì hệ thống ghi lại: tin và sự kiện bị bỏ sót, thời gian CIO xem trước khi duyệt, thời gian từ tin đến RM, tốc độ hộp tin và Agent.</p></div></div>
+      <p class="lede">Đọc từ những gì hệ thống ghi lại: tin và sự kiện bị bỏ sót, thời gian CIO xem trước khi duyệt, thời gian từ tin đến RM, tốc độ hộp tin và Agent, mức sẵn sàng trong giờ làm việc.</p></div></div>
 
     <section class="panel"><h3>Bỏ sót <span class="hint">BRD-RULE-MEAS-03 · theo tháng, kèm nguyên nhân</span></h3>
       <p class="small">Tin quan trọng (mức liên quan “cao” — cách hiểu của chúng tôi, Q-07) không thành sự kiện; sự kiện không đến được các gia đình.</p>
@@ -54,5 +56,14 @@ export async function render(box) {
         ${t.agent.by_month.map(x => `<tr><td>${esc(x.month)}</td><td>Agent CIO</td><td class="num">${x.minutes.n}</td><td>${stats(x.minutes, "phút")}</td><td class="num">${met(x.met_share, {month: x.month, step: "Agent CIO"})}</td></tr>`).join("")}
         ${!t.inbox.by_month.length && !t.agent.by_month.length ? `<tr><td colspan="5" class="muted">Chưa có số liệu.</td></tr>` : ""}
       </tbody></table></div>
+    </section>
+
+    <section class="panel mt"><h3>Sẵn sàng trong giờ làm việc <span class="hint">BRD-NFR-03 · mục tiêu ≥ ${how(pct(a.target, false, 1), "uptime.availability")}</span></h3>
+      <p class="small">Số phút làm việc (thứ Hai–thứ Sáu, 08:00–17:30 giờ Việt Nam) máy chủ ghi được nhịp ÷ số phút làm việc, từ nhịp đầu tiên. Khởi động lại khi triển khai tính là không sẵn sàng.</p>
+      ${a.months.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Tháng</th><th class="num">Phút làm việc</th><th class="num">Phút có nhịp</th><th class="num">Sẵn sàng</th><th>Gián đoạn</th></tr></thead><tbody>
+        ${a.months.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${num(x.business_minutes)}</td><td class="num">${num(x.up_minutes)}</td>
+          <td class="num"><span class="${x.met ? "good-text" : "bad-text"}">${how(pct(x.availability, false, 2), "uptime.availability", {month: x.month, business_minutes: x.business_minutes, up_minutes: x.up_minutes})}</span></td>
+          <td class="small">${x.outages.length ? x.outages.slice(-5).reverse().map(o => `${stamp(o.from)} · ${num(o.minutes)} phút`).join("<br>") + (x.outages.length > 5 ? `<div class="muted">và ${x.outages.length - 5} lần khác</div>` : "") : `<span class="muted">không có</span>`}</td></tr>`).join("")}
+      </tbody></table></div>` : empty("Chưa có nhịp nào: việc nhịp tim chạy cùng máy chủ.")}
     </section>`;
 }

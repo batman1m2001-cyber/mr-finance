@@ -8,18 +8,18 @@ built and proven, and what is still open and why. The single source of each requ
 ## 1. In one paragraph
 
 The BRD has 165 rows: 61 numbered requirements, 7 success metrics and 97 rules. At the start of the plan 108 were
-verified and 40 were open. Now **154 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08,
-NFR-07 and RULE-DATA-10 after G1–G4 of [BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 11 that are not, 7
-are pilot measurements or later BRD phases (`out_of_scope_demo`), 2 do not apply to this product, and **2 are partial**,
-each for a reason outside a demo's reach (a bank's deployment, or a measurement nothing defines yet). Nothing is
-blocked, planned or unbuilt.
+verified and 40 were open. Now **155 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08,
+NFR-07, RULE-DATA-10 and NFR-03 after G1–G5 of [BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 10 that are
+not, 7 are pilot measurements or later BRD phases (`out_of_scope_demo`), 2 do not apply to this product, and **1 is
+partial**, for a reason outside a demo's reach (a measurement nothing defines yet). Nothing is blocked, planned or
+unbuilt.
 
 | Set | Rows | Verified | Partial | Out of scope (demo) | Not applicable |
 |---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 60 | 1 | 0 | 0 |
+| BRD numbered (BR, FR, NFR) | 61 | 61 | 0 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 2 | 1 | 4 | 0 |
 | BRD rules (RULE) | 97 | 92 | 0 | 3 | 2 |
-| **Total** | **165** | **154** | **2** | **7** | **2** |
+| **Total** | **165** | **155** | **1** | **7** | **2** |
 
 “Verified” means a test in `tests/` exercises the requirement and passed in the latest full run; the documentation
 checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not exist, and recomputes the counts.
@@ -42,6 +42,7 @@ checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not
 | G2 | The client-data barrier, by configuration (NFR-08) | #55 |
 | G3 | Client data sealed at rest, keys from a secret store, security headers, the attack suite (NFR-07) | #56 |
 | G4 | The PostgreSQL export checked row for row against a real PostgreSQL; the audit log on write-once segments; the migration guide (RULE-DATA-10) | #57 |
+| G5 | Availability in business hours measured from a heartbeat, in Hệ thống and the monthly report, an alert below 99.5 % (NFR-03) | #58 |
 
 ## 3. The scale requirement, measured (NFR-01)
 
@@ -66,7 +67,6 @@ BRD's size, not the bank's servers.
 
 | ID | What is missing | Why it is not in the demo |
 |---|---|---|
-| BRD-NFR-03 | 99.5 % availability | A property of the bank's hosting. The other half — an AI outage stops neither computing nor reading — is tested against a real refused connection. |
 | BRD-KPI-01 | News → RM ready ≤ 2 h; urgent ≤ 30 min | The 2 h part is measured monthly. Nothing in the BRD defines “urgent”, so the 30 min part cannot be measured. |
 
 Out of scope for the demo (pilot measurements or later BRD phases): KPI-02, KPI-05, KPI-06, KPI-07, RULE-ROLE-05,
@@ -139,7 +139,7 @@ Generated from the matrix on 2026-10-16; the matrix has each row's code, screens
 | BRD-FR-801 | CIO newsletter | verified | 3 |
 | BRD-NFR-01 | 6,500 families ≤ 5 min; family page ≤ 2 s | verified | 2 |
 | BRD-NFR-02 | News to inbox ≤ 10 min; CIO agent ≤ 15 min | verified | 3 |
-| BRD-NFR-03 | 99.5 %; AI failure does not stop computing or viewing | partially implemented | 2 |
+| BRD-NFR-03 | 99.5 %; AI failure does not stop computing or viewing | verified (G5) | 5 |
 | BRD-NFR-04 | Same snapshot → same result to the dong | verified | 2 |
 | BRD-NFR-05 | Exact money; no floats for balances | verified | 1 |
 | BRD-NFR-06 | New factors, classes, agents by configuration; provider change without architecture change | verified | 3 |
