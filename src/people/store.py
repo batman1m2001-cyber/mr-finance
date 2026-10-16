@@ -23,9 +23,10 @@ import os
 import sqlite3
 import time
 from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import Any, Dict, Iterator, List, Optional
 
-from wealth.paths import DATA, no_people_in_zone, state_path
+from wealth.paths import DATA, ensure_schema, no_people_in_zone, state_path
 
 KINDS = ("staff", "client", "dependent")
 STAFF_ROLES = ("cio", "rm", "compliance", "admin", "specialist")
@@ -135,7 +136,7 @@ def _db(write: bool = False) -> Iterator[sqlite3.Connection]:
     con = sqlite3.connect(path, timeout=10, isolation_level=None)
     con.row_factory = sqlite3.Row
     try:
-        con.executescript(SCHEMA)
+        ensure_schema(con, path, "people", SCHEMA)
         if str(path) not in _TOPPED:
             _top_up(con)
             _TOPPED.add(str(path))
@@ -177,23 +178,51 @@ def _person(row: sqlite3.Row) -> Dict[str, Any]:
 # -- clients -----------------------------------------------------------------------------------
 
 
-def client(client_id: str) -> Dict[str, Any]:
-    """One client's record with their dependents and source-system data, as their seed file reads. KeyError when
-    there is no such client."""
-    cid = str(client_id or "")
+_ONE_READ: ContextVar[Optional[Dict[Any, Any]]] = ContextVar("people_one_read", default=None)
+
+
+@contextmanager
+def one_read() -> Iterator[None]:
+    """Inside it a client's rows are read from the database once (NFR-01: applying a view reads every family
+    through the consolidate ops, each source op reading the client again — 16 connections a family at ~0.6 ms
+    each). Each call still decodes its own copy. Only for a bulk read that changes no client; outside it every
+    read is fresh."""
+    token = _ONE_READ.set({})
+    try:
+        yield
+    finally:
+        _ONE_READ.reset(token)
+
+
+def _client_rows(cid: str):
     with _db() as con:
         row = con.execute("select data from people where id = ? and kind = 'client'", (cid,)).fetchone()
         if row is None:
             raise KeyError(f"no client {cid!r}")
-        rec = json.loads(row["data"])
         deps = con.execute(
             "select data from people where member_of = ? and kind = 'dependent' order by seq", (cid,)
         ).fetchall()
         srcs = con.execute(
             "select source, data from client_sources where client_id = ? order by pos", (cid,)
         ).fetchall()
-    rec["dependents"] = [json.loads(d["data"]) for d in deps]
-    rec["sources"] = {s["source"]: json.loads(s["data"]) for s in srcs}
+    return row["data"], [d["data"] for d in deps], [(x["source"], x["data"]) for x in srcs]
+
+
+def client(client_id: str) -> Dict[str, Any]:
+    """One client's record with their dependents and source-system data, as their seed file reads. KeyError when
+    there is no such client."""
+    cid = str(client_id or "")
+    memo = _ONE_READ.get()
+    key = (str(state_path()), cid)
+    if memo is not None and key in memo:
+        data, deps, srcs = memo[key]
+    else:
+        data, deps, srcs = _client_rows(cid)
+        if memo is not None:
+            memo[key] = (data, deps, srcs)
+    rec = json.loads(data)
+    rec["dependents"] = [json.loads(d) for d in deps]
+    rec["sources"] = {source: json.loads(d) for source, d in srcs}
     return rec
 
 

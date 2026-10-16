@@ -15,7 +15,7 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from control import audit
 from control.audit import SCHEMA as AUDIT_SCHEMA
-from wealth.paths import state_path
+from wealth.paths import ensure_schema, state_path
 
 STATUSES = ("new", "dismissed", "grouped", "refused")
 
@@ -38,7 +38,7 @@ def _db() -> Iterator[sqlite3.Connection]:
     con = sqlite3.connect(path, timeout=10, isolation_level=None)
     con.row_factory = sqlite3.Row
     try:
-        con.executescript(SCHEMA + AUDIT_SCHEMA)
+        ensure_schema(con, path, "news", SCHEMA + AUDIT_SCHEMA)
         con.execute("begin immediate")
         yield con
         con.execute("commit")

@@ -408,6 +408,17 @@ async def family_impact(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc)}, status_code=403)
 
 
+async def family_how(request: Request) -> JSONResponse:
+    """“Cách tính” at asset-class level (F-D9): for the family's own people and its staff; names no holding."""
+    q = request.query_params
+    try:
+        return JSONResponse(
+            apply_trace.client_how(q.get("run") or "", request.path_params["family_id"], q.get("horizon") or "3m")
+        )
+    except KeyError as exc:
+        return JSONResponse({"error": str(exc.args[0])}, status_code=404)
+
+
 async def family_graph(request: Request) -> JSONResponse:
     """Kit K3: news → event → scenario → factor → asset → family → goal, every edge with its records."""
     q = request.query_params
@@ -1046,6 +1057,7 @@ app = Starlette(
         Route("/api/runs/{run_id}/graph", run_graph),
         Route("/api/families/{family_id}/impact", family_impact),
         Route("/api/families/{family_id}/graph", family_graph),
+        Route("/api/families/{family_id}/how", family_how),
         Route("/api/trace/{run_id}/{family_id}", trace),
         Route("/api/rm/today", rm_today),
         Route("/api/audit", audit_list),

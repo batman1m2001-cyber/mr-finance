@@ -1,7 +1,7 @@
 /* Tin tác động: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, empty, esc, get, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
+import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, drawer, empty, esc, get, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
@@ -87,7 +87,8 @@ export async function render(box, ctx) {
         <div class="m">${runBadge(i.status, i.status_label)} · duyệt ${when(i.approved_at)} ${staff && i.pre_review ? '· <span class="badge bad">xem trước</span>' : ""}</div>
         ${i.sources ? `<div class="small muted">Nguồn: ${esc(i.sources.outlets.join(", "))} (${i.sources.count} tin)</div>` : ""}
         <div class="row" style="margin-top:6px"><button type="button" class="btn sm" data-run="${esc(i.run_id)}" aria-pressed="false">Xem dải</button>
-        ${staff ? `<button type="button" class="linkbtn small" data-trace="${esc(i.run_id)}">Cách tính</button>` : ""}</div></div>
+        ${staff ? `<button type="button" class="linkbtn small" data-trace="${esc(i.run_id)}">Cách tính</button>`
+          : i.status === "EFFECTIVE" ? `<button type="button" class="linkbtn small" data-how="${esc(i.run_id)}">Cách tính</button>` : ""}</div></div>
       <div style="text-align:right"><div class="num ${signClass(e)}" style="font-weight:700">${vnd(e, true)}</div><div class="small muted">${pct(i.pct["3m"].expected, true, 2)}</div></div></div>`;
   }).join("");
   // the timeline: one row per event, its steps in order with their times, read from the stored records
@@ -102,6 +103,7 @@ export async function render(box, ctx) {
     </div>`).join("");
   box.querySelectorAll("[data-run]").forEach(b => { b.onclick = () => drawFan(items.find(i => i.run_id === b.dataset.run)); });
   box.querySelectorAll("[data-trace]").forEach(b => { b.onclick = () => openTrace(b.dataset.trace, client); });
+  box.querySelectorAll("[data-how]").forEach(b => { b.onclick = () => openHow(b.dataset.how, client); });
   drawFan(sel);
 
   if (staff) {
@@ -163,8 +165,33 @@ function drawGoals(el, it) {
   if (el.hidden) return;
   const lvl = (x) => `<span class="num">${pct(x.ratio, false, 0)}</span> <span class="badge ${FUND[x.level] || ""}">${esc(x.level)}</span>`;
   el.innerHTML = `<h3>Mục tiêu <span class="hint">“${esc(it.event.title)}” · 3 tháng · mức đáp ứng trước → sau</span></h3>
-    <table class="table"><thead><tr><th>Mục tiêu</th><th>Trước</th><th>Sau</th></tr></thead><tbody>
+    <table class="table"><thead><tr><th>Mục tiêu</th><th>Trước</th><th>Sau</th>${g.pool.bands ? "<th>Tác động 3 tháng (VND)</th>" : ""}</tr></thead><tbody>
     ${g.goals.map(x => `<tr><td>${esc(x.label)}${x.changed ? ' <span class="badge warn">đổi mức</span>' : ""}
-      <div class="small muted num">hạn ${esc(x.date)} · cần ${vnd(x.amount)}</div></td><td>${lvl(x.before)}</td><td>${lvl(x.after)}</td></tr>`).join("")}</tbody></table>
-    <div class="footnote">Mục tiêu lấy nguồn theo thứ tự hạn từ tài sản tài chính (tiền, tiền gửi, quỹ, trái phiếu, cổ phiếu, vàng, tiền số): ${vnd(g.pool.before)} → ${vnd(g.pool.after)} (${vnd(g.pool.change, true)}). Mức: tiền cần để dành mỗi tháng ÷ thặng dư hằng tháng — ≤ 0,6 Đạt, ≤ 1 Theo dõi, cao hơn Thiếu. Đây là quy tắc của bản demo, không phải chính sách của ngân hàng.</div>`;
+      <div class="small muted num">hạn ${esc(x.date)} · cần ${vnd(x.amount)}</div></td><td>${lvl(x.before)}</td><td>${lvl(x.after)}</td>
+      ${x.impact ? `<td class="num">${vnd(x.impact["3m"].expected, true)}<div class="small muted">P10 ${vnd(x.impact["3m"].p10, true)} · P90 ${vnd(x.impact["3m"].p90, true)}</div></td>` : g.pool.bands ? "<td></td>" : ""}</tr>`).join("")}</tbody></table>
+    <div class="footnote">Mục tiêu lấy nguồn theo thứ tự hạn từ tài sản tài chính (tiền, tiền gửi, quỹ, trái phiếu, cổ phiếu, vàng, tiền số): ${vnd(g.pool.before)} → ${vnd(g.pool.after)} (${vnd(g.pool.change, true)}). Mức: tiền cần để dành mỗi tháng ÷ thặng dư hằng tháng — ≤ 0,6 Đạt, ≤ 1 Theo dõi, cao hơn Thiếu. Đây là quy tắc của bản demo, không phải chính sách của ngân hàng.${g.pool.bands ? ` Tác động theo mục tiêu: tác động của cả nhóm tài sản đó (cùng bộ máy, mọi kỳ hạn, kỳ vọng và P5–P90) chia theo phần mỗi mục tiêu đang chiếm trước sự kiện; phần chưa gắn mục tiêu ${pct(g.unallocated.share, false, 0)} (${vnd(g.unallocated.impact["3m"].expected, true)}).` : ""}</div>`;
+}
+
+// F-D9 (Q-14, NFR-11): the client's “cách tính” — the formula, the scenarios with the market's moves and the family's
+// change in each, and the family's own asset-class sums; no holding is named (GET /api/families/{id}/how)
+async function openHow(runId, client) {
+  const body = drawer("Cách tính", `<p class="small muted">Đang tải…</p>`);
+  try {
+    const d = await get(`/api/families/${encodeURIComponent(client)}/how?run=${encodeURIComponent(runId)}`);
+    const UNIT = {pct: "%", bp: " điểm cơ bản", pp: " điểm %", sd: " độ lệch chuẩn"};
+    const n = d.number, mv = (m) => `${m.move > 0 ? "+" : "−"}${Math.abs(m.move).toLocaleString("vi-VN", {maximumFractionDigits: m.unit === "bp" ? 0 : 1})}${UNIT[m.unit] || ""}`;
+    body.innerHTML = `
+      <div class="eyebrow">${esc(d.event)} · giá ngày ${esc(d.run.price_date)} · CIO duyệt ${when(d.approved)}</div>
+      <div class="num ${signClass(n.value)}" style="font-size:28px;font-weight:700;margin-top:6px">${vnd(n.value, true)}</div>
+      <div class="small muted">${esc(n.label)} · ${pct(n.pct, true, 2)} tài sản ròng · P10 ${vnd(n.band.p10, true)} · P90 ${vnd(n.band.p90, true)}</div>
+      <h3 style="margin-top:16px">Công thức</h3><p class="small">${esc(d.formula)}</p>
+      <h3 style="margin-top:16px">Theo kịch bản</h3>
+      ${d.branches.map(b => `<div class="panel" style="padding:10px 12px;margin:8px 0"><div class="row" style="justify-content:space-between"><b>${esc(b.name)}</b><span class="num">${pct(b.probability, false, 0)}</span></div>
+        <div class="small muted">${b.moves.map(m => `${esc(m.factor)} ${mv(m)}`).join(" · ")}</div>
+        <div class="small">Gia đình trong kịch bản này: <b class="num ${signClass(b.family_expected)}">${vnd(b.family_expected, true)}</b></div></div>`).join("")}
+      <h3 style="margin-top:16px">Theo nhóm tài sản</h3>
+      <table class="table"><thead><tr><th>Nhóm</th><th>Giá trị</th><th>Đóng góp</th></tr></thead><tbody>
+        ${d.classes.map(c => `<tr><td>${esc(c.label)}</td><td class="num">${vnd(c.value)}</td><td class="num ${signClass(c.contribution)}">${vnd(c.contribution, true)}</td></tr>`).join("")}</tbody></table>
+      <div class="footnote">Nguồn tin: ${d.sources.map(esc).join(", ")}. Phần tài sản có mô hình: ${pct(d.modelled_share, false, 0)}. Không phải khuyến nghị đầu tư; câu hỏi về tài sản cụ thể: liên hệ RM.</div>`;
+  } catch (e) { body.innerHTML = `<p class="small down">${esc(e.message)}</p>`; }
 }

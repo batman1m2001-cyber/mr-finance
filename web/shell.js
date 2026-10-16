@@ -9,7 +9,7 @@
 import {$, $$, esc, failed, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261016r1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261016r17";
+import {mount as mountHeader} from "./header.js?v=20261016r18";
 
 const ROLES = {
   client: {
@@ -173,7 +173,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r17`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r18`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {

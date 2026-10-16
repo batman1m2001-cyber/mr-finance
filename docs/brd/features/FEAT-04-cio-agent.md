@@ -52,7 +52,9 @@ synthesis). A CIO edit that drops one is not refused: the challenger raises it a
 ## Live-mode safeguards
 Two different models (refused if equal); a reply with `finish_reason == "length"` is refused; a reply from a
 model other than the configured one is refused; token caps: analyst 3,000, debate 3,000, synthesis 6,000,
-challenger 4,000.
+challenger 4,000. **Time limit per run** (BRD-RULE-WF-03): 15 minutes from the run's start
+(`views.agents.DEADLINES`), checked before each model call and enforced on it (`asyncio.wait_for` with the time
+left); past it the run fails with “Quá thời hạn 15 phút của lần chạy (BRD §5)”. The policy agent has the same 15.
 
 ## Implementation
 `src/views/graph.py`, `src/views/ops.py` (`gather`, `analyse`, `discuss`, `compose`, `save_view`, `review`),
@@ -66,6 +68,8 @@ challenger 4,000.
 `::test_live_mode_refuses_same_models_a_cut_reply_and_another_model`, `::test_only_the_cio_runs_the_agent_and_decides`;
 `tests/test_queue.py` (queued and answered at once, one open job per event, checks when queued, a failed run, a dead
 worker's job, the three modes).
+`tests/test_deadlines.py::test_a_cio_agent_run_past_its_limit_fails_with_why`,
+`::test_a_run_already_past_its_time_makes_no_call`, `::test_the_limits_are_the_brds`.
 Live run recorded 2026-10-15 (OpenRouter): CIO agent 26 s over 7 nodes (news plan §9).
 
 ## Live demo (UI redesign R6, 2026-10-16)

@@ -2,6 +2,16 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — The remaining rules and the scale test (BRD completion F10): each goal's VND impact at every
+  horizon and band, its share of the goals' pool run through the same engine (BR-08; the overview card of policy
+  and project items relabelled as their own rules, Q-03); the client's own “Cách tính” per effective event (F-D9);
+  15- and 5-minute limits on the CIO agent and the challenger, enforced on each model call (WF-03, WF-04); the
+  served schedules asserted (FR-101, WF-01); browser tests for the goal branch's placements and the “Nội bộ”
+  stamp (FR-603, SEC-03); 6,500 families applied in 167 s and every family read ≤ 0.3 s with them all stored
+  (NFR-01; a family read decodes its own row, the consolidation reads each client once per run, stores create
+  their tables once) — FEAT-01, 04, 05, 08, 09, 10, 13, matrix (BR-08, FR-101, FR-603, NFR-01, WF-01/03/04,
+  SEC-03 verified), api_reference, client.md, BRD_COMPLETION_REPORT.md.
+
 - 2026-10-16 — The policy agent and the policy radar (BRD completion F9): Compliance adds a policy document from
   the Official Gazette (the server reads the gazette's signed PDF, extracts the text, keeps its hash) or an
   official page; a second Compliance person verifies the source; the policy agent (live on `llm:cio` with the new

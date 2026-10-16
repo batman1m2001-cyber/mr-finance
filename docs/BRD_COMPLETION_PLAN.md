@@ -284,6 +284,13 @@ labelled “Đề xuất”. FR-306 and AI-01 verified; Q-09 stays open for the 
 - Client-level “cách tính” (F-D9).
 - Doc sweep and matrix to final, then `docs/BRD_COMPLETION_REPORT.md` with every row's status and evidence.
 
+**Done** ([BRD_COMPLETION_REPORT.md](BRD_COMPLETION_REPORT.md)): per-goal VND at every horizon and band from the
+goals' pool through the same engine, the overview card relabelled (BR-08, Q-03); the client's “Cách tính”
+(`GET /api/families/{id}/how`, F-D9); 15/5-minute limits on each model call (WF-03/04); the served schedules
+asserted (FR-101, WF-01); browser tests for FR-603 and SEC-03; NFR-01 measured: 6,500 families in 167.3 s, every
+family read ≤ 0.29 s. The BRD's 165 rows: 150 verified, 5 partial (deployment matters, KPI-01's undefined
+“urgent”), 8 pilot or later phase, 2 not applicable.
+
 ## 5. What the owner may be asked
 
 Nothing blocks the plan. Optional:

@@ -78,7 +78,7 @@ def family_graph(family_id: str, role: str = "client", run_id: Optional[str] = N
         h3 = fam["horizons"]["3m"]
         view = vstore.get(run["view_id"])
         ev = events.get(run["event_id"])
-        model = FactorModel.from_dict(runs.snapshot(run["snapshot_id"])["factor_model"])
+        model = FactorModel.from_dict(runs.snapshot_head(run["snapshot_id"])["factor_model"])
         rsrc = ("run", run["id"])
 
         eid = node(
@@ -188,7 +188,7 @@ def run_graph(run_id: str) -> Dict[str, Any]:
     run = runs.get(run_id)
     view = vstore.get(run["view_id"])
     ev = events.get(run["event_id"])
-    model = FactorModel.from_dict(runs.snapshot(run["snapshot_id"])["factor_model"])
+    model = FactorModel.from_dict(runs.snapshot_head(run["snapshot_id"])["factor_model"])
     results = runs.family_results(run_id)
     nodes: Dict[str, Dict[str, Any]] = {}
     edges: Dict[tuple, Dict[str, Any]] = {}

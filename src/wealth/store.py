@@ -13,7 +13,7 @@ import uuid
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional
 
-from wealth.paths import state_path
+from wealth.paths import ensure_schema, state_path
 
 SCHEMA = """
 create table if not exists holdings (
@@ -37,7 +37,7 @@ def _db() -> Iterator[sqlite3.Connection]:
     path.parent.mkdir(parents=True, exist_ok=True)
     con = sqlite3.connect(path, timeout=10)
     try:
-        con.executescript(SCHEMA)
+        ensure_schema(con, path, "wealth", SCHEMA)
         yield con
         con.commit()
     finally:

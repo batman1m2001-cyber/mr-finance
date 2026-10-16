@@ -25,9 +25,10 @@ import time
 from datetime import date
 from typing import Any, Dict, List, Optional
 
-from apply.goals import goal_impacts
+from apply.goals import POOL, goal_impacts
 from control import audit, config, db
 from engine import ENGINE_VERSION, FactorModel, evaluate
+from people import store as people_store
 from procedural import goals as procedural_goals
 from views import schema
 from wealth import fixtures, profile
@@ -66,25 +67,30 @@ async def family_holdings() -> Dict[str, Dict[str, Any]]:
     engine = Operon(consolidate_flow, params={"client_id": None, "scope": None})
     as_of = date.fromisoformat(fixtures.market()["as_of"])
     out = {}
-    for cid in fixtures.client_ids():
-        got = await engine.run(inputs={"client_id": cid, "scope": "family"})
-        if "$errors" in got:
-            raise RunError(f"không đọc được danh mục {cid}: {got['$errors']}")
-        who = profile.build(cid, got["members"])
-        out[cid] = {
-            "name": fixtures.client(cid)["name"],
-            "members": got["members"],
-            "holdings": [
-                {k: h[k] for k in ("key", "owner", "kind", "class", "name", "value", "detail")} for h in got["holdings"]
-            ],
-            # FR-404: the dated goals and the monthly surplus their level is judged against
-            "goals": [
-                {k: g[k] for k in ("goal_id", "label", "date", "amount")}
-                for g in procedural_goals.goals_of(fixtures.client(cid), as_of)
-            ],
-            "surplus_monthly": who["income_monthly"] - who["spending_monthly"],
-        }
+    with people_store.one_read():  # each source op reads the client: once from the database is enough
+        for cid in fixtures.client_ids():
+            out[cid] = await _family(engine, cid, as_of)
     return out
+
+
+async def _family(engine, cid: str, as_of: date) -> Dict[str, Any]:
+    got = await engine.run(inputs={"client_id": cid, "scope": "family"})
+    if "$errors" in got:
+        raise RunError(f"không đọc được danh mục {cid}: {got['$errors']}")
+    who = profile.build(cid, got["members"])
+    rec = fixtures.client(cid)
+    return {
+        "name": rec["name"],
+        "members": got["members"],
+        "holdings": [
+            {k: h[k] for k in ("key", "owner", "kind", "class", "name", "value", "detail")} for h in got["holdings"]
+        ],
+        # FR-404: the dated goals and the monthly surplus their level is judged against
+        "goals": [
+            {k: g[k] for k in ("goal_id", "label", "date", "amount")} for g in procedural_goals.goals_of(rec, as_of)
+        ],
+        "surplus_monthly": who["income_monthly"] - who["spending_monthly"],
+    }
 
 
 def make_snapshot(view: Dict[str, Any], families: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
@@ -119,6 +125,10 @@ def compute(snapshot: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
         h3 = r["horizons"]["3m"]
         modelled = sum(h["value"] for h in r["holdings"] if h["modelled"] and h["value"] > 0)
         loans = {h["key"] for h in hs if h["class"] == "loan"}
+        pooled = [h for h in hs if h["kind"] == "asset" and h["class"] in POOL]
+        pool_bands = (  # BR-08: the goals' pool through the same engine, for the VND impact by goal
+            evaluate(pooled, snapshot["branches"], model)["horizons"] if fam.get("goals") and pooled else None
+        )
         out[fid] = {
             "family_id": fid,
             "name": fam["name"],
@@ -152,7 +162,7 @@ def compute(snapshot: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
             "modelled_share": modelled / assets if assets else 0.0,
             "pre_review": bool(nw > 0 and h3["p10"] <= limits["pre_review_pct"] * nw),
             "model": r["model"],
-            "goal_impact": goal_impacts(fam, h3["by_holding"], snapshot["market"]["as_of"]),
+            "goal_impact": goal_impacts(fam, h3["by_holding"], snapshot["market"]["as_of"], pool_bands),
         }
     return out
 
@@ -401,6 +411,16 @@ def withdraw_view(view_id: str, by: str, reason: str) -> List[str]:
     return out
 
 
+def _same(kept: Any, again: Any) -> bool:
+    """Equal on everything ``kept`` holds: a run stored before a field was added (BR-08's goal impact, F10)
+    verifies on what it has; a field it has that differs, or is gone, is a difference."""
+    if isinstance(kept, dict):
+        return isinstance(again, dict) and all(k in again and _same(v, again[k]) for k, v in kept.items())
+    if isinstance(kept, list):
+        return isinstance(again, list) and len(kept) == len(again) and all(_same(a, b) for a, b in zip(kept, again))
+    return kept == again
+
+
 def verify(run_id: str) -> Dict[str, Any]:
     """FR-405 / NFR-04: recompute every family from the run's snapshot and compare to the dong."""
     run = get(run_id)
@@ -415,7 +435,7 @@ def verify(run_id: str) -> Dict[str, Any]:
             for x in ("expected", "p5", "p10", "p50", "p90", "by_class", "by_factor", "by_holding"):
                 if new is None or new["horizons"][h][x] != r["horizons"][h][x]:
                     diffs.append(f"{fid} {h} {x}")
-        if "goal_impact" in r and (new is None or new["goal_impact"] != r["goal_impact"]):
+        if "goal_impact" in r and (new is None or not _same(r["goal_impact"], new["goal_impact"])):
             diffs.append(f"{fid} goal_impact")
     return {
         "ok": not diffs,
@@ -465,6 +485,18 @@ def snapshot(snapshot_id: str) -> Dict[str, Any]:
     return json.loads(row["data"])
 
 
+def snapshot_head(snapshot_id: str) -> Dict[str, Any]:
+    """A snapshot without its families' holdings: what one family's page needs (model, branches, prices). NFR-01:
+    the whole snapshot is 27 MB at 6,500 families, 0.9 s to decode; SQLite drops the families in 0.2 s."""
+    with db.tx() as con:
+        row = con.execute(
+            "select json_remove(data, '$.families') as data from run_snapshots where id = ?", (snapshot_id,)
+        ).fetchone()
+    if row is None:
+        raise KeyError(f"không có ảnh chụp {snapshot_id}")
+    return json.loads(row["data"])
+
+
 def family_results(run_id: str) -> Dict[str, Dict[str, Any]]:
     with db.tx() as con:
         rows = con.execute("select family_id, data from family_impacts where run_id = ?", (run_id,)).fetchall()
@@ -472,7 +504,11 @@ def family_results(run_id: str) -> Dict[str, Dict[str, Any]]:
 
 
 def family_result(run_id: str, family_id: str) -> Dict[str, Any]:
-    got = family_results(run_id).get(family_id)
-    if got is None:
+    """One family's result: its row only (NFR-01: decoding every family's to pick one took 2.4 s at 6,500)."""
+    with db.tx() as con:
+        row = con.execute(
+            "select data from family_impacts where run_id = ? and family_id = ?", (run_id, family_id)
+        ).fetchone()
+    if row is None:
         raise KeyError(f"không có kết quả {family_id} trong {run_id}")
-    return got
+    return json.loads(row["data"])

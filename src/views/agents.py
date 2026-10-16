@@ -24,6 +24,7 @@ import time
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
+from control import db
 from views import mock, prompts, schema
 from views import store as vstore
 from wealth import ai
@@ -31,6 +32,7 @@ from wealth import ai
 MAX_TOKENS = {"analyst": 3000, "debate": 3000, "synthesize": 6000, "challenge": 4000}  # measured: analysts ~1.1–1.5k
 DAILY_TOKENS = 300_000  # NFR-10: the day's budget for all agent calls; AGENT_DAILY_TOKENS overrides
 FORMAT_RETRIES = 2
+DEADLINES = {"cio": 15 * 60, "challenger": 5 * 60, "policy": 15 * 60}  # BRD §5 steps 3–4 (WF-03, WF-04), seconds
 
 
 class AgentError(RuntimeError):
@@ -134,10 +136,31 @@ def budget() -> Dict[str, int]:
     return {"daily": daily, "used_today": vstore.tokens(midnight)["total"]}
 
 
-async def call_model(resource: str, system: str, user: str, max_tokens: int) -> Tuple[str, Dict[str, Any]]:
+def deadline(run_id: str) -> Tuple[float, int]:
+    """(the time a run must be done by, its limit in seconds): from its start and its agent's limit (WF-03/04)."""
+    with db.tx() as con:
+        row = con.execute("select agent, created from agent_runs where id = ?", (run_id,)).fetchone()
+    limit = DEADLINES.get(row["agent"], 15 * 60)
+    return row["created"] + limit, limit
+
+
+async def call_model(
+    resource: str, system: str, user: str, max_tokens: int, run_id: Optional[str] = None
+) -> Tuple[str, Dict[str, Any]]:
     """One chat call through the operonx resource ``llm:<resource>`` → (text, meta). Raises
-    AgentError when the reply was cut off or came from another model than configured."""
+    AgentError when the reply was cut off or came from another model than configured, and — given the agent run
+    it belongs to — when the run's time is up (WF-03: the CIO agent within 15 minutes; WF-04: the challenger
+    within 5): the call is cut at what is left."""
+    import asyncio
+
     from operonx.providers.ops._utils import resolve_hub
+
+    left = None
+    if run_id:
+        until, limit = deadline(run_id)
+        left = until - time.time()
+        if left <= 0:
+            raise AgentError(f"Quá thời hạn {limit // 60} phút của lần chạy (BRD §5)")
 
     b = budget()
     if b["used_today"] + max_tokens > b["daily"]:
@@ -145,11 +168,16 @@ async def call_model(resource: str, system: str, user: str, max_tokens: int) -> 
     llm = _llm(resolve_hub().get(f"llm:{resource}"), models()[resource])
     expected = models()[resource]
     try:
-        resp = await llm.generate(
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-            temperature=0.2,
-            max_tokens=max_tokens,
+        resp = await asyncio.wait_for(
+            llm.generate(
+                messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+                temperature=0.2,
+                max_tokens=max_tokens,
+            ),
+            timeout=left,
         )
+    except asyncio.TimeoutError:
+        raise AgentError(f"Quá thời hạn {limit // 60} phút của lần chạy (BRD §5): mô hình chưa trả lời") from None
     except Exception as exc:  # noqa: BLE001 — the provider down or refusing: the run fails with why (NFR-03)
         raise AgentError(f"Không gọi được mô hình {expected}: {type(exc).__name__}: {exc}"[:300]) from None
     choice = resp.choices[0]
@@ -251,7 +279,7 @@ async def analyst(lens: str, packet: Dict[str, Any], mode: str, run_id: str, fac
     user = f"Sự kiện, tin nguồn và danh mục:\n{wrap(packet)}"
     prompt = {"system": system, "user": user}
     try:
-        text, meta = await call_model("cio", system, user, MAX_TOKENS["analyst"])
+        text, meta = await call_model("cio", system, user, MAX_TOKENS["analyst"], run_id=run_id)
         out = _json(text)
         out.setdefault("factors", {})
         out.setdefault("impacts", [])
@@ -278,7 +306,7 @@ async def debate(notes: List[Dict[str, Any]], packet: Dict[str, Any], mode: str,
         system = _prompt("debate", round=rnd)
         user = f"Ghi chú các nhóm và tin nguồn:\n{wrap({'notes': notes, 'previous': out, 'event': packet['event']})}"
         try:
-            text, meta = await call_model("cio", system, user, MAX_TOKENS["debate"])
+            text, meta = await call_model("cio", system, user, MAX_TOKENS["debate"], run_id=run_id)
             out = _json(text)
         except (AgentError, ValueError) as exc:
             _record(
@@ -340,7 +368,7 @@ async def synthesize(
                     given["previous_errors"] = errors
                 user = f"Đầu vào:\n{wrap(given)}"
                 prompt = {"system": system, "user": user}
-                text, meta = await call_model("cio", system, user, MAX_TOKENS["synthesize"])
+                text, meta = await call_model("cio", system, user, MAX_TOKENS["synthesize"], run_id=run_id)
                 model = meta["model"]
                 view = _json(text)
             errors = schema.check(view, news_ids)
@@ -407,7 +435,7 @@ async def challenge(view: Dict[str, Any], event: Dict[str, Any], mode: str, run_
         }
         user = f"Nhận định và tin nguồn:\n{wrap(packet)}"
         try:
-            text, meta = await call_model("challenger", system, user, MAX_TOKENS["challenge"])
+            text, meta = await call_model("challenger", system, user, MAX_TOKENS["challenge"], run_id=run_id)
             got = _json(text).get("findings", [])
         except (AgentError, ValueError) as exc:
             _record(

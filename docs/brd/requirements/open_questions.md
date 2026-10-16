@@ -10,7 +10,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 |---|---|---|---|
 | Q-01 | divergence | The BRD describes its author's TypeScript/Cloudflare demo; this product is Python/operonx | resolved (ADR-0002) |
 | Q-02 | ambiguity | The BRD's own open decisions (content boundary, model parameters, AI infrastructure) | open — business |
-| Q-03 | conflict | BR-08 “one engine for alerts” vs the product's separate policy-cost alerts | partly resolved (ADR-0007); visible inconsistency remains |
+| Q-03 | conflict | BR-08 “one engine for alerts” vs the product's separate policy-cost alerts | resolved for this phase (ADR-0007; the card relabelled in F10); presets N5 remain |
 | Q-04 | conflict | BRD §3 puts Open API and statements out of scope; the product has them | resolved (ADR-0003) |
 | Q-05 | ambiguity | What makes the challenger “independent, 2nd line” | open |
 | Q-06 | divergence | The kit's Copilot, Money Flow and graph are not in the BRD; the Copilot as worded conflicts with BR-11 | resolved for planning (ADR-0012) |
@@ -48,6 +48,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 - **Fact:** The product also has `alerts_flow` (src/impact, from the brief): 19 dated factors (14 policies, 2 macro moves, 3 infrastructure projects) scored as exposure × sensitivity × probability. Some are cash costs (property tax, transfer tax, PIT), some are price moves (gold-bar policy, market upgrade, FX, metro).
 - **Resolution (partial), [ADR-0007](../decisions/ADR-0007-policy-cost-alerts-stay-outside-the-engine.md):** cash-cost rules are not price moves and stay as “Chi phí chính sách”, outside the ranking. Price-moving rules should become engine presets (planned, news plan N5).
 - **Visible inconsistency (2026-10-15):** the client overview's “Headline News” card ([SCR-CL-01](../assets/current_ui/SCR-CL-01_desktop-light.jpg)) shows the old point-rule numbers (e.g. “Metro số 1 … +778 triệu”), while “Tin tác động” ([SCR-CL-05](../assets/current_ui/SCR-CL-05_desktop-light.jpg)) shows the engine's (“−726 triệu”). Two “news” numbers from two methods, side by side in one product. Proposed: the overview card links to the engine's result, and the point rules are labelled as policy costs. Owner: product.
+- **Done (F10, 2026-10-16):** the overview card is “Chính sách và dự án”, says its numbers come from each policy's own rules (tax, fees, project zones), not the scenario engine, and links to Tác động thị trường for the news impact; goals now get the engine's VND impact (BR-08). Turning the price-moving rules into engine presets (N5) stays for a later phase.
 
 ### Q-04 — Open API and statements
 - **Fact:** BRD §3 lists “Kết nối dữ liệu tài sản ngoài hệ sinh thái TCB (Open API, sao kê)” as out of scope *for this phase*, belonging to step 1 of the Wealth AI journey. The brief (BRIEF-DATA-02) requires both, and they are built.

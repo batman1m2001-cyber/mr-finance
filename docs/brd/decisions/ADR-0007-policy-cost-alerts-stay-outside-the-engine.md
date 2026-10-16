@@ -16,3 +16,4 @@ BR-08 makes the engine the only machine for alerts. The pre-BRD alerts (`src/imp
 ## Consequences
 
 - Until N5, the client overview's “Headline News” card shows point-rule numbers next to the engine's results (Q-03).
+- 2026-10-16 (BRD completion F10): that card is now “Chính sách và dự án”, labelled as the policies' own rules with a link to the engine's Tác động thị trường; goals take the engine's VND impact (BR-08), so ranking, the RM list, goals and explanation are all the engine's.

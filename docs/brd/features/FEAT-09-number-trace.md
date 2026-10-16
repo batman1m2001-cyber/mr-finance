@@ -22,13 +22,19 @@ version and hash, engine version).
 ## Rules
 Staff only: it names holdings and headlines, which client content may not (flow 2,
 [ADR-0008](../decisions/ADR-0008-the-client-sees-asset-classes-only.md)). The client sees the formula sentence
-and the asset-class breakdown instead (Q-14).
+and the asset-class breakdown instead (Q-14), and since F10 a client **“Cách tính”** of its own (F-D9,
+`GET /api/families/{id}/how?run=`): for an effective run only, the number and its band, the formula, each
+scenario's probability with the factor moves (|move| ≥ 0.05, in the model's order, with units) and the family's
+change in it, the asset classes (value and contribution, loans and cards included), the event type and the
+outlets — no holding, no headline, no view text.
 
 ## Implementation
-`src/apply/trace.py`, `app/web.py::trace`, `web/pages/trace.js` (`openTrace`, drawer).
+`src/apply/trace.py` (`trace`, `client_how`), `app/web.py::trace`, `app/web.py::family_how`,
+`web/pages/trace.js` (`openTrace`, drawer), `web/pages/impact.js` (`openHow`, the client's drawer).
 
 ## Acceptance and tests
-`tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news`.
+`tests/test_apply.py::test_the_trace_goes_from_a_number_back_to_the_news`,
+`tests/test_apply.py::test_fd9_the_client_reads_how_its_number_is_made_by_asset_class_with_no_holding_named`.
 
 ## Limitations
 The pre-BRD pages' numbers (dashboard, alerts, scenarios) have their own inline formulas but no trace drawer

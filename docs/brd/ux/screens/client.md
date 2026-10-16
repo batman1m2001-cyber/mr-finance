@@ -135,8 +135,8 @@ tolerance and capacity on the five named levels with the level each falls in. **
 | Generation | new (`web/pages/impact.js`) |
 | Features | [FEAT-13](../../features/FEAT-13-impact-delivery-by-role.md), [FEAT-10](../../features/FEAT-10-goal-branch.md) |
 | Requirements | BRD-BR-08, BRD-BR-10, BRD-FR-502, BRD-RULE-CONTENT-01 (flow 2), BRD-RULE-CONTENT-02, BRD-NFR-11 |
-| Data | `GET /api/families/{id}/impact?role=client`, `GET /api/goals/regulation?family_id=&role=client` |
-| Screenshots | [desktop, with the timeline](../../assets/current_ui/SCR-CL-05_desktop-light.jpg) · [desktop dark](../../assets/current_ui/SCR-CL-05_desktop-dark.jpg) · [phone](../../assets/current_ui/SCR-CL-05_phone-light.jpg) |
+| Data | `GET /api/families/{id}/impact?role=client`, `GET /api/goals/regulation?family_id=&role=client`, `GET /api/families/{id}/how?run=` |
+| Screenshots | [desktop, with the timeline](../../assets/current_ui/SCR-CL-05_desktop-light.jpg) · [desktop dark](../../assets/current_ui/SCR-CL-05_desktop-dark.jpg) · [phone](../../assets/current_ui/SCR-CL-05_phone-light.jpg) · [Cách tính, desktop](../../assets/current_ui/SCR-CL-05-how_desktop-light.jpg) · [Cách tính, phone](../../assets/current_ui/SCR-CL-05-how_phone-light.jpg) · [goals in VND, desktop](../../assets/current_ui/SCR-CL-05-goals_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CL-05-goals_phone-light.jpg) |
 
 **Journey.** After the CIO approves news and the post-check passes, the client sees what it may do to their
 wealth over the next 3 months, how wide the range is, and where it comes from — without tickers or advice.
@@ -162,11 +162,19 @@ validated palette; hover tooltips on marks.
 
 **Rationale.** One hero number instead of tables (the U1 target “news page ≤ 736 words”: 257 achieved). Event type
 instead of headline because a headline can name a company ([ADR-0008](../../decisions/ADR-0008-the-client-sees-asset-classes-only.md)).
-No “Cách tính” drawer for the client (Q-14).
+No trace drawer for the client (Q-14): it names holdings and headlines; the client's own “Cách tính” came in F10.
 
 **Since R4.** A “Dòng thời gian” panel: one row per event, its steps in order — first news, event, AI draft, AI
 challenge, CIO approval, applied, effective — each with the time stored on its record; the selected event's row is
 outlined. Tests: `tests/ui/test_pages.py::test_the_timeline_the_news_impact_card_and_the_cio_run_graph`.
+
+**Since F10.** Each effective event has a **“Cách tính”** button: a drawer with the number and its band, the formula
+in words, each scenario (probability, the factor moves with their units, the family's change in it), the asset
+classes (value, contribution) and the outlets — no holding, ticker or headline (F-D9, FEAT-09). The goals panel
+adds **“Tác động 3 tháng (VND)”**: each goal's expected change with P10 and P90, its share of the goals' pool, and
+a footnote with what stays unallocated (BR-08); runs stored before F10 show the levels only. Tests:
+`tests/test_apply.py::test_fd9_the_client_reads_how_its_number_is_made_by_asset_class_with_no_holding_named`,
+`tests/test_apply.py::test_br08_each_goal_gets_its_vnd_share_of_the_pools_impact_at_every_horizon`.
 
 ---
 
