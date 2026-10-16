@@ -24,3 +24,13 @@ rule-based alert jobs.
 
 Background model spend is the consolidator only, bounded per conversation and measured per day (A6). Follow-ups
 cannot express free-form conditions; the tool says which kinds it supports.
+
+## Notes (A6, 2026-10-17)
+
+- Built as decided. Measured on the real model: the consolidator costs ~US$0.00024 a conversation (five
+  conversations, 531–2,372 prompt tokens, 4.5 s each); about US$0.24 a day for 1,000 conversations. Follow-up checks
+  cost nothing.
+- The token budget's estimate was wrong by 1.8× (3 characters a token assumed; 1.64–1.70 counted on Vietnamese) and
+  was corrected before release: an estimate that is low lets a run pass its budget.
+- A follow-up shows in the bell for every role (a client's bell is the feed's list; staff have no feed).
+- The consolidator writes only where the model may read the conversation; elsewhere its run is `skipped`.

@@ -231,7 +231,7 @@ bigrams with accents folded). Both collections are **lexical only**, so nothing 
   and a “Mức độ chắc chắn” line closes it. Caps: 20 per person and 500 in total per day, counted before the call.
   Measured on the real model 2026-10-17: 9.1 s, US$0.012, two dated sources whose disagreement the answer named.
 
-## 7. Agents *(target, A6–A7)* — ADR-0031, ADR-0033
+## 7. Agents *(built in A6, 2026-10-17; the map in A7)* — ADR-0031, ADR-0033
 
 | Agent | Responsibility | Trigger | Tools | Budget |
 |---|---|---|---|---|
@@ -247,6 +247,33 @@ reads another's prompt. The **ecosystem map** (Agent page, and a link from the p
 agents → data, grouped (front door · background · CIO desk · rules), each node's state from real records
 (`agent_runs`, `agent_jobs`, conversation runs, consolidator and follow-up rows) — active / waiting / done / failed —
 and a click opens that run's trace drawer.
+
+### As built (A6, 2026-10-17)
+
+- **Consolidator** (`src/assistant/consolidate.py`, job `assistant_consolidate` every 5 minutes): conversations idle
+  15 minutes whose turns changed (a hash of the turns' numbers and times) — at most 20 a tick, each once per content.
+  Only where the model may read the conversation (`turn.model_reads`: `demo`, or the model inside the bank);
+  otherwise the run is `skipped` and nothing is sent. Sent: the questions and the answers (600 characters each),
+  newest first within 8,000 tokens (1,500 of them the model's), and the owner's items to merge with. Kept: ≤ 5
+  items, each through `memory.refused` like a person's own; a repeat (the model's `same_as`, or ≥ 60 % shared words
+  of the same kind) is merged — a confirmed item keeps the person's wording, a consolidator's takes the newer one;
+  new items have confidence 0.7, the conversation as source, and show “trợ lý tự rút ra” on the Bộ nhớ page.
+  Runs (`consolidations`): status, attempts, tokens, the provider's cost, counts — never text; a failure is retried
+  on the next two ticks, then left until the conversation changes.
+- **Measured** on the real model (`anthropic/claude-haiku-5.5`), five client conversations of 2–11 turns: 531–2,372
+  prompt tokens, US$0.00007–0.00037 each, **US$0.00024 a conversation on average**, 4.5 s each; 11 items kept, none
+  refused; a “cảm ơn” conversation kept nothing; an 11-turn one kept only the standing request. The token estimate
+  was first 3 characters a token; the model counted **1.64–1.70** on Vietnamese, so the budget would have been
+  passed by 1.8×: the estimate is now 1.6 (a little high, never low).
+- **Follow-ups** (`src/assistant/followups.py`, table `follow_ups`): tools `theo_doi` (a write: “Báo cho bạn một
+  lần khi VN-Index dưới 1.200 điểm (theo dõi 30 ngày)?”), `theo_doi_cua_toi`, `huy_theo_doi` (35 tools in all). A
+  market series (the 31 of `data/market_sources.json`) above or below a level, or a topic matched in the title of an
+  event whose run became effective after the follow-up was made. Checked by an op at the end of each market job (its
+  own series) and of `news_ingest`, no model; ≤ 20 open a person, 30 days by default (≤ 180); a hit fires once.
+  Shown in the bell for every role until opened (“Theo dõi: …”, with the close or the event), and in a “Việc theo
+  dõi” panel on the Bộ nhớ page (Huỷ). On the real model both kinds were asked for correctly in one request each.
+- **Cost per day** = conversations consolidated × ~US$0.00024: 1,000 a day would cost about US$0.24.
+  `consolidate.costs()` reads it from the runs per day (A7 shows it on the map).
 
 ## 8. Storage measurement (A0, 2026-10-16) — ADR-0027
 
@@ -296,6 +323,7 @@ OneWealth keeps only its rules: which tools, which roles, the barrier, what a me
 
 ## 11. Costs *(to be measured in A8)*
 
-Inputs known now: Haiku 5.5 through OpenRouter; a web search ~US$0.012; the consolidator ≤ 8,000 tokens per
-conversation; follow-up checks 0 tokens. A8 measures tokens and cost per conversation and per day from the runs'
-usage records (`operonx-agents` `Usage` carries the provider's own counts and cost).
+Inputs known now: Haiku 5.5 through OpenRouter; a web search US$0.012 (measured, A5); the consolidator
+~US$0.00024 a conversation (measured, A6; ≤ 8,000 tokens); follow-up checks 0 tokens. A8 measures tokens and
+cost per conversation and per day from the runs' usage records (`operonx-agents` `Usage` carries the provider's own
+counts and cost).

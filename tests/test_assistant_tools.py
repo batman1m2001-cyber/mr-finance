@@ -104,6 +104,12 @@ def _an_item(mp):
     return {"item_id": run(memory.remember(ctx("client"), "goal", "Mua nhà năm sau")).id}
 
 
+def _a_follow_up(mp):
+    from assistant import followups
+
+    return {"follow_up_id": followups.create(ctx("client"), "topic", topic="lãi suất")["id"]}
+
+
 SETUP = {  # write → (who asks, what must exist first → the model's arguments)
     "duyet_de_xuat": ("rm", _review_pending),
     "lay_tin": ("cio", _feeds),
@@ -115,15 +121,18 @@ SETUP = {  # write → (who asks, what must exist first → the model's argument
     "da_xem_canh_bao": ("cio", _an_alert),
     "ghi_nho": ("client", lambda mp: {"kind": "preference", "text": "Thích báo cáo ngắn"}),
     "quen": ("client", _an_item),
+    "theo_doi": ("client", lambda mp: {"series": "VNINDEX", "op": "below", "level": 1200}),
+    "huy_theo_doi": ("client", _a_follow_up),
 }
 DELETES = ("quen",)  # writes whose effect is an absence
 BUSINESS = ("reviews", "rm_contacts", "events", "alerts", "news_items", "audit_log")
 
 
 def fingerprint(path):
-    """The rows of the tables a write changes (the business records and the audit chain; the memory items)."""
+    """The rows of the tables a write changes (the business records and the audit chain; the memory items and
+    the follow-ups)."""
     h = hashlib.sha256(_rows(path, BUSINESS).encode())
-    h.update(_rows(path.with_name("assistant.db"), ("operonx_agents_memory",)).encode())
+    h.update(_rows(path.with_name("assistant.db"), ("operonx_agents_memory", "follow_ups")).encode())
     return h.hexdigest()
 
 

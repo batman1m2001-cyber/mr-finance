@@ -10,6 +10,7 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
                     assistant_flow ──► an answer from the role's tools in several steps; writes wait for the person
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
                     · POST /api/assistant/memory ──► the Bộ nhớ page (A4) · 02:30 daily ──► assistant_retention
+                    · every 5 min ──► assistant_consolidate (A6) · market and news jobs ──► follow-ups (A6)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
@@ -61,6 +62,7 @@ from app import web
 from app.http import SecurityHeaders
 from apply.graph import recompute_flow, run_decide_flow
 from assistant.graph import (
+    assistant_consolidate_flow,
     assistant_conversations_flow,
     assistant_flow,
     assistant_memory_flow,
@@ -402,8 +404,6 @@ APP = Application(
             schedule=schedule(at="07:00", port=PORT),
             description="07:00 daily: the policy sweep over every client.",
         ),
-        # the news: every white-listed feed through the gates into the CIO's inbox, every 10 minutes
-        # (inside `operonx serve`), and on demand with `operonx run news_ingest`
         # the assistant's retention (A4): conversations past Compliance's assistant_retention, expired memory items
         Job(
             "assistant_retention",
@@ -411,6 +411,16 @@ APP = Application(
             schedule=schedule(at="02:30", port=PORT),
             description="02:30 daily: the assistant's conversations past retention and expired memory items deleted.",
         ),
+        # the memory consolidator (A6, ADR-0031): idle conversations into long-term items, ≤ 8,000 tokens each
+        Job(
+            "assistant_consolidate",
+            graph=assistant_consolidate_flow,
+            schedule=schedule(every="5m", port=PORT),
+            timeout=600,
+            description="Every 5 minutes: conversations idle 15 minutes distilled into the person's memory (A6).",
+        ),
+        # the news: every white-listed feed through the gates into the CIO's inbox, every 10 minutes
+        # (inside `operonx serve`), and on demand with `operonx run news_ingest`; then the topic follow-ups (A6)
         Job(
             "news_ingest",
             graph=ingest_flow,
