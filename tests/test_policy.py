@@ -247,3 +247,18 @@ def test_the_endpoints(gazette, monkeypatch):
         radar = c.get("/api/policy").json()
         assert radar["documents"][0]["id"] == did and radar["statuses"]["effective"] == "Có hiệu lực"
         assert c.get(f"/api/policy/{did}").json()["document"]["text"]
+
+
+def test_a_cut_off_answer_fails_the_run_and_the_attempt_is_recorded(gazette, live, monkeypatch):
+    from test_views import FakeLLM
+
+    d = verified(gazette)
+    cut = FakeLLM("vendor/big-model", live.sent, answer=lambda *a: "{", finish="length")
+    import operonx.providers.ops._utils as hub_utils
+
+    monkeypatch.setattr(hub_utils, "resolve_hub", lambda: SimpleNamespace(get=lambda key: cut))
+    with pytest.raises(Conflict, match="bị cắt"):
+        summarise(d["id"])
+    with db.tx() as con:
+        data = json.loads(con.execute("select data from agent_runs where agent = 'policy'").fetchone()[0])
+    assert data["status"] == "error" and "bị cắt" in data["nodes"][0]["error"] and agent.MAX_TOKENS >= 6000

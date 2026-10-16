@@ -20,7 +20,7 @@ from policy import store, text
 from views import agents, prompts
 from views import store as vstore
 
-MAX_TOKENS = 2500
+MAX_TOKENS = 6000  # measured: 2,500 cut a live answer (six Vietnamese quotes); the CIO's synthesis uses ~4.5k
 MAX_RETRIES = 2
 MAX_INPUT = 60_000
 
@@ -83,6 +83,11 @@ async def _attempts(d, given, mode, model, run_id):
             try:
                 reply, meta = await agents.call_model("cio", system, user, MAX_TOKENS)
                 raw = agents._json(reply)
+            except agents.AgentError as exc:  # cut off, another model, the provider: the run fails, recorded
+                agents._record(
+                    run_id, "summarise", mode, model, {"document": d["id"]}, prompt, None, str(exc), started, attempt
+                )
+                raise
             except ValueError as exc:  # unreadable JSON: a format error, retried
                 raw, meta = None, {}
                 findings = [str(exc)]
