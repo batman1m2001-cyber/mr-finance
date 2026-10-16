@@ -75,6 +75,11 @@ create table if not exists newsletters (
 create table if not exists policy_documents (
   id text primary key, status text not null, created real not null, data text not null);
 create table if not exists heartbeats (minute integer primary key, at real not null, business integer not null);
+create table if not exists rm_contacts (
+  id text primary key, at real not null, family_id text not null, by text not null, signal text, data text not null);
+create table if not exists client_alerts (
+  client_id text not null, key text not null, first_shown real not null, opened real, data text not null,
+  primary key (client_id, key));
 """
 
 TABLES = (
@@ -96,6 +101,8 @@ TABLES = (
     "newsletters",
     "policy_documents",
     "heartbeats",
+    "rm_contacts",
+    "client_alerts",
     "counters",
 )
 

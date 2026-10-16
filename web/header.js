@@ -83,7 +83,7 @@ export function mount(shell) {
         const f = (await post("/api/feed", {client_id: client, scope, role})).feed;
         const where = role === "client" ? {impact: "#/client/tin/thi-truong", detail: "#/client/tong-quan/chi-tiet", flow: "#/client/tong-quan/toan-canh"}
           : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/toan-canh"};
-        items = f.items.map(i => ({title: i.title, sub: i.why, tone: SEV[i.severity], route: where[i.link] || where.detail, focus: i.key}));
+        items = f.items.map(i => ({title: i.title, sub: i.why, tone: SEV[i.severity], route: where[i.link] || where.detail, focus: i.key, high: i.severity === "high"}));
       } else {
         // staff: the alerts of the kinds the role looks after first (NFR-12), then the role's own queue
         const al = (await get("/api/system/alerts")).alerts.filter(a => a.status === "open");
@@ -132,6 +132,8 @@ export function mount(shell) {
     const a = e.target.closest("[data-b]"); if (!a) return;
     e.preventDefault(); bpop.hidden = true;
     const it = items[Number(a.dataset.b)];
+    // the client opened a high-level item (BRD-KPI-07): recorded, never in the way of opening it
+    if (shell.role() === "client" && it.high) post("/api/feed/open", {client_id: shell.client(), key: it.focus}).catch(() => {});
     shell.go(it.route, it.focus ? [it.focus] : null);
   });
   document.addEventListener("click", (e) => { if (!bpop.hidden && !bpop.contains(e.target)) { bpop.hidden = true; bell.setAttribute("aria-expanded", "false"); } });

@@ -45,7 +45,7 @@ def read_decision(item_id: str = None, decision: str = None, note: str = None, b
     decision = str(decision or "")
     if decision not in ("approved", "rejected"):
         raise ValueError("decision is approved or rejected")
-    return {"item_id": str(item_id or ""), "decision": decision, "note": str(note or "")[:1000]}
+    return {"item_id": str(item_id or ""), "decision": decision, "note": str(note or "")[:1000], "by": by}
 
 
 @op
@@ -61,6 +61,6 @@ def check_pending(item_id: str) -> dict:
 
 
 @op
-def decide(item_id: str, decision: str, note: str = "") -> dict:
-    """The RM's decision, kept with its note and time."""
-    return {"item": store.decide(item_id, decision, note)}
+def decide(item_id: str, decision: str, note: str = "", by: str = None) -> dict:
+    """The RM's decision, kept with its note, its time and who decided, and audited (BRD-KPI-05)."""
+    return {"item": store.decide(item_id, decision, note, by)}

@@ -4,7 +4,7 @@ from operonx import END, START, graph
 
 from consolidate.graph import consolidate_flow
 from dashboard.graph import dashboard_flow
-from feed.ops import check_request, feed
+from feed.ops import check_request, feed, open_item
 
 
 @graph
@@ -21,3 +21,10 @@ def feed_flow(client_id, scope="personal", role="client"):
         transactions=held["transactions"],
     )
     START >> ask >> held >> dash >> out >> END
+
+
+@graph
+def feed_open_flow(client_id, key):
+    """The client opened a high-level item (BRD-KPI-07)."""
+    done = open_item(client_id=client_id, key=key)
+    START >> done >> END

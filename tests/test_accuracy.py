@@ -149,7 +149,17 @@ def test_the_pages_api_is_for_staff(monkeypatch):
         a = c.get("/api/accuracy").json()
         m = c.get("/api/measure").json()
     assert a["min_obs"] == 24 and a["accept"] == [0.7, 0.9] and "horizons" in a["views"]
-    assert set(m) == {"misses", "rubber_stamp", "speed", "timing", "availability", "important"}
+    assert set(m) == {
+        "misses",
+        "rubber_stamp",
+        "speed",
+        "timing",
+        "availability",
+        "important",
+        "reviewed",
+        "contacts",
+        "opens",
+    }
 
 
 def test_a_factors_own_band_is_its_shock_times_the_realisation_with_the_model_spread():

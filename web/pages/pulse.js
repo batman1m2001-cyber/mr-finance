@@ -215,6 +215,11 @@ export async function render(box, ctx) {
       }).join("")}</div>`
         : `<div class="small muted">Không có điều gì cần chú ý lúc này.</div>`}
       <div class="footnote" data-explains>Vì sao một mục hiện ở đây: ${esc(fd.feed.rules)}</div>`;
+    // the client opened a high-level item's evidence (BRD-KPI-07): recorded, never in the way of opening it
+    if (!staff) for (const a of el.querySelectorAll(".feed-item a, .feed-item [data-month]")) a.addEventListener("click", () => {
+      const it = its.find(i => i.key === a.closest(".feed-item").dataset.focus);
+      if (it && it.severity === "high") post("/api/feed/open", {client_id: client, key: it.key}).catch(() => {});
+    });
     for (const b of el.querySelectorAll("[data-month]")) b.onclick = () => {
       const sel = $("#month", box);
       sel.value = b.dataset.month; sel.dispatchEvent(new Event("change"));

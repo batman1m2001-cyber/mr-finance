@@ -163,16 +163,40 @@ def propose(client_id: str, kind: str, title: str, data: Dict[str, Any]) -> str:
     return item_id
 
 
-def decide(item_id: str, status: str, note: str = "") -> Optional[Dict[str, Any]]:
+def decide(item_id: str, status: str, note: str = "", by: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """The decision, once. With ``by`` (the RM deciding), the item keeps who decided and the decision goes into the
+    audit chain (``review.decide``, BRD-KPI-05); without it, as the queue did before (a test of the old records)."""
     if status not in ("approved", "rejected"):
         raise ValueError(f"a decision is approved or rejected, not {status!r}")
-    with _db() as con:
+    if by is None:
+        with _db() as con:
+            cur = con.execute(
+                "update reviews set status = ?, note = ?, decided = ? where id = ? and status = 'pending'",
+                (status, _seal("reviews", item_id, "note", note), time.time(), item_id),
+            )
+            if not cur.rowcount:
+                return None
+        return review(item_id)
+    from control import audit, db
+
+    item = review(item_id)
+    if item is None or item["status"] != "pending":
+        return None
+    data = json.dumps({**item["data"], "decided_by": by}, ensure_ascii=False)
+    with db.tx() as con:
         cur = con.execute(
-            "update reviews set status = ?, note = ?, decided = ? where id = ? and status = 'pending'",
-            (status, _seal("reviews", item_id, "note", note), time.time(), item_id),
+            "update reviews set status = ?, note = ?, decided = ?, data = ? where id = ? and status = 'pending'",
+            (
+                status,
+                _seal("reviews", item_id, "note", note),
+                time.time(),
+                _seal("reviews", item_id, "data", data),
+                item_id,
+            ),
         )
         if not cur.rowcount:
             return None
+        audit.append(con, by, "review.decide", item_id, {"client_id": item["client_id"], "decision": status})
     return review(item_id)
 
 

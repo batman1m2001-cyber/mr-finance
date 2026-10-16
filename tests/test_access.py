@@ -119,6 +119,8 @@ def actions(vid, item):
             {"compliance"},
         ),
         ("/api/policy/summarise", {"document_id": "PD-0000", "by": "BY"}, {"compliance"}),
+        ("/api/rm/contacts", {"family_id": "C01", "channel": "call", "by": "BY"}, {"rm01"}),
+        ("/api/feed/open", {"client_id": "C01", "key": "feed:x"}, {"C01"}),
         ("/api/goals/outflow", {"family_id": "C01", "goal_id": "G1", "purpose": "học", "by": "BY"}, {"rm01"}),
         ("/api/model/estimate", {"by": "BY"}, {"cio"}),
         ("/api/market/load", {"by": "BY", "since": "2026-01-01"}, {"admin"}),

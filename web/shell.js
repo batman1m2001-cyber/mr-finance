@@ -174,7 +174,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r23`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r24`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {

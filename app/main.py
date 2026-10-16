@@ -3,6 +3,8 @@
 POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──► the dashboard
 POST /api/flows     {client_id, scope?, month?} ──► flows_flow ──► a month's money in → out, with the rows
 POST /api/feed      {client_id, scope?, role?} ──► feed_flow ──► what matters now, why, and its evidence
+POST /api/feed/open {client_id, key} ──► feed_open_flow ──► the client opened a high-level item (KPI-07)
+POST /api/rm/contacts {family_id, channel, signal?, note?, by} ──► contact_flow ──► an RM's contact (KPI-06)
 POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ──► copilot_flow ──► a templated answer
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
@@ -52,13 +54,14 @@ from operonx.app.jobs import Job
 from app import web
 from app.http import SecurityHeaders
 from apply.graph import recompute_flow, run_decide_flow
+from contacts.graph import contact_flow
 from control import barrier
 from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow, heartbeat_flow
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
 from events.graph import event_flow, event_urgent_flow
-from feed.graph import feed_flow
+from feed.graph import feed_flow, feed_open_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
@@ -123,6 +126,19 @@ APP = Application(
             http("POST", "/api/feed", port=PORT),
             graph=feed_flow,
             description="POST {client_id, scope, role: client|rm}: the Intelligence Feed, with why and evidence.",
+        ),
+        Service(
+            "feed_open",
+            http("POST", "/api/feed/open", port=PORT),
+            graph=feed_open_flow,
+            description="POST {client_id, key}: the client opened a high-level item (KPI-07).",
+        ),
+        Service(
+            "rm_contact",
+            http("POST", "/api/rm/contacts", port=PORT),
+            graph=contact_flow,
+            description="POST {family_id, channel, signal?, note?, by}: an RM records a contact, from a Hôm nay "
+            "signal or not (KPI-06).",
         ),
         Service(
             "config_propose",
