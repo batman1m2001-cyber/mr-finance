@@ -38,6 +38,10 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CIO-13_phone-light.jpg` | SCR-CIO-13 Đo lường | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state (market history from 2020, two approved views) |
 | `SCR-ADM-01_desktop-light.jpg` | SCR-ADM-01 Hệ thống | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state, after a load of the history since 2026-10-01 |
 | `SCR-ADM-01_phone-light.jpg` | SCR-ADM-01 Hệ thống | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state, after a load of the history since 2026-10-01 |
+| `SCR-ADM-01-alerts_desktop-light.jpg` | SCR-ADM-01 Hệ thống, “Cảnh báo” | current | desktop 1440×900, light, viewport at the section | 2026-10-16, dev server, after an unsigned package to the inbox was rejected (AL-000001) |
+| `SCR-ADM-01-alerts_phone-light.jpg` | SCR-ADM-01 Hệ thống, “Cảnh báo” | current | phone 390×844, light, viewport at the section | as above |
+| `FEAT-36-bell-cio_desktop-light.jpg` | the bell, CIO: the open alert first, then new news | current | desktop 1440×900, light, bell open | as above |
+| `FEAT-36-bell-admin_phone-light.jpg` | the bell, Admin: system alerts | current | phone 390×844, light, bell open | as above |
 | `SCR-ADM-01-zone_desktop-light.jpg` | SCR-ADM-01 Hệ thống, “Vùng AI và hộp chờ” | current | desktop 1440×900, light, viewport at the section | 2026-10-16, dev server :8031 in inbox mode beside the AI zone :8041, after the zone's package IN-000001 was imported |
 | `SCR-ADM-01-zone_phone-light.jpg` | SCR-ADM-01 Hệ thống, “Vùng AI và hộp chờ” | current | phone 390×844, light, viewport at the section | as above |
 | `SCR-CIO-03-inbox_desktop-light.jpg` | SCR-CIO-03 Nhận định, a view from the AI zone | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, VW-0004-v1 imported from the zone (zone in mock), waiting for the CIO |

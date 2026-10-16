@@ -72,7 +72,7 @@ export function mount(shell) {
   // ── the bell ───────────────────────────────────────────────────────────
   const bell = $("#bell"), bpop = $("#bell-pop");
   let items = [], key = "";
-  const SEV = {high: "bad", medium: "warn", info: ""};
+  const SEV = {high: "bad", medium: "warn", info: ""};  // a feed item's severity, and an alert's
   const load = async () => {
     const role = shell.role(), client = shell.client(), scope = shell.scope();
     const k = `${role}|${client}|${scope}`;
@@ -84,14 +84,23 @@ export function mount(shell) {
         const where = role === "client" ? {impact: "#/client/tin/thi-truong", detail: "#/client/tong-quan/chi-tiet", flow: "#/client/tong-quan/toan-canh"}
           : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/toan-canh"};
         items = f.items.map(i => ({title: i.title, sub: i.why, tone: SEV[i.severity], route: where[i.link] || where.detail, focus: i.key}));
-      } else if (role === "cio") {
-        const n = (await get("/api/news/inbox?limit=200")).items;
-        items = n.slice(0, 8).map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio/hop-tin"}));
-        items.total = n.length;
       } else {
-        const n = (await get("/api/news/inbox?held=1")).items.filter(i => i.status !== "released");
-        items = n.slice(0, 8).map(i => ({title: i.title, sub: "Tin bị giữ", tone: "warn", route: "#/compliance/giu"}));
-        items.total = n.length;
+        // staff: the alerts of the kinds the role looks after first (NFR-12), then the role's own queue
+        const al = (await get("/api/system/alerts")).alerts.filter(a => a.status === "open");
+        const alerts = al.map(a => ({title: a.title, sub: `${a.label}${a.count > 1 ? ` · ${a.count} lần` : ""}`, tone: SEV[a.severity],
+          route: (WHERE[role] || {})[a.kind] || `#/${role}`, alert: a.id}));
+        let rest = [], total = 0;
+        if (role === "cio") {
+          const n = (await get("/api/news/inbox?limit=200")).items;
+          rest = n.slice(0, 8).map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio/hop-tin"}));
+          total = n.length;
+        } else if (role === "compliance") {
+          const n = (await get("/api/news/inbox?held=1")).items.filter(i => i.status !== "released");
+          rest = n.slice(0, 8).map(i => ({title: i.title, sub: "Tin bị giữ", tone: "warn", route: "#/compliance/giu"}));
+          total = n.length;
+        }
+        items = [...alerts, ...rest];
+        items.total = alerts.length + total;
       }
     } catch (_) { items = []; }
     const count = items.total != null ? items.total : items.length;
@@ -99,14 +108,27 @@ export function mount(shell) {
     bell.setAttribute("aria-label", count ? `Thông báo: ${count}` : "Thông báo: không có");
     if (!bpop.hidden) drawBell();
   };
-  const TITLE = {client: "Điều đáng chú ý", rm: "Điều đáng chú ý · khách đang chọn", cio: "Tin mới trong hộp tin", compliance: "Tin đang bị giữ"};
+  // where an alert's cause is seen, by role (Admin: Hệ thống lists them all)
+  const WHERE = {
+    admin: {news_feed: "#/admin/he-thong", market_job: "#/admin/du-lieu", agent: "#/admin/he-thong", audit_chain: "#/admin/nhat-ky", inbox: "#/admin/he-thong", zone_sync: "#/admin/he-thong"},
+    cio: {news_feed: "#/cio/hop-tin", market_job: "#/cio/mo-hinh/du-lieu", agent: "#/cio/nhan-dinh", inbox: "#/cio/nhan-dinh"},
+    compliance: {audit_chain: "#/compliance/nhat-ky"},
+  };
+  const TITLE = {client: "Điều đáng chú ý", rm: "Điều đáng chú ý · khách đang chọn", cio: "Cảnh báo và tin mới trong hộp tin",
+    compliance: "Cảnh báo và tin đang bị giữ", admin: "Cảnh báo hệ thống"};
   const drawBell = () => {
     bpop.innerHTML = `<div class="pop-head">${TITLE[shell.role()]}</div>${items.length ? items.map((i, n) =>
-      `<a class="pop-item" href="${esc(i.route)}" data-b="${n}"><span class="dot ${i.tone}"></span><span class="pop-t"><b>${esc(i.title)}</b><small>${esc(i.sub)}</small></span></a>`).join("")
+      `<a class="pop-item" href="${esc(i.route)}" data-b="${n}"><span class="dot ${i.tone}"></span><span class="pop-t"><b>${esc(i.title)}</b><small>${esc(i.sub)}</small></span>${i.alert ? `<button type="button" class="btn sm" data-ack="${esc(i.alert)}" title="Đánh dấu đã xem (ghi vào nhật ký)">Đã xem</button>` : ""}</a>`).join("")
       : `<div class="pop-empty">Không có gì cần chú ý lúc này.</div>`}`;
   };
   bell.onclick = (e) => { e.stopPropagation(); bpop.hidden = !bpop.hidden; bell.setAttribute("aria-expanded", String(!bpop.hidden)); if (!bpop.hidden) drawBell(); };
-  bpop.addEventListener("click", (e) => {
+  bpop.addEventListener("click", async (e) => {
+    const ackBtn = e.target.closest("[data-ack]");
+    if (ackBtn) {  // “Đã xem”: audited (alert.ack); the alert stays in Hệ thống until the thing works again
+      e.preventDefault(); e.stopPropagation(); ackBtn.disabled = true;
+      try { await post("/api/system/alerts/ack", {alert_id: ackBtn.dataset.ack, by: shell.user()}); } catch (_) { ackBtn.disabled = false; return; }
+      key = ""; await load(); drawBell(); return;
+    }
     const a = e.target.closest("[data-b]"); if (!a) return;
     e.preventDefault(); bpop.hidden = true;
     const it = items[Number(a.dataset.b)];

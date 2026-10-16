@@ -28,7 +28,8 @@ note — from one box, and see what needs attention without opening a page.
 
 3. **Keyboard**: “/” focuses the box; ↑/↓ move; Enter opens the selected (or first) hit; Esc closes.
 4. **Bell**: the client's or RM's “Điều đáng chú ý” (`POST /api/feed`, the same items as on Toàn cảnh), the CIO's
-   new news (`GET /api/news/inbox`), Compliance's held news. The count is on the bell; a click lists them; an item
+   new news (`GET /api/news/inbox`), Compliance's held news — and, for CIO, Compliance and Admin, first their open
+   alerts (`GET /api/system/alerts`, each with “Đã xem”; [FEAT-36](FEAT-36-alerts-and-central-log.md)). The count is on the bell; a click lists them; an item
    opens its evidence page and marks the item there ([FEAT-33](FEAT-33-living-interface.md)). It reloads when the
    role, client or scope changes.
 

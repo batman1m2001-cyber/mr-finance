@@ -21,6 +21,7 @@ import json
 import time
 from typing import Any, Dict, List
 
+from control import alerts
 from events import store as events
 from inbox import sign, store
 from news import rules
@@ -56,13 +57,17 @@ def import_one(row: Dict[str, Any]) -> Dict[str, Any]:
         store.mark(pid, "READY", waiting=str(exc))
         return {"id": pid, "status": "READY", "waiting": str(exc)}
     except Rejected as exc:
-        store.mark(pid, "REJECTED", error=str(exc))
-        return {"id": pid, "status": "REJECTED", "error": str(exc)}
+        return _reject(pid, str(exc))
     except Exception as exc:  # noqa: BLE001 — a package that breaks the import is refused, not left PROCESSING
-        store.mark(pid, "REJECTED", error=f"{type(exc).__name__}: {exc}"[:500])
-        return {"id": pid, "status": "REJECTED", "error": str(exc)}
+        return _reject(pid, f"{type(exc).__name__}: {exc}"[:500])
     store.mark(pid, "IMPORTED", **got)
     return {"id": pid, "status": "IMPORTED", **got}
+
+
+def _reject(pid: str, why: str) -> Dict[str, Any]:
+    store.mark(pid, "REJECTED", error=why)
+    alerts.raise_("inbox", pid, f"Gói {pid} từ vùng AI bị từ chối", why)
+    return {"id": pid, "status": "REJECTED", "error": why}
 
 
 def _import(row: Dict[str, Any]) -> Dict[str, Any]:

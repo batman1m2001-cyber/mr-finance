@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional
 
 from operonx import op
 
-from control import roles
+from control import alerts, roles
 from news import rss, rules, store
 from people import auth
 from wealth.paths import DATA
@@ -130,6 +130,11 @@ def screen(fetched: list, at: float) -> dict:
 def keep(rows: list, counts: dict, at: float) -> dict:
     """The new items kept, and the run recorded for the feed-health strip."""
     kept, dup = store.add(rows)
+    for sid, c in counts.items():  # a feed that failed raises an alert; one that answered resolves it (NFR-12)
+        if c.get("error"):
+            alerts.raise_("news_feed", sid, f"Nguồn tin {sid} không lấy được", c["error"])
+        else:
+            alerts.resolve("news_feed", sid)
     added = [r["id"] for r in kept if r["status"] == "new"]
     summary = {
         "at": at,

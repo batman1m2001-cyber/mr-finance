@@ -61,6 +61,7 @@ READS = {
     "/api/audit/verify": {"compliance", "admin"},
     "/api/audit/export": {"compliance", "admin"},
     "/api/system": {"admin"},
+    "/api/system/alerts": DESK,  # the bell: each role its kinds of alert
     "/api/rm/today": {"rm01", "rm03"},
 }
 OPEN = {"/healthz", "/api/auth/me", "/api/auth/accounts", "/api/auth/login", "/api/auth/demo", "/api/auth/logout"}
@@ -104,6 +105,7 @@ def actions(vid, item):
         ("/api/goals/outflow", {"family_id": "C01", "goal_id": "G1", "purpose": "học", "by": "BY"}, {"rm01"}),
         ("/api/model/estimate", {"by": "BY"}, {"cio"}),
         ("/api/market/load", {"by": "BY", "since": "2026-01-01"}, {"admin"}),
+        ("/api/system/alerts/ack", {"alert_id": "AL-0", "by": "BY"}, DESK),
     ]
 
 

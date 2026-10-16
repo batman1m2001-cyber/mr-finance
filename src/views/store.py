@@ -196,6 +196,7 @@ def finish_run(run_id: str, status: str, error: str = "") -> None:
         data.update(status=status, error=error, finished=time.time())
         con.execute("update agent_runs set data = ? where id = ?", (db.dumps(data), run_id))
         nodes = hashlib.sha256(db.dumps(data["nodes"]).encode("utf-8")).hexdigest()
+        who = con.execute("select agent, subject_id from agent_runs where id = ?", (run_id,)).fetchone()
         audit.append(
             con,
             "agent",
@@ -203,6 +204,12 @@ def finish_run(run_id: str, status: str, error: str = "") -> None:
             run_id,
             {"status": status, "error": error, "nodes": len(data["nodes"]), "nodes_hash": nodes},
         )
+    from control import alerts  # after the write: an alert is its own transaction (NFR-12)
+
+    if status == "error":
+        alerts.raise_("agent", who["agent"], f"Agent {who['agent']} lỗi ({who['subject_id']}, {run_id})", error)
+    elif status == "ok":
+        alerts.resolve("agent", who["agent"])
 
 
 def runs(subject_id: str) -> List[Dict[str, Any]]:
