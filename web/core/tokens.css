@@ -128,6 +128,15 @@ a { color: var(--accent); }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
 .dot.bad { background: var(--critical); } .dot.warn { background: var(--warning); } .dot.good { background: var(--good); }
 .bellwrap { position: relative; }
+/* Cá nhân / Gia đình and its “?”: the explanation opens under it on hover, focus or tap */
+.scopewrap { position: relative; display: inline-flex; align-items: center; gap: 6px; }
+.helpbtn { width: 22px; height: 22px; border-radius: 999px; border: 1px solid var(--axis); background: var(--surface); color: var(--muted);
+  font: 700 12px/1 var(--font); cursor: help; display: grid; place-items: center; padding: 0; flex: none; }
+.helpbtn:hover, .helpbtn[aria-expanded="true"] { color: var(--ink); border-color: var(--ink-2); }
+.scopetip { width: 340px; cursor: default; }
+.scopetip .tipbody { padding: 2px 10px 8px; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.scopetip .tipbody p { margin: 6px 0; }
+.scopetip .tipbody b { color: var(--ink); font-weight: 650; }
 #bell { position: relative; display: grid; place-items: center; }
 #bell[data-count]:not([data-count=""])::after { content: attr(data-count); position: absolute; top: -4px; right: -4px; min-width: 17px;
   height: 17px; padding: 0 4px; border-radius: 999px; background: var(--critical); color: #fff; font: 700 10.5px/17px var(--font);
@@ -330,7 +339,7 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 :is(#page, .drawer) .hero.md { font-size: clamp(28px, 3.4vw, 40px); }
 :is(#page, .drawer) .btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
 .tt { min-width: 0; overflow-wrap: anywhere; } /* a legacy source row ran 8px past a phone screen */
-.shell-bar [hidden], [hidden].seg, .pick[hidden] { display: none !important; } /* legacy .seg set display */
+.shell-bar [hidden], [hidden].seg, .pick[hidden], .scopewrap[hidden] { display: none !important; } /* legacy .seg set display */
 .editing-only { display: none; }
 .editing .editing-only { display: revert; }
 .editing .editing-only.row, .editing .row.editing-only { display: flex; }
@@ -727,7 +736,7 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .cp-st { font-size: 11.5px; color: var(--muted); width: 100%; }
 
 /* ── sign-in (web/pages/signin.js) ─────────────────────────────────────────── */
-body.signed-out .shell-nav, body.signed-out #search, body.signed-out #client-pick, body.signed-out #scope-pick,
+body.signed-out .shell-nav, body.signed-out #search, body.signed-out #client-pick, body.signed-out #scope-wrap,
 body.signed-out .bellwrap, body.signed-out .cp-fab, body.signed-out #reset { display: none !important; }
 .signin { display: grid; gap: var(--s-4); grid-template-columns: minmax(0, 380px) minmax(0, 1fr); align-items: start;
   max-width: 1100px; margin: 24px auto; }

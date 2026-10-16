@@ -22,7 +22,7 @@ from apply import run as apply_run
 from apply import trace as apply_trace
 from control import alerts as control_alerts
 from control import audit as control_audit
-from control import barrier, roles
+from control import barrier, config, roles
 from control import crypto as control_crypto
 from control import db as control_db
 from control import log as control_log
@@ -76,12 +76,18 @@ def _visible_clients(v) -> list:
 async def clients(request: Request) -> JSONResponse:
     """The families the person signed in may see: a client their own, an RM the families assigned to them."""
     out = []
+    # whether a member is in the family view: their consent, when Compliance's ``consent`` configuration asks for it
+    # (consolidate.ops.household); the header's Cá nhân / Gia đình switch says who is and who is not
+    needed = config.data("consent")["require"]["family_member"]
     for cid in _visible_clients(viewer(request)):
         c = fixtures.client(cid)
         out.append(
             {
                 **fixtures.summary(cid),
-                "household": [{**m, "name": fixtures.client(m["id"])["name"]} for m in c.get("household", [])],
+                "household": [
+                    {**m, "name": fixtures.client(m["id"])["name"], "counted": bool(m.get("consent") or not needed)}
+                    for m in c.get("household", [])
+                ],
                 "samples": c.get("samples", []),
             }
         )

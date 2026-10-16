@@ -142,6 +142,8 @@ class Page:
         self.ctx = browser.new_context(
             viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None, color_scheme=theme
         )
+        # the app opens dark unless the person chose light (mf.theme), whatever the system's scheme: say which
+        self.ctx.add_init_script(f"try {{ localStorage.setItem('mf.theme', '{theme}'); }} catch (_) {{}}")
         self.page = self.ctx.new_page()
         self.errors = []
         self.page.on("pageerror", lambda e: self.errors.append(f"pageerror: {e} @ {(e.stack or '').splitlines()[1:3]}"))

@@ -17,3 +17,24 @@ overlay = "resources.yaml"
 # .operonx/runs.
 [tracing]
 sinks = ["local"]
+
+# The page reads are not traced: each recomputes a picture from stored data and changes nothing (the audit log keeps
+# what matters), and a trace of one — every step's inputs and outputs, ~0.4 MB for the feed — took two thirds of the
+# request's time, its JSON written while the next request waited for the interpreter. The copilot, the agents, the
+# jobs and every change stay traced.
+[tracing.services.dashboard]
+sinks = []
+[tracing.services.overview]
+sinks = []
+[tracing.services.flows]
+sinks = []
+[tracing.services.feed]
+sinks = []
+[tracing.services.goals]
+sinks = []
+[tracing.services.alerts]
+sinks = []
+[tracing.services.scenario]
+sinks = []
+[tracing.services.search]
+sinks = []

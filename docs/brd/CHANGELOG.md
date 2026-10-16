@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Pages switch at once: a page's reads are kept in the tab's memory, so going back to a page draws it
+  from what it had (6–45 ms, was 20–480 ms) while the same reads go to the server again and the page is drawn once
+  more if an answer changed; any change made in the tab forgets them; every page module of the role is imported
+  while the browser is idle. The page reads (dashboard, overview, flows, feed, goals, alerts, scenario, search) are
+  no longer traced — a trace took two thirds of their time (feed 226 → 71 ms). The Cá nhân / Gia đình switch shows
+  only where the family has someone else, with a “?” saying whose assets each view counts and who has not consented
+  — ADR-0024 (memory only, not `no-store`'s HTTP caches).
+
 - 2026-10-16 — Availability measured (BRD_REMAINING_PLAN G5, NFR-03): a heartbeat every 20 seconds inside the
   server; availability = business minutes (Mon–Fri 08:00–17:30, Vietnam time) with a beat ÷ business minutes, from
   the first beat; Hệ thống shows the month so far, the monthly report each month with its outages and “Cách tính”;

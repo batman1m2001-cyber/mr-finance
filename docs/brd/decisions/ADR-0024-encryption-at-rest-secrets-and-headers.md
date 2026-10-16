@@ -31,6 +31,9 @@ headers. SQLite has no built-in encryption, and a bank keeps keys in a secret st
   hash) and no framing; `nosniff`; no referrer; HSTS when the request came over TLS; `no-store` on `/api/`; a write
   from another site refused (403) before it reaches the app. The session cookie stays HttpOnly, SameSite=Lax, Secure
   over HTTPS.
+  The pages keep what they read in the tab's memory for an instant return to a page (2026-10-16, `web/core/core.js`
+  `keep`): never written to disk or to an HTTP cache, forgotten on any change, reload or sign-out — `no-store` still
+  holds for every API answer.
 - **An attack suite in the tests** (`tests/test_security.py`, `tests/ui/test_attacks.py`): at rest, rotation,
   secrets, headers, cross-site writes, forged sessions, another family's data, SQL in inputs, paths out of the web
   folder, an oversized upload, stored markup in the page; prompt injection stays in `tests/test_views.py`.
