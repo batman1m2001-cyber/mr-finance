@@ -32,6 +32,11 @@ below is built until then.
 | A-D8 | Ecosystem map | Built into the existing Agent page (FEAT-15) and the Copilot panel: overview (user → assistant → agents → tools → data), live states from `agent_runs`, `agent_jobs` and sessions, drill-down into the existing run traces. Drawn to the kit's visual language (docs/brd/assets) | No parallel monitoring page |
 | A-D9 | Production readiness | An eval suite on real models (OpenRouter keys exist), realistic Vietnamese conversations, tracked metrics (accuracy, grounding, tool success, refusals, leakage, latency p50/p95, tokens and cost per conversation, background-agent cost per day), a gate the assistant must pass; external services without credentials isolated and reported | The brief forbids claiming readiness on mocks |
 
+**Upstream is allowed (owner, 2026-10-16):** “you can update the kg and knowledge of operonx core”. Where a
+need is generic — long-term and archive memory, memory tools, the knowledge base's collections and ACLs, tool
+registries with verifiers — it is built in OperonX (core, `operonx-agents`, `operonx-kb`) with its own tests and
+release, and OneWealth pins the new version; only OneWealth's rules stay in this repository.
+
 ## 3. Phases (after G9)
 
 | Phase | What | Done when |
