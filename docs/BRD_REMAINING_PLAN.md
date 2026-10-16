@@ -90,6 +90,13 @@ the next.
   (`src/contacts/`). KPI-07: a high-level item is delivered when the client themselves first reads it and opened
   when the client clicks it (`src/feed/opens.py`). All three monthly on Đo lường.
 - **G8 — The certified specialist (ROLE-05, WF-08).**
+  **Done** (2026-10-16): specialists sign in (they had no accounts; a database made before gets them on first
+  open) and see the families whose team they lead. Certificates are the configuration `certifications`
+  (Compliance, two people; demo values, two specialists left uncertified). An RM's approval of a family with a
+  certified specialist waits for them (`pending_specialist`, `POST /api/review/specialist`, audited
+  `review.specialist`); the certificate is checked again when they decide; a rejection needs a reason. A family
+  with none is approved by the RM alone. The RM may write a recommendation for a family (`POST
+  /api/review/recommend`), through the same gate; one approved by its author alone counts as a KPI-05 miss.
 - **G9 — The control group (MEAS-06).** Then the report updated: what is verified, what only a pilot or the bank
   can show.
 

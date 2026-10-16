@@ -9,7 +9,7 @@
 import {$, $$, esc, explainOn, failed, howAudience, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261016r1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261016r19";
+import {mount as mountHeader} from "./header.js?v=20261016r25";
 
 const ROLES = {
   client: {
@@ -69,6 +69,12 @@ const ROLES = {
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
     ],
   },
+  specialist: {
+    label: "Chuyên gia", user: "sp_global",
+    nav: [
+      {id: "duyet", label: "Duyệt khuyến nghị", page: "specialist"},
+    ],
+  },
   compliance: {
     label: "Tuân thủ", user: "compliance",
     nav: [
@@ -84,6 +90,9 @@ const ROLES = {
   },
 };
 const state = {role: "client", users: {}, route: null, seq: 0, me: null, auth: false, demo: false};
+let leaving = false;
+window.addEventListener("pagehide", () => { leaving = true; });
+window.addEventListener("beforeunload", () => { leaving = true; });
 const pages = {};
 
 function parse(hash) {
@@ -174,12 +183,13 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r24`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r25`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {
     if (seq === state.seq) box.innerHTML = failed(e);
-    if (box.isConnected) console.error(e);
+    // a fetch the browser cut because the document is being left is not a failure of the page
+    if (box.isConnected && !leaving) console.error(e);
   }
   // the route has rendered, or failed visibly: motion.js applies a waiting highlight; tests wait on it
   if (seq === state.seq) window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
@@ -285,7 +295,7 @@ async function start() {
   mountCopilot();
   await Promise.all([
     pickers(),
-    state.me && state.me.role === "client" ? null  // the staff list is staff-only
+    state.me && (state.me.role === "client" || state.me.role === "specialist") ? null  // the staff list: desk and RMs
       : fetch("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
   ]);
   await route();

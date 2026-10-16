@@ -3,7 +3,6 @@ the risk test goes back and forth and sets the drawdown limit the dashboard uses
 hoạch is approved by the RM and the client sees the note, the policy filter keeps one side, and a row of the
 all-clients performance opens that client."""
 
-
 from conftest import api, in_thread
 from test_apply import MARKET, approved
 
@@ -54,14 +53,20 @@ def test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it(open_page):
     p = open_page()
     p.go("#/client/muc-tieu/ke-hoach")
     p.page.locator("[data-act]").first.click()
-    p.page.wait_for_selector("#panel .pill.ai")  # “Chờ chuyên gia duyệt” where the button was
+    p.page.wait_for_selector("#panel .pill.ai")  # “Chờ RM duyệt” where the button was
     p.go("#/client/chuyen-gia")
-    assert p.page.locator(".qitem").count() == 1 and "Chờ chuyên gia duyệt" in p.page.inner_text(".qitem")
+    assert p.page.locator(".qitem").count() == 1 and "Chờ RM duyệt" in p.page.inner_text(".qitem")
     assert p.page.locator("[data-ok]").count() == 0  # the client only reads the queue
     p.go("#/rm/khach-hang/duyet")
     p.page.locator(".qitem input").fill("Đồng ý, gọi khách tuần sau")
     p.page.click("[data-ok]")
-    p.page.wait_for_function("/Đã xử lý/.test(document.querySelector('#page').textContent)")
+    # C01 has a certified specialist: the RM's approval waits for them (G8)
+    p.page.wait_for_function("/Chờ chuyên gia có chứng chỉ duyệt/.test(document.querySelector('.qitem').textContent)")
+    p.go("#/client/chuyen-gia")
+    assert "Chờ chuyên gia có chứng chỉ duyệt" in p.page.inner_text(".qitem")
+    p.go("#/specialist/duyet")
+    p.page.click("[data-ok]")
+    p.page.wait_for_function("/Bạn đã xử lý/.test(document.querySelector('#page').textContent)")
     p.go("#/client/chuyen-gia")
     item = p.page.inner_text(".qitem")
     assert "Đã duyệt" in item and "Đồng ý, gọi khách tuần sau" in item

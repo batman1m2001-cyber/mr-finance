@@ -23,7 +23,8 @@ and the steps that need two people get two people.
   signs in, what they may see and act for all follow it (F5). A staff member
   added to the seed later joins a database made before, with an account (`store._top_up`).
 - **Accounts and sessions** (`src/people/auth.py`, [ADR-0020](../decisions/ADR-0020-sign-in-with-own-accounts.md)):
-  everyone but the specialists and dependents has an account; login by e-mail or id; scrypt-hashed password; a
+  everyone but the dependents has an account (specialists since G8: they approve action recommendations for
+  the families whose team they lead, BRD-RULE-ROLE-05); login by e-mail or id; scrypt-hashed password; a
   signed HttpOnly cookie for 12 hours. A wrong login or password gets one answer, after a short delay, and every
   sign-in is an audit row (`auth.sign_in`). With `MF_DEMO_ACCOUNTS=on` the sign-in page lists the accounts by
   role and opens one with a click.

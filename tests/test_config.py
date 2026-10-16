@@ -108,6 +108,7 @@ def test_the_endpoints():
             "price_sources",
             "ticker_map",
             "rm_assignment",
+            "certifications",
             "ai_mode",
             "client_ai",
             "prompts",

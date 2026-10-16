@@ -63,10 +63,10 @@ def test_a_household_member_has_their_familys_rm():
             assert store.assigned_rm(cid) == store.assigned_rm(head)
 
 
-def test_the_specialists_are_people_but_do_not_act_in_the_app():
+def test_the_specialists_act_in_the_app_since_g8():
+    """Specialists approve action recommendations for the families assigned to them (BRD-RULE-ROLE-05)."""
     assert store.staff("specialist")
-    assert not set(p["id"] for p in store.staff("specialist")) & set(roles.users())
-    assert set(roles.users()) == {p["id"] for p in store.staff() if p["role"] != "specialist"}
+    assert set(roles.users()) == {p["id"] for p in store.staff()}
 
 
 def test_reset_brings_the_people_back_to_their_seeds():

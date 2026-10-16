@@ -223,6 +223,40 @@ def _check_assignment(data: Any) -> None:
         raise ValueError(f"không phải RM: {bad}")
 
 
+# Who may approve action recommendations (BRD-RULE-ROLE-05, WF-08; BRD_REMAINING_PLAN G8, G-D7): a specialist with a
+# certificate in force. Demo values, not real certificates; two specialists are left uncertified on purpose.
+CERTIFICATIONS = {
+    "sp_global": {"certificate": "CFA (demo)", "issuer": "CFA Institute", "valid_until": "2027-12-31"},
+    "sp_insurance": {
+        "certificate": "Tư vấn bảo hiểm nhân thọ (demo)",
+        "issuer": "Bộ Tài chính",
+        "valid_until": "2027-06-30",
+    },
+    "sp_private": {"certificate": "CFP (demo)", "issuer": "FPSB", "valid_until": "2028-03-31"},
+}
+
+
+def _check_certifications(data: Any) -> None:
+    from datetime import date
+
+    from people import store
+
+    if not isinstance(data, dict):
+        raise ValueError("cần {mã chuyên gia: {certificate, issuer, valid_until}}")
+    specialists = {p["id"] for p in store.staff("specialist")}
+    for sid, c in data.items():
+        if sid not in specialists:
+            raise ValueError(f"{sid!r} không phải chuyên gia")
+        if not isinstance(c, dict) or not str(c.get("certificate") or "").strip() or len(str(c["certificate"])) > 100:
+            raise ValueError(f"{sid}: cần tên chứng chỉ (tối đa 100 ký tự)")
+        if not str(c.get("issuer") or "").strip():
+            raise ValueError(f"{sid}: cần nơi cấp")
+        try:
+            date.fromisoformat(str(c.get("valid_until")))
+        except ValueError:
+            raise ValueError(f"{sid}: valid_until là ngày YYYY-MM-DD") from None
+
+
 def _models_base() -> Dict[str, str]:
     import os
 
@@ -338,6 +372,13 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": False,
         "base": _assignment_base,
         "check": _check_assignment,
+    },
+    "certifications": {
+        "label": "Chứng nhận chuyên gia",
+        "owner": "compliance",
+        "two_person": True,
+        "base": lambda: json.loads(json.dumps(CERTIFICATIONS)),
+        "check": _check_certifications,
     },
     "ai_mode": {
         "label": "Chế độ chạy AI",

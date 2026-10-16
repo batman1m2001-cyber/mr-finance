@@ -68,7 +68,7 @@ def viewer(request: Request):
 def _visible_clients(v) -> list:
     if v is None or v["role"] in ("cio", "compliance", "admin"):
         return fixtures.client_ids()
-    if v["role"] == "rm":
+    if v["role"] in ("rm", "specialist"):
         return [c for c in fixtures.client_ids() if c in v.get("families", [])]
     return [v["family"]]
 
@@ -182,7 +182,24 @@ async def reviews(request: Request) -> JSONResponse:
     heads = {cid: fixtures.client(cid).get("member_of") or cid for cid in fixtures.client_ids(members=True)}
     rows = [r for r in rows if heads.get(r["client_id"], r["client_id"]) in mine]
     names = {cid: fixtures.client(cid)["name"] for cid in heads}
-    return JSONResponse({"items": [{**r, "client_name": names.get(r["client_id"], r["client_id"])} for r in rows]})
+    from review import specialist
+
+    # who approves after the RM, per family the person sees (G8): its certified specialists, none → the RM alone
+    approvers = {cid: specialist.approvers(cid) for cid in sorted(mine)}
+    v = viewer(request)
+    me = specialist.certificate(v["id"]) if v and v["role"] == "specialist" else None
+    if v and v["role"] == "client":  # an RM's recommendation reaches the client once it is approved (G8)
+        rows = [r for r in rows if r["kind"] != "rm_note" or r["status"] == "approved"]
+    return JSONResponse(
+        {
+            "items": [
+                {**r, "client_name": names.get(r["client_id"], r["client_id"]), "family_id": heads.get(r["client_id"])}
+                for r in rows
+            ],
+            "approvers": approvers,
+            "certificate": me,
+        }
+    )
 
 
 @lru_cache(maxsize=1)

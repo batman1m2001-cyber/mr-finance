@@ -8,9 +8,9 @@ built and proven, and what is still open and why. The single source of each requ
 ## 1. In one paragraph
 
 The BRD has 165 rows: 61 numbered requirements, 7 success metrics and 97 rules. At the start of the plan 108 were
-verified and 40 were open. Now **160 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08,
-NFR-07, RULE-DATA-10, NFR-03 and the seven success metrics' last five after G1–G7 of
-[BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 5 that are not, 3 are later BRD phases (`out_of_scope_demo`)
+verified and 40 were open. Now **162 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08,
+NFR-07, RULE-DATA-10, NFR-03, the success metrics' last five, ROLE-05 and WF-08 after G1–G8 of
+[BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 3 that are not, 1 is a later BRD phase (`out_of_scope_demo`)
 and 2 do not apply to this product.
 **Nothing is partial**, blocked, planned or unbuilt.
 
@@ -18,8 +18,8 @@ and 2 do not apply to this product.
 |---|---|---|---|---|---|
 | BRD numbered (BR, FR, NFR) | 61 | 61 | 0 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 7 | 0 | 0 | 0 |
-| BRD rules (RULE) | 97 | 92 | 0 | 3 | 2 |
-| **Total** | **165** | **160** | **0** | **3** | **2** |
+| BRD rules (RULE) | 97 | 94 | 0 | 1 | 2 |
+| **Total** | **165** | **162** | **0** | **1** | **2** |
 
 “Verified” means a test in `tests/` exercises the requirement and passed in the latest full run; the documentation
 checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not exist, and recomputes the counts.
@@ -45,6 +45,7 @@ checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not
 | G5 | Availability in business hours measured from a heartbeat, in Hệ thống and the monthly report, an alert below 99.5 % (NFR-03) | #58 |
 | G6 | Urgent news: the CIO's flag, the product's proposals, measured against 30 min (KPI-01); important news collected, against an independent reference read every 2 h (KPI-02) | #59 |
 | G7 | Recommendations reviewed and logged, from the records (KPI-05); the RM's contact log and the share from a signal (KPI-06); client opens of high-level items (KPI-07) | #60 |
+| G8 | The certified specialist: specialists sign in; certificates as configuration; an approved action recommendation waits for the family's certified specialist, if any; the RM's own recommendation through the same gate (ROLE-05, WF-08) | #61 |
 
 ## 3. The scale requirement, measured (NFR-01)
 
@@ -73,7 +74,7 @@ Nothing. KPI-01's “urgent” and KPI-02's “important” are not defined by t
 are measured from the RM's contact log and the client's opens (G7); the 50 % and 70 % themselves are behaviour only
 a pilot shows.
 
-Out of scope for the demo (later BRD phases): RULE-ROLE-05, RULE-WF-08, RULE-MEAS-06. Not applicable: RULE-SCOPE-03 (the product keeps its pre-BRD connectors,
+Out of scope for the demo (later BRD phases): RULE-MEAS-06. Not applicable: RULE-SCOPE-03 (the product keeps its pre-BRD connectors,
 ADR-0003) and RULE-SCOPE-05 (nothing is sent; the client view is in-app, ADR-0008).
 
 ## 5. Decisions still with the owner

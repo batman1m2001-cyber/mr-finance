@@ -106,7 +106,9 @@ def test_no_write_without_confirm_and_the_result_is_the_real_one():
     assert ask(confirm=first["confirm"], role="client")["status"] == "forbidden"  # the client cannot confirm it
     assert wealth_store.review(item)["status"] == "pending"
     done = ask(confirm=first["confirm"], role="rm")
-    assert done["status"] == "ok" and wealth_store.review(item)["status"] == "approved"
+    # C01 has a certified specialist: the RM's approval waits for them (G8)
+    assert done["status"] == "ok" and wealth_store.review(item)["status"] == "pending_specialist"
+    assert "chờ chuyên gia" in done["text"]
     again = ask(confirm=first["confirm"], role="rm")  # the server refuses a second decision: said as a failure
     assert again["status"] == "failed" and again["text"].startswith("Không thực hiện được")
 

@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from typing import Dict
 
-SIGN_IN_ROLES = ("cio", "rm", "compliance", "admin")
+SIGN_IN_ROLES = ("cio", "rm", "compliance", "admin", "specialist")
 
 
 def users() -> Dict[str, Dict[str, str]]:
-    """The staff who act in the app, by id (the people table, src/people): CIO, RM, Compliance and Admin users.
-    The specialists of the families' teams are people too, but do not act in the app."""
+    """The staff who act in the app, by id (the people table, src/people): CIO, RM, Compliance, Admin and the
+    specialists, who approve action recommendations for the families assigned to them (BRD-RULE-ROLE-05, G8)."""
     from people import store
 
     return {
@@ -26,7 +26,14 @@ def users() -> Dict[str, Dict[str, str]]:
 ZONE_ACTOR = "agent:zone"  # who acts in the AI zone (app/zone.py): its jobs only, and only there
 
 
-ROLE_LABELS = {"cio": "CIO", "rm": "RM", "compliance": "Tuân thủ", "admin": "Quản trị", "client": "Khách hàng"}
+ROLE_LABELS = {
+    "cio": "CIO",
+    "rm": "RM",
+    "compliance": "Tuân thủ",
+    "admin": "Quản trị",
+    "specialist": "Chuyên gia",
+    "client": "Khách hàng",
+}
 
 
 class Forbidden(PermissionError):
