@@ -8,9 +8,9 @@ built and proven, and what is still open and why. The single source of each requ
 ## 1. In one paragraph
 
 The BRD has 165 rows: 61 numbered requirements, 7 success metrics and 97 rules. At the start of the plan 108 were
-verified and 40 were open. Now **151 are implemented and verified by tests** (150 after F10; NFR-11 after G1 of
-[BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 14 that are not, 8 are pilot
-measurements or later BRD phases (`out_of_scope_demo`), 2 do not apply to this product, and **4 are partial**,
+verified and 40 were open. Now **152 are implemented and verified by tests** (150 after F10; NFR-11 after G1 and NFR-08 after G2 of
+[BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 13 that are not, 8 are pilot
+measurements or later BRD phases (`out_of_scope_demo`), 2 do not apply to this product, and **3 are partial**,
 each for a reason outside a demo's reach (a bank's deployment, or a measurement nothing defines yet). Nothing is
 blocked, planned or unbuilt.
 
@@ -64,7 +64,6 @@ BRD's size, not the bank's servers.
 |---|---|---|
 | BRD-NFR-03 | 99.5 % availability | A property of the bank's hosting. The other half — an AI outage stops neither computing nor reading — is tested against a real refused connection. |
 | BRD-NFR-07 | Encryption at rest, a secret store, penetration tests | The bank deployment's. The prompt-injection test is built and passes. |
-| BRD-NFR-08 | Client data never reaches an AI provider, everywhere | True and tested for the whole news-impact system. The pre-BRD statement reading and chat declaration send client text when AI is on; accepted for the mock demo (ADR-0018), required before a bank deployment. |
 | BRD-KPI-01 | News → RM ready ≤ 2 h; urgent ≤ 30 min | The 2 h part is measured monthly. Nothing in the BRD defines “urgent”, so the 30 min part cannot be measured. |
 
 Out of scope for the demo (pilot measurements or later BRD phases): KPI-02, KPI-05, KPI-06, KPI-07, RULE-ROLE-05,
@@ -142,7 +141,7 @@ Generated from the matrix on 2026-10-16; the matrix has each row's code, screens
 | BRD-NFR-05 | Exact money; no floats for balances | verified | 1 |
 | BRD-NFR-06 | New factors, classes, agents by configuration; provider change without architecture change | verified | 3 |
 | BRD-NFR-07 | Encryption, secret store, pen and prompt-injection tests | partially implemented | 1 |
-| BRD-NFR-08 | Client data in Vietnam; never to an AI provider | partially implemented | 1 |
+| BRD-NFR-08 | Client data in Vietnam; never to an AI provider | verified (G2) | 2 |
 | BRD-NFR-09 | Immutable log; retention per bank rules | verified | 1 |
 | BRD-NFR-10 | Token limits, daily budget, cost per event | verified | 2 |
 | BRD-NFR-11 | Vietnamese; “cách tính” on every number; desktop and phone | verified (G1) | 2 |

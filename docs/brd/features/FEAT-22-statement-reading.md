@@ -23,5 +23,6 @@ mbs_C02.csv, hsc_note.txt).
 (OpenRouter Haiku 5.5) 5/5 on 2026-10-10 (docs/PLAN.md).
 
 ## Limitations
-This is client data: in a bank deployment the model must run inside the bank (BRD NFR-08) — the demo sends a
-mock statement to the configured model only when AI is on.
+This is client data (BRD NFR-08). The `client_ai` setting decides where it may go (ADR-0023): `demo` (the public
+demo) sends the mock statement to the configured model when AI is on; `onprem` reads it with `llm:onprem`, the
+bank's own model; `off` reads it with the rules. `tests/test_barrier.py` proves it at the wire.

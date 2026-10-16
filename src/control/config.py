@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 from functools import lru_cache
 from typing import Any, Callable, Dict, List, Optional
@@ -170,6 +171,26 @@ def _check_ai_mode(data: Any) -> None:
         raise ValueError(f"cần {{'mode': một trong {list(AI_MODES)}}}")
 
 
+def _client_ai_base() -> Dict[str, Any]:
+    from control.barrier import BASE
+
+    return json.loads(json.dumps(BASE))
+
+
+def _check_client_ai(data: Any) -> None:
+    from control.barrier import MODES
+
+    if not isinstance(data, dict) or set(data) != {"mode", "onprem_hosts"} or data["mode"] not in MODES:
+        raise ValueError(f"cần {{'mode': một trong {list(MODES)}, 'onprem_hosts': [máy chủ]}}")
+    hosts = data["onprem_hosts"]
+    if not isinstance(hosts, list) or len(hosts) > 20:
+        raise ValueError("onprem_hosts: danh sách tối đa 20 tên máy chủ")
+    if not all(isinstance(h, str) and re.fullmatch(r"[A-Za-z0-9.-]{1,253}", h) for h in hosts):
+        raise ValueError("onprem_hosts: mỗi mục là một tên máy chủ hoặc địa chỉ IP, không có giao thức hay cổng")
+    if data["mode"] == "onprem" and not hosts:
+        raise ValueError("chế độ onprem cần ít nhất một máy chủ trong onprem_hosts")
+
+
 def _check_related(data: Any) -> None:
     if not isinstance(data, list) or not 1 <= len(data) <= 100:
         raise ValueError("một danh sách 1–100 tên bên liên quan")
@@ -324,6 +345,13 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": False,
         "base": lambda: {"mode": "live"},
         "check": _check_ai_mode,
+    },
+    "client_ai": {
+        "label": "AI với dữ liệu khách hàng",
+        "owner": "admin",
+        "two_person": True,
+        "base": _client_ai_base,
+        "check": _check_client_ai,
     },
     "prompts": {
         "label": "Lời nhắc của agent",

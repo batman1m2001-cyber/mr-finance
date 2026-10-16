@@ -48,6 +48,7 @@ from operonx.app.jobs import Job
 
 from app import web
 from apply.graph import recompute_flow, run_decide_flow
+from control import barrier
 from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
@@ -85,6 +86,8 @@ from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
 from views.graph import agent_eval_flow, agent_queue_flow, agent_worker_flow, decide_flow
 from zone.graph import zone_sync_flow
+
+barrier.install()  # every llm: call of this process passes the client-data barrier (BRD-NFR-08)
 
 PORT = env("PORT", 8030)
 

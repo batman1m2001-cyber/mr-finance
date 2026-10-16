@@ -35,8 +35,10 @@ def check_request(client_id: str = None, message: str = None, session_id: str = 
 
 @op
 def ai_mode() -> dict:
-    """Whether the agent answers (wealth/ai.py), and when this turn began."""
-    return {"ai": ai.enabled(), "since": time.time()}
+    """Whether an agent answers and on which model (wealth/ai.client_model: the ``client_ai`` configuration), and
+    when this turn began."""
+    use = ai.client_model()
+    return {"assistant": use == "assistant", "onprem": use == "onprem", "since": time.time()}
 
 
 def _line(kind: str, d: Dict[str, Any]) -> str:
@@ -94,9 +96,21 @@ def rule_declare(client_id: str, message: str) -> dict:
 
 
 @op
-def agent_answer(client_id: str, message: str, output: str = None, status: str = None, error: str = None) -> dict:
-    """The agent's reply; when it could not answer (no network, a bad key), the rules read the
-    message instead, so what the client said is still recorded."""
+def agent_answer(
+    client_id: str,
+    message: str,
+    output: str = None,
+    status: str = None,
+    error: str = None,
+    onprem_output: str = None,
+    onprem_status: str = None,
+    onprem_error: str = None,
+) -> dict:
+    """The agent's reply (on llm:assistant or llm:onprem, whichever ran); when it could not answer (no network, a
+    bad key, the client-data barrier), the rules read the message instead, so what the client said is still
+    recorded."""
+    if status is None and onprem_status is not None:
+        output, status, error = onprem_output, onprem_status, onprem_error
     if status == "completed" and output:
         return {"reply": output, "method": "ai"}
     reply = by_rules(client_id, message)

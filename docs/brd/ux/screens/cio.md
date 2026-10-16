@@ -173,7 +173,7 @@ subject, time, mode, status). Then **Chất lượng AI** (7 days and all time) 
 | Feature | [FEAT-14](../../features/FEAT-14-versioned-configuration.md) |
 | Requirements | BRD-FR-701, BRD-RULE-SEC-04, BRD-RULE-SEC-05, BRD-RULE-AI-02, BRD-RULE-MEAS-07, BRD-NFR-06 |
 | Data | `GET /api/config`, `POST /api/config/propose`, `POST /api/config/decide` |
-| Screenshots | [desktop, the second Admin on a prompts proposal whose eval did not run](../../assets/current_ui/SCR-CIO-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-09_phone-light.jpg) |
+| Screenshots | [desktop, the second Admin on a prompts proposal whose eval did not run](../../assets/current_ui/SCR-CIO-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-09_phone-light.jpg) · [“AI với dữ liệu khách hàng” (client_ai, ADR-0023), desktop](../../assets/current_ui/SCR-CIO-09-client-ai_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-09-client-ai_phone-light.jpg) |
 
 One panel per kind (eleven): owner, “hai người”, “bộ đánh giá” where the eval set gates it; the version in force
 (number, id, hash, who approved) and its content in short. A pending proposal shows who proposed it, when and why,

@@ -48,8 +48,9 @@ def read_file(filename: str, content: str) -> dict:
 
 @op
 def ai_mode() -> dict:
-    """Whether the model reads it (wealth/ai.py)."""
-    return {"ai": ai.enabled()}
+    """Whether a model reads it, and which (wealth/ai.client_model: the ``client_ai`` configuration)."""
+    use = ai.client_model()
+    return {"ai": use is not None, "resource": use or "assistant"}
 
 
 @op

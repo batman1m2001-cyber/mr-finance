@@ -46,6 +46,10 @@ the next.
   `tests/ui/test_how.py`, `tests/test_explain.py`. G-D1 as built: the formula is the server's (the catalogue), the
   inputs come with the number from the same answer; the attribute is `data-metric`, not `data-num`.
 - **G2 — The client-data barrier (NFR-08).** `client_ai`; the barrier; `llm:onprem`; the recorded-provider test.
+  **Done** (2026-10-16, ADR-0023): operonx 1.28.0 adds `ResourceHub.guard` (a check before every call of a resource,
+  whichever op makes it); `src/control/barrier.py` guards every `llm:` resource; `tests/test_barrier.py` proves it at
+  the wire against a recording server. Found on the way: the CIO agent's client for another model name was built
+  outside the hub, so it is guarded too. The live demo stays `demo`.
 - **G3 — Encryption and secrets (NFR-07).** `control.secrets`; column encryption and rotation; headers and
   cookies; the attack suite.
 - **G4 — Moving to the bank (DATA-10).** PostgreSQL export proven in Docker; WORM audit segments; the guide.
