@@ -41,6 +41,10 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/research` | research_upload → `research_upload_flow` | `item {kind, report_no, title, summary, release_at, conflict? {related, parties, statement}, regulation?}, by` (naming a related party needs `conflict`) | CIO | FEAT-03 |
 | `/api/research/release` | research_release → `research_release_flow` | `item_id, decision (release\|reject), by, note` | Compliance, ≠ uploader | FEAT-03 |
 | `/api/newsletters` | newsletter_draft → `newsletter_draft_flow` | `view_ids (1–6 approved), by, title?, mode (template\|agent)?, distribution? {send_at, private_early_hours, early_reason}, conflict?` | CIO | FEAT-17 |
+| `/api/policy` | policy_add → `policy_add_flow` | `item {gazette_url} \| {source_url (official), title, number?, issuer?, issued?, text?, status, note?}, by` | Compliance | FEAT-16 |
+| `/api/policy/verify` | policy_verify → `policy_verify_flow` | `document_id, by, note (≥ 20)` | Compliance, ≠ the one who added it | FEAT-16 |
+| `/api/policy/status` | policy_status → `policy_status_flow` | `document_id, status (draft\|consultation\|issued\|effective\|dropped), by, note (≥ 10), date?` | Compliance | FEAT-16 |
+| `/api/policy/summarise` | policy_summarise → `policy_summarise_flow` | `document_id, by, mode?` (verified documents only; 409 with why otherwise) | Compliance | FEAT-16 |
 | `/api/newsletters/act` | newsletter_act → `newsletter_act_flow` | `newsletter_id, action (edit\|submit\|withdraw: CIO; approve\|return: Compliance, ≠ author), by, note?, changes? {title, intro, headings, distribution, conflict}` | CIO, Compliance | FEAT-17 |
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
 | `/api/system/alerts/ack` | alert_ack → `alert_ack_flow` | `alert_id, by, note?` | a role the alert's kind is for (CIO, Compliance, Admin); 409 if not open | FEAT-36 |
@@ -106,6 +110,8 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `/api/measure` | — | staff: the monthly reports — misses with causes, approvals (minutes, without edits, under 2 min), news to RM hours, inbox and CIO agent minutes | FEAT-18 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |
 | `/api/newsletters` | — | CIO, Compliance: the letters (without their sections) and the approved views to draft from | FEAT-17 |
+| `/api/policy` | `since?` | CIO, Compliance: the radar — documents by last change (no text), new / changed since `since`, counts by status | FEAT-16 |
+| `/api/policy/{id}` | — | CIO, Compliance: one document with its text, articles, history, verification and the agent's summary | FEAT-16 |
 | `/api/newsletters/{id}` | — | CIO, Compliance: one letter — sections, labels, the guard's result, distribution, history | FEAT-17 |
 | `/api/goals/regulation` | `family_id?, role?` | regulation matches, purposes, a family's goals (staff) | FEAT-10 |
 

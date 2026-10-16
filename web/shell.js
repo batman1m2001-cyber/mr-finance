@@ -9,7 +9,7 @@
 import {$, $$, esc, failed, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261016r1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261016r16";
+import {mount as mountHeader} from "./header.js?v=20261016r17";
 
 const ROLES = {
   client: {
@@ -50,6 +50,7 @@ const ROLES = {
       {id: "do-thi", label: "Đồ thị lần áp dụng", page: "graph"},
       {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
       {id: "ban-tin", label: "Bản tin", page: "newsletter"},
+      {id: "chinh-sach", label: "Chính sách", page: "radar"},
       {id: "mo-hinh", label: "Mô hình", sub: [
         {id: "tham-so", label: "Tham số", page: "model"}, {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
         {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"}]},
@@ -74,6 +75,7 @@ const ROLES = {
       {id: "giu", label: "Tin bị giữ", page: "held"},
       {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
       {id: "ban-tin", label: "Bản tin", page: "newsletter"},
+      {id: "chinh-sach", label: "Chính sách", page: "radar"},
       {id: "do-luong", label: "Đo lường", page: "measure"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "agent", label: "Agent", page: "agents"},
@@ -171,7 +173,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r16`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r17`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {

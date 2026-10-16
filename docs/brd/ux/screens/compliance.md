@@ -69,3 +69,28 @@ The CIO's list without the form, and the same letter page; while a letter waits,
 (“trả lại: từ 10 ký tự”) with **Duyệt** and **Trả lại**. An earlier send to Private shows as a warning badge with
 both times and the CIO's reason. Refusals come back as messages: the author cannot approve, the check fails, the
 note is too short.
+
+---
+
+## SCR-CMP-05 — Chính sách (policy radar)
+
+| | |
+|---|---|
+| Route | Compliance `#/compliance/chinh-sach`, one document `#/compliance/chinh-sach/PD-0001`; CIO `#/cio/chinh-sach[/PD-…]` (read only) |
+| Feature | [FEAT-16](../../features/FEAT-16-policy-agent.md) |
+| Requirements | BRD-FR-306, BRD-RULE-AI-01, BRD-RULE-SEC-04 |
+| Data | `GET /api/policy?since=`, `GET /api/policy/{id}`, `POST /api/policy`, `/api/policy/verify`, `/api/policy/status`, `/api/policy/summarise` |
+| Screenshots | [radar, desktop](../../assets/current_ui/SCR-CMP-05_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CMP-05_phone-light.jpg) · [a document, desktop](../../assets/current_ui/SCR-CMP-05-document_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CMP-05-document_phone-light.jpg) |
+
+**Radar.** “Radar chính sách” with the **Đề xuất** badge and one paragraph saying it is our reading (Q-09);
+“<n> văn bản theo dõi · <m> thay đổi từ lần xem trước”; counts by status; for Compliance a folded **Thêm văn bản**
+form (a gazette address, or an official address with title, number, issuer, date, status and pasted text); the
+documents by last change, each with **Mới** / **Thay đổi** since the reader's last look, number · issuer · date,
+whether the source is verified and the document summarised, its status path and its status badge.
+
+**One document.** **Tóm tắt của Agent Chính sách** (AI and model, or “Mô phỏng — không gọi mô hình”; the run id,
+time and attempts; the summary; each point with its article and its quote — a click scrolls to the quote, marked in
+the text below; “Nội bộ — không gửi khách hàng”), **Chạy Agent Chính sách** for Compliance once verified; **Văn
+bản**, the text with article headings and the quotes marked, and where it came from (the signed PDF and its hash);
+beside it **Nguồn** (address, who added it, and the verification or, for a second Compliance person, the form to
+verify), **Cập nhật trạng thái** (Compliance) and **Lịch sử**.

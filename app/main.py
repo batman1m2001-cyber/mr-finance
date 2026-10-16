@@ -22,6 +22,8 @@ POST /api/events ──► event_flow · POST /api/events/run-agent ──► ag
      ──► cio_agent_flow (agent + challenger)
 POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, newsletter_act_flow (FR-801: the CIO drafts from
      approved views, Compliance approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
+POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: Compliance adds a document from the Official
+     Gazette, a second person verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
 Hourly ──► audit_check: the audit chain walked · POST /api/system/alerts/ack ──► alert_ack_flow; GET
      /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the inbox (NFR-12)
 POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
@@ -73,6 +75,7 @@ from measure.graph import accuracy_flow
 from news.graph import dismiss_flow, ingest_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
+from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, review_flow
 from risk.graph import risk_flow
@@ -275,6 +278,30 @@ APP = Application(
             http("POST", "/api/newsletters/act", port=PORT),
             graph=newsletter_act_flow,
             description="POST {newsletter_id, action: edit|submit|approve|return|withdraw, by, note?, changes?}.",
+        ),
+        Service(
+            "policy_add",
+            http("POST", "/api/policy", port=PORT),
+            graph=policy_add_flow,
+            description="POST {item: {gazette_url} | {source_url, title, number?, issued?, text?, status}, by}.",
+        ),
+        Service(
+            "policy_verify",
+            http("POST", "/api/policy/verify", port=PORT),
+            graph=policy_verify_flow,
+            description="POST {document_id, by, note}: a second Compliance person confirms the source (FR-306).",
+        ),
+        Service(
+            "policy_status",
+            http("POST", "/api/policy/status", port=PORT),
+            graph=policy_status_flow,
+            description="POST {document_id, status, by, note, date?}: where the document stands (the radar).",
+        ),
+        Service(
+            "policy_summarise",
+            http("POST", "/api/policy/summarise", port=PORT),
+            graph=policy_summarise_flow,
+            description="POST {document_id, by, mode?}: the policy agent on a verified document (FR-306).",
         ),
         Service(
             "alert_ack",
