@@ -128,6 +128,7 @@ def fingerprint(path):
 
 def test_the_catalogue_is_whole():
     assert set(SETUP) == set(WRITES)  # a new write is tested here, or this fails
+    assert set(registry.LABELS) == set(registry.REGISTRY)  # every step has a name in the panel
     for name, t in registry.REGISTRY.items():
         assert t.kind in KINDS and set(t.roles) <= set(ROLES), name
         assert not any(c.isdigit() for c in t.description), name  # the model reads no data

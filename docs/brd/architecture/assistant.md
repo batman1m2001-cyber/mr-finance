@@ -46,7 +46,7 @@ knowledge base in the app; no web search; agent catalogue is a table, not a map;
 One front door: the assistant. It never reaches a service except through a registered tool, and every tool runs the
 same graph or read the page uses, so the server's role, family and separation-of-duty checks apply unchanged.
 
-## 3. The turn *(target, A2)*
+## 3. The turn *(built in A2, 2026-10-17)*
 
 1. **Check** the person (signed-in user or demo role), the conversation (theirs), the message (≤ 2,000 characters).
 2. **Turn**: `Runner.run(assistant, message, session=…, store=…, limits=…)` inside one op, so each model call and
@@ -65,6 +65,22 @@ same graph or read the page uses, so the server's role, family and separation-of
 With `client_ai = off` the same loop runs in **template mode** (ADR-0026): the model sees the scrubbed message and
 tool *statuses* (never their data), chains tools, and the answer is the tools' own templated texts in order —
 today's Copilot quality, multi-step.
+
+**As built (A2):** `src/assistant/{turn,ops,graph}.py`, service `assistant` (`POST /api/assistant`).
+- Request and answer:
+  - The request carries `{message}`, or `{turn_id, approvals: {id: approve|deny}}`. `run_id` is a name operonx's
+    HTTP door reads itself.
+  - The answer carries `mode` (`model` / `template` / `fallback`), `steps` (each tool: label, status, text, card,
+    page), `waits` (the writes and their one-line plans), `citations`, `sources`, `as_of` and `usage`.
+- Without a model (AI off, or `LLM_MODEL_COPILOT` unset), or when the model fails before any tool ran, the turn takes
+  the Copilot's keyword path (`fallback`, NFR-03). Its confirm still goes to `POST /api/copilot`.
+- A parked write is answered only by the person who asked, in the same role, once, within 10 minutes. The table
+  `parked` in `assistant.db` holds who, and the call ids. operonx-agents' `SQLiteStateStore` in the same file holds
+  the run.
+- Limits are 8 model calls, 12 tool calls, 60,000 tokens and 60 s. The US$ cap waits for declared prices (A8).
+- The instructions say to call a write directly and let the panel ask. The first real-model eval found the model
+  asking in prose instead (docs/brd/testing/assistant_eval.md).
+- The real-model eval subset passed 10/10, twice: p50 ≈ 5.4 s, ~6,000 tokens a turn.
 
 ## 4. Tools *(built in A1, 2026-10-17)* — ADR-0032
 

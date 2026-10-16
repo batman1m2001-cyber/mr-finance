@@ -6,6 +6,7 @@ is kept verbatim in the [appendix](#appendix--the-owners-brief-2026-10-16) and a
 **A0 done** (2026-10-16): the target architecture is [`docs/brd/architecture/assistant.md`](brd/architecture/assistant.md);
 the decisions below are recorded as ADR-0026…ADR-0034; the requirements are OWN-AS-01…25.
 **A1 done** (2026-10-17): 25 tools in `src/assistant/registry.py`; verifiers upstream in operonx-agents 0.2.3.
+**A2 done** (2026-10-17): `POST /api/assistant` behind the panel; real-model eval subset 10/10 twice.
 
 ## 1. What exists today (first audit, 2026-10-16)
 
@@ -45,7 +46,7 @@ release, and OneWealth pins the new version; only OneWealth's rules stay in this
 |---|---|---|
 | A0 | Full audit; the architecture document `docs/brd/architecture/assistant.md`; ADRs for A-D1…A-D9; the storage measurement; BRD requirements for the assistant (new requirement rows, owner source = this brief) | Decisions recorded with evidence — **done** 2026-10-16 (assistant.md, ADR-0026…0034, OWN-AS-01…25, FEAT-37…39, `scripts/bench_chat_store.py`) |
 | A1 | The tool registry: today's 13 tools moved in, served graphs wrapped, permissions, confirmations, verifiers, timeouts | Every tool tested for role refusal, confirmation and verification — **done** 2026-10-17 (25 tools; `tests/test_assistant_tools.py`, 139 tests; operonx-agents 0.2.3 verifiers) |
-| A2 | The assistant: multi-step orchestration on `operonx-agents` (plan → call → verify → answer), grounding and citations, uncertainty, honest refusal of unsupported requests; the Copilot panel becomes its front end | Multi-step tasks pass the eval subset |
+| A2 | The assistant: multi-step orchestration on `operonx-agents` (plan → call → verify → answer), grounding and citations, uncertainty, honest refusal of unsupported requests; the Copilot panel becomes its front end | Multi-step tasks pass the eval subset — **done** 2026-10-17 (10/10 twice on anthropic/claude-haiku-5.5; docs/brd/testing/assistant_eval.md) |
 | A3 | Conversations on the server: sessions, resume across devices, short-term memory with compaction, task state | Long-conversation tests pass |
 | A4 | Long-term and archive memory: extraction rules, the “Bộ nhớ” page (see, correct, forget), retention, isolation tests | Isolation and deletion tests pass |
 | A5 | Knowledge base (product + user materials) and web search with citations | Grounding tests pass; web search measured or reported unavailable |

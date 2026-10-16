@@ -16,8 +16,8 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD success metrics (KPI) | 7 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 39 | 12 | 3 | 2 | 21 | 0 | 0 | 0 | 1 |
+| Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
+| Owner requests (OWN) | 39 | 17 | 3 | 0 | 18 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -251,7 +251,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | KIT-UX-06 | FEAT-29…33 | implemented_unverified | Motion only for a state change (FEAT-33, 2026-10-16): request in flight, outcome, the evidence an answer read, a chosen graph path; transform/opacity only, all off under reduced motion (`tests/test_living_interface.py::test_hidden_tabs_pause_reduced_motion_stops_and_no_js_loop`); every chart has a table or list view (Sankey table, graph list); the static alternative is checked by screenshots only |
 | KIT-UX-07 | all | implemented_unverified | No horizontal scroll at 390 and 1440 px on every route (`tests/ui/test_routes.py::test_every_route_renders_without_errors`); Sankey bands, map segments and graph nodes are focusable (Enter/Space); responsive at 390 px; progressive disclosure (band → rows, node → path); K6 sweep, no automated UI test |
 | KIT-COPILOT-01 | FEAT-32 | implemented_verified | `tests/ui/test_routes.py::test_every_route_renders_without_errors` (the button on every route of every role, desktop and phone), `tests/ui/test_copilot_ui.py::test_an_answer_marks_what_it_read_and_the_states_follow` (panel opens with the page's context) — SCR-CL-10 |
-| KIT-COPILOT-02 | FEAT-32 | partially_implemented | Ask (13 tools), Act (2 writes, confirmed), Navigate, Continue (tab session); Investigate (`dieu_tra`, `tests/test_copilot.py::test_investigate_reads_the_events_path_from_the_impact_graph`) and Analyze (`kich_ban`, `tests/test_copilot.py::test_a_stress_scenario_is_the_planning_pages_and_picked_by_words`) built on existing graphs (R5); under ADR-0012 the model reads no data; other writes not tools yet |
+| KIT-COPILOT-02 | FEAT-32 | implemented_verified | `tests/test_assistant.py::test_one_question_two_tools_and_an_answer_that_cites_them`, `tests/test_assistant.py::test_a_write_waits_for_the_person_who_asked_then_runs_once_and_is_checked`, `tests/test_assistant_tools.py::test_a_write_asks_first_changes_nothing_then_is_read_back` — Ask, Act, Navigate, Investigate, Analyze, Continue: the assistant (A2) runs the role's 25 tools in several steps, 8 writes confirmed and read back; real-model eval 10/10 (docs/brd/testing/assistant_eval.md); the conversation is per tab until A3 |
 | KIT-COPILOT-03 | FEAT-32 | implemented_verified | `tests/test_copilot.py::test_no_write_without_confirm_and_the_result_is_the_real_one`, `tests/test_copilot.py::test_a_client_cannot_run_a_cio_tool_even_by_confirm` — typed catalogue, role check, confirm, server checks unchanged |
 | KIT-COPILOT-04 | FEAT-32 | implemented_verified | `tests/test_copilot.py::test_the_router_prompt_carries_no_name_number_or_code`, `tests/test_copilot.py::test_the_live_router_receives_only_the_scrubbed_question` — the router gets no news, record or client data; reads are role-filtered |
 | KIT-COPILOT-05 | FEAT-32 | implemented_verified | `tests/test_copilot.py::test_a_failing_tool_is_reported_as_failed_and_unknown_questions_get_help`, `tests/test_copilot.py::test_an_answer_outside_the_catalogue_falls_back_to_keywords_said_so` |
@@ -267,15 +267,15 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
-| OWN-AS-01 | FEAT-32 | planned | A2: the panel calls the assistant |
+| OWN-AS-01 | FEAT-32 | implemented_verified | A2: the panel calls `POST /api/assistant` on every page and role — `tests/ui/test_copilot_ui.py::test_the_assistant_asks_before_a_write_and_shows_its_steps`, `tests/test_assistant.py::test_the_endpoint` |
 | OWN-AS-02 | FEAT-38 | planned | A5: `help` tool over the product collection |
 | OWN-AS-03 | FEAT-32 | implemented_verified | A1: every tool runs the page's own graph or read as the person — `tests/test_assistant_tools.py::test_a_read_answers_or_says_why_not`, `::test_a_write_asks_first_changes_nothing_then_is_read_back` |
 | OWN-AS-04 | FEAT-32 | implemented_verified | A1: `src/assistant/registry.py`, 25 tools (ADR-0032) — `tests/test_assistant_tools.py::test_the_catalogue_is_whole`, `::test_a_tool_is_refused_to_a_role_it_is_not_for` (every tool × every other role) |
-| OWN-AS-05 | FEAT-32 | partially_implemented | A1: every write read back — `tests/test_assistant_tools.py::test_a_write_that_did_not_land_is_not_said_done`, `::test_the_copilot_says_an_unconfirmed_write_failed`; multi-step turns in A2 |
-| OWN-AS-06 | FEAT-32 | partially_implemented | A1: a write parks the agent's run; Approve runs and verifies it, Deny runs nothing — `tests/test_assistant_tools.py::test_an_agent_write_waits_for_the_person`; the panel's confirm in A2 |
+| OWN-AS-05 | FEAT-32 | implemented_verified | A1–A2: several tools in one turn — `tests/test_assistant.py::test_one_question_two_tools_and_an_answer_that_cites_them`; 6/6 multi-step eval cases on the real model (docs/brd/testing/assistant_eval.md); every write read back — `tests/test_assistant_tools.py::test_a_write_that_did_not_land_is_not_said_done` |
+| OWN-AS-06 | FEAT-32 | implemented_verified | A2: the run parks, the panel shows what will be written, only the person who asked answers, once, within 10 minutes — `tests/test_assistant.py::test_a_write_waits_for_the_person_who_asked_then_runs_once_and_is_checked`, `::test_a_declined_write_runs_nothing`, `tests/ui/test_copilot_ui.py::test_the_assistant_asks_before_a_write_and_shows_its_steps` |
 | OWN-AS-07 | FEAT-38 | planned | A5: `web_search` on OpenRouter (ADR-0030; measured in A0: 8 s, US$0.012) |
-| OWN-AS-08 | FEAT-32 | planned | A2: refusal with what it can do |
-| OWN-AS-09 | FEAT-32 | planned | A2: barrier per `client_ai` mode, template mode when `off` (ADR-0026) |
+| OWN-AS-08 | FEAT-32 | implemented_verified | A2: no tool for it → said plainly, with what it can do; a tool the role lacks is not offered — `tests/test_assistant.py::test_a_tool_the_role_does_not_have_is_not_there_to_call`; eval refuse-01/02 on the real model (docs/brd/testing/assistant_eval.md) |
+| OWN-AS-09 | FEAT-32 | implemented_verified | A2: `demo` (or onprem with the model inside) the model reads tool results; otherwise template mode: scrubbed question, statuses only, the tools' texts as the answer — `tests/test_assistant.py::test_with_the_barrier_off_the_model_sees_no_client_data_and_the_tools_write_the_answer` |
 | OWN-AS-10 | FEAT-37 | planned | A3: `data/assistant.db` (ADR-0027; storage measured in A0, assistant.md §8) |
 | OWN-AS-11 | FEAT-37 | planned | A3: sessions with compaction |
 | OWN-AS-12 | FEAT-37, FEAT-39 | planned | A4/A6: typed items, consolidator |

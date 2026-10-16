@@ -52,7 +52,7 @@ def test_busy_lasts_exactly_as_long_as_the_request(open_page):
     p.go("#/client/tong-quan/toan-canh")
     p.page.evaluate(
         """() => { const f0 = window.fetch; window.__hold = null;
-             window.fetch = (u, o) => String(u).includes('/api/copilot')
+             window.fetch = (u, o) => String(u).includes('/api/assistant')
                ? new Promise(r => { window.__hold = () => r(f0(u, o)); }) : f0(u, o); }"""
     )
     p.page.click(".cp-fab")
@@ -80,4 +80,28 @@ def test_answers_show_their_card_their_time_and_sources_and_offer_next_steps(ope
     p.page.wait_for_function("document.querySelectorAll('#cp-msgs .cp-card .cp-figs').length > 0")
     b = ask(p, "Mục tiêu của tôi thế nào?")
     assert b.locator(".cp-li").count() > 0 and b.locator(".bar-track").count() == b.locator(".cp-li").count()
+    assert not p.problems()
+
+
+def test_the_assistant_asks_before_a_write_and_shows_its_steps(open_page, monkeypatch):
+    """A2: a model (scripted) plans a write; the panel shows what will be written and writes it only on Xác nhận."""
+    from operonx_agents.testing import ScriptedLLM, asks, says, scripted
+
+    from contacts import store as contacts
+
+    monkeypatch.setenv("MF_AI", "on")
+    monkeypatch.setenv("LLM_MODEL_COPILOT", "scripted-model")
+    llm = ScriptedLLM(asks(("hom_nay", {})), asks(("ghi_lien_he", {"channel": "call"})), says("Đã ghi cuộc gọi."))
+    with scripted(copilot=llm):
+        p = open_page()
+        p.go("#/rm/khach-hang/toan-canh")
+        a = ask(p, "Hôm nay gọi ai, rồi ghi lại cuộc gọi với khách này")
+        assert "Ghi một cuộc gọi với gia đình" in a.inner_text() and contacts.recent() == []
+        assert p.page.get_attribute(".cp-fab", "data-state") == "pending"
+        assert p.page.inner_text("#cp-router") == "mô hình scripted-model"
+        n = p.page.locator("#cp-msgs .cp-bot").count()
+        a.locator("[data-ok]").click()
+        p.page.wait_for_function(f"document.querySelectorAll('#cp-msgs .cp-bot:not([data-busy])').length > {n}")
+        done = p.page.locator("#cp-msgs .cp-bot").last
+        assert "Đã ghi cuộc gọi." in done.inner_text() and len(contacts.recent()) == 1
     assert not p.problems()

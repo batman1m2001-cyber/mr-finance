@@ -21,6 +21,33 @@ REGISTRY: Dict[str, Tool] = {**tools.CATALOGUE}
 for _name, _t in actions.CATALOGUE.items():
     assert _name not in REGISTRY, f"two tools named {_name!r}"
     REGISTRY[_name] = _t
+LABELS = {  # what a step is called in the panel ("Các bước")
+    "tong_quan": "Tổng quan",
+    "dong_tien": "Dòng tiền",
+    "chu_y": "Điều cần chú ý",
+    "muc_tieu": "Mục tiêu",
+    "tac_dong": "Tác động tin",
+    "dieu_tra": "Điều tra tin",
+    "kich_ban": "Kịch bản",
+    "hom_nay": "Hôm nay",
+    "hop_tin": "Hộp tin",
+    "tin_bi_giu": "Tin bị giữ",
+    "mo_trang": "Mở trang",
+    "duyet_de_xuat": "Duyệt đề xuất",
+    "lay_tin": "Lấy tin",
+    "dong_luc": "Chính sách & dự án",
+    "tim_kiem": "Tìm kiếm",
+    "de_xuat": "Hàng chờ đề xuất",
+    "su_kien": "Sự kiện",
+    "canh_bao_he_thong": "Cảnh báo hệ thống",
+    "lien_he": "Liên hệ gần đây",
+    "gui_de_xuat": "Gửi đề xuất",
+    "ghi_lien_he": "Ghi liên hệ",
+    "khuyen_nghi": "Khuyến nghị",
+    "chuyen_gia_duyet": "Chuyên gia duyệt",
+    "danh_dau_khan": "Đánh dấu khẩn",
+    "da_xem_canh_bao": "Đã xem cảnh báo",
+}
 DEMO_USER = {**tools.USER, "admin": "admin", "specialist": "sp_global"}  # who acts when sign-in is off
 
 
@@ -100,7 +127,10 @@ def _agent_tool(tool: Tool):
         args = {k: v for k, v in kwargs.items() if v is not None}
         if tool.write:
             args = (await plan(tool, ctx, args))["args"]
-        return _seen(tool, ctx, await tool.run(ctx, args))
+        out = await tool.run(ctx, args)
+        # the answer's cards, dates and sources (A2); a call id is unique within one model turn only
+        ctx.trail.setdefault(rctx.tool_call_id or tool.name, []).append(out)
+        return _seen(tool, ctx, out)
 
     def verify(rctx: RunContext, args: Dict[str, Any], result: Seen):
         return tool.verify(rctx.deps, result._out)

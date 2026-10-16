@@ -6,6 +6,8 @@ POST /api/feed      {client_id, scope?, role?} ──► feed_flow ──► wha
 POST /api/feed/open {client_id, key} ──► feed_open_flow ──► the client opened a high-level item (KPI-07)
 POST /api/rm/contacts {family_id, channel, signal?, note?, by} ──► contact_flow ──► an RM's contact (KPI-06)
 POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ──► copilot_flow ──► a templated answer
+POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, route?} ──► assistant_flow ──► an
+                    answer from the role's tools in several steps; writes wait for the person (A2)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
@@ -56,6 +58,7 @@ from operonx.app.jobs import Job
 from app import web
 from app.http import SecurityHeaders
 from apply.graph import recompute_flow, run_decide_flow
+from assistant.graph import assistant_flow
 from contacts.graph import contact_flow
 from control import barrier
 from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow, heartbeat_flow
@@ -165,6 +168,14 @@ APP = Application(
             http("POST", "/api/copilot", port=PORT),
             graph=copilot_flow,
             description="POST {question, role, client_id, scope, route, confirm}: the Copilot (routes, never reads).",
+        ),
+        Service(
+            "assistant",
+            http("POST", "/api/assistant", port=PORT),
+            graph=assistant_flow,
+            description="POST {message | turn_id + approvals, role, client_id, scope, route, goals}: the assistant "
+            "(A2) — the role's tools in several steps, writes confirmed and verified; the Copilot's path when no "
+            "model answers.",
         ),
         Service(
             "statement",

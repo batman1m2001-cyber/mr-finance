@@ -1,7 +1,10 @@
-/* OneWealth Copilot (kit K5, ADR-0012): a floating button and a side panel on every page. It sends the
-   question, the page's route, the role and the picked client to POST /api/copilot; the server's router sees
-   only the scrubbed question and the route, our code runs the tool and writes the answer. Writes wait for
-   “Xác nhận”. The conversation is kept for this browser tab only.
+/* OneWealth Copilot (kit K5): a floating button and a side panel on every page, the assistant's front end
+   (ASSISTANT_PLAN A2). It sends the message, the page's route, the role and the picked client to
+   POST /api/assistant: the role's tools in as many steps as the question needs, writes waiting for “Xác nhận”
+   (the run parks on the server; the answer resumes it). Each answer says how it was written (mode): the model
+   reading the tools' results, the tools' own texts (the barrier keeps client data from the model), or the
+   Copilot's keyword path when no model answers (POST /api/copilot, whose confirm it still uses). The
+   conversation is kept for this browser tab only.
 
    Living Interface (B-01): the button and panel show the request's real state (data-state: idle, busy while
    the request is in flight, ok, error, pending a confirmation), and an answer marks the page elements it
@@ -11,16 +14,24 @@ import {icon} from "./core/icons.js?v=20261016r1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
 
-const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ"};
+const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ", specialist: "Chuyên gia", admin: "Quản trị"};
 const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
   rm: ["Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Kịch bản lãi suất tăng", "Duyệt đề xuất đang chờ"],
   cio: ["Hộp tin có bao nhiêu tin?", "Lấy tin mới"],
   compliance: ["Có bao nhiêu tin bị giữ?", "Mở tin bị giữ"],
+  specialist: ["Khuyến nghị nào đang chờ tôi duyệt?"],
+  admin: ["Có cảnh báo hệ thống nào?", "Mở trang Hệ thống"],
+};
+const MODE = {  // how the answer was written: the badge and the line under the form
+  model: (a) => [`mô hình ${a.model || ""}`.trim(), "Mô hình đọc kết quả công cụ của ứng dụng (chế độ demo) và viết câu trả lời; số liệu lấy từ công cụ. Không phải khuyến nghị đầu tư."],
+  template: () => ["mẫu cố định", "Mô hình chỉ thấy câu hỏi đã che tên và số, không thấy số liệu; câu trả lời ghép từ kết quả công cụ theo mẫu. Không phải khuyến nghị đầu tư."],
+  fallback: () => ["dự phòng: từ khóa", "Chế độ dự phòng: bộ định tuyến từ khóa chọn một công cụ; câu trả lời viết theo mẫu. Không phải khuyến nghị đầu tư."],
 };
 const BADGE = {failed: ["bad", "Không thực hiện được"], forbidden: ["bad", "Không có quyền"], pending: ["warn", "Chờ xác nhận"]};
 const STATE = {idle: "Sẵn sàng", busy: "Đang xử lý", ok: "Đã trả lời", error: "Không thực hiện được", pending: "Chờ bạn xác nhận"};
 const FOR = {ok: "ok", pending: "pending", failed: "error", forbidden: "error", unknown: "idle"};
+const STEP = {ok: "✓", failed: "✕", declined: "–", forbidden: "✕"};
 
 function context() {
   const role = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "client";
@@ -60,6 +71,21 @@ function bars_(c) {
   const max = Math.max(1, ...c.items.map(x => Math.abs(x.value)));
   return `${c.title && c.kind === "bars" && c.figures ? `<div class="cp-ct">${esc(c.title)}</div>` : ""}<div class="cp-bars">${c.items.map(x => `<div class="cp-bar"><span>${esc(x.label)}</span><i style="--w:${Math.round(Math.abs(x.value) / max * 100)}%"></i><b class="num">${esc(x.text)}</b></div>`).join("")}</div>`;
 }
+// the model's prose: escaped first, then only bold, bullet lines and paragraphs (no links, no HTML from the model)
+function prose(text) {
+  const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  const out = []; let list = [];
+  const flush = () => { if (list.length) { out.push(`<ul class="cp-prose">${list.map(x => `<li>${inline(x)}</li>`).join("")}</ul>`); list = []; } };
+  for (const line of String(text || "").split("\n")) {
+    const m = line.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)$/);
+    if (m) { list.push(m[1]); continue; }
+    flush();
+    const t = line.replace(/^#+\s*/, "").trim();
+    if (t) out.push(`<p class="cp-p">${inline(t)}</p>`);
+  }
+  flush();
+  return out.join("");
+}
 const day = (d) => (/^\d{4}-\d{2}-\d{2}$/.test(d) ? `${d.slice(8)}/${d.slice(5, 7)}/${d.slice(0, 4)}` : /^\d{4}-\d{2}$/.test(d) ? `tháng ${d.slice(5)}/${d.slice(0, 4)}` : d);
 const clock = (t) => { const x = new Date(t * 1000); return `${String(x.getHours()).padStart(2, "0")}:${String(x.getMinutes()).padStart(2, "0")}`; };
 function meta(m) {
@@ -76,14 +102,14 @@ export function mount() {
   const panel = document.createElement("aside");
   panel.className = "cp-panel"; panel.hidden = true;
   panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "OneWealth Copilot");
-  panel.innerHTML = `<header class="cp-head"><span class="cp-dot" id="cp-dot" aria-hidden="true"></span><b>OneWealth Copilot</b><span class="sr-only" id="cp-state">Sẵn sàng</span><span class="badge assumed" id="cp-router">bộ định tuyến từ khóa</span>
+  panel.innerHTML = `<header class="cp-head"><span class="cp-dot" id="cp-dot" aria-hidden="true"></span><b>OneWealth Copilot</b><span class="sr-only" id="cp-state">Sẵn sàng</span><span class="badge assumed" id="cp-router">trợ lý</span>
       <button type="button" class="linkbtn" id="cp-close" aria-label="Đóng">✕</button></header>
     <div class="cp-ctx small muted" id="cp-ctx"></div>
     <div class="cp-msgs" id="cp-msgs" aria-live="polite"></div>
     <div class="cp-sugg" id="cp-sugg"></div>
-    <form class="cp-form" id="cp-form"><input id="cp-q" autocomplete="off" maxlength="500" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
+    <form class="cp-form" id="cp-form"><input id="cp-q" autocomplete="off" maxlength="2000" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
       <button type="submit" class="btn sm">Gửi</button></form>
-    <div class="cp-foot small muted">Mô hình chỉ chọn công cụ trên câu hỏi đã che tên và số; câu trả lời viết từ kết quả công cụ theo mẫu. Không phải khuyến nghị đầu tư.</div>`;
+    <div class="cp-foot small muted" id="cp-foot">Trợ lý chỉ dùng các chức năng sẵn có của ứng dụng; việc ghi luôn chờ bạn xác nhận. Không phải khuyến nghị đầu tư.</div>`;
   document.body.append(btn, panel);
   let msgs = [], role = null, busy = false, shown = 0, settle = null, later = null;
   const covers = () => !panel.hidden && matchMedia("(max-width: 560px)").matches;  // phone: the panel hides the page
@@ -106,7 +132,7 @@ export function mount() {
 
   const drawCtx = () => {
     const c = context();
-    if (c.role !== role) { role = c.role; msgs = load(role); }
+    if (c.role !== role) { const had = role; role = c.role; msgs = load(role); shown = msgs.length; if (had && !panel.hidden) { draw(); sugg(); } }
     const page = (document.querySelector("#subnav:not([hidden]) [aria-current=page]") || document.querySelector("#nav [aria-current=page]") || {}).textContent || "";
     const name = (($("#client") || {}).selectedOptions || [])[0];
     $("#cp-ctx", panel).textContent = `Đang xem: ${page.trim() || "—"} · ${ROLE_LABEL[role]}${["client", "rm"].includes(role) && name ? " · " + name.textContent.split("·")[0].trim() : ""}`;
@@ -121,10 +147,12 @@ export function mount() {
     const fresh = (i) => (i >= shown ? " cp-in" : "");
     box.innerHTML = msgs.length ? msgs.map((m, i) => m.me
       ? `<div class="cp-me${fresh(i)}">${esc(m.text)}</div>`
-      : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${esc(m.text)}
-          ${card(m.card)}${m.status === "ok" ? meta(m) : ""}
-          ${m.confirm && !m.done ? `<div class="row mt"><button type="button" class="btn sm" data-ok="${i}">Xác nhận</button><button type="button" class="btn sm ghostbtn" data-no="${i}">Huỷ</button></div>` : ""}
-          ${m.evidence || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${m.evidence && !(m.here && m.evidence.route === location.hash) ? `<a class="small" data-ev="${i}" href="${esc(m.evidence.route)}">Mở ${esc(m.evidence.label)} →</a>` : ""}</div>` : ""}
+      : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${m.mode === "model" ? prose(m.text) : esc(m.text)}
+          ${(m.waits || []).length > 1 ? `<ul class="cp-notes">${m.waits.map(w => `<li>${esc(w.summary)}</li>`).join("")}</ul>` : ""}
+          ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) : ""}
+          ${(m.steps || []).length > 1 || (m.steps || []).some(s => s.status !== "ok") ? `<div class="cp-steps small muted">Các bước: ${m.steps.map(s => `<span class="chip ${s.status === "ok" ? "" : "bad"}" title="${esc(s.text || "")}">${esc(s.label || s.tool)} ${STEP[s.status] || ""}</span>`).join(" ")}</div>` : ""}
+          ${(m.confirm || (m.waits || []).length) && !m.done ? `<div class="row mt"><button type="button" class="btn sm" data-ok="${i}">Xác nhận</button><button type="button" class="btn sm ghostbtn" data-no="${i}">Huỷ</button></div>` : ""}
+          ${(m.citations || []).length || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${(m.citations || []).filter(c => !(m.here && c.route === location.hash)).map(c => `<a class="small" data-ev="${i}" href="${esc(c.route)}">Mở ${esc(c.label)} →</a>`).join("")}</div>` : ""}
           ${m.seen ? `<details class="small muted mt"><summary>Mô hình thấy gì</summary>“${esc(m.seen)}” · ${esc(m.router)}</details>` : ""}</div>`).join("")
       : `<div class="small muted">Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn. Tôi chỉ dùng các chức năng sẵn có của ứng dụng.</div>`;
     shown = msgs.length;
@@ -135,32 +163,48 @@ export function mount() {
     for (const b of box.querySelectorAll("[data-here]")) b.onclick = () => { show(msgs[b.dataset.here]); if (covers()) close(); };
     for (const a of box.querySelectorAll("[data-ev]")) a.onclick = () => after(msgs[a.dataset.ev].focus);
     for (const b of box.querySelectorAll("[data-ok]")) b.onclick = () => confirmIt(Number(b.dataset.ok));
-    for (const b of box.querySelectorAll("[data-no]")) b.onclick = () => { msgs[b.dataset.no].done = true; msgs.push({text: "Đã huỷ, không có gì được ghi."}); save(role, msgs); setState("idle"); draw(); };
+    for (const b of box.querySelectorAll("[data-no]")) b.onclick = () => declineIt(Number(b.dataset.no));
   };
+  // the Copilot's answer (the fallback's confirm runs there) and the assistant's, as one message
+  const fromCopilot = (a) => ({text: a.text, status: a.status, confirm: a.confirm, citations: a.evidence ? [a.evidence] : [], seen: a.seen,
+    focus: a.focus || [], cards: a.card ? [a.card] : [], as_of: a.as_of, sources: a.sources, at: a.answered_at, mode: "fallback",
+    router: (a.router || {}).kind === "confirm" ? "bạn xác nhận" : "định tuyến từ khóa (dự phòng)", suggest: a.suggest, navigate: a.navigate});
+  const fromAssistant = (a) => ({text: a.text, status: a.status, confirm: a.confirm, waits: a.waits, turn_id: a.turn_id, steps: a.steps || [],
+    citations: a.citations || [], seen: a.seen, focus: a.focus || [], cards: (a.steps || []).map(s => s.card).filter(Boolean),
+    as_of: a.as_of, sources: a.sources, at: a.answered_at, mode: a.mode, model: a.model, suggest: a.suggest, navigate: a.navigate,
+    router: a.mode === "template" ? "mô hình chỉ thấy trạng thái công cụ" : a.mode === "fallback" ? `định tuyến từ khóa (dự phòng: ${a.why || ""})` : ""});
   const call = async (body) => {
     busy = true; setState("busy"); draw();
-    let a;
-    try { a = (await post("/api/copilot", {...context(), ...body})).copilot; }
-    catch (e) { a = {status: "failed", text: `Không gọi được trợ lý: ${e.message}`}; }
+    let m;
+    try {
+      m = body.confirm ? fromCopilot((await post("/api/copilot", {...context(), question: "", confirm: body.confirm})).copilot)
+        : fromAssistant((await post("/api/assistant", {...context(), ...body})).assistant);
+    } catch (e) { m = {status: "failed", text: `Không gọi được trợ lý: ${e.message}`}; }
     busy = false;
-    const r = a.router || {};
-    $("#cp-router", panel).textContent = r.kind === "llm" ? `mô hình ${r.model || ""}` : "bộ định tuyến từ khóa";
-    const m = {text: a.text, status: a.status, confirm: a.confirm, evidence: a.evidence, seen: a.seen, focus: a.focus || [],
-      card: a.card, as_of: a.as_of, sources: a.sources, at: a.answered_at,
-      router: r.kind === "llm" ? `định tuyến bởi ${r.model}` : r.kind === "confirm" ? "bạn xác nhận" : "định tuyến từ khóa (mô phỏng)"};
+    const [badge, foot] = (MODE[m.mode] || MODE.fallback)(m);
+    if (m.mode) { $("#cp-router", panel).textContent = badge; $("#cp-foot", panel).textContent = foot; }
     msgs.push(m);
-    setState(FOR[a.status] || "error");
-    if (a.navigate) { after(m.focus); location.hash = a.navigate; }
+    setState(FOR[m.status] || "error");
+    if (m.navigate) { after(m.focus); location.hash = m.navigate; }
     else m.here = show(m) > 0;  // on this page: mark it now, and keep a button to mark it again
-    save(role, msgs); draw(); sugg(a.suggest);
+    save(role, msgs); draw(); sugg(m.suggest);
   };
   const send = (q) => {
     q = String(q || "").trim();
     if (!q || busy) return;
     msgs.push({me: true, text: q}); $("#cp-q", panel).value = "";
-    call({question: q});
+    call({message: q});
   };
-  const confirmIt = (i) => { msgs[i].done = true; msgs.push({me: true, text: "Xác nhận"}); call({question: "", confirm: msgs[i].confirm}); };
+  const answers = (m, v) => Object.fromEntries(m.waits.map(w => [w.id, v]));
+  const confirmIt = (i) => {
+    const m = msgs[i]; m.done = true; msgs.push({me: true, text: "Xác nhận"});
+    call(m.confirm ? {confirm: m.confirm} : {turn_id: m.turn_id, approvals: answers(m, "approve")});
+  };
+  const declineIt = (i) => {
+    const m = msgs[i]; m.done = true;
+    if (m.confirm) { msgs.push({text: "Đã huỷ, không có gì được ghi."}); save(role, msgs); setState("idle"); draw(); return; }
+    msgs.push({me: true, text: "Huỷ"}); call({turn_id: m.turn_id, approvals: answers(m, "deny")});  // the run ends, nothing written
+  };
 
   const open = () => { drawCtx(); draw(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); };
   const close = () => { panel.hidden = true; btn.setAttribute("aria-expanded", "false"); if (btn.dataset.state === "error") setState("idle"); btn.focus();
