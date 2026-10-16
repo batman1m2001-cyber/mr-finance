@@ -5,6 +5,7 @@ from __future__ import annotations
 from operonx import op
 
 from control import roles
+from control.errors import BadRequest
 from people import auth
 from wealth import fixtures, store
 
@@ -17,7 +18,7 @@ def read_proposal(
     queue item it becomes."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     auth.require_client(client_id)  # their family, their RM, or the desk (ROLE-02)
     option = option or {}
     if option.get("id") not in ("light", "heavy"):

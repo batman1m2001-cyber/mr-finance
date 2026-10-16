@@ -7,7 +7,6 @@ it is served here, by the asgi service app/main.py mounts last.
 from __future__ import annotations
 
 import json
-import os
 from functools import lru_cache
 
 from starlette.applications import Starlette
@@ -24,8 +23,10 @@ from apply import trace as apply_trace
 from control import alerts as control_alerts
 from control import audit as control_audit
 from control import barrier, roles
+from control import crypto as control_crypto
 from control import db as control_db
 from control import log as control_log
+from control import secrets as control_secrets
 from events import store as events_store
 from inbox import sign as inbox_sign
 from inbox import store as inbox_store
@@ -92,10 +93,20 @@ async def healthz(request: Request) -> JSONResponse:
     from wealth import ai
 
     agents = view_ops.agent_status()
-    hmac_on = bool((os.environ.get("AUDIT_HMAC_KEY") or "").strip())
+    hmac_on = bool(control_secrets.get("AUDIT_HMAC_KEY"))
     router_by = "mô hình " + copilot_router.model() if copilot_router.live() else "từ khóa"
     client_ai = barrier.mode()
+    enc = control_crypto.current()
+    where = {"vault": "kho bí mật", "file": "tệp bí mật", "env": "biến môi trường"}
     protections = [
+        {
+            "id": "data_encrypted",
+            "on": bool(enc),
+            "note": f"Dữ liệu khách mã hóa AES-256-GCM theo cột, khóa {enc} từ "
+            f"{where.get(control_secrets.source('MF_DATA_KEYS'), '?')}"
+            if enc
+            else "Dữ liệu khách lưu dạng rõ (chưa đặt MF_DATA_KEYS)",
+        },
         {
             "id": "audit_hmac",
             "on": hmac_on,

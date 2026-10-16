@@ -26,6 +26,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from typing import Any, Dict, Iterator, List, Optional
 
+from control import crypto
 from wealth.paths import DATA, ensure_schema, no_people_in_zone, state_path
 
 KINDS = ("staff", "client", "dependent")
@@ -75,25 +76,52 @@ def _seed(con: sqlite3.Connection) -> None:
         seq += 1
         rec = {k: v for k, v in c.items() if k not in ("sources", "dependents")}
         rm = (teams.get(head[c["id"]]) or {}).get("rm")
+        cid = c["id"]
         con.execute(
             "insert into people values (?, ?, 'client', 'client', ?, ?, ?, ?, ?)",
-            (c["id"], seq, c["name"], c.get("email"), c.get("member_of"), rm, json.dumps(rec, ensure_ascii=False)),
+            (
+                cid,
+                seq,
+                _seal(c["name"], cid, "name"),
+                _seal(c.get("email"), cid, "email"),
+                c.get("member_of"),
+                rm,
+                _seal(json.dumps(rec, ensure_ascii=False), cid, "data"),
+            ),
         )
         for i, d in enumerate(c.get("dependents", []), 1):
             seq += 1
+            did = f"{cid}-D{i}"
             con.execute(
                 "insert into people values (?, ?, 'dependent', 'dependent', ?, null, ?, null, ?)",
-                (f"{c['id']}-D{i}", seq, d["name"], c["id"], json.dumps(d, ensure_ascii=False)),
+                (did, seq, _seal(d["name"], did, "name"), cid, _seal(json.dumps(d, ensure_ascii=False), did, "data")),
             )
         for pos, (src, data) in enumerate((c.get("sources") or {}).items()):
             con.execute(
                 "insert into client_sources values (?, ?, ?, ?)",
-                (c["id"], src, pos, json.dumps(data, ensure_ascii=False)),
+                (cid, src, pos, crypto.seal(json.dumps(data, ensure_ascii=False), _src_where(cid, src))),
             )
     for cid, t in teams.items():
         con.execute("insert into teams values (?, ?, 'rm', 0, 0)", (cid, t["rm"]))
         for pos, sid in enumerate(specialists, 1):
             con.execute("insert into teams values (?, ?, 'specialist', ?, ?)", (cid, sid, int(sid in t["lead"]), pos))
+
+
+def _seal(text: Optional[str], person_id: str, column: str) -> Optional[str]:
+    """A client's or dependent's column, sealed when column keys are set (BRD-NFR-07, control/crypto.py)."""
+    return crypto.seal(text, crypto.where("people", person_id, column))
+
+
+def _open(text: Optional[str], person_id: str, column: str) -> Optional[str]:
+    return crypto.open_(text, crypto.where("people", person_id, column))
+
+
+def _src_where(client_id: str, source: str) -> bytes:
+    return crypto.where("client_sources", (client_id, source), "data")
+
+
+def _open_source(text: str, client_id: str, source: str) -> str:
+    return crypto.open_(text, _src_where(client_id, source))
 
 
 _TOPPED: set = set()
@@ -165,13 +193,15 @@ def reset() -> None:
 
 
 def _person(row: sqlite3.Row) -> Dict[str, Any]:
+    pid = row["id"]
+    email = _open(row["email"], pid, "email")
     return {
-        **json.loads(row["data"]),
-        "id": row["id"],
+        **json.loads(_open(row["data"], pid, "data")),
+        "id": pid,
         "kind": row["kind"],
         "role": row["role"],
-        "name": row["name"],
-        **({"email": row["email"]} if row["email"] else {}),
+        "name": _open(row["name"], pid, "name"),
+        **({"email": email} if email else {}),
     }
 
 
@@ -200,12 +230,16 @@ def _client_rows(cid: str):
         if row is None:
             raise KeyError(f"no client {cid!r}")
         deps = con.execute(
-            "select data from people where member_of = ? and kind = 'dependent' order by seq", (cid,)
+            "select id, data from people where member_of = ? and kind = 'dependent' order by seq", (cid,)
         ).fetchall()
         srcs = con.execute(
             "select source, data from client_sources where client_id = ? order by pos", (cid,)
         ).fetchall()
-    return row["data"], [d["data"] for d in deps], [(x["source"], x["data"]) for x in srcs]
+    return (
+        _open(row["data"], cid, "data"),
+        [_open(d["data"], d["id"], "data") for d in deps],
+        [(x["source"], crypto.open_(x["data"], _src_where(cid, x["source"]))) for x in srcs],
+    )
 
 
 def client(client_id: str) -> Dict[str, Any]:
@@ -322,4 +356,12 @@ def everyone() -> List[Dict[str, Any]]:
     with _db() as con:
         rows = con.execute("select id, kind, role, name, email, member_of from people order by seq").fetchall()
     rm = _assignment()
-    return [{**dict(r), "rm_id": rm.get(r["member_of"] or r["id"]) if r["kind"] == "client" else None} for r in rows]
+    return [
+        {
+            **dict(r),
+            "name": _open(r["name"], r["id"], "name"),
+            "email": _open(r["email"], r["id"], "email"),
+            "rm_id": rm.get(r["member_of"] or r["id"]) if r["kind"] == "client" else None,
+        }
+        for r in rows
+    ]

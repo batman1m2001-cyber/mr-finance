@@ -80,7 +80,7 @@ def _ensure(con) -> None:
     for r in rows:
         if r["role"] not in ACCOUNT_ROLES:
             continue
-        login = (r["email"] or r["id"]).lower()
+        login = (store._open(r["email"], r["id"], "email") or r["id"]).lower()
         con.execute("insert into accounts values (?, ?, ?, ?, null)", (r["id"], login, pw, now))
 
 
@@ -108,13 +108,13 @@ def accounts() -> List[Dict[str, Any]]:
         ).fetchall()
     out = []
     for r in rows:
-        data = json.loads(r["data"])
+        data = json.loads(store._open(r["data"], r["person_id"], "data"))
         out.append(
             {
                 "id": r["person_id"],
                 "login": r["login"],
                 "has_password": bool(r["has_password"]),
-                "name": r["name"],
+                "name": store._open(r["name"], r["person_id"], "name"),
                 "role": r["role"],
                 "title": data.get("title") or data.get("occupation") or "",
                 "member_of": r["member_of"],
@@ -146,7 +146,9 @@ def reset() -> None:
 
 
 def _secret() -> bytes:
-    env = os.environ.get("MF_SESSION_SECRET")
+    from control import secrets as store_of_secrets
+
+    env = store_of_secrets.get("MF_SESSION_SECRET")  # the secret store, a file or the environment (BRD-NFR-07)
     if env:
         return env.encode("utf-8")
     with _db() as con:

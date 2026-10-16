@@ -6,14 +6,15 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import os
 from typing import Optional
 
 HEADER = "x-mf-signature"
 
 
 def key() -> Optional[bytes]:
-    k = (os.environ.get("MF_INBOX_KEY") or "").strip()
+    from control import secrets
+
+    k = secrets.get("MF_INBOX_KEY") or ""  # the secret store, a file or the environment (BRD-NFR-07)
     return k.encode("utf-8") if k else None
 
 

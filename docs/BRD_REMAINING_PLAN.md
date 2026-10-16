@@ -51,7 +51,12 @@ the next.
   the wire against a recording server. Found on the way: the CIO agent's client for another model name was built
   outside the hub, so it is guarded too. The live demo stays `demo`.
 - **G3 — Encryption and secrets (NFR-07).** `control.secrets`; column encryption and rotation; headers and
-  cookies; the attack suite.
+  cookies; the attack suite. **Done** (2026-10-16, ADR-0024): what to seal was found by scanning a populated database
+  — beyond G-D3's list, the run snapshots, rankings and exposures, RM proposals and the chat history hold client
+  names too; inside runs only those fields are sealed, so the snapshot-head SQL (NFR-01) is unchanged. operonx 1.29.0
+  adds `Application(middleware=…)` so the headers cover the graph services. Found on the way: an unknown client id
+  answered 500 (now 400). NFR-01 with keys on, 6,500 families, same machine: apply 165.6 s (167.3 s plain), the
+  slowest family read 0.43 s (0.31 s plain) — BRD ≤ 300 s and ≤ 2 s.
 - **G4 — Moving to the bank (DATA-10).** PostgreSQL export proven in Docker; WORM audit segments; the guide.
 - **G5 — Availability (NFR-03).** Heartbeat, the business-hours measure, the alert.
 - **G6 — Urgent and important news (KPI-01, KPI-02).** The flag, the reference feed job, the two measures.

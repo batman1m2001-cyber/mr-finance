@@ -12,6 +12,7 @@ from typing import Any, Dict, List
 
 from operonx import op
 
+from control.errors import BadRequest
 from dashboard import _calendar
 from wealth import fixtures, profile
 from wealth.labels import CLASSES, GROUPS, TRUST, TRUST_WEIGHT
@@ -30,7 +31,7 @@ def check_request(client_id: str = None, scope: str = None, months: int = None) 
     """What a caller sent, checked: a known client, a scope, 1–36 months."""
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     return {
         "client_id": client_id,
         "scope": scope or "personal",

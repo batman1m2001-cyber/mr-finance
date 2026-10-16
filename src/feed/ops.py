@@ -14,6 +14,7 @@ from typing import Any, Dict, List
 from operonx import op
 
 from apply import reads
+from control.errors import BadRequest
 from flows.ops import LABELS
 from people import auth
 from research import ops as research
@@ -35,7 +36,7 @@ def _vnd(x: float) -> str:
 def check_request(client_id: str = None, scope: str = None, role: str = None) -> dict:
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
-        raise ValueError(f"no client {client_id!r}")
+        raise BadRequest(f"no client {client_id!r}")
     role = auth.role_for(role or "client")
     if role not in ("client", "rm"):
         raise ValueError("role is client or rm")

@@ -15,7 +15,6 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
-import os
 import sqlite3
 import time
 from typing import Any, Dict, Optional
@@ -38,7 +37,9 @@ class AuditError(RuntimeError):
 
 
 def _key() -> Optional[bytes]:
-    k = (os.environ.get("AUDIT_HMAC_KEY") or "").strip()
+    from control import secrets
+
+    k = secrets.get("AUDIT_HMAC_KEY") or ""  # the secret store, a file or the environment (BRD-NFR-07)
     return k.encode("utf-8") if k else None
 
 
