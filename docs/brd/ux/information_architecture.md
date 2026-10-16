@@ -42,12 +42,14 @@ CIO                                         Tuân thủ (Compliance)
 ├── Hộp tin ............. SCR-CIO-01        ├── Tin bị giữ ...................... SCR-CMP-01
 ├── Sự kiện & nhận định . SCR-CIO-02        ├── Nghiên cứu ...................... SCR-CMP-02
 │   └── /<view id> ...... SCR-CIO-03        ├── Nhật ký ......................... SCR-CMP-03
+│                                           ├── Bản tin ......................... SCR-CMP-04
 │                                           ├── Agent ........................... SCR-CIO-08
 │                                           └── Cấu hình ........................ SCR-CIO-09
 ├── Phơi nhiễm .......... SCR-CIO-04
 ├── Lần áp dụng ......... SCR-CIO-05
 ├── Đồ thị lần áp dụng .. SCR-CIO-10
 ├── Nghiên cứu .......... SCR-CIO-06
+├── Bản tin ............. SCR-CIO-14
 ├── Mô hình ............. SCR-CIO-07
 ├── Agent ............... SCR-CIO-08
 └── Cấu hình ............ SCR-CIO-09

@@ -500,6 +500,27 @@ async def inbox_receive(request: Request) -> JSONResponse:
     return JSONResponse({"id": inbox_store.receive(body, signed)}, status_code=202)
 
 
+async def newsletters(request: Request) -> JSONResponse:
+    """The newsletters (FR-801), newest first, and the approved views a CIO may draft from."""
+    from newsletter import store as nl_store
+    from views import store as vstore
+
+    approved = [
+        {"id": v["id"], "event_id": v["event_id"], "summary": v["current"]["summary"], "mode": v["mode"]}
+        for v in vstore.approved()
+    ]
+    return JSONResponse({"newsletters": nl_store.listing(), "approved_views": approved})
+
+
+async def newsletter_one(request: Request) -> JSONResponse:
+    from newsletter import store as nl_store
+
+    try:
+        return JSONResponse({"newsletter": nl_store.get(request.path_params["newsletter_id"])})
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=404)
+
+
 async def system_alerts(request: Request) -> JSONResponse:
     """The bell's alerts (BRD-NFR-12): the open and acknowledged ones of the kinds the signed-in role looks after
     (sign-in off: ``?role=``)."""
@@ -902,6 +923,7 @@ ROUTE_ROLES = {
     "/api/audit": ("compliance", "admin"),
     "/api/system": ("admin",),
     "/api/system/alerts": OVERSIGHT,  # the bell: each role its kinds of alert
+    "/api/newsletters": ("cio", "compliance"),  # the CIO writes, Compliance approves (FR-801)
     "/api/rm/": ("rm",),
 }
 ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị"}
@@ -1007,6 +1029,8 @@ app = Starlette(
         Route("/api/market", market),
         Route("/api/system", system),
         Route("/api/system/alerts", system_alerts),
+        Route("/api/newsletters", newsletters),
+        Route("/api/newsletters/{newsletter_id}", newsletter_one),
         Route("/api/inbox", inbox_receive, methods=["POST"]),
         Route("/api/accuracy", accuracy),
         Route("/api/measure", measure_reports),

@@ -170,6 +170,17 @@ def _check_ai_mode(data: Any) -> None:
         raise ValueError(f"cần {{'mode': một trong {list(AI_MODES)}}}")
 
 
+def _check_related(data: Any) -> None:
+    if not isinstance(data, list) or not 1 <= len(data) <= 100:
+        raise ValueError("một danh sách 1–100 tên bên liên quan")
+    if not all(isinstance(p, str) and 2 <= len(p.strip()) <= 80 for p in data):
+        raise ValueError("mỗi tên là chuỗi 2–80 ký tự")
+
+
+# the bank and its group (BRD §14 CONTENT-03 names “tổ chức liên quan tới TCB hoặc TCBS”); Compliance keeps the list
+RELATED = ["Techcombank", "TCB", "TCBS", "Techcom Securities", "Techcom Capital", "Techcom Life"]
+
+
 def _assignment_base() -> Dict[str, str]:
     from people import store
 
@@ -271,6 +282,13 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "two_person": False,
         "base": lambda: json.loads(json.dumps(CONSENT)),
         "check": _check_consent,
+    },
+    "related_parties": {
+        "label": "Bên liên quan (xung đột lợi ích)",
+        "owner": "compliance",
+        "two_person": False,
+        "base": lambda: list(RELATED),
+        "check": _check_related,
     },
     "news_sources": {
         "label": "Nguồn tin (danh sách trắng)",

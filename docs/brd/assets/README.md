@@ -38,6 +38,11 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CIO-13_phone-light.jpg` | SCR-CIO-13 Đo lường | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state (market history from 2020, two approved views) |
 | `SCR-ADM-01_desktop-light.jpg` | SCR-ADM-01 Hệ thống | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state, after a load of the history since 2026-10-01 |
 | `SCR-ADM-01_phone-light.jpg` | SCR-ADM-01 Hệ thống | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state, after a load of the history since 2026-10-01 |
+| `SCR-CIO-14_desktop-light.jpg` | SCR-CIO-14 Bản tin (CIO), the form open | current | desktop 1440×900, light, full page | 2026-10-16, BRD completion F8, dev server in inbox mode (two approved views) |
+| `SCR-CIO-14_phone-light.jpg` | SCR-CIO-14 Bản tin (CIO) | current | phone 390×844, light, viewport | 2026-10-16, BRD completion F8, dev server in inbox mode (two approved views) |
+| `FEAT-17-draft_desktop-light.jpg` | FEAT-17 a draft letter (CIO): the agent's fallback reason, the edit panel | current | desktop 1440×900, light, full page | 2026-10-16, BRD completion F8, dev server in inbox mode (two approved views) |
+| `SCR-CMP-04_desktop-light.jpg` | SCR-CMP-04 an approved letter (Compliance), Private 2 hours early with its reason | current | desktop 1440×900, light, full page | 2026-10-16, BRD completion F8, dev server in inbox mode (two approved views) |
+| `SCR-CMP-04_phone-light.jpg` | SCR-CMP-04 an approved letter (Compliance) | current | phone 390×844, light, viewport | 2026-10-16, BRD completion F8, dev server in inbox mode (two approved views) |
 | `SCR-ADM-01-alerts_desktop-light.jpg` | SCR-ADM-01 Hệ thống, “Cảnh báo” | current | desktop 1440×900, light, viewport at the section | 2026-10-16, dev server, after an unsigned package to the inbox was rejected (AL-000001) |
 | `SCR-ADM-01-alerts_phone-light.jpg` | SCR-ADM-01 Hệ thống, “Cảnh báo” | current | phone 390×844, light, viewport at the section | as above |
 | `FEAT-36-bell-cio_desktop-light.jpg` | the bell, CIO: the open alert first, then new news | current | desktop 1440×900, light, bell open | as above |

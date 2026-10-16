@@ -103,6 +103,7 @@ def test_the_endpoints():
             "restricted",
             "forbidden_phrases",
             "consent",
+            "related_parties",
             "news_sources",
             "price_sources",
             "ticker_map",

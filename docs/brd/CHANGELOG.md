@@ -2,6 +2,15 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — The newsletter and conflict of interest (BRD completion F8): the CIO drafts a general letter from
+  1–6 approved views (impacts in words, tickers counted not named, scenarios, outlets), the opening by template or
+  the CIO agent under a content guard (forbidden wording, tickers, restricted names, the CONTENT-02 labels) with the
+  template as fallback; same time for Private and retail unless a reason is recorded; Compliance approves or
+  returns, never the author; a preview, never sent; conflict of interest is a structured field on research and
+  letters, a related party (Compliance's `related_parties`) cannot go undeclared, and the client reads the
+  disclosure on the impact page — FEAT-17, FEAT-03, FEAT-13, matrix (FR-801, CONTENT-01/02/03, SEC-04 verified),
+  api_reference, cio.md (SCR-CIO-14), compliance.md (SCR-CMP-04).
+
 - 2026-10-16 — Alerts and the central log (BRD completion F7): one alert per failing thing (a news feed, a market
   series, an agent run, the audit chain checked hourly by the new `audit_check` job, a rejected inbox package, the
   zone sync), counted while it keeps failing and resolved when it works again; staff see their kinds in the bell

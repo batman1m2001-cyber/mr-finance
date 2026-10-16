@@ -64,7 +64,7 @@ export async function render(box, ctx) {
         <div class="cols" style="margin-top:8px"><div class="c6"><div class="small muted">Theo yếu tố (3 tháng)</div><div id="by-factor"></div></div>
         <div class="c6"><div class="small muted">Vị thế góp phần nhiều nhất</div><div id="by-holding"></div></div></div></details></div>` : ""}
       ${goalBlock}
-      ${d.labels ? `<div class="c12 notice small">${esc(d.labels.note)}</div>` : ""}
+      ${d.labels ? `<div class="c12 notice small">${esc(d.labels.note)}<div style="margin-top:4px">${d.labels.conflicts.map(esc).join("<br>")}</div></div>` : ""}
     </div>`;
   wireGoals(box, ctx, client);
 

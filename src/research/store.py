@@ -38,6 +38,16 @@ def _ts(text: str) -> float:
     return dt.astimezone(timezone.utc).timestamp()
 
 
+def _conflict(item: Dict[str, Any]) -> Dict[str, Any]:
+    from research import conflict
+
+    try:
+        given = item.get("conflict", item.get("conflicts"))
+        return conflict.declare(given, item.get("title", ""), item.get("summary", ""))
+    except conflict.ConflictError as exc:
+        raise ResearchError(str(exc)) from None
+
+
 def upload(item: Dict[str, Any], by: str) -> Dict[str, Any]:
     kind = item.get("kind")
     if kind not in KINDS:
@@ -51,7 +61,7 @@ def upload(item: Dict[str, Any], by: str) -> Dict[str, Any]:
         "title": str(item["title"]).strip(),
         "summary": str(item["summary"]).strip(),
         "release_at": _ts(item["release_at"]),
-        "conflicts": str(item.get("conflicts") or "").strip(),
+        "conflict": _conflict(item),
         "uploaded_by": by,
         "history": [{"at": time.time(), "by": by, "status": "PENDING_RELEASE", "note": ""}],
     }
@@ -146,6 +156,7 @@ def _to_inbox(item: Dict[str, Any]) -> None:
                 "restricted": [],
                 "research_id": item["id"],
                 "report_no": item["report_no"],
+                "conflict": item.get("conflict"),
             }
         ]
     )
@@ -156,6 +167,14 @@ def get(rid: str) -> Dict[str, Any]:
         r = db.load(con.execute("select * from research_items where id = ?", (rid,)).fetchone())
     if r is None:
         raise KeyError(f"không có {rid}")
+    if "conflict" not in r:  # kept before the field was structured (F8): the free text is the statement
+        text = str(r.get("conflicts") or "").strip()
+        r["conflict"] = {
+            "related": bool(text) and text.lower() not in ("không", "không có"),
+            "parties": [],
+            "statement": text,
+            "mentions": [],
+        }
     return r
 
 
