@@ -360,5 +360,70 @@
    ],
    "ticker": "KPH"
   }
- ]
+ ],
+ "urgent": {
+  "note": "Cách hiểu của chúng tôi (Đề xuất) cho tới khi ngân hàng định nghĩa tin khẩn",
+  "target_minutes": 30,
+  "actor_words": [
+   "nhnn",
+   "ngân hàng nhà nước",
+   "sbv"
+  ],
+  "decisions": [
+   {
+    "id": "sbv_rate",
+    "label": "NHNN quyết định lãi suất điều hành",
+    "words": [
+     "lãi suất điều hành",
+     "lãi suất tái cấp vốn",
+     "lãi suất tái chiết khấu"
+    ]
+   },
+   {
+    "id": "fx_band",
+    "label": "NHNN quyết định biên độ tỷ giá",
+    "words": [
+     "biên độ tỷ giá",
+     "biên độ giao dịch",
+     "tỷ giá trung tâm"
+    ]
+   }
+  ],
+  "sigma": 3.0,
+  "window_days": 250
+ },
+ "reference": {
+  "note": "Cách hiểu của chúng tôi (Đề xuất) cho tới khi ngân hàng định nghĩa tin quan trọng",
+  "url": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=vi&gl=VN&ceid=VN:vi",
+  "outlet": "Google News (Kinh doanh, Việt Nam)",
+  "min_outlets": 2,
+  "match": 0.4,
+  "match_hours": 36,
+  "judge_after_hours": 24,
+  "target": 0.95,
+  "stopwords": [
+   "hôm",
+   "nay",
+   "ngày",
+   "và",
+   "của",
+   "các",
+   "những",
+   "có",
+   "là",
+   "được",
+   "cho",
+   "với",
+   "trong",
+   "về",
+   "thế",
+   "nào",
+   "sẽ",
+   "đã",
+   "này",
+   "từ",
+   "khi",
+   "một"
+  ]
+ }
 }

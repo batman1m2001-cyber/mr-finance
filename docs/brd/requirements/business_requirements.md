@@ -38,7 +38,7 @@ tool, not the client's P&L; the rate at which clients act on recommendations is 
 | ID | Group | Metric (BRD) | Target (BRD) | Doc status |
 |---|---|---|---|---|
 | BRD-KPI-01 | Tốc độ | From news out to result ready for the RM | ≤ 2 h; urgent news ≤ 30 min | documented |
-| BRD-KPI-02 | Độ phủ tin | Important news collected | ≥ 95 % | needs_clarification (Q-07: “important” is not defined) |
+| BRD-KPI-02 | Độ phủ tin | Important news collected | ≥ 95 % | documented; “important” is our reading until the bank defines it (Q-07, G-D6) |
 | BRD-KPI-03 | Độ chính xác | Right direction (VN-Index, out-of-sample) | ≥ 70 % (author's demo: 77 %) | documented |
 | BRD-KPI-04 | Độ chính xác | Coverage of the P10–P90 band (out-of-sample, per factor and horizon) | 70–90 % (author's demo: 68–87 %) | documented |
 | BRD-KPI-05 | Kiểm soát | Recommendations with a reviewer and a log | 100 % | documented |

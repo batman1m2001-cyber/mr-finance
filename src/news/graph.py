@@ -7,7 +7,7 @@ sends and are not used."""
 
 from operonx import END, START, graph
 
-from news.ops import dismiss, fetch, keep, release, screen
+from news.ops import dismiss, fetch, keep, reference_check, release, screen
 
 
 @graph
@@ -30,4 +30,11 @@ def dismiss_flow(ids, by="cio", note=""):
 def release_flow(item_id, by, note):
     """Compliance lets an item that names someone on the restricted list through (BR-04)."""
     done = release(item_id=item_id, by=by, note=note)
+    START >> done >> END
+
+
+@graph
+def reference_flow(feed=None, now=None, tick=None, at=None):
+    """The independent reference read, its stories kept and judged (KPI-02)."""
+    done = reference_check(feed=feed, now=now)
     START >> done >> END

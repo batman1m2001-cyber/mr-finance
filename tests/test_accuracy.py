@@ -126,7 +126,8 @@ def test_the_reports_read_approval_time_edits_and_news_to_rm_time():
     assert row["edited"] is False and row["minutes"] is not None and row["minutes"] < reports.FAST_MIN
     assert r["by_month"][0]["no_edit_share"] == 1.0 and r["by_month"][0]["fast"] == 1
     sp = reports.speed()
-    assert [x["run"] for x in sp["runs"]] == [run["id"]] and sp["urgent"] == "chưa có định nghĩa"
+    assert [x["run"] for x in sp["runs"]] == [run["id"]] and not sp["runs"][0]["urgent"]
+    assert sp["urgent"]["target_minutes"] == 30 and sp["urgent"]["by_month"] == []  # nothing flagged
     t = reports.timing()
     assert t["agent"]["runs"] and t["agent"]["runs"][0]["minutes"] < reports.AGENT_TARGET_MIN
 
@@ -148,7 +149,7 @@ def test_the_pages_api_is_for_staff(monkeypatch):
         a = c.get("/api/accuracy").json()
         m = c.get("/api/measure").json()
     assert a["min_obs"] == 24 and a["accept"] == [0.7, 0.9] and "horizons" in a["views"]
-    assert set(m) == {"misses", "rubber_stamp", "speed", "timing", "availability"}
+    assert set(m) == {"misses", "rubber_stamp", "speed", "timing", "availability", "important"}
 
 
 def test_a_factors_own_band_is_its_shock_times_the_realisation_with_the_model_spread():

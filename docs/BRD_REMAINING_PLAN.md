@@ -74,6 +74,12 @@ the next.
   way: operonx kept every job run forever — the 5 s agent worker left ~17,000 run folders (~200 MB) a day on the
   demo; operonx 1.30.0 adds `Job(keep_runs=N)`, set on the four short-clock jobs.
 - **G6 — Urgent and important news (KPI-01, KPI-02).** The flag, the reference feed job, the two measures.
+  **Done** (2026-10-16): the CIO flags an event urgent with a reason (audited, `POST /api/events/urgent`); the
+  product proposes it for an SBV policy-rate or FX-band decision, or a factor's daily move past 3 deviations of its
+  last 250 (`src/news/urgent.py`); flagged events are measured against 30 min on Đo lường. The `news_reference` job
+  reads Google News' Business section for Vietnam every 2 h (`src/news/reference.py`): a story on our factors
+  carried by ≥ 2 outlets is important, judged collected or not once, a day after first seen; coverage by day and
+  month, and over the stories an outlet we follow carried. On a dev copy: 4 of 7 (57 %), followed outlets 80 %.
 - **G7 — Control and behaviour measures (KPI-05, KPI-06, KPI-07).** The review rate, the RM contact log, client
   opens.
 - **G8 — The certified specialist (ROLE-05, WF-08).**

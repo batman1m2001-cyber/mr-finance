@@ -26,7 +26,7 @@ async function renderList(box, ctx) {
       const v = e.views[e.views.length - 1];
       return `<a class="item" href="${ctx.href("nhan-dinh", v ? v.id : e.id)}" style="text-decoration:none;color:inherit">
         <span class="badge">${esc(e.id.slice(-4))}</span>
-        <div><div class="t" data-quote>${esc(e.title)}</div><div class="m">${esc(EVENT_TYPE[e.type] || "Chưa phân loại")} · ${e.news_ids.length} tin · ${when(e.created)}${e.blocked ? ' · <span class="badge bad">bị giữ</span>' : ""}</div></div>
+        <div><div class="t" data-quote>${esc(e.title)}</div><div class="m">${esc(EVENT_TYPE[e.type] || "Chưa phân loại")} · ${e.news_ids.length} tin · ${when(e.created)}${e.blocked ? ' · <span class="badge bad">bị giữ</span>' : ""}${urgentBadge(e)}</div></div>
         <span>${v ? viewBadge(v.status) : '<span class="badge">Chưa chạy agent</span>'}</span></a>`;
     }).join("")}</div>` : empty("Chưa có sự kiện", "Vào Hộp tin, chọn vài tin cùng nói về một chuyện, rồi bấm “Gom thành sự kiện”.")}</div>`;
 }
@@ -50,7 +50,9 @@ async function renderEvent(box, ctx, id) {
         <div class="small muted" style="margin-top:8px">Bốn nhóm phân tích chạy song song → tranh luận → tổng hợp và kiểm tra định dạng → Agent Phản biện. Agent chỉ đọc tin và danh mục thị trường, không đọc dữ liệu khách.</div>`}
         ${views.length ? `<h3 style="margin-top:16px">Các phiên bản</h3>${views.map(v => `<div class="row spread" style="margin:6px 0"><a href="${ctx.href("nhan-dinh", v.id)}">${esc(v.id)}</a><span>${viewBadge(v.status)} <span class="badge">${MODE_LABEL[v.mode] || "mô phỏng"}</span></span></div>`).join("")}` : ""}
       </div>
+      <div class="panel c12" id="urgent">${urgentPanel(ev)}</div>
     </div>`;
+  wireUrgent(box, ctx, ev);
   const run = box.querySelector("#run");
   if (run) run.onclick = async () => {
     run.disabled = true; run.textContent = "Agent đang chạy…";
@@ -60,6 +62,40 @@ async function renderEvent(box, ctx, id) {
     } catch (e) { toast(e.message); run.disabled = false; run.textContent = "Chạy Agent CIO"; }
   };
   if (busy) follow(box, ctx, ev.id, job.id);
+}
+
+// Urgent (BRD-KPI-01, news/urgent.py): the CIO's flag, with a reason; what the product proposes. Our reading,
+// labelled “Đề xuất” until the bank defines urgent news.
+function urgentBadge(e) {
+  if (e.urgent && e.urgent.flag) return ' · <span class="badge bad">khẩn</span>';
+  return (e.urgent_proposed || []).length ? ' · <span class="badge warn">đề xuất khẩn</span>' : "";
+}
+
+function urgentPanel(ev) {
+  const u = ev.urgent, props = ev.urgent_proposed || [];
+  return `<h3>Tin khẩn <span class="hint">BRD-KPI-01 · Đề xuất</span></h3>
+    <p class="small muted">Sự kiện CIO đánh dấu khẩn được đo theo mục tiêu ≤ 30 phút, từ tin sớm nhất đến lúc lần áp dụng có hiệu lực cho RM. Hệ thống đề xuất khẩn khi NHNN quyết định lãi suất điều hành hoặc biên độ tỷ giá, hoặc khi một yếu tố biến động quá 3 lần độ lệch chuẩn trong ngày — cách hiểu của chúng tôi cho tới khi ngân hàng định nghĩa.</p>
+    ${props.length ? `<div class="small" style="margin:8px 0"><b>Hệ thống đề xuất khẩn:</b><ul>${props.map(x => `<li data-explains>${esc(x.reason)}</li>`).join("")}</ul></div>` : `<div class="small muted" style="margin:8px 0">Hệ thống không đề xuất khẩn cho sự kiện này.</div>`}
+    ${u && u.flag
+      ? `<div class="notice bad"><b>Đã đánh dấu khẩn</b> · ${esc(u.by)} · ${when(u.at)}<div data-quote>${esc(u.reason)}</div></div>
+         <div class="row" style="margin-top:8px"><button type="button" class="btn" id="unflag">Bỏ đánh dấu khẩn</button></div>`
+      : `<label class="small" for="urgent-reason">Lý do</label>
+         <div class="row" style="margin-top:4px"><input id="urgent-reason" style="flex:1;min-width:0" maxlength="300" value="${esc(props.map(x => x.reason).join("; "))}">
+         <button type="button" class="btn" id="flag">Đánh dấu khẩn</button></div>`}`;
+}
+
+function wireUrgent(box, ctx, ev) {
+  const send = async (urgent, reason) => {
+    try {
+      const r = await post("/api/events/urgent", {event_id: ev.id, urgent, reason, by: ctx.user});
+      box.querySelector("#urgent").innerHTML = urgentPanel(r.event);
+      wireUrgent(box, ctx, r.event);
+      toast(urgent ? "Đã đánh dấu khẩn" : "Đã bỏ đánh dấu khẩn");
+    } catch (e) { toast(e.message); }
+  };
+  const flag = box.querySelector("#flag"), unflag = box.querySelector("#unflag");
+  if (flag) flag.onclick = () => send(true, box.querySelector("#urgent-reason").value);
+  if (unflag) unflag.onclick = () => send(false, "");
 }
 
 const MODE_LABEL = {live: "AI", inbox: "vùng AI", mock: "mô phỏng"};

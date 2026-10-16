@@ -48,11 +48,13 @@ after the due day. A view withdrawn or superseded later stays scored: the record
 
 - MEAS-03: high-relevance news never grouped into an event — dismissed by the CIO, held for Compliance, or more
   than a day in the inbox — and events that never reached families: no view, view not approved, approved without
-  an effective run. “Important” is read as relevance “high” (Q-07 is still open).
+  an effective run. “Important” is read as relevance “high” here; KPI-02 uses the reference reading of Q-07 below.
 - MEAS-05: per approval, the CIO's minutes from ready-for-approval to approved; the share approved without an
   edit; approvals under 2 minutes (our signal, labelled as such — the BRD gives no threshold).
 - KPI-01 / WF-09: per effective run, hours from the event's first news being published to the run being
-  effective, against 2 h. The “urgent ≤ 30 min” half is not measured: nothing in the product marks news urgent.
+  effective, against 2 h; events the CIO flagged urgent against 30 min (`news/urgent.py` proposes; the CIO decides).
+- KPI-02: important stories in an independent reference (`news/reference.py`) collected by our feeds, by day and
+  month, against 95 %.
 - NFR-02: minutes from publication to the inbox (news published after the ingest job started), and each CIO agent
   run's duration, with the share meeting 10 and 15 minutes.
 

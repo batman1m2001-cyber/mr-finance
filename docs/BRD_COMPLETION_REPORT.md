@@ -8,18 +8,17 @@ built and proven, and what is still open and why. The single source of each requ
 ## 1. In one paragraph
 
 The BRD has 165 rows: 61 numbered requirements, 7 success metrics and 97 rules. At the start of the plan 108 were
-verified and 40 were open. Now **155 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08,
-NFR-07, RULE-DATA-10 and NFR-03 after G1–G5 of [BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 10 that are
-not, 7 are pilot measurements or later BRD phases (`out_of_scope_demo`), 2 do not apply to this product, and **1 is
-partial**, for a reason outside a demo's reach (a measurement nothing defines yet). Nothing is blocked, planned or
-unbuilt.
+verified and 40 were open. Now **157 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08,
+NFR-07, RULE-DATA-10, NFR-03, KPI-01 and KPI-02 after G1–G6 of [BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 8
+that are not, 6 are pilot measurements or later BRD phases (`out_of_scope_demo`) and 2 do not apply to this product.
+**Nothing is partial**, blocked, planned or unbuilt.
 
 | Set | Rows | Verified | Partial | Out of scope (demo) | Not applicable |
 |---|---|---|---|---|---|
 | BRD numbered (BR, FR, NFR) | 61 | 61 | 0 | 0 | 0 |
-| BRD success metrics (KPI) | 7 | 2 | 1 | 4 | 0 |
+| BRD success metrics (KPI) | 7 | 4 | 0 | 3 | 0 |
 | BRD rules (RULE) | 97 | 92 | 0 | 3 | 2 |
-| **Total** | **165** | **155** | **1** | **7** | **2** |
+| **Total** | **165** | **157** | **0** | **6** | **2** |
 
 “Verified” means a test in `tests/` exercises the requirement and passed in the latest full run; the documentation
 checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not exist, and recomputes the counts.
@@ -43,6 +42,7 @@ checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not
 | G3 | Client data sealed at rest, keys from a secret store, security headers, the attack suite (NFR-07) | #56 |
 | G4 | The PostgreSQL export checked row for row against a real PostgreSQL; the audit log on write-once segments; the migration guide (RULE-DATA-10) | #57 |
 | G5 | Availability in business hours measured from a heartbeat, in Hệ thống and the monthly report, an alert below 99.5 % (NFR-03) | #58 |
+| G6 | Urgent news: the CIO's flag, the product's proposals, measured against 30 min (KPI-01); important news collected, against an independent reference read every 2 h (KPI-02) | #59 |
 
 ## 3. The scale requirement, measured (NFR-01)
 
@@ -65,11 +65,11 @@ BRD's size, not the bank's servers.
 
 ## 4. What stays partial, and why
 
-| ID | What is missing | Why it is not in the demo |
-|---|---|---|
-| BRD-KPI-01 | News → RM ready ≤ 2 h; urgent ≤ 30 min | The 2 h part is measured monthly. Nothing in the BRD defines “urgent”, so the 30 min part cannot be measured. |
+Nothing. KPI-01's “urgent” and KPI-02's “important” are not defined by the BRD; G6 measures both by our reading
+(G-D6, labelled “Đề xuất” where it shows) until the bank defines them. KPI-02 is measured, not met: on the dev copy
+4 of 7 important stories were collected (57 %); reaching 95 % depends on the bank's own sources.
 
-Out of scope for the demo (pilot measurements or later BRD phases): KPI-02, KPI-05, KPI-06, KPI-07, RULE-ROLE-05,
+Out of scope for the demo (pilot measurements or later BRD phases): KPI-05, KPI-06, KPI-07, RULE-ROLE-05,
 RULE-WF-08, RULE-MEAS-06. Not applicable: RULE-SCOPE-03 (the product keeps its pre-BRD connectors,
 ADR-0003) and RULE-SCOPE-05 (nothing is sent; the client view is in-app, ADR-0008).
 

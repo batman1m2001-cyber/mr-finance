@@ -13,7 +13,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | Set | Rows | implemented_verified | implemented_unverified | partially_implemented | planned | not_implemented | blocked | out_of_scope_demo | not_applicable |
 |---|---|---|---|---|---|---|---|---|---|
 | BRD numbered (BR, FR, NFR) | 61 | 61 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| BRD success metrics (KPI) | 7 | 2 | 0 | 1 | 0 | 0 | 0 | 4 | 0 |
+| BRD success metrics (KPI) | 7 | 4 | 0 | 0 | 0 | 0 | 0 | 3 | 0 |
 | BRD rules (RULE) | 97 | 92 | 0 | 0 | 0 | 0 | 0 | 3 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
@@ -21,8 +21,8 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
-completion is not 100 %:** all 61 numbered requirements are implemented and verified by tests; what stays partial is a
-success metric (BRD_COMPLETION_REPORT.md lists it). (The `not_applicable` KIT rows
+completion is not 100 %:** all 61 numbered requirements are implemented and verified by tests; nothing stays partial;
+the rows not verified are pilot measurements, later BRD phases or not applicable (BRD_COMPLETION_REPORT.md lists them). (The `not_applicable` KIT rows
 are the documentation rules this repository itself follows.) Counts are recomputed by the checker.
 
 ## 1. BRD numbered requirements
@@ -95,8 +95,8 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Metric | Status | Evidence, gaps |
 |---|---|---|---|
-| BRD-KPI-01 | News → RM ready ≤ 2 h | partially_implemented | Measured per event, monthly (`src/measure/reports.py::speed`, SCR-CIO-13); “urgent ≤ 30 min” not measured: nothing defines urgent news |
-| BRD-KPI-02 | Important news collected ≥ 95 % | out_of_scope_demo | Pilot measurement; “important” undefined (Q-07) |
+| BRD-KPI-01 | News → RM ready ≤ 2 h | implemented_verified | Measured per event, monthly (`src/measure/reports.py::speed`, SCR-CIO-13); urgent ≤ 30 min (G6, G-D6, “Đề xuất”): the CIO flags an event urgent with a reason, audited; the product proposes SBV rate/FX-band decisions and factor moves past 3σ of 250 daily moves (`src/news/urgent.py`). `tests/test_urgent_news.py::test_an_urgent_event_is_measured_against_thirty_minutes`, `tests/test_urgent_news.py::test_the_cio_flags_an_event_urgent_with_a_reason_audited_and_can_take_it_off`, `tests/test_urgent_news.py::test_an_sbv_rate_or_fx_band_decision_is_proposed_urgent_and_the_same_words_without_the_sbv_are_not`, `tests/test_urgent_news.py::test_a_move_past_three_deviations_of_the_daily_moves_is_proposed_and_a_normal_day_is_not` |
+| BRD-KPI-02 | Important news collected ≥ 95 % | implemented_verified | Measured (G6, G-D6, Q-07, “Đề xuất”) against an independent reference, Google News Business VN, read every 2 h (`src/news/reference.py`): important = on our factors and carried by ≥ 2 outlets; collected = one of our items matches a story title, judged once a day later; coverage by day and month on Đo lường. `tests/test_urgent_news.py::test_important_is_on_our_topics_from_two_outlets_and_collected_is_judged_once_a_day_later`, `tests/test_urgent_news.py::test_a_story_seen_again_grows_its_outlets_until_it_is_judged`, `tests/test_urgent_news.py::test_the_reference_job_reads_keeps_and_alerts_when_the_reference_cannot_be_read`. The measure is verified, not the 95 %: on the dev copy 4 of 7 (57 %); reaching 95 % depends on the bank's sources |
 | BRD-KPI-03 | Direction right ≥ 70 % | implemented_verified | `src/measure/backtest.py`, `src/measure/forecasts.py`, SCR-CIO-12, `tests/test_accuracy.py::test_walking_forward_on_history_that_follows_the_model_covers_about_80_percent`. History (engine step 2 given the other factors, walk-forward 2022–2026): VN-Index 72 % at 3 months, 96 % at 12 months, 57 % at 1 week. Views: scored as horizons pass, < 24 so far |
 | BRD-KPI-04 | Band coverage 70–90 % | implemented_verified | `tests/test_accuracy.py::test_walking_forward_on_history_that_follows_the_model_covers_about_80_percent`; history walk-forward pooled 72 % (1 week), 77 % (3 months), 75 % (12 months); per factor on SCR-CIO-12 (gold and the VN yields too narrow) |
 | BRD-KPI-05 | Recommendations reviewed and logged 100 % | out_of_scope_demo | No recommendation is sent; views and runs are reviewed and logged (FEAT-06, 11) |

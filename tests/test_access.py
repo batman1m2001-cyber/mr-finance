@@ -99,6 +99,7 @@ def actions(vid, item):
         ("/api/news/release", {"item_id": "NW-0", "by": "BY", "note": "x" * 20}, {"compliance"}),
         ("/api/events", {"news_ids": ["NW-0"], "by": "BY"}, {"cio"}),
         ("/api/events/run-agent", {"event_id": "EV-0000", "by": "BY"}, {"cio"}),
+        ("/api/events/urgent", {"event_id": "EV-0000", "urgent": True, "reason": "x", "by": "BY"}, {"cio"}),
         ("/api/views/decide", {"view_id": "VW-0000", "action": "approve", "by": "BY"}, {"cio"}),
         ("/api/runs/recompute", {"run": "AR-0000", "by": "BY"}, {"cio"}),
         ("/api/runs/decide", {"run": "AR-0000", "action": "withdraw", "by": "BY", "reason": "x"}, {"cio"}),
