@@ -9,12 +9,15 @@ Cấu hình ([SCR-CIO-09](cio.md#scr-cio-09--cấu-hình-versioned-configuration
 |---|---|
 | Route | `#/admin/he-thong` (Admin's first page) |
 | Generation | new (F5, `web/pages/system.js`) |
-| Feature | [FEAT-12](../../features/FEAT-12-roles-and-separation-of-duties.md), [FEAT-19](../../features/FEAT-19-external-ai-inbox.md) (the zone and the inbox) |
-| Requirements | BRD-RULE-ROLE-04, BRD-NFR-12 (status part), BRD-RULE-ROLE-02 (the RM assignment), BRD-FR-307 (the mode shown) |
+| Feature | [FEAT-12](../../features/FEAT-12-roles-and-separation-of-duties.md), [FEAT-19](../../features/FEAT-19-external-ai-inbox.md) (the zone and the inbox), [FEAT-36](../../features/FEAT-36-alerts-and-central-log.md) (alerts, the log) |
+| Requirements | BRD-RULE-ROLE-04, BRD-NFR-12, BRD-RULE-ROLE-02 (the RM assignment), BRD-FR-307 (the mode shown) |
 | Data | `GET /api/system` (Admin only), `POST /api/market/load` (Admin only) |
-| Screenshots | [desktop, after a load of the history since 2026-10-01](../../assets/current_ui/SCR-ADM-01_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01_phone-light.jpg) · [the AI zone section, desktop](../../assets/current_ui/SCR-ADM-01-zone_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01-zone_phone-light.jpg) |
+| Screenshots | [desktop, after a load of the history since 2026-10-01](../../assets/current_ui/SCR-ADM-01_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01_phone-light.jpg) · [alerts, desktop](../../assets/current_ui/SCR-ADM-01-alerts_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01-alerts_phone-light.jpg) · [the AI zone section, desktop](../../assets/current_ui/SCR-ADM-01-zone_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01-zone_phone-light.jpg) |
 
 - **Four tiles:** the audit chain's check (intact or where it breaks), the agents' mode and models, the last news fetch, and the configuration waiting for approval.
+- **Cảnh báo:** the last 30 alerts of every kind (title, kind, id, how many times and when last, the error, status
+  Đang mở / Đã xem / Đã hết, who acknowledged with their note), and “Đã xem” on an open one (asks for an optional
+  note; audited). The lede counts the open alerts.
 - **Background jobs:** every job declared in `app/main.py`, with what it does, when it runs, and how it last went. The news and market jobs report ok or error with the error text. A job that keeps no record here says so.
 - **News sources:** the last fetch from each source: items fetched, accepted, refused, and any error.
 - **Agents:** the last 7 days, per agent: runs, failures, and the last run. Eval-set runs still waiting are listed.
@@ -27,6 +30,7 @@ Cấu hình ([SCR-CIO-09](cio.md#scr-cio-09--cấu-hình-versioned-configuration
   - The `market_load` job runs it within a minute, one load at a time.
   - Every load is listed with its status (Đang chờ, Đang nạp, Xong, Lỗi) and the points kept.
   - Each request is an audit row (`market.load_asked`).
+- **Nhật ký hệ thống:** the central log's last 30 warnings and errors (when, level, process, event, what).
 - **People:**
   - Every staff account: name, title, role, login, whether a password is set, and an RM's families.
   - The number of customer accounts.

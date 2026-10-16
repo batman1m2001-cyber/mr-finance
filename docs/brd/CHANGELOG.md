@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Alerts and the central log (BRD completion F7): one alert per failing thing (a news feed, a market
+  series, an agent run, the audit chain checked hourly by the new `audit_check` job, a rejected inbox package, the
+  zone sync), counted while it keeps failing and resolved when it works again; staff see their kinds in the bell
+  with “Đã xem” (audited), Admin all of them in Hệ thống with the central JSON-lines log; a provider that cannot be
+  reached fails the run with why instead of leaving it running, and an outage test shows computing, runs and reads
+  unaffected — FEAT-36, FEAT-34, matrix (NFR-12 verified; NFR-03's AI part verified), api_reference, admin.md.
+
 - 2026-10-16 — Background runs, the AI zone and inbox mode (BRD completion F6): “Chạy Agent CIO” queues a job
   that the `agent_worker` job runs, and the event page follows it; Admin chooses live, inbox or mock (`ai_mode`);
   the AI zone is a second process (`app/zone.py`) with its own database and a catalogue-only data folder, fed the

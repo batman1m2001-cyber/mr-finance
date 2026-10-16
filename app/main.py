@@ -20,6 +20,8 @@ POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──�
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
 POST /api/events ──► event_flow · POST /api/events/run-agent ──► agent_queue_flow, then the agent_worker job
      ──► cio_agent_flow (agent + challenger)
+Hourly ──► audit_check: the audit chain walked · POST /api/system/alerts/ack ──► alert_ack_flow; GET
+     /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the inbox (NFR-12)
 POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
      the zone_sync job sends the zone the approved catalogues and released research (inbox mode, F-D7)
 POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
@@ -42,7 +44,7 @@ from operonx.app.jobs import Job
 
 from app import web
 from apply.graph import recompute_flow, run_decide_flow
-from control.graph import config_decide_flow, config_propose_flow
+from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
@@ -259,6 +261,12 @@ APP = Application(
             graph=market_load_ask_flow,
             description="POST {by, since}: an Admin queues a load of the market history (the market_load job runs it).",
         ),
+        Service(
+            "alert_ack",
+            http("POST", "/api/system/alerts/ack", port=PORT),
+            graph=alert_ack_flow,
+            description="POST {alert_id, by, note?}: “Đã xem” on an alert, by a role it is for (NFR-12).",
+        ),
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
     ],
     jobs=[
@@ -358,6 +366,13 @@ APP = Application(
             schedule=schedule(every="10m", port=PORT),
             timeout=300,
             description="Every 10 minutes in inbox mode: the approved catalogues and released research to the AI zone.",
+        ),
+        Job(
+            "audit_check",
+            graph=audit_check_flow,
+            schedule=schedule(every="1h", port=PORT),
+            timeout=600,
+            description="Hourly: the audit chain walked; an alert for Compliance and Admin when it is broken.",
         ),
         Job(
             "agent_eval",

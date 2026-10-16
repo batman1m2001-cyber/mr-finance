@@ -41,6 +41,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/research` | research_upload → `research_upload_flow` | `item {kind, report_no, title, summary, release_at, conflicts?, regulation?}, by` | CIO | FEAT-03 |
 | `/api/research/release` | research_release → `research_release_flow` | `item_id, decision (release\|reject), by, note` | Compliance, ≠ uploader | FEAT-03 |
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
+| `/api/system/alerts/ack` | alert_ack → `alert_ack_flow` | `alert_id, by, note?` | a role the alert's kind is for (CIO, Compliance, Admin); 409 if not open | FEAT-36 |
 | `/api/market/load` | market_load_ask → `market_load_ask_flow` | `by, since? (YYYY-MM-DD, from 2015-01-01; default 2020-01-01)` | Admin | FEAT-12 (SCR-ADM-01) |
 | `/api/reset` | web (`reset`) | — | — | demo reset |
 
@@ -97,7 +98,8 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `/api/audit/export` | `format=json\|csv` | the whole chain as a download (JSON includes the check) | FEAT-11 |
 | `/api/market` | — | staff: the market jobs (cadence, last run, last success, last error), each series' coverage, last value, source and 120-day tail, each factor's provenance | FEAT-35 |
 | `/api/market/series` | `id, from?` | staff: one stored or computed (DXY, SJC_GAP) series' points | FEAT-35 |
-| `/api/system` | — | Admin: jobs and how each last went, news feeds, agent runs (7 days) and runs queued, audit chain check, history loads, the inbox's packages and the last zone syncs, configuration waiting, staff accounts with an RM's families | FEAT-12 (SCR-ADM-01) |
+| `/api/system/alerts` | `role?` (sign-in off) | CIO, Compliance, Admin: the open and acknowledged alerts of the kinds the role looks after (the bell) | FEAT-36 |
+| `/api/system` | — | Admin: jobs and how each last went, news feeds, agent runs (7 days) and runs queued, audit chain check, history loads, the inbox's packages and the last zone syncs, the last 30 alerts and the central log's last 30 warnings and errors, configuration waiting, staff accounts with an RM's families | FEAT-12 (SCR-ADM-01) |
 | `/api/accuracy` | — | staff: the model walked forward over history (per horizon and factor: observations, share inside P10–P90, verdict, direction hit rate; KPI-03), the approved views' forecasts summarised and listed with their scores | FEAT-18 |
 | `/api/measure` | — | staff: the monthly reports — misses with causes, approvals (minutes, without edits, under 2 min), news to RM hours, inbox and CIO agent minutes | FEAT-18 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |

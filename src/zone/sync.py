@@ -12,7 +12,7 @@ import urllib.error
 import urllib.request
 from typing import Any, Callable, Dict, Optional, Tuple
 
-from control import audit, config, db
+from control import alerts, audit, config, db
 from inbox import sign
 from news import store as news_store
 
@@ -123,4 +123,8 @@ def push(send: Optional[Send] = None) -> Dict[str, Any]:
         sid = f"ZS-{db.next_seq(con, 'zone_sync'):06d}"
         con.execute("insert into zone_syncs values (?, ?, ?, ?, ?)", (sid, time.time(), status, h, db.dumps(data)))
         audit.append(con, "system:zone_sync", "zone.sync", sid, {"status": status, "hash": h, **data})
+    if status == "ok":
+        alerts.resolve("zone_sync", "zone")
+    else:
+        alerts.raise_("zone_sync", "zone", "Không gửi được danh mục sang vùng AI", data["error"])
     return {"id": sid, "status": status, **data}

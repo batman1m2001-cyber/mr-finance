@@ -242,6 +242,11 @@ stays in `live` mode.
 - Alerts appear in the staff bell and on the admin screen. Acknowledging one is audited.
 - A test that kills the AI provider and checks the engine, runs and reads still work (NFR-03).
 
+**Done** (FEAT-36): `alerts` (six kinds, one per failing thing, resolved on recovery, “Đã xem” audited) in the bell
+of CIO, Compliance and Admin and in Hệ thống; the central log `mr-finance-log.jsonl`; the hourly `audit_check` job;
+a provider failure is the run's error (`AGENT_ERROR`, alert) and the outage test uses a real refused connection.
+NFR-12 verified; NFR-03 stays partial for its availability figure (deployment).
+
 ### F8 — Newsletter and content rules (F)
 
 - FR-801: the CIO drafts a newsletter from approved views (template, or the CIO agent under the content guard).

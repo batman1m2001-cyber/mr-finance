@@ -21,3 +21,6 @@ evals/
 # the AI zone (app/zone.py): its own state and catalogue-only data folder (scripts/make_zone_data.py)
 data/zone.db*
 data/zone/
+
+# the central log (src/control/log.py), beside the state file
+data/mr-finance-log.jsonl*

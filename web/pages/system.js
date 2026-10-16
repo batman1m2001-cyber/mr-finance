@@ -18,11 +18,13 @@ const JOB = {  // what each job does, in the product's language (the declaration
   agent_worker: "Chạy lần lượt các yêu cầu “Chạy Agent CIO” đang xếp hàng (AI-13)",
   inbox_import: "Nhập các gói từ vùng AI qua cùng các kiểm tra, hoặc từ chối kèm lý do (ZONE-03)",
   zone_sync: "Gửi vùng AI danh mục đã duyệt và nghiên cứu đã phát hành (chế độ hộp chờ)",
+  audit_check: "Kiểm tra chuỗi nhật ký kiểm toán; gãy thì báo Tuân thủ và Quản trị",
   agent_eval: "Bộ đánh giá cố định cho đề xuất lời nhắc và mô hình AI (MEAS-07)",
   accuracy_score: "Chấm độ chính xác các dự báo đã đến hạn (FEAT-18)",
   market_backfill: "Lịch sử mọi chuỗi từ 2020 (chạy bằng dòng lệnh)",
   statement_reading: "Đánh giá việc đọc sao kê (chạy bằng dòng lệnh)",
 };
+const ALERT = {open: ["bad", "Đang mở"], acked: ["warn", "Đã xem"], resolved: ["good", "Đã hết"]};
 const MODE = {live: "Mô hình thật", mock: "Mô phỏng", inbox: "Hộp chờ (vùng AI)"};
 const INBOX = {READY: ["warn", "Chờ nhập"], PROCESSING: ["warn", "Đang nhập"], IMPORTED: ["good", "Đã nhập"], REJECTED: ["bad", "Từ chối"]};
 const LOAD = {asked: ["warn", "Đang chờ"], running: ["warn", "Đang nạp"], done: ["good", "Xong"], failed: ["bad", "Lỗi"]};
@@ -51,6 +53,7 @@ export async function render(box, ctx) {
     <div class="pagehead"><div><div class="eyebrow">Quản trị</div>
       <h1 class="h1">Hệ thống</h1>
       <p class="lede">${d.jobs.length} việc chạy nền${failing.length ? ` · <span class="bad-text">${failing.length} đang lỗi</span>` : " · không việc nào đang lỗi"}
+        · ${d.alerts.filter(a => a.status === "open").length ? `<span class="bad-text">${d.alerts.filter(a => a.status === "open").length} cảnh báo đang mở</span>` : "không có cảnh báo mở"}
         · chuỗi nhật ký ${d.chain.ok ? "toàn vẹn" : `<span class="bad-text">gãy ở dòng ${d.chain.broken_at}</span>`}.</p></div></div>
 
     <div class="cols">
@@ -59,6 +62,15 @@ export async function render(box, ctx) {
       ${tile("Tin tức", d.news_at ? esc(ago(d.news_at)) : "Chưa lấy", `${d.feeds.length} nguồn · ${d.feeds.filter(f => f.error).length} lỗi lần gần nhất`)}
       ${tile("Cấu hình chờ duyệt", d.config_waiting.length, d.config_waiting.map(c => esc(c.label)).join(", ") || "không có")}
     </div>
+
+    <section class="panel mt" id="alerts"><div class="h3">Cảnh báo</div>
+      <p class="small muted">Nguồn tin hay chuỗi thị trường không lấy được, agent lỗi, chuỗi nhật ký gãy, gói từ vùng AI bị từ chối, không gửi được vùng AI. Một cảnh báo cho mỗi việc: lỗi lại thì đếm thêm, chạy lại được thì tự hết. “Đã xem” được ghi vào nhật ký.</p>
+      <div class="scrollx"><table class="table"><thead><tr><th>Cảnh báo</th><th>Trạng thái</th></tr></thead><tbody>
+      ${d.alerts.map(a => `<tr><td><b>${esc(a.title)}</b><div class="small muted">${esc(a.label)} · <span class="mono">${esc(a.id)}</span> · ${a.count} lần, gần nhất ${esc(ago(a.last_at))}</div>${a.detail ? `<div class="small ${a.status === "resolved" ? "muted" : "bad-text"}">${esc(a.detail)}</div>` : ""}</td>
+        <td><span class="badge ${ALERT[a.status][0]}">${ALERT[a.status][1]}</span>${a.history.filter(h => h.status === "acked").map(h => `<div class="small muted">${esc(h.by)}${h.note ? `: ${esc(h.note)}` : ""}</div>`).join("")}
+          ${a.status === "open" ? `<div class="mt"><button type="button" class="btn sm" data-ack="${esc(a.id)}">Đã xem</button></div>` : ""}</td></tr>`).join("")
+        || `<tr><td colspan="2" class="muted">Không có cảnh báo nào.</td></tr>`}
+      </tbody></table></div></section>
 
     <section class="panel mt"><div class="h3">Việc chạy nền</div>
       <div class="scrollx"><table class="table"><thead><tr><th>Việc</th><th>Lịch</th><th>Lần gần nhất</th></tr></thead><tbody>
@@ -103,6 +115,12 @@ export async function render(box, ctx) {
           <td><span class="badge ${LOAD[l.status][0]}">${LOAD[l.status][1]}</span>${l.error ? `<div class="small muted">${esc(l.error)}</div>` : ""}</td>
           <td class="num">${l.points == null ? "—" : num(l.points)}</td></tr>`).join("")}</tbody></table></div>` : ""}</section>
 
+    <section class="panel mt" id="log"><div class="h3">Nhật ký hệ thống</div>
+      <p class="small muted">Nhật ký tập trung (một dòng JSON mỗi sự việc, cả ngân hàng và vùng AI): 30 dòng cảnh báo và lỗi gần nhất.</p>
+      ${d.log.length ? `<div class="scrollx"><table class="table"><tbody>${d.log.map(l => `<tr><td class="small">${esc(ago(l.at))}</td>
+        <td><span class="badge ${l.level === "error" ? "bad" : "warn"}">${esc(l.level)}</span></td><td class="small mono">${esc(l.process)} · ${esc(l.event)}</td>
+        <td class="small">${esc(l.title || l.path || l.detail || "")}</td></tr>`).join("")}</tbody></table></div>` : `<p class="small muted">Chưa có dòng nào.</p>`}</section>
+
     <section class="panel mt"><div class="h3">Người dùng</div>
       <div class="scrollx"><table class="table"><thead><tr><th>Người</th><th>Vai trò</th><th>Đăng nhập</th><th>Gia đình phụ trách</th></tr></thead><tbody>
       ${d.people.map(p => `<tr><td><b>${esc(p.name)}</b><div class="small muted">${esc(p.title || "")}</div></td><td>${esc(ROLE[p.role] || p.role)}</td>
@@ -110,6 +128,14 @@ export async function render(box, ctx) {
         <td class="small">${p.families ? esc(p.families.join(", ") || "—") : `<span class="muted">—</span>`}</td></tr>`).join("")}
       </tbody></table></div>
       <p class="small muted">${d.clients} tài khoản khách hàng. Phân công RM cho từng gia đình là cấu hình “Phân công RM” ở trang <a href="#/admin/cau-hinh">Cấu hình</a>.</p></section>`;
+  box.querySelectorAll("[data-ack]").forEach(b => b.onclick = async () => {
+    const note = prompt("Ghi chú (không bắt buộc): đã làm gì hoặc sẽ làm gì") ?? null;
+    if (note === null) return;
+    b.disabled = true;
+    try { await post("/api/system/alerts/ack", {alert_id: b.dataset.ack, by: ctx.user, note}); toast("Đã ghi nhận"); }
+    catch (e) { toast("Không ghi được: " + e.message); }
+    render(box, ctx);
+  });
   const ask = box.querySelector("#ask");
   ask.onclick = async () => {
     ask.disabled = true;

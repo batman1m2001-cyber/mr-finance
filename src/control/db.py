@@ -66,6 +66,10 @@ create table if not exists zone_syncs (
 create table if not exists zone_outbox (
   id text primary key, event_id text not null, status text not null, created real not null, data text not null);
 create index if not exists zone_outbox_open on zone_outbox (status, created);
+create table if not exists alerts (
+  id text primary key, kind text not null, key text not null, status text not null, created real not null,
+  data text not null);
+create index if not exists alerts_open on alerts (kind, key, status);
 """
 
 TABLES = (
@@ -83,6 +87,7 @@ TABLES = (
     "external_outputs",
     "zone_syncs",
     "zone_outbox",
+    "alerts",
     "counters",
 )
 

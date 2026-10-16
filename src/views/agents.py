@@ -144,11 +144,14 @@ async def call_model(resource: str, system: str, user: str, max_tokens: int) -> 
         raise AgentError(f"Vượt ngân sách token trong ngày ({b['used_today']:,}/{b['daily']:,})".replace(",", "."))
     llm = _llm(resolve_hub().get(f"llm:{resource}"), models()[resource])
     expected = models()[resource]
-    resp = await llm.generate(
-        messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-        temperature=0.2,
-        max_tokens=max_tokens,
-    )
+    try:
+        resp = await llm.generate(
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+            temperature=0.2,
+            max_tokens=max_tokens,
+        )
+    except Exception as exc:  # noqa: BLE001 — the provider down or refusing: the run fails with why (NFR-03)
+        raise AgentError(f"Không gọi được mô hình {expected}: {type(exc).__name__}: {exc}"[:300]) from None
     choice = resp.choices[0]
     answered = str(getattr(resp, "model", "") or "")
     if answered and not (answered == expected or answered.startswith(expected)):

@@ -21,8 +21,10 @@ from apply import impact_graph
 from apply import reads as apply_reads
 from apply import run as apply_run
 from apply import trace as apply_trace
+from control import alerts as control_alerts
 from control import audit as control_audit
 from control import db as control_db
+from control import log as control_log
 from control import roles
 from events import store as events_store
 from inbox import sign as inbox_sign
@@ -498,6 +500,16 @@ async def inbox_receive(request: Request) -> JSONResponse:
     return JSONResponse({"id": inbox_store.receive(body, signed)}, status_code=202)
 
 
+async def system_alerts(request: Request) -> JSONResponse:
+    """The bell's alerts (BRD-NFR-12): the open and acknowledged ones of the kinds the signed-in role looks after
+    (sign-in off: ``?role=``)."""
+    from control import alerts
+
+    v = viewer(request)
+    role = v["role"] if v else request.query_params.get("role", "admin")
+    return JSONResponse({"alerts": alerts.for_role(role)})
+
+
 JOBS: list = []  # filled by app/main.py: {id, description, when: {every|at}}
 
 
@@ -553,6 +565,8 @@ async def system(request: Request) -> JSONResponse:
             "inbox": inbox_store.recent(),
             "agent_queue": agent_queue.waiting(),
             "zone_syncs": zone_sync.recent(5),
+            "alerts": control_alerts.recent(30),
+            "log": control_log.recent(30, "warning"),
             "people": [{**a, "families": families.get(a["id"])} for a in accounts if a["role"] != "client"],
             "clients": sum(1 for a in accounts if a["role"] == "client"),
         }
@@ -887,6 +901,7 @@ ROUTE_ROLES = {
     "/api/market": ("cio", "admin"),
     "/api/audit": ("compliance", "admin"),
     "/api/system": ("admin",),
+    "/api/system/alerts": OVERSIGHT,  # the bell: each role its kinds of alert
     "/api/rm/": ("rm",),
 }
 ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị"}
@@ -912,6 +927,17 @@ def _family_of(path: str, query: QueryParams):
     if path.startswith("/api/trace/") and len(parts) > 4:
         return parts[4]
     return query.get("client_id") or query.get("family_id") or None
+
+
+def _logged(scope, send):
+    """The server's own failures on a read go to the central log (BRD-NFR-12)."""
+
+    async def wrapped(message):
+        if message["type"] == "http.response.start" and message["status"] >= 500:
+            control_log.write("error", "http.error", path=scope.get("path"), status=message["status"])
+        await send(message)
+
+    return wrapped
 
 
 class SignInGate:
@@ -941,7 +967,7 @@ class SignInGate:
         if fam and not people_auth.may_see(v, fam):
             return await _deny(403, f"{v['name']} không được xem dữ liệu của khách hàng này")(scope, receive, send)
         scope["mf_viewer"] = v
-        return await self.app(scope, receive, send)
+        return await self.app(scope, receive, _logged(scope, send))
 
 
 app = Starlette(
@@ -980,6 +1006,7 @@ app = Starlette(
         Route("/api/audit", audit_list),
         Route("/api/market", market),
         Route("/api/system", system),
+        Route("/api/system/alerts", system_alerts),
         Route("/api/inbox", inbox_receive, methods=["POST"]),
         Route("/api/accuracy", accuracy),
         Route("/api/measure", measure_reports),

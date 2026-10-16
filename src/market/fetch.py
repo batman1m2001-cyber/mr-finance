@@ -13,6 +13,7 @@ import time
 from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
+from control import alerts
 from market import sources, store
 from market.sources import Fetched, Http, Request, _within
 
@@ -131,6 +132,10 @@ def run_job(
         if not got["points"] and not stale:
             error = "; ".join(f"{t['source']}: {t.get('error') or 'không có điểm mới'}" for t in got["tried"])
         store.record_run(job, spec["id"], got["source"], got["tried"], t0, time.time(), n, error)
+        if error:
+            alerts.raise_("market_job", spec["id"], f"{spec['id']} ({job}): mọi nguồn đều lỗi", error)
+        elif got["points"]:
+            alerts.resolve("market_job", spec["id"])
         out.append({"series": spec["id"], "source": got["source"], "points": n, "error": error})
     return {
         "job": job,
