@@ -139,6 +139,31 @@ server resolved; no tool takes an owner argument.
 **Bộ nhớ page** (client and staff): long-term items with source and expiry — correct, forget one, forget all;
 conversations — open, search, delete.
 
+### As built (A3, 2026-10-17)
+
+- **A conversation** is created by the first message (titled from it, 80 characters) and named by
+  `conversation_id` on every later turn; `POST /api/assistant/conversations` lists (newest first), opens (the turns
+  as the panel showed them, and any write still waiting) and deletes one. Owner and role are the server's
+  (`conversations.owner`): another person's id answers “Không có cuộc trò chuyện này”, never its content.
+- **Two records of a turn.** `turns` keeps what the panel showed (the question, the answer with its steps, cards
+  and citations) so another device draws the same thing; `operonx_agents_items` keeps what the model was sent and
+  said. They differ in template mode, where the model saw only the scrubbed question and statuses — so the plan's
+  “the archive is the session, no copy” did not hold, and the panel's record is its own table.
+- **One session per mode** (`conv:<id>:read`, `conv:<id>:template`): if the barrier closes mid-conversation, the
+  template-mode model starts from its own scrubbed history and never receives what a reading model was sent
+  (`test_closing_the_barrier_mid_conversation_sends_none_of_what_was_read_before`).
+- **Compaction**: `ContextPolicy(window=24_000, compact_at=0.75, keep_recent=8)`, the same model writing the summary.
+  The budget is far below the model's window, so the request that finds it passed still fits. A turn that compacted
+  says so in the panel. Upstream fix: a run of one request never compacted (the flag was per run) — operonx-agents
+  0.2.5 compacts before that run commits (Operonx #188).
+- **Storage**: `SQLiteSession` over one shared connection per file (operonx-agents 0.2.4, Operonx #187: 50
+  concurrent sessions raised “database is locked” before). Titles, turns, session items and parked run states are
+  sealed with `MF_DATA_KEYS` (`crypto.SealedSession`, `conversations.Runs`); `scripts/rotate_keys.py` re-seals
+  `assistant.db` too.
+- **The panel** resumes the latest conversation of the role when it moved within a day (on any device), lists them
+  (clock button), starts another (“+ Mới”). The old `sessionStorage` copy is removed, not uploaded: it held one tab's
+  messages and the server could not tell whose they were.
+
 ## 6. Knowledge *(target, A5)* — ADR-0029, ADR-0030
 
 `operonx-kb` with its catalog in `data/kb.db` (lexical FTS5; no embedding service is configured, so `hybrid` is not
@@ -199,7 +224,8 @@ behind interfaces; `RedisSession` exists); a new database for the demo is not ju
 
 | Need | Where | Phase |
 |---|---|---|
-| Sessions and stores on one SQLite file share one connection (the lock errors in §8); reads without a write lock | `operonx-agents` `_storage.py` | A3 |
+| Sessions and stores on one SQLite file share one connection (the lock errors in §8); reads without a write lock | `operonx-agents` `_storage.py` — **done**, 0.2.4 (Operonx #187) | A3 |
+| A conversation whose runs are one request each compacts (the flag was per run) | `operonx-agents` runner — **done**, 0.2.5 (Operonx #188) | A3 |
 | Long-term memory items (typed, sourced, expiring) with a store protocol and SQLite store; archive search over a session store; memory tools (search, recall, remember, forget) | `operonx-agents` `memory/` | A4 |
 | Tool verifiers: a check run after a tool, its verdict in the tool message and the trace | `operonx-agents` tools — **done**, 0.2.3 (`@tool(verify=)`, Operonx #186) | A1 |
 | Anything the KB needs for per-owner collections (if A5 finds a gap) | `operonx-kb` | A5 |
@@ -211,8 +237,8 @@ OneWealth keeps only its rules: which tools, which roles, the barrier, what a me
 1. A1: the registry beside the Copilot; `copilot_flow` reads its tools from it (no behaviour change; its tests pass).
 2. A2: `POST /api/assistant` and the agent; the panel switches to it; `POST /api/copilot` kept (the template path,
    and the fallback when the model is unavailable — NFR-03: an AI failure must not stop the product).
-3. A3: conversations move from `sessionStorage` to the server; the panel lists them; the old storage is read once and
-   dropped.
+3. A3: conversations move from `sessionStorage` to the server; the panel lists them; the old storage is dropped
+   (not uploaded: one tab's messages, nobody's to claim) — done.
 4. A4–A7 add memory, knowledge, agents and the map without changing earlier contracts.
 5. A8: the eval gate decides readiness; the report states what passed, what failed and what it costs.
 

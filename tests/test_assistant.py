@@ -17,7 +17,7 @@ from control import audit, config, db
 from wealth import fixtures
 from wealth import store as wealth_store
 
-INPUTS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals")
+INPUTS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id")
 ASK = Operon(assistant_flow, params={k: None for k in INPUTS})
 
 
@@ -27,9 +27,11 @@ def model_on(monkeypatch):
     monkeypatch.setenv("LLM_MODEL_COPILOT", "scripted-model")
 
 
-def ask(message=None, role="client", client_id="C01", turn_id=None, approvals=None, route="#/client/tong-quan"):
+def ask(
+    message=None, role="client", client_id="C01", turn_id=None, approvals=None, route="#/client/tong-quan", cid=None
+):
     inputs = {"message": message, "role": role, "client_id": client_id, "scope": "personal", "route": route}
-    inputs.update({"turn_id": turn_id, "approvals": approvals})
+    inputs.update({"turn_id": turn_id, "approvals": approvals, "conversation_id": cid})
     out = asyncio.run(ASK.run(inputs=inputs))
     assert "$errors" not in out, out["$errors"]
     return out["assistant"]

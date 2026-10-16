@@ -3,8 +3,11 @@
    POST /api/assistant: the role's tools in as many steps as the question needs, writes waiting for “Xác nhận”
    (the run parks on the server; the answer resumes it). Each answer says how it was written (mode): the model
    reading the tools' results, the tools' own texts (the barrier keeps client data from the model), or the
-   Copilot's keyword path when no model answers (POST /api/copilot, whose confirm it still uses). The
-   conversation is kept for this browser tab only.
+   Copilot's keyword path when no model answers (POST /api/copilot, whose confirm it still uses).
+
+   Conversations live on the server (A3, POST /api/assistant/conversations): opening the panel resumes the
+   person's latest conversation in this role when it moved in the last day — on any device — the clock button
+   lists them (open, delete), “Mới” starts another. Nothing is kept in the browser.
 
    Living Interface (B-01): the button and panel show the request's real state (data-state: idle, busy while
    the request is in flight, ok, error, pending a confirmation), and an answer marks the page elements it
@@ -24,7 +27,7 @@ const START = {
   admin: ["Có cảnh báo hệ thống nào?", "Mở trang Hệ thống"],
 };
 const MODE = {  // how the answer was written: the badge and the line under the form
-  model: (a) => [`mô hình ${a.model || ""}`.trim(), "Mô hình đọc kết quả công cụ của ứng dụng (chế độ demo) và viết câu trả lời; số liệu lấy từ công cụ. Không phải khuyến nghị đầu tư."],
+  model: (a) => [`mô hình ${String(a.model || "").split("/").pop()}`.trim(), "Mô hình đọc kết quả công cụ của ứng dụng (chế độ demo) và viết câu trả lời; số liệu lấy từ công cụ. Không phải khuyến nghị đầu tư."],
   template: () => ["mẫu cố định", "Mô hình chỉ thấy câu hỏi đã che tên và số, không thấy số liệu; câu trả lời ghép từ kết quả công cụ theo mẫu. Không phải khuyến nghị đầu tư."],
   fallback: () => ["dự phòng: từ khóa", "Chế độ dự phòng: bộ định tuyến từ khóa chọn một công cụ; câu trả lời viết theo mẫu. Không phải khuyến nghị đầu tư."],
 };
@@ -40,9 +43,10 @@ function context() {
   return {role: ROLE_LABEL[role] ? role : "client", client_id: client, scope, route: location.hash, goals: client ? followedIds(client) : null};
 }
 
-const KEY = (role) => `mf.copilot.${role}`;
-function load(role) { try { return JSON.parse(sessionStorage.getItem(KEY(role)) || "[]"); } catch (_) { return []; } }
-function save(role, msgs) { try { sessionStorage.setItem(KEY(role), JSON.stringify(msgs.slice(-30).map(({here, ...m}) => m))); } catch (_) { /* private mode */ } }
+const RESUME_S = 24 * 3600;  // the latest conversation is picked up again when it moved within a day
+function dropOld() {  // before A3 the conversation lived in this tab's sessionStorage: no longer read or kept
+  try { for (const k of Object.keys(sessionStorage)) if (k.startsWith("mf.copilot.")) sessionStorage.removeItem(k); } catch (_) { /* private mode */ }
+}
 
 // Copilot 2.0 (UI redesign R5): the tool's numbers as a card — figures, a list with chips, bars or a chain — and
 // when the data is from and what it was read from. Every value comes from the server's tool result.
@@ -88,6 +92,7 @@ function prose(text) {
 }
 const day = (d) => (/^\d{4}-\d{2}-\d{2}$/.test(d) ? `${d.slice(8)}/${d.slice(5, 7)}/${d.slice(0, 4)}` : /^\d{4}-\d{2}$/.test(d) ? `tháng ${d.slice(5)}/${d.slice(0, 4)}` : d);
 const clock = (t) => { const x = new Date(t * 1000); return `${String(x.getHours()).padStart(2, "0")}:${String(x.getMinutes()).padStart(2, "0")}`; };
+const when = (t) => { const x = new Date(t * 1000); const d = new Date(); return x.toDateString() === d.toDateString() ? clock(t) : `${String(x.getDate()).padStart(2, "0")}/${String(x.getMonth() + 1).padStart(2, "0")} ${clock(t)}`; };
 function meta(m) {
   const bits = [m.as_of && `Số liệu ${day(m.as_of)}`, m.at && `trả lời lúc ${clock(m.at)}`].filter(Boolean).join(" · ");
   const src = (m.sources || []).length ? `<div>Nguồn: ${m.sources.map(esc).join(" · ")}</div>` : "";
@@ -103,7 +108,9 @@ export function mount() {
   panel.className = "cp-panel"; panel.hidden = true;
   panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "OneWealth Copilot");
   panel.innerHTML = `<header class="cp-head"><span class="cp-dot" id="cp-dot" aria-hidden="true"></span><b>OneWealth Copilot</b><span class="sr-only" id="cp-state">Sẵn sàng</span><span class="badge assumed" id="cp-router">trợ lý</span>
-      <button type="button" class="linkbtn" id="cp-close" aria-label="Đóng">✕</button></header>
+      <span class="cp-tools"><button type="button" class="linkbtn small" id="cp-new" title="Cuộc trò chuyện mới">+ Mới</button>
+      <button type="button" class="linkbtn" id="cp-hist" title="Các cuộc trò chuyện" aria-pressed="false">${icon("history", {size: 18})}<span class="sr-only">Các cuộc trò chuyện</span></button>
+      <button type="button" class="linkbtn" id="cp-close" aria-label="Đóng">✕</button></span></header>
     <div class="cp-ctx small muted" id="cp-ctx"></div>
     <div class="cp-msgs" id="cp-msgs" aria-live="polite"></div>
     <div class="cp-sugg" id="cp-sugg"></div>
@@ -111,7 +118,9 @@ export function mount() {
       <button type="submit" class="btn sm">Gửi</button></form>
     <div class="cp-foot small muted" id="cp-foot">Trợ lý chỉ dùng các chức năng sẵn có của ứng dụng; việc ghi luôn chờ bạn xác nhận. Không phải khuyến nghị đầu tư.</div>`;
   document.body.append(btn, panel);
+  dropOld();
   let msgs = [], role = null, busy = false, shown = 0, settle = null, later = null;
+  let cid = null, resumed = false, listing = null;  // the conversation on screen; the history list when it shows
   const covers = () => !panel.hidden && matchMedia("(max-width: 560px)").matches;  // phone: the panel hides the page
 
   // one state for the button and the panel, set only by what the request did
@@ -132,7 +141,10 @@ export function mount() {
 
   const drawCtx = () => {
     const c = context();
-    if (c.role !== role) { const had = role; role = c.role; msgs = load(role); shown = msgs.length; if (had && !panel.hidden) { draw(); sugg(); } }
+    if (c.role !== role) {  // another role: its own conversations
+      const had = role; role = c.role; msgs = []; shown = 0; cid = null; resumed = false; listing = null;
+      if (had && !panel.hidden) { draw(); sugg(); resume(); }
+    }
     const page = (document.querySelector("#subnav:not([hidden]) [aria-current=page]") || document.querySelector("#nav [aria-current=page]") || {}).textContent || "";
     const name = (($("#client") || {}).selectedOptions || [])[0];
     $("#cp-ctx", panel).textContent = `Đang xem: ${page.trim() || "—"} · ${ROLE_LABEL[role]}${["client", "rm"].includes(role) && name ? " · " + name.textContent.split("·")[0].trim() : ""}`;
@@ -144,6 +156,8 @@ export function mount() {
   };
   const draw = () => {
     const box = $("#cp-msgs", panel);
+    $("#cp-hist", panel).setAttribute("aria-pressed", String(!!listing));
+    if (listing) { drawList(box); return; }
     const fresh = (i) => (i >= shown ? " cp-in" : "");
     box.innerHTML = msgs.length ? msgs.map((m, i) => m.me
       ? `<div class="cp-me${fresh(i)}">${esc(m.text)}</div>`
@@ -153,10 +167,12 @@ export function mount() {
           ${(m.steps || []).length > 1 || (m.steps || []).some(s => s.status !== "ok") ? `<div class="cp-steps small muted">Các bước: ${m.steps.map(s => `<span class="chip ${s.status === "ok" ? "" : "bad"}" title="${esc(s.text || "")}">${esc(s.label || s.tool)} ${STEP[s.status] || ""}</span>`).join(" ")}</div>` : ""}
           ${(m.confirm || (m.waits || []).length) && !m.done ? `<div class="row mt"><button type="button" class="btn sm" data-ok="${i}">Xác nhận</button><button type="button" class="btn sm ghostbtn" data-no="${i}">Huỷ</button></div>` : ""}
           ${(m.citations || []).length || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${(m.citations || []).filter(c => !(m.here && c.route === location.hash)).map(c => `<a class="small" data-ev="${i}" href="${esc(c.route)}">Mở ${esc(c.label)} →</a>`).join("")}</div>` : ""}
+          ${m.compacted ? `<div class="small muted mt">Các lượt trước đã được tóm tắt để trợ lý nhớ gọn; cuộc trò chuyện vẫn được lưu đủ.</div>` : ""}
           ${m.seen ? `<details class="small muted mt"><summary>Mô hình thấy gì</summary>“${esc(m.seen)}” · ${esc(m.router)}</details>` : ""}</div>`).join("")
       : `<div class="small muted">Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn. Tôi chỉ dùng các chức năng sẵn có của ứng dụng.</div>`;
     shown = msgs.length;
     box.setAttribute("aria-busy", String(busy));
+    box.dataset.conversation = cid || "";
     if (busy) box.insertAdjacentHTML("beforeend", `<div class="cp-bot cp-in cp-think" data-busy><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Đang xử lý…</div>`);
     box.scrollTop = box.scrollHeight;
     for (const li of box.querySelectorAll("[data-mark]")) li.onclick = () => { if (present([li.dataset.mark])) focus([li.dataset.mark]); };
@@ -171,23 +187,32 @@ export function mount() {
     router: (a.router || {}).kind === "confirm" ? "bạn xác nhận" : "định tuyến từ khóa (dự phòng)", suggest: a.suggest, navigate: a.navigate});
   const fromAssistant = (a) => ({text: a.text, status: a.status, confirm: a.confirm, waits: a.waits, turn_id: a.turn_id, steps: a.steps || [],
     citations: a.citations || [], seen: a.seen, focus: a.focus || [], cards: (a.steps || []).map(s => s.card).filter(Boolean),
-    as_of: a.as_of, sources: a.sources, at: a.answered_at, mode: a.mode, model: a.model, suggest: a.suggest, navigate: a.navigate,
+    as_of: a.as_of, sources: a.sources, at: a.answered_at, mode: a.mode, model: a.model, suggest: a.suggest, navigate: a.navigate, compacted: a.compacted,
     router: a.mode === "template" ? "mô hình chỉ thấy trạng thái công cụ" : a.mode === "fallback" ? `định tuyến từ khóa (dự phòng: ${a.why || ""})` : ""});
+  const mode = (m) => {  // the badge and the line under the form: how the answer was written
+    if (!m || !m.mode) return;
+    const [badge, foot] = (MODE[m.mode] || MODE.fallback)(m);
+    const el = $("#cp-router", panel);
+    el.textContent = badge; el.title = m.model || badge; $("#cp-foot", panel).textContent = foot;
+  };
   const call = async (body) => {
-    busy = true; setState("busy"); draw();
+    busy = true; listing = null; setState("busy"); draw();
     let m;
     try {
-      m = body.confirm ? fromCopilot((await post("/api/copilot", {...context(), question: "", confirm: body.confirm})).copilot)
-        : fromAssistant((await post("/api/assistant", {...context(), ...body})).assistant);
+      if (body.confirm) m = fromCopilot((await post("/api/copilot", {...context(), question: "", confirm: body.confirm})).copilot);
+      else {
+        const a = (await post("/api/assistant", {...context(), conversation_id: body.approvals ? null : cid, ...body})).assistant;
+        if (a.conversation_id) cid = a.conversation_id;
+        m = fromAssistant(a);
+      }
     } catch (e) { m = {status: "failed", text: `Không gọi được trợ lý: ${e.message}`}; }
     busy = false;
-    const [badge, foot] = (MODE[m.mode] || MODE.fallback)(m);
-    if (m.mode) { $("#cp-router", panel).textContent = badge; $("#cp-foot", panel).textContent = foot; }
+    mode(m);
     msgs.push(m);
     setState(FOR[m.status] || "error");
     if (m.navigate) { after(m.focus); location.hash = m.navigate; }
     else m.here = show(m) > 0;  // on this page: mark it now, and keep a button to mark it again
-    save(role, msgs); draw(); sugg(m.suggest);
+    draw(); sugg(m.suggest);
   };
   const send = (q) => {
     q = String(q || "").trim();
@@ -202,11 +227,70 @@ export function mount() {
   };
   const declineIt = (i) => {
     const m = msgs[i]; m.done = true;
-    if (m.confirm) { msgs.push({text: "Đã huỷ, không có gì được ghi."}); save(role, msgs); setState("idle"); draw(); return; }
+    if (m.confirm) { msgs.push({text: "Đã huỷ, không có gì được ghi."}); setState("idle"); draw(); return; }
     msgs.push({me: true, text: "Huỷ"}); call({turn_id: m.turn_id, approvals: answers(m, "deny")});  // the run ends, nothing written
   };
 
-  const open = () => { drawCtx(); draw(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); };
+  // -- conversations on the server (A3) ---------------------------------------------------------------------------
+  const convs = async (action, conversation_id) =>
+    (await post("/api/assistant/conversations", {role, client_id: context().client_id, action, conversation_id})).conversations;
+  // a stored turn as the panel draws it: the question, then the answer (a write still waiting keeps its buttons)
+  const replay = (turns, waiting) => {
+    const out = [];
+    for (const t of turns) {
+      const a = t.answer || {};
+      if (t.question) out.push({me: true, text: t.question});
+      else out.push({me: true, text: (a.steps || []).some(s => s.status === "declined") ? "Huỷ" : "Xác nhận"});
+      const m = fromAssistant(a);
+      if ((m.waits || []).length && !waiting.includes(a.turn_id)) m.done = true;  // answered, or too late
+      if (m.confirm) m.done = true;  // the keyword path's confirm is not kept on the server
+      out.push(m);
+    }
+    return out;
+  };
+  const openConv = async (id) => {
+    busy = true; listing = null; draw();
+    try {
+      const got = await convs("open", id);
+      cid = got.conversation.id; msgs = replay(got.turns, got.waiting || []);
+    } catch (e) { msgs = [{status: "failed", text: `Không mở được cuộc trò chuyện: ${e.message}`}]; cid = null; }
+    busy = false; shown = msgs.length; draw();
+    const last = msgs[msgs.length - 1];
+    mode([...msgs].reverse().find(m => m.mode));
+    sugg(last && last.suggest);
+  };
+  const resume = async () => {  // the latest conversation, when it moved within a day
+    if (resumed) return;
+    resumed = true;
+    try {
+      const items = (await convs("list")).items || [];
+      if (items[0] && Date.now() / 1000 - items[0].updated < RESUME_S && !msgs.length) await openConv(items[0].id);
+    } catch (_) { /* signed out, or the server is down: start fresh */ }
+  };
+  const fresh = () => { cid = null; msgs = []; shown = 0; listing = null; setState("idle"); draw(); sugg(); $("#cp-q", panel).focus(); };
+  const drawList = (box) => {
+    const rows = listing.items || [];
+    box.innerHTML = `<div class="cp-st">Các cuộc trò chuyện của bạn (${ROLE_LABEL[role]})</div>` + (rows.length
+      ? `<ul class="cp-convs">${rows.map(c => `<li${c.id === cid ? ' aria-current="true"' : ""}><button type="button" class="cp-conv" data-open="${esc(c.id)}"><b>${esc(c.title || "Cuộc trò chuyện")}</b><small>${esc(when(c.updated))} · ${c.turns} lượt</small></button>
+          <button type="button" class="linkbtn small" data-del="${esc(c.id)}" title="Xoá cuộc trò chuyện này">${icon("x", {size: 16})}<span class="sr-only">Xoá</span></button></li>`).join("")}</ul>`
+      : `<div class="small muted">Chưa có cuộc trò chuyện nào.</div>`);
+    for (const b of box.querySelectorAll("[data-open]")) b.onclick = () => openConv(b.dataset.open);
+    for (const b of box.querySelectorAll("[data-del]")) b.onclick = async () => {
+      if (!confirm("Xoá cuộc trò chuyện này? Không lấy lại được.")) return;
+      try { await convs("delete", b.dataset.del); } catch (e) { alert(`Không xoá được: ${e.message}`); }
+      if (b.dataset.del === cid) { cid = null; msgs = []; shown = 0; }
+      showList();
+    };
+  };
+  const showList = async () => {
+    if (busy) return;
+    try { listing = await convs("list"); } catch (e) { listing = {items: []}; }
+    draw();
+  };
+  $("#cp-new", panel).onclick = () => { if (!busy) fresh(); };
+  $("#cp-hist", panel).onclick = () => { if (listing) { listing = null; draw(); } else showList(); };
+
+  const open = () => { drawCtx(); draw(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); resume(); };
   const close = () => { panel.hidden = true; btn.setAttribute("aria-expanded", "false"); if (btn.dataset.state === "error") setState("idle"); btn.focus();
     if (later) { const k = later; later = null; focus(k); } };
   btn.onclick = () => (panel.hidden ? open() : close());

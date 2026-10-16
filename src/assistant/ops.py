@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from operonx import op
 from operonx.core.loggings import LOGGER
 
+from assistant import conversations as conv
 from assistant import registry
 from assistant import turn as turns
 from assistant.base import Ctx
@@ -34,11 +35,10 @@ def check_request(
     goals: list = None,
     turn_id: str = None,
     approvals: dict = None,
+    conversation_id: str = None,
 ) -> dict:
-    """Who asks (a customer always as client), what (≤ 2,000 characters), or which parked writes they answer."""
-    role = auth.role_for(str(role or "client"))
-    if role not in registry.DEMO_USER:
-        raise roles.Forbidden(f"vai trò {role!r} không có")
+    """Who asks (a customer always as client), what (≤ 2,000 characters), in which conversation (none: a new one),
+    or which parked writes they answer."""
     message = str(message or "").strip()
     if len(message) > 2000:
         raise ValueError("Câu hỏi dài quá 2.000 ký tự")
@@ -51,16 +51,22 @@ def check_request(
         raise ValueError("Hãy nhập câu hỏi")
     return {
         "request": {
+            **who(role, client_id, scope),
             "message": message,
-            "role": role,
-            "client_id": client_id or None,
-            "scope": scope or "personal",
             "route": str(route or ""),
             "followed": None if goals is None else [str(g) for g in goals][:50],
             "turn_id": str(turn_id or "") or None,
             "approvals": answers,
+            "conversation_id": str(conversation_id or "") or None,
         }
     }
+
+
+def who(role: Optional[str], client_id: Optional[str], scope: Optional[str] = None) -> Dict[str, Any]:
+    role = auth.role_for(str(role or "client"))
+    if role not in registry.DEMO_USER:
+        raise roles.Forbidden(f"vai trò {role!r} không có")
+    return {"role": role, "client_id": client_id or None, "scope": scope or "personal"}
 
 
 def context(r: Dict[str, Any]) -> Ctx:
@@ -94,24 +100,37 @@ async def fallback(r: Dict[str, Any], why: str) -> Dict[str, Any]:
     return out
 
 
+def conversation(r: Dict[str, Any], ctx: Ctx) -> str:
+    """The conversation a message goes to: the one named, when it is this person's (else ValueError), or a new one."""
+    if r["conversation_id"]:
+        return conv.own(ctx, r["conversation_id"])["id"]
+    return conv.start(ctx, r["message"])
+
+
 @op
 async def turn(request: dict) -> dict:
     """One turn: the agent when a model is configured; else, or when the model fails before any tool ran, the
-    fallback. A parked write is answered only by the person who asked, within ten minutes."""
+    fallback. A parked write is answered only by the person who asked, within ten minutes. Every turn belongs to a
+    conversation (A3): the one asked in, the one the parked write came from, or a new one."""
     r = request
-    if not turns.live():
-        return {"result": await fallback(r, "chưa cấu hình mô hình cho trợ lý")}
     ctx = context(r)
+    try:
+        cid = None if r["approvals"] else conversation(r, ctx)
+    except ValueError as exc:  # someone else's conversation, or one deleted
+        return {"result": {"status": "failed", "mode": "model", "steps": [], "text": str(exc)}}
+    if not turns.live():
+        return {"result": {**await fallback(r, "chưa cấu hình mô hình cho trợ lý"), "conversation_id": cid}}
     try:
         if r["approvals"]:
             return {"result": await turns.resume(ctx, r["turn_id"], r["approvals"])}
-        got = await turns.run(ctx, r["message"])
+        got = await turns.run(ctx, r["message"], cid)
         if got.get("model_error") and not ctx.trail:  # the model failed before any tool ran: NFR-03
             LOGGER.warning("assistant: the model failed (%s)", got["model_error"])
-            return {"result": await fallback(r, f"mô hình lỗi ({got['model_error'].split(':')[0]})")}
+            why = f"mô hình lỗi ({got['model_error'].split(':')[0]})"
+            return {"result": {**await fallback(r, why), "conversation_id": cid}}
         return {"result": got}
     except ValueError as exc:  # nothing waiting for this person, or too late
-        return {"result": {"status": "failed", "mode": "model", "steps": [], "text": str(exc)}}
+        return {"result": {"status": "failed", "mode": "model", "steps": [], "text": str(exc), "conversation_id": cid}}
     except Exception as exc:  # noqa: BLE001 - the model failed: NFR-03, the product keeps answering
         LOGGER.warning("assistant: the model failed (%s: %s)", type(exc).__name__, exc)
         if ctx.trail or r["approvals"]:
@@ -122,9 +141,10 @@ async def turn(request: dict) -> dict:
                     "steps": [],
                     "text": f"Trợ lý gặp lỗi giữa chừng ({type(exc).__name__}); "
                     "hãy kiểm tra trên trang trước khi làm lại.",
+                    "conversation_id": cid,
                 }
             }
-        return {"result": await fallback(r, f"mô hình lỗi ({type(exc).__name__})")}
+        return {"result": {**await fallback(r, f"mô hình lỗi ({type(exc).__name__})"), "conversation_id": cid}}
 
 
 def _latest(dates: List[str]) -> str | None:
@@ -167,16 +187,48 @@ def answer(request: dict, result: dict) -> dict:
                 "cost_usd": usage.get("cost_usd"),
             },
         )
-    return {
-        "assistant": {
-            **result,
-            "citations": citations,
-            "sources": sources,
-            "as_of": _latest([s.get("as_of") for s in steps]),
-            "focus": next((s.get("focus") for s in reversed(steps) if s.get("focus")), []),
-            "navigate": next((s.get("navigate") for s in reversed(steps) if s.get("navigate")), None),
-            "suggest": result.get("suggest") or (last and last.follow) or START.get(r["role"], []),
-            "answered_at": at,
-            "audit_seq": seq,
-        }
+    out = {
+        **result,
+        "citations": citations,
+        "sources": sources,
+        "as_of": _latest([s.get("as_of") for s in steps]),
+        "focus": next((s.get("focus") for s in reversed(steps) if s.get("focus")), []),
+        "navigate": next((s.get("navigate") for s in reversed(steps) if s.get("navigate")), None),
+        "suggest": result.get("suggest") or (last and last.follow) or START.get(r["role"], []),
+        "answered_at": at,
+        "audit_seq": seq,
     }
+    if out.get("conversation_id"):  # the turn as the panel shows it, to draw again on any device (A3)
+        conv.record(out["conversation_id"], r["message"] or None, out)
+    return {"assistant": out}
+
+
+# -- the conversations (A3): list, open, delete ------------------------------------------------------------------
+
+
+@op
+def conversations(action: str = None, conversation_id: str = None, role: str = None, client_id: str = None) -> dict:
+    """The person's conversations in this role: ``list`` (newest first), ``open`` one (its turns as shown, and the
+    writes still waiting in it), ``delete`` one (its turns and the model's side; audited without its text)."""
+    r = {**who(role, client_id), "message": "", "route": "", "followed": None}
+    ctx = context(r)
+    action = str(action or "list")
+    if action == "list":
+        return {"conversations": {"items": conv.listing(ctx)}}
+    if action == "open":
+        c = conv.own(ctx, conversation_id)
+        with conv.db() as con:
+            rows = con.execute(
+                "select run_id from parked where conversation_id = ? and created > ?",
+                (c["id"], time.time() - turns.APPROVAL_TTL),
+            ).fetchall()
+        return {"conversations": {"conversation": c, "turns": conv.turns_of(c["id"]), "waiting": [x[0] for x in rows]}}
+    if action == "delete":
+        n = conv.delete(ctx, conversation_id)
+        actor = auth.acting_id(registry.DEMO_USER.get(r["role"])) or f"client:{r['client_id'] or '-'}"
+        with db.tx() as con:
+            audit.append(
+                con, actor, "assistant.conversation.delete", str(conversation_id), {"role": r["role"], "turns": n}
+            )
+        return {"conversations": {"deleted": conversation_id, "turns": n}}
+    raise ValueError("action là list, open hoặc delete")

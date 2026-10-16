@@ -42,18 +42,25 @@ or another person's data. Content and item text sealed when data keys are set.
 A storage failure fails the turn visibly; nothing is half-written.
 
 ## API and data
-`data/assistant.db` (WAL): `operonx_agents_items`, the run state store, `conversations`, `memory_items`. See
+`data/assistant.db` (WAL): `conversations`, `turns` (what the panel showed), `operonx_agents_items` (the model's side,
+one session per mode), `assistant_runs` (parked runs), `parked`; A4 adds `memory_items`. See
 [assistant.md §5](../architecture/assistant.md#5-conversations-and-memory-target-a3a4--adr-0027-adr-0028).
 
 ## Implementation
-*(A3–A4)* `src/assistant/` with the generic parts in `operonx-agents` (`memory/`).
+A3 (2026-10-17): `src/assistant/conversations.py` (the store, sealed), `src/assistant/turn.py` (`ContextPolicy`, a
+session per mode), `assistant_conversations_flow` (`POST /api/assistant/conversations`: list, open, delete), the
+panel's history (`web/copilot.js`). operonx-agents 0.2.4 (one SQLite connection per file) and 0.2.5 (compaction
+across runs). A4: memory, with the generic parts in `operonx-agents` (`memory/`).
 
 ## Dependencies
 FEAT-32 (the assistant), FEAT-39 (the consolidator), FEAT-14 (retention configuration).
 
 ## Acceptance and tests
-*(A3–A4)* long conversations and compaction, resume, isolation between two people, deletion really deletes,
-retention.
+A3: `tests/test_assistant_conversations.py` — carry-on and reopen as shown, owner-only list/open/continue/delete,
+deletion removes turns and the model's side (audited without text), a parked write inside its conversation, a
+30-turn conversation compacting twice with every turn kept, sealing and key rotation, the barrier closing
+mid-conversation; `tests/ui/test_copilot_ui.py::test_a_conversation_is_picked_up_on_another_device_listed_and_deleted`.
+A4: isolation of memory items, retention.
 
 ## Limitations
 Archive search scans one person's messages (sealed content has no plain index).
