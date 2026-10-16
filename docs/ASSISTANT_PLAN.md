@@ -1,9 +1,10 @@
 # OneWealth — Assistant, memory and agent ecosystem: backlog plan
 
-**Status: backlog.** The owner's next big task (2026-10-16), queued behind
-[BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md) (G1–G9). Its brief is kept verbatim in the
-[appendix](#appendix--the-owners-brief-2026-10-16). Phase A0 turns this plan into the architecture document; nothing
-below is built until then.
+**Status: in progress** (owner's go, 2026-10-16: “go, don't stop until you finished the assistant plan”). The brief
+is kept verbatim in the [appendix](#appendix--the-owners-brief-2026-10-16) and as source
+[`2026-10-16_assistant_memory_agents.md`](brd/sources/owner_requests/2026-10-16_assistant_memory_agents.md).
+**A0 done** (2026-10-16): the target architecture is [`docs/brd/architecture/assistant.md`](brd/architecture/assistant.md);
+the decisions below are recorded as ADR-0026…ADR-0034; the requirements are OWN-AS-01…25.
 
 ## 1. What exists today (first audit, 2026-10-16)
 
@@ -23,10 +24,10 @@ below is built until then.
 | # | Question | Proposal | Why |
 |---|---|---|---|
 | A-D1 | The assistant must answer about the user's own financial data; BR-11 / NFR-08 forbid client data reaching an AI provider | The assistant's model reads tool results **only where `client_ai` allows it** (built in G2): `demo` (the live demo, ADR-0018), `onprem` (the bank's own model). With `off` it keeps today's behaviour: the model routes and plans, and the answer is assembled from tool results by templates. ADR-0012 is amended, not dropped | One barrier for every model call; the bank's rule holds by configuration, not by trust |
-| A-D2 | Where chat history and memory live | Behind the `operonx-agents` `Session` / `StateStore` interfaces, so the store can change. **A0 measures** SQLite (WAL) under N concurrent sessions writing and reading on the demo host before choosing; PostgreSQL is the bank path (G4). No new database unless the measurement says so | The brief asks not to adopt SQLite blindly nor add a database without reason |
+| A-D2 | Where chat history and memory live | **Settled in A0 (ADR-0027), measured (assistant.md §8):** `data/assistant.db`, SQLite WAL, behind the `Session` / `StateStore` interfaces: ~127 turns/s on the demo host against ~10 at the BRD's busy hour; inside `state.db` the same load gave p99 2.6–8.4 s and lock errors. The library's connection-per-session use failed under load (fixed upstream in A3). PostgreSQL stays the bank path | The brief asks not to adopt SQLite blindly nor add a database without reason |
 | A-D3 | Three memory layers | **Short-term**: the session (messages + active task state) with `ContextPolicy` compaction. **Long-term**: a few typed items per user (preference, goal, fact, constraint), each with its source message, time, confidence and expiry, written only by the consolidation step, shown and editable on a “Bộ nhớ” page, forgettable one by one or all. **Archive**: every message, searchable (full-text), with provenance; retention per policy. Generic parts (memory items, extraction, search) go upstream into `operonx-agents` | OperonX is upstream; the app keeps only OneWealth's rules |
 | A-D4 | Knowledge base | `operonx-kb` with three separated collections: product (docs/brd, user guide; shared), user (materials a user uploads; ACL to that user and their RM), and none for the web (web results are cited, never stored) | Isolation by collection and ACL; citations checked against the text |
-| A-D5 | Web search | One `web_search` tool behind an adapter; a provider key from the owner (Tavily, Brave or similar). Without a key the tool reports it is unavailable. Answers cite sources and say how sure they are | Reported as a limitation, not faked |
+| A-D5 | Web search | **Settled in A0 (ADR-0030):** OpenRouter's `web` plugin on the existing key — measured 8 s, US$0.012, three cited sources; no new provider. The query is scrubbed; results cited, never stored; daily caps. Without the key the tool reports it is unavailable | No new vendor; reported as a limitation when missing, not faked |
 | A-D6 | Which agents | Keep: CIO agent, challenger, policy agent, newsletter intro. Add only: **the assistant** (front door), **memory consolidator** (event-driven at the end of a session, token budget, deduplicated), **follow-up agent** (only for a follow-up the user asked for: “nhắc tôi khi…”, run by event or a scheduled job the request creates). Monitoring stays the existing alert jobs (no LLM) | The brief asks for a small family; most monitoring needs rules, not models |
 | A-D7 | Tools | One registry: today's Copilot tools plus wrappers of the app's served graphs, each with roles, read/write, a confirmation rule for writes, a verifier (re-read after a write), a timeout and a cost class; discoverable by the model through descriptions. No raw access to internal services | Broad but controlled, as the brief asks |
 | A-D8 | Ecosystem map | Built into the existing Agent page (FEAT-15) and the Copilot panel: overview (user → assistant → agents → tools → data), live states from `agent_runs`, `agent_jobs` and sessions, drill-down into the existing run traces. Drawn to the kit's visual language (docs/brd/assets) | No parallel monitoring page |
@@ -41,7 +42,7 @@ release, and OneWealth pins the new version; only OneWealth's rules stay in this
 
 | Phase | What | Done when |
 |---|---|---|
-| A0 | Full audit; the architecture document `docs/brd/architecture/assistant.md`; ADRs for A-D1…A-D9; the storage measurement; BRD requirements for the assistant (new requirement rows, owner source = this brief) | Decisions recorded with evidence |
+| A0 | Full audit; the architecture document `docs/brd/architecture/assistant.md`; ADRs for A-D1…A-D9; the storage measurement; BRD requirements for the assistant (new requirement rows, owner source = this brief) | Decisions recorded with evidence — **done** 2026-10-16 (assistant.md, ADR-0026…0034, OWN-AS-01…25, FEAT-37…39, `scripts/bench_chat_store.py`) |
 | A1 | The tool registry: today's 13 tools moved in, served graphs wrapped, permissions, confirmations, verifiers, timeouts | Every tool tested for role refusal, confirmation and verification |
 | A2 | The assistant: multi-step orchestration on `operonx-agents` (plan → call → verify → answer), grounding and citations, uncertainty, honest refusal of unsupported requests; the Copilot panel becomes its front end | Multi-step tasks pass the eval subset |
 | A3 | Conversations on the server: sessions, resume across devices, short-term memory with compaction, task state | Long-conversation tests pass |
@@ -53,7 +54,7 @@ release, and OneWealth pins the new version; only OneWealth's rules stay in this
 
 ## 4. What the owner may be asked
 
-- A web-search provider key (A-D5). Without it, web research is reported as unavailable.
+- ~~A web-search provider key (A-D5)~~ — not needed: the existing OpenRouter key searches (ADR-0030).
 - Whether the bank's assistant runs on an on-premise model (A-D1, `client_ai = onprem`), or answers from templates.
 
 ## Appendix — the owner's brief (2026-10-16)

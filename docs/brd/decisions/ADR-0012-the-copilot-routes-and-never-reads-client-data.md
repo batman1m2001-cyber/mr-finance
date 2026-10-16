@@ -1,6 +1,7 @@
 # ADR-0012 — The Copilot routes; it never reads client data
 
-- **Status:** accepted; implemented 2026-10-16 (FEAT-32), stricter on one point: no entity id reaches the model
+- **Status:** accepted; implemented 2026-10-16 (FEAT-32), stricter on one point: no entity id reaches the model;
+  amended by ADR-0026 (the assistant may read client data where `client_ai` allows; this rule is its `off` mode)
 - **Date:** 2026-10-15
 - **Sources:** docs/REDESIGN_KIT_PLAN.md D1–D3; Q-06
 

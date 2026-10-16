@@ -41,6 +41,13 @@
   idle / busy / ok / error / pending from the request itself; an ok answer carries `focus`, the keys of the page
   elements it was read from, which the page marks for 2.6 s (“Chỉ trên trang” shows them again).
 
+## Next: the assistant (ASSISTANT_PLAN A1–A2, OWN-AS-01…09)
+
+The Copilot becomes the assistant's front end ([assistant.md](../architecture/assistant.md), ADR-0026, ADR-0032):
+one tool registry by role, multi-step turns on `operonx-agents`, writes confirmed (the run parks) and verified,
+answers citing tools, pages, passages and web sources; `POST /api/copilot` stays as the template path and the
+fallback. Conversations: FEAT-37; knowledge and web: FEAT-38.
+
 ## Implementation
 `src/copilot/{scrub,tools,router,ops,graph}.py`; service `copilot` in `app/main.py`; resource `llm:copilot`
 (`resources.yaml`), `LLM_MODEL_COPILOT` in `.env.example`; `web/copilot.js`, mounted by `web/shell.js`;

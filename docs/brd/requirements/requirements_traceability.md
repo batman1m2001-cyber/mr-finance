@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 39 | 10 | 3 | 0 | 25 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -267,6 +267,31 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
+| OWN-AS-01 | FEAT-32 | planned | A2: the panel calls the assistant |
+| OWN-AS-02 | FEAT-38 | planned | A5: `help` tool over the product collection |
+| OWN-AS-03 | FEAT-32 | planned | A1: every tool runs the page's own graph or read with the person's context |
+| OWN-AS-04 | FEAT-32 | planned | A1: `src/assistant/registry.py` (ADR-0032) |
+| OWN-AS-05 | FEAT-32 | planned | A1–A2: verifiers; multi-step turns |
+| OWN-AS-06 | FEAT-32 | planned | A1–A2: writes park until confirmed |
+| OWN-AS-07 | FEAT-38 | planned | A5: `web_search` on OpenRouter (ADR-0030; measured in A0: 8 s, US$0.012) |
+| OWN-AS-08 | FEAT-32 | planned | A2: refusal with what it can do |
+| OWN-AS-09 | FEAT-32 | planned | A2: barrier per `client_ai` mode, template mode when `off` (ADR-0026) |
+| OWN-AS-10 | FEAT-37 | planned | A3: `data/assistant.db` (ADR-0027; storage measured in A0, assistant.md §8) |
+| OWN-AS-11 | FEAT-37 | planned | A3: sessions with compaction |
+| OWN-AS-12 | FEAT-37, FEAT-39 | planned | A4/A6: typed items, consolidator |
+| OWN-AS-13 | FEAT-37 | planned | A4: archive search |
+| OWN-AS-14 | FEAT-37 | planned | A4: memory tools and the Bộ nhớ page |
+| OWN-AS-15 | FEAT-37 | planned | A4: `assistant_retention` configuration |
+| OWN-AS-16 | FEAT-37, FEAT-38 | planned | A4–A5: owner-keyed stores, KB ACLs |
+| OWN-AS-17 | FEAT-38 | planned | A5: operonx-kb collections (ADR-0029) |
+| OWN-AS-18 | FEAT-39 | planned | A6: consolidator and follow-up watcher (ADR-0031) |
+| OWN-AS-19 | FEAT-39 | planned | A6: budgets, dedup, retries, cost per day |
+| OWN-AS-20 | FEAT-15 | planned | A7: the map on the Agent page (ADR-0033) |
+| OWN-AS-21 | FEAT-15 | planned | A7: states from records, compared with traces |
+| OWN-AS-22 | FEAT-15 | planned | A7: kit look, desktop and phone |
+| OWN-AS-23 | — | planned | A8: `evals/assistant/` on real models (ADR-0034) |
+| OWN-AS-24 | — | planned | A8: the gate and the readiness report |
+| OWN-AS-25 | — | planned | A0 audit and documents (assistant.md, ADR-0026…0034); kept per phase |
 | OWN-MOTION-01 | FEAT-33 | implemented_unverified | A slow ripple from the panel's status dot while the panel is open and idle; nothing when closed (display:none), paused when the tab is hidden, none under reduced motion. Browser run and screenshots (2026-10-16); cost measured: +9 ms main thread per 5 s, no layout |
 | OWN-MOTION-02 | FEAT-33 | implemented_verified | `tests/ui/test_copilot_ui.py::test_busy_lasts_exactly_as_long_as_the_request` — busy (✦ breathes, three dots, `aria-busy`) from the request sent until its answer, held answer included; no step-by-step progress because the server does not report steps |
 | OWN-MOTION-03 | FEAT-33 | implemented_verified | `tests/test_living_interface.py::test_an_answer_names_the_elements_it_was_read_from`, `tests/test_living_interface.py::test_an_impact_answer_points_at_the_largest_event_and_the_feed_at_its_items`, `tests/test_living_interface.py::test_failures_mark_nothing`, `tests/test_living_interface.py::test_every_focus_key_has_a_page_that_renders_it` — the answer's `focus` keys come from the tool's result; KPIs, flow panel/rows/bands, feed items, events, families and the graph path are marked (browser run). Goals on Kế hoạch are not marked |
