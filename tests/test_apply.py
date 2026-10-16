@@ -37,8 +37,8 @@ DECIDE = Operon(
         "responses": None,
     },
 )
-RECOMPUTE = Operon(recompute_flow, params={"run_id": None, "by": None, "idem_key": None})
-RUN_DECIDE = Operon(run_decide_flow, params={"run_id": None, "action": None, "by": None, "reason": None})
+RECOMPUTE = Operon(recompute_flow, params={"run": None, "by": None, "idem_key": None})
+RUN_DECIDE = Operon(run_decide_flow, params={"run": None, "action": None, "by": None, "reason": None})
 
 
 def ok(engine, **inputs):
@@ -178,11 +178,11 @@ def test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective(monkeypa
     assert reads.family_impact("C01", "rm")["items"] == []
     assert reads.family_impact("C01", "cio")["items"][0]["status"] == "NEEDS_CIO_REVIEW"
     assert "Cần lý do" in str(
-        asyncio.run(
-            RUN_DECIDE.run(inputs={"run_id": run["id"], "action": "make_effective", "by": "cio", "reason": ""})
-        )["$errors"]
+        asyncio.run(RUN_DECIDE.run(inputs={"run": run["id"], "action": "make_effective", "by": "cio", "reason": ""}))[
+            "$errors"
+        ]
     )
-    ok(RUN_DECIDE, run_id=run["id"], action="make_effective", by="cio", reason="Đã kiểm tra, số hợp lý")
+    ok(RUN_DECIDE, run=run["id"], action="make_effective", by="cio", reason="Đã kiểm tra, số hợp lý")
     assert reads.family_impact("C01", "rm")["items"][0]["status_label"] == "Hiệu lực"
 
 
@@ -197,7 +197,7 @@ def test_withdrawing_the_view_withdraws_its_runs_and_rms_see_the_label():
 
 def test_recompute_makes_a_new_run_and_supersedes_the_old():
     _, run = approved(*MARKET)
-    out = ok(RECOMPUTE, run_id=run["id"], by="cio")
+    out = ok(RECOMPUTE, run=run["id"], by="cio")
     assert out["run"]["status"] == "EFFECTIVE" and out["run"]["id"].endswith("-2")
     assert all(c["delta"] == 0 for c in out["compare"])  # same data, same numbers
     assert runs.get(run["id"])["status"] == "SUPERSEDED"

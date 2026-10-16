@@ -27,7 +27,9 @@ ROLE_LABELS = {"cio": "CIO", "rm": "RM", "compliance": "Tuân thủ", "admin": "
 
 
 class Forbidden(PermissionError):
-    """The user's role may not do this."""
+    """The user's role may not do this. A served request answers 403 with the message (operonx ``http_status``)."""
+
+    http_status = 403
 
 
 def user(user_id: str) -> Dict[str, str]:
@@ -38,7 +40,7 @@ def user(user_id: str) -> Dict[str, str]:
     if auth.checking():
         me = auth.signed_in()
         if me is None:
-            raise Forbidden("Cần đăng nhập")
+            raise auth.NotSignedIn("Cần đăng nhập")
         if me["id"] != str(user_id or ""):
             raise Forbidden(f"Đang đăng nhập là {me['name']}: không thể thao tác thay người khác")
     u = users().get(str(user_id or ""))
@@ -54,3 +56,18 @@ def require(user_id: str, *roles: str) -> Dict[str, str]:
         allowed = ", ".join(ROLE_LABELS[r] for r in roles)
         raise Forbidden(f"{u['name']} ({ROLE_LABELS[u['role']]}) không được làm việc này; cần vai trò: {allowed}")
     return u
+
+
+def require_signed_in(*roles: str) -> None:
+    """Inside a request (sign-in on), the person signed in holds one of ``roles``: for an action that names no
+    ``by`` (fetching the news now). Outside a request (a scheduled job, a test), nothing to check."""
+    from people import auth
+
+    if not auth.checking():
+        return
+    me = auth.signed_in()
+    if me is None:
+        raise auth.NotSignedIn("Cần đăng nhập")
+    if me["role"] not in roles:
+        allowed = ", ".join(ROLE_LABELS[r] for r in roles)
+        raise Forbidden(f"{me['name']} không được làm việc này; cần vai trò: {allowed}")

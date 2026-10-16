@@ -259,6 +259,82 @@ asyncio.run(main())
 - `running` is all a store can say about a killed run: telling a dead writer
   from a slow op needs a lease, which durable runs bring.
 
+## When a run is slow but its ops are not
+
+Items that wait in front of a busy consumer, a busy worker and a held event
+loop make a run slow while every op in it looks fast. The run's trace says
+which, in its metadata:
+
+- `backlog`: the sequential edges whose items queued, as
+  `{"<src> -> <dst>": {"max": items waiting at once, "max_wait_ms": the longest wait}}`.
+  Only edges where 2 or more items waited, or one waited 100 ms or more;
+  a run that never queued has no `backlog`.
+- `worker` (a served run): `{"pid", "active_runs"}`, the process that served it
+  and how many runs it was serving then. Spread these over a load test to see
+  whether the workers share the load.
+- `loop_lag_ms` (a served run): `{"max", "p95"}`, how late the process's event
+  loop woke while the run went, from a 50 ms heartbeat the serve layer starts.
+  A run shorter than one heartbeat has none.
+- `cpu_pct` (a served run): `{"avg", "max"}`, how busy the process was, read
+  once a second, one core = 100. A late loop with `max` near 100 is a worker
+  out of CPU; a late loop with low CPU is something blocking it.
+- `latency_ms`: what the run's ops measured with `measure(name, ms)`, as
+  `{name: {"n", "p50", "p95", "max"}}`. For the latency a user feels that no
+  single op's time shows: a reply that starts in one op and is heard in
+  another. The studio's Monitor charts every name over time.
+
+```python
+import asyncio
+import time
+
+from operonx import END, START, Operon, graph, measure, op
+from operonx.telemetry.consumer import Consumer
+
+
+class Keep(Consumer):
+    def __init__(self):
+        super().__init__()
+        self.traces = []
+
+    def consume(self, trace):
+        self.traces.append(trace)
+
+
+@op
+async def packets(n: int):
+    for i in range(n):
+        yield {"i": i, "sent": time.perf_counter()}
+
+
+@op
+async def detect(i: int, sent: float) -> dict:
+    await asyncio.sleep(0.01)  # slower than the packets come
+    measure("heard", (time.perf_counter() - sent) * 1000)  # what a caller feels
+    return {"o": i}
+
+
+@graph
+def audio(n):
+    p = packets(n=n)
+    d = detect(i=p["i"], sent=p["sent"])
+    START >> p >> d >> END
+
+
+async def main():
+    keep = Keep()
+    await Operon(audio, params={"n": None}, trace=[keep]).start({"n": 20}).collect()
+    while not keep.traces:  # consumers run once the run has ended
+        await asyncio.sleep(0.01)
+    metadata = keep.traces[0].metadata
+    queued = metadata["backlog"]["audio.p -> audio.d"]
+    assert queued["max"] == 19 and queued["max_wait_ms"] >= 150
+    heard = metadata["latency_ms"]["heard"]  # {"n", "p50", "p95", "max"}
+    assert heard["n"] == 20 and heard["max"] >= 190  # the last packet waited for 19
+
+
+asyncio.run(main())
+```
+
 ## Durable runs: resume after a crash
 
 With a `journal=`, each op's result and the cells it wrote are recorded as
@@ -323,6 +399,14 @@ asyncio.run(main())
 - **Values are journalled as JSON** and come back exactly: plain data, tuples, sets,
   bytes, dates, Decimal, UUID, and dataclasses, pydantic models and enums of them.
   Any other type fails the run, naming the op and the output.
+- **A run that failed** keeps its failure on a plain resume: a failed op is
+  journalled as ended. `resume(run_id, retry_failed=True)` runs it again from
+  its first failed op: what ended before the failure is not run again, the
+  failed op and everything after it run. After fixing the op's code, pass
+  `allow_graph_change=True` too. The failed steps leave the journal as the
+  retry starts, so a second retry, or `operonx run --resume`, does not run
+  them again. In the studio, a failed journalled run's page has **Retry
+  from the failure**, which does this with the project's current code.
 - **The graph must be the one that ran:** `resume` refuses a graph whose ops,
   code or wiring changed (`allow_graph_change=True` to resume anyway).
 - A generator that had yielded and not ended runs again, its first yields
@@ -330,6 +414,37 @@ asyncio.run(main())
   `on_resume="fail"` refuses instead).
 - Without `journal=` nothing is recorded, and the scheduler pays one
   `is None` test per op.
+- **What it costs:** every step is written to the journal. Measured with an
+  8-op chain, one run at a time: 1.4 ms per run without a journal, about 3.8 ms
+  with `SqliteJournal` (`"async"` or `"exit"`), 7.3 ms with `"sync"`. The runs
+  of one journal share one writer, which puts their steps in one commit: at
+  400 runs at once a run costs about 3.7 ms with the journal against 1.2 ms
+  without. Journal the runs that must survive a crash or wait for a person,
+  not a live call.
+
+### `[durable]`: the project's jobs and services
+
+One table in `operonx.toml` journals every doorless job and request-reply
+service of the project, without touching their code:
+
+```toml
+[durable]
+journal = "sqlite:.operonx/journal.db"   # relative to the project; or "memory"
+durability = "async"                     # optional
+```
+
+- **A job item** is journalled as `<job run id>-<key hash>`. A failed item
+  retried by `Job(retry=)` continues from its failed op, and `operonx run
+  NAME --resume` finishes the items the last run left mid-way or failed, from
+  where they stopped: a charge is not charged twice.
+- **A service run that asks a person** (an `InterruptOp`) replies
+  `{"run_id": ..., "interrupted": [{"id", "op", "payload"}]}` instead of an
+  answer; `POST <path>/resume` with `{"run_id": ..., "answers": {"<id>":
+  value}}` continues it and replies with the answer (`404` for a run the
+  journal does not hold, `409` for one not waiting). A service with its own
+  `resume=` graph (operonx-agents' approvals) keeps it.
+- **A graph with a door** (a websocket call, a job fed through a session) is
+  never journalled: its items come from a live connection.
 
 ### Approvals that outlive the process, and drains
 
@@ -386,6 +501,78 @@ asyncio.run(main())
   `resume(run_id)` on the next worker continues it.
 - A graph that reads through a door (`ingress`) is journalled but not
   resumable: its items came from a live connection the journal does not hold.
+- **The trace says it stopped.** A parked run's trace has status
+  `interrupted` (`drained` for a drain) and its questions in
+  `metadata["interrupted"]` (`[{id, op, payload}]`).
+- **A resumed run's trace is the whole run.** A run that stops (parked,
+  drained or failed) keeps its trace in the journal; its resume starts from
+  it, under the same trace id, so each trace store holds one run from its
+  first op to its last. A step that was cut off appears twice: the stopped
+  one as `<op_id>@stopped` (status `retried` when it had failed), then the
+  one that ran after the resume. A run that ends keeps nothing extra.
+- **The studio answers them.** Runs → *Waiting* lists the parked runs of a
+  `[durable]` project, and a waiting run's page answers each question:
+  *Approve* (`"approve"`), *Deny* (`"deny"`), or any JSON.
+
+### Fork a run from a step
+
+`await engine.fork(run_id, at="op", outputs={...})` runs a journalled run
+again from one op, as if that op had answered `outputs`: what ended before it
+is replayed from the journal, not run; what follows it runs with the new
+value. It answers "what would have happened if the tool had said X?" without
+running the whole run again, and the original run is not changed.
+
+```python
+import asyncio
+
+from operonx import END, START, Operon, graph, op
+from operonx.durable import MemoryJournal
+
+CALLS = []
+
+
+@op
+async def quote(item: str) -> dict:
+    CALLS.append("quote")  # slow, or paid: not run again by a fork
+    return {"price": 120}
+
+
+@op
+async def decide(price: int) -> dict:
+    return {"verdict": "buy" if price < 100 else "wait"}
+
+
+@graph
+def shop(item):
+    q = quote(item=item)
+    d = decide(price=q["price"])
+    START >> q >> d >> END
+
+
+async def main():
+    engine = Operon(shop, params={"item": None}, journal=MemoryJournal())
+    out = await engine.run({"item": "lamp"}, run_id="lamp-1")
+    assert out["verdict"] == "wait"
+    handle = await engine.fork("lamp-1", at="q", outputs={"price": 90})
+    assert (await handle.result())["verdict"] == "buy"
+    assert CALLS == ["quote"]  # quote ran once: the fork replayed it
+    print(handle.trace.trace_id)  # lamp-1~<8 hex>, a run of its own
+
+
+asyncio.run(main())
+```
+
+- **`at`** is an op that answers once (not a generator or a graph), named as
+  in the graph. `ctx=` and `occurrence=` pick one execution of an op that ran
+  more than once (in a loop: one per iteration).
+- The new run is `<run_id>~<8 hex>`. Its trace holds the whole run: the steps
+  replayed from the journal (`attrs["operonx.replayed"]`, no time of their own)
+  and the ones that ran, with `metadata["forked_from"]` and `["fork_at"]`.
+- The op's changed output reaches every cell it was copied to (a parent
+  graph's output too). The graph must be the one that ran
+  (`allow_graph_change=True` to fork with the code as it is now).
+- In the studio, a step of a journalled run has **Change this output and
+  continue**, which forks there.
 
 ### Threads: cells a conversation keeps between runs
 

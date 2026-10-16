@@ -55,6 +55,8 @@ from market.graph import (
     market_flows_flow,
     market_fx_flow,
     market_gold_flow,
+    market_load_ask_flow,
+    market_load_flow,
     market_world_flow,
     market_yields_flow,
     model_estimate_flow,
@@ -246,6 +248,12 @@ APP = Application(
             description="POST {by, end?, note?}: a CIO proposes the model estimated from market history (F2).",
         ),
         # last: it is mounted at "/", and would answer every path the services above own
+        Service(
+            "market_load_ask",
+            http("POST", "/api/market/load", port=PORT),
+            graph=market_load_ask_flow,
+            description="POST {by, since}: an Admin queues a load of the market history (the market_load job runs it).",
+        ),
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
     ],
     jobs=[
@@ -319,6 +327,13 @@ APP = Application(
             description="Hourly: SJC gold bars (PNJ's history).",
         ),
         Job(
+            "market_load",
+            graph=market_load_flow,
+            schedule=schedule(every="1m", port=PORT),
+            timeout=7200,
+            description="Every minute: the market history load an Admin asked for in Hệ thống, if any.",
+        ),
+        Job(
             "agent_eval",
             graph=agent_eval_flow,
             schedule=schedule(every="1m", port=PORT),
@@ -351,3 +366,8 @@ APP = Application(
         ),
     ],
 )
+
+# Hệ thống lists the jobs as declared here (app/web.py cannot import this module)
+web.JOBS[:] = [
+    {"id": j.name, "description": j.description, "when": (j.schedule.options if j.schedule else {})} for j in APP.jobs
+]

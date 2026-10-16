@@ -211,6 +211,11 @@ flow, the newsletter's forbidden phrases (SEC-04 partial).
 - An admin screen with configuration by kind, system status (feeds, agents, jobs, audit-chain check), data
   loading (market backfill) and users.
 
+**Done** (FEAT-12, SCR-ADM-01): `tests/test_access.py` walks every served route as seven people against a written
+matrix; operonx 1.27.0 answers a refusal with its status (403, 401, 400); five holes the walk found are closed;
+`rm_assignment` is an Admin configuration kind; Hệ thống shows jobs, feeds, agents, the audit chain, history loads
+(queued for the `market_load` job) and accounts. No password form, on purpose (public demo).
+
 ### F6 — Background runs, the AI zone and inbox mode (D)
 
 - A job queue for live agent runs, with status on the event page (AI-13).

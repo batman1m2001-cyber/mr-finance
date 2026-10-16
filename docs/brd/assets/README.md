@@ -36,10 +36,12 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CIO-12_phone-light.jpg` | SCR-CIO-12 Độ chính xác | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state (market history from 2020, two approved views) |
 | `SCR-CIO-13_desktop-light.jpg` | SCR-CIO-13 Đo lường | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state (market history from 2020, two approved views) |
 | `SCR-CIO-13_phone-light.jpg` | SCR-CIO-13 Đo lường | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state (market history from 2020, two approved views) |
+| `SCR-ADM-01_desktop-light.jpg` | SCR-ADM-01 Hệ thống | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state, after a load of the history since 2026-10-01 |
+| `SCR-ADM-01_phone-light.jpg` | SCR-ADM-01 Hệ thống | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server on a copy of the live state, after a load of the history since 2026-10-01 |
 | `SCR-CIO-08_desktop-light.jpg` | SCR-CIO-08 Agent | current | desktop 1440×900, light, full page (≤ 2,600 px) | 2026-10-16, dev server, mock agents, three approved views |
 | `SCR-CIO-08_phone-light.jpg` | SCR-CIO-08 Agent | current | phone 390×844, light, full page (≤ 2,600 px) | 2026-10-16, dev server, mock agents, three approved views |
-| `SCR-CIO-09_desktop-light.jpg` | SCR-CIO-09 Cấu hình | current | desktop 1440×900, light, full page | 2026-10-16, dev server, Compliance, a restricted-list proposal waiting for the second person; thresholds v2 in force |
-| `SCR-CIO-09_phone-light.jpg` | SCR-CIO-09 Cấu hình | current | phone 390×844, light, viewport | 2026-10-16, dev server, Compliance |
+| `SCR-CIO-09_desktop-light.jpg` | SCR-CIO-09 Cấu hình | current | desktop 1440×900, light, viewport at the prompts panel | 2026-10-16 (F4), dev server on a copy of the live state, the second Admin on a prompts proposal whose eval set could not run (AI off) |
+| `SCR-CIO-09_phone-light.jpg` | SCR-CIO-09 Cấu hình | current | phone 390×844, light, from the prompts panel down | 2026-10-16 (F4), dev server, the second Admin |
 | `SCR-CIO-10_desktop-light.jpg` | SCR-CIO-10 Đồ thị lần áp dụng | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CIO-10_phone-light.jpg` | SCR-CIO-10 Đồ thị lần áp dụng | current | phone 390×844, light, the list view | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-01_desktop-light.jpg` | SCR-CL-01 Tổng quan | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |

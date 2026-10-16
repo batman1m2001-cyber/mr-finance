@@ -60,6 +60,7 @@ const ROLES = {
   admin: {
     label: "Quản trị", user: "admin",
     nav: [
+      {id: "he-thong", label: "Hệ thống", page: "system"},
       {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "agent", label: "Agent", page: "agents"},
@@ -168,7 +169,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r12`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r13`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {

@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Identity and access complete (BRD completion F5): every served route walked as seven people
+  against a written matrix (reads by role per path, actions by person, role and family); refused actions answer
+  403 with the reason and signed-out 401 (operonx 1.27 `http_status`); holes the walk found closed (declaring
+  assets, uploading a statement and proposing a plan for another family; an RM deciding another family's review
+  item; anyone fetching the news); the RM-to-family assignment is configuration (Admin); Hệ thống for Admin (jobs,
+  feeds, agents, audit chain, history load on request through the `market_load` job, accounts) — FEAT-12,
+  FEAT-14, matrix (SEC-02, ROLE-04 verified), api_reference, admin.md (SCR-ADM-01), screen inventory.
+
 - 2026-10-16 — Configuration completes (BRD completion F4): return assumptions (CIO), forbidden phrases and
   consent (Compliance), prompts and models (Admin, two people) as versioned configuration the product reads; the
   fixed eval set (six sample events, `agent_eval` job) gates every prompt or model change; each agent node records

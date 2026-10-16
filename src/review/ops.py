@@ -5,6 +5,7 @@ from __future__ import annotations
 from operonx import op
 
 from control import roles
+from people import auth
 from wealth import fixtures, store
 
 
@@ -17,6 +18,7 @@ def read_proposal(
     client_id = str(client_id or "")
     if client_id not in fixtures.client_ids(members=True):
         raise ValueError(f"no client {client_id!r}")
+    auth.require_client(client_id)  # their family, their RM, or the desk (ROLE-02)
     option = option or {}
     if option.get("id") not in ("light", "heavy"):
         raise ValueError("option.id is light or heavy")
@@ -51,6 +53,7 @@ def check_pending(item_id: str) -> dict:
     found = store.review(item_id)
     if not found:
         raise ValueError(f"no review item {item_id!r}")
+    auth.require_client(found["client_id"])  # an RM decides only for the families assigned to them (ROLE-02)
     if found["status"] != "pending":
         raise ValueError(f"{item_id} was already {found['status']}")
     return {"item_id": item_id}

@@ -8,6 +8,8 @@ all of it is declared, never written into an op body.
 | You want | Write |
 |---|---|
 | try a flaky call again | `@op(retry=Retry(max_attempts=4))` |
+| retry every op of a run, or a project | `Operon(g, retry=Retry())`, `[retry]` in `operonx.toml` |
+| never retry this op | `@op(retry=False)` |
 | stop a call that hangs | `@op(timeout=Timeout(run=30))` |
 | do something when an op fails | `op.on_error(handler)` |
 | the failure itself, as an exception | `Operon(g, errors="raise")` |
@@ -50,13 +52,23 @@ asyncio.run(main())
 ```
 
 - **What is retried:** `on=TRANSIENT` by default — a `TimeoutError`, a
-  `ConnectionError`, an error carrying HTTP status 429 or 5xx, and the
-  connection errors of `httpx` and `openai`. A `ValueError` or a 400 fails
-  the same way every time and is not retried. Pass `on=` an exception class,
-  a tuple, or a function `error -> bool` to choose.
+  `ConnectionError`, an error carrying HTTP status 429 or 5xx, the
+  connection errors of `httpx` and `openai`, and a gRPC status meaning "no
+  answer" (`UNAVAILABLE`, `DEADLINE_EXCEEDED`, …). A `ValueError` or a 400
+  fails the same way every time and is not retried. Pass `on=` an exception
+  class, a tuple, or a function `error -> bool` to choose.
+- **Your own transient error:** `TRANSIENT.also(Throttled)`, or
+  `[retry] transient = ["crm.errors:Throttled"]` in `operonx.toml`. It then
+  counts for every retry of the process: an op's `retry=`, the run's
+  default, and an LLM resource's transport retry. A name that does not
+  import fails when the app starts.
 - **The pause:** `initial` seconds, times `backoff` (2) per attempt, at most
   `max_interval` (30 s), with jitter: a random wait between half of that
   and all of it.
+- **The pause holds no slot.** While it waits, the op gives back its place
+  under the graph's `concurrency` and the run's `max_concurrency`, and takes
+  it again before the next attempt. In an outage, healthy ops keep running
+  instead of queueing behind ops that are only waiting.
 - **A generator is retried only before its first yield.** After that its
   items are already downstream; the error is recorded instead.
 - **One use of an op:** `fetch(order=o, retry=Retry(max_attempts=2))`
@@ -66,9 +78,102 @@ asyncio.run(main())
   that was run again has `status="retried"` (its error kept) and an
   `op_id` ending in `@1`, `@2` …; it does not make the run a failure. The
   last attempt of an op that never succeeds is an ordinary `error`.
-- **`LLMOp`** retries its transport per resource (`max_retries:` in
-  `resources.yaml`). An error that retry already gave up on is not retried
-  again by `retry=`: set one of the two, not both, for the same errors.
+- **A model or a store can also retry one call** (below); an error that
+  call retry already gave up on is not retried again by `retry=`.
+
+## Op retry or call retry
+
+Two places retry, with one vocabulary (`Retry`'s fields) and one list of
+errors worth it (`TRANSIENT`):
+
+| | op retry | call retry |
+|---|---|---|
+| runs again | the whole op | one request |
+| set with | `@op(retry=)`, `Operon(retry=)`, `[retry]` | `retry:` on the resource in `resources.yaml` |
+| use it for | an op that makes one call | an op that makes many (an agent: model, tool, model) |
+
+An agent's fifth model call that hits a 429 must not run its first four
+turns, and their tools, again: give its model resource a call retry.
+
+```yaml
+llm:assistant:
+  api_type: openai
+  model: gpt-4o-mini
+  retry: {max_attempts: 3, initial: 1, max_interval: 30}   # off unless set
+```
+
+`max_retries`, `retry_base_delay`, `retry_max_delay` and `retry_min_delay`
+still work as its old spelling (`max_retries: 2` is `max_attempts: 3`); set
+one or the other. A rate limit's `Retry-After` is honoured by both kinds.
+Your own code can run a call the same way: `await retry_call(fetch,
+Retry(max_attempts=3))`, with `from operonx import retry_call`.
+Every call sent again is on the trace node of the op (or `child()` step)
+that sent it, as `attrs["operonx.call_retries"]`: `{call, attempt, error,
+waited}` each. The studio's step panel reads it as "llm:assistant: 3 calls,
+2 retried (429)".
+
+## A default retry for a whole run, or a project
+
+```python
+import asyncio
+
+from operonx import END, START, Operon, Retry, graph, op
+
+SENT = []
+
+
+@op
+def quote(order: int) -> dict:  # a plain `def`: retried too
+    SENT.append("quote")
+    if SENT.count("quote") == 1:
+        raise TimeoutError("pricing service timed out")
+    return {"price": 42}
+
+
+@op(retry=False)  # sent once, whatever the default
+async def charge(price: int) -> dict:
+    SENT.append("charge")
+    return {"receipt": f"R-{price}"}
+
+
+@graph
+def checkout(order):
+    q = quote(order=order)
+    c = charge(price=q["price"])
+    START >> q >> c >> END
+
+
+async def main():
+    engine = Operon(checkout, params={"order": None}, retry=Retry(max_attempts=3, initial=0.01))
+    out = await engine.run({"order": 7})
+    assert out["receipt"] == "R-42" and SENT == ["quote", "quote", "charge"]
+
+
+asyncio.run(main())
+```
+
+- **Precedence, narrowest first:** one use (`op(..., retry=...)`), the op
+  (`@op(retry=...)`), the engine (`Operon(g, retry=...)`), the project
+  (`[retry]`). `retry=False` at the op or one use opts out.
+- **In `operonx.toml`**, for the project's jobs and request-response
+  services:
+
+  ```toml
+  [retry]
+  max_attempts = 3   # attempts in all, the first included
+  initial = 0.5      # seconds before the second attempt
+  max_interval = 30
+  ```
+
+  A stream door (a websocket call) does not take it: an item already sent
+  to the caller cannot be sent again. A job's own `Job(retry=)` is another
+  thing: it runs a failed *item* again. An `Operon` given to a job as is
+  keeps its own `retry=`.
+- **Only errors worth another try** are retried (`TRANSIENT`), so turning
+  the default on is safe for pure code: a bug fails once, as before.
+- **Free when nothing fails.** The default is looked at only when an op
+  fails. A plain `def` op still runs inline; one that fails waits out its
+  pause in a task of its own, so the rest of the run keeps moving.
 
 ## `timeout=` — a deadline per attempt
 
@@ -300,7 +405,8 @@ asyncio.run(main())
 ```
 
 It counts the ops that run as tasks (`async def`, `bound="cpu"`); a plain
-`def` op runs inline and a subgraph holds no slot of its own.
+`def` op runs inline, a subgraph holds no slot of its own, and an op waiting
+between two `retry=` attempts gives its slot back.
 
 ## Two writers of one cell must be ordered
 

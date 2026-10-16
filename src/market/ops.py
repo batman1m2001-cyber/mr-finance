@@ -12,7 +12,7 @@ from typing import Optional
 
 from operonx import op
 
-from market import estimate, fetch
+from market import estimate, fetch, store
 
 
 async def _run(job: str, since: Optional[str], only: Optional[list]) -> dict:
@@ -69,6 +69,52 @@ async def backfill(since: str = "2020-01-01", only: list = None) -> dict:
     for job in fetch.jobs():
         out.append(await _run(job, since or "2020-01-01", only))
     return {"run": {"job": "market_backfill", "jobs": out, "points": sum(r["points"] for r in out)}}
+
+
+@op
+def ask_load(by: str, since: str = "2020-01-01") -> dict:
+    """An Admin asks for the market history to be loaded again from ``since`` (Hệ thống). Queued: the
+    ``market_load`` job runs it within a minute; one load at a time."""
+    from control import audit, db, roles
+    from control.errors import BadRequest
+
+    roles.require(by, "admin")
+    since = str(since or "2020-01-01")
+    try:
+        start = date.fromisoformat(since)
+    except ValueError:
+        raise BadRequest(f"since {since!r}: một ngày dạng YYYY-MM-DD") from None
+    if not date(2015, 1, 1) <= start <= date.today():
+        raise BadRequest("since: từ 2015-01-01 đến hôm nay")
+    req = store.request_load(by, since)
+    if req["queued"]:
+        with db.tx() as con:
+            audit.append(con, by, "market.load_asked", f"LOAD-{req['id']}", {"since": since})
+    return {"load": req}
+
+
+@op
+async def run_loads(tick: int = None, at: str = None) -> dict:
+    """The ``market_load`` job: the load an Admin asked for, if any (every series from its ``since``)."""
+    return {"load": await load_pending()}
+
+
+async def load_pending() -> Optional[dict]:
+    """The oldest load waiting, run; None when none waits."""
+    req = store.next_load()
+    if req is None:
+        return None
+    try:
+        out = []
+        for job in fetch.jobs():
+            out.append(await _run(job, req["since"], None))
+        points = sum(r["points"] for r in out)
+        errors = sum(r["errors"] for r in out)
+        note = f"{errors} chuỗi không lấy được (xem Dữ liệu thị trường)" if errors else None
+        store.finish_load(req["id"], points, note, failed=points == 0 and errors > 0)
+    except Exception as exc:  # noqa: BLE001 — a crash is a failed load the Admin must see, not a stuck one
+        store.finish_load(req["id"], 0, f"{type(exc).__name__}: {exc}"[:500], failed=True)
+    return store.loads(1)[0]
 
 
 @op

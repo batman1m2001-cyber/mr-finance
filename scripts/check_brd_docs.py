@@ -207,7 +207,7 @@ def check_requirements(errors: List[str], report: List[str]) -> None:
 
 def check_references(errors: List[str]) -> None:
     feats = {p.name.split("-")[0] + "-" + p.name.split("-")[1] for p in (DOCS / "features").glob("FEAT-*.md")}
-    screens = set(re.findall(r"SCR-(?:CL|RM|CIO|CMP|PRO)-\d{2}", (DOCS / "ux" / "screen_inventory.md").read_text()))
+    screens = set(re.findall(r"SCR-(?:CL|RM|CIO|CMP|PRO|ADM)-\d{2}", (DOCS / "ux" / "screen_inventory.md").read_text()))
     adrs = {p.name[:8] for p in (DOCS / "decisions").glob("ADR-*.md")}
     oq = (DOCS / "requirements" / "open_questions.md").read_text(encoding="utf-8")
     questions = set(re.findall(r"^### (Q-\d{2})", oq, re.M))
@@ -218,7 +218,7 @@ def check_references(errors: List[str]) -> None:
         for f in set(re.findall(r"\bFEAT-(\d{2})\b", text)):
             if f"FEAT-{f}" not in feats:
                 errors.append(f"{rel}: FEAT-{f} has no feature file")
-        for s in set(re.findall(r"\bSCR-(?:CL|RM|CIO|CMP|PRO)-\d{2}\b", text)):
+        for s in set(re.findall(r"\bSCR-(?:CL|RM|CIO|CMP|PRO|ADM)-\d{2}\b", text)):
             if s not in screens:
                 errors.append(f"{rel}: {s} is not in the screen inventory")
         for a in set(re.findall(r"\bADR-\d{4}\b", text)):

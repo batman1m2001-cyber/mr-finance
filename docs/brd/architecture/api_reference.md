@@ -30,23 +30,26 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/goals` | goals → `goals_flow` | `client_id, scope?` | — | FEAT-26 |
 | `/api/review/propose` | propose → `propose_flow` | `client_id, scenario, title, option` | — | FEAT-27 |
 | `/api/review/decide` | decide → `review_flow` | `item_id, decision (approved\|rejected), note?, by` | RM | FEAT-27 |
-| `/api/news/ingest` | news_fetch → `ingest_flow` | `{}` | — | FEAT-01 |
+| `/api/news/ingest` | news_fetch → `ingest_flow` | `{}` | CIO (the person signed in) | FEAT-01 |
 | `/api/news/dismiss` | news_dismiss → `dismiss_flow` | `ids, by?, note?` | CIO | FEAT-02 |
 | `/api/news/release` | news_release → `release_flow` | `item_id, by, note` | Compliance | FEAT-02 |
 | `/api/events` | event → `event_flow` | `news_ids, title?, by` | CIO | FEAT-02 |
 | `/api/events/run-agent` | cio_agent → `cio_agent_flow` | `event_id, by, mode? (live\|mock)` | CIO | FEAT-04, 05 |
 | `/api/views/decide` | view_decide → `decide_flow` | `view_id, action, by, reason, idem_key?, edits?, responses?` | CIO | FEAT-06 |
-| `/api/runs/recompute` | run_recompute → `recompute_flow` | `run_id, by, idem_key?` | CIO | FEAT-08 |
-| `/api/runs/decide` | run_decide → `run_decide_flow` | `run_id, action (make_effective\|withdraw), by, reason` | CIO | FEAT-08 |
+| `/api/runs/recompute` | run_recompute → `recompute_flow` | `run, by, idem_key?` | CIO | FEAT-08 |
+| `/api/runs/decide` | run_decide → `run_decide_flow` | `run, action (make_effective\|withdraw), by, reason` | CIO | FEAT-08 |
 | `/api/research` | research_upload → `research_upload_flow` | `item {kind, report_no, title, summary, release_at, conflicts?, regulation?}, by` | CIO | FEAT-03 |
 | `/api/research/release` | research_release → `research_release_flow` | `item_id, decision (release\|reject), by, note` | Compliance, ≠ uploader | FEAT-03 |
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
+| `/api/market/load` | market_load_ask → `market_load_ask_flow` | `by, since? (YYYY-MM-DD, from 2015-01-01; default 2020-01-01)` | Admin | FEAT-12 (SCR-ADM-01) |
 | `/api/reset` | web (`reset`) | — | — | demo reset |
 
 ## Sign-in (`app/web.py`, FEAT-12)
 
-Every `/api/*` path but these needs a session (401 without one); a customer gets 403 on staff routes, anyone gets
-403 on a family they may not see ([ADR-0020](../decisions/ADR-0020-sign-in-with-own-accounts.md)).
+Every `/api/*` path but these needs a session (401 without one). Each read is open to the roles `ROUTE_ROLES` in
+`app/web.py` names for its path (403 otherwise; the matrix is in `tests/test_access.py`), and a family's data only to
+whoever may see it ([ADR-0020](../decisions/ADR-0020-sign-in-with-own-accounts.md)). A served action that refuses
+answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `http_status`).
 
 | Path | Body / query | Returns |
 |---|---|---|
@@ -86,6 +89,7 @@ Every `/api/*` path but these needs a session (401 without one); a customer gets
 | `/api/audit/export` | `format=json\|csv` | the whole chain as a download (JSON includes the check) | FEAT-11 |
 | `/api/market` | — | staff: the market jobs (cadence, last run, last success, last error), each series' coverage, last value, source and 120-day tail, each factor's provenance | FEAT-35 |
 | `/api/market/series` | `id, from?` | staff: one stored or computed (DXY, SJC_GAP) series' points | FEAT-35 |
+| `/api/system` | — | Admin: jobs and how each last went, news feeds, agent runs (7 days), audit chain check, history loads, configuration waiting, staff accounts with an RM's families | FEAT-12 (SCR-ADM-01) |
 | `/api/accuracy` | — | staff: the model walked forward over history (per horizon and factor: observations, share inside P10–P90, verdict, direction hit rate; KPI-03), the approved views' forecasts summarised and listed with their scores | FEAT-18 |
 | `/api/measure` | — | staff: the monthly reports — misses with causes, approvals (minutes, without edits, under 2 min), news to RM hours, inbox and CIO agent minutes | FEAT-18 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |

@@ -18,8 +18,9 @@ and the steps that need two people get two people.
   (`kind` client), their dependents, and the staff (`data/people/staff.json`, written by `scripts/make_people.py`):
   `cio` Trần Quang Huy, `cio2` Lê Thu Hà, RMs `rm01` Hoàng Hải Yến (C01, C04, C05), `rm02` Ngô Minh Châu (C02),
   `rm03` Trần Quốc Bảo (C03), `compliance` Đỗ Minh Châu, `compliance2` Vũ Hải Nam, `admin`, `admin2` Đỗ Minh
-  Khôi (the second Admin for prompts and models, F4), and five specialists. A family's team and its assigned RM
-  (`people.rm_id`) come from the same rows, so “your RM” and the RM who signs in are the same person. A staff member
+  Khôi (the second Admin for prompts and models, F4), and five specialists. A family's assigned RM is the
+  `rm_assignment` configuration in force (Admin, FEAT-14; version 1 from the seed's teams): “your RM”, the RM who
+  signs in, what they may see and act for all follow it (F5). A staff member
   added to the seed later joins a database made before, with an account (`store._top_up`).
 - **Accounts and sessions** (`src/people/auth.py`, [ADR-0020](../decisions/ADR-0020-sign-in-with-own-accounts.md)):
   everyone but the specialists and dependents has an account; login by e-mail or id; scrypt-hashed password; a
@@ -29,10 +30,14 @@ and the steps that need two people get two people.
 - **What each person sees**: the shell shows only the signed-in person's role and its pages, their name and
   “Đăng xuất”; an address of another role's page opens their own. A customer has no family picker (their own
   family, the client view always); an RM's picker lists their families; CIO, Compliance and Admin see every family.
-- **Checks**: `SignInGate` (`app/web.py`) refuses `/api/*` reads without a session (401), staff routes to
-  customers and other families' data to anyone (403); in served runs, a family's data (`fixtures.client`), the
+- **Checks**: `SignInGate` (`app/web.py`) refuses `/api/*` reads without a session (401), a read to a role its
+  path does not allow (`ROUTE_ROLES`: e.g. the inbox and draft views only to CIO, Compliance and Admin, the audit
+  log to Compliance and Admin, market data to CIO and Admin) and other families' data to anyone (403); in served runs, a family's data (`fixtures.client`), the
   view (`auth.role_for`), the acting user (`roles.user`: nobody acts in someone else's name) and lists over every
   family (`auth.visible`: search, the review queue, the advisory record, regulation matches, the RM's today).
+  A served action refused answers 403 with the reason, not signed in 401 (operonx 1.27 `http_status` on
+  `Forbidden` and `NotSignedIn`). Uploading a statement, declaring assets and proposing a plan check the family;
+  an RM decides review items only for their families; fetching the news now is the CIO's (F5).
 - News-impact actions call `roles.require(user_id, *roles)`: CIO for grouping, agent runs, view decisions, run
   decisions and research upload; Compliance for releasing research and restricted-list holds; RM for goal
   declarations and approval decisions. A wrong role → `Forbidden` with the role needed.
@@ -54,12 +59,17 @@ ordinary test suite. Runs that no request started (scheduled jobs, the engine ov
 `tests/test_auth.py` (14 tests: accounts, hashing, signed and expiring sessions, login and one answer for any
 failure, demo list switch, audit row, 401 without a session, a customer only their family and only the client
 view, an RM only their families, lists filtered, nobody acts in someone else's name, unserved runs unchecked);
-`tests/test_people.py`; `tests/ui/test_signin.py`; every browser test signs in as the route's role;
+`tests/test_access.py` (every served read and action as seven people — two families, an assigned and an
+unassigned RM, CIO, Compliance, Admin — against the matrix written in the test; a route not in the matrix fails;
+the RM reassignment); `tests/test_system.py` (Hệ thống and the history load); `tests/test_people.py`;
+`tests/ui/test_signin.py`; every browser test signs in as the route's role;
 `tests/test_views.py::test_only_the_cio_runs_the_agent_and_decides`;
 `tests/test_research.py::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`.
 
 ## Limitations
-- A refused `POST` run answers 500, not 403 (operonx 1.19 has no exception-to-status mapping); the data is refused.
 - The form is the demo's; a bank signs in through SSO (the session and the checks stay).
-- Admin signs in and sees configuration, agents and the audit log; the admin screens for sources and data loading
-  are BRD_COMPLETION_PLAN F5.
+- Admin's screen is Hệ thống ([SCR-ADM-01](../ux/screens/admin.md#scr-adm-01--hệ-thống-system)): jobs, feeds,
+  agents, the audit chain, history loads and accounts; sources and the RM assignment are edited in Cấu hình. It
+  has no password form: on the public demo anyone can sign in as Admin (`scripts/set_password.py` sets one).
+- A served action whose input is wrong still answers 500 in most places (a `ValueError`); only the history load
+  answers 400 (`control.errors.BadRequest`).

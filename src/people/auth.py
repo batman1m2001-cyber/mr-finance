@@ -39,7 +39,9 @@ ACCOUNT_ROLES = ("client", "rm", "cio", "compliance", "admin")
 
 
 class NotSignedIn(PermissionError):
-    """A served request without a valid session."""
+    """A served request without a valid session: answered 401."""
+
+    http_status = 401
 
 
 def enabled() -> bool:
@@ -316,7 +318,7 @@ def require_client(client_id: str) -> None:
 
     v = signed_in()
     if v is None:
-        raise Forbidden("Cần đăng nhập")
+        raise NotSignedIn("Cần đăng nhập")
     if not may_see(v, client_id):
         raise Forbidden(f"{v['name']} không được xem dữ liệu của khách hàng này")
 
@@ -337,11 +339,9 @@ def role_for(asked: Optional[str]) -> Optional[str]:
     for the RM's or the client's view of what they may see. Outside a request: what was asked."""
     if not checking():
         return asked
-    from control.roles import Forbidden
-
     v = signed_in()
     if v is None:
-        raise Forbidden("Cần đăng nhập")
+        raise NotSignedIn("Cần đăng nhập")
     if v["role"] == "client":
         return "client"
     if asked in (v["role"], "client", "rm"):
