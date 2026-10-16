@@ -14,15 +14,15 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 |---|---|---|---|---|---|---|---|---|---|
 | BRD numbered (BR, FR, NFR) | 61 | 60 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 2 | 0 | 1 | 0 | 0 | 0 | 4 | 0 |
-| BRD rules (RULE) | 97 | 91 | 0 | 0 | 0 | 0 | 0 | 4 | 2 |
+| BRD rules (RULE) | 97 | 92 | 0 | 0 | 0 | 0 | 0 | 3 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 9 | 2 | 1 | 0 | 0 | 0 | 0 | 7 |
 | Owner requests (OWN) | 14 | 10 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
-completion is not 100 %:** of the 61 numbered requirements, 57 are implemented and verified by tests; the other 4 are
-partial, each with its reason below (BRD_COMPLETION_REPORT.md lists them). (The `not_applicable` KIT rows
+completion is not 100 %:** of the 61 numbered requirements, 60 are implemented and verified by tests; the other one is
+partial, with its reason below (BRD_COMPLETION_REPORT.md lists them). (The `not_applicable` KIT rows
 are the documentation rules this repository itself follows.) Counts are recomputed by the checker.
 
 ## 1. BRD numbered requirements
@@ -177,7 +177,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | BRD-RULE-DATA-07 | FEAT-06, 08 | implemented_verified | `tests/test_apply.py::test_the_same_approval_applied_twice_is_one_run` | |
 | BRD-RULE-DATA-08 | — | implemented_verified | `tests/test_apply.py::test_the_endpoints` | Formats in [domain_model.md](../architecture/domain_model.md#4-identifiers) |
 | BRD-RULE-DATA-09 | FEAT-04 | implemented_verified | `tests/test_views.py::test_live_mode_uses_two_models_and_no_client_data_reaches_them` | By graph inputs, not DB permissions |
-| BRD-RULE-DATA-10 | — | out_of_scope_demo | — | Bank migration guidance |
+| BRD-RULE-DATA-10 | — | implemented_verified | `tests/test_bank_move.py::test_the_export_loads_into_postgresql_and_checks_row_for_row`, `tests/test_bank_move.py::test_split_and_rebuilt_every_row_is_the_same_and_client_data_stays_sealed`, `tests/test_bank_move.py::test_a_row_changed_after_it_was_segmented_is_caught_though_the_chain_was_recomputed`, `tests/test_bank_move.py::test_a_segment_edited_removed_or_left_writable_breaks_the_walk` | G4 (ADR-0025): `scripts/export_postgres.py` maps every table to PostgreSQL with the queried JSON fields split into columns and 15 child tables, client values still sealed, checked row for row against a real PostgreSQL 16; the audit log on write-once segments that `audit_check` verifies; [bank_migration.md](../architecture/bank_migration.md). The application stays on SQLite (G-D4); the bank's database and WORM bucket are the bank's |
 | BRD-RULE-LC-01 | FEAT-06 | implemented_verified | `tests/test_views.py::test_return_withdraw_and_supersede` | |
 | BRD-RULE-LC-02 | FEAT-08 | implemented_verified | `tests/test_apply.py::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`, `tests/test_apply.py::test_recompute_makes_a_new_run_and_supersedes_the_old` | |
 | BRD-RULE-LC-03 | FEAT-03 | implemented_verified | `tests/test_research.py::test_a_report_naming_the_restricted_list_is_not_released` | |

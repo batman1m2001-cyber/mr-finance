@@ -27,6 +27,7 @@ from control import crypto as control_crypto
 from control import db as control_db
 from control import log as control_log
 from control import secrets as control_secrets
+from control import worm as control_worm
 from events import store as events_store
 from inbox import sign as inbox_sign
 from inbox import store as inbox_store
@@ -113,6 +114,13 @@ async def healthz(request: Request) -> JSONResponse:
             "note": "Chuỗi nhật ký ký HMAC"
             if hmac_on
             else "Chuỗi nhật ký chỉ SHA-256: ai ghi được cơ sở dữ liệu có thể tính lại cả chuỗi",
+        },
+        {
+            "id": "audit_worm",
+            "on": control_worm.folder() is not None,
+            "note": "Nhật ký kiểm toán chép mỗi giờ vào đoạn chỉ-ghi-một-lần (ADR-0025)"
+            if control_worm.folder() is not None
+            else "Nhật ký kiểm toán chỉ có trong cơ sở dữ liệu (MF_AUDIT_WORM=off)",
         },
         {
             "id": "two_models",
@@ -627,6 +635,7 @@ async def system(request: Request) -> JSONResponse:
         jobs.append({**j, "last": last})
     with control_db.tx() as con:
         chain = control_audit.verify(con)
+        kept = control_worm.verify(con)
     accounts = people_auth.accounts()
     families = {a["id"]: people_store.families_of(a["id"]) for a in accounts if a["role"] == "rm"}
     return JSONResponse(
@@ -643,6 +652,7 @@ async def system(request: Request) -> JSONResponse:
                 if k.get("pending")
             ],
             "chain": chain,
+            "worm": kept,
             "loads": loads,
             "inbox": inbox_store.recent(),
             "agent_queue": agent_queue.waiting(),

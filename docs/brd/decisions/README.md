@@ -30,3 +30,4 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0022](ADR-0022-the-ai-zone-is-a-second-process.md) | The AI zone is a second process with its own database, reaching the bank through a signed inbox | accepted | 2026-10-16 |
 | [ADR-0023](ADR-0023-client-data-barrier-by-configuration.md) | The client-data barrier is one guard on every model call, set by configuration (`client_ai`) | accepted | 2026-10-16 |
 | [ADR-0024](ADR-0024-encryption-at-rest-secrets-and-headers.md) | Client data sealed per column (AES-256-GCM, rotating keys), keys from a secret store, every response hardened | accepted | 2026-10-16 |
+| [ADR-0025](ADR-0025-postgresql-export-and-worm-audit.md) | The move to the bank proven by a checked PostgreSQL export; the audit log on write-once segments | accepted | 2026-10-16 |

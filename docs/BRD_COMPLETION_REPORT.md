@@ -8,18 +8,18 @@ built and proven, and what is still open and why. The single source of each requ
 ## 1. In one paragraph
 
 The BRD has 165 rows: 61 numbered requirements, 7 success metrics and 97 rules. At the start of the plan 108 were
-verified and 40 were open. Now **153 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08 and NFR-07 after G1–G3 of
-[BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 12 that are not, 8 are pilot
-measurements or later BRD phases (`out_of_scope_demo`), 2 do not apply to this product, and **2 are partial**,
+verified and 40 were open. Now **154 are implemented and verified by tests** (150 after F10; NFR-11, NFR-08,
+NFR-07 and RULE-DATA-10 after G1–G4 of [BRD_REMAINING_PLAN.md](BRD_REMAINING_PLAN.md)). Of the 11 that are not, 7
+are pilot measurements or later BRD phases (`out_of_scope_demo`), 2 do not apply to this product, and **2 are partial**,
 each for a reason outside a demo's reach (a bank's deployment, or a measurement nothing defines yet). Nothing is
 blocked, planned or unbuilt.
 
 | Set | Rows | Verified | Partial | Out of scope (demo) | Not applicable |
 |---|---|---|---|---|---|
-| BRD numbered (BR, FR, NFR) | 61 | 58 | 3 | 0 | 0 |
+| BRD numbered (BR, FR, NFR) | 61 | 60 | 1 | 0 | 0 |
 | BRD success metrics (KPI) | 7 | 2 | 1 | 4 | 0 |
-| BRD rules (RULE) | 97 | 91 | 0 | 4 | 2 |
-| **Total** | **165** | **151** | **4** | **8** | **2** |
+| BRD rules (RULE) | 97 | 92 | 0 | 3 | 2 |
+| **Total** | **165** | **154** | **2** | **7** | **2** |
 
 “Verified” means a test in `tests/` exercises the requirement and passed in the latest full run; the documentation
 checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not exist, and recomputes the counts.
@@ -37,7 +37,11 @@ checker (`scripts/check_brd_docs.py`) refuses a verified row whose test does not
 | F7 | Alerts and the central log | #47 |
 | F8 | The CIO newsletter; conflict of interest as a structured, enforced field | #48 |
 | F9 | The policy agent (quotes checked word for word inside their article) and the policy radar | #49, #50 |
-| F10 | Per-goal VND impact; the client's “Cách tính”; agent time limits; schedule and browser tests; the 6,500-family scale test | this report's PR |
+| F10 | Per-goal VND impact; the client's “Cách tính”; agent time limits; schedule and browser tests; the 6,500-family scale test | #51 |
+| G1 | “Cách tính” on every number (NFR-11) | #54 |
+| G2 | The client-data barrier, by configuration (NFR-08) | #55 |
+| G3 | Client data sealed at rest, keys from a secret store, security headers, the attack suite (NFR-07) | #56 |
+| G4 | The PostgreSQL export checked row for row against a real PostgreSQL; the audit log on write-once segments; the migration guide (RULE-DATA-10) | #57 |
 
 ## 3. The scale requirement, measured (NFR-01)
 
@@ -66,7 +70,7 @@ BRD's size, not the bank's servers.
 | BRD-KPI-01 | News → RM ready ≤ 2 h; urgent ≤ 30 min | The 2 h part is measured monthly. Nothing in the BRD defines “urgent”, so the 30 min part cannot be measured. |
 
 Out of scope for the demo (pilot measurements or later BRD phases): KPI-02, KPI-05, KPI-06, KPI-07, RULE-ROLE-05,
-RULE-WF-08, RULE-DATA-10, RULE-MEAS-06. Not applicable: RULE-SCOPE-03 (the product keeps its pre-BRD connectors,
+RULE-WF-08, RULE-MEAS-06. Not applicable: RULE-SCOPE-03 (the product keeps its pre-BRD connectors,
 ADR-0003) and RULE-SCOPE-05 (nothing is sent; the client view is in-app, ADR-0008).
 
 ## 5. Decisions still with the owner
