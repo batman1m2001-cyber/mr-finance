@@ -10,7 +10,7 @@ BRD's prompt rule, learnt from 2022).
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 LENSES = {
     "macro": {"label": "Vĩ mô và lãi suất", "factors": ["VN_RATE", "VN_GOV", "USDVND", "US10Y", "DXY"]},
@@ -111,10 +111,14 @@ def factor_votes(news: List[Dict[str, Any]], factor_words: Dict[str, List[str]])
     return out
 
 
-def analyst(lens: str, news: List[Dict[str, Any]], factor_words: Dict[str, List[str]]) -> Dict[str, Any]:
-    """One analyst group's note: its factors' directions and the impact rows they imply."""
+def analyst(
+    lens: str, news: List[Dict[str, Any]], factor_words: Dict[str, List[str]], spec: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """One analyst group's note: its factors' directions and the impact rows they imply. ``spec``: the group as
+    the prompts configuration declares it (label, factors); the BRD's four by default."""
+    spec = spec or LENSES[lens]
     votes = factor_votes(news, factor_words)
-    mine = {f: votes[f] for f in LENSES[lens]["factors"] if f in votes}
+    mine = {f: votes[f] for f in spec["factors"] if f in votes}
     rows = []
     for f, (v, ids) in mine.items():
         if v == 0:
@@ -135,7 +139,7 @@ def analyst(lens: str, news: List[Dict[str, Any]], factor_words: Dict[str, List[
             )
     return {
         "lens": lens,
-        "label": LENSES[lens]["label"],
+        "label": spec["label"],
         "factors": {f: {"votes": v, "source_ids": sorted(set(ids))} for f, (v, ids) in mine.items()},
         "impacts": rows,
         "note": NOTE,

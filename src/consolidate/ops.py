@@ -13,6 +13,7 @@ from typing import Any, Dict, List
 
 from operonx import op
 
+from control import config
 from wealth import fixtures, store, valuation
 from wealth.labels import SOURCES, TRUST
 
@@ -22,17 +23,19 @@ SCOPES = ("personal", "family")
 @op
 def household(client_id: str, scope: str = "personal") -> dict:
     """Whose assets this picture holds: the client, and in the family view every member who
-    consented. Members who did not are listed, so the screen can say who is missing."""
+    consented (when Compliance's ``consent`` configuration asks for it). Members who did not are listed, so the
+    screen can say who is missing."""
     if scope not in SCOPES:
         raise ValueError(f"scope is one of {SCOPES}, not {scope!r}")
     me = fixtures.client(client_id)
     members = [{"id": me["id"], "name": me["name"], "relation": "Chủ tài khoản"}]
     waiting = []
     if scope == "family":
+        needed = config.data("consent")["require"]["family_member"]  # Compliance's consent configuration
         for m in me.get("household", []):
             other = fixtures.client(m["id"])
             row = {"id": m["id"], "name": other["name"], "relation": m["relation"]}
-            (members if m.get("consent") else waiting).append(row)
+            (members if m.get("consent") or not needed else waiting).append(row)
     return {"members": members, "waiting": waiting}
 
 

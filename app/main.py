@@ -69,7 +69,7 @@ from scenarios.graph import goals_flow, scenario_flow
 from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
-from views.graph import cio_agent_flow, decide_flow
+from views.graph import agent_eval_flow, cio_agent_flow, decide_flow
 
 PORT = env("PORT", 8030)
 
@@ -317,6 +317,13 @@ APP = Application(
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: SJC gold bars (PNJ's history).",
+        ),
+        Job(
+            "agent_eval",
+            graph=agent_eval_flow,
+            schedule=schedule(every="1m", port=PORT),
+            timeout=3600,
+            description="Every minute: the fixed eval set on prompt and model proposals waiting for it (MEAS-07).",
         ),
         Job(
             "accuracy_score",

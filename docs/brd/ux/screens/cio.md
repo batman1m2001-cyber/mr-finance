@@ -168,17 +168,20 @@ subject, time, mode, status). Then **Chất lượng AI** (7 days and all time) 
 
 | | |
 |---|---|
-| Route | `#/cio/cau-hinh`; Compliance: `#/compliance/cau-hinh` |
+| Route | `#/cio/cau-hinh`; Compliance: `#/compliance/cau-hinh`; Admin: `#/admin/cau-hinh` |
 | Generation | new (`web/pages/config.js`) |
 | Feature | [FEAT-14](../../features/FEAT-14-versioned-configuration.md) |
-| Requirements | BRD-FR-701, BRD-RULE-SEC-04, BRD-RULE-SEC-05 |
+| Requirements | BRD-FR-701, BRD-RULE-SEC-04, BRD-RULE-SEC-05, BRD-RULE-AI-02, BRD-RULE-MEAS-07, BRD-NFR-06 |
 | Data | `GET /api/config`, `POST /api/config/propose`, `POST /api/config/decide` |
-| Screenshots | [desktop, a pending proposal](../../assets/current_ui/SCR-CIO-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-09_phone-light.jpg) |
+| Screenshots | [desktop, the second Admin on a prompts proposal whose eval did not run](../../assets/current_ui/SCR-CIO-09_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-09_phone-light.jpg) |
 
-One panel per kind: owner and “hai người”, the version in force (number, id, hash, who approved), its content in
-short; a pending proposal with who proposed, when, why, its content, and — for the owner's role — an approver
-picker (the proposer left out where two people are required), **Duyệt** and **Từ chối**; for thresholds and the
-restricted list an “Đề xuất thay đổi” JSON editor with a reason; the history.
+One panel per kind (eleven): owner, “hai người”, “bộ đánh giá” where the eval set gates it; the version in force
+(number, id, hash, who approved) and its content in short. A pending proposal shows who proposed it, when and why,
+its content, the fields it changes, and for prompts and models the eval set's result (each sample: valid, challenged,
+direction). The owner's role sees **Duyệt** (disabled until the eval passed) and **Từ chối**; the person who
+proposed a two-person kind reads “Bạn đã đề xuất: cần một … khác duyệt”. Everyone acts as the person signed in.
+Every kind but the factor model has an “Đề xuất thay đổi” JSON editor with a reason; then the history, with each
+version's eval result.
 
 ---
 

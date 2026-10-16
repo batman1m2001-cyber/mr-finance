@@ -196,6 +196,12 @@ forecasts recorded at approval and scored by the 18:30 `accuracy_score` job; the
 - New asset classes and agents can be declared in configuration where the engine allows it (NFR-06). Whatever
   stays code says so in the feature file.
 
+**Done** (FEAT-14, SCR-CIO-09): eleven kinds; the guard, the life scenarios, consent and the agents read the version
+in force; a prompt or model proposal runs the six-sample eval set (`agent_eval` job, every minute) and a second
+Admin approves only when it passed; nodes record `CF-prompts-vN`. NFR-06: asset classes in `loadings.classes`,
+analyst groups in `prompts.lenses`. Still code: the engine's six built-in asset classes, the step functions of the
+flow, the newsletter's forbidden phrases (SEC-04 partial).
+
 ### F5 — Identity and access (C)
 
 - Done in F1 part 1 (ADR-0020): sign-in tokens (F-D6), accounts by e-mail, three RMs with assigned families, and

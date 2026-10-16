@@ -72,11 +72,15 @@ FORBIDDEN = [
     "rửa tiền",
     "danh sách theo dõi",
 ]
-_FORBIDDEN = re.compile(r"(?<!\w)(" + "|".join(map(re.escape, FORBIDDEN)) + r")(?!\w)", re.IGNORECASE)
 
 
 def forbidden_words(*texts: str) -> List[str]:
-    return sorted({m.group(0).lower() for t in texts for m in _FORBIDDEN.finditer(t or "")})
+    """Words a client-facing regulation note must not use (FR-604): the ``compliance`` list of the
+    forbidden_phrases configuration in force (``FORBIDDEN`` above is its version 1)."""
+    from views import schema
+
+    pat = schema.phrases_pattern("compliance")
+    return sorted({m.group(0).lower() for t in texts for m in pat.finditer(t or "")})
 
 
 def infer(label: str) -> Optional[Dict[str, str]]:

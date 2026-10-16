@@ -7,7 +7,8 @@ A floating VND loan's load is the extra interest over the horizon, so it depends
 
 Proxies the BRD calls "theo mô hình" (real estate, private equity) and our own stand-ins are
 flagged ``modelled`` with the reason in ``method``; holdings no factor moves (cash, deposits,
-insurance, card debt) get no loads and say so.
+insurance, card debt) get no loads and say so. A class the code does not know can be declared in the
+factor model's configuration (``loadings.classes``: label, loads per factor unit; NFR-06).
 """
 
 from __future__ import annotations
@@ -135,6 +136,16 @@ def exposure(h: Dict[str, Any], model: FactorModel, months: float) -> Exposure:
             e.method = f"Vay VND thả nổi: chi phí lãi tăng thêm trong {_months_label(months)}"
         else:
             e.method = "Vay lãi cố định: không đổi theo lãi suất trong kỳ"
+    elif cls in (lo.get("classes") or {}):  # NFR-06: a class declared in the factor model's configuration
+        spec = lo["classes"][cls]
+        for f, per_unit in spec["loads"].items():
+            load(f, float(per_unit))
+        e.modelled = bool(spec.get("modelled", True))
+        e.method = spec.get("method") or (
+            f"{spec['label']}: "
+            + ", ".join(f"{v:g} × {model.factor(f).name}" for f, v in spec["loads"].items())
+            + " (khai báo trong cấu hình mô hình)"
+        )
     else:  # cash, deposit, card, insurance, anything new
         e.method = {
             "cash": "Tiền VND: không chịu tác động giá",

@@ -136,7 +136,7 @@ def catalogue() -> Dict[str, Any]:
                 "latest_run": _latest_run(e["id"]) if e["id"] in ("cio", "challenger") else None,
             }
         )
-    return {"agents": out, "references": REFS, "prompt_version": agents.PROMPT_VERSION}
+    return {"agents": out, "references": REFS, "prompt_version": agents.prompt_version()}
 
 
 def quality(days: int = 7) -> Dict[str, Any]:

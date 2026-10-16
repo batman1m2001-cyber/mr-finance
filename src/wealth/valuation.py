@@ -269,9 +269,12 @@ def onehousing(owner: str, raw: Dict[str, Any], market: Dict[str, Any]) -> List[
 
 def open_api(owner: str, raw: List[Dict[str, Any]], market: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Other banks and brokers the client let us read (Open API, NHNN's framework)."""
+    from control import config
+
+    needed = config.data("consent")["require"]["open_api"]  # Compliance's consent configuration
     out = []
     for inst in raw or []:
-        if not inst.get("consent"):
+        if needed and not inst.get("consent"):
             continue
         name = inst["institution"]
         for a in inst.get("accounts", []):

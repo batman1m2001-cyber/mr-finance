@@ -338,7 +338,7 @@ def test_live_mode_uses_two_models_and_no_client_data_reaches_them(live):
     assert r["challenges"][0]["independent"] and r["challenges"][0]["model"] == "vendor/small-model"
     assert any(f["source"] == "model" for f in r["challenges"][0]["findings"])
     nodes = r["runs"][0]["nodes"]
-    assert all(n["prompt_version"] == agents.PROMPT_VERSION for n in nodes if n["mode"] == "live")
+    assert all(n["prompt_version"] == "CF-prompts-v1" for n in nodes if n["mode"] == "live")
     assert any(n["tokens_in"] == 100 for n in nodes if n["node"].startswith("analyst"))
     # the barrier (BR-11): no client name, account, holding or amount is in anything the models saw
     text = json.dumps(live.sent, ensure_ascii=False)

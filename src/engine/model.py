@@ -23,6 +23,24 @@ REGIMES = ("normal", "stressed")
 SIZES = ("S", "M", "L")
 
 
+# classes the engine's code values (engine.loadings.exposure); others are declared in loadings.classes
+BUILT_IN_CLASSES = (
+    "stock",
+    "bond",
+    "fund",
+    "gold",
+    "crypto",
+    "fx",
+    "real_estate",
+    "business",
+    "loan",
+    "cash",
+    "deposit",
+    "card",
+    "insurance",
+)
+
+
 class FactorModelError(ValueError):
     """The factor model file is not one the engine may run on."""
 
@@ -116,6 +134,18 @@ class FactorModel:
         n = len(ids)
         if len(set(ids)) != n:
             raise FactorModelError("duplicate factor ids")
+        for cls, spec in (self.loadings.get("classes") or {}).items():
+            # NFR-06: an asset class declared by configuration — its label and loads per factor unit
+            if cls in BUILT_IN_CLASSES:
+                raise FactorModelError(f"class {cls}: already built into the engine")
+            loads = spec.get("loads") if isinstance(spec, dict) else None
+            if not (isinstance(spec, dict) and spec.get("label") and isinstance(loads, dict)):
+                raise FactorModelError(f"class {cls}: needs a label and loads")
+            bad = [f for f in loads if f not in ids]
+            if bad:
+                raise FactorModelError(f"class {cls}: unknown factors {', '.join(bad)}")
+            if not all(isinstance(v, (int, float)) and abs(v) <= 5 for v in loads.values()):
+                raise FactorModelError(f"class {cls}: each load is a number within ±5")
         for f in self.factors:
             if set(f.sizes) != set(SIZES) or any(v <= 0 for v in f.sizes.values()):
                 raise FactorModelError(f"{f.id}: sizes must be S, M, L and positive")
