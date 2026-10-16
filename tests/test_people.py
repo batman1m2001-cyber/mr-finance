@@ -77,3 +77,15 @@ def test_reset_brings_the_people_back_to_their_seeds():
     assert store.everyone() != before
     store.reset()
     assert store.everyone() == before
+
+
+def test_a_staff_member_added_to_the_seed_joins_a_database_seeded_before():
+    from people import auth
+
+    auth.accounts()  # seeded with accounts
+    with store._db(write=True) as con:
+        con.execute("delete from accounts where person_id = 'admin2'")
+        con.execute("delete from people where id = 'admin2'")
+    store._TOPPED.clear()  # a new process opens the older database
+    assert [a["id"] for a in auth.accounts() if a["role"] == "admin"] == ["admin", "admin2"]
+    assert roles.users()["admin2"]["role"] == "admin"

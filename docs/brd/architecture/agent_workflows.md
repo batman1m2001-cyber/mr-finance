@@ -47,10 +47,12 @@ as challenger): the CIO agent took 26 s over 7 recorded nodes; the challenger 13
 | No client data in prompts | inputs of `gather`; prompt inspection | `test_live_mode_uses_two_models_and_no_client_data_reaches_them` |
 | Models and prompts as two-person config | — | not built (FEAT-14) |
 | Daily budget, cost per event | — | not built (NFR-10) |
-| Fixed evaluation set on prompt/model change | — | not built (BRD-RULE-MEAS-07); the pre-BRD `statement_reading` eval is the only eval |
+| Fixed evaluation set on prompt/model change | `src/views/evalset.py`, `data/agent_eval.json`, job `agent_eval`; approval refused until it passed (`control/config.py::decide`) | `tests/test_config_f4.py::test_a_prompt_change_runs_the_eval_set_and_needs_a_second_admin`, `tests/test_config_f4.py::test_a_proposal_that_fails_the_eval_set_cannot_be_approved` |
 
 ## Changing a model or a prompt
 
-Set `LLM_MODEL_CIO` / `LLM_MODEL_CHALLENGER` in `.env` (names in `.env.example`); prompts live in
-`src/views/agents.py` with `PROMPT_VERSION`. Bump the version with any prompt change so traces say which prompt
-produced a view, add a changelog line, and re-run a live check (each run ≈ 8 model calls on the owner's key).
+Both are configuration (Admin, two people; FEAT-14): propose new `prompts` or `models` in Cấu hình. The
+`agent_eval` job runs the fixed eval set on the proposal within a minute or so (six sample events through every
+step, ≈ 50 model calls on the owner's key); a second Admin approves once it passed. Every node records the id of
+the prompts version it used (`CF-prompts-vN`). Version 1 of the models is `LLM_MODEL_CIO` / `LLM_MODEL_CHALLENGER`
+in `.env`; version 1 of the prompts is `src/views/prompts.py::DEFAULT`.

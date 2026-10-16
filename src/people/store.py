@@ -10,14 +10,18 @@ broker, fund manager, housing platform, Open API) has for them. ``teams`` links 
 specialists.
 
 Seeds: ``data/clients/*.json`` and ``data/people/staff.json`` (scripts/make_people.py). They are loaded into an
-empty database, and again on demo reset (:func:`reset`), and are never read at request time. :func:`client`
+empty database, and again on demo reset (:func:`reset`), and are never read at request time. A staff member added
+to the seed after a database was made joins it, with an account, the first time a process opens it
+(:func:`_top_up`). :func:`client`
 puts a client back together exactly as their seed file reads.
 """
 
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
+import time
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional
 
@@ -91,6 +95,38 @@ def _seed(con: sqlite3.Connection) -> None:
             con.execute("insert into teams values (?, ?, 'specialist', ?, ?)", (cid, sid, int(sid in t["lead"]), pos))
 
 
+_TOPPED: set = set()
+
+
+def _top_up(con: sqlite3.Connection) -> None:
+    """Staff in the seed but not in a database seeded earlier (the second Admin, F4) are added, with an account
+    when their role has one. Nothing else in the database changes."""
+    have = {r[0] for r in con.execute("select id from people where kind = 'staff'")}
+    if not have:
+        return  # an empty database is seeded whole
+    missing = [s for s in _seed_staff()["staff"] if s["id"] not in have]
+    if not missing:
+        return
+    from people import auth
+
+    con.execute("begin immediate")
+    seq = con.execute("select coalesce(max(seq), 0) from people").fetchone()[0]
+    accounts = con.execute("select 1 from accounts limit 1").fetchone() is not None
+    demo = os.environ.get("MF_DEMO_PASSWORD") or ""
+    for s in missing:
+        seq += 1
+        con.execute(
+            "insert or ignore into people values (?, ?, 'staff', ?, ?, ?, null, null, ?)",
+            (s["id"], seq, s["role"], s["name"], s.get("email"), json.dumps(s, ensure_ascii=False)),
+        )
+        if accounts and s["role"] in auth.ACCOUNT_ROLES:  # with no accounts yet, auth seeds them all
+            con.execute(
+                "insert or ignore into accounts values (?, ?, ?, ?, null)",
+                (s["id"], (s.get("email") or s["id"]).lower(), auth.hash_password(demo) if demo else None, time.time()),
+            )
+    con.execute("commit")
+
+
 @contextmanager
 def _db(write: bool = False) -> Iterator[sqlite3.Connection]:
     path = state_path()
@@ -99,6 +135,9 @@ def _db(write: bool = False) -> Iterator[sqlite3.Connection]:
     con.row_factory = sqlite3.Row
     try:
         con.executescript(SCHEMA)
+        if str(path) not in _TOPPED:
+            _top_up(con)
+            _TOPPED.add(str(path))
         if write or not con.execute("select 1 from people limit 1").fetchone():
             con.execute("begin immediate")
             if not con.execute("select 1 from people limit 1").fetchone():

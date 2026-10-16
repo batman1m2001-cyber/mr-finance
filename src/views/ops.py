@@ -17,7 +17,7 @@ from engine import default_model
 from events import store as events
 from measure import forecasts
 from news.ops import config as news_config
-from views import agents, decide, schema
+from views import agents, decide, prompts, schema
 from views import store as vstore
 from views.preview import preview
 
@@ -83,6 +83,20 @@ async def analyse(lens: str, packet: dict, mode: str, run_id: str) -> dict:
 
 
 @op
+async def analyse_more(packet: dict, mode: str, run_id: str) -> dict:
+    """The analyst groups declared in the prompts configuration beyond the BRD's four (NFR-06), at once."""
+    import asyncio
+
+    extra = [k for k in agents.lenses() if k not in prompts.BUILT_IN_LENSES]
+    if not extra:
+        return {"notes": [], "error": ""}
+    words = news_config()["factor_words"]
+    got = await asyncio.gather(*(agents.analyst(k, packet, mode, run_id, words) for k in extra), return_exceptions=True)
+    errors = [str(g) for g in got if isinstance(g, BaseException)]
+    return {"notes": [g for g in got if not isinstance(g, BaseException)], "error": "; ".join(errors)}
+
+
+@op
 async def discuss(
     packet: dict,
     mode: str,
@@ -95,10 +109,12 @@ async def discuss(
     equity_error: str = "",
     credit_error: str = "",
     other_error: str = "",
+    more: Optional[list] = None,
+    more_error: str = "",
 ) -> dict:
     """The bull/bear debate, only when a row reaches ±2 or the groups disagree; at most two rounds."""
-    notes = [macro, equity, credit, other]
-    failed = "; ".join(e for e in (macro_error, equity_error, credit_error, other_error) if e)
+    notes = [macro, equity, credit, other] + list(more or [])
+    failed = "; ".join(e for e in (macro_error, equity_error, credit_error, other_error, more_error) if e)
     if failed or any(n is None for n in notes):
         return {"notes": [], "merged": None, "error": failed or "Một nhóm phân tích không trả kết quả"}
     try:
@@ -251,10 +267,18 @@ def agent_status() -> Dict[str, Any]:
     return {
         "mode": mode,
         "models": m if mode == "live" else {"cio": "mock", "challenger": "rules"},
-        "prompt_version": agents.PROMPT_VERSION,
+        "prompt_version": agents.prompt_version(),
         "budget": {**agents.budget(), "by_event": vstore.tokens()["by_subject"]},  # NFR-10: cost per event
     }
 
 
 def event_views(event_id: str) -> List[Dict[str, Any]]:
     return [{k: v.get(k) for k in ("id", "version", "status", "mode", "created")} for v in vstore.for_event(event_id)]
+
+
+@op
+async def run_evals(tick: str = None, at: str = None) -> dict:
+    """The fixed eval set on every prompt or model proposal still waiting for one (MEAS-07)."""
+    from views import evalset
+
+    return {"done": await evalset.run_pending()}

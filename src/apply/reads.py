@@ -28,6 +28,7 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
     if role not in VISIBLE:
         raise roles.Forbidden(f"vai trò {role!r} không có")
     statuses = VISIBLE[role]
+    labels = schema.class_labels()
     items: List[Dict[str, Any]] = []
     for run in runs.runs(statuses=statuses):
         try:
@@ -52,7 +53,7 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
             },
             "pct": r["pct"],
             "by_class": h3["by_class"],
-            "classes": {k: schema.ASSET_CLASSES.get(k, k) for k in h3["by_class"]},
+            "classes": {k: labels.get(k, k) for k in h3["by_class"]},
             "modelled_share": r["modelled_share"],
             "goal_impact": r.get("goal_impact"),  # FR-404; absent on runs computed before it
         }

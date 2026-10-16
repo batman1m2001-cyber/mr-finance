@@ -70,6 +70,13 @@
    "email": "admin@tcbwealth.example"
   },
   {
+   "id": "admin2",
+   "role": "admin",
+   "name": "Đỗ Minh Khôi",
+   "title": "Quản trị (người duyệt thứ hai)",
+   "email": "admin2@tcbwealth.example"
+  },
+  {
    "id": "sp_real_estate",
    "role": "specialist",
    "specialty": "real_estate",

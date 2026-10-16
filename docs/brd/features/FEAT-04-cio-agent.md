@@ -15,7 +15,7 @@ money figure and never sees client data.
 
 ## Preconditions and permissions
 Role `cio`. The event exists and is not held for the agent run itself (approval is what holds are checked
-against). Mode: `live` only when `LLM_MODEL_CIO` and `LLM_MODEL_CHALLENGER` are both set and differ; else
+against). Mode: `live` only when the two models of the `models` configuration (version 1: `LLM_MODEL_CIO` and `LLM_MODEL_CHALLENGER`) are both set and differ; else
 `mock` ([ADR-0010](../decisions/ADR-0010-two-configured-models-and-a-labelled-mock.md)).
 
 ## Behaviour (graph `cio_agent_flow`, BRD §8.1)
@@ -30,7 +30,7 @@ against). Mode: `live` only when `LLM_MODEL_CIO` and `LLM_MODEL_CHALLENGER` are 
    two retries**; still failing → the view goes to `AGENT_ERROR` and the CIO sees the errors.
 5. `save_view` — the valid view is stored with its content hash → `PENDING_CHALLENGE`.
 6. `review` — the challenger (FEAT-05).
-Every node is recorded with input, prompt, prompt version (`v1`), model, output and time (FR-704).
+Every node is recorded with input, prompt, prompt version (the `prompts` configuration version, `CF-prompts-v1` as shipped), model, output and time (FR-704).
 
 ## Rules (schema, BRD §8.2)
 summary in Vietnamese, ≥ 20 characters, no buy/sell wording; ≥ 1 impact row with a target in the catalogue,

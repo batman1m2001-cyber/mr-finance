@@ -17,9 +17,10 @@ and the steps that need two people get two people.
 - **People** (`src/people/store.py`, owner 2026-10-16): one table of everyone — customers and household members
   (`kind` client), their dependents, and the staff (`data/people/staff.json`, written by `scripts/make_people.py`):
   `cio` Trần Quang Huy, `cio2` Lê Thu Hà, RMs `rm01` Hoàng Hải Yến (C01, C04, C05), `rm02` Ngô Minh Châu (C02),
-  `rm03` Trần Quốc Bảo (C03), `compliance` Đỗ Minh Châu, `compliance2` Vũ Hải Nam, `admin`, and five
-  specialists. A family's team and its assigned RM (`people.rm_id`) come from the same rows, so “your RM” and the
-  RM who signs in are the same person.
+  `rm03` Trần Quốc Bảo (C03), `compliance` Đỗ Minh Châu, `compliance2` Vũ Hải Nam, `admin`, `admin2` Đỗ Minh
+  Khôi (the second Admin for prompts and models, F4), and five specialists. A family's team and its assigned RM
+  (`people.rm_id`) come from the same rows, so “your RM” and the RM who signs in are the same person. A staff member
+  added to the seed later joins a database made before, with an account (`store._top_up`).
 - **Accounts and sessions** (`src/people/auth.py`, [ADR-0020](../decisions/ADR-0020-sign-in-with-own-accounts.md)):
   everyone but the specialists and dependents has an account; login by e-mail or id; scrypt-hashed password; a
   signed HttpOnly cookie for 12 hours. A wrong login or password gets one answer, after a short delay, and every

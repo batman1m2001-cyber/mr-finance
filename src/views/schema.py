@@ -34,7 +34,8 @@ PRICED_IN = ("none", "partial", "full")
 REGIMES = ("normal", "stressed")
 SEVERITIES = ("critical", "medium", "low")
 
-# words a view must not use: it is market analysis, not advice to buy or sell (§8.2, F18)
+# words a view must not use: it is market analysis, not advice to buy or sell (§8.2, F18). Version 1 of the
+# forbidden_phrases configuration (``recommendation``); Compliance changes it there.
 FORBIDDEN = [
     "nên mua",
     "nên bán",
@@ -50,8 +51,13 @@ FORBIDDEN = [
     "all in",
     "tất tay",
 ]
-_FORBIDDEN = re.compile(r"(?<!\w)(" + "|".join(re.escape(w) for w in FORBIDDEN) + r")(?!\w)", re.IGNORECASE)
 _VIETNAMESE = re.compile(r"[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]", re.IGNORECASE)
+
+
+def class_labels() -> Dict[str, str]:
+    """Every asset class's label: the built-in ones and those declared in the factor model (NFR-06)."""
+    extra = default_model().loadings.get("classes") or {}
+    return {**ASSET_CLASSES, **{k: v["label"] for k, v in extra.items()}}
 
 
 def catalogue() -> Dict[str, Any]:
@@ -59,7 +65,7 @@ def catalogue() -> Dict[str, Any]:
     m = fixtures.market()
     model = default_model()
     return {
-        "asset_class": dict(ASSET_CLASSES),
+        "asset_class": class_labels(),
         "sector": sorted({v["sector"] for v in m["stocks"].values()} | {v["sector"] for v in m["bonds"].values()}),
         "ticker": {t: {"sector": v["sector"], "issuer": v["issuer"]} for t, v in sorted(m["stocks"].items())},
         "fx": ["USDVND"],
@@ -70,8 +76,23 @@ def catalogue() -> Dict[str, Any]:
     }
 
 
+_PATTERNS: Dict[str, Any] = {}
+
+
+def phrases_pattern(which: str) -> "re.Pattern[str]":
+    """The ``forbidden_phrases`` list in force (Compliance's configuration; ``FORBIDDEN`` above is its version 1)
+    as one pattern, rebuilt when a new version comes into force."""
+    from control import config
+
+    key = (which, config.active_hash("forbidden_phrases"))
+    if key not in _PATTERNS:
+        words = config.data("forbidden_phrases")[which]
+        _PATTERNS[key] = re.compile(r"(?<!\w)(" + "|".join(re.escape(w) for w in words) + r")(?!\w)", re.IGNORECASE)
+    return _PATTERNS[key]
+
+
 def forbidden_words(text: str) -> List[str]:
-    return sorted({m.group(0).lower() for m in _FORBIDDEN.finditer(text or "")})
+    return sorted({m.group(0).lower() for m in phrases_pattern("recommendation").finditer(text or "")})
 
 
 def split_restricted(impacts: List[Dict[str, Any]], restricted_tickers: List[str]) -> Tuple[list, list]:

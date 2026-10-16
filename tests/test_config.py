@@ -99,10 +99,15 @@ def test_the_endpoints():
         assert [k["kind"] for k in kinds] == [
             "factor_model",
             "thresholds",
+            "return_assumptions",
             "restricted",
+            "forbidden_phrases",
+            "consent",
             "news_sources",
             "price_sources",
             "ticker_map",
+            "prompts",
+            "models",
         ]
         r = c.post(
             "/api/config/propose",

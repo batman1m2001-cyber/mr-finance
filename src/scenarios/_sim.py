@@ -18,9 +18,14 @@ from typing import Any, Callable, Dict, List, Optional
 
 from wealth.money import TR, TY, pct, vnd
 
-SAFE = 0.05  # a 12-month deposit
-GROWTH = 0.07  # a balanced portfolio, long run
-INFLATION = 0.04
+
+def R() -> Dict[str, float]:
+    """The return assumptions in force: the CIO's ``return_assumptions`` configuration (BRD-RULE-SEC-05;
+    version 1 is ``control.config.RETURNS``: deposit 5 %, balanced portfolio 7 %, inflation 4 %, withdrawal 4 %,
+    rental yield 3.5 %, best deposit 6.5 %)."""
+    from control import config
+
+    return config.data("return_assumptions")
 
 
 @dataclass
@@ -84,9 +89,9 @@ def pmt(principal: float, rate: float, years: int) -> float:
     return principal * r / (1 - (1 + r) ** -n) if r else principal / n
 
 
-def saving_for(target: float, months: int, rate: float = SAFE) -> float:
+def saving_for(target: float, months: int, rate: Optional[float] = None) -> float:
     """What to put aside each month to have ``target`` in ``months`` (a deposit's interest)."""
-    r = rate / 12
+    r = (R()["safe"] if rate is None else rate) / 12
     return target * r / ((1 + r) ** months - 1) if r else target / months
 
 
@@ -250,20 +255,22 @@ def retire_early(p: Pic, prm: Dict[str, Any], withdraw: float = 0.0) -> Dict[str
     investable = p.value("cash", "deposit", "fund", "bond", "stock", "gold", "crypto") - p.debt - withdraw
     rent = sum((h["detail"].get("rental_monthly") or 0) * 12 for h in p.assets("real_estate"))
     years = max(0, at - age)
+    a = R()
+    growth, inflation, wd = a["growth"], a["inflation"], a["withdrawal"]
     pot = investable
     for _ in range(years):
-        pot = pot * (1 + GROWTH) + max(0.0, p.surplus) * 12
-    passive = pot * 0.04 + rent
+        pot = pot * (1 + growth) + max(0.0, p.surplus) * 12
+    passive = pot * wd + rent
     lasts, y, money = at, at, pot
     while y < 100 and money > 0:
-        money = money * (1 + GROWTH - INFLATION) + rent - spend
+        money = money * (1 + growth - inflation) + rent - spend
         y += 1
     lasts = y
     ok = passive >= spend
-    # the pot that pays the spending rent does not cover at a 4% withdrawal
-    need = max(0.0, spend - rent) / 0.04
+    # the pot that pays the spending rent does not cover at the withdrawal rate
+    need = max(0.0, spend - rent) / wd
     # already at the age: a year of saving is what is left to close a gap
-    grow = ((1 + GROWTH) ** years - 1) / GROWTH * 12 if years else 12.0
+    grow = ((1 + growth) ** years - 1) / growth * 12 if years and growth else 12.0 * max(years, 1)
     short = need - pot
     monthly = max(0.0, short / grow)
     idle = sum(h["value"] for h in p.assets("real_estate") if not h["detail"].get("rental_monthly"))
@@ -277,10 +284,10 @@ def retire_early(p: Pic, prm: Dict[str, Any], withdraw: float = 0.0) -> Dict[str
             act(f"Tăng tích lũy thêm {vnd(monthly)}/tháng vào quỹ cân bằng", short, "light"),
             act(
                 "Làm thêm 2 năm trước khi nghỉ",
-                pot * ((1 + GROWTH) ** 2 - 1) + max(0.0, p.surplus) * 24 + need * 0.04 * 2,
+                pot * ((1 + growth) ** 2 - 1) + max(0.0, p.surplus) * 24 + need * wd * 2,
                 "light",
             ),
-            act("Cho thuê hoặc bán BĐS chưa tạo thu nhập", idle * 0.035 / 0.04, "heavy"),
+            act("Cho thuê hoặc bán BĐS chưa tạo thu nhập", idle * a["rental_yield"] / wd, "heavy"),
         ],
         have_label=f"Dự kiến có lúc {at} tuổi",
         floor=OFF_TRACK if lasts < 85 else AT_RISK if lasts < 90 else ON_TRACK,
@@ -359,8 +366,8 @@ def sell_home(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
             line("Giữ lại: lợi suất thuê + tăng giá", pct(keep_yield)),
             line(
                 "Bán rồi gửi kỳ hạn / trái phiếu ngân hàng",
-                f"{pct(SAFE)} – {pct(0.065)}",
-                "good" if keep_yield < 0.065 else "neutral",
+                f"{pct(R()['safe'])} – {pct(R()['best_deposit'])}",
+                "good" if keep_yield < R()["best_deposit"] else "neutral",
             ),
             line("Thời gian bán ước tính", f"{area.get('months_to_sell', 12)} tháng"),
         ],
@@ -389,7 +396,7 @@ def leverage_buy(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
     ratio = float(prm.get("loan_ratio") or 0.7)
     years = int(prm.get("years") or 20)
     rate = float(prm.get("rate") or p.market["rates"]["mortgage_floating"])
-    rent = float(prm.get("rent_monthly") if prm.get("rent_monthly") is not None else price * 0.035 / 12)
+    rent = float(prm.get("rent_monthly") if prm.get("rent_monthly") is not None else price * R()["rental_yield"] / 12)
     loan, down = price * ratio, price * (1 - ratio)
     pay, shock = pmt(loan, rate, years), pmt(loan, rate + 0.02, years)
     income = p.profile.get("income_monthly") or 1
@@ -875,8 +882,8 @@ def usd_up(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
 # The same goal, run again on the holdings as they were a month ago and at the start of the year
 # (each holding's prev_value / ytd_value; flat when unknown), says how the gap moved. The pool
 # that funds it — what is invested, for retirement; what can be had within days beyond six months
-# of spending, for the rest — is held against what the plan expects of it: its rate (GROWTH or
-# SAFE) plus the monthly saving the plan asks for.
+# of spending, for the rest — is held against what the plan expects of it: its rate (growth or
+# safe, from the return assumptions) plus the monthly saving the plan asks for.
 
 INVESTED_POOL = ("cash", "deposit", "fund", "bond", "stock", "gold", "crypto")
 
@@ -899,7 +906,7 @@ def _pool_holdings(p: Pic, invested: bool) -> List[Dict[str, Any]]:
 def track(run: Callable[[Pic, Dict[str, Any]], Dict[str, Any]], p: Pic, params: Dict[str, Any], scenario: str):
     """How the goal and the pool that funds it moved this month and this year, against the plan."""
     invested = scenario == "retire_early"
-    rate = GROWTH if invested else SAFE
+    rate = R()["growth"] if invested else R()["safe"]
     now, prev, start = p, _as_of(p, "prev_value"), _as_of(p, "ytd_value")
     g_now, g_prev, g_start = (run(x, params)["goal"] for x in (now, prev, start))
     pool_now, pool_prev, pool_start = (_pool(x, invested) for x in (now, prev, start))

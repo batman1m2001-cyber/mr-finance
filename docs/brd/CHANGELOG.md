@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Configuration completes (BRD completion F4): return assumptions (CIO), forbidden phrases and
+  consent (Compliance), prompts and models (Admin, two people) as versioned configuration the product reads; the
+  fixed eval set (six sample events, `agent_eval` job) gates every prompt or model change; each agent node records
+  the prompts version; asset classes and analyst groups declared by configuration (NFR-06); a second Admin
+  account — FEAT-14, FEAT-04, agent_workflows, matrix (FR-701, NFR-06, AI-02, SEC-05, MEAS-07 verified; SEC-04
+  partial), SCR-CIO-09.
+
 - 2026-10-16 — Accuracy over time and the measurement reports (BRD completion F3): the model walked forward over
   2021–2026 market history per factor and horizon (band coverage, direction from engine step 2); every approved
   view's forecasts recorded at approval and scored by the daily `accuracy_score` job; monthly misses, approval

@@ -1,11 +1,13 @@
 """Versioned, owned configuration (BRD FR-701, §13.1, ADR-0016): propose, then approve.
 
-Kinds: the factor model, alert thresholds, the restricted list, the news sources (white list), the market data
-sources and the ticker map (F1). Version 1 of each
-is the file shipped in data/ (or the defaults below); every change is a new version that is PROPOSED, then
-APPROVED (it becomes ACTIVE and the one before SUPERSEDED) or REJECTED, by a user of the owner's role. Where
-§13.1 and F14 ask for two people, the approver must not be the proposer. Every step is in the audit chain, and
-the content of each version is hashed.
+Kinds (BRD-RULE-SEC-05): the factor model, alert thresholds and return assumptions (CIO); the restricted list,
+forbidden phrases and data-sharing consent (Compliance); the news sources, the market data sources and the ticker
+map (Admin); the agents' prompts and models (Admin). Version 1 of each is the file shipped in data/ (or the
+defaults in code; for the models, what the deployment set in .env); every change is a new version that is
+PROPOSED, then APPROVED (it becomes ACTIVE and the one before SUPERSEDED) or REJECTED, by a user of the owner's
+role. Where §13.1 and F14 ask for two people, the approver must not be the proposer. A prompt or model proposal
+is approved only after the fixed eval set passed on it (MEAS-07, ``views.evalset``, the ``agent_eval`` job). Every
+step is in the audit chain, and the content of each version is hashed.
 """
 
 from __future__ import annotations
@@ -98,6 +100,98 @@ def _check_price_sources(data: Any) -> None:
                 raise ValueError(f"{s['id']}: nguồn {src.get('source')!r} không có (có: {sorted(ADAPTERS)})")
 
 
+RETURNS = {  # the life-scenario simulator's rates a year (scenarios._sim)
+    "safe": 0.05,  # a 12-month deposit
+    "growth": 0.07,  # a balanced portfolio, long run
+    "inflation": 0.04,
+    "withdrawal": 0.04,  # what a pot can pay out a year without running down
+    "rental_yield": 0.035,  # gross rent of a property a year
+    "best_deposit": 0.065,  # the best 12-month deposit on the market (what idle cash is compared to)
+}
+
+
+def _check_returns(data: Any) -> None:
+    if not isinstance(data, dict) or set(data) != set(RETURNS):
+        raise ValueError(f"giả định lợi suất phải có đúng các khóa {sorted(RETURNS)}")
+    for k, v in data.items():
+        if not isinstance(v, (int, float)) or not 0 <= v <= 0.3:
+            raise ValueError(f"{k}: một tỷ lệ năm trong khoảng 0 … 0,3")
+    if data["safe"] > data["best_deposit"]:
+        raise ValueError("safe không lớn hơn best_deposit (lãi tiền gửi tốt nhất)")
+
+
+def _forbidden_base() -> Dict[str, List[str]]:
+    from procedural import goals
+    from views import schema
+
+    return {"recommendation": list(schema.FORBIDDEN), "compliance": list(goals.FORBIDDEN)}
+
+
+def _check_forbidden(data: Any) -> None:
+    if not isinstance(data, dict) or set(data) != {"recommendation", "compliance"}:
+        raise ValueError("cần hai danh sách: recommendation (khuyến nghị mua/bán) và compliance (ghi chú quy định)")
+    for k, words in data.items():
+        if not isinstance(words, list) or not words:
+            raise ValueError(f"{k}: một danh sách khác rỗng")
+        if not all(isinstance(w, str) and w.strip() and len(w) <= 60 for w in words):
+            raise ValueError(f"{k}: mỗi cụm từ là chuỗi 1–60 ký tự")
+
+
+CONSENT = {
+    "version": "2026-10",
+    "text": (
+        "Tôi đồng ý cho Ngân hàng đọc số dư và giao dịch của tôi tại các tổ chức tôi chọn (qua Open API theo khuôn khổ "
+        "của NHNN) và cho thành viên chủ hộ xem tài sản của tôi trong bức tranh gia đình. Tôi có thể rút lại đồng ý "
+        "bất cứ lúc nào."
+    ),
+    "require": {"open_api": True, "family_member": True},
+}
+
+
+def _check_consent(data: Any) -> None:
+    if not isinstance(data, dict) or not str(data.get("version", "")).strip():
+        raise ValueError("cần version của mẫu đồng ý")
+    if not isinstance(data.get("text"), str) or len(data["text"].strip()) < 40:
+        raise ValueError("cần nội dung đồng ý (ít nhất 40 ký tự)")
+    req = data.get("require")
+    if (
+        not isinstance(req, dict)
+        or set(req) != set(CONSENT["require"])
+        or not all(isinstance(v, bool) for v in req.values())
+    ):
+        raise ValueError(f"require: đúng các khóa {sorted(CONSENT['require'])}, giá trị true/false")
+
+
+def _models_base() -> Dict[str, str]:
+    import os
+
+    return {
+        "cio": (os.environ.get("LLM_MODEL_CIO") or "").strip(),
+        "challenger": (os.environ.get("LLM_MODEL_CHALLENGER") or "").strip(),
+    }
+
+
+def _check_models(data: Any) -> None:
+    if not isinstance(data, dict) or set(data) != {"cio", "challenger"}:
+        raise ValueError("cần đúng hai mô hình: cio và challenger")
+    if not all(isinstance(v, str) and v.strip() and len(v) <= 120 for v in data.values()):
+        raise ValueError("tên mô hình là chuỗi 1–120 ký tự")
+    if data["cio"].strip() == data["challenger"].strip():
+        raise ValueError("Agent CIO và Agent Phản biện phải dùng hai mô hình khác nhau (§8.3)")
+
+
+def _prompts_base() -> Dict[str, Any]:
+    from views import prompts
+
+    return prompts.default()
+
+
+def _check_prompts(data: Any) -> None:
+    from views import prompts
+
+    prompts.check(data)
+
+
 def _check_ticker_map(data: Any) -> None:
     if not isinstance(data, dict) or not data:
         raise ValueError("bảng mã là một bảng khác rỗng")
@@ -121,12 +215,33 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "base": lambda: dict(THRESHOLDS),
         "check": _check_thresholds,
     },
+    "return_assumptions": {
+        "label": "Giả định lợi suất",
+        "owner": "cio",
+        "two_person": False,
+        "base": lambda: dict(RETURNS),
+        "check": _check_returns,
+    },
     "restricted": {
         "label": "Danh sách hạn chế",
         "owner": "compliance",
         "two_person": True,
         "base": _file("news_config.json", "restricted"),
         "check": _check_restricted,
+    },
+    "forbidden_phrases": {
+        "label": "Cụm từ cấm",
+        "owner": "compliance",
+        "two_person": False,
+        "base": _forbidden_base,
+        "check": _check_forbidden,
+    },
+    "consent": {
+        "label": "Đồng ý chia sẻ dữ liệu",
+        "owner": "compliance",
+        "two_person": False,
+        "base": lambda: json.loads(json.dumps(CONSENT)),
+        "check": _check_consent,
     },
     "news_sources": {
         "label": "Nguồn tin (danh sách trắng)",
@@ -149,6 +264,23 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "base": _file("market_sources.json", "ticker_map"),
         "check": _check_ticker_map,
     },
+    "prompts": {
+        "label": "Lời nhắc của agent",
+        "owner": "admin",
+        "two_person": True,
+        "eval": True,
+        "base": _prompts_base,
+        "check": _check_prompts,
+    },
+    "models": {
+        "label": "Mô hình AI của agent",
+        "owner": "admin",
+        "two_person": True,
+        "eval": True,
+        "from_env": True,  # version 1 is what the deployment set (LLM_MODEL_CIO, LLM_MODEL_CHALLENGER)
+        "base": _models_base,
+        "check": _check_models,
+    },
 }
 
 
@@ -162,9 +294,17 @@ def _kind(kind: str) -> Dict[str, Any]:
     return KINDS[kind]
 
 
-@lru_cache(maxsize=None)
 def _base_text(kind: str) -> tuple:
-    """The shipped version as canonical JSON and its hash (files do not change while the app runs)."""
+    """The shipped version as canonical JSON and its hash (files do not change while the app runs; the models'
+    version 1 is read from the environment each time)."""
+    if _kind(kind).get("from_env"):
+        data = KINDS[kind]["base"]()
+        return db.dumps(data), _hash(data)
+    return _base_file_text(kind)
+
+
+@lru_cache(maxsize=None)
+def _base_file_text(kind: str) -> tuple:
     data = _kind(kind)["base"]()
     return db.dumps(data), _hash(data)
 
@@ -208,6 +348,8 @@ def _in_force(kind: str) -> tuple:
         if row:
             d = json.loads(row["data"])
             _CACHE[key] = (db.dumps(d["data"]), d["hash"])
+        elif KINDS[kind].get("from_env"):
+            return _base_text(kind)
         else:
             _CACHE[key] = _base_text(kind)
     return _CACHE[key]
@@ -281,6 +423,12 @@ def decide(version_id: str, action: str, by: str, note: str = "") -> Dict[str, A
             raise ValueError(f"{version_id} đã {v['status']}")
         if action == "approve" and k["two_person"] and by == v["proposed_by"]:
             raise roles.Forbidden("Cần người thứ hai duyệt: người đề xuất không tự duyệt (§13.1)")
+        if action == "approve" and k.get("eval"):
+            ev = v.get("eval") or {}
+            if ev.get("status") != "done":
+                raise ValueError("Chưa duyệt được: bộ đánh giá cố định chưa chạy xong trên đề xuất này (MEAS-07)")
+            if not ev.get("passed"):
+                raise ValueError(f"Chưa duyệt được: đề xuất không qua bộ đánh giá cố định — {ev.get('summary', '')}")
         now = time.time()
         status = "ACTIVE" if action == "approve" else "REJECTED"
         if status == "ACTIVE":
@@ -291,6 +439,8 @@ def decide(version_id: str, action: str, by: str, note: str = "") -> Dict[str, A
                 q2 = "update config_versions set status = 'SUPERSEDED', data = ? where id = ?"
                 con.execute(q2, (db.dumps(d), old["id"]))
         body = {k2: v[k2] for k2 in ("data", "hash", "proposed_by", "note", "history")}
+        if v.get("eval"):
+            body["eval"] = v["eval"]
         body["history"].append({"at": now, "by": by, "status": status, "note": str(note or "")[:500]})
         body["decided_by"] = by
         q = "update config_versions set status = ?, data = ? where id = ?"
@@ -300,11 +450,53 @@ def decide(version_id: str, action: str, by: str, note: str = "") -> Dict[str, A
     return next(x for x in versions(v["kind"]) if x["id"] == version_id)
 
 
+def get(version_id: str) -> Dict[str, Any]:
+    with db.tx() as con:
+        v = db.load(con.execute("select * from config_versions where id = ?", (version_id,)).fetchone())
+    if v is None:
+        raise ValueError(f"không có phiên bản {version_id}")
+    return v
+
+
+def pending_evals() -> List[Dict[str, Any]]:
+    """Proposals of an eval-gated kind whose eval has not finished (or started more than 30 minutes ago)."""
+    out = []
+    for kind, k in KINDS.items():
+        if not k.get("eval"):
+            continue
+        for v in versions(kind):
+            ev = v.get("eval") or {}
+            if v["status"] == "PROPOSED" and (
+                not ev or (ev.get("status") == "running" and time.time() - ev.get("started", 0) > 1800)
+            ):
+                out.append(v)
+    return out
+
+
+def set_eval(version_id: str, result: Dict[str, Any]) -> None:
+    """The eval set's state or result on a proposal (MEAS-07); in the audit chain when it is done."""
+    with db.tx() as con:
+        row = con.execute("select data, status from config_versions where id = ?", (version_id,)).fetchone()
+        if row is None or row["status"] != "PROPOSED":
+            return
+        d = json.loads(row["data"])
+        d["eval"] = result
+        con.execute("update config_versions set data = ? where id = ?", (db.dumps(d), version_id))
+        if result.get("status") == "done":
+            audit.append(
+                con,
+                "job:agent_eval",
+                "config.eval",
+                version_id,
+                {"passed": result.get("passed"), "summary": result.get("summary"), "runs": result.get("runs")},
+            )
+
+
 def overview() -> List[Dict[str, Any]]:
     out = []
     for kind, k in KINDS.items():
         vs = versions(kind)
-        keep = ("id", "version", "status", "created", "proposed_by", "decided_by", "note", "hash")
+        keep = ("id", "version", "status", "created", "proposed_by", "decided_by", "note", "hash", "eval")
         out.append(
             {
                 "kind": kind,
@@ -312,6 +504,7 @@ def overview() -> List[Dict[str, Any]]:
                 "owner": k["owner"],
                 "owner_label": roles.ROLE_LABELS[k["owner"]],
                 "two_person": k["two_person"],
+                "eval": bool(k.get("eval")),
                 "active": next(v for v in vs if v["status"] == "ACTIVE"),
                 "pending": next((v for v in vs if v["status"] == "PROPOSED"), None),
                 "versions": [{x: v.get(x) for x in keep} for v in vs],

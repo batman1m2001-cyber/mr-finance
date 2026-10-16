@@ -73,6 +73,13 @@ def staff() -> list:
             "email": f"nam.vu@{D}",
         },
         {"id": "admin", "role": "admin", "name": "Quản trị demo", "title": "Quản trị", "email": f"admin@{D}"},
+        {
+            "id": "admin2",
+            "role": "admin",
+            "name": "Đỗ Minh Khôi",
+            "title": "Quản trị (người duyệt thứ hai)",
+            "email": f"admin2@{D}",
+        },
     ]
     for s in adv.SPECIALISTS:
         out.append(
