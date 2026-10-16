@@ -7,7 +7,7 @@
    server takes the user from the session, never from the page. Only with sign-in switched off (MF_AUTH=off, a
    developer's machine) does the old role switcher appear. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261017r4";
+import {mount as mountCopilot} from "./copilot.js?v=20261017r5";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261017r2";
 
@@ -199,7 +199,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261017r2`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261017r3`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

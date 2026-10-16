@@ -43,3 +43,12 @@ sinks = []
 # memory item, or a document of up to 5 MB — into .operonx/runs in clear.
 [tracing.services.assistant_memory]
 sinks = []
+
+# The assistant itself (A7): a question and its answer are a person's words, and the ops' inputs hold them — the
+# audit log keeps each turn without its text (`assistant.turn`), and the Agent page's map reads that, not traces.
+[tracing.services.assistant]
+sinks = []
+[tracing.services.copilot]
+sinks = []
+[tracing.services.assistant_conversations]
+sinks = []

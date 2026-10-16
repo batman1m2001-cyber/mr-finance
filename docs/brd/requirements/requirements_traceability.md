@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 39 | 29 | 3 | 0 | 6 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 39 | 32 | 3 | 0 | 3 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -286,9 +286,9 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-AS-17 | FEAT-38 | implemented_verified | A5: operonx-kb 0.2.6 collections `product` and `materials` in `data/kb/`, lexical only (ADR-0029 amended: embeddings measured, not used) — `tests/test_assistant_knowledge.py::test_the_guide_is_synced_once_and_an_unchanged_file_is_skipped`, `::test_what_is_not_a_document_is_refused`, `tests/ui/test_memory_ui.py::test_a_document_is_added_found_and_deleted` |
 | OWN-AS-18 | FEAT-39 | implemented_verified | A6: the memory consolidator (job `assistant_consolidate`) and follow-ups (`theo_doi`, checked by the market and news jobs, no model) beside the existing agents (ADR-0031) — `tests/test_assistant_agents.py::test_where_the_model_may_not_read_nothing_is_sent`, `::test_a_market_follow_up_fires_once_for_its_owner_only`, `::test_a_topic_follow_up_fires_on_an_event_approved_after_it`, `tests/ui/test_memory_ui.py::test_a_fired_follow_up_rings_once_and_an_open_one_is_cancelled` |
 | OWN-AS-19 | FEAT-39 | implemented_verified | A6: follow-ups checked when their data arrives (the market and news jobs), the consolidator every 5 minutes on idle changed conversations only; ≤ 8,000 tokens, merged repeats, 2 retries, runs with tokens and cost; ~US$0.00024 a conversation on the real model — `tests/test_assistant_agents.py::test_a_long_conversation_keeps_to_the_budget_newest_first`, `::test_a_failure_is_retried_twice_then_left`, `::test_the_cost_per_day_adds_up` |
-| OWN-AS-20 | FEAT-15 | planned | A7: the map on the Agent page (ADR-0033) |
-| OWN-AS-21 | FEAT-15 | planned | A7: states from records, compared with traces |
-| OWN-AS-22 | FEAT-15 | planned | A7: kit look, desktop and phone |
+| OWN-AS-20 | FEAT-15 | implemented_verified | A7: the map on the Agent page — the person, the assistant and its 35 tools in four families, the CIO desk, the rules, the background agents and the data; 27 lines, each a `file::symbol` checked; overview first, a part's runs and a run's steps in drawers — `tests/test_agent_map.py::test_every_edge_names_code_that_exists_and_joins_two_nodes`, `::test_every_tool_of_the_assistant_is_on_the_map_once`, `tests/ui/test_agent_map_ui.py::test_the_map_draws_what_the_endpoint_says_and_opens_a_run`, `::test_the_panel_links_the_desk_to_the_map` |
+| OWN-AS-21 | FEAT-15 | implemented_verified | A7: Đang chạy / Đang chờ / Hoàn tất / Lỗi / Chưa chạy from the audit log, `parked`, `agent_jobs`, `agent_runs`, `consolidations`, `follow_ups` and the jobs' run records; the real jobs run in the test and the map's states match their traces — `tests/test_agent_map.py::test_the_policy_sweep_state_matches_its_traces`, `::test_the_consolidator_state_matches_what_its_traces_report`, `::test_the_cio_desk_states_match_the_worker_trace`, `::test_the_assistant_state_comes_from_its_audited_turns` |
+| OWN-AS-22 | FEAT-15 | implemented_verified | A7: the kit's tokens, icon chips and pills, lanes per group, plain lines only where code connects; light and dark; a list per group on a phone with no sideways scroll — `tests/test_agent_map.py::test_every_part_wears_an_icon_the_kit_has`, `tests/ui/test_agent_map_ui.py::test_on_a_phone_the_map_is_a_list_per_group`; screenshots SCR-CIO-08 |
 | OWN-AS-23 | — | planned | A8: `evals/assistant/` on real models (ADR-0034) |
 | OWN-AS-24 | — | planned | A8: the gate and the readiness report |
 | OWN-AS-25 | — | planned | A0 audit and documents (assistant.md, ADR-0026…0034); kept per phase |

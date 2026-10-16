@@ -23,3 +23,16 @@ drill-down, integrated in the existing UI and in the kit's visual language.
 ## Consequences
 
 The catalogue table stays below the map. A wrong edge or state is a failing test, not a drawing mistake.
+
+## Notes (as built, A7, 2026-10-17)
+
+- Built as decided: `src/views/ecosystem.py` (21 parts, 27 lines, each line's `file::symbol` checked by a test),
+  `GET /api/agents/map` and `/api/agents/map/<part>` (CIO, Compliance, Admin), `web/pages/agents.js`.
+- The groups are six, not four: the person and the data are drawn as their own lanes so each line crosses one gap.
+- *Assistant runs* are its audited turns, not traces: tracing the assistant's services copied the person's question
+  into `.operonx/runs`, so A7 turned those traces off. Jobs keep their traces (they hold counts) and the map's
+  drill-down reads their ops from them.
+- *A run opens the existing trace drawer*: the existing drawer (`trace.js`) explains an application run's numbers;
+  the map's run drawer is its own (steps, status, time) in the same `core.drawer`.
+- Desktop: lanes in three columns with plain lines (one colour, lit with the selected part); the main path of a
+  question is a numbered strip above that lights its parts. Phone: a list per group, the lines in each part's drawer.

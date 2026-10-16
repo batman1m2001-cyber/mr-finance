@@ -147,16 +147,23 @@ CIO approves it.
 
 ---
 
-## SCR-CIO-08 — Agent (catalogue and AI quality)
+## SCR-CIO-08 — Agent (the ecosystem map, catalogue and AI quality)
 
 | | |
 |---|---|
-| Route | `#/cio/agent`; Compliance: `#/compliance/agent` |
+| Route | `#/cio/agent`; Compliance: `#/compliance/agent`; Admin: `#/admin/agent` |
 | Generation | new (`web/pages/agents.js`) |
 | Feature | [FEAT-15](../../features/FEAT-15-agent-catalogue.md) |
-| Requirements | BRD-FR-703, BRD-RULE-MEAS-04 |
-| Data | `GET /api/agents/catalogue?days=7` |
+| Requirements | BRD-FR-703, BRD-RULE-MEAS-04, OWN-AS-20…22 |
+| Data | `GET /api/agents/map`, `GET /api/agents/map/<part>[?run=<id>]`, `GET /api/agents/catalogue?days=7` |
 | Screenshots | [desktop](../../assets/current_ui/SCR-CIO-08_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-CIO-08_phone-light.jpg) |
+
+**The map** (A7, ADR-0033) first: the five steps of a question as numbered chips (each lights its parts), the count
+of parts per state and “Làm mới”; then the person on top and three columns of lanes — Cửa trước (the assistant, the
+fallback, four tool families), Dữ liệu, and Bàn CIO / Luật / Chạy nền — each part a card with its icon, the last
+day's runs and a state pill; plain lines with arrows between them. Hover lights a part's lines; a click opens a drawer
+(what it does, what it reads, model, lines with their code, tools, last runs); a run opens its steps. Phone: a list per
+group. Below, the catalogue:
 
 One card per task: name and mode badge (Trực tiếp / Mô phỏng / Từ khóa / Mẫu tất định / Chưa xây), purpose, owner,
 risk (badge and why), model (configured and the BRD default, with the resource), what it may read, latest run (id,
