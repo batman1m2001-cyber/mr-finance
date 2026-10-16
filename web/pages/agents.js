@@ -1,7 +1,7 @@
 /* Danh mục agent (BRD FR-703) and AI quality (RULE-MEAS-04): one card per language-model task, what it may read,
    who owns it, its risk, the BRD's default model and the one configured now, its latest run; then the week's
    figures from what is stored. */
-import {esc, get, pct, when} from "../core/core.js";
+import {esc, get, n as how, pct, when} from "../core/core.js";
 
 const MODE = {live: ["good", "Trực tiếp"], mock: ["", "Mô phỏng"], keyword: ["", "Từ khóa (mô phỏng)"],
   template: ["", "Mẫu tất định"], not_built: ["warn", "Chưa xây"]};
@@ -28,7 +28,7 @@ export async function render(box) {
         </tbody></table></div>`).join("")}
       <div class="panel c6"><h3>Chất lượng AI <span class="hint">${q.days} ngày qua · từ đầu</span></h3>
         <table class="table"><thead><tr><th></th><th class="r">${q.days} ngày</th><th class="r">Từ đầu</th></tr></thead><tbody>
-          ${fig("decided", "Nhận định đã quyết")}${fig("edited_share", "Tỷ lệ CIO sửa kịch bản", (x) => pct(x, false, 0))}
+          ${fig("decided", "Nhận định đã quyết")}${fig("edited_share", "Tỷ lệ CIO sửa kịch bản", (x) => how(pct(x, false, 0), "agent.edited_share"))}
           ${fig("findings", "Phát hiện của phản biện")}${fig("critical_findings", "— trong đó nghiêm trọng")}
           ${fig("agent_runs", "Lần chạy agent")}${fig("failed_runs", "— lỗi")}${fig("format_retries", "Viết lại vì sai định dạng")}
         </tbody></table><div class="footnote">Đếm từ dữ liệu đã lưu (nhận định, phản biện, lần chạy agent); BRD §16.3.</div></div>

@@ -42,7 +42,7 @@ export async function render(box, ctx) {
       <div class="list">${items.length ? items.slice(0, state.shown).map(i => `
         <label class="item" style="cursor:pointer">
           <input type="checkbox" data-id="${esc(i.id)}" ${state.picked.has(i.id) ? "checked" : ""} aria-label="Chọn ${esc(i.title)}">
-          <div><div class="t">${esc(i.title)}</div>
+          <div><div class="t" data-quote>${esc(i.title)}</div>
             <div class="m">${esc(i.outlet)} · ${esc(i.label)} · ${when(i.published)}${i.event_type ? ` · ${esc(EVENT_TYPE[i.event_type] || i.event_type)}` : ""}${i.held ? ' · <span class="badge bad">bị giữ: danh sách hạn chế</span>' : ""}</div></div>
           <span class="badge ${REL[i.relevance][0]}">${REL[i.relevance][1]}</span>
         </label>`).join("") : empty("Không có tin nào khớp bộ lọc")}</div>

@@ -1,6 +1,6 @@
 /* CIO · Sự kiện & nhận định: events, the CIO agent's view of each, the independent challenge, and the
    decision. The page shows what the server decided (status, checks, findings); it decides nothing. */
-import {ASSET_CLASS, EVENT_TYPE, HORIZON, empty, esc, get, post, pct, toast, viewBadge, viewLabel, when, runBadge, severity, signClass, vnd} from "../core/core.js";
+import {ASSET_CLASS, EVENT_TYPE, HORIZON, empty, esc, get, post, pct, toast, viewBadge, viewLabel, when, runBadge, severity, signClass, vnd, n as how} from "../core/core.js";
 import {moves, probBar, slot} from "../charts/charts.js";
 
 const STEPS = [["DRAFTING", "Agent soạn"], ["PENDING_CHALLENGE", "Phản biện"], ["PENDING_APPROVAL", "CIO duyệt"], ["APPROVED", "Đã duyệt"]];
@@ -26,7 +26,7 @@ async function renderList(box, ctx) {
       const v = e.views[e.views.length - 1];
       return `<a class="item" href="${ctx.href("nhan-dinh", v ? v.id : e.id)}" style="text-decoration:none;color:inherit">
         <span class="badge">${esc(e.id.slice(-4))}</span>
-        <div><div class="t">${esc(e.title)}</div><div class="m">${esc(EVENT_TYPE[e.type] || "Chưa phân loại")} · ${e.news_ids.length} tin · ${when(e.created)}${e.blocked ? ' · <span class="badge bad">bị giữ</span>' : ""}</div></div>
+        <div><div class="t" data-quote>${esc(e.title)}</div><div class="m">${esc(EVENT_TYPE[e.type] || "Chưa phân loại")} · ${e.news_ids.length} tin · ${when(e.created)}${e.blocked ? ' · <span class="badge bad">bị giữ</span>' : ""}</div></div>
         <span>${v ? viewBadge(v.status) : '<span class="badge">Chưa chạy agent</span>'}</span></a>`;
     }).join("")}</div>` : empty("Chưa có sự kiện", "Vào Hộp tin, chọn vài tin cùng nói về một chuyện, rồi bấm “Gom thành sự kiện”.")}</div>`;
 }
@@ -36,10 +36,10 @@ async function renderEvent(box, ctx, id) {
   const job = jobs[jobs.length - 1], busy = job && ["queued", "running"].includes(job.status);
   box.innerHTML = `
     <div class="pagehead"><div><a class="small" href="${ctx.href("nhan-dinh")}">← Sự kiện</a>
-      <div class="eyebrow" style="margin-top:6px">${esc(ev.id)} · ${esc(EVENT_TYPE[ev.type] || "Chưa phân loại")}</div><div class="h1">${esc(ev.title)}</div></div></div>
+      <div class="eyebrow" style="margin-top:6px">${esc(ev.id)} · ${esc(EVENT_TYPE[ev.type] || "Chưa phân loại")}</div><div class="h1" data-quote>${esc(ev.title)}</div></div></div>
     <div class="cols">
       <div class="panel c7"><h3>Tin nguồn <span class="hint">${ev.news.length} tin</span></h3>
-        ${ev.news.map(n => `<div style="margin:8px 0"><a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>
+        ${ev.news.map(n => `<div style="margin:8px 0"><a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer" data-quote>${esc(n.title)}</a>
           <div class="small muted">${esc(n.outlet)} · ${esc(n.label)} · ${when(n.published)}${n.held ? ' · <span class="badge bad">bị giữ chờ Tuân thủ</span>' : ""}</div></div>`).join("")}</div>
       <div class="panel c5"><h3>Agent CIO</h3>
         ${ev.blocked ? `<div class="notice bad">Sự kiện đang bị giữ vì tin nhắc tới tổ chức trong danh sách hạn chế. Tuân thủ cần cho phép trước khi chạy agent.</div>` : `
@@ -118,7 +118,7 @@ async function renderView(box, ctx, id) {
     ${cur ? `
     <div class="cols">
       <div class="panel c7"><h3>Nhận định <span class="badge ai">${v.mode === "live" ? "AI soạn" : v.mode === "inbox" ? "vùng AI soạn" : "mô phỏng"}</span></h3>
-        <div style="font-size:15px">${esc(cur.summary)}</div>
+        <div style="font-size:15px" data-quote>${esc(cur.summary)}</div>
         <div class="small muted" style="margin-top:8px">Đã vào giá: <b>${{none: "chưa", partial: "một phần", full: "đã hết"}[cur.scenarios.priced_in]}</b> · nội dung ${esc(v.content_hash.slice(0, 10))}</div></div>
       <div class="panel c5"><h3>Điều kiện duyệt${decided ? ` <span class="hint">đã quyết: ${esc(viewLabel(v.status))}</span>` : ""}</h3>
         <div class="list">${checks.map(c => `<div class="check"><span class="${c.ok ? "up" : "down"}" aria-hidden="true">${c.ok ? "✓" : "✕"}</span><div><div>${esc(c.label)}</div>${c.ok ? "" : `<div class="small muted">${esc(c.detail)}</div>`}</div></div>`).join("")}</div>
@@ -134,11 +134,11 @@ async function renderView(box, ctx, id) {
         <div id="prob"></div>
         <div class="cols" style="margin-top:12px">${cur.scenarios.branches.map((b, i) => `
           <div class="c4 panel flat" style="border-top:3px solid ${slot(i)}">
-            <div class="row spread"><b>${esc(b.name)}</b><span class="num">${pct(b.probability, false, 0)}</span></div>
+            <div class="row spread"><b>${esc(b.name)}</b><span class="num">${how(pct(b.probability, false, 0), "scenario.probability", {event: v.event_id})}</span></div>
             <div class="small muted">${b.regime === "stressed" ? "Chế độ căng thẳng" : "Chế độ bình thường"}</div>
             <div class="row" style="margin:8px 0;gap:6px">${b.core_shocks.map(s => `<span class="chip">${esc(names[s.factor] ? names[s.factor].name : s.factor)} ${s.direction === "up" ? "▲" : "▼"} ${SIZE[s.size]}</span>`).join("")}</div>
             <details class="more"><summary>Lan truyền ra thị trường</summary><div data-moves="${i}"></div><div class="small muted" style="margin-top:4px">Độ dài thanh: so với biến động 1 tháng thường thấy.</div></details>
-            <details class="more"><summary>Lập luận</summary><div class="small">${esc(b.rationale)}</div></details>
+            <details class="more"><summary>Lập luận</summary><div class="small" data-quote>${esc(b.rationale)}</div></details>
             ${editable ? `<div class="editing-only"><div class="row" style="margin-top:8px;gap:6px"><label class="field">Xác suất<input type="number" min="5" max="95" step="5" data-prob="${i}" value="${Math.round(b.probability * 100)}" style="width:72px"></label>
               <label class="field">Chế độ<select data-regime="${i}"><option value="normal" ${b.regime === "normal" ? "selected" : ""}>bình thường</option><option value="stressed" ${b.regime === "stressed" ? "selected" : ""}>căng thẳng</option></select></label></div>
               ${b.core_shocks.map((s, j) => `<label class="field" style="margin-top:6px">${esc(names[s.factor] ? names[s.factor].name : s.factor)}<span class="row" style="gap:6px"><select data-dir="${i}-${j}"><option value="up" ${s.direction === "up" ? "selected" : ""}>tăng</option><option value="down" ${s.direction === "down" ? "selected" : ""}>giảm</option></select><select data-size="${i}-${j}">${["S", "M", "L"].map(z => `<option value="${z}" ${s.size === z ? "selected" : ""}>${SIZE[z]} (${z})</option>`).join("")}</select><button type="button" class="linkbtn small" data-drop="${i}-${j}">bỏ</button></span></label>`).join("")}</div>` : ""}
@@ -152,12 +152,12 @@ async function renderView(box, ctx, id) {
       <div class="panel c6"><h3>Phản biện độc lập <span class="hint">${ch ? `${esc(ch.model)} · ${ch.findings.length} phát hiện` : "chưa có"}</span></h3>
         ${ch ? ch.findings.map(f => `<div style="padding:8px 0;border-bottom:1px solid var(--hair)">
           <div class="row spread"><span>${severity(f.severity)} <b>${esc(f.title)}</b></span><span class="badge ${f.source === "model" ? "ai" : ""}">${f.source === "model" ? "AI" : "quy tắc"}</span></div>
-          <div class="small" style="margin-top:4px">${esc(f.detail)}</div>
+          <div class="small" style="margin-top:4px" data-explains>${esc(f.detail)}</div>
           ${answered[f.id] ? `<div class="small" style="margin-top:4px"><span class="badge human">CIO ${answered[f.id].decision === "accept" ? "chấp nhận" : "bác"}</span> ${esc(answered[f.id].reason)}</div>` :
             v.status === "PENDING_APPROVAL" ? `<div class="row" style="margin-top:6px;gap:6px"><input data-resp="${esc(f.id)}" placeholder="Trả lời (từ 10 ký tự)" style="flex:1;min-width:160px;padding:6px 9px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
               <button type="button" class="btn sm" data-answer="${esc(f.id)}" data-decision="accept">Chấp nhận</button><button type="button" class="btn sm" data-answer="${esc(f.id)}" data-decision="reject">Bác</button></div>` : ""}
         </div>`).join("") || '<div class="small muted">Không có phát hiện.</div>' : ""}</div>
-      ${d.application_runs.length ? `<div class="panel c12"><h3>Lần áp dụng</h3>${d.application_runs.map(r => `<div class="row spread" style="margin:6px 0"><a href="#/cio/ap-dung/${esc(r.id)}">${esc(r.id)}</a><span>${runBadge(r.status, r.status_label)} <span class="num ${signClass(r.totals && r.totals.expected_3m)}">${r.totals ? vnd(r.totals.expected_3m, true) : ""}</span> ${r.totals ? `· ${r.totals.pre_review} gia đình cần RM xem trước` : ""}</span></div>`).join("")}</div>` : ""}
+      ${d.application_runs.length ? `<div class="panel c12"><h3>Lần áp dụng</h3>${d.application_runs.map(r => `<div class="row spread" style="margin:6px 0"><a href="#/cio/ap-dung/${esc(r.id)}">${esc(r.id)}</a><span>${runBadge(r.status, r.status_label)} <span class="num ${signClass(r.totals && r.totals.expected_3m)}">${r.totals ? how(vnd(r.totals.expected_3m, true), "run.expected_3m", {families: String(r.families || "")}) : ""}</span> ${r.totals ? `· ${r.totals.pre_review} gia đình cần RM xem trước` : ""}</span></div>`).join("")}</div>` : ""}
     </div>` : ""}
     <div class="panel flat" style="margin-top:16px"><details class="more"><summary>Vết chạy agent (từng bước)</summary>
       ${d.runs.map(r => `<div style="margin-top:8px"><b>${esc(r.id)}</b> · ${esc(r.agent)} · ${esc(r.mode)} · ${esc(r.status)}${r.error ? ` · <span class="down">${esc(r.error)}</span>` : ""}
@@ -174,7 +174,7 @@ async function renderView(box, ctx, id) {
       moves(node, pv.moves.slice(0, 7).map(m => ({
         name: m.name, core: m.core, z: m.move / (names[m.factor] ? names[m.factor].vol_month : 1),
         text: `${m.move > 0 ? "+" : ""}${m.unit === "bp" ? Math.round(m.move) : m.move.toFixed(2)}${UNIT[m.unit]}`,
-      })));
+      })), {metric: "scenario.move", inputs: {branch: b.name}});
     });
   }
   const act = async (body, msg) => {

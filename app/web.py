@@ -419,6 +419,14 @@ async def family_how(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc.args[0])}, status_code=404)
 
 
+async def how_catalogue(request: Request) -> JSONResponse:
+    """BRD-NFR-11: the formula behind every kind of number the pages show (src/explain); names no client."""
+    from explain import metrics  # noqa: F401 — registers every metric
+    from explain.catalogue import catalogue
+
+    return JSONResponse(catalogue())
+
+
 async def family_graph(request: Request) -> JSONResponse:
     """Kit K3: news → event → scenario → factor → asset → family → goal, every edge with its records."""
     q = request.query_params
@@ -1058,6 +1066,7 @@ app = Starlette(
         Route("/api/families/{family_id}/impact", family_impact),
         Route("/api/families/{family_id}/graph", family_graph),
         Route("/api/families/{family_id}/how", family_how),
+        Route("/api/how", how_catalogue),
         Route("/api/trace/{run_id}/{family_id}", trace),
         Route("/api/rm/today", rm_today),
         Route("/api/audit", audit_list),

@@ -4,10 +4,10 @@
    here that the server did not return, except sums and shares of what it returned (the month's change by asset
    class is the sum of each holding's value − its value last month). The full former overview stays one click
    away (“Chi tiết”). */
-import {internal, ASSET_CLASS, CLASS_COLOR, $, esc, pct, post, signClass, vnd} from "../core/core.js";
+import {internal, n, nAttrs, ASSET_CLASS, CLASS_COLOR, $, esc, pct, post, signClass, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {hover, sankey} from "../charts/charts.js";
-import {donut, gauge, progress, ring} from "../charts/mini.js?v=20261016r1";
+import {donut, gauge, progress, ring} from "../charts/mini.js?v=20261016r2";
 
 const STATUS = {
   ok: ["good", "An toàn"], near: ["warn", "Gần ngưỡng"], over: ["bad", "Vượt ngưỡng"],
@@ -66,7 +66,7 @@ export async function render(box, ctx) {
         <h3>Phân bổ tài sản <span class="hint">giá ngày ${esc(d.as_of)}</span></h3>
         <div class="wmap2"><div id="donut"></div><div class="wlegend" id="wlegend" role="list"></div></div>
         <div id="wmap-open"></div>
-        <div class="footnote">Tổng ${vnd(assets)} tài sản. Nợ ${vnd(nw.liabilities)} không nằm trong biểu đồ; tài sản ròng = tài sản − nợ. Bấm một nhóm để xem từng khoản.</div>
+        <div class="footnote">Tổng ${n(vnd(assets), "assets.total")} tài sản. Nợ ${n(vnd(nw.liabilities), "liabilities.total")} không nằm trong biểu đồ; tài sản ròng = tài sản − nợ. Bấm một nhóm để xem từng khoản.</div>
       </div>
       <div class="panel c7" id="feed"></div>
       <div class="panel c5" id="goals"></div>
@@ -86,7 +86,7 @@ export async function render(box, ctx) {
     const contrib = top.length ? `<div class="small muted">Thay đổi nhiều nhất trong tháng</div><div class="contrib" aria-label="Đóng góp trong tháng theo nhóm tài sản">${top.map(([g, v]) => `
       <div class="crow" data-g="${esc(g)}" data-delta="${v}"><span class="legend-dot" style="background:${CLASS_COLOR[g] || "var(--other)"}"></span><span>${esc(gname(g))}</span>
         <span class="cbar"><i style="width:${(Math.abs(v) / max) * 100}%;background:${v < 0 ? "var(--down)" : "var(--up)"}"></i></span>
-        <b class="num ${signClass(v)}">${vnd(v, true)}</b></div>`).join("")}</div>` : "";
+        <b class="${signClass(v)}">${n(vnd(v, true), "class.month_change", {group: gname(g)})}</b></div>`).join("")}</div>` : "";
     const at = hist.findIndex(m => m.month === f.month);
     const end = at >= 0 ? at : hist.length - 1;
     const last = hist.slice(Math.max(0, end - 5), end + 1);
@@ -96,22 +96,26 @@ export async function render(box, ctx) {
       return `<rect x="${x}" y="${34 - hi}" width="6" height="${hi}" rx="1.5" fill="var(--in)" opacity="${on}"/><rect x="${x + 7}" y="${34 - ho}" width="6" height="${ho}" rx="1.5" fill="var(--out)" opacity="${on}"/>`;
     }).join("")}</svg>` : "";
     const rate = f.total_in ? f.left / f.total_in : null;
+    const fio = {total_in: vnd(f.total_in), total_out: vnd(f.total_out)};
     const months = liq.months >= 24 ? Math.floor(liq.months / 12) + " năm" : Math.round(liq.months) + " tháng";
     const share = assets ? liq.value / assets : 0;
+    const chg = {now: vnd(nw.value), prev: vnd(nw.prev_value)};
     $("#kpis", box).innerHTML = [
-      card("kpi:net_worth", "wallet", "var(--accent)", "Tài sản ròng", vnd(nw.value),
-        `<span class="${signClass(nw.month_change)}">${nw.month_change >= 0 ? "▲" : "▼"} ${vnd(nw.month_change, true)} (${pct(nw.month_change_pct, true)})</span> so với tháng trước`,
+      card("kpi:net_worth", "wallet", "var(--accent)", "Tài sản ròng", n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)}),
+        `<span class="${signClass(nw.month_change)}">${nw.month_change >= 0 ? "▲" : "▼"} ${n(vnd(nw.month_change, true), "net_worth.month_change", chg)} (${n(pct(nw.month_change_pct, true), "net_worth.month_change", chg)})</span> so với tháng trước`,
         "", contrib),
-      card(`flow:${f.month}`, "flow", "var(--in)", `Dòng tiền ${MONTH(f.month)}`, `${f.left >= 0 ? "+" : "−"}${vnd(Math.abs(f.left))}`,
-        `<span class="nowrap">Vào <b>${vnd(f.total_in)}</b></span> · <span class="nowrap">Ra <b>${vnd(f.total_out)}</b></span>${rate != null ? `<br>${f.left >= 0 ? "Để dành" : "Thiếu"} ${pct(Math.abs(rate), false, 0)} tiền vào` : ""}`,
+      card(`flow:${f.month}`, "flow", "var(--in)", `Dòng tiền ${MONTH(f.month)}`, n(`${f.left >= 0 ? "+" : "−"}${vnd(Math.abs(f.left))}`, "flow.left", fio),
+        `<span class="nowrap">Vào <b>${n(vnd(f.total_in), "flow.in")}</b></span> · <span class="nowrap">Ra <b>${n(vnd(f.total_out), "flow.out")}</b></span>${rate != null ? `<br>${f.left >= 0 ? "Để dành" : "Thiếu"} ${n(pct(Math.abs(rate), false, 0), "flow.saving_rate", {left: vnd(f.left, true), total_in: vnd(f.total_in)})} tiền vào` : ""}`,
         io, `<span class="legend-dot" style="background:var(--in)"></span> vào <span class="legend-dot" style="background:var(--out);margin-left:8px"></span> ra · ${last.length} tháng`,
         f.left >= 0 ? "up" : "down"),
-      card("kpi:liquidity", "bank", "var(--s3)", "Thanh khoản dự phòng", vnd(liq.value), `đủ chi ${months} ${pill(liq.status)}`,
-        ring(share, {size: 58, color: "var(--s3)", label: `${pct(share, false, 0)} tổng tài sản`}),
-        `${pct(share, false, 0)} tổng tài sản · chi ${vnd(liq.spending_monthly)}/tháng`),
-      card("kpi:risk", "shield", "var(--warning)", "Rủi ro khi thị trường xấu", pct(rk.current), `ngưỡng ${pct(rk.limit, false, 0)} ${pill(rk.status)}`,
+      card("kpi:liquidity", "bank", "var(--s3)", "Thanh khoản dự phòng", n(vnd(liq.value), "liquidity.value", {count: String(liq.items.length)}),
+        `đủ chi ${n(months, "liquidity.months", {value: vnd(liq.value), spending: vnd(liq.spending_monthly)})} ${pill(liq.status)}`,
+        ring(share, {size: 58, color: "var(--s3)", label: `${pct(share, false, 0)} tổng tài sản`, how: nAttrs("liquidity.share", {value: vnd(liq.value), assets: vnd(assets)})}),
+        `${n(pct(share, false, 0), "liquidity.share", {value: vnd(liq.value), assets: vnd(assets)})} tổng tài sản · chi ${n(vnd(liq.spending_monthly), "spending.monthly")}/tháng`),
+      card("kpi:risk", "shield", "var(--warning)", "Rủi ro khi thị trường xấu", n(pct(rk.current), "risk.current", {loss: vnd(rk.stress_loss), net_worth: vnd(nw.value)}),
+        `ngưỡng ${n(pct(rk.limit, false, 0), "risk.limit")} ${pill(rk.status)}`,
         "", gauge(rk.current, rk.limit, {status: rk.status, label: `Sụt giảm ước tính ${pct(rk.current)} so với ngưỡng ${pct(rk.limit, false, 0)}`}) +
-        `<div class="small muted mt-xs">Mất khoảng ${vnd(rk.stress_loss)} trong kịch bản xấu</div>`),
+        `<div class="small muted mt-xs">Mất khoảng ${n(vnd(rk.stress_loss), "risk.loss")} trong kịch bản xấu</div>`),
     ].join("");
     for (const r of box.querySelectorAll(".crow[data-g]")) r.onclick = () => openGroup(r.dataset.g);
   };
@@ -124,15 +128,15 @@ export async function render(box, ctx) {
     const svg = $("#donut svg", box);
     if (svg) { svg.classList.add("picked"); for (const s of svg.querySelectorAll(".seg")) s.classList.toggle("on", s.dataset.key === key); }
     $("#wmap-open", box).innerHTML = `<table class="table mt"><caption class="small muted" style="text-align:left">${esc(gname(key))} · ${g.items.length} khoản</caption><tbody>${
-      g.items.sort((a, b) => b.value - a.value).map(h => `<tr><td>${esc(h.name)}${scope === "family" && h.owner_name ? `<div class="small muted">${esc(h.owner_name)}</div>` : ""}</td><td class="r num">${vnd(h.value)}</td><td class="r num muted">${pct(h.value / assets)}</td></tr>`).join("")}</tbody></table>`;
+      g.items.sort((a, b) => b.value - a.value).map(h => `<tr><td>${esc(h.name)}${scope === "family" && h.owner_name ? `<div class="small muted">${esc(h.owner_name)}</div>` : ""}</td><td class="r num">${n(vnd(h.value), "holding.value", {source: h.source_label || h.source || ""})}</td><td class="r num muted">${n(pct(h.value / assets), "holding.share", {value: vnd(h.value), assets: vnd(assets)})}</td></tr>`).join("")}</tbody></table>`;
   };
   const drawMap = () => {
     $("#donut", box).innerHTML = donut(map.map(g => ({key: g.key, value: g.value, color: CLASS_COLOR[g.key] || "var(--other)",
-      label: `${gname(g.key)}: ${vnd(g.value)}, ${pct(g.value / assets)}`})), {size: 176, stroke: 24, center: vnd(assets), sub: "Tổng tài sản",
+      label: `${gname(g.key)}: ${vnd(g.value)}, ${pct(g.value / assets)}`})), {size: 176, stroke: 24, center: vnd(assets), sub: "Tổng tài sản", how: nAttrs("assets.total"),
       label: "Phân bổ tài sản theo nhóm"});
     $("#wlegend", box).innerHTML = map.map(g => `<button type="button" class="wrow" role="listitem" data-g="${esc(g.key)}" aria-pressed="false">
       <span class="ic-chip sm" style="--tone:${CLASS_COLOR[g.key] || "var(--other)"}">${icon(CLASS_ICON[g.key] || "wallet", {size: 13})}</span>
-      <span>${esc(gname(g.key))}</span><span class="num muted">${vnd(g.value)}</span><b class="num">${pct(g.value / assets, false, 1)}</b></button>`).join("");
+      <span>${esc(gname(g.key))}</span><span class="num muted">${n(vnd(g.value), "class.value", {count: String(g.items.length)})}</span><b class="num">${n(pct(g.value / assets, false, 1), "class.share", {value: vnd(g.value), assets: vnd(assets)})}</b></button>`).join("");
     for (const b of box.querySelectorAll(".wrow[data-g]")) b.onclick = () => openGroup(b.dataset.g);
     for (const s of box.querySelectorAll("#donut .seg")) {
       const g = groups[s.dataset.key];
@@ -146,17 +150,17 @@ export async function render(box, ctx) {
   const drawRows = (b, side) => {
     const el = $("#flow-rows", box);
     if (!b) {  // the table view of the chart: every band and its total
-      const line = (x, sign) => `<tr class="click" data-cat="${esc(x.category)}" data-side="${sign}" data-focus="flow:${f.month}:${sign}:${esc(x.category)}"><td>${esc(x.label)}</td><td class="r num">${sign === "in" ? "+" : "−"}${vnd(x.amount)}</td><td class="r small muted">${x.rows.length} giao dịch</td></tr>`;
+      const line = (x, sign) => `<tr class="click" data-cat="${esc(x.category)}" data-side="${sign}" data-focus="flow:${f.month}:${sign}:${esc(x.category)}"><td>${esc(x.label)}</td><td class="r num">${n(`${sign === "in" ? "+" : "−"}${vnd(x.amount)}`, "flow.band", {rows: String(x.rows.length)})}</td><td class="r small muted">${x.rows.length} giao dịch</td></tr>`;
       el.innerHTML = `<table class="table"><tbody>${f.inflow.map(x => line(x, "in")).join("")}${f.outflow.map(x => line(x, "out")).join("")}
-        <tr><td><b>${f.left >= 0 ? "Còn lại" : "Thiếu hụt"}</b></td><td class="r num"><b class="${f.left >= 0 ? "up" : "down"}">${vnd(f.left, true)}</b></td><td></td></tr></tbody></table>`;
+        <tr><td><b>${f.left >= 0 ? "Còn lại" : "Thiếu hụt"}</b></td><td class="r num"><b class="${f.left >= 0 ? "up" : "down"}">${n(vnd(f.left, true), "flow.left", {total_in: vnd(f.total_in), total_out: vnd(f.total_out)})}</b></td><td></td></tr></tbody></table>`;
       for (const r of el.querySelectorAll("[data-cat]")) r.onclick = () => drawRows((r.dataset.side === "in" ? f.inflow : f.outflow).find(x => x.category === r.dataset.cat), r.dataset.side);
       return;
     }
     if (!b.rows) {  // Còn lại / Thiếu hụt: a difference, not rows
-      el.innerHTML = `<p class="small">${esc(b.label)} = tiền vào ${vnd(f.total_in)} − tiền ra ${vnd(f.total_out)} = <b>${vnd(f.left, true)}</b>. <button type="button" class="linkbtn small" id="all-rows">Xem bảng tổng</button></p>`;
+      el.innerHTML = `<p class="small">${esc(b.label)} = tiền vào ${n(vnd(f.total_in), "flow.in")} − tiền ra ${n(vnd(f.total_out), "flow.out")} = <b>${n(vnd(f.left, true), "flow.left", {total_in: vnd(f.total_in), total_out: vnd(f.total_out)})}</b>. <button type="button" class="linkbtn small" id="all-rows">Xem bảng tổng</button></p>`;
     } else {
-      el.innerHTML = `<div class="row"><b>${esc(b.label)}</b><span class="muted small">${side === "in" ? "tiền vào" : "tiền ra"} · ${b.rows.length} giao dịch · ${vnd(b.amount)}</span><button type="button" class="linkbtn small" id="all-rows" style="margin-left:auto">← Bảng tổng</button></div>
-        <table class="table"><tbody>${b.rows.map(r => `<tr><td class="num">${esc(r.date)}</td><td>${esc(r.desc)}${scope === "family" ? `<div class="small muted">${esc(r.owner_name)}</div>` : ""}</td><td class="r num">${vnd(r.amount)}</td></tr>`).join("")}</tbody></table>`;
+      el.innerHTML = `<div class="row"><b>${esc(b.label)}</b><span class="muted small">${side === "in" ? "tiền vào" : "tiền ra"} · ${b.rows.length} giao dịch · ${n(vnd(b.amount), "flow.band", {rows: String(b.rows.length)})}</span><button type="button" class="linkbtn small" id="all-rows" style="margin-left:auto">← Bảng tổng</button></div>
+        <table class="table"><tbody>${b.rows.map(r => `<tr><td class="num">${esc(r.date)}</td><td>${esc(r.desc)}${scope === "family" ? `<div class="small muted">${esc(r.owner_name)}</div>` : ""}</td><td class="r num">${n(vnd(r.amount), "transaction.amount", {date: r.date})}</td></tr>`).join("")}</tbody></table>`;
     }
     $("#all-rows", box).onclick = () => drawRows(null);
   };
@@ -164,9 +168,9 @@ export async function render(box, ctx) {
     const rate = f.total_in ? f.left / f.total_in : null;
     const big = f.outflow[0];
     $("#ratios", box).innerHTML = [
-      [f.left >= 0 ? "Tỷ lệ để dành" : "Chi vượt thu", rate == null ? "—" : pct(Math.abs(rate), false, 0), f.left >= 0 ? "up" : "down"],
-      ["Tiền ra / tiền vào", f.total_in ? pct(f.total_out / f.total_in, false, 0) : "—", ""],
-      ["Nhóm chi lớn nhất", big ? `${esc(big.label)} · ${vnd(big.amount)}` : "—", ""],
+      [f.left >= 0 ? "Tỷ lệ để dành" : "Chi vượt thu", rate == null ? "—" : n(pct(Math.abs(rate), false, 0), "flow.saving_rate", {left: vnd(f.left, true), total_in: vnd(f.total_in)}), f.left >= 0 ? "up" : "down"],
+      ["Tiền ra / tiền vào", f.total_in ? n(pct(f.total_out / f.total_in, false, 0), "flow.out_in", {total_out: vnd(f.total_out), total_in: vnd(f.total_in)}) : "—", ""],
+      ["Nhóm chi lớn nhất", big ? `${esc(big.label)} · ${n(vnd(big.amount), "flow.band", {rows: String(big.rows.length)})}` : "—", ""],
     ].map(([k, v, c]) => `<div class="ratio"><span class="k">${k}</span><b class="${c}">${v}</b></div>`).join("");
   };
   const drawFlow = () => {
@@ -202,15 +206,15 @@ export async function render(box, ctx) {
         const t = TYPE[i.type] || [i.type, "info", "var(--accent)"];
         return `<div class="item feed-item" data-focus="${esc(i.key)}">
         <span class="ic-chip" style="--tone:${t[2]}">${icon(t[1])}</span>
-        <div><div class="t">${esc(i.title)}</div>
-          <div class="row tight mt-xs"><span class="pill ${SEV[i.severity][0]}">${SEV[i.severity][1]}</span><span class="pill">${esc(t[0])}</span>${i.value != null && i.type === "impact" ? `<span class="pill ${i.value < 0 ? "bad" : "good"}">${vnd(i.value, true)} · 3 tháng</span>` : ""}</div>
-          <div class="m mt-xs">${esc(i.why)}</div>
+        <div><div class="t" data-explains>${esc(i.title)}</div>
+          <div class="row tight mt-xs"><span class="pill ${SEV[i.severity][0]}">${SEV[i.severity][1]}</span><span class="pill">${esc(t[0])}</span>${i.value != null && i.type === "impact" ? `<span class="pill ${i.value < 0 ? "bad" : "good"}">${n(vnd(i.value, true), "impact.expected_3m", {event: i.title})} · 3 tháng</span>` : ""}</div>
+          <div class="m mt-xs" data-explains>${esc(i.why)}</div>
           <div class="small muted">Nguồn: ${esc(source(i.evidence))}</div></div>
         ${i.link === "flow" ? `<button type="button" class="linkbtn small" data-month="${esc(i.evidence.month)}">Xem dòng tiền →</button>`
           : `<a class="small" href="${ROUTE[i.link]}">Xem bằng chứng →</a>`}</div>`;
       }).join("")}</div>`
         : `<div class="small muted">Không có điều gì cần chú ý lúc này.</div>`}
-      <div class="footnote">Vì sao một mục hiện ở đây: ${esc(fd.feed.rules)}</div>`;
+      <div class="footnote" data-explains>Vì sao một mục hiện ở đây: ${esc(fd.feed.rules)}</div>`;
     for (const b of el.querySelectorAll("[data-month]")) b.onclick = () => {
       const sel = $("#month", box);
       sel.value = b.dataset.month; sel.dispatchEvent(new Event("change"));
@@ -229,9 +233,9 @@ export async function render(box, ctx) {
         const x = g.goal, st = GOAL[x.status] || ["", x.status, "var(--accent)"];
         return `<div class="goal" data-focus="goal:${esc(g.id)}">
           <div class="row spread"><b>${esc(g.title)}</b><span class="pill ${st[0]}">${st[1]}</span></div>
-          <div class="row spread small muted mt-xs"><span>Cần ${vnd(x.need)} · ${esc(x.by)}</span><b class="num" style="color:var(--ink)">${pct(Math.min(1, x.progress), false, 0)}</b></div>
+          <div class="row spread small muted mt-xs"><span>Cần ${n(vnd(x.need), "goal.need")} · ${esc(x.by)}</span><b class="num" style="color:var(--ink)">${n(pct(Math.min(1, x.progress), false, 0), "goal.progress", {need: vnd(x.need), have: vnd(x.have)})}</b></div>
           ${progress(x.progress, {color: st[2], label: `${g.title}: ${pct(Math.min(1, x.progress), false, 0)}`})}
-          <div class="small muted mt-xs">${x.gap > 0 ? `Còn thiếu ${vnd(x.gap)}` : "Đã đủ nguồn"} · ${esc(x.have_label)} ${vnd(x.have)}</div></div>`;
+          <div class="small muted mt-xs">${x.gap > 0 ? `Còn thiếu ${n(vnd(x.gap), "goal.gap", {need: vnd(x.need), have: vnd(x.have)})}` : "Đã đủ nguồn"} · ${esc(x.have_label)} ${n(vnd(x.have), "goal.have")}</div></div>`;
       }).join("")}</div>` : `<div class="small muted">Chưa có mục tiêu đang theo dõi.</div>`}
       <div class="footnote">Theo giả định mặc định của trang Kế hoạch. <a href="${plan}">Mở Kế hoạch →</a></div>`;
   };

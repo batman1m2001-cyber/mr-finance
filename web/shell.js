@@ -6,10 +6,10 @@
    person's role, and the client picker only the families they may see (a client: none, their own family). The
    server takes the user from the session, never from the page. Only with sign-in switched off (MF_AUTH=off, a
    developer's machine) does the old role switcher appear. */
-import {$, $$, esc, failed, loading} from "./core/core.js";
+import {$, $$, esc, explainOn, failed, howAudience, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261016r1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261016r18";
+import {mount as mountHeader} from "./header.js?v=20261016r19";
 
 const ROLES = {
   client: {
@@ -161,6 +161,7 @@ async function route() {
   const want = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "";
   if (state.me && want !== state.me.role) { location.replace(`#/${state.me.role}`); return; }
   state.role = rt.role;
+  howAudience.staff = rt.role !== "client";
   state.route = rt;
   localStore("mf.role", rt.role);
   drawChrome(rt);
@@ -173,7 +174,7 @@ async function route() {
   const seq = ++state.seq;
   box.innerHTML = loading();
   try {
-    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r18`));
+    const mod = pages[target.page] || (pages[target.page] = await import(`./pages/${target.page}.js?v=20261016r19`));
     if (seq !== state.seq) return;
     await mod.render(box, ctx(rt));
   } catch (e) {
@@ -278,6 +279,7 @@ async function start() {
     if (b) go(`#/${b.dataset.role}`);
   });
   window.addEventListener("hashchange", route);
+  explainOn(document);  // BRD-NFR-11: any [data-metric] opens its “Cách tính”
   startMotion();
   header = mountHeader({role: () => state.role, user: () => (state.me ? state.me.id : ROLES[state.role].user), client, scope, pages: pagesFor, go, setClient});
   mountCopilot();

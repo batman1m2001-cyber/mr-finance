@@ -1,7 +1,7 @@
 /* CIO · Mô hình · Dữ liệu thị trường, and Quản trị (F1): every public source fetched on its own clock into the
    app's database — each job's cadence, last success and last error; where each factor of the model comes from;
    each series with its last value, source and the last 120 days. Read from SQLite only (GET /api/market). */
-import {ago, esc, get, num} from "../core/core.js";
+import {ago, esc, get, n as how, num} from "../core/core.js";
 
 const SOURCE = {
   vndirect: "VNDirect", vietcap: "Vietcap", msn: "MSN Finance", binance: "Binance", vcb: "Vietcombank", pnj: "PNJ",
@@ -25,7 +25,7 @@ function value(s) {
   if (s.value == null) return "—";
   const big = s.unit === "VND" && Math.abs(s.value) >= 1e9, a = Math.abs(s.value);
   const d = big ? num(s.value / 1e9, 1) + " tỷ" : num(s.value, a < 10 ? 4 : a < 1000 ? 2 : 0);
-  return `${d} <span class="small muted">${esc(big ? "VND" : s.unit)}</span>`;
+  return `${how(d, "market.value", {date: s.last || "", source: s.source || (s.sources || [])[0] || ""})} <span class="small muted">${esc(big ? "VND" : s.unit)}</span>`;
 }
 
 export async function render(box) {

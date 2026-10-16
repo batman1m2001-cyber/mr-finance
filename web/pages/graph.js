@@ -1,7 +1,7 @@
 /* Đồ thị tác động (redesign kit K3): news → event → scenario → factor → asset → family → goal for one family,
    drawn in columns from GET /api/families/{id}/graph. Every edge shows the stored records it came from. Click
    (or Enter on) a node to light its path and read its details; the list view is the same graph as a table. */
-import {internal, $, empty, esc, get, pct, signClass, vnd} from "../core/core.js";
+import {internal, $, empty, esc, get, n as how, pct, signClass, vnd} from "../core/core.js";
 import {hover} from "../charts/charts.js";
 
 const COLOR = {news: "var(--s7)", event: "var(--s1)", branch: "var(--s4)", factor: "var(--s5)", asset: "var(--s2)",
@@ -41,7 +41,7 @@ export async function render(box, ctx) {
   const state = {view: narrow ? "list" : "graph", hidden: new Set(), sel: null};
   const byId = Object.fromEntries(g.nodes.map(n => [n.id, n]));
   const src = (e) => e.sources.map(s => `${SRC[s.type] || s.type} ${esc(s.id)}`).join(" · ");
-  const val = (e) => (e.value == null ? "" : vnd(e.value, true));
+  const val = (e) => (e.value == null ? "" : how(vnd(e.value, true), "impact.edge"));
 
   box.innerHTML = `${staff ? internal() : ""}
     <div class="panel">
@@ -84,21 +84,21 @@ export async function render(box, ctx) {
     const n = state.sel && byId[state.sel];
     if (!n) { el.innerHTML = `<div class="small muted">Bấm một nút để xem đường đi và nguồn của nó.</div>`; return; }
     const facts = [
-      n.expected_3m != null && `Tác động kỳ vọng 3 tháng: <b class="${signClass(n.expected_3m)}">${vnd(n.expected_3m, true)}</b>`,
-      n.probability != null && `Xác suất: <b>${pct(n.probability, false, 0)}</b>`,
-      n.family_expected != null && `Gia đình trong nhánh này: <b class="${signClass(n.family_expected)}">${vnd(n.family_expected, true)}</b>`,
-      n.contribution != null && `Đóng góp cho gia đình: <b class="${signClass(n.contribution)}">${vnd(n.contribution, true)}</b>`,
-      n.net_worth != null && `Tài sản ròng: <b>${vnd(n.net_worth)}</b>`,
+      n.expected_3m != null && `Tác động kỳ vọng 3 tháng: <b class="${signClass(n.expected_3m)}">${how(vnd(n.expected_3m, true), "impact.expected_3m", {event: n.label})}</b>`,
+      n.probability != null && `Xác suất: <b>${how(pct(n.probability, false, 0), "scenario.probability")}</b>`,
+      n.family_expected != null && `Gia đình trong nhánh này: <b class="${signClass(n.family_expected)}">${how(vnd(n.family_expected, true), "impact.branch", {branch: n.label})}</b>`,
+      n.contribution != null && `Đóng góp cho gia đình: <b class="${signClass(n.contribution)}">${how(vnd(n.contribution, true), "impact.holding")}</b>`,
+      n.net_worth != null && `Tài sản ròng: <b>${how(vnd(n.net_worth), "net_worth")}</b>`,
       n.pre_review && `<span class="badge bad">RM xem trước</span>`,
       n.before && `Mức đáp ứng: <b>${esc(n.before)} → ${esc(n.after)}</b> (hạn ${esc(n.date)})`,
       n.url && `<a href="${esc(n.url)}" target="_blank" rel="noopener">Mở bài gốc (${esc(n.outlet || "")})</a>`,
     ].filter(Boolean);
     const rel = g.edges.filter(e => e.from === n.id || e.to === n.id);
     if (n.kind === "event" && !cio) { el.innerHTML = impactCard(n, rel); $("#g-clear", box).onclick = () => select(null); bindJumps(el); return; }
-    el.innerHTML = `<div class="card" style="padding:14px 16px"><div class="row"><span class="badge" style="border-color:${COLOR[n.kind]}">${KIND[n.kind]}</span><b>${esc(n.label)}</b>
+    el.innerHTML = `<div class="card" style="padding:14px 16px"><div class="row"><span class="badge" style="border-color:${COLOR[n.kind]}">${KIND[n.kind]}</span><b ${n.kind === "branch" ? "data-explains" : "data-quote"}>${esc(n.label)}</b>
         <button type="button" class="linkbtn small" id="g-clear" style="margin-left:auto">Bỏ chọn</button></div>
       ${facts.length ? `<div class="small mt">${facts.join(" · ")}</div>` : ""}
-      <table class="table mt"><tbody>${rel.map(e => `<tr><td>${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}</td><td class="small muted">${esc(e.label)}</td><td class="r num ${signClass(e.value || 0)}">${val(e)}</td><td class="small muted">${src(e)}</td></tr>`).join("")}</tbody></table></div>`;
+      <table class="table mt"><tbody>${rel.map(e => `<tr><td data-quote>${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}</td><td class="small muted">${esc(e.label)}</td><td class="r num ${signClass(e.value || 0)}">${val(e)}</td><td class="small muted">${src(e)}</td></tr>`).join("")}</tbody></table></div>`;
     $("#g-clear", box).onclick = () => select(null);
   };
 
@@ -118,14 +118,14 @@ export async function render(box, ctx) {
       <div class="row tight"><span class="pill ${v < 0 ? "bad" : v > 0 ? "good" : ""}">${v < 0 ? "Tiêu cực" : v > 0 ? "Tích cực" : "Trung tính"}</span>
         <span class="small muted">${news.length} tin · ${branches.length} kịch bản CIO duyệt</span>
         <button type="button" class="linkbtn small" id="g-clear" style="margin-left:auto">Bỏ chọn</button></div>
-      <h4>${esc(n.label)}</h4>
-      <div class="kv"><span>Tác động kỳ vọng 3 tháng</span><b class="${signClass(v)}">${vnd(v, true)}${fam && fam.net_worth ? ` · ${pct(v / fam.net_worth, true, 2)} tài sản ròng` : ""}</b></div>
-      ${branches[0] ? `<div class="kv"><span>Kịch bản chính</span><b>${esc(branches[0].label)}</b></div>` : ""}
+      <h4 data-quote>${esc(n.label)}</h4>
+      <div class="kv"><span>Tác động kỳ vọng 3 tháng</span><b class="${signClass(v)}">${how(vnd(v, true), "impact.expected_3m", {event: n.label})}${fam && fam.net_worth ? ` · ${how(pct(v / fam.net_worth, true, 2), "impact.expected_3m", {event: n.label})} tài sản ròng` : ""}</b></div>
+      ${branches[0] ? `<div class="kv"><span>Kịch bản chính</span><b data-explains>${esc(branches[0].label)}</b></div>` : ""}
       <div class="subhead mt">Chuỗi tác động</div>
       <div class="chainrow">${chain.map((c, i) => `${i ? `<span class="muted" aria-hidden="true">→</span>` : ""}<span class="chip"><i class="legend-dot" style="background:${COLOR[c.kind]}"></i>${esc(c.label)} · ${g.nodes.filter(x => x.kind === c.kind && on.has(x.id)).length}</span>`).join("")}</div>
       <div class="subhead mt">${staff ? "Khoản" : "Nhóm tài sản"} có thể bị ảnh hưởng</div>
       <div class="mlist">${assets.map(a => `<button type="button" class="mrow" data-jump="${esc(a.n.id)}"><span><b>${esc(a.n.label)}</b></span>
-        <span class="num ${signClass(a.v)}">${vnd(a.v, true)}${fam && fam.net_worth ? ` <span class="small muted">${Math.abs(a.v / fam.net_worth) < 5e-5 ? "≈0%" : pct(a.v / fam.net_worth, true, 2)}</span>` : ""}</span></button>`).join("") || `<p class="small muted">Không khoản nào.</p>`}</div>
+        <span class="num ${signClass(a.v)}">${how(vnd(a.v, true), "impact.by_class", {part: a.n.label, event: n.label})}${fam && fam.net_worth ? ` <span class="small muted">${how(Math.abs(a.v / fam.net_worth) < 5e-5 ? "≈0%" : pct(a.v / fam.net_worth, true, 2), "impact.by_class", {part: a.n.label, event: n.label})}</span>` : ""}</span></button>`).join("") || `<p class="small muted">Không khoản nào.</p>`}</div>
       ${goals.length ? `<div class="subhead mt">Mục tiêu</div>${goals.map(x => `<div class="kv"><span>${esc(x.label)}</span><b>${esc(x.before)} → ${esc(x.after)}</b></div>`).join("")}` : ""}
       <div class="small muted mt">“Có thể ảnh hưởng” theo kịch bản CIO duyệt, không phải quan hệ nhân quả · nguồn: ${news.map(x => esc(x.outlet || x.label)).slice(0, 3).join(", ")}</div></div>`;
   };
@@ -195,6 +195,9 @@ export async function render(box, ctx) {
       const t = mk("text", {x: q.x + 9, y: q.y + 18, class: "lbl"}, grp);
       const max = Math.floor((nodeW - 16) / 7);
       t.textContent = n.label.length > max ? n.label.slice(0, max - 1) + "…" : n.label;
+      // headlines are the outlets' words; a branch's label carries its probability, explained in the node's panel
+      if (["news", "event"].includes(n.kind)) t.setAttribute("data-quote", "");
+      if (n.kind === "branch") t.setAttribute("data-explains", "");
       hover(grp, `<b>${esc(n.label)}</b><br>${KIND[n.kind]}`);
       grp.addEventListener("click", () => select(n.id));
       grp.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(n.id); } });

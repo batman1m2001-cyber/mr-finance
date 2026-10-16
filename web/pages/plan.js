@@ -5,10 +5,10 @@
    again), before/after, and two options that can be sent to the RM (POST /api/review/propose). A wealth view on
    top sums the followed goals and the cash flow; after a decision or stress test it shows the picture after it.
    Regulation notes on the goals (FR-603) as the viewer may read them. Followed goals are kept in this browser. */
-import {internal, $, esc, get, pct, post, vnd} from "../core/core.js";
+import {internal, $, esc, get, n as how, pct, post, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
-import {progress} from "../charts/mini.js?v=20261016r1";
-import {cashSeries, cashflow, monthsText} from "../charts/money.js?v=20261016r3";
+import {progress} from "../charts/mini.js?v=20261016r2";
+import {cashSeries, cashflow, monthsText} from "../charts/money.js?v=20261016r4";
 
 const PARAMS = {
   per_year: ["Học phí mỗi năm", "tỷ"], years: ["Số năm", ""], start_year: ["Năm bắt đầu", ""], fx_rise: ["Tỷ giá tăng", "%"],
@@ -26,7 +26,9 @@ const STAGE_ICON = {young: "user", family: "users", mid: "business", retire: "sa
 const plans = {};  // per client, for this page's life: the pick, the last result, what was sent
 
 const chip = (k) => `<span class="pill ${GOAL[k] ? GOAL[k][0] : ""}">${(GOAL[k] || GOAL.none)[1]}</span>`;
+const gapIn = (g) => ({need: vnd(g.need), have: vnd(g.have)});
 const gapLine = (g) => (g.gap > 0 ? `Thiếu ${vnd(g.gap)}` : g.gap < 0 ? `Dư ${vnd(-g.gap)}` : "Vừa đủ");
+const gapHow = (g) => (g.gap ? how(gapLine(g), "goal.gap", gapIn(g)) : gapLine(g));
 
 export async function render(box, ctx) {
   const client = ctx.client(), scope = ctx.scope(), staff = ctx.role !== "client";
@@ -82,25 +84,29 @@ export async function render(box, ctx) {
     const ahead = cf.months.slice(0, 12);
     const aheadIn = ahead.reduce((a, m) => a + m.in, 0), aheadOut = ahead.reduce((a, m) => a + m.out, 0);
     const surplus = gs.length ? Math.max(0, gs[0].goal.surplus) : 0, left = surplus - saving;
+    const sv = {surplus: vnd(surplus), count: String(short.length)};
     const r = st.result;
     const sc = r && !r.error && r.scenario === st.pick && r.before && r.after && !goals.some(g => g.id === r.scenario) ? r : null;
     const dNw = sc ? sc.after.net_worth - sc.before.net_worth : 0, dLq = sc ? sc.after.liquid - sc.before.liquid : 0;
     const was = (x) => `<span class="muted">trước ${x}</span>`;
+    const ss = (text) => how(text, "scenario.state", {scenario: sc.title});
+    const tot = {have: vnd(have), need: vnd(need), count: String(gs.length)};
+    const ahd = {total_in: vnd(aheadIn), total_out: vnd(aheadOut)};
     const tile = (k, v, s) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
     $("#mini", box).innerHTML = `<div class="panel">
       <h3>Wealth view <span class="hint">tóm tắt tài sản · so với mục tiêu đã đặt · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></h3>
-      ${sc ? `<div class="notice row"><span class="pill ai">${sc.kind === "stress" ? "Stress test" : "Kịch bản"}</span><span>Số liệu bên dưới là <b>sau</b> kịch bản <b>${esc(sc.title)}</b></span>
+      ${sc ? `<div class="notice row"><span class="pill ai">${sc.kind === "stress" ? "Stress test" : "Kịch bản"}</span><span>Số liệu bên dưới là <b>sau</b> kịch bản <b data-explains>${esc(sc.title)}</b></span>
         <button type="button" class="linkbtn" id="scen-off" style="margin-left:auto">Về hiện trạng</button></div>` : ""}
       <div class="kpis mt">
-        ${sc ? tile("Tổng tài sản ròng · sau kịch bản", vnd(sc.after.net_worth), `<span class="${dNw >= 0 ? "up" : "down"}">${vnd(dNw, true)} (${pct(sc.before.net_worth ? dNw / sc.before.net_worth : 0, true)})</span> ${was(vnd(sc.before.net_worth))}`)
-          : tile("Tổng tài sản ròng", vnd(nw.value), `<span class="${nw.month_change >= 0 ? "up" : "down"}">${nw.month_change >= 0 ? "▲" : "▼"} ${pct(nw.month_change_pct, true)}</span> tháng này · tài sản ${vnd(nw.assets)}, nợ ${vnd(nw.liabilities)}`)}
-        ${sc ? tile("Thanh khoản · sau kịch bản", vnd(sc.after.liquid), `<span class="${dLq >= 0 ? "up" : "down"}">${vnd(dLq, true)}</span> · đủ chi ${monthsText(sc.after.liquid_months)} ${was(monthsText(sc.before.liquid_months))}`)
-          : tile("Lãi / lỗ danh mục đầu tư", `<span class="${pf.unrealized >= 0 ? "up" : "down"}">${pct(pf.unrealized_pct, true)}</span>`,
-            `${vnd(pf.unrealized, true)} chưa chốt · từ đầu năm ${pct(pf.ytd_return, true)} <span class="${pf.vs_benchmark >= 0 ? "up" : "down"}">(${pf.vs_benchmark >= 0 ? "hơn" : "kém"} ${esc(pf.benchmark_name)} ${pct(Math.abs(pf.vs_benchmark))})</span>`)}
-        ${tile("Mục tiêu đã đặt · đang có / cần có", gs.length ? pct(need ? have / need : 1, false, 0) : "—",
-          gs.length ? `${vnd(have)} / ${vnd(need)} · ${short.length}/${gs.length} mục tiêu còn thiếu` : "chưa đặt mục tiêu nào")}
-        ${sc ? "" : tile("Dòng tiền ròng 12 tháng tới · dự báo", vnd(aheadIn - aheadOut, true),
-          `vào ${vnd(aheadIn)} · ra ${vnd(aheadOut)}${pastNet != null ? ` · 12 tháng qua thực tế ${vnd(pastNet, true)}/tháng` : ""}`)}
+        ${sc ? tile("Tổng tài sản ròng · sau kịch bản", ss(vnd(sc.after.net_worth)), `<span class="${dNw >= 0 ? "up" : "down"}">${ss(vnd(dNw, true))} (${ss(pct(sc.before.net_worth ? dNw / sc.before.net_worth : 0, true))})</span> ${was(ss(vnd(sc.before.net_worth)))}`)
+          : tile("Tổng tài sản ròng", how(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)}), `<span class="${nw.month_change >= 0 ? "up" : "down"}">${nw.month_change >= 0 ? "▲" : "▼"} ${how(pct(nw.month_change_pct, true), "net_worth.month_change", {now: vnd(nw.value)})}</span> tháng này · tài sản ${how(vnd(nw.assets), "assets.total")}, nợ ${how(vnd(nw.liabilities), "liabilities.total")}`)}
+        ${sc ? tile("Thanh khoản · sau kịch bản", ss(vnd(sc.after.liquid)), `<span class="${dLq >= 0 ? "up" : "down"}">${ss(vnd(dLq, true))}</span> · đủ chi ${monthsText(sc.after.liquid_months)} ${was(monthsText(sc.before.liquid_months))}`)
+          : tile("Lãi / lỗ danh mục đầu tư", `<span class="${pf.unrealized >= 0 ? "up" : "down"}">${how(pct(pf.unrealized_pct, true), "perf.unrealized")}</span>`,
+            `${how(vnd(pf.unrealized, true), "perf.unrealized")} chưa chốt · từ đầu năm ${how(pct(pf.ytd_return, true), "perf.ytd_return")} <span class="${pf.vs_benchmark >= 0 ? "up" : "down"}">(${pf.vs_benchmark >= 0 ? "hơn" : "kém"} ${esc(pf.benchmark_name)} ${how(pct(Math.abs(pf.vs_benchmark)), "perf.vs_benchmark", {mine: pct(pf.ytd_return, true), bench: pct(pf.benchmark_ytd, true)})})</span>`)}
+        ${tile("Mục tiêu đã đặt · đang có / cần có", gs.length ? how(pct(need ? have / need : 1, false, 0), "goals.total", tot) : "—",
+          gs.length ? `${how(vnd(have), "goals.total", tot)} / ${how(vnd(need), "goals.total", tot)} · ${short.length}/${gs.length} mục tiêu còn thiếu` : "chưa đặt mục tiêu nào")}
+        ${sc ? "" : tile("Dòng tiền ròng 12 tháng tới · dự báo", how(vnd(aheadIn - aheadOut, true), "cashflow.net_ahead", ahd),
+          `vào ${how(vnd(aheadIn), "cashflow.forecast", {months: "12"})} · ra ${how(vnd(aheadOut), "cashflow.forecast", {months: "12"})}${pastNet != null ? ` · 12 tháng qua thực tế ${how(vnd(pastNet, true), "cashflow.past_net", {months: String(past.length)})}/tháng` : ""}`)}
       </div>
       <div class="cols mt">
         <div class="c7"><div class="subhead">Dòng tiền vào / ra · 12 tháng qua (thực tế) và 12 tháng tới (dự báo)</div>
@@ -111,11 +117,11 @@ export async function render(box, ctx) {
             const x = g.goal, c = (GOAL[x.status] || GOAL.none)[2];
             return `<div class="goal"><div class="row spread"><b>${esc(g.title)}</b>${chip(x.status)}</div>
               ${progress(x.progress, {color: c, label: `${g.title}: đang có ${pct(x.progress, false, 0)} nhu cầu`})}
-              <div class="small"><span class="muted">Đang có</span> ${vnd(Math.min(x.have, x.need))} <span class="muted">/ cần</span> ${vnd(x.need)} <span class="muted">· ${esc(x.by)}</span> ·
-                ${x.gap > 0 ? `<span class="down">thiếu ${vnd(x.gap)}</span>` : `<span class="up">đủ</span>`}</div></div>`;
+              <div class="small"><span class="muted">Đang có</span> ${how(vnd(Math.min(x.have, x.need)), "goal.have")} <span class="muted">/ cần</span> ${how(vnd(x.need), "goal.need")} <span class="muted">· ${esc(x.by)}</span> ·
+                ${x.gap > 0 ? `<span class="down">thiếu ${how(vnd(x.gap), "goal.gap", gapIn(x))}</span>` : `<span class="up">đủ</span>`}</div></div>`;
           }).join("")}</div>
-          <div class="notice mt ${left >= 0 && !unfunded.length ? "" : "bad"}"><b>${saving ? `Mục tiêu cần để dành ${vnd(saving)}/tháng` : short.length ? "Mục tiêu còn thiếu nguồn bù" : "Các mục tiêu đã đủ nguồn"}</b>
-            <div class="small">Thu nhập trừ chi tiêu còn dư ${vnd(surplus)}/tháng${saving ? ` → ${left >= 0 ? `còn dư ${vnd(left)}/tháng sau khi để dành` : `thiếu ${vnd(-left)}/tháng`}` : ""}${unfunded.length ? ` · ${unfunded.length} mục tiêu chưa có nguồn bù: ${unfunded.map(g => esc(g.title)).join(", ")}` : ""}.</div></div>`
+          <div class="notice mt ${left >= 0 && !unfunded.length ? "" : "bad"}"><b>${saving ? `Mục tiêu cần để dành ${how(vnd(saving), "goals.saving", sv)}/tháng` : short.length ? "Mục tiêu còn thiếu nguồn bù" : "Các mục tiêu đã đủ nguồn"}</b>
+            <div class="small">Thu nhập trừ chi tiêu còn dư ${how(vnd(surplus), "goal.surplus")}/tháng${saving ? ` → ${left >= 0 ? `còn dư ${how(vnd(left), "goals.saving", sv)}/tháng sau khi để dành` : `thiếu ${how(vnd(-left), "goals.saving", sv)}/tháng`}` : ""}${unfunded.length ? ` · ${unfunded.length} mục tiêu chưa có nguồn bù: ${unfunded.map(g => esc(g.title)).join(", ")}` : ""}.</div></div>`
           : `<p class="small muted">Chọn một mục tiêu bên dưới và bấm <b>Đặt mục tiêu</b> để theo dõi ở đây.</p>`}
         </div>
       </div></div>`;
@@ -129,7 +135,7 @@ export async function render(box, ctx) {
     const m = reg.matches || [];
     $("#reg", box).innerHTML = m.length ? `<div class="panel mt"><h3>Lưu ý quy định cho mục tiêu <span class="hint">nhánh mục tiêu: mốc thời gian và hồ sơ, không phải tiền</span></h3>
       <div class="list">${m.map(x => `<div class="item"><span class="ic-chip" style="--tone:var(--warning)">${icon("scale")}</span>
-        <div><div class="t">${esc(x.goal)} · ${esc(x.level_label)}</div><div class="m">mốc ${esc(x.milestone)}</div><div class="small">${esc(x.client_message || x.rm_hint || "")}</div></div><span></span></div>`).join("")}</div></div>` : "";
+        <div><div class="t">${esc(x.goal)} · ${esc(x.level_label)}</div><div class="m">mốc ${esc(x.milestone)}</div><div class="small" data-explains>${esc(x.client_message || x.rm_hint || "")}</div></div><span></span></div>`).join("")}</div></div>` : "";
   };
 
   // ── the list: goals by stage, then decisions and stress tests ───────────────────────────────────
@@ -138,7 +144,7 @@ export async function render(box, ctx) {
       const on = followed(e), g = e.goal;
       return `<button type="button" class="gitem${st.pick === e.id ? " on" : ""}" data-sim="${e.id}">
         <span class="row spread"><b>${esc(e.title)}</b>${chip(on ? g.status : "none")}</span>
-        <span class="small ${on ? "" : "muted"}">${on ? gapLine(g) : "Chưa đặt mục tiêu"}</span></button>`;
+        <span class="small ${on ? "" : "muted"}">${on ? gapHow(g) : "Chưa đặt mục tiêu"}</span></button>`;
     };
     const others = catalog.filter(c => !goals.some(g => g.id === c.id));
     $("#list", box).innerHTML = `<h3>Life goals <span class="hint">Mục tiêu theo giai đoạn đời</span></h3>
@@ -147,7 +153,7 @@ export async function render(box, ctx) {
         return items.length ? `<div class="stage"><div class="subhead">${icon(STAGE_ICON[k] || "target", {size: 14})} ${esc(stages[k])}</div><div class="slist">${items.map(card).join("")}</div></div>` : "";
       }).join("")}
       <div class="stage"><div class="subhead">${icon("activity", {size: 14})} Quyết định & stress test</div><div class="slist">${others.map(c => `<button type="button" class="gitem${st.pick === c.id ? " on" : ""}" data-sim="${c.id}">
-        <b>${esc(c.title)}</b><span class="small muted">${esc(c.question)}</span></button>`).join("")}</div></div>`;
+        <b data-explains>${esc(c.title)}</b><span class="small muted" data-explains>${esc(c.question)}</span></button>`).join("")}</div></div>`;
     for (const b of box.querySelectorAll("[data-sim]")) b.onclick = () => run(b.dataset.sim, null);
   };
 
@@ -161,69 +167,70 @@ export async function render(box, ctx) {
     return f ? `<form id="sim-form" class="simform">${f}<button type="submit" class="btn primary">Chạy lại</button></form>` : "";
   };
   const beforeAfter = (r) => `<table class="table mt"><thead><tr><th></th><th class="r">Trước</th><th class="r">Sau</th></tr></thead><tbody>
-    <tr><td>Tài sản ròng</td><td class="r">${vnd(r.before.net_worth)}</td><td class="r">${vnd(r.after.net_worth)}</td></tr>
-    <tr><td>Thanh khoản</td><td class="r">${vnd(r.before.liquid)}</td><td class="r">${vnd(r.after.liquid)}</td></tr>
+    <tr><td>Tài sản ròng</td><td class="r">${how(vnd(r.before.net_worth), "scenario.state", {scenario: r.title})}</td><td class="r">${how(vnd(r.after.net_worth), "scenario.state", {scenario: r.title})}</td></tr>
+    <tr><td>Thanh khoản</td><td class="r">${how(vnd(r.before.liquid), "scenario.state", {scenario: r.title})}</td><td class="r">${how(vnd(r.after.liquid), "scenario.state", {scenario: r.title})}</td></tr>
     <tr><td>Đủ chi</td><td class="r">${monthsText(r.before.liquid_months)}</td><td class="r">${monthsText(r.after.liquid_months)}</td></tr></tbody></table>`;
-  const summary = (r) => `<div class="stats mt">${r.summary.map(l => `<div class="stat"><span class="k">${esc(l.label)}</span><span class="v">${esc(l.value)}</span></div>`).join("")}</div>`;
+  const summary = (r) => `<div class="stats mt">${r.summary.map(l => `<div class="stat"><span class="k" data-explains>${esc(l.label)}</span><span class="v">${how(esc(l.value), "scenario.line", {scenario: r.title, line: l.label})}</span></div>`).join("")}</div>`;
   const options = (r, key) => `<div class="cols mt">${(r.options || []).map(o => {
     const tag = sentTag(`${key}:${o.title}`);
     return `<div class="panel c6"><div class="row spread"><span class="pill">${o.id === "light" ? "Hướng nhẹ" : "Hướng mạnh"}</span>${tag}</div>
-      <h3 style="margin:10px 0 6px">${esc(o.title)}</h3>
+      <div data-explains><h3 style="margin:10px 0 6px">${esc(o.title)}</h3>
       <div class="small muted">Làm gì</div><ul class="ul">${o.actions.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
-      <div class="small muted">Kết quả</div><ul class="ul">${o.effect.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
+      <div class="small muted">Kết quả</div><ul class="ul">${o.effect.map(a => `<li>${esc(a)}</li>`).join("")}</ul></div>
       ${tag ? "" : `<button type="button" class="btn" data-propose="${o.id}">Gửi chuyên gia duyệt</button>`}</div>`;
   }).join("")}</div>`;
   const tracking = (g) => {
     const t = g.tracking;
     if (!t) return "";
-    const m = t.month, pf = d.performance;
-    const sign = (x) => `<span class="${x >= 0 ? "up" : "down"}">${vnd(x, true)}</span>`;
-    const pc = (x) => `<span class="${x >= 0 ? "up" : "down"}">${pct(x, true)}</span>`;
+    const m = t.month, pf = d.performance, ex = {rate: pct(t.rate, false, 0), saving: vnd(t.saving)};
+    const sign = (x, id = "track.actual", inp) => `<span class="${x >= 0 ? "up" : "down"}">${how(vnd(x, true), id, inp)}</span>`;
+    const pc = (x, id = "track.actual") => `<span class="${x >= 0 ? "up" : "down"}">${how(pct(x, true), id, {pool: t.pool_label})}</span>`;
+    const pt = (p, text) => how(text, "track.point", {point: p.label});
     const rows = t.points.map((p, i) => {
       const prev = i ? t.points[i - 1] : null, move = prev ? p.gap - prev.gap : null;
-      return `<tr><td>${esc(p.label)}</td><td class="r">${vnd(p.pool)}</td><td class="r">${p.gap > 0 ? "Thiếu " + vnd(p.gap) : "Dư " + vnd(-p.gap)}</td>
-        <td class="r">${move == null || Math.abs(move) < 1e6 ? "—" : `<span class="${move > 0 ? "down" : "up"}">${move > 0 ? "xấu đi " : "cải thiện "}${vnd(Math.abs(move))}</span>`}</td></tr>`;
+      return `<tr><td>${esc(p.label)}</td><td class="r">${pt(p, vnd(p.pool))}</td><td class="r">${pt(p, p.gap > 0 ? "Thiếu " + vnd(p.gap) : "Dư " + vnd(-p.gap))}</td>
+        <td class="r">${move == null || Math.abs(move) < 1e6 ? "—" : `<span class="${move > 0 ? "down" : "up"}">${move > 0 ? "xấu đi " : "cải thiện "}${pt(p, vnd(Math.abs(move)))}</span>`}</td></tr>`;
     }).join("");
     return `<div class="panel mt"><h3>Performance tracking <span class="hint">Theo dõi so với danh mục · nguồn: ${esc(t.pool_label.toLowerCase())}</span></h3>
-      <div class="notice ${t.behind ? "bad" : ""}"><b>${t.behind ? "▼ Tháng này kém kỳ vọng" : "▲ Tháng này đạt kỳ vọng"}</b><div class="small">${esc(t.note)}</div></div>
+      <div class="notice ${t.behind ? "bad" : ""}"><b>${t.behind ? "▼ Tháng này kém kỳ vọng" : "▲ Tháng này đạt kỳ vọng"}</b><div class="small" data-explains>${esc(t.note)}</div></div>
       <div class="kpis mt three">
-        <div class="kpi"><div class="k">Tháng này · thực tế</div><div class="v">${sign(m.actual)}</div><div class="s">${pc(m.actual_pct)} nguồn tài sản</div></div>
-        <div class="kpi"><div class="k">Tháng này · kỳ vọng</div><div class="v">${vnd(m.expected, true)}</div><div class="s">lãi ${pct(t.rate, false, 0)}/năm${t.saving ? ` + để dành ${vnd(t.saving)}/tháng` : ""}</div></div>
-        <div class="kpi"><div class="k">Hụt / vượt so với kỳ vọng</div><div class="v">${sign(m.short)}</div><div class="s">từ đầu năm: ${pc(t.ytd.actual_pct)} so với kỳ vọng ${pct(t.ytd.expected_pct, true)}</div></div>
+        <div class="kpi"><div class="k">Tháng này · thực tế</div><div class="v">${sign(m.actual, "track.actual", {pool: t.pool_label})}</div><div class="s">${pc(m.actual_pct)} nguồn tài sản</div></div>
+        <div class="kpi"><div class="k">Tháng này · kỳ vọng</div><div class="v">${how(vnd(m.expected, true), "track.expected", ex)}</div><div class="s">lãi ${how(pct(t.rate, false, 0), "track.expected", ex)}/năm${t.saving ? ` + để dành ${how(vnd(t.saving), "track.expected", ex)}/tháng` : ""}</div></div>
+        <div class="kpi"><div class="k">Hụt / vượt so với kỳ vọng</div><div class="v">${sign(m.short, "track.short", {actual: vnd(m.actual, true), expected: vnd(m.expected, true)})}</div><div class="s">từ đầu năm: ${pc(t.ytd.actual_pct)} so với kỳ vọng ${how(pct(t.ytd.expected_pct, true), "track.expected", ex)}</div></div>
       </div>
       <table class="table mt"><thead><tr><th>Mốc</th><th class="r">Nguồn cho mục tiêu</th><th class="r">Chênh lệch mục tiêu</th><th class="r">Thay đổi</th></tr></thead><tbody>${rows}</tbody></table>
-      ${t.movers.length ? `<div class="subhead mt">Biến động lớn tháng này trong nguồn</div>${t.movers.map(x => `<div class="kv"><span><span class="legend-dot" style="background:${x.change >= 0 ? "var(--in)" : "var(--out)"}"></span> ${esc(x.name)}</span><b>${vnd(x.change, true)} <span class="muted">${pct(x.pct, true)}</span></b></div>`).join("")}` : ""}
-      <p class="small muted mt">Toàn danh mục đầu tư từ đầu năm ${pct(pf.ytd_return, true)} so với ${esc(pf.benchmark_name)} ${pct(pf.benchmark_ytd, true)}:
-        <span class="${pf.vs_benchmark >= 0 ? "up" : "down"}">${pf.vs_benchmark >= 0 ? "hơn" : "kém"} ${pct(Math.abs(pf.vs_benchmark))}</span>.</p></div>`;
+      ${t.movers.length ? `<div class="subhead mt">Biến động lớn tháng này trong nguồn</div>${t.movers.map(x => `<div class="kv"><span><span class="legend-dot" style="background:${x.change >= 0 ? "var(--in)" : "var(--out)"}"></span> ${esc(x.name)}</span><b>${how(vnd(x.change, true), "track.mover")} <span class="muted">${how(pct(x.pct, true), "track.mover")}</span></b></div>`).join("")}` : ""}
+      <p class="small muted mt">Toàn danh mục đầu tư từ đầu năm ${how(pct(pf.ytd_return, true), "perf.ytd_return")} so với ${esc(pf.benchmark_name)} ${how(pct(pf.benchmark_ytd, true), "perf.benchmark_ytd", {benchmark: pf.benchmark_name})}:
+        <span class="${pf.vs_benchmark >= 0 ? "up" : "down"}">${pf.vs_benchmark >= 0 ? "hơn" : "kém"} ${how(pct(Math.abs(pf.vs_benchmark)), "perf.vs_benchmark", {mine: pct(pf.ytd_return, true), bench: pct(pf.benchmark_ytd, true)})}</span>.</p></div>`;
   };
   const goalPanel = (entry, r) => {
     const g = (r && r.goal) || entry.goal, on = followed(entry), key = on ? g.status : "none";
     const acts = g.actions.map((a, i) => {
       const tag = sentTag(`${entry.id}:${a.text}`);
-      const worth = a.cut > 0 ? (g.gap > 0 ? `giảm chênh lệch ~${vnd(a.cut)}` : `giá trị ~${vnd(a.cut)}`) : esc(a.effect);
-      return `<div class="item"><span class="ic-chip sm">${i + 1}</span><div><div class="t">${esc(a.text)}</div><div class="m">${worth} · ${a.option === "light" ? "Hướng nhẹ" : "Hướng mạnh"}</div></div>
+      const worth = a.cut > 0 ? (g.gap > 0 ? `giảm chênh lệch ~${how(vnd(a.cut), "goal.action_cut")}` : `giá trị ~${how(vnd(a.cut), "goal.action_cut")}`) : `<span data-explains>${esc(a.effect)}</span>`;
+      return `<div class="item"><span class="ic-chip sm">${i + 1}</span><div><div class="t" data-explains>${esc(a.text)}</div><div class="m">${worth} · ${a.option === "light" ? "Hướng nhẹ" : "Hướng mạnh"}</div></div>
         <div>${tag || `<button type="button" class="btn sm" data-act="${i}">Gửi chuyên gia duyệt</button>`}</div></div>`;
     }).join("");
     return `<div class="panel"><div class="row spread">${chip(key)}<span class="small muted">Mốc: ${esc(g.by)} · ${esc(entry.stage_label)}</span>
         ${on ? `<button type="button" class="linkbtn" data-unfollow="${entry.id}">Bỏ theo dõi</button>` : `<button type="button" class="btn primary sm" data-follow="${entry.id}">Đặt mục tiêu</button>`}</div>
-        <h2 class="h2">${esc(entry.title)}</h2>${r ? `<p class="muted" style="margin:0">${esc(r.question)}</p>` : ""}</div>
+        <h2 class="h2">${esc(entry.title)}</h2>${r ? `<p class="muted" style="margin:0" data-explains>${esc(r.question)}</p>` : ""}</div>
       <div class="panel mt"><h3>Goal status <span class="hint">Tình trạng mục tiêu</span></h3>
         <div class="kpis three">
-          <div class="kpi"><div class="k">Cần có</div><div class="v">${vnd(g.need)}</div></div>
-          <div class="kpi"><div class="k">${esc(g.have_label)}</div><div class="v">${vnd(g.have)}</div></div>
-          <div class="kpi"><div class="k">Chênh lệch</div><div class="v ${g.gap > 0 ? "down" : "up"}">${g.gap > 0 ? "−" + vnd(g.gap) : "+" + vnd(-g.gap)}</div></div></div>
+          <div class="kpi"><div class="k">Cần có</div><div class="v">${how(vnd(g.need), "goal.need")}</div></div>
+          <div class="kpi"><div class="k">${esc(g.have_label)}</div><div class="v">${how(vnd(g.have), "goal.have")}</div></div>
+          <div class="kpi"><div class="k">Chênh lệch</div><div class="v ${g.gap > 0 ? "down" : "up"}">${how(g.gap > 0 ? "−" + vnd(g.gap) : "+" + vnd(-g.gap), "goal.gap", gapIn(g))}</div></div></div>
         <div class="mt">${progress(g.progress, {color: (GOAL[key] || GOAL.none)[2], label: `Tiến độ ${pct(g.progress, false, 0)}`})}</div>
-        <div class="small muted mt-xs">Đã có ${pct(g.progress, false, 0)} nhu cầu</div>
-        <p class="takeaway">${esc(g.verdict)}</p></div>
+        <div class="small muted mt-xs">Đã có ${how(pct(g.progress, false, 0), "goal.progress", gapIn(g))} nhu cầu</div>
+        <p class="takeaway" data-explains>${esc(g.verdict)}</p></div>
       ${r ? tracking(g) : `<div class="panel mt muted">Đang tính diễn biến so với danh mục…</div>`}
       <div class="panel mt"><h3>Required action <span class="hint">Hành động cần làm · xếp theo mức giảm chênh lệch</span></h3>
         ${acts ? `<div class="list">${acts}</div>` : `<p class="muted">Không cần hành động thêm.</p>`}</div>
       ${r ? `<div class="panel mt"><h3>Calculation details <span class="hint">Chi tiết tính toán · đổi giả định rồi Chạy lại, mục tiêu cập nhật ngay · dữ liệu ngày ${esc(r.as_of)}</span></h3>
-        ${simForm(r)}${summary(r)}${beforeAfter(r)}</div>${options(r, entry.id)}<p class="footnote">${esc(r.note)}</p>` : ""}`;
+        ${simForm(r)}${summary(r)}${beforeAfter(r)}</div>${options(r, entry.id)}<p class="footnote" data-explains>${esc(r.note)}</p>` : ""}`;
   };
   const scenarioPanel = (r) => `<div class="panel"><div class="small muted">${r.kind === "stress" ? "Stress test thị trường · AI tự chạy" : "Quyết định tài sản"} · dữ liệu ngày ${esc(r.as_of)}</div>
-      <h2 class="h2">${esc(r.title)}</h2><p class="muted">${esc(r.question)}</p>${simForm(r)}${summary(r)}${beforeAfter(r)}</div>
-    ${options(r, r.scenario)}<p class="footnote">${esc(r.note)}</p>`;
+      <h2 class="h2" data-explains>${esc(r.title)}</h2><p class="muted" data-explains>${esc(r.question)}</p>${simForm(r)}${summary(r)}${beforeAfter(r)}</div>
+    ${options(r, r.scenario)}<p class="footnote" data-explains>${esc(r.note)}</p>`;
 
   const drawPanel = () => {
     const entry = goals.find(g => g.id === st.pick);

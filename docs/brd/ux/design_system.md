@@ -62,6 +62,7 @@ tagline hides, search takes its own row ([FEAT-34](../features/FEAT-34-header-se
 | Table `.table`, `.scrollx` | tokens.css | horizontal scroll inside the table on phones, never the page |
 | States `loading()`, `empty(title, hint)`, `failed(e)` | core.js | skeleton with `aria-busy`; empty with a hint of what will appear; error with `role="alert"` |
 | Drawer `drawer(title, html)`, toast `toast(msg)` | core.js | dialog with Esc; the result of an action, including refusals |
+| A figure with its formula `n(text, metric, inputs)`, `nAttrs` (SVG), `howOn` and `opts.metric` (charts); `data-quote`, `data-axis`, `data-explains` | core.js, tokens.css `.how-n`, `.num-svg`, `.how` | every money or percent figure (NFR-11, G1): a dotted underline on hover, focusable, Enter or a click opens “Cách tính” — what it is, the formula, the inputs, the code for staff. It is a `span role=button`, never a nested button; a row that opens something else still does, from anywhere but the figure |
 | Charts: `fan`, `diverging`, `probBar`, `heat`, `spark`, `moves`, `sankey`, `hover` | charts/charts.js | SVG, no library |
 | Copilot button | tokens.css, copilot.js | a 56 px round mark with the sparkles icon; its states are in Motion |
 

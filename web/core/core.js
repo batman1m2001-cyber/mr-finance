@@ -167,3 +167,53 @@ export const internal = () => `<div class="internal" role="note"><span class="ba
 export function followedIds(client) {
   try { return JSON.parse(localStorage.getItem(`mf.goals.${client}`) || "null"); } catch (_) { return null; }
 }
+
+// ── cách tính (BRD-NFR-11): every number carries what it is; the drawer reads the formula from the server ─────
+// n(text, metric, inputs): a number as a focusable control (a span, so it can sit inside a row that is itself a
+// button or a link); inputs {key: shown value} come from the same server answer as the number.
+export function n(text, metric, inputs) {
+  const data = inputs ? ` data-in="${esc(JSON.stringify(inputs))}"` : "";
+  return `<span class="how-n" role="button" tabindex="0" data-metric="${esc(metric)}"${data}>${text}</span>`;
+}
+// the same for an SVG <text>: attributes, focusable
+export const nAttrs = (metric, inputs) =>
+  ` data-metric="${esc(metric)}"${inputs ? ` data-in="${esc(JSON.stringify(inputs))}"` : ""} tabindex="0" role="button" class="num-svg"`;
+
+export const howAudience = {staff: false};
+let howCatalogue = null;
+async function catalogue() {
+  if (!howCatalogue) howCatalogue = get("/api/how").catch((e) => { howCatalogue = null; throw e; });
+  return howCatalogue;
+}
+async function openHowOf(el) {
+  const id = el.dataset.metric;
+  let inputs = {};
+  try { inputs = JSON.parse(el.dataset.in || "{}"); } catch (_) { /* no inputs */ }
+  const body = drawer("Cách tính", loading(2));
+  try {
+    const m = (await catalogue())[id];
+    if (!m) throw new Error(`chưa có cách tính cho “${id}”`);
+    const rows = Object.entries(m.inputs || {}).filter(([k]) => inputs[k] != null)
+      .map(([k, label]) => `<tr><td>${esc(label)}</td><td class="r">${esc(inputs[k])}</td></tr>`).join("");
+    const extra = Object.entries(inputs).filter(([k]) => !(m.inputs || {})[k])
+      .map(([k, v]) => `<tr><td>${esc(k)}</td><td class="r">${esc(v)}</td></tr>`).join("");
+    body.innerHTML = `<div class="how">
+      <div class="small muted">${esc(m.label)}</div>
+      <div class="how-value">${esc(el.textContent.trim())}</div>
+      <h4>Công thức</h4><p data-explains>${esc(m.formula)}</p>
+      ${rows || extra ? `<h4>Đầu vào</h4><table class="table" data-explains><tbody>${rows}${extra}</tbody></table>` : ""}
+      ${howAudience.staff ? `<p class="small muted">Tính tại <code>${esc(m.code)}</code></p>` : ""}</div>`;
+  } catch (e) {
+    body.innerHTML = failed(e);
+  }
+}
+export function explainOn(root) {
+  root.addEventListener("click", (e) => {
+    const el = e.target.closest("[data-metric]");
+    if (el && !el.closest(".drawer")) { e.preventDefault(); e.stopPropagation(); openHowOf(el); }
+  }, true);
+  root.addEventListener("keydown", (e) => {
+    const el = e.target.closest && e.target.closest("[data-metric]");
+    if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openHowOf(el); }
+  });
+}

@@ -2,7 +2,7 @@
    The owner's role proposes; a user of the same role approves — another person where §13.1 asks for two. Everyone
    acts as themselves (signed in). A prompt or model proposal shows the fixed eval set's result: it is approved only
    when the set passed (MEAS-07). */
-import {esc, get, post, toast, when} from "../core/core.js";
+import {esc, get, n as how, post, toast, when} from "../core/core.js";
 
 const STATUS = {ACTIVE: ["good", "Đang áp dụng"], PROPOSED: ["warn", "Chờ duyệt"], SUPERSEDED: ["", "Đã thay"], REJECTED: ["bad", "Từ chối"]};
 const LABEL = {pre_review_pct: "RM xem trước khi P10 3 tháng ≤ (tỷ lệ tài sản ròng)", concentration_share: "Hậu kiểm: một tài sản chiếm >",
@@ -16,7 +16,7 @@ const NO_EDIT = ["factor_model"];  // proposed from Mô hình (estimate) or by t
 function summary(k, d) {
   if (!d) return "";
   if (k === "thresholds") return Object.entries(d).map(([x, v]) => `${LABEL[x] || x}: <b class="num">${v}</b>`).join("<br>");
-  if (k === "return_assumptions") return Object.entries(d).map(([x, v]) => `${LABEL[x] || x}: <b class="num">${pc(v)}</b>`).join("<br>");
+  if (k === "return_assumptions") return Object.entries(d).map(([x, v]) => `${LABEL[x] || x}: <b class="num">${how(pc(v), "setting.return", {key: LABEL[x] || x})}</b>`).join("<br>");
   if (k === "restricted") return d.map(r => `${esc(r.name)} (${esc(r.ticker)})`).join(", ");
   if (k === "forbidden_phrases") return `Khuyến nghị mua/bán: ${d.recommendation.length} cụm (${d.recommendation.slice(0, 4).map(esc).join(", ")}…)<br>Ghi chú quy định: ${d.compliance.length} cụm`;
   if (k === "consent") return `Mẫu ${esc(d.version)} · cần đồng ý cho: ${[d.require.open_api && "Open API", d.require.family_member && "thành viên gia đình"].filter(Boolean).join(", ") || "không"}<div class="muted">${esc(d.text)}</div>`;

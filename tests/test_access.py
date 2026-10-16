@@ -29,6 +29,7 @@ ROLE = {"C01": "client", "C02": "client", "rm01": "rm", "rm03": "rm"}
 READS = {
     "/api/clients": ALL,
     "/api/views": ALL,
+    "/api/how": ALL,  # the formulas (NFR-11); no client data
     "/api/scenarios?client_id=C01": FAMILY,
     "/api/review?client_id=C01": FAMILY,
     "/api/advisory?client_id=C01": FAMILY,
