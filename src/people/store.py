@@ -25,7 +25,7 @@ import time
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional
 
-from wealth.paths import DATA, state_path
+from wealth.paths import DATA, no_people_in_zone, state_path
 
 KINDS = ("staff", "client", "dependent")
 STAFF_ROLES = ("cio", "rm", "compliance", "admin", "specialist")
@@ -129,6 +129,7 @@ def _top_up(con: sqlite3.Connection) -> None:
 
 @contextmanager
 def _db(write: bool = False) -> Iterator[sqlite3.Connection]:
+    no_people_in_zone("people")
     path = state_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     con = sqlite3.connect(path, timeout=10, isolation_level=None)

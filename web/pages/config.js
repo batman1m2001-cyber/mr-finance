@@ -10,6 +10,7 @@ const LABEL = {pre_review_pct: "RM xem trước khi P10 3 tháng ≤ (tỷ lệ 
   safe: "Tiền gửi 12 tháng", growth: "Danh mục cân bằng, dài hạn", inflation: "Lạm phát", withdrawal: "Tỷ lệ rút an toàn",
   rental_yield: "Lợi suất cho thuê BĐS", best_deposit: "Lãi tiền gửi tốt nhất"};
 const pc = (x) => `${(x * 100).toLocaleString("vi-VN", {maximumFractionDigits: 2})} %`;
+const MODE = {live: "Chạy thật trong TCB (live)", inbox: "Hộp chờ: vùng AI chạy, TCB nhập gói đã ký", mock: "Mô phỏng, không gọi mô hình"};
 const NO_EDIT = ["factor_model"];  // proposed from Mô hình (estimate) or by the API: too large to edit here
 
 function summary(k, d) {
@@ -24,6 +25,9 @@ function summary(k, d) {
   if (k === "ticker_map") return `${Object.keys(d).length} mã`;
   if (k === "factor_model") return `Phiên bản ${esc(d.version || "—")} · ${(d.factors || []).length} yếu tố${(d.loadings || {}).classes ? ` · ${Object.keys(d.loadings.classes).length} loại tài sản khai báo` : ""}`;
   if (k === "prompts") return `${Object.keys(d.lenses || {}).length} nhóm phân tích (${Object.values(d.lenses || {}).map(l => esc(l.label)).join(", ")}) · lời nhắc: ${["analyst", "debate", "synthesize", "challenge"].map(x => `${x} ${(d[x] || "").length} ký tự`).join(", ")}`;
+  if (k === "ai_mode") return `<b>${esc(MODE[d.mode] || d.mode)}</b>`;
+  if (k === "rm_assignment") return Object.entries(Object.entries(d).reduce((m, [f, rm]) => ((m[rm] = (m[rm] || 0) + 1), m), {}))
+    .map(([rm, n]) => `${esc(rm)}: <b class="num">${n}</b> gia đình`).join(" · ");
   if (k === "models") return `Agent CIO: <b>${esc(d.cio || "chưa đặt")}</b> · Agent Phản biện: <b>${esc(d.challenger || "chưa đặt")}</b>`;
   return "";
 }

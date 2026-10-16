@@ -2,6 +2,16 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-16 — Background runs, the AI zone and inbox mode (BRD completion F6): “Chạy Agent CIO” queues a job
+  that the `agent_worker` job runs, and the event page follows it; Admin chooses live, inbox or mock (`ai_mode`);
+  the AI zone is a second process (`app/zone.py`) with its own database and a catalogue-only data folder, fed the
+  approved catalogues and released research by the signed `zone_sync` job; it fetches the feeds itself, runs the
+  agent under a daily cap and pushes signed packages to the write-only `POST /api/inbox`; the `inbox_import` job
+  takes each through a live run's checks (news matched to the bank's own fetch) or rejects it with the error;
+  Hệ thống shows the inbox and the syncs; `operonx run <job>` no longer refused as a signed-out request —
+  ADR-0022 (ADR-0009 superseded in part), FEAT-19, FEAT-04, matrix (FR-307, AI-13, ZONE-01/02/03/06, LC-04,
+  SEC-07 verified), api_reference, admin.md (SCR-ADM-01).
+
 - 2026-10-16 — Identity and access complete (BRD completion F5): every served route walked as seven people
   against a written matrix (reads by role per path, actions by person, role and family); refused actions answer
   403 with the reason and signed-out 401 (operonx 1.27 `http_status`); holes the walk found closed (declaring

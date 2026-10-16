@@ -1,0 +1,13 @@
+# The AI zone (app/zone.py, F-D7): a second process beside the bank's app, with its own state file
+# and data folder. Serve with: MF_STATE=data/zone.db MF_DATA=data/zone operonx serve -f operonx.zone.toml
+
+[project]
+name = "mr-finance-zone"
+src  = ["src", "."]
+app  = "app.zone:APP"
+
+[resources]
+overlay = "resources.yaml"
+
+[tracing]
+sinks = ["local"]

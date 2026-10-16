@@ -224,6 +224,13 @@ matrix; operonx 1.27.0 answers a refusal with its status (403, 401, 400); five h
   import through the same checks.
 - Mode switch: live, inbox or mock (FR-307).
 
+**Done** (FEAT-19, FEAT-04, ADR-0022): live runs queued (`agent_jobs`, the `agent_worker` job every 5 s, the event
+page follows the job); `ai_mode` (Admin); the AI zone `app/zone.py` (own `MF_STATE`, catalogue-only `MF_DATA`,
+`MF_ZONE=on` refuses people reads), fed by `zone_sync` (signed `MF_ZONE_KEY`), its own `zone_news` and `zone_agent`
+(daily cap, outbox with retries); `POST /api/inbox` (202 id only, 409/413/429) and `inbox_import` through the same
+checks. Recorded across two real processes: the zone's package `IN-000001` imported as `VW-0004-v1`. The live demo
+stays in `live` mode.
+
 ### F7 — Observability and alerts (E)
 
 - A central structured log.

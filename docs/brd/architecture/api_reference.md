@@ -34,7 +34,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/news/dismiss` | news_dismiss → `dismiss_flow` | `ids, by?, note?` | CIO | FEAT-02 |
 | `/api/news/release` | news_release → `release_flow` | `item_id, by, note` | Compliance | FEAT-02 |
 | `/api/events` | event → `event_flow` | `news_ids, title?, by` | CIO | FEAT-02 |
-| `/api/events/run-agent` | cio_agent → `cio_agent_flow` | `event_id, by, mode? (live\|mock)` | CIO | FEAT-04, 05 |
+| `/api/events/run-agent` | cio_agent → `agent_queue_flow` (a job; the `agent_worker` job runs `cio_agent_flow`) | `event_id, by, mode? (live\|mock)` → `{job}` | CIO; 409 in inbox mode or on a held event | FEAT-04, 05 |
 | `/api/views/decide` | view_decide → `decide_flow` | `view_id, action, by, reason, idem_key?, edits?, responses?` | CIO | FEAT-06 |
 | `/api/runs/recompute` | run_recompute → `recompute_flow` | `run, by, idem_key?` | CIO | FEAT-08 |
 | `/api/runs/decide` | run_decide → `run_decide_flow` | `run, action (make_effective\|withdraw), by, reason` | CIO | FEAT-08 |
@@ -43,6 +43,14 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
 | `/api/market/load` | market_load_ask → `market_load_ask_flow` | `by, since? (YYYY-MM-DD, from 2015-01-01; default 2020-01-01)` | Admin | FEAT-12 (SCR-ADM-01) |
 | `/api/reset` | web (`reset`) | — | — | demo reset |
+
+## The AI zone's doors (FEAT-19, [ADR-0022](../decisions/ADR-0022-the-ai-zone-is-a-second-process.md))
+
+| Path | Process | Body | Answers |
+|---|---|---|---|
+| `POST /api/inbox` | the bank (`app/web.py`), open without a session: the signature is the check | a package (FEAT-19), header `x-mf-signature: sha256=<hex>` (`MF_INBOX_KEY`) | `202 {"id"}` only; 409 outside inbox mode, 413 over 512 KB, 429 with 200 waiting |
+| `POST /api/zone/sync` | the AI zone (`src/zone/web.py`) | the bank's bundle `{version, catalogues, not_set, research}`, signed `MF_ZONE_KEY` | `{applied, research_added}`; 401 unsigned, 400 a catalogue that may not go or fails its check |
+| `GET /api/zone/status` | the AI zone | — | its news count, last ingest, catalogues in force (and from which bank version), today's events and cap, the outbox |
 
 ## Sign-in (`app/web.py`, FEAT-12)
 
@@ -89,7 +97,7 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `/api/audit/export` | `format=json\|csv` | the whole chain as a download (JSON includes the check) | FEAT-11 |
 | `/api/market` | — | staff: the market jobs (cadence, last run, last success, last error), each series' coverage, last value, source and 120-day tail, each factor's provenance | FEAT-35 |
 | `/api/market/series` | `id, from?` | staff: one stored or computed (DXY, SJC_GAP) series' points | FEAT-35 |
-| `/api/system` | — | Admin: jobs and how each last went, news feeds, agent runs (7 days), audit chain check, history loads, configuration waiting, staff accounts with an RM's families | FEAT-12 (SCR-ADM-01) |
+| `/api/system` | — | Admin: jobs and how each last went, news feeds, agent runs (7 days) and runs queued, audit chain check, history loads, the inbox's packages and the last zone syncs, configuration waiting, staff accounts with an RM's families | FEAT-12 (SCR-ADM-01) |
 | `/api/accuracy` | — | staff: the model walked forward over history (per horizon and factor: observations, share inside P10–P90, verdict, direction hit rate; KPI-03), the approved views' forecasts summarised and listed with their scores | FEAT-18 |
 | `/api/measure` | — | staff: the monthly reports — misses with causes, approvals (minutes, without edits, under 2 min), news to RM hours, inbox and CIO agent minutes | FEAT-18 |
 | `/api/research` | `status?` | research items and kinds | FEAT-03 |
@@ -101,5 +109,6 @@ The BRD lists its author's endpoints (e.g. `POST /api/events/from-news`, `PUT /a
 `POST /api/views/:id/decision`, `GET /api/families/:id/impacts`, `GET /api/config`, `POST /api/external/import`).
 Here the same operations are named differently (one decision endpoint with `action`, edits through it) and these
 have no equivalent: `/cashflow` and `/pnl` per family as separate reads (they are part of `/api/dashboard`),
-`GET/POST /api/config` (FEAT-14), `POST /api/external/import` and `/api/external/submit` (FEAT-19),
+`GET/POST /api/config` (FEAT-14), `POST /api/external/import` and `/api/external/submit` (FEAT-19: here the
+zone's `POST /api/inbox` and the `inbox_import` job),
 `GET /api/procedural` (here `/api/goals/regulation`).

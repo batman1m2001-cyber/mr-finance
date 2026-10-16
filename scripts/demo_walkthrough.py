@@ -41,6 +41,17 @@ def call(base: str, path: str, body: dict | None = None, timeout: float = 600) -
     return out
 
 
+def wait_for_job(base: str, event_id: str, job_id: str, timeout: float = 1800) -> dict:
+    """The queued agent run, once the worker has finished it (done or failed)."""
+    end = time.time() + timeout
+    while time.time() < end:
+        job = next(j for j in call(base, f"/api/events/{event_id}")["jobs"] if j["id"] == job_id)
+        if job["status"] in ("done", "failed"):
+            return job
+        time.sleep(3)
+    raise RuntimeError(f"agent run {job_id} not finished after {timeout:.0f} s")
+
+
 def groups(items: list, n: int) -> list:
     """The event types with the most news (two or more), newest news first, at most four per event."""
     by: dict = defaultdict(list)
@@ -84,11 +95,14 @@ def main() -> int:
         try:
             ev = call(base, "/api/events", {"news_ids": [n["id"] for n in news], "by": BY})["event"]
             t0 = time.time()
-            res = call(base, "/api/events/run-agent", {"event_id": ev["id"], "by": BY})["result"]
-            view = res["view"]
+            job = call(base, "/api/events/run-agent", {"event_id": ev["id"], "by": BY})["job"]
+            job = wait_for_job(base, ev["id"], job["id"])  # queued: the agent_worker job runs it (AI-13)
+            if job["status"] != "done":
+                raise RuntimeError(f"agent run {job['id']} {job['status']}: {job.get('error')}")
+            view = call(base, f"/api/views/{job['view_id']}")["view"]
             print(
                 f"{tag} {ev['id']} → {view['id']} ({view['status']}, {time.time() - t0:.0f} s, "
-                f"mode {(res.get('agent') or {}).get('mode') or view.get('mode') or '?'})"
+                f"mode {job.get('mode') or view.get('mode') or '?'})"
             )
             if k >= approve_upto:
                 print(f"{tag} để chờ CIO duyệt")

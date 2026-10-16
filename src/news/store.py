@@ -156,6 +156,14 @@ def get(ids: List[str]) -> List[Dict[str, Any]]:
     return [by[i] for i in ids if i in by]
 
 
+def by_url_key(key: str) -> Optional[Dict[str, Any]]:
+    """The item fetched from this address (``rules.url_key``), if TCB has it: how the inbox matches the AI zone's
+    news to news TCB fetched itself."""
+    with _db() as con:
+        r = con.execute("select * from news_items where url_key = ?", (key,)).fetchone()
+    return _item(r) if r else None
+
+
 def counts_by_hour(hours: int = 24, now: Optional[float] = None) -> Dict[str, List[int]]:
     """Items published per hour per source over the last ``hours`` (oldest first): feed health."""
     now = now or time.time()

@@ -18,7 +18,10 @@ every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_
      (market_backfill on demand) · GET /api/market[/series] ──► app/web.py (the source registry, the series)
 POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (Compliance)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
-POST /api/events ──► event_flow · POST /api/events/run-agent ──► cio_agent_flow (agent + challenger)
+POST /api/events ──► event_flow · POST /api/events/run-agent ──► agent_queue_flow, then the agent_worker job
+     ──► cio_agent_flow (agent + challenger)
+POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
+     the zone_sync job sends the zone the approved catalogues and released research (inbox mode, F-D7)
 POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
 approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
      run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
@@ -48,6 +51,7 @@ from feed.graph import feed_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
+from inbox.graph import inbox_import_flow
 from market.graph import (
     market_backfill_flow,
     market_crypto_flow,
@@ -71,7 +75,8 @@ from scenarios.graph import goals_flow, scenario_flow
 from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
-from views.graph import agent_eval_flow, cio_agent_flow, decide_flow
+from views.graph import agent_eval_flow, agent_queue_flow, agent_worker_flow, decide_flow
+from zone.graph import zone_sync_flow
 
 PORT = env("PORT", 8030)
 
@@ -202,8 +207,8 @@ APP = Application(
         Service(
             "cio_agent",
             http("POST", "/api/events/run-agent", port=PORT),
-            graph=cio_agent_flow,
-            description="POST {event_id, by, mode?: live|mock}: the CIO agent, then the challenger.",
+            graph=agent_queue_flow,
+            description="POST {event_id, by, mode?: live|mock}: the CIO agent queued; the agent_worker job runs it.",
         ),
         Service(
             "view_decide",
@@ -332,6 +337,27 @@ APP = Application(
             schedule=schedule(every="1m", port=PORT),
             timeout=7200,
             description="Every minute: the market history load an Admin asked for in Hệ thống, if any.",
+        ),
+        Job(
+            "agent_worker",
+            graph=agent_worker_flow,
+            schedule=schedule(every="5s", port=PORT),
+            timeout=1800,
+            description="Every 5 seconds: the oldest queued CIO agent run (AI-13), one at a time.",
+        ),
+        Job(
+            "inbox_import",
+            graph=inbox_import_flow,
+            schedule=schedule(every="10m", port=PORT),
+            timeout=1800,
+            description="Every 10 minutes: the AI zone's packages through the same checks, imported or rejected.",
+        ),
+        Job(
+            "zone_sync",
+            graph=zone_sync_flow,
+            schedule=schedule(every="10m", port=PORT),
+            timeout=300,
+            description="Every 10 minutes in inbox mode: the approved catalogues and released research to the AI zone.",
         ),
         Job(
             "agent_eval",

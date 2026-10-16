@@ -9,15 +9,19 @@ Cấu hình ([SCR-CIO-09](cio.md#scr-cio-09--cấu-hình-versioned-configuration
 |---|---|
 | Route | `#/admin/he-thong` (Admin's first page) |
 | Generation | new (F5, `web/pages/system.js`) |
-| Feature | [FEAT-12](../../features/FEAT-12-roles-and-separation-of-duties.md) |
-| Requirements | BRD-RULE-ROLE-04, BRD-NFR-12 (status part), BRD-RULE-ROLE-02 (the RM assignment) |
+| Feature | [FEAT-12](../../features/FEAT-12-roles-and-separation-of-duties.md), [FEAT-19](../../features/FEAT-19-external-ai-inbox.md) (the zone and the inbox) |
+| Requirements | BRD-RULE-ROLE-04, BRD-NFR-12 (status part), BRD-RULE-ROLE-02 (the RM assignment), BRD-FR-307 (the mode shown) |
 | Data | `GET /api/system` (Admin only), `POST /api/market/load` (Admin only) |
-| Screenshots | [desktop, after a load of the history since 2026-10-01](../../assets/current_ui/SCR-ADM-01_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01_phone-light.jpg) |
+| Screenshots | [desktop, after a load of the history since 2026-10-01](../../assets/current_ui/SCR-ADM-01_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01_phone-light.jpg) · [the AI zone section, desktop](../../assets/current_ui/SCR-ADM-01-zone_desktop-light.jpg) · [phone](../../assets/current_ui/SCR-ADM-01-zone_phone-light.jpg) |
 
 - **Four tiles:** the audit chain's check (intact or where it breaks), the agents' mode and models, the last news fetch, and the configuration waiting for approval.
 - **Background jobs:** every job declared in `app/main.py`, with what it does, when it runs, and how it last went. The news and market jobs report ok or error with the error text. A job that keeps no record here says so.
 - **News sources:** the last fetch from each source: items fetched, accepted, refused, and any error.
 - **Agents:** the last 7 days, per agent: runs, failures, and the last run. Eval-set runs still waiting are listed.
+- **Vùng AI và hộp chờ:** the AI mode in force (a link to “Chế độ chạy AI” in Cấu hình), the zone's last ten
+  packages (when received, signature valid or not, Chờ nhập / Đang nhập / Đã nhập / Từ chối, and the view it became
+  or the error), and the last sync to the zone with the catalogue versions it put in force. The Agent tile counts
+  the runs queued.
 - **Load the market history again:**
   - Admin picks a start date (2015-01-01 to today) and sends the request.
   - The `market_load` job runs it within a minute, one load at a time.

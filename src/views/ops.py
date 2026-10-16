@@ -20,6 +20,7 @@ from news.ops import config as news_config
 from views import agents, decide, prompts, schema
 from views import store as vstore
 from views.preview import preview
+from wealth.paths import in_zone
 
 
 def public(view_id: str) -> Dict[str, Any]:
@@ -37,7 +38,7 @@ def public(view_id: str) -> Dict[str, Any]:
             for r in apply_run.runs(view_id=view_id)
         ],
     }
-    if v.get("current"):
+    if v.get("current") and not in_zone():  # the preview reads the families; the AI zone holds none (ZONE-01)
         try:
             out["preview"] = preview(v["current"])
         except Exception as exc:  # noqa: BLE001 — a preview never hides the view
@@ -144,7 +145,12 @@ def save_view(
 ) -> dict:
     """The draft kept (restricted tickers taken out of the rows), or AGENT_ERROR with why. (``view``
     has a default: a None output does not bind to an input.)"""
-    errors = errors or []
+    return keep_draft(view_id, run_id, view, errors or [], by, "Agent CIO viết xong")
+
+
+def keep_draft(view_id: str, run_id: str, view: Optional[dict], errors: list, by: str, note: str) -> dict:
+    """The draft kept (restricted tickers taken out of the rows), or AGENT_ERROR with why: a live or mock run's
+    (save_view), and an imported package's (inbox.importer)."""
     v = vstore.get(view_id)
     if view is None:
         vstore.finish_run(run_id, "error", "; ".join(errors))
@@ -159,7 +165,7 @@ def save_view(
     v["restricted_rows"] = out
     v["content_hash"] = vstore.content_hash(draft)
     vstore.finish_run(run_id, "ok")
-    vstore.save(v, "PENDING_CHALLENGE", by, "Agent CIO viết xong")
+    vstore.save(v, "PENDING_CHALLENGE", by, note)
     return {"view_id": view_id, "ok": True}
 
 
@@ -260,13 +266,12 @@ async def decide_view(
 def agent_status() -> Dict[str, Any]:
     """What the CIO screen says about the AI: which mode a run would use, and the two models."""
     m = agents.models()
-    try:
-        mode = agents.resolve_mode(None)
-    except agents.AgentError:
-        mode = "mock"
+    configured = agents.configured_mode()
+    mode = "inbox" if configured == "inbox" else agents.resolve_mode(None)
     return {
         "mode": mode,
-        "models": m if mode == "live" else {"cio": "mock", "challenger": "rules"},
+        "configured": configured,
+        "models": m if mode in ("live", "inbox") else {"cio": "mock", "challenger": "rules"},
         "prompt_version": agents.prompt_version(),
         "budget": {**agents.budget(), "by_event": vstore.tokens()["by_subject"]},  # NFR-10: cost per event
     }
