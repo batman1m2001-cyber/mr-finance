@@ -36,6 +36,8 @@ sinks = []
 sinks = []
 [tracing.services.scenario]
 sinks = []
+[tracing.services.scenario_combine]
+sinks = []
 [tracing.services.search]
 sinks = []
 

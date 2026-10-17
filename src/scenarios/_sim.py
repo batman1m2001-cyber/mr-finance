@@ -739,24 +739,40 @@ def wedding(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
 # ── market stress tests ─────────────────────────────────────────────────
 
 
-def _stress(
-    p: Pic,
-    shock: Callable[[Dict[str, Any]], float],
-    illiquid: Callable[[Dict[str, Any]], bool],
-    extra_cost: float,
-    limit: float,
-) -> Dict[str, Any]:
+@dataclass
+class Shocks:
+    """A stress test as data (UNIFIED_FLOWS_PLAN F4): the change it applies to each asset (a share of its value),
+    which assets cannot be sold meanwhile, its yearly costs by key (``floating_interest``, ``fx_spending``: the same
+    key from two scenarios is one cost), the change of monthly income (the person's what-if only) and its
+    assumptions in words."""
+
+    shock: Callable[[Dict[str, Any]], float]
+    illiquid: Callable[[Dict[str, Any]], bool]
+    costs: Dict[str, Dict[str, Any]]
+    assumptions: List[str]
+    income: float = 0.0
+
+
+def cost(amount: float, label: str) -> Dict[str, Any]:
+    return {"amount": amount, "label": label}
+
+
+def _stress(p: Pic, sk: Shocks, limit: float) -> Dict[str, Any]:
     rows = []
     for h in p.assets():
-        s = shock(h)
+        s = sk.shock(h)
         if s:
-            rows.append({"name": h["name"], "loss": h["value"] * s})
+            rows.append({"name": h["name"], "key": h["key"], "class": h["class"], "shock": s, "loss": h["value"] * s})
+    extra_cost = sum(c["amount"] for c in sk.costs.values())
     loss = sum(r["loss"] for r in rows) - extra_cost
     nw = p.net_worth
-    stuck = sum(h["value"] for h in p.assets() if illiquid(h))
+    stuck = sum(h["value"] for h in p.assets() if sk.illiquid(h))
     after = {"net_worth": nw + loss, "liquid": p.liquid, "liquid_months": p.liquid / p.spending}
     share = -loss / nw if nw else 0
     rows.sort(key=lambda r: r["loss"])
+    by_class: Dict[str, float] = {}
+    for r in rows:
+        by_class[r["class"]] = by_class.get(r["class"], 0.0) + r["loss"]
     return {
         "summary": [
             line("Tài sản ròng sau cú sốc", vnd(nw + loss)),
@@ -766,12 +782,17 @@ def _stress(
                 f"{pct(limit, digits=0)} — " + ("vượt ngưỡng" if share > limit else "trong ngưỡng"),
                 "bad" if share > limit else "good",
             ),
+            *[line(c["label"], vnd(c["amount"]), "bad" if c["amount"] else "neutral") for c in sk.costs.values()],
             line("Tài sản không bán được trong giai đoạn này", vnd(stuck), "bad" if stuck else "neutral"),
             *[line(f"Ảnh hưởng nhiều: {r['name']}", vnd(r["loss"], signed=True)) for r in rows[:3]],
         ],
         "before": p.state(),
         "after": after,
         "loss_share": share,
+        "rows": rows,
+        "by_class": by_class,
+        "costs": sk.costs,
+        "assumptions": sk.assumptions,
         "options": [
             {
                 "id": "light",
@@ -795,7 +816,7 @@ def _stress(
     }
 
 
-def bond_crisis(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+def bond_crisis_shocks(p: Pic, prm: Dict[str, Any]) -> Shocks:
     def shock(h):
         d = h["detail"]
         if h["class"] == "bond" and d.get("bond_kind") == "corporate":
@@ -806,19 +827,20 @@ def bond_crisis(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
             return -0.10 if d.get("fund_type") == "bond" else -0.25 if d.get("fund_type") == "equity" else 0
         return -0.05 if h["class"] == "real_estate" else 0
 
-    return {
-        "params": {},
-        **_stress(
-            p,
-            shock,
-            lambda h: h["class"] == "bond" and h["detail"].get("bond_kind") == "corporate",
-            0,
-            p.profile["drawdown_limit"],
-        ),
-    }
+    return Shocks(
+        shock,
+        lambda h: h["class"] == "bond" and h["detail"].get("bond_kind") == "corporate",
+        {},
+        [
+            "Trái phiếu doanh nghiệp −35%, không bán được trong giai đoạn này",
+            "Cổ phiếu ngành bất động sản −40%, cổ phiếu khác −25% × beta",
+            "Quỹ trái phiếu −10%, quỹ cổ phiếu −25%",
+            "Bất động sản −5%",
+        ],
+    )
 
 
-def re_freeze(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+def re_freeze_shocks(p: Pic, prm: Dict[str, Any]) -> Shocks:
     def shock(h):
         if h["class"] == "real_estate":
             return -0.15
@@ -826,10 +848,15 @@ def re_freeze(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
             return -0.30
         return 0
 
-    return {"params": {}, **_stress(p, shock, lambda h: h["class"] == "real_estate", 0, p.profile["drawdown_limit"])}
+    return Shocks(
+        shock,
+        lambda h: h["class"] == "real_estate",
+        {},
+        ["Bất động sản −15%, không bán được trong giai đoạn này", "Cổ phiếu bất động sản và ngân hàng −30%"],
+    )
 
 
-def vni_30(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+def vni_30_shocks(p: Pic, prm: Dict[str, Any]) -> Shocks:
     def shock(h):
         if h["class"] == "stock":
             return -0.30 * (h["detail"].get("beta") or 1)
@@ -837,13 +864,17 @@ def vni_30(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
             return -0.28
         return -0.5 if h["class"] == "crypto" else 0
 
-    return {"params": {}, **_stress(p, shock, lambda h: False, 0, p.profile["drawdown_limit"])}
+    return Shocks(shock, lambda h: False, {}, ["Cổ phiếu −30% × beta", "Quỹ cổ phiếu −28%", "Tài sản số −50%"])
 
 
-def rates_up(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
-    floating = sum(
+def floating_debt(p: Pic) -> float:
+    return sum(
         h["value"] for h in p.holdings if h["kind"] == "liability" and h["detail"].get("rate_type") == "floating"
     )
+
+
+def rates_up_shocks(p: Pic, prm: Dict[str, Any]) -> Shocks:
+    floating = floating_debt(p)
 
     def shock(h):
         if h["class"] == "bond":
@@ -852,14 +883,20 @@ def rates_up(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
             return -0.10
         return -0.05 if h["class"] == "real_estate" else 0
 
-    out = _stress(p, shock, lambda h: False, floating * 0.02, p.profile["drawdown_limit"])
-    out["summary"].insert(
-        3, line("Lãi vay thả nổi tăng thêm mỗi năm", vnd(floating * 0.02), "bad" if floating else "neutral")
+    return Shocks(
+        shock,
+        lambda h: False,
+        {"floating_interest": cost(floating * 0.02, "Lãi vay thả nổi tăng thêm mỗi năm")},
+        [
+            "Lãi suất +2 điểm: lãi vay thả nổi +2%/năm trên dư nợ",
+            "Trái phiếu −2% × kỳ hạn",
+            "Cổ phiếu −10%",
+            "Bất động sản −5%",
+        ],
     )
-    return {"params": {}, **out}
 
 
-def usd_up(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+def usd_up_shocks(p: Pic, prm: Dict[str, Any]) -> Shocks:
     abroad = sum(
         e["amount"]
         for e in p.profile.get("events", [])
@@ -870,11 +907,79 @@ def usd_up(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
     def shock(h):
         return 0.05 * 0.3 if h["class"] == "gold" else 0  # gold follows the dollar, in part
 
-    out = _stress(p, shock, lambda h: False, abroad * 0.05, p.profile["drawdown_limit"])
-    out["summary"].insert(
-        3, line("Khoản chi bằng ngoại tệ tăng thêm", vnd(abroad * 0.05), "bad" if abroad else "neutral")
+    return Shocks(
+        shock,
+        lambda h: False,
+        {"fx_spending": cost(abroad * 0.05, "Khoản chi bằng ngoại tệ tăng thêm")},
+        ["USD/VND +5%: các khoản chi ngoại tệ (du học, định cư) +5%", "Vàng +1,5% (theo một phần USD)"],
     )
-    return {"params": {}, **out}
+
+
+# the person's own what-if (F5): each input bounded, nothing else shocked
+CUSTOM_LIMITS = {"real_estate": (-0.5, 0.5), "stock": (-0.5, 0.5), "gold": (-0.5, 0.5), "rate": (0.0, 0.05),
+                 "income": (-0.5, 0.5)}  # fmt: skip
+
+
+def custom_params(prm: Dict[str, Any]) -> Dict[str, float]:
+    out = {}
+    for k, (lo, hi) in CUSTOM_LIMITS.items():
+        try:
+            v = float(prm.get(k) or 0)
+        except (TypeError, ValueError):
+            raise ValueError(f"{k} is a number") from None
+        if not lo <= v <= hi:
+            raise ValueError(f"{k} is between {lo} and {hi}")
+        out[k] = v
+    return out
+
+
+def custom_shocks(p: Pic, prm: Dict[str, Any]) -> Shocks:
+    x = custom_params(prm)
+
+    def shock(h):
+        if h["class"] == "real_estate":
+            return x["real_estate"]
+        if h["class"] == "stock" or (h["class"] == "fund" and h["detail"].get("fund_type") == "equity"):
+            return x["stock"]
+        return x["gold"] if h["class"] == "gold" else 0
+
+    said = [
+        f"Bất động sản {pct(x['real_estate'], signed=True, digits=0)}" if x["real_estate"] else "",
+        f"Cổ phiếu và quỹ cổ phiếu {pct(x['stock'], signed=True, digits=0)}" if x["stock"] else "",
+        f"Vàng {pct(x['gold'], signed=True, digits=0)}" if x["gold"] else "",
+        f"Lãi vay thả nổi +{pct(x['rate'], digits=1)}/năm trên dư nợ" if x["rate"] else "",
+        f"Thu nhập hằng tháng {pct(x['income'], signed=True, digits=0)}" if x["income"] else "",
+    ]
+    costs = (
+        {"floating_interest": cost(floating_debt(p) * x["rate"], "Lãi vay thả nổi tăng thêm mỗi năm")}
+        if x["rate"]
+        else {}
+    )
+    return Shocks(shock, lambda h: False, costs, [t for t in said if t] or ["Không thay đổi gì"], income=x["income"])
+
+
+def bond_crisis(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+    return {"params": {}, **_stress(p, bond_crisis_shocks(p, prm), p.profile["drawdown_limit"])}
+
+
+def re_freeze(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+    return {"params": {}, **_stress(p, re_freeze_shocks(p, prm), p.profile["drawdown_limit"])}
+
+
+def vni_30(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+    return {"params": {}, **_stress(p, vni_30_shocks(p, prm), p.profile["drawdown_limit"])}
+
+
+def rates_up(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+    return {"params": {}, **_stress(p, rates_up_shocks(p, prm), p.profile["drawdown_limit"])}
+
+
+def usd_up(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+    return {"params": {}, **_stress(p, usd_up_shocks(p, prm), p.profile["drawdown_limit"])}
+
+
+def custom(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
+    return {"params": custom_params(prm), **_stress(p, custom_shocks(p, prm), p.profile["drawdown_limit"])}
 
 
 # ── a goal tracked against the portfolio that funds it ──────────────────
@@ -1083,4 +1188,20 @@ SCENARIOS: Dict[str, Dict[str, Any]] = {
         "personas": [],
         "run": usd_up,
     },
+    "custom": {
+        "kind": "stress",
+        "title": "Kịch bản của bạn",
+        "question": "Nếu giá nhà, cổ phiếu, vàng, lãi suất hay thu nhập thay đổi như bạn giả định?",
+        "personas": [],
+        "run": custom,
+    },
+}
+# each stress test's shocks, for combining several (F4)
+SHOCKS: Dict[str, Callable[[Pic, Dict[str, Any]], Shocks]] = {
+    "bond_crisis": bond_crisis_shocks,
+    "re_freeze": re_freeze_shocks,
+    "vni_30": vni_30_shocks,
+    "rates_up": rates_up_shocks,
+    "usd_up": usd_up_shocks,
+    "custom": custom_shocks,
 }

@@ -4,7 +4,18 @@ from operonx import END, START, graph
 from operonx.core.ops import if_
 
 from consolidate.graph import consolidate_flow
-from scenarios.ops import answer, check_client, check_request, goals, kind_of, life, profile_of, stress
+from scenarios.ops import (
+    answer,
+    check_client,
+    check_combine,
+    check_request,
+    combined,
+    goals,
+    kind_of,
+    life,
+    profile_of,
+    stress,
+)
 
 
 @graph
@@ -35,4 +46,22 @@ def goals_flow(client_id, scope="personal"):
     held = consolidate_flow(client_id=ask["client_id"], scope=ask["scope"])
     who = profile_of(client_id=ask["client_id"], members=held["members"])
     out = goals(client_id=ask["client_id"], holdings=held["holdings"], profile=who["profile"])
+    START >> ask >> held >> who >> out >> END
+
+
+@graph
+def combine_flow(client_id, scenarios, params=None, scope="personal", goals=None):
+    """Several stress tests at once on this client's holdings (POST /api/scenario/combine): per class and per
+    scenario, net worth, liquidity, income, expenses and goals before and after — a what-if, never net worth."""
+    ask = check_combine(client_id=client_id, scenarios=scenarios, params=params, scope=scope, goals=goals)
+    held = consolidate_flow(client_id=ask["client_id"], scope=ask["scope"])
+    who = profile_of(client_id=ask["client_id"], members=held["members"])
+    out = combined(
+        client_id=ask["client_id"],
+        scenarios=ask["scenarios"],
+        params=ask["params"],
+        holdings=held["holdings"],
+        profile=who["profile"],
+        followed=ask["followed"],
+    )
     START >> ask >> held >> who >> out >> END

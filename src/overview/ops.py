@@ -51,10 +51,11 @@ KINDS = [
     ("alert", "Chính sách"),
     ("event", "Tin tức"),
     ("flow", "Dòng tiền"),
+    ("category", "Khoản thu chi"),
     ("liquidity", "Thanh khoản"),
     ("scenario", "Kịch bản giả định"),
 ]
-CERTAINTY = {"event": "estimate", "alert": "estimate", "scenario": "hypothetical"}
+CERTAINTY = {"event": "estimate", "alert": "estimate", "goal": "estimate", "scenario": "hypothetical"}
 TOP_ALERTS = 6
 WORDING = "có thể ảnh hưởng"
 GOAL_STATUS = {"on_track": "Đúng tiến độ", "at_risk": "Cần chú ý", "off_track": "Chậm tiến độ"}
@@ -108,6 +109,11 @@ def build(
 
     d = dashboard
     nw = d["net_worth"]
+    own = fixtures.client(client_id)["name"]
+
+    def _family(owner: Optional[str]) -> bool:  # another member's (family scope): marked, never mixed up (F1)
+        return scope == "family" and bool(owner) and owner != own
+
     me = node(
         "ME",
         "family",
@@ -139,6 +145,7 @@ def build(
             trust=h["trust"],
             source=h["source"],
             owner=h.get("owner_name"),
+            family=_family(h.get("owner_name")),
         )
         if h["kind"] == "liability":
             edge(cid, me, ("holding", h["key"]), "khoản nợ", h["value"])
@@ -167,15 +174,21 @@ def build(
                 edge(sid, cls_of[h["key"]], ("holding", h["key"]), "dữ liệu từ", agg=cls_of[h["key"]])
                 edge(sid, f"HD:{h['key']}", ("holding", h["key"]), "dữ liệu từ", parent=cls_of[h["key"]])
 
-    def touch(rid: str, names: List[str], source: tuple, label: str) -> None:
-        hit = False
+    def touch(rid: str, names: List[str], source: tuple, label: str) -> List[tuple]:
+        """Join a record to the holdings it names; the class-level edges it made (or the one to the client)."""
+        made, hit = [], []
         for name in names:
             for h in by_name.get(name, []):
-                hit = True
+                hit.append(h["key"])
                 edge(cls_of[h["key"]], rid, source, label, agg=cls_of[h["key"]])
                 edge(f"HD:{h['key']}", rid, source, label, parent=cls_of[h["key"]])
+                made.append((cls_of[h["key"]], rid))
         if not hit:  # the record names no single holding (a portfolio, an income): it is about the client
             edge(me, rid, source, label)
+            made.append((me, rid))
+        if len(set(hit)) == 1:
+            made.append((f"HD:{hit[0]}", rid))
+        return list(dict.fromkeys(made))
 
     # what puts it at risk
     rk = d["risk"]
@@ -236,6 +249,7 @@ def build(
         edge(me, rid, ("risk", "liquidity"), "thanh khoản")
 
     # the goals followed
+    shown: List[Dict[str, Any]] = []
     for g in goals:
         if not (g["id"] in followed if followed is not None else g["followed"]):
             continue
@@ -249,11 +263,35 @@ def build(
             status_label=GOAL_STATUS.get(gl["status"], gl["status"]),
             need=gl["need"],
             have=gl["have"],
+            have_label=gl.get("have_label"),
             gap=gl["gap"],
             by=gl.get("by"),
+            monthly=gl.get("monthly"),
+            surplus=gl.get("surplus"),
             value=gl["need"],
         )
-        edge(me, gid, ("goal", g["id"]), GOAL_STATUS.get(gl["status"], "mục tiêu"))
+        # what closes the gap by the date, each month (F2): a projected flow toward the goal, never a payment made
+        need = gl.get("monthly") if gl["gap"] > 0 and (gl.get("monthly") or 0) > 0 else None
+        said = "cần để dành/tháng" if need else GOAL_STATUS.get(gl["status"], "mục tiêu")
+        edge(me, gid, ("goal", g["id"]), said, need)
+        if need:
+            edges[(me, gid)].update(monthly=need, dir="fwd")
+        shown.append(nodes[gid])
+    # goals counting the same pool (F3): said once, never as if each had it
+    pools: Dict[tuple, List[Dict[str, Any]]] = {}
+    for n in shown:
+        if n["have"] > 0:
+            pools.setdefault((n.get("have_label"), round(n["have"])), []).append(n)
+    for (label, have), group in pools.items():
+        if len(group) < 2:
+            continue
+        pool = {"have": have, "label": label, "goals": [n["id"] for n in group]}
+        for n in group:
+            n["pool"] = pool
+            edges[(me, n["id"])]["shared"] = True
+    if shown:
+        nodes[me]["goal_monthly"] = sum(n["monthly"] or 0 for n in shown if n["gap"] > 0)
+        nodes[me]["surplus"] = shown[0].get("surplus")
 
     # the policy items that move it most
     for a in alerts[:TOP_ALERTS]:
@@ -269,7 +307,12 @@ def build(
             probability=a["probability"],
             source_text=a["source"],
         )
-        touch(aid, a["affected"], ("alert", a["id"]), "cơ hội" if a["opportunity"] else "chịu tác động")
+        made = touch(aid, a["affected"], ("alert", a["id"]), "cơ hội" if a["opportunity"] else "chịu tác động")
+        ends = {f for f, _ in made if not f.startswith("HD:")}
+        if len(ends) == 1:  # one class (or the client) takes it all: the impact is that edge's amount (F2)
+            for key in made:
+                edges[key]["value"] = a["impact"]
+                edges[key]["dir"] = "back" if a["impact"] > 0 else "fwd"  # a gain flows into the class
 
     # approved news events that may affect it (EFFECTIVE runs only; by asset class)
     impact = reads.family_impact(client_id, "client" if role == "client" else "rm")
@@ -286,6 +329,9 @@ def build(
             approved_at=it["approved_at"],
             value=it["horizons"]["3m"]["expected"],
             outlets=it["sources"]["outlets"],
+            band={k: it["horizons"]["3m"][k] for k in ("p10", "p50", "p90")},  # its confidence, as the run recorded it
+            modelled_share=it.get("modelled_share"),
+            horizon="3m",
         )
         for c, v in it["by_class"].items():
             if not v:
@@ -293,6 +339,8 @@ def build(
             cid = f"CL:{GROUP.get(c, c)}"
             if cid in nodes:
                 edge(eid, cid, ("run", it["run_id"]), WORDING, v)
+                e = edges[(eid, cid)]
+                e.update(monthly=abs(e["value"]) / 3, dir="fwd" if e["value"] > 0 else "back", horizon="3m")
 
     # the month's money in and out (FEAT-40): the transactions of the latest month with rows, as on Toàn cảnh
     if flows and flows.get("month"):
@@ -319,6 +367,27 @@ def build(
             )
             a, b = (fid, me) if side == "in" else (me, fid)
             edge(a, b, ("txn", m), verb, flows[total])
+            edges[(a, b)].update(monthly=flows[total], dir="fwd")
+            # each category on its own (F11), opened on demand like a class's holdings: the sum of its rows
+            for bd in items:
+                owners = sorted({t.get("owner_name") or "" for t in bd["rows"]} - {""})
+                cat = node(
+                    f"FC:{side}:{bd['category']}",
+                    "category",
+                    bd["label"],
+                    ref=bd["category"],
+                    parent=fid,
+                    side=side,
+                    month=m,
+                    value=bd["amount"],
+                    rows=len(bd["rows"]),
+                    keys=[f"flow:{m}:{side}:{bd['category']}"],
+                    owners=owners,
+                    family=any(_family(o) for o in owners),
+                )
+                ca, cb = (cat, fid) if side == "in" else (fid, cat)
+                edge(ca, cb, ("txn", f"{m}:{side}:{bd['category']}"), verb, bd["amount"], parent=fid)
+                edges[(ca, cb)].update(monthly=bd["amount"], dir="fwd")
             if side == "out":  # the month's repayments run along the debt they pay down (the graph's money sparks)
                 for it in items:
                     e = edges.get((f"CL:{it['category']}", me)) if it["category"] in ("loan", "card") else None

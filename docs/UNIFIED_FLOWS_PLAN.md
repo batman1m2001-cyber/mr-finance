@@ -71,8 +71,10 @@ goal that needs nothing (`monthly` 0 or none, “chưa có nguồn bù”).
 
 **F4. Combining scenarios (`POST /api/scenario/combine`), one engine, no double counting.**
 - **Assets are compounded per holding:** `after = value × Π(1 + shockᵢ)`. Shocks are never summed on the same base.
-- **Attribution:** each holding's combined change is split between the scenarios in proportion to their standalone
-  changes on that holding. The parts add up to the total exactly.
+- **Attribution by Shapley value:** each scenario is credited with its average marginal change over the orders in
+  which the scenarios could be applied. The parts add up to the total exactly, whatever the signs. A split in
+  proportion to the standalone changes was rejected: with opposite signs on one holding (gold up with the dollar,
+  down in the person's what-if) it divides by almost zero.
 - **Costs are keyed** (`floating_interest`, `fx_spending`). The same key from two scenarios counts once, the larger.
   That covers a rate rise in the stress test and the same rise in the person's own what-if.
 - **Net worth after** = assets after − debt − one year of the extra costs. This is the standalone stress rule
@@ -167,8 +169,8 @@ an owner mark in family scope.
 
 | Phase | What | Gate |
 |---|---|---|
-| U0 | BRD: the source, OWN-GW-33…50, FEAT-40 section, this plan | `scripts/check_brd_docs.py` 0 errors |
-| U1 | Data: the flow fields (F2) on overview edges, goal edges with the shared pool (F3), stress rows by class, `POST /api/scenario/combine` (F4) and the custom what-if (F5) | pytest: one scenario combined = its standalone result; compounding (two −50 % → −75 %, not −100 %); attributions add up; a cost key counted once; the what-if's income moves the surplus and goal status; the overview's net worth never changes; directions and monthly rates as F2; no amount on a policy edge that touches several classes |
+| U0 ✅ | BRD: the source, OWN-GW-33…50, FEAT-40 section, this plan | `scripts/check_brd_docs.py` 0 errors |
+| U1 ✅ | Data: the flow fields (F2) on overview edges, goal edges with the shared pool (F3), stress rows by class, `POST /api/scenario/combine` (F4) and the custom what-if (F5) | pytest: one scenario combined = its standalone result; compounding (two −50 % → −75 %, not −100 %); attributions add up; a cost key counted once; the what-if's income moves the surplus and goal status; the overview's net worth never changes; directions and monthly rates as F2; no amount on a policy edge that touches several classes |
 | U2 | Animation: F7 intensity, certainty treatments, directions, the cap, F8 sleep | UI test: each money edge's sparks run its `dir`; more money → more sparks, longer trail, higher opacity; relations have no sparks; estimate and hypothetical look different from actual; asleep → no running animation; reduced motion → none; idle frame time within 1 ms of before |
 | U3 | Scenarios on the graph: run, activate, the bar, hypothetical class edges, the what-if form, the trace in Thông tin | UI test: two active scenarios → the bar shows the combined figure from the server; net worth on the core unchanged; turning one off recombines; the trace lists classes → liabilities/expenses → liquidity → projected net worth → goals |
 | U4 | Edge selection (F9) and categories (F11); the shared goal pool in Thông tin and the strip | UI test: clicking a news, goal, flow and scenario edge shows its source, calculation, assumptions, confidence where recorded, and downstream; categories fan out and are clear (audit) |

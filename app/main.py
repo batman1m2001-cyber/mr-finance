@@ -18,6 +18,7 @@ POST /api/risk      {client_id, answers} ──► risk_flow ──► the next 
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
+POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 POST /api/review/specialist ──► specialist_flow (certified specialist, G8)
 POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
@@ -105,7 +106,7 @@ from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_f
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, recommend_flow, review_flow, specialist_flow
 from risk.graph import risk_flow
-from scenarios.graph import goals_flow, scenario_flow
+from scenarios.graph import combine_flow, goals_flow, scenario_flow
 from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
@@ -247,6 +248,12 @@ APP = Application(
             http("POST", "/api/scenario", port=PORT),
             graph=scenario_flow,
             description="POST {client_id, scenario, params?, scope?}: a life event or a stress test, with two options.",
+        ),
+        Service(
+            "scenario_combine",
+            http("POST", "/api/scenario/combine", port=PORT),
+            graph=combine_flow,
+            description="POST {client_id, scenarios, params?, scope?, goals?}: stress tests together, no double count.",
         ),
         Service(
             "goals",

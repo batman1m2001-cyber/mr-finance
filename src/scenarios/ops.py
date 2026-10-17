@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from operonx import op
 
@@ -106,3 +106,33 @@ def goals(client_id: str, holdings: list, profile: dict) -> dict:
             }
         )
     return {"goals": out, "stages": _sim.STAGES, "as_of": pic.market["as_of"]}
+
+
+@op
+def check_combine(
+    client_id: str = None, scenarios: list = None, params: dict = None, scope: str = None, goals: list = None
+) -> dict:
+    """What a caller sent for a combination, checked: a known client, a list of stress tests, params by scenario."""
+    client_id = str(client_id or "")
+    if client_id not in fixtures.client_ids(members=True):
+        raise BadRequest(f"no client {client_id!r}")
+    if not isinstance(scenarios, list):
+        raise ValueError("scenarios is a list of stress scenario ids")
+    params = params or {}
+    if not isinstance(params, dict) or not all(isinstance(v, dict) for v in params.values()):
+        raise ValueError("params is an object of objects, by scenario")
+    followed = None if goals is None else [str(g) for g in goals]
+    return {"client_id": client_id, "scenarios": [str(s) for s in scenarios], "params": params,
+            "scope": scope or "personal", "followed": followed}  # fmt: skip
+
+
+@op
+def combined(
+    client_id: str, scenarios: list, params: dict, holdings: list, profile: dict, followed: Optional[list] = None
+) -> dict:
+    """The active stress tests together, without double counting (scenarios.combine)."""
+    from scenarios.combine import combine
+
+    pic = _sim.Pic(holdings=holdings, profile=profile, market=fixtures.market())
+    return {"result": {"client_id": client_id, "as_of": pic.market["as_of"],
+                       **combine(pic, scenarios, params, followed)}}  # fmt: skip
