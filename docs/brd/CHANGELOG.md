@@ -2,6 +2,21 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The unified graph and its money flows built (experiment, UNIFIED_FLOWS_PLAN U1–V; OWN-GW-33…50:
+  17 implemented_verified, OWN-GW-34 partially implemented because the data has no transfer rows).
+  - Money edges carry amount, monthly rate and direction, and their motion follows them. Actual, estimate and
+    hypothetical look different.
+  - Several scenarios combine on the server with nothing counted twice, and never in net worth.
+  - Edges can be picked, with source, formula, assumptions, confidence and downstream. Categories open on Dòng
+    tiền. Goals sharing a pool say so once.
+  - The assistant knows the lens, the selection and the active scenarios; two read tools, `lien_ket` and
+    `so_sanh_kich_ban`.
+  - The V audit with scenarios active found 27 crossings; an active scenario now sits on its own spoke. Edge ends
+    meet their rims. Another member's holdings are marked in Gia đình.
+  - The audit is at 0 on every lens, real and 3×, with and without scenarios. Idle frame time is within the gate.
+  - Documents: FEAT-40 “As built” and “Feature map”, matrix OWN-GW-33…50, unified_flows_report.md (new), the
+    plan's as-built notes, screenshots SCR-CL-12-flows, -scenarios, -edge, -compare (desktop, phone).
+
 - 2026-10-17 — Owner request recorded: the unified graph and its money flows (OWN-GW-33…50, planned). The audit
   found: goals share one 4,03 tỷ pool, policy impacts have no per-class split, no transfer rows exist, and
   scenarios cannot be combined. Documents: sources SRC-05, owner_requirements.md, FEAT-40 “Money flows,

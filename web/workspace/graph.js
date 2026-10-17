@@ -114,8 +114,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // a folded item hides behind its group node (OWN-GW-30); a group node shows while its fold holds
   let groupNodes = [], fold = new Map(), groupIds = new Set(), groupEdges = [];
   // the active stress tests (UNIFIED_FLOWS_PLAN F6): their hypothetical edges, and what they reach — on Mục tiêu the
-  // classes and the spending they move, on Tổng quan the scenarios themselves — shown while they are active
-  let scn = null, scnEdges = [], reach = new Set();
+  // classes and the spending they move, on Tổng quan the scenarios themselves — shown while they are active. Like a
+  // news item, an active scenario reaches “My Wealth” on its own spoke, which carries its whole change (scnSpokes); its
+  // fan of class and cost edges shows when it is picked or read, so it never cuts across the ring (OWN-GW-28)
+  let scn = null, scnEdges = [], scnSpokes = new Map(), reach = new Set();
   const reached = (n) => reach.has(n.id) && (lens.kinds.includes("scenario") || (n.kind === "scenario" && lens.id === "tong-quan"));
   const shows = (n) => lens.kinds.includes(n.kind) || reached(n);
   const visible = (n) => !!lens && (n.kind === "group" ? groupIds.has(n.id)
@@ -128,7 +130,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const relates = (e, rv) => rv.has(e.from) || rv.has(e.to) || hotEdges.has(`${e.from}>${e.to}`)
     || (!!e.parent && opened(e.parent) && (byId[e.from].kind === "class" || byId[e.from].kind === "category" || byId[e.to].kind === "category"));
   const reveal = () => new Set([st.sel, hoverId].filter(Boolean));
-  const allEdges = () => g.edges.concat(derived, groupEdges, scnShown());
+  const allEdges = () => g.edges.map(e => (e.from === "ME" && scnSpokes.get(e.to)) || e).concat(derived, groupEdges, scnShown());
   // an active scenario's edge to a class folded behind “+n”: on the group's node, the same scenario's amounts summed
   function scnShown() {
     const out = new Map();
@@ -141,7 +143,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   }
   const drawable = (e) => byId[e.from] && byId[e.to] && visible(byId[e.from]) && visible(byId[e.to])
     && !(e.agg && opened(e.agg)) && !(e.parent && !opened(e.parent));
-  const shownEdges = () => { const rv = reveal(); return allEdges().filter(e => drawable(e) && (spoke(e) || e.active || `${e.from}>${e.to}` === st.edge || relates(e, rv))); };
+  const shownEdges = () => { const rv = reveal(); return allEdges().filter(e => drawable(e) && (spoke(e) || `${e.from}>${e.to}` === st.edge || relates(e, rv))); };
   const links = (id) => allEdges().filter(e => drawable(e) && (e.from === id || e.to === id));
   const other = (e, id) => byId[e.from === id ? e.to : e.from];
 
@@ -567,6 +569,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         stroke: tone, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round", class: "wicon"}, el);
       inner.innerHTML = iconPaths(n.kind === "class" ? CLASS_ICON[n.ref] || ic : ic);
       if (n.kind === "scenario") mk("text", {y: r + 13, "text-anchor": "middle", class: "wtag"}, el).textContent = "giả định";
+      if (n.family) {  // another family member's (family scope, F1): their initial on the rim, never mixed up with the person's own
+        const who = n.owner || (n.owners || []).filter(Boolean).join(", "), first = (n.owner || (n.owners || [])[0] || "?").trim().split(/\s+/).pop();
+        const badge = mk("g", {class: "wown", transform: `translate(${(r * 0.72).toFixed(1)},${(-r * 0.72).toFixed(1)})`, role: "img", "aria-label": `Của ${who}`}, el);
+        mk("title", {}, badge).textContent = `Của ${who}`;
+        mk("circle", {r: 7.5}, badge);
+        const many = !n.owner && (n.owners || []).filter(Boolean).length > 1;  // a category shared: how many, not one initial
+        mk("text", {y: 3.2, "text-anchor": "middle"}, badge).textContent = many ? String(n.owners.filter(Boolean).length) : first.charAt(0).toUpperCase();
+      }
       mk("text", {class: "wlbl"}, el);
       if (n.kind !== "source") {
         const f = mk("text", {class: `wfig ${["event", "alert", "scenario"].includes(n.kind) ? signClass(n.value) : ""}`}, el);
@@ -791,6 +801,9 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       });
       // inside the ring: the ring itself between the two, drawn in toward the centre (both ring nodes: their angle
       // on the ring is known), never outside it where the labels are
+      // a sampled route trimmed at the discs starts at its first point outside them: begin and end it on the rims
+      const onRim = (N, r, q) => { const [ux, uy] = unit(q[0] - N.x, q[1] - N.y); return [N.x + ux * r, N.y + uy * r]; };
+      const rim = (pts) => (pts.length > 1 ? [onRim(A, rA, pts[0]), ...pts, onRim(B, rB, pts[pts.length - 1])] : pts);
       const inner = [];
       if (A.ring && B.ring && ring) {
         const ta = A.a * Math.PI / 180;
@@ -803,8 +816,24 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
           inner.push([C.x + ox * f, C.y + oy * f]);
         }
       }
-      const trimmed = inner.filter(([x, y]) => Math.hypot(x - A.x, y - A.y) > rA && Math.hypot(x - B.x, y - B.y) > rB);
+      const trimmed = rim(inner.filter(([x, y]) => Math.hypot(x - A.x, y - A.y) > rA && Math.hypot(x - B.x, y - B.y) > rB));
       if (trimmed.length > 1) cands.push({d: `M${xy(trimmed[0])} L${trimmed.slice(1).map(xy).join(" ")}`, pts: trimmed});
+      // … and where the ring hugs the core (a phone), that dip still runs through the discs between: the same way round
+      // at a fixed radius in the gap, just outside the core's rings (tried last)
+      if (A.ring && B.ring && ring) {
+        const rt = ME_R + 16 + Math.max(0, (Math.min(ring.rx, ring.ry) - ME_R - 46) * 0.3), ta = Math.atan2(A.y - C.y, A.x - C.x);
+        let d1 = Math.atan2(B.y - C.y, B.x - C.x) - ta;
+        d1 = ((d1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+        const tight = [];
+        for (let i = 0; i <= 48; i++) {
+          // straight in toward the centre first, then round: leaving a disc, it clears what sits beside it
+          const t = i / 48, hump = Math.sin(Math.PI * Math.min(1, t / 0.2, (1 - t) / 0.2) / 2), at = ta + d1 * Math.min(1, Math.max(0, (t - 0.14) / 0.72));
+          const P = t < 0.5 ? A : B, dP = Math.hypot(P.x - C.x, P.y - C.y), r = dP + (rt - dP) * hump;
+          tight.push([C.x + Math.cos(at) * r, C.y + Math.sin(at) * r]);
+        }
+        const kept = rim(tight.filter(([x, y]) => Math.hypot(x - A.x, y - A.y) > rA && Math.hypot(x - B.x, y - B.y) > rB));
+        if (kept.length > 1) cands.push({d: `M${xy(kept[0])} L${kept.slice(1).map(xy).join(" ")}`, pts: kept});
+      }
       r = {d: pick(cands, ends).d};
     }
     routes.set(key, r);
@@ -1274,7 +1303,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       if (!g) return;
       for (const n of g.nodes) if (n.kind === "scenario" && n.active) { n.active = false; n.value = null; n.part = null; }
       scn = res && res.scenarios && res.scenarios.length ? res : null;
-      scnEdges = []; reach = new Set();
+      scnEdges = []; scnSpokes = new Map(); reach = new Set();
       for (const s of scn ? scn.scenarios : []) {
         const id = `SC:${s.id}`, n = byId[id];
         if (!n) continue;
@@ -1282,6 +1311,9 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         Object.assign(n, {active: true, value: s.change - costs, part: s});
         reach.add(id);
         const src = [{type: "scenario", id: s.id}];
+        const fan = Object.values(s.by_class || {}).filter(Boolean).length + scn.costs.filter(x => x.by === s.id).length;
+        scnSpokes.set(id, {from: "ME", to: id, label: "nếu xảy ra", value: n.value, dir: n.value < 0 ? "fwd" : "back",
+          certainty: "hypothetical", active: true, derived: fan, sources: src});
         for (const [c, v] of Object.entries(s.by_class || {})) {
           if (!byId[`CL:${c}`] || !v) continue;
           scnEdges.push({from: id, to: `CL:${c}`, label: "nếu xảy ra", value: v, dir: v > 0 ? "fwd" : "back", certainty: "hypothetical", active: true, sources: src});

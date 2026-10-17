@@ -264,6 +264,73 @@ model: what really moved, what the CIO's assumptions estimate, and what the pers
   list a node's links (`lien_ket`) and compare or combine scenarios (`so_sanh_kich_ban`). The graph lights what
   each tool read.
 
+**As built (U1–U5, 2026-10-17).** Report: [unified_flows_report.md](../testing/unified_flows_report.md).
+- **Categories open on Dòng tiền only.** Picking income or spending fans out the month's categories there.
+  Tổng quan keeps its ring still, because a pick there must move no node (OWN-GW-31).
+- **The strip has no goal line.** The plan put the goals' monthly total on the strip. That line cost 38 px of
+  graph height on every lens, and goals folded on Mục tiêu, so the total sits in Thông tin instead (“Các mục tiêu
+  cần … / bạn dư …”).
+- **The selection's label reaches a model only.** In template mode (no model) the instructions get the
+  selection's kind, not its name.
+- **The two graph tools are model-mode tools.** The keyword fallback keeps the Copilot's 13 tools and does not
+  route to `lien_ket` or `so_sanh_kich_ban`.
+- **A comparison names every goal's status.** The picked goal comes first, so “this goal” has an answer.
+- **An active scenario sits on its own spoke.** At rest the spoke carries its whole change (class shocks and
+  costs), moving in hollow dots. Its fan of class and cost edges shows when it is picked or read, as a news item's
+  does. Drawing the fan all the time cut across the ring (27 crossings, V audit).
+- **Another member's holdings are marked on the graph.** In Gia đình, their initial sits on the rim (a shared
+  category shows how many people share it), named on hover. There is one core, the family's total.
+- **An active scenario's read pulses along its edges.** When a tool reads an active scenario, it pulses along
+  that scenario's three largest hypothetical edges, then home, hollow.
+
+## Feature map — every BRD feature and its graph form (OWN-GW-33, 50)
+
+The Customer's graph is one model. Each BRD feature draws something on it, feeds what it draws, or stays a staff
+tool or a dedicated view. A staff tool reaches the Customer only through what is approved: the CIO's approval is
+still the gate.
+
+| Feature | Graph form on the Customer's workspace | Certainty | Elsewhere |
+|---|---|---|---|
+| FEAT-01 News ingestion | None directly: an approved, applied item becomes an event node (FEAT-08) | — | CIO inbox (staff) |
+| FEAT-02 CIO inbox and events | None until approved: then the event node | — | staff |
+| FEAT-03 Research and regulation notes | None directly | — | staff |
+| FEAT-04 CIO agent | None: its views reach the graph only through an approved run | — | staff |
+| FEAT-05 Challenger | None | — | staff |
+| FEAT-06 View decisions | The approval that lets an event onto the graph | — | staff |
+| FEAT-07 Scenario engine and factor model | Each event → class edge's 3-month change; its P10/P90 is the edge's “Độ tin cậy” | estimate | sheet Tác động thị trường |
+| FEAT-08 Application runs | Event nodes on Tin & sự kiện; the run is the edge's “Nguồn” (Lần áp dụng tin) | estimate | RM list |
+| FEAT-09 Number trace | “Cách tính” on every node and edge (the formula from `/api/how`) and the trace in Thông tin | — | sheet Đồ thị tác động |
+| FEAT-10 Goal branch | None (gap): its goal matches are the RM's tasks | — | RM, research page |
+| FEAT-11 Audit log | None: edge sources name the records; the log stays staff | — | Compliance |
+| FEAT-12 Roles | Only the Customer gets the workspace; staff keep their layout | — | — |
+| FEAT-13 Impact by role | The family scope (person marks) and this family's event edges | estimate | RM list |
+| FEAT-14 Versioned configuration | None: the assumptions an edge names come from it | — | staff |
+| FEAT-15 Agent catalogue | None | — | staff |
+| FEAT-16 Policy agent | Policy nodes (“Chính sách”) on Tin & sự kiện | estimate | staff radar |
+| FEAT-17 CIO newsletter | None | — | staff |
+| FEAT-18 Accuracy tracking | None | — | staff (Mô hình) |
+| FEAT-19 External AI inbox | None | — | staff |
+| FEAT-20 Consolidation | Holdings under their classes (open a class), source nodes on Tài sản, person marks for family members | actual | sheet Tài sản |
+| FEAT-21 Dashboard | The core's net worth, the bottom strip | actual | sheet Chi tiết |
+| FEAT-22 Statement reading | Source nodes on Tài sản; a read statement adds holdings | actual | sheet Tài sản (upload) |
+| FEAT-23 Chat declaration | As FEAT-22, through the assistant | actual | the dock |
+| FEAT-24 Risk test | Rủi ro lens: the stress-loss node (RK:drawdown) | estimate | sheet Khẩu vị rủi ro |
+| FEAT-25 Policy-cost alerts and house views | Policy nodes, with an amount where the item touches one class | estimate | sheet Chi phí chính sách |
+| FEAT-26 Life scenarios, stress tests, goals | Goal nodes with their monthly need, sharing one pool; stress scenarios combined (F4) in the bar; the person's what-if | estimate (goals), hypothetical (scenarios) | sheet Kế hoạch |
+| FEAT-27 RM approval queue | None: a Customer's action goes to it from Kế hoạch | — | staff |
+| FEAT-28 Specialist team | None | — | sheet Chuyên gia |
+| FEAT-29 Pulse, Wealth Map, Money Flow | Pulse → the strip; Wealth Map → the graph; Money Flow → Dòng tiền with categories | actual | sheet Toàn cảnh |
+| FEAT-30 Intelligence graph | The graph itself (news → class → family) | estimate | sheet Đồ thị tác động |
+| FEAT-31 Intelligence Feed | Tin & sự kiện; the inspector's list | estimate | sheet Toàn cảnh |
+| FEAT-32 Copilot | The dock; its stream lights the graph; it reads the selection and the scenarios (F10) | — | — |
+| FEAT-33 Living interface | Answer focus keys light nodes and edges | — | sheets |
+| FEAT-34 Header search and notifications | A result opens its lens or sheet | — | header |
+| FEAT-35 Market data layer | None directly: it feeds the factor model behind the event edges | — | staff |
+| FEAT-36 Alerts and central log | None | — | staff |
+| FEAT-37 Conversations and memory | The goals the person follows decide which goal nodes show | — | sheet Bộ nhớ |
+| FEAT-38 Knowledge and web search | None: answers cite their sources in the dock | — | the dock |
+| FEAT-39 Background agents | None | — | sheet Bộ nhớ |
+
 ## Capability map — every Customer capability and where it goes (OWN-GW-11)
 
 | Today (screen · route) | Capability | Requirements | In the workspace | Interaction model |

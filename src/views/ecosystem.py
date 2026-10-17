@@ -41,7 +41,7 @@ GROUPS = [
 
 # the assistant's tools, by the module that holds them (every registry tool is in exactly one: a test checks)
 TOOL_FAMILIES = {
-    "tools_app": ("assistant.tools", "assistant.actions"),
+    "tools_app": ("assistant.tools", "assistant.actions", "assistant.graphtools"),
     "tools_memory": ("assistant.memory",),
     "tools_knowledge": ("assistant.knowledge",),
     "tools_follow": ("assistant.followups",),

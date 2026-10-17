@@ -171,11 +171,28 @@ an owner mark in family scope.
 |---|---|---|
 | U0 ✅ | BRD: the source, OWN-GW-33…50, FEAT-40 section, this plan | `scripts/check_brd_docs.py` 0 errors |
 | U1 ✅ | Data: the flow fields (F2) on overview edges, goal edges with the shared pool (F3), stress rows by class, `POST /api/scenario/combine` (F4) and the custom what-if (F5) | pytest: one scenario combined = its standalone result; compounding (two −50 % → −75 %, not −100 %); attributions add up; a cost key counted once; the what-if's income moves the surplus and goal status; the overview's net worth never changes; directions and monthly rates as F2; no amount on a policy edge that touches several classes |
-| U2 | Animation: F7 intensity, certainty treatments, directions, the cap, F8 sleep | UI test: each money edge's sparks run its `dir`; more money → more sparks, longer trail, higher opacity; relations have no sparks; estimate and hypothetical look different from actual; asleep → no running animation; reduced motion → none; idle frame time within 1 ms of before |
-| U3 | Scenarios on the graph: run, activate, the bar, hypothetical class edges, the what-if form, the trace in Thông tin | UI test: two active scenarios → the bar shows the combined figure from the server; net worth on the core unchanged; turning one off recombines; the trace lists classes → liabilities/expenses → liquidity → projected net worth → goals |
-| U4 | Edge selection (F9) and categories (F11); the shared goal pool in Thông tin and the strip | UI test: clicking a news, goal, flow and scenario edge shows its source, calculation, assumptions, confidence where recorded, and downstream; categories fan out and are clear (audit) |
-| U5 | The assistant (F10): context, `lien_ket`, `so_sanh_kich_ban`, stream mapping | pytest: the context reaches the instructions (label only in model mode); both tools return the server's numbers; stream nodes per tool. UI test: a scripted comparison lights the scenarios' edges. One real-model turn, cost reported |
-| V | The layout audit (real and 3×, with scenarios active and categories open); frame times; full suites; FEAT-40 feature map (every BRD feature → its graph form); report; matrix; screenshots | OWN-GW-33…50 implemented_verified or named gaps |
+| U2 ✅ | Animation: F7 intensity, certainty treatments, directions, the cap, F8 sleep | UI test: each money edge's sparks run its `dir`; more money → more sparks, longer trail, higher opacity; relations have no sparks; estimate and hypothetical look different from actual; asleep → no running animation; reduced motion → none; idle frame time within 1 ms of before |
+| U3 ✅ | Scenarios on the graph: run, activate, the bar, hypothetical class edges, the what-if form, the trace in Thông tin | UI test: two active scenarios → the bar shows the combined figure from the server; net worth on the core unchanged; turning one off recombines; the trace lists classes → liabilities/expenses → liquidity → projected net worth → goals |
+| U4 ✅ | Edge selection (F9) and categories (F11); the shared goal pool in Thông tin and the strip | UI test: clicking a news, goal, flow and scenario edge shows its source, calculation, assumptions, confidence where recorded, and downstream; categories fan out and are clear (audit) |
+| U5 ✅ | The assistant (F10): context, `lien_ket`, `so_sanh_kich_ban`, stream mapping | pytest: the context reaches the instructions (label only in model mode); both tools return the server's numbers; stream nodes per tool. UI test: a scripted comparison lights the scenarios' edges. One real-model turn, cost reported |
+| V ✅ | The layout audit (real and 3×, with scenarios active and categories open); frame times; full suites; FEAT-40 feature map (every BRD feature → its graph form); report; matrix; screenshots | OWN-GW-33…50 implemented_verified or named gaps |
+
+### As built: where the build left the plan (2026-10-17)
+
+- **F3, the strip.** The goals' monthly total is not on the strip: the line cost 38 px of graph height on every
+  lens, and goals folded on Mục tiêu. Thông tin shows the total against the surplus instead.
+- **F11, categories.** They open on Dòng tiền only. A pick on Tổng quan must move no node (OWN-GW-31), so the
+  categories there would break the ring.
+- **F10, the fallback.** `lien_ket` and `so_sanh_kich_ban` are model-mode tools. The keyword fallback keeps the
+  Copilot's 13 tools. In template mode, the instructions get the selection's kind, not its label.
+- **F10, the comparison.** It reports every goal's status, the picked goal first. The first real-model turn showed
+  that reporting only the goals that changed left “this goal” without an answer.
+- **F7, frame cost.** Against U1, the idle mean rose by 0.66 ms on the real graph (within the 1 ms gate) and idle
+  p95 is unchanged. The p95 rise seen at U2 is gone. A burst's worst frame grew by about 33 ms (unified_flows_report.md).
+- **F6, an active scenario at rest.** It reaches the core on its own spoke, carrying its whole change. Its class and
+  cost edges show when it is picked or read; drawn all the time, they crossed the ring 27 times.
+- **F1, family marks.** Another member's holdings and categories carry the member's initial on the graph, not only
+  in Thông tin.
 
 ## 4. Out of scope
 

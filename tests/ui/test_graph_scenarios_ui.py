@@ -1,7 +1,8 @@
 """Scenarios on the graph (UNIFIED_FLOWS_PLAN F5/F6, OWN-GW-37…40): turning stress tests on makes them active; the
 bar shows the server's combined figure (POST /api/scenario/combine) while the net worth on the core stays the real
 one; turning one off recombines the rest; the set survives a reload; only an active scenario's hypothetical edges
-move; its trace in Thông tin runs assumptions → classes → debt and spending → liquidity → projected net worth → goals;
+move — at rest its spoke, carrying its whole change, and its fan of class and cost edges once it is picked; its
+trace in Thông tin runs assumptions → classes → debt and spending → liquidity → projected net worth → goals;
 the person's own what-if takes their inputs within the server's bounds."""
 
 import pytest
@@ -12,6 +13,11 @@ BAR = """() => { const b = document.querySelector('#ws-scn'); if (!b || b.hidden
   const chips = [...b.querySelectorAll('.ws-chip [data-n]')].map(x => x.dataset.n);
   return {after: v('after'), change: v('change'), chips}; }"""
 MOVING = """() => [...new Set([...document.querySelectorAll('.wspark.c-hypothetical')].map(q => q.dataset.e))].sort()"""
+
+
+def owner(key):
+    """The scenario a hypothetical edge belongs to: its spoke (ME>SC:x) or one of its fan (SC:x>…)."""
+    return next(x for x in key.split(">") if x.startswith("SC:"))
 
 
 def fresh(open_page, size="desktop"):
@@ -60,9 +66,13 @@ def test_active_scenarios_combine_on_the_server_and_never_touch_net_worth(open_p
     assert bar["chips"] == ["SC:vni_30", "SC:rates_up"]
     assert bar["after"] == round(want["after"]["net_worth"]) and bar["change"] == round(want["change"])
     assert p.page.text_content(".wme-v") == core  # the real net worth: a what-if is never added to it
-    moving = p.page.evaluate(MOVING)
-    assert moving and all(k.split(">")[0] in ("SC:vni_30", "SC:rates_up") for k in moving)
+    moving = p.page.evaluate(MOVING)  # rates_up picked: its fan, and both spokes
+    assert {owner(k) for k in moving} == {"SC:vni_30", "SC:rates_up"}
     assert any(k.startswith("SC:rates_up>") and k.endswith("FL:out") for k in moving)  # its interest cost: spending
+    assert not any(k.startswith("SC:vni_30>") for k in moving)  # not picked: no fan across the ring
+    p.page.click("#ws-clear")
+    p.page.wait_for_timeout(500)
+    assert p.page.evaluate(MOVING) == ["ME>SC:rates_up", "ME>SC:vni_30"]  # at rest: each on its own spoke
     p.page.reload()  # kept in this browser, recomputed by the server
     p.page.wait_for_selector('.wnode[data-n="SC:rates_up"].live')
     settle(p)
@@ -70,7 +80,7 @@ def test_active_scenarios_combine_on_the_server_and_never_touch_net_worth(open_p
     toggle(p, "vni_30", on=False)  # off: the rest recombined
     one = server(p, ["rates_up"])
     assert p.page.evaluate(BAR)["after"] == round(one["after"]["net_worth"])
-    assert all(k.startswith("SC:rates_up>") for k in p.page.evaluate(MOVING))
+    assert {owner(k) for k in p.page.evaluate(MOVING)} == {"SC:rates_up"}
     p.page.click('#ws-scn [data-off="*"]')
     p.page.wait_for_selector("#ws-scn", state="hidden")
     settle(p)

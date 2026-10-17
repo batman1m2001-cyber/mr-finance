@@ -9,7 +9,7 @@ import json
 import pytest
 
 LENSES = ("tong-quan", "tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro")
-COUNTS = ("discs", "labels", "labelOnDisc", "edgeThroughNode", "edgeThroughLabel", "cross", "quiet", "outside")
+COUNTS = ("discs", "labels", "labelOnDisc", "edgeThroughNode", "edgeThroughLabel", "cross", "quiet", "outside", "loose")
 
 AUDIT = r"""() => {
   const shown = (el) => { for (let x = el; x && x.tagName !== 'svg'; x = x.parentNode) { const s = getComputedStyle(x);
@@ -30,7 +30,7 @@ AUDIT = r"""() => {
       0.3};
   });
   const out = {nodes: discs.length, edges: edges.length, discs: 0, labels: 0, labelOnDisc: 0, edgeThroughNode: 0,
-    edgeThroughLabel: 0, cross: 0, outside: 0, ex: [],
+    edgeThroughLabel: 0, cross: 0, outside: 0, loose: 0, ex: [],
     quiet: nodes.filter(n => n.classList.contains('quiet') && !n.classList.contains('k-holding')).length};
   const note = (s) => { if (out.ex.length < 6) out.ex.push(s); };
   for (let i = 0; i < discs.length; i++) for (let j = i + 1; j < discs.length; j++) {
@@ -48,7 +48,11 @@ AUDIT = r"""() => {
       if (Math.hypot(cx - d.x, cy - d.y) < d.r - 1) { out.labelOnDisc++; note('label ' + lb.id + ' on ' + d.id); } } }
   for (const d of discs) if (d.x - d.r < svg.left - 1 || d.x + d.r > svg.right + 1 || d.y - d.r < svg.top - 1 || d.y +
     d.r > svg.bottom + 1) { out.outside++; note('outside disc ' + d.id); }
-  for (const e of edges) {
+  for (const e of edges) {  // each end of an edge meets its node's rim (within 4 px), never short of it
+    for (const id of e.ends) { const d = discs.find(x => x.id === id); if (!d) continue;
+      const gap = Math.min(...[e.pts[0], e.pts[e.pts.length - 1]].map(([x, y]) => Math.abs(Math.hypot(x - d.x, y - d.y)
+        - d.r)));
+      if (gap > 4) { out.loose++; note('edge ' + e.ends.join('>') + ' short of ' + id + ' by ' + Math.round(gap)); } }
     for (const d of discs) if (!e.ends.includes(d.id) && e.pts.some(([x, y]) => Math.hypot(x - d.x, y - d.y) < d.r -
       1)) { out.edgeThroughNode++; note('edge ' + e.ends.join('>') + ' through ' + d.id); }
     if (e.faint) continue;
@@ -123,13 +127,23 @@ def lens(p, name):
     p.page.wait_for_timeout(700)  # the nodes' slide and the edges drawn where they arrive
 
 
-@pytest.mark.parametrize("size", ["desktop", "phone"])
-def test_every_lens_is_clear_idle_and_with_a_pick(open_page, size):
+ACTIVE = ["vni_30", "rates_up"]  # two stress tests on (UNIFIED_FLOWS_PLAN F6): they show on Tổng quan and Mục tiêu
+
+
+@pytest.mark.parametrize("size,active", [("desktop", []), ("phone", []), ("desktop", ACTIVE), ("phone", ACTIVE)],
+                         ids=["desktop", "phone", "desktop-scenarios", "phone-scenarios"])  # fmt: skip
+def test_every_lens_is_clear_idle_and_with_a_pick(open_page, size, active):
     p = open_page(size)
+    if active:
+        keep = json.dumps({"ids": active, "params": {}})
+        p.ctx.add_init_script(f"try {{ localStorage.setItem('mf.ws.scn.C01', {json.dumps(keep)}); }} catch (_) {{}}")
+        p.page.reload()
     p.go("#/client")
     p.page.wait_for_selector(".wnode.k-family")
+    if active:
+        p.page.wait_for_selector(f'.wnode.live[data-n="SC:{active[-1]}"]', state="attached")
     bad = {}
-    for name in LENSES:
+    for name in LENSES if not active else ("tong-quan", "muc-tieu"):
         lens(p, name)
         m = p.page.evaluate(AUDIT)
         if clear(m):
