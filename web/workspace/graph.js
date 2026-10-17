@@ -102,6 +102,12 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const fxLayer = mk("g", {class: "ws-fx", "aria-hidden": "true"}, world);
   const nodeLayer = mk("g", {class: "ws-nodes"}, world);
   host.appendChild(svg);
+  // money in motion on its own layer over the graph, same viewBox and pan/zoom: a moving dash then repaints that layer
+  // alone, not the edges, nodes and labels under it (measured: 40% less CPU for the same sparks)
+  const fxSvg = mk("svg", {class: "ws-fxsvg", "aria-hidden": "true", focusable: "false"});
+  const fxWorld = mk("g", {}, fxSvg);
+  const sparkLayer = mk("g", {class: "ws-sparks"}, fxWorld);
+  host.appendChild(fxSvg);
   const els = new Map();  // node id → its <g>, kept across draws
   let W = 1000, H = 640, pos = {}, edgeTimer = 0, narrow = false, hoverId = null, derived = [], layoutRun = 0;
   const hotEdges = new Map();  // "from>to" → "hot" | "bad": a relation a pulse runs along, drawn while it matters
@@ -676,6 +682,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     narrow = box.width > 0 && box.width < 600;
     W = Math.max(narrow ? 520 : 720, Math.round(box.width || 1000)); H = Math.max(narrow ? 640 : 520, Math.round(box.height || 640));
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    fxSvg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     pos = layout();
     ring = pos.ring;
     applyGroups(pos.groups, pos.fold);
@@ -847,10 +854,13 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // carries money (`dir` and an amount, from the server) runs sparks the way the money goes — income into “My Wealth”,
   // spending, repayments and goal savings out of it, a news or policy change into a class or out of it — and nothing
   // else does: a relation implies no transfer. How much a month sets how it moves: intensity i = √(monthly ÷ the
-  // month's larger flow), 0.12…1 — sparks per beat 1…3, trail 6…20 px, speed 140…280 px/s, opacity .4….95. A one-off
-  // (a policy item, a scenario) has no monthly rate: its i is relative to the largest of its kind, at most .5. Actual
-  // sparks are bright beads; an estimate's are dashed and unlit; a hypothesis's are dots, only while it is active. At
-  // most 48 spark paths: the weakest edges thin out first. Reduced motion stills them (tokens.css).
+  // month's larger flow), 0.12…1 — sparks per beat 1…3, trail 5…16 px, speed 130…260 px/s, core 1.4…2.2 px, opacity
+  // .6…1, so the smallest flow still reads. A one-off (a policy item, a scenario) has no monthly rate: its i is relative
+  // to the largest of its kind, at most .5. A spark is a light core of its edge's own colour (the hue kept: in, out,
+  // estimate, hypothesis, risk); an actual transfer's core carries a faint wider glow stroke under it, an estimate's is
+  // dashed and unlit, a hypothesis's dots, only while it is active. No CSS filter: two drop-shadows per spark,
+  // repainted every frame, were 61% of the graph's CPU (docs/brd/testing/ui/flows_perf.md). At most 48 spark paths:
+  // the weakest edges thin out first. Reduced motion stills them (tokens.css).
   const SPARK = [1, 2.5, 1.5, 2, 5];  // back to front: crackle, crackle, head (dash, gap)… — short, a bead of light
   const SPARK_LEN = SPARK.reduce((p, q) => p + q, 0);
   const DASHED = [2.2, 2.4, 2.2, 2.4, 2.8];  // an estimate: even dashes, no head
@@ -875,24 +885,29 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   function plan(d, i, cert, m) {
     const len = pathLen(d);
     if (len < 16) return null;  // a category hangs ~25 px off its flow: still room for a bead
-    const k = 1 + Math.round(2 * i), speed = 140 + 140 * i;
+    const k = 1 + Math.round(2 * i), speed = 130 + 130 * i;
     const base = cert === "hypothetical" ? DOTS : cert === "estimate" ? DASHED : SPARK;
-    const scale = (6 + 14 * i) / SPARK_LEN, pattern = cert === "hypothetical" ? base : base.map(x => +(x * scale).toFixed(2));
-    return {d, len, i, cert, k, speed, pattern, m, sl: pattern.reduce((p, q) => p + q, 0),
-      opacity: (0.4 + 0.55 * i) * (cert === "estimate" ? 0.75 : cert === "hypothetical" ? 0.8 : 1)};
+    const scale = (5 + 11 * i) / SPARK_LEN, pattern = cert === "hypothetical" ? base : base.map(x => +(x * scale).toFixed(2));
+    return {d, len, i, cert, k, speed, pattern, m, sl: pattern.reduce((p, q) => p + q, 0), width: +(1.4 + 0.8 * i).toFixed(2),
+      opacity: (0.6 + 0.4 * i) * (cert === "estimate" ? 0.7 : cert === "hypothetical" ? 0.8 : 1)};
   }
   const lanes = (pl) => Math.max(1, Math.round(pl.len / pl.speed / (BEAT / pl.k)));
   function sparks(pl, key, tone, offset = 0) {
     const per = BEAT / pl.k, n = lanes(pl), dur = n * per;
     for (let j = 0; j < n; j++) {
-      const q = mk("path", {d: pl.d, class: `wspark c-${pl.cert}`, "data-e": key, "data-m": Math.round(pl.m)}, edgeLayer);
-      q.style.strokeDasharray = `${pl.pattern.join(" ")} ${pl.len + 40}`;
-      q.style.setProperty("--a", pl.sl);
-      q.style.setProperty("--b", -pl.len);
-      q.style.setProperty("--tone", tone);
-      q.style.setProperty("--so", pl.opacity.toFixed(2));
-      q.style.animationDuration = `${dur.toFixed(3)}s, .16s`;
-      q.style.animationDelay = `${(mod(offset - dur * j / n, dur) - dur).toFixed(3)}s, ${(-Math.random() * .16).toFixed(2)}s`;
+      const delay = `${(mod(offset - dur * j / n, dur) - dur).toFixed(3)}s`;
+      // an actual transfer: the glow first (under), then the core — the same dash, clock and delay, so they move as one
+      for (const cls of pl.cert === "actual" ? ["wglow", "wspark"] : ["wspark"]) {
+        const q = mk("path", {d: pl.d, class: `${cls} c-${pl.cert}`, "data-e": key, "data-m": Math.round(pl.m)}, sparkLayer);
+        q.style.strokeDasharray = `${pl.pattern.join(" ")} ${pl.len + 40}`;
+        q.style.setProperty("--a", pl.sl);
+        q.style.setProperty("--b", -pl.len);
+        q.style.setProperty("--tone", tone);
+        q.style.setProperty("--so", pl.opacity.toFixed(2));
+        q.style.setProperty("--sw", pl.width);
+        q.style.animationDuration = `${dur.toFixed(3)}s`;
+        q.style.animationDelay = delay;
+      }
     }
     // when a spark's head reaches the end (it moves len + its pattern in dur), and when one leaves the start
     return {per, arr: mod(dur * pl.len / (pl.len + pl.sl) + offset, per), dep: mod(offset, per)};
@@ -926,7 +941,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         for (const [c, v] of [["on", on && !!lit], ["faint", !on], ["hot", state === "hot"], ["bad", state === "bad"], ["picked", p.dataset.e === st.edge]]) p.classList.toggle(c, v);
       }
       for (const h of edgeLayer.querySelectorAll(".whit")) h.setAttribute("aria-pressed", String(h.dataset.e === st.edge));
-      for (const q of svg.querySelectorAll(".wspark, .wport")) {
+      for (const q of [...svg.querySelectorAll(".wport"), ...sparkLayer.querySelectorAll(".wspark, .wglow")]) {
         const [f0, t0] = q.dataset.e.split(">");
         q.classList.toggle("faint", !isOn(lit, f0, t0));
       }
@@ -935,6 +950,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     }
     drawn = sig;
     edgeLayer.replaceChildren();
+    sparkLayer.replaceChildren();
     const meEl = els.get("ME"), ports = meEl && meEl.querySelector(".wme-ports"), bandHost = meEl && meEl.querySelector(".wme-bandhost");
     if (ports) ports.replaceChildren();
     if (bandHost) bandHost.replaceChildren();
@@ -997,7 +1013,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       if (q.money && q.into && !beat) beat = {at: t.arr, angle: rimAngle(q.e.from)};
       if (q.money && ports && (q.into || q.from)) port(ports, rimAngle(q.into ? q.e.from : q.e.to), q.tone, t.per, q.into ? t.arr : t.dep, q.key);
       if (q.repaid && ports) port(ports, rimAngle(q.e.from), "var(--out)", t.per, t.dep, q.key);
-      if (!q.on) for (const x of edgeLayer.querySelectorAll(`.wspark[data-e="${q.key}"]`)) x.classList.add("faint");
+      if (!q.on) for (const x of sparkLayer.querySelectorAll(`[data-e="${q.key}"]`)) x.classList.add("faint");
       if (!q.on && ports) for (const x of ports.querySelectorAll(`.wport[data-e="${q.key}"]`)) x.classList.add("faint");
     }
     if (beat && bandHost) {  // light crossing the core from where the income lands, once a beat
@@ -1023,7 +1039,9 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // ── pan and zoom: one transform on the world group, set by the person's hand only ─────────────────
   const view = () => st.view;
   const applyView = () => {
-    world.setAttribute("transform", `translate(${view().x.toFixed(1)} ${view().y.toFixed(1)}) scale(${view().k.toFixed(3)})`);
+    const t = `translate(${view().x.toFixed(1)} ${view().y.toFixed(1)}) scale(${view().k.toFixed(3)})`;
+    world.setAttribute("transform", t);
+    fxWorld.setAttribute("transform", t);
     svg.classList.toggle("near", view().k >= 1.3);  // zoomed in: the holdings' names show
   };
   function zoom(f, cx = W / 2, cy = H / 2) {

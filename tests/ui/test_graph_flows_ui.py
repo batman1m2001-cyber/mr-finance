@@ -11,13 +11,14 @@ SPARKS = r"""() => {
   const wire = (k) => document.querySelector(`.wedge[data-e="${k}"]`);
   const ends = (d) => [d.match(/^M(\S+)/)[1], d.match(/(\S+)$/)[1]];
   const out = {};
-  for (const q of document.querySelectorAll('.ws-edges .wspark')) {
+  for (const q of document.querySelectorAll('.ws-sparks .wspark')) {
     const k = q.dataset.e, w = wire(k), [ws, we] = ends(w.getAttribute('d')), [s, e] = ends(q.getAttribute('d'));
     const dur = parseFloat(q.style.animationDuration), cs = getComputedStyle(q);
     const o = out[k] ||= {cert: [...q.classList].find(c => c.startsWith('c-')), m: +q.dataset.m, n: 0, dur,
       trail: +q.style.getPropertyValue('--a'), so: +q.style.getPropertyValue('--so'),
       way: s === ws && e === we ? 'fwd' : s === we && e === ws ? 'back' : '?',
-      dash: q.style.strokeDasharray.split(' ').slice(0, 5).join(' '), width: cs.strokeWidth, filter: cs.filter};
+      dash: q.style.strokeDasharray.split(' ').slice(0, 5).join(' '), width: parseFloat(cs.strokeWidth), filter: cs.filter,
+      glow: !!document.querySelector(`.ws-sparks .wglow[data-e="${k}"]`), stroke: cs.stroke, wire: getComputedStyle(w).stroke};
     o.n++;
   }
   return out;
@@ -91,8 +92,8 @@ def test_an_estimate_does_not_look_like_a_real_transfer(open_page):
     actual = [s for s in got.values() if s["cert"] == "c-actual"]
     estimate = [s for s in got.values() if s["cert"] == "c-estimate"]
     assert actual and estimate
-    assert all(s["filter"] != "none" for s in actual)  # a real transfer glows
-    assert all(s["filter"] == "none" for s in estimate)  # an estimate does not: even dashes, dimmer
+    assert all(s["glow"] for s in actual)  # a real transfer glows (a faint wider stroke under its core)
+    assert not any(s["glow"] for s in estimate)  # an estimate does not: even dashes, dimmer
     assert {len(set(s["dash"].split())) for s in estimate} == {3}  # dash, gap, the last gap: no bright head
     assert max(s["so"] for s in estimate) <= 0.72 < max(s["so"] for s in actual)  # at most ¾ of a transfer's light
     assert not p.problems()
@@ -100,7 +101,7 @@ def test_an_estimate_does_not_look_like_a_real_transfer(open_page):
 
 # the graph's looping animations still running (a transition finishing is not activity: it ends by itself)
 PLAYING = """() => document.getAnimations().filter(a => a instanceof CSSAnimation && a.playState === 'running'
-  && a.effect.target.closest && a.effect.target.closest('.ws-svg')).length"""
+  && a.effect.target.closest && a.effect.target.closest('.ws-canvas')).length"""
 
 
 def test_everything_pauses_off_screen_and_under_a_sheet(open_page):
@@ -130,3 +131,34 @@ def test_nothing_moves_under_reduced_motion(open_page):
         shown = "[...document.querySelectorAll('.wspark')].filter(s => getComputedStyle(s).display !== 'none').length"
         assert p.page.evaluate(shown) == 0
     assert not p.problems()
+
+
+def test_a_spark_stands_off_its_edge_on_its_own_layer_without_filters(open_page):
+    """The energy flow, tuned against measurement (docs/brd/testing/ui/flows_perf.md): the sparks sit on their own layer
+    (same viewBox and pan/zoom as the graph, no pointer events) so a moving dash repaints only that layer; no spark or
+    glow carries a CSS filter (two drop-shadows per spark were 61% of the graph's CPU); a spark's core is not its
+    edge's colour (it stands off the line), but keeps its hue; static edges stay quieter than what moves on them; a
+    bigger monthly flow draws a wider core, and the smallest still shows."""
+    for theme in ("dark", "light"):
+        p = open_page(theme=theme)
+        p.go("#/client/xem/tong-quan")
+        p.page.wait_for_selector(".wspark")
+        p.page.click("[data-z='in']")  # zoomed: the spark layer follows the graph's pan and zoom
+        p.page.wait_for_timeout(300)
+        layer = p.page.evaluate("""() => { const s = document.querySelector('.ws-svg'), f = document.querySelector('.ws-fxsvg');
+          return {same_box: s.getAttribute('viewBox') === f.getAttribute('viewBox'),
+                  same_view: s.querySelector('.ws-world').getAttribute('transform') === f.firstElementChild.getAttribute('transform'),
+                  events: getComputedStyle(f).pointerEvents, inside: f.parentElement === s.parentElement,
+                  stray: s.querySelectorAll('.wspark, .wglow').length,
+                  filters: [...f.querySelectorAll('.wspark, .wglow')].filter(q => getComputedStyle(q).filter !== 'none').length,
+                  edge: Math.max(...[...document.querySelectorAll('.wedge.money:not(.on):not(.hot)')].map(q => +getComputedStyle(q).strokeOpacity))}; }""")
+        assert layer["same_box"] and layer["same_view"] and layer["inside"], layer
+        assert layer["events"] == "none" and layer["stray"] == 0 and layer["filters"] == 0, layer
+        got = p.page.evaluate(SPARKS)
+        for k, s in got.items():
+            assert s["stroke"] != s["wire"], (theme, k, s)  # the core stands off its line
+            assert s["cert"] == "c-hypothetical" or s["so"] >= 0.42, (theme, k, s)  # the smallest flow still shows
+        assert layer["edge"] < min(s["so"] for s in got.values()), (theme, layer, got)  # the line quieter than its spark
+        income, spending = got["FL:in>ME"], got["ME>FL:out"]
+        assert income["m"] > spending["m"] and income["width"] > spending["width"]
+        assert not p.problems()

@@ -12,7 +12,7 @@ import pytest
 CLOCKS = r"""() => {
   const ws = (el, name) => el.getAnimations().find(a => a.animationName === name);
   const out = {};
-  for (const q of document.querySelectorAll('.ws-edges .wspark')) {
+  for (const q of document.querySelectorAll('.ws-sparks .wspark')) {
     const a = ws(q, 'ws-money'); if (!a) continue;
     const t = a.effect.getComputedTiming(), dur = t.duration / 1000, loc = t.progress * dur, len = q.getTotalLength();
       // progress counts the delay
@@ -109,7 +109,7 @@ def test_the_core_answers_selection_the_assistant_and_a_flow(open_page):
       .dispatchEvent(new MouseEvent('click', {bubbles: true}))""")
     p.page.wait_for_selector(".wnode.k-family.flow")  # a flow picked: the core leans toward it
     band, flow_in = p.page.evaluate("""() => [getComputedStyle(document.querySelector('.wme-band')).fill,
-      getComputedStyle(document.querySelector('.wspark[data-e="FL:in>ME"]')).stroke]""")
+      getComputedStyle(document.querySelector('.wglow[data-e="FL:in>ME"]')).stroke]""")  # the flow's own tone
     assert band == flow_in
     assert p.page.locator(".wport.faint").count() >= 1  # the other flows' ports step back
     assert not p.problems()

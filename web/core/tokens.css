@@ -22,6 +22,7 @@
   --up: #0f7a3d; --down: #c0332b; --flat: #6b6785;
   --in: #2a78d6; --out: #eb6834;
   --pulse: #0d9488;  /* a pulse: data read by the assistant — never a money colour (OWN-GW-18) */
+  --spark-hi: #140f33; --spark-mix: 88%; --glow-o: .2;  /* a moving spark's core: its hue, deepened (light) / lit (dark) */
   --core-hi: #8f7dff; --core-mid: #4a37c8; --core-deep: #1b1458; --core-face: #150f44; --core-aura: #6a55e6;
   --core-ring: #6a55e6; --core-glow: #7fd8ff; --core-aura-a: .2;  /* the financial core (OWN-GW-20): a deep glass jewel in both themes */
   --ai: #2a78d6; --ai-soft: #e6f0fc; --human: #c4561f; --human-soft: #fcebe1; --data: #6b6785;
@@ -47,7 +48,7 @@
     --good-soft: #1d3a34; --warning-soft: #3a3226; --critical-soft: #3d2236;
     --up: #5fd38d; --down: #ff8a7a; --flat: #a39cd0;
     --in: #3987e5; --out: #d95926;
-    --pulse: #2dd4bf;
+    --pulse: #2dd4bf; --spark-hi: #ffffff; --spark-mix: 60%; --glow-o: .26;
     --core-hi: #9b8bff; --core-mid: #4a37c6; --core-deep: #120d3e; --core-face: #0f0a34; --core-aura: #8f7dff;
     --core-ring: #b3a7ff; --core-glow: #8ae2ff; --core-aura-a: .34;
     --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
@@ -69,7 +70,7 @@
   --good-soft: #1d3a34; --warning-soft: #3a3226; --critical-soft: #3d2236;
   --up: #5fd38d; --down: #ff8a7a; --flat: #a39cd0;
   --in: #3987e5; --out: #d95926;
-  --pulse: #2dd4bf;
+  --pulse: #2dd4bf; --spark-hi: #ffffff; --spark-mix: 60%; --glow-o: .26;
   --core-hi: #9b8bff; --core-mid: #4a37c6; --core-deep: #120d3e; --core-face: #0f0a34; --core-aura: #8f7dff;
   --core-ring: #b3a7ff; --core-glow: #8ae2ff; --core-aura-a: .34;
   --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
@@ -1039,29 +1040,32 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-edges { transition: opacity var(--dur-2) var(--ease-out); }
 .ws-edges.moving { opacity: 0; }
 /* silk (OWN-GW-16, 18): hairlines, solid / dashed / dotted by certainty; a read path glows, a failed one is red */
-.wedge { fill: none; stroke: var(--tone); stroke-opacity: .45; stroke-linecap: round; transition: opacity var(--dur-2) var(--ease-out); }
-.wedge.money { stroke-opacity: .62; }
+/* a static edge is a quiet line: what moves on it, and the core, carry the light (docs/brd/testing/ui/flows_perf.md) */
+.wedge { fill: none; stroke: var(--tone); stroke-opacity: .3; stroke-linecap: round; transition: opacity var(--dur-2) var(--ease-out); }
+.wedge.money { stroke-opacity: .4; }
 .wedge.c-estimate { stroke-dasharray: 6 4; }
 .wedge.c-hypothetical { stroke-dasharray: 1 4.5; }
-.wedge.sum { stroke-opacity: .3; }
-.wedge.on { stroke-opacity: .95; }
+.wedge.sum { stroke-opacity: .2; }
+.wedge.on { stroke-opacity: .55; }
 .wedge.faint { opacity: .08; }
 .wedge.hot { stroke: var(--pulse); stroke-opacity: .95; filter: drop-shadow(0 0 3px var(--pulse)); }
 .wedge.bad { stroke: var(--critical); stroke-opacity: .9; }
 .wknob { fill: var(--tone); stroke: var(--plane); stroke-width: 1.5; }
-/* money in motion (Studio's dfflow spark): crackle dashes into a bright head, sliding the way the money goes, flickering;
-   the one keyframe here that is not transform or opacity — owner's order (2026-10-17), a few thin paths, measured */
-.wspark { fill: none; stroke: var(--tone); stroke-width: 2.6; stroke-linecap: round; pointer-events: none;
-  filter: drop-shadow(0 0 3px var(--tone)) drop-shadow(0 0 6px var(--tone)); animation-name: ws-money, ws-flicker; animation-timing-function: linear, steps(2, jump-none);
-  animation-iteration-count: infinite, infinite; }
-.wspark.faint, .ws-svg.focusing .wspark { opacity: .12; }
-.wspark { stroke-opacity: var(--so, 1); }
-.wspark.c-estimate { filter: none; stroke-width: 2.2; }  /* an estimate: dashed, unlit */
-.wspark.c-hypothetical { filter: none; stroke-width: 3.2; }  /* a hypothesis: round dots */
+/* money in motion (Studio's dfflow spark): crackle dashes into a bright head, sliding the way the money goes — the one
+   keyframe here that is not transform or opacity (owner's order, 2026-10-17). Its own layer over the graph (.ws-fxsvg:
+   a moving dash repaints that alone); a light core of the edge's own hue, so it stands off its edge in both themes; an
+   actual transfer's glow is a wider faint stroke under the core, never a CSS filter (two drop-shadows per spark were
+   61% of the graph's CPU). Width and opacity come from the monthly amount (graph.js plan()). */
+.ws-fxsvg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; will-change: transform; }
+.wspark, .wglow { fill: none; stroke-linecap: round; pointer-events: none; animation: ws-money linear infinite; }
+.wspark { stroke: color-mix(in oklab, var(--tone) var(--spark-mix), var(--spark-hi)); stroke-width: var(--sw, 1.8); stroke-opacity: var(--so, 1); }
+.wglow { stroke: var(--tone); stroke-width: calc(var(--sw, 1.8) * 2.2); stroke-opacity: calc(var(--so, 1) * var(--glow-o)); }
+.wspark.c-estimate { stroke-width: calc(var(--sw, 1.8) * .9); }  /* an estimate: even dashes, no glow */
+.wspark.c-hypothetical { stroke-width: 3; }  /* a hypothesis: round dots, no glow */
+.ws-sparks .faint, .ws-svg.focusing ~ .ws-fxsvg :is(.wspark, .wglow) { opacity: .12; }
 /* off screen, under a sheet or in a hidden tab, nothing on the graph runs (F8) */
-.ws-svg.asleep, .ws-svg.asleep * { animation-play-state: paused !important; }
+.ws-svg.asleep, .ws-svg.asleep *, .ws-svg.asleep ~ .ws-fxsvg * { animation-play-state: paused !important; }
 @keyframes ws-money { from { stroke-dashoffset: var(--a); } to { stroke-dashoffset: var(--b); } }
-@keyframes ws-flicker { from { opacity: 1; } to { opacity: .6; } }
 .wcomet { pointer-events: none; }
 .wcomet .whead { fill: color-mix(in srgb, #fff 55%, var(--pulse)); filter: drop-shadow(0 0 4px var(--pulse)) drop-shadow(0 0 1.5px var(--pulse)); }
 .wcomet .wtrail { fill: var(--pulse); }
@@ -1162,7 +1166,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-fold { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .wspark { display: none; }
+  .ws-fxsvg, .wspark, .wglow { display: none; }
   .wnode, .wedge, .wme-act, .wme-sel, .ws-edges, .ws-tool::after, .scard, .ws-fold .ic, .ws-svg :is(.k-holding, .quiet) :is(.wlbl, .wfig) { transition: none !important; }
   .ws-sheet, .wnode .wring, .wnode .wburst, .ws-tool.ping { animation: none !important; }
   .ws-tool.ping { box-shadow: 0 0 0 2px var(--accent); }
