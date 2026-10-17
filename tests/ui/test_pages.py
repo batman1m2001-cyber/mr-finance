@@ -105,8 +105,8 @@ def test_a_row_of_all_clients_opens_that_client(open_page):
 def test_the_overview_graph_selects_expands_and_opens_pages(open_page, base_url):
     in_thread(approved, *MARKET)
     p = open_page()
-    p.go("#/client/tong-quan/ban-do")
-    o = api(base_url, "/api/overview", {"client_id": "C01", "role": "client"})["overview"]
+    p.go("#/rm/khach-hang/ban-do")  # the page view (the Customer's is the workspace graph: test_graph_workspace_ui)
+    o = api(base_url, "/api/overview", {"client_id": "C01", "role": "rm"}, who="rm01")["overview"]
     shown = [n for n in o["nodes"] if n["kind"] in ("family", "class", "goal", "risk", "event")]
     assert p.page.locator(".mnode").count() == len(shown)  # sources and policy items start hidden
     p.page.click("[data-k=alert]")
@@ -123,7 +123,7 @@ def test_the_overview_graph_selects_expands_and_opens_pages(open_page, base_url)
     ev = next(n for n in o["nodes"] if n["kind"] == "event")
     p.page.locator(f'.mnode[data-n="{ev["id"]}"]').click()
     p.page.click("[data-go]")  # an event opens its path on Đồ thị tác động, selected
-    p.page.wait_for_function("location.hash === '#/client/tin/do-thi'")
+    p.page.wait_for_function("location.hash === '#/rm/khach-hang/do-thi'")
     p.page.wait_for_selector(f'[data-focus="event:{ev["ref"]}"][aria-pressed="true"]')
     assert not p.problems()
 
@@ -131,7 +131,7 @@ def test_the_overview_graph_selects_expands_and_opens_pages(open_page, base_url)
 def test_the_overview_graph_is_a_list_on_a_phone(open_page):
     in_thread(approved, *MARKET)
     p = open_page("phone")
-    p.go("#/client/tong-quan/ban-do")
+    p.go("#/rm/khach-hang/ban-do")
     assert p.page.locator(".mapsvg").count() == 0 and p.page.locator(".mgroup .mrow").count() > 0
     p.page.locator(".mgroup .mrow").first.click()
     p.page.wait_for_selector("#m-side #m-clear")

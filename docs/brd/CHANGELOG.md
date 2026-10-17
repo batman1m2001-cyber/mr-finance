@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The persistent financial graph, built and verified (experiment, G1–G7).
+  - The Customer's app is one page: lenses on a persistent graph (cash flow, reserve and stress scenarios as nodes,
+    certainty on every edge), the old pages as sheets at their old addresses, the dock (Trợ lý, Thông tin), the
+    strip. `POST /api/assistant/stream` sends each real tool step; the graph lights only on those, and a broken
+    stream is said and marked failed. OWN-GW-01…14 implemented_verified (18 tests); one live question US$0.0014.
+  - Documents: graph_workspace_report.md (new), matrix OWN-GW, SCR-CL-12 screenshots in assets/current_ui, the
+    plan's status. Branch `exp/graph-workspace` only; `main` and the live demo unchanged.
+
 - 2026-10-17 — The persistent financial graph, documented before building (owner request, experiment).
   - The owner's request and concept image registered (SRC-05); OWN-GW-01…14 (planned); FEAT-40 with the capability
     map of every Customer screen to its lens or sheet; SCR-CL-12 (proposed); ADR-0035; the Customer workspace tree in

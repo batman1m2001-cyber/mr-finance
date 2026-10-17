@@ -1025,7 +1025,10 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-canvas, .ws-list { order: 2; } .ws-strip { order: 3; }
   .ws-svg .wlbl { font-size: 14px; } .ws-svg .wfig { font-size: 12.5px; } .ws-svg .wme-v { font-size: 21px; }
   .ws-strip-b { grid-auto-columns: minmax(200px, 78%); }
-  .ws-sheet { position: fixed; inset: var(--ws-top, 0) 0 0 0; z-index: 30; }
+  /* a phone: the sheet takes the graph's place in the page (the graph stays mounted, hidden) and the dock stays below */
+  .ws-sheet { position: static; animation: none; }
+  .ws-sheet-b { overflow: visible; padding: 14px 14px 24px; }
+  .ws.sheeted .ws-canvas, .ws.sheeted .ws-list, .ws.sheeted .ws-ctl, .ws.sheeted .ws-strip, .ws.sheeted .ws-head { display: none; }
   .ws-dock { border-left: 0; border-top: 1px solid var(--hair); height: 78dvh; }
   .ws.folded .ws-pane, .ws.folded .ws-tabs [role="tab"] { display: revert; }
   .ws-fold { display: none; }

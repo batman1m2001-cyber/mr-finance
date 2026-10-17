@@ -179,6 +179,12 @@ class Page:
         self.page.wait_for_function("!document.querySelector('#page:not([hidden]) .skeleton')")
         self.page.wait_for_timeout(150)
 
+    def panel(self):
+        """Open the assistant: the floating button for staff; the Customer's panel is docked in the workspace."""
+        if self.page.is_hidden(".cp-panel"):
+            self.page.click(".cp-fab")
+        self.page.wait_for_selector("#cp-q")
+
     def problems(self):
         """Errors so far, an error panel on the page, and horizontal scroll."""
         out = list(self.errors)

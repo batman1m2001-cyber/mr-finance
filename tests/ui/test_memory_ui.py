@@ -45,7 +45,7 @@ def test_the_memory_page_shows_corrects_and_forgets(open_page):
 def test_a_past_conversation_is_found_and_opened_in_the_panel(open_page):
     p = open_page("phone")
     p.go("#/client/tong-quan/toan-canh")
-    p.page.click(".cp-fab")
+    p.panel()
     p.page.fill("#cp-q", "Tài sản của tôi thế nào?")
     p.page.press("#cp-q", "Enter")
     p.page.wait_for_function("document.querySelectorAll('#cp-msgs .cp-bot:not([data-busy])').length > 0")

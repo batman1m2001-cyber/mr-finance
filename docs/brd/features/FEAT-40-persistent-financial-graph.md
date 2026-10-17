@@ -123,6 +123,6 @@ citations, the search and the bell keep working.
 - A scripted assistant stream (no paid call) drives: running → pulse on the tool's nodes, finished → focus lit,
   answer → marks kept, failure → red ring and the failed step named; no animation without an event.
 - Certainty: actual, estimate and hypothetical edges are drawn differently; a scenario's value is in no total.
-- Phone (390 px): toolbar at the bottom, list view, dock and sheets full screen, no horizontal scroll.
+- Phone (390 px): the toolbar as a row under the header (with Trợ lý); graph first, list one tap away; the dock below the graph; a sheet in the graph's place, so the dock stays reachable; no horizontal scroll.
 - Reduced motion: no pulse or particle animation runs; marks are still outlines.
 - The full suite stays green; the BRD checker passes.

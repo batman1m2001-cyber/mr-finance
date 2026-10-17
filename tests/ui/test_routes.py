@@ -33,7 +33,7 @@ def test_every_route_renders_without_errors(open_page, size, theme):
     for r in seen:
         p.errors.clear()
         p.go(r)
-        if not p.page.is_visible(".cp-fab"):
+        if not (p.page.is_visible(".cp-fab") or p.page.is_visible("#cp-q")):  # floating, or docked (Customer)
             p.errors.append("no Copilot button")
         if p.problems():
             bad[r] = p.problems()

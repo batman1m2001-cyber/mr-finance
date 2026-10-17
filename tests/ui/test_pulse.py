@@ -29,7 +29,7 @@ def test_the_figures_are_the_apis(open_page, base_url):
     assert p.page.locator("#goals .goal").count() == len([g for g in goals if g["followed"]])
     assert p.page.locator("#feed .feed-item").count() == len(feed)
     for key in ("kpi:net_worth", "kpi:liquidity", "kpi:risk"):  # the Copilot's marks still have their targets
-        assert p.page.locator(f'[data-focus="{key}"]').count() == 1
+        assert p.page.locator(f'#page [data-focus="{key}"]').count() == 1  # the strip repeats them outside #page
     assert not p.problems()
 
 

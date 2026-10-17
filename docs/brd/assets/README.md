@@ -134,6 +134,11 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-RM-05_desktop-light.jpg` | SCR-RM-05 Hiệu quả tư vấn (all) | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
 | `SCR-RM-02_phone-light.jpg` | SCR-RM-02 Tác động tin (staff), Mục tiêu panel (FR-404) | current | phone 390×844, light, viewport | 2026-10-15, dev server, runs recomputed with goal impact (client C01) |
 | `SCR-RM-06_desktop-light.jpg` | SCR-RM-06 Duyệt đề xuất | current | desktop 1440×900, light, viewport | 2026-10-16, UI redesign R3, dev server after “Làm lại demo” (client C01) |
+| `SCR-CL-12_desktop-dark.jpg` | SCR-CL-12 Không gian làm việc, Tổng quan lens | current (experiment `exp/graph-workspace`) | desktop 1440×900, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
+| `SCR-CL-12-sheet_desktop-dark.jpg` | SCR-CL-12, an old address opened as a sheet over the graph | current (experiment `exp/graph-workspace`) | desktop 1440×900, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
+| `SCR-CL-12_phone-dark.jpg` | SCR-CL-12 Không gian làm việc, Tổng quan lens | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
+| `SCR-CL-12-dock_phone-dark.jpg` | SCR-CL-12, the dock (Trợ lý) below the graph | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
+| `SCR-CL-12-sheet_phone-dark.jpg` | SCR-CL-12, an old address as a sheet in the graph's place | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
 
 ## proposed_ui/ — the redesign kit (SRC-03)
 

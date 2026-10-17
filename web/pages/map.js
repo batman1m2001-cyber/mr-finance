@@ -34,7 +34,10 @@ const short = (s, n) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
 
 export async function render(box, ctx) {
   const client = ctx.client(), scope = ctx.scope(), staff = ctx.role !== "client";
-  const {overview: g} = await post("/api/overview", {client_id: client, scope, role: staff ? "rm" : "client", goals: followedIds(client)});
+  const {overview: all} = await post("/api/overview", {client_id: client, scope, role: staff ? "rm" : "client", goals: followedIds(client)});
+  // this page draws the kinds it has a look for; the workspace's money, reserve and scenario nodes are not its own
+  const mine = all.nodes.filter(n => LOOK[n.kind]), ids = new Set(mine.map(n => n.id));
+  const g = {...all, nodes: mine, edges: all.edges.filter(e => ids.has(e.from) && ids.has(e.to)), kinds: all.kinds.filter(k => LOOK[k.kind])};
   const byId = Object.fromEntries(g.nodes.map(n => [n.id, n]));
   const KIND = Object.fromEntries(g.kinds.map(k => [k.kind, k.label]));
   const narrow = (box.clientWidth || innerWidth) < 760;

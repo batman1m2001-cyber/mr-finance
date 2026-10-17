@@ -367,8 +367,10 @@ A sheet slides over the centre with its title, “Đóng”, and the page module
 back to the same state; asking → the graph follows the stream (FEAT-40). Keyboard: the toolbar is a list of buttons
 (arrows, Enter), nodes are buttons, `Escape` closes a sheet, `/` focuses the search.
 
-**Responsive / a11y.** Phone: the toolbar becomes a bottom bar, the list view is the default, the dock and sheets
-are full-screen with a close button, the strip folds by default. Every animation has a still equivalent under
-reduced motion. Colour is never the only carrier of certainty (line style and a word).
+**Responsive / a11y.** Phone (as built, G6–G7): the toolbar is a row under the header, with a Trợ lý button that
+goes to the dock. The graph comes first; the list view is one tap away. The strip is a swipeable row, and the dock
+sits below the graph. A sheet takes the graph's place in the page, with a close button: the graph stays mounted
+and the dock stays reachable. (A full-screen sheet covered the dock, so the assistant could not be used while a
+sheet was open.) Every animation has a still equivalent under reduced motion. Colour is never the only carrier of certainty (line style and a word).
 
 **Tests.** Planned in FEAT-40 “Acceptance”.

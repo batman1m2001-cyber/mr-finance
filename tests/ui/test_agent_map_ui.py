@@ -52,13 +52,13 @@ def test_on_a_phone_the_map_is_a_list_per_group(open_page):
 def test_the_panel_links_the_desk_to_the_map(open_page):
     p = open_page()
     p.go("#/admin/he-thong")
-    p.page.click(".cp-fab")
+    p.panel()
     p.page.click("#cp-hist")
     p.page.click("text=Bản đồ agent →")
     p.page.wait_for_selector(".eco-node")
     assert p.page.evaluate("location.hash").startswith("#/admin/agent")
     p.go("#/client/tong-quan/toan-canh")
-    p.page.click(".cp-fab")
+    p.panel()
     p.page.click("#cp-hist")
     p.page.wait_for_selector(".cp-st")
     assert p.page.locator("text=Bản đồ agent →").count() == 0  # a client has no Agent page

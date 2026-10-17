@@ -99,3 +99,12 @@ def test_the_shell_mounts_the_workspace_for_the_customer_only():
     assert "dock(host, hooks)" in copilot and "undock()" in copilot and "/api/assistant/stream" in copilot
     # the scenario's effect is hypothetical: the inspector says it never adds to net worth (OWN-GW-12)
     assert "không cộng vào tài sản ròng" in (WS / "inspector.js").read_text(encoding="utf-8")
+
+
+def test_a_second_copy_of_the_app_runs_no_job_on_its_own(monkeypatch):
+    # OWN-GW-14: the experiment serves the same app on its own port; with MF_JOBS=off no job has a clock
+    from app.main import schedule
+
+    assert schedule(every="1h") is not None
+    monkeypatch.setenv("MF_JOBS", "off")
+    assert schedule(every="1h") is None

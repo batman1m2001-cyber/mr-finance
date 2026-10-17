@@ -6,8 +6,7 @@ from test_apply import MARKET, approved
 
 
 def ask(p, q):
-    if p.page.is_hidden(".cp-panel"):
-        p.page.click(".cp-fab")
+    p.panel()
     n = p.page.locator("#cp-msgs .cp-bot:not([data-busy])").count()
     p.page.fill("#cp-q", q)
     p.page.press("#cp-q", "Enter")
@@ -17,23 +16,25 @@ def ask(p, q):
 
 def test_an_answer_marks_what_it_read_and_the_states_follow(open_page):
     p = open_page()
-    p.go("#/client/tong-quan/toan-canh")
-    ask(p, "Tài sản của tôi thế nào?")
-    assert p.page.inner_text("#cp-ctx").startswith("Đang xem: Toàn cảnh · Khách hàng")  # the page's context
+    p.go("#/rm/khach-hang/toan-canh")  # the floating panel: staff (the Customer's is docked, test_graph_workspace_ui)
+    ask(p, "Tài sản của khách này thế nào?")
+    assert p.page.inner_text("#cp-ctx").startswith("Đang xem: Toàn cảnh · RM")  # the page's context
     marked = p.page.eval_on_selector_all(".mf-focus", "es => es.map(e => e.dataset.focus)")
     assert sorted(marked) == ["kpi:liquidity", "kpi:net_worth", "kpi:risk"]
     assert p.page.get_attribute(".cp-fab", "data-state") == "ok"
     p.page.wait_for_function("document.querySelector('.cp-fab').dataset.state === 'idle'")  # after 1.6 s
     p.page.wait_for_function("!document.querySelector('.mf-focus')")  # marks clear themselves
-    refused = ask(p, "Duyệt đề xuất đang chờ")
-    assert "Không có quyền" in refused.inner_text() and p.page.get_attribute(".cp-panel", "data-state") == "error"
-    assert not p.problems()
+    c = open_page()  # a Customer may not approve: refused, said as one (the docked panel, the same states)
+    c.go("#/client")
+    refused = ask(c, "Duyệt đề xuất đang chờ")
+    assert "Không có quyền" in refused.inner_text() and c.page.get_attribute(".cp-panel", "data-state") == "error"
+    assert not p.problems() and not c.problems()
 
 
 def test_the_phone_waits_for_the_panel_to_close(open_page):
     p = open_page("phone")
-    p.go("#/client/tong-quan/toan-canh")
-    ask(p, "Tài sản của tôi thế nào?")
+    p.go("#/rm/khach-hang/toan-canh")
+    ask(p, "Tài sản của khách này thế nào?")
     assert p.page.locator(".mf-focus").count() == 0
     p.page.click("#cp-close")
     assert p.page.locator(".mf-focus").count() == 3
@@ -41,22 +42,22 @@ def test_the_phone_waits_for_the_panel_to_close(open_page):
 
 def test_reduced_motion_runs_no_animation(open_page):
     p = open_page(reduced=True)
-    p.go("#/client/tong-quan/toan-canh")
-    ask(p, "Tài sản của tôi thế nào?")
+    p.go("#/rm/khach-hang/toan-canh")
+    ask(p, "Tài sản của khách này thế nào?")
     assert p.page.locator(".mf-focus").count() == 3
     assert p.page.evaluate("document.getAnimations().length") == 0
 
 
 def test_busy_lasts_exactly_as_long_as_the_request(open_page):
     p = open_page()
-    p.go("#/client/tong-quan/toan-canh")
+    p.go("#/rm/khach-hang/toan-canh")
     p.page.evaluate(
         """() => { const f0 = window.fetch; window.__hold = null;
              window.fetch = (u, o) => String(u).endsWith('/api/assistant')
                ? new Promise(r => { window.__hold = () => r(f0(u, o)); }) : f0(u, o); }"""
     )
     p.page.click(".cp-fab")
-    p.page.fill("#cp-q", "Tài sản của tôi thế nào?")
+    p.page.fill("#cp-q", "Tài sản của khách này thế nào?")
     p.page.press("#cp-q", "Enter")
     p.page.wait_for_function("!!window.__hold")
     assert p.page.get_attribute(".cp-fab", "data-state") == "busy"
@@ -117,7 +118,7 @@ def test_a_conversation_is_picked_up_on_another_device_listed_and_deleted(open_p
     assert cid and p.page.evaluate("Object.keys(sessionStorage).filter(k => k.startsWith('mf.copilot')).length") == 0
     q = open_page("phone")  # another device, the same person
     q.go("#/client/tong-quan/toan-canh")
-    q.page.click(".cp-fab")
+    q.panel()
     q.page.wait_for_function(f"document.querySelector('#cp-msgs').dataset.conversation === '{cid}'")
     assert q.page.inner_text("#cp-msgs .cp-me") == "Tài sản của tôi thế nào?"
     assert q.page.locator("#cp-msgs .cp-bot .cp-figs").count() == 1  # the answer's card, as first shown

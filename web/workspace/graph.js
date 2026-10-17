@@ -187,7 +187,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
 
   // the canvas size, kept by a ResizeObserver: reading it on every draw forced a layout per lens change
   let size = null;
-  new ResizeObserver(([e]) => { const r = e.contentRect; if (!size || r.width !== size.width || r.height !== size.height) { size = {width: r.width, height: r.height}; if (g && lens) draw(); } }).observe(host);
+  new ResizeObserver(([e]) => { const r = e.contentRect; if (!r.width) return; /* hidden (a phone's sheet): keep the last size */ if (!size || r.width !== size.width || r.height !== size.height) { size = {width: r.width, height: r.height}; if (g && lens) draw(); } }).observe(host);
   function draw({moved = false} = {}) {
     if (!g) return;
     const box = size || host.getBoundingClientRect();
