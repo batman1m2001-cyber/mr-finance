@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 79 | 75 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 97 | 75 | 3 | 0 | 18 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -324,6 +324,24 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-GW-30 | FEAT-40 | implemented_verified | L4: groups open and close, Tập trung (button, `f`), Vừa khung (`0`) — `tests/ui/test_graph_layout_ui.py::test_focus_fits_the_selection_and_keeps_the_rest_in_sight`, `tests/ui/test_graph_layout_ui.py::test_a_dense_graph_folds_instead_of_squeezing` |
 | OWN-GW-31 | FEAT-40 | implemented_verified | L2–L4: a pick outside Tài sản and an answer move no node; lens switches keep the ring's order — `tests/ui/test_graph_layout_ui.py::test_the_layout_holds_still` |
 | OWN-GW-32 | FEAT-40 | implemented_verified | L0/V: the audit as tests on the real and a 3× graph, desktop and phone; before/after, frame times and gaps in docs/brd/testing/graph_core_layout_report.md — `tests/ui/test_graph_layout_ui.py::test_every_lens_is_clear_idle_and_with_a_pick`, `tests/ui/test_graph_layout_ui.py::test_a_dense_graph_folds_instead_of_squeezing` |
+| OWN-GW-33 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U4, V |
+| OWN-GW-34 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U1, U2, U4 |
+| OWN-GW-35 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U1, U2 |
+| OWN-GW-36 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U1, U4 |
+| OWN-GW-37 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U1, U3 |
+| OWN-GW-38 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U1–U4 |
+| OWN-GW-39 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U3 |
+| OWN-GW-40 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U1, U3 |
+| OWN-GW-41 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U2 |
+| OWN-GW-42 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U5 |
+| OWN-GW-43 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md V |
+| OWN-GW-44 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md V |
+| OWN-GW-45 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U5 |
+| OWN-GW-46 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U4 |
+| OWN-GW-47 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U5 |
+| OWN-GW-48 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U2, V |
+| OWN-GW-49 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md U1–V |
+| OWN-GW-50 | FEAT-40 | planned | UNIFIED_FLOWS_PLAN.md V |
 | OWN-SS-01 | FEAT-37 | implemented_verified | S1, S4: rename, archive, restore, delete, owner and role only; the panel's history with search, Gần đây / Lưu trữ, groups by day — `tests/test_assistant_sessions.py::test_a_session_is_renamed_archived_and_brought_back_by_its_owner_only`, `tests/ui/test_sessions_ui.py::test_a_session_is_named_kept_on_reload_renamed_started_anew_archived_and_restored` |
 | OWN-SS-02 | FEAT-37 | implemented_verified | S2: title (≤ 7 words) and goal by the copilot model after the 1st and 4th answers and after a compaction, asked by the panel once the answer is drawn (no reply latency); never over a name the person set; template mode sends nothing; live: US$0.0001 and 1.3–2.4 s a title — `tests/test_assistant_sessions.py::test_the_title_and_goal_are_written_after_the_first_answer_and_once`, `tests/test_assistant_sessions.py::test_it_is_written_again_at_the_fourth_turn_but_never_over_a_name_the_person_chose`, `tests/test_assistant_sessions.py::test_template_mode_sends_nothing_for_a_title`, `tests/test_assistant_sessions.py::test_a_broken_title_answer_changes_nothing` |
 | OWN-SS-03 | FEAT-37 | implemented_verified | S1: storage kept (assistant.db, ADR-0027, checked against the deployment); a turn written when it starts, each step as it ends; a closed stream does not stop the server's run (measured live: both tools ran and the answer was kept), so the panel follows a running turn after a reload; a turn the server never finished reads as interrupted — `tests/test_assistant_sessions.py::test_a_refresh_mid_answer_keeps_the_question_and_the_tools_that_ran`, `tests/test_assistant_sessions.py::test_a_turn_left_running_by_a_dead_server_reads_as_interrupted`, `tests/test_assistant_sessions.py::test_a_finished_turn_is_one_row_with_its_answer`, `tests/ui/test_sessions_ui.py::test_a_turn_running_at_reload_is_followed_to_its_answer_and_a_dead_one_says_it_was_cut` |

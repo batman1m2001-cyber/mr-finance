@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Owner request recorded: the unified graph and its money flows (OWN-GW-33…50, planned). The audit
+  found: goals share one 4,03 tỷ pool, policy impacts have no per-class split, no transfer rows exist, and
+  scenarios cannot be combined. Documents: sources SRC-05, owner_requirements.md, FEAT-40 “Money flows,
+  scenarios and the assistant”, matrix, docs/UNIFIED_FLOWS_PLAN.md.
+
 - 2026-10-17 — The central wealth core and the graph's layout built (experiment, GRAPH_CORE_LAYOUT_PLAN C0–V,
   OWN-GW-20…32 implemented_verified).
   - One rounded ring with slots sized from the measured labels. Groups fold into “+n” nodes instead of squeezing,

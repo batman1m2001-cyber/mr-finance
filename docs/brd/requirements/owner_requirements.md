@@ -18,7 +18,9 @@ branch `exp/graph-workspace` and served on its own public link; the live demo is
 (OWN-GW-15…19): [`2026-10-17_graph_dataflow_refinement.md`](../sources/owner_requests/2026-10-17_graph_dataflow_refinement.md). The
 centre and the layout (OWN-GW-20…32): [`2026-10-17_central_wealth_core.md`](../sources/owner_requests/2026-10-17_central_wealth_core.md)
 (“Core”) and [`2026-10-17_graph_layout_routing.md`](../sources/owner_requests/2026-10-17_graph_layout_routing.md)
-(“Layout”); plan [`docs/GRAPH_CORE_LAYOUT_PLAN.md`](../../GRAPH_CORE_LAYOUT_PLAN.md).
+(“Layout”); plan [`docs/GRAPH_CORE_LAYOUT_PLAN.md`](../../GRAPH_CORE_LAYOUT_PLAN.md). Unified graph and flows
+(OWN-GW-33…50): [`2026-10-17_unified_graph_flows.md`](../sources/owner_requests/2026-10-17_unified_graph_flows.md)
+(“Unified”); plan [`docs/UNIFIED_FLOWS_PLAN.md`](../../UNIFIED_FLOWS_PLAN.md).
 
 | ID | Requirement | Source | Doc status |
 |---|---|---|---|
@@ -54,6 +56,24 @@ centre and the layout (OWN-GW-20…32): [`2026-10-17_central_wealth_core.md`](..
 | OWN-GW-30 | Adaptive exploration: a dense graph reveals secondary nodes progressively, collapses groups and expands a selected branch; fit-to-view, zoom, pan, and focus on the selection without losing context | Layout, bullet 5 | documented |
 | OWN-GW-31 | Stable interaction: predictable layout changes; the mental map is kept — nodes do not jump when an asset is selected, a view switched or an assistant answer arrives | Layout, bullet 6 | documented |
 | OWN-GW-32 | Tested on realistic and dense graphs for node and label collisions, crossings, readability at zoom levels and performance. Acceptance: organized as complexity grows — no overlapping nodes or labels, no edge through a node, no uncontrolled web; when a layout cannot stay readable, visible complexity is reduced instead of squeezed | Layout, testing paragraph and acceptance criterion | documented |
+| OWN-GW-33 | One unified graph for the Customer: assets, liabilities, income, expenses, transactions, news impacts, goals, risks and scenarios in one interactive model; the toolbar, graph, Assistant/Info panel and bottom strip kept; navigation enriches, refocuses or filters the graph instead of replacing it (Experts/contact may keep its own view) | Unified §1 | documented |
+| OWN-GW-34 | Actual money flows — verified income, expenses, transfers, debt payments and other real cash movements — drawn as directional animated flows, each traceable to the records it sums | Unified §2 “Actual”; §5 “identity and traceability” | documented |
+| OWN-GW-35 | News impacts — estimated consequences of news, policies, infrastructure projects and market changes — drawn as estimated flows to what they affect | Unified §2 “News impacts” | documented |
+| OWN-GW-36 | Goal flows — projected savings and contributions toward education, retirement, purchases and other goals — drawn as projected flows | Unified §2 “Goals” | documented |
+| OWN-GW-37 | Scenario flows — hypothetical market moves, property prices, interest rates, income changes and user-defined what-ifs — drawn as hypothetical flows | Unified §2 “Scenarios” | documented |
+| OWN-GW-38 | Actual data, estimates, assumptions and family-related information distinguished visually and semantically; a hypothetical flow is never shown as a completed transaction or added to current assets | Unified §2 | documented |
+| OWN-GW-39 | An impact can be traced from its source through the assets, liabilities, income, expenses and liquidity it affects to projected net worth | Unified §2 | documented |
+| OWN-GW-40 | Several scenarios together: their assumptions and dependencies tracked, no double counting, the active scenarios clearly shown | Unified §2 | documented |
+| OWN-GW-41 | Every eligible money edge moves continuously and subtly; density, speed, trail and prominence follow the normalized monthly amount within limits; direction follows the money; actual, estimated and hypothetical look different; a non-monetary relation implies no transfer; figures stay crisp | Unified §3 | documented |
+| OWN-GW-42 | When the assistant answers, streams, investigates an event or runs a scenario, the graph's movement and pulses follow the entities and paths concerned — nothing decorative or unrelated | Unified §3, §6 | documented |
+| OWN-GW-43 | The core stays the visual heart, with a clear hierarchy core → primary assets → secondary entities → context (restates OWN-GW-20…25) | Unified §4 | documented |
+| OWN-GW-44 | The layout requirements hold for the enlarged graph (restates OWN-GW-26…31): no collisions, no edge through a node or label, groups around the core, progressive reveal, zoom, pan, fit, focus, graph/list switching, stable under selection, view changes and answers | Unified §5 | documented |
+| OWN-GW-45 | The assistant explains graph relationships, investigates news, inspects assets, compares scenarios and helps with supported tasks, in the existing panel | Unified §6 | documented |
+| OWN-GW-46 | Selecting a node or an edge shows in Thông tin its details, source, calculation, assumptions, confidence where available and downstream effects | Unified §6 | documented |
+| OWN-GW-47 | The assistant knows the current graph selection and the active scenarios | Unified §6 | documented |
+| OWN-GW-48 | The existing rendering stack and Studio patterns reused; animation work limited, off-screen activity reduced, reduced motion respected, responsive at realistic volumes | Unified §7 | documented |
+| OWN-GW-49 | No transaction amount, projection, news evidence or confidence score is invented; where data or logic is missing the gap is named and only what is supported is built | Unified §7 | documented |
+| OWN-GW-50 | BRD discipline: every existing feature and its logic kept; docs/brd updated (decisions, feature mapping, graph semantics, flow rules, UI references, test evidence); a final report of work, tests, gaps and BRD requirements not yet implemented | Unified §8 | documented |
 
 ## SS — Assistant sessions, history and compaction (2026-10-17, experiment)
 

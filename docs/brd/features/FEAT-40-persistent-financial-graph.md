@@ -222,6 +222,48 @@ and the free relaxation of G8, which the audit showed still drew spokes through 
   0.36 s later. Streaming ripples are Web Animations, at most one per 350 ms.
 - **Tập trung** is a toolbar button (enabled once something is picked) and the key `f`; `0` fits the whole graph.
 
+### Money flows, scenarios and the assistant (OWN-GW-33…50)
+Plan: [`docs/UNIFIED_FLOWS_PLAN.md`](../../UNIFIED_FLOWS_PLAN.md) (decisions F1–F12). The graph becomes one money
+model: what really moved, what the CIO's assumptions estimate, and what the person supposes.
+
+- **Three certainties and a family mark** (OWN-GW-38).
+  - **Actual:** a record.
+  - **Estimate:** computed under the CIO's assumptions (news, policy, a goal's monthly need).
+  - **Hypothetical:** a scenario.
+  - A holding or category owned by another family member carries a person mark.
+  - Nothing hypothetical is added to net worth or shown as a done transaction.
+- **Money edges** (OWN-GW-34…37). Each money edge carries its amount, its monthly rate and its direction:
+  - income and spending, and this month's categories on demand;
+  - repayments;
+  - each goal's monthly need;
+  - each news event's 3-month change per class;
+  - a policy item's impact where it touches one class;
+  - an active scenario's change per class and its extra yearly costs.
+
+  Every other edge is a relation, with no sparks.
+- **Goals share their pool** (OWN-GW-36, 49). When followed goals count the same liquid pool, the graph and
+  Thông tin say so once and total the monthly needs against the surplus.
+- **Scenarios together** (OWN-GW-39, 40). One engine combines the active scenarios:
+  - shocks compound per holding;
+  - each change is attributed in proportion;
+  - a shared cost counts once;
+  - liquidity, the surplus and the goals are recomputed on the shocked picture.
+
+  A bar shows what is active and the net worth “nếu xảy ra”. The person can add their own what-if (property,
+  stocks, gold, floating rate, income).
+- **Motion from money** (OWN-GW-41, 48). Sparks per beat, trail, speed and opacity follow the monthly rate against
+  this month's larger flow, within limits. A one-off (policy, scenario) is relative and capped at half. Treatments:
+  - actual bright;
+  - estimate dashed;
+  - hypothetical hollow and dotted.
+
+  Off screen, everything sleeps.
+- **Select an edge** (OWN-GW-46). Thông tin shows its ends, amount, certainty, sources, Cách tính, assumptions,
+  confidence where recorded and downstream effects.
+- **The assistant sees the graph** (OWN-GW-42, 45, 47). It is told the selection and the active scenarios. It can
+  list a node's links (`lien_ket`) and compare or combine scenarios (`so_sanh_kich_ban`). The graph lights what
+  each tool read.
+
 ## Capability map — every Customer capability and where it goes (OWN-GW-11)
 
 | Today (screen · route) | Capability | Requirements | In the workspace | Interaction model |
