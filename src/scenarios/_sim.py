@@ -198,7 +198,7 @@ def tuition(p: Pic, prm: Dict[str, Any]) -> Dict[str, Any]:
             act(f"Khóa tỷ giá cho {vnd(with_fx * 0.5)} bằng tiền gửi ngoại tệ", total * fx * 0.5, "heavy"),
             act("Mua ngoại tệ dần mỗi quý để trung bình giá", total * fx * 0.25, "light"),
         ],
-        have_label="Dự phòng dùng được",
+        have_label="Thanh khoản ngoài 6 tháng chi tiêu",  # the same pool as the other goals' (F3: said once)
     )
     return {
         "goal": target,

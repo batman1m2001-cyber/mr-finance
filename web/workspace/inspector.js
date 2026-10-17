@@ -1,10 +1,10 @@
 /* Thông tin — the workspace's inspector (FEAT-40, OWN-GW-03): the selected node's figures with their “Cách tính”,
    its links with the records they were read from, and the sheets that show it in full; with nothing selected, what
    the lens looks at first. Built from the overview page's side panel (map.js). */
-import {n as how, esc, pct, signClass, vnd} from "../core/core.js";
+import {formulaOf, n as how, esc, pct, signClass, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
-import {LOOK, certaintyOf, figureOf, howOf, srcText} from "./graph.js?v=20261017u3";
-import {SHEETS} from "./lenses.js?v=20261017w3";
+import {LOOK, certaintyOf, figureOf, howOf, srcText} from "./graph.js?v=20261017u4";
+import {SHEETS} from "./lenses.js?v=20261017u4";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
 const titled = {event: "data-quote", alert: "data-explains"};  // a news event's title is the outlets' words
@@ -12,16 +12,18 @@ const nameOf = (n, text) => (n.id === "RK:drawdown" ? how(text, "risk.current") 
 const fig = (n, text) => (n.kind === "source" || !text ? text : how(text, ...howOf(n)));
 const CERT_WORD = {actual: "thực tế", estimate: "ước tính", hypothetical: "giả định"};
 // which sheet shows a kind in full
-const SHEET_OF = {family: "chi-tiet", class: "tai-san", holding: "tai-san", source: "tai-san", goal: "ke-hoach", scenario: "ke-hoach",
+const SHEET_OF = {category: "toan-canh", family: "chi-tiet", class: "tai-san", holding: "tai-san", source: "tai-san", goal: "ke-hoach", scenario: "ke-hoach",
   risk: "chi-tiet", liquidity: "chi-tiet", alert: "chinh-sach", event: "do-thi", flow: "toan-canh"};
 
 // the person's own what-if (F5, scenarios._sim.CUSTOM_LIMITS): each input a percentage, within the server's bounds
 const CUSTOM = [["real_estate", "Bất động sản", -50, 50], ["stock", "Cổ phiếu và quỹ cổ phiếu", -50, 50], ["gold", "Vàng", -50, 50],
   ["rate", "Lãi vay thả nổi tăng (điểm %)", 0, 5], ["income", "Thu nhập hằng tháng", -50, 50]];
+const SRC_WORD = {holding: "Khoản", risk: "Rủi ro", goal: "Mục tiêu", alert: "Chính sách", run: "Lần áp dụng tin", txn: "Giao dịch tháng", scenario: "Kịch bản"};
 const GOAL_WORD = {on_track: "Đúng tiến độ", at_risk: "Cần chú ý", off_track: "Chậm tiến độ"};
 
-export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) {
+export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scenario}) {
   const n = node;
+  if (!n && edge) { drawEdge(edge); wire(); return; }
   const sheetBtns = (ids) => ids.map(id => `<button type="button" class="btn sm" data-sheet="${id}">${esc(SHEETS[id].label)} ${icon("arrow", {size: 14})}</button>`).join("");
   if (!n) {
     const g = graph.data();
@@ -33,7 +35,7 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) 
     } else {
       const pick = {"tai-san": ["class"], "dong-tien": ["flow", "liquidity"], "muc-tieu": ["goal", "scenario"], "rui-ro": ["risk", "liquidity"]}[lens.id] || [];
       const rows = g.nodes.filter(x => pick.includes(x.kind));
-      body = `<h3>${esc(lens.label)} <span class="hint">${rows.length}</span></h3>${list(rows)}`;
+      body = `<h3>${esc(lens.label)} <span class="hint">${rows.length}</span></h3>${lens.id === "muc-tieu" ? goalsTotal(g) : ""}${list(rows)}`;
     }
     el.innerHTML = `<div class="ws-ins-lens">${body}
       <p class="small muted">Bấm một nút trên đồ thị để xem số liệu, liên kết và nguồn của nó.</p>
@@ -41,12 +43,15 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) 
   } else {
     const es = graph.links(n.id);
     const g = graph.data();
-    const kids = n.kind === "class" && lens.kinds.includes("holding") ? g.nodes.filter(x => x.parent === n.id).length : 0;  // only where holdings show
+    const kid = {class: "holding", flow: "category"}[n.kind];  // what it opens to, only where the lens shows those
+    const kids = kid && lens.kinds.includes(kid) ? g.nodes.filter(x => x.parent === n.id && x.kind === kid).length : 0;
     const facts = [
       n.kind === "family" && `Tài sản ròng <b>${fig(n, vnd(n.value))}</b> · tài sản ${how(vnd(n.assets), "assets.total")} · nợ ${how(vnd(n.liabilities), "liabilities.total")}`,
       n.kind === "class" && `${n.liability ? "Dư nợ" : "Giá trị"} <b>${fig(n, vnd(n.value))}</b> · ${n.count} khoản`,
       n.kind === "holding" && `Giá trị <b>${fig(n, vnd(n.value))}</b>${n.owner ? ` · ${esc(n.owner)}` : ""}`,
       n.kind === "source" && `${esc(n.what)} · ${n.count} khoản · ${esc((n.trust || []).join(", "))}`,
+      n.kind === "goal" && n.pool && `<span data-explains>Nguồn ${esc(n.pool.label || n.have_label || "")}</span> ${how(vnd(n.pool.have), "goal.have")} dùng chung cho ${n.pool.goals.length} mục tiêu: tính một lần, không cộng dồn`,
+      n.kind === "goal" && n.monthly > 0 && n.gap > 0 && `Cần để dành <b>${how(vnd(n.monthly), "goal.monthly", {need: vnd(n.need), have: vnd(n.have)})}</b>/tháng · bạn dư ${how(vnd(n.surplus || 0), "goal.surplus")}/tháng`,
       n.kind === "goal" && `Cần <b>${how(vnd(n.need), "goal.need")}</b> · đang có ${how(vnd(n.have), "goal.have")} · ${n.gap > 0 ? `thiếu ${how(vnd(n.gap), "goal.gap", {need: vnd(n.need), have: vnd(n.have)})}` : "đủ"}${n.by ? ` · mốc ${esc(n.by)}` : ""}`,
       n.kind === "risk" && `${fig(n, vnd(Math.abs(n.value)))} · <span data-explains>${esc(n.detail)}</span>`,
       n.kind === "alert" && `Tác động ước tính <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b> · xác suất ${how(pct(n.probability, false, 0), "policy.probability")} · ${esc(n.status_label)}`,
@@ -56,6 +61,8 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) 
       n.kind === "flow" && `${n.side === "in" ? "Tiền vào" : "Tiền ra"} tháng ${esc(n.month || "")} <b>${fig(n, vnd(Math.abs(n.value)))}</b> · từ giao dịch đã ghi nhận`,
       n.kind === "flow" && (n.items || []).length && `Lớn nhất: ${n.items.slice(0, 3).map(i => `${esc(i.label)} ${vnd(Math.abs(i.value))}`).join(" · ")}`,
       n.kind === "flow" && n.rows && `${n.rows} giao dịch · <span class="cert c-actual">thực tế</span>`,
+      n.kind === "category" && `${n.side === "in" ? "Tiền vào" : "Tiền ra"} tháng ${esc(n.month || "")} <b>${fig(n, vnd(Math.abs(n.value)))}</b> · ${n.rows} giao dịch · <span class="cert c-actual">thực tế</span>`,
+      n.kind === "category" && (n.owners || []).length > 1 && `Của: ${n.owners.map(esc).join(", ")}`,
       n.kind === "liquidity" && (n.items || []).length && `Gồm: ${n.items.slice(0, 3).map(i => `${esc(i.label)} ${vnd(i.value)}`).join(" · ")}`,
       n.kind === "liquidity" && `Tài sản thanh khoản <b>${fig(n, vnd(n.value))}</b>${n.months != null ? ` · đủ chi tiêu <b>${String(n.months).replace(".", ",")} tháng</b> (mốc an toàn 6 tháng)` : ""}`,
       n.kind === "scenario" && `<span class="pill">giả định</span> ${esc(n.detail || "")}`,
@@ -63,7 +70,7 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) 
         : `${n.active ? "Phần của kịch bản này" : "Nếu xảy ra"}: <b class="${signClass(n.value)}">${vnd(n.value, true)}</b> — giả định, không cộng vào tài sản ròng.`),
       n.kind === "scenario" && (n.summary || []).length && `<span class="ws-sum">${n.summary.map(l => `<span>${esc(l.label)}</span><b class="${{bad: "down", good: "up"}[l.tone] || ""}">${esc(l.value)}</b>`).join("")}</span>`,
     ].filter(Boolean);
-    const look = n.kind === "flow" && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind] || LOOK.class;
+    const look = (n.kind === "flow" || n.kind === "category") && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind] || LOOK.class;
     const kindTone = look[0];
     const sheet = SHEET_OF[n.kind];
     el.innerHTML = `<div class="row tight"><span class="ic-chip" style="--tone:${kindTone}">${icon(n.kind === "class" ? CLASS_ICON[n.ref] || "layers" : look[1], {size: 16})}</span>
@@ -71,7 +78,7 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) 
         <button type="button" class="linkbtn small" id="ws-clear" style="margin-left:auto">Bỏ chọn</button></div>
       ${facts.map(f => `<p class="small mt-xs">${f}</p>`).join("")}
       <div class="row tight mt">
-        ${kids ? `<button type="button" class="btn sm" id="ws-open">${graph.isOpen(n.id) ? "Thu gọn" : `Mở rộng ${kids} khoản`}</button>` : ""}
+        ${kids ? `<button type="button" class="btn sm" id="ws-open">${graph.isOpen(n.id) ? "Thu gọn" : `Mở rộng ${kids} ${kid === "category" ? "khoản thu chi" : "khoản"}`}</button>` : ""}
         ${n.kind === "scenario" && scenario && n.ref !== "custom" ? `<button type="button" class="btn sm ${n.active ? "" : "primary"}" id="ws-run" aria-pressed="${!!n.active}">${n.active ? "Tắt kịch bản" : "Bật kịch bản"}</button>` : ""}
         ${n.kind === "event" ? `<button type="button" class="btn sm primary" data-sheet="do-thi" data-param="${esc(n.ref)}" data-focus-key="event:${esc(n.ref)}">Xem đường đi của tin ${icon("arrow", {size: 14})}</button>`
           : sheet ? `<button type="button" class="btn sm" data-sheet="${sheet}">Mở ${esc(SHEETS[sheet].label)} ${icon("arrow", {size: 14})}</button>` : ""}</div>
@@ -104,8 +111,106 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) 
       if (off) off.onclick = () => { off.disabled = true; scenario.set("custom", false); };
     }
   }
-  for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => graph.select(b.dataset.n);
-  for (const b of el.querySelectorAll("[data-sheet]")) b.onclick = () => openSheet(b.dataset.sheet, b.dataset.param || null, b.dataset.focusKey ? [b.dataset.focusKey] : null);
+  wire();
+
+  function wire() {
+    for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => graph.select(b.dataset.n);
+    for (const b of el.querySelectorAll("[data-sheet]")) b.onclick = () => openSheet(b.dataset.sheet, b.dataset.param || null, b.dataset.focusKey ? [b.dataset.focusKey] : null);
+  }
+
+  // ── an edge picked (UNIFIED_FLOWS_PLAN F9, OWN-GW-46): what it joins and says, its amount and monthly rate, its
+  // certainty, the records it was read from, how it is computed, its assumptions, its confidence where one is
+  // recorded (none is invented), and what it reaches downstream
+  function drawEdge(e) {
+    const A = graph.node(e.from), B = graph.node(e.to), g = graph.data();
+    if (!A || !B) { el.innerHTML = ""; return; }
+    const cert = certaintyOf(e, {[A.id]: A, [B.id]: B});
+    const kinds = [A.kind, B.kind], has = (k) => kinds.includes(k), far = A.id === "ME" ? B : A;
+    const type = has("scenario") ? "scenario" : has("event") || (far.kind === "group" && far.of === "event") ? "event"
+      : has("alert") ? "alert" : has("goal") ? "goal" : has("category") ? "category" : has("flow") ? "flow" : far.kind;
+    const node = (k) => g.nodes.find(x => x.kind === k && kinds.includes(x.kind) && (x.id === A.id || x.id === B.id));
+    const ev = node("event"), al = node("alert"), sc = node("scenario"), gl = node("goal"), fl = node("flow") || node("category");
+    const [metric, inputs] = {
+      event: ["impact.expected_3m", {event: ev ? ev.label : ""}], alert: ["policy.impact", al ? {probability: pct(al.probability, false, 0)} : {}],
+      scenario: [e.cost ? "scenario.cost" : "scenario.effect", {scenario: sc ? sc.label : ""}],
+      goal: ["goal.monthly", gl ? {need: vnd(gl.need), have: vnd(gl.have), ...(gl.pool ? {pool: vnd(gl.pool.have)} : {})} : {}],
+      category: ["flow.category", {rows: String((node("category") || {}).rows || "")}], flow: [fl && fl.side === "out" ? "flow.out" : "flow.in", {}],
+      class: ["class.value", {}], holding: ["holding.value", {}], liquidity: ["liquidity.value", {}], risk: ["risk.loss", {}],
+    }[type] || [null, {}];
+    const monthlyMetric = {event: "impact.monthly", goal: "goal.monthly", scenario: "scenario.cost"}[type] || metric;
+    const signed = cert !== "actual";
+    const money = (x, m = metric, i = inputs) => (m ? how(vnd(x, signed), m, i) : vnd(x, signed));
+    const [src, dst] = e.dir === "back" ? [B, A] : [A, B];
+    const amount = type === "goal" ? (e.value != null ? `Cần để dành <b>${how(vnd(e.value), metric, inputs)}</b>/tháng` : "Không cần để dành thêm") : [
+      e.value != null && `${{event: "Tác động ước tính", alert: "Tác động ước tính", scenario: e.cost ? "Chi phí giả định một năm" : "Nếu xảy ra"}[type] || "Số tiền"} <b class="${signed ? signClass(e.value) : ""}">${money(e.value)}</b>`,
+      e.monthly != null && e.monthly !== Math.abs(e.value) && `~<b>${how(vnd(e.monthly), monthlyMetric, inputs)}</b>/tháng`,
+      e.repaid && `trả trong tháng <b>${how(vnd(e.repaid), "transaction.amount")}</b>`,
+    ].filter(Boolean).join(" · ");
+    const once = e.monthly == null && e.value != null ? " · một lần, không phải hằng tháng" : "";
+    const flowWords = !e.dir ? "Quan hệ: không có tiền chuyển"
+      : cert === "actual" ? `Tiền đi: ${esc(src.label)} → ${esc(dst.label)}${once}`
+        : `Chiều của dòng: ${esc(src.label)} → ${esc(dst.label)} · ${CERT_WORD[cert]}, không phải giao dịch${once}`;
+    // the records, each linked to its node where the graph has one
+    const NODE = {holding: "HD", risk: "RK", goal: "GL", alert: "AL", scenario: "SC"};
+    const srcNode = (s) => (NODE[s.type] && graph.node(`${NODE[s.type]}:${s.id}`)) || (s.type === "run" && g.nodes.find(x => x.run === s.id))
+      || (s.type === "txn" && graph.node(fl ? fl.id : "FL:out")) || null;
+    const records = (e.sources || []).slice(0, 8).map(s => { const t = srcNode(s); return t
+      ? `<button type="button" class="linkbtn small" data-n="${esc(t.id)}">${esc(SRC_WORD[s.type] || s.type)}: ${esc(short(t.label, 48))}</button>`
+      : `<span class="small">${esc(SRC_WORD[s.type] || s.type)}: ${esc(s.id)}</span>`; }).join("<br>");
+    const more = (e.sources || []).length > 8 ? `<br><span class="small muted">và ${(e.sources || []).length - 8} bản ghi khác</span>` : "";
+    // assumptions, and confidence only where it is recorded
+    const assume = {
+      event: ev && `Theo nhận định CIO duyệt${ev.approved_at ? ` ngày ${new Date(ev.approved_at * 1000).toLocaleDateString("vi-VN")}` : ""}, tầm nhìn 3 tháng; nhịp mỗi tháng = tác động ÷ 3`,
+      alert: al && `${esc(al.status_label || "")}${al.source_text ? ` · ${esc(al.source_text)}` : ""}`,
+      scenario: sc && (sc.part ? (sc.part.assumptions || []).map(esc).join(" · ") : `${esc(sc.detail || "")} · chưa bật`),
+      goal: gl && `Lãi tiền gửi ${gl.rate != null ? pct(gl.rate, false, 1) : "an toàn"}/năm${gl.by ? ` · đến ${esc(gl.by)}` : ""} · còn thiếu ${how(vnd(Math.max(0, gl.gap)), "goal.gap", {need: vnd(gl.need), have: vnd(gl.have)})}`,
+    }[type] || (cert === "actual" ? "Không có giả định: số liệu đã ghi nhận" : "");
+    const band = ev && ev.band ? `P10 ${how(vnd(ev.band.p10, true), "impact.band")} · P50 ${how(vnd(ev.band.p50, true), "impact.band")} · P90 ${how(vnd(ev.band.p90, true), "impact.band")}` : "";
+    const conf = type === "event" ? [band, ev && ev.modelled_share != null ? `${how(pct(ev.modelled_share, false, 0), "impact.modelled_share")} tài sản tính bằng đại diện (càng lớn càng kém chắc)` : ""].filter(Boolean).join(" · ")
+      : type === "alert" && al ? `Xác suất ${how(pct(al.probability, false, 0), "policy.probability")}`
+        : cert === "actual" ? "Đã ghi nhận (giao dịch, số dư từ nguồn đã kết nối hoặc đã khai báo)" : "Không có độ tin cậy được ghi nhận cho mục này";
+    el.innerHTML = `<div class="row tight"><span class="ic-chip" style="--tone:${(LOOK[far.kind] || LOOK.class)[0]}">${icon("link", {size: 16})}</span>
+        <div><div class="small muted">Liên kết · <span class="cert c-${cert}">${CERT_WORD[cert]}</span></div>
+          <b>${nameOf(A, esc(short(A.label, 40)))} → ${nameOf(B, esc(short(B.label, 40)))}</b></div>
+        <button type="button" class="linkbtn small" id="ws-clear" style="margin-left:auto">Bỏ chọn</button></div>
+      <p class="small mt-xs">${esc(e.label)}${e.derived ? ` · tổng hợp từ ${e.derived} liên kết` : ""}</p>
+      ${amount ? `<p class="small mt-xs">${amount}</p>` : ""}
+      <p class="small mt-xs">${flowWords}</p>
+      <dl class="ws-edge">
+        <dt>Nguồn</dt><dd>${records || `<span class="small muted">Không có bản ghi</span>`}${more}</dd>
+        ${metric ? `<dt>Cách tính</dt><dd class="small" data-explains><span data-formula="${esc(metric)}">…</span> ${how("Xem chi tiết", metric, inputs)}</dd>` : ""}
+        <dt>Giả định</dt><dd class="small">${assume || "—"}</dd>
+        <dt>Độ tin cậy</dt><dd class="small">${conf}</dd>
+        <dt>Ảnh hưởng tiếp theo</dt><dd class="small">${downstream(type, {ev, al, sc, gl, fl, A, B, e})}</dd>
+      </dl>`;
+    el.querySelector("#ws-clear").onclick = () => graph.selectEdge(`${e.from}>${e.to}`);
+    const f = el.querySelector("[data-formula]");
+    if (f) formulaOf(f.dataset.formula).then(m => { if (f.isConnected) f.textContent = m ? m.formula : "Chưa có cách tính cho mục này."; });
+  }
+  function downstream(type, {ev, al, sc, gl, fl, A, B, e}) {
+    const g = graph.data(), label = (id) => esc((graph.node(id) || {label: id}).label);
+    const classesOf = (id) => g.edges.filter(x => x.from === id && (graph.node(x.to) || {}).kind === "class" && x.value != null)
+      .map(x => `${label(x.to)} <b class="${signClass(x.value)}">${vnd(x.value, true)}</b>`);
+    if (type === "event" && ev) return `${classesOf(ev.id).join(" · ") || "—"} → Tài sản ròng: ước tính <b class="${signClass(ev.value)}">${vnd(ev.value, true)}</b> trong 3 tháng, không cộng vào tài sản ròng. Mục tiêu: xem “Kế hoạch”.`;
+    if (type === "alert" && al) return `${classesOf(al.id).join(" · ") || "Nhiều lớp tài sản: chưa có số chia theo lớp"} → Tài sản ròng: ước tính <b class="${signClass(al.value)}">${vnd(al.value, true)}</b>, không cộng vào tài sản ròng.`;
+    if (type === "scenario" && sc) {
+      const r = graph.combined();
+      if (!sc.active || !r) return "Bật kịch bản để xem nó đi tới đâu: lớp tài sản, chi tiêu, thanh khoản, tài sản ròng và mục tiêu.";
+      const goals = r.goals.filter(x => x.before.status !== x.after.status).map(x => `${esc(x.title)}: ${GOAL_WORD[x.after.status] || x.after.status}`);
+      return `${e.cost ? `Chi tiêu mỗi tháng +${vnd(e.cost.amount / 12)} → thanh khoản đủ ${r.after.liquid_months.toFixed(1).replace(".", ",")} tháng` : label(B.id)} → Tài sản ròng nếu xảy ra ${how(vnd(r.after.net_worth), "scenario.combined", {scenarios: r.scenarios.map(x => x.title).join(", ")})}${goals.length ? ` → ${goals.join(" · ")}` : " → mục tiêu không đổi trạng thái"}. Xem “Đường đi của kịch bản” ở nút kịch bản.`;
+    }
+    if (type === "goal" && gl) {
+      const pool = gl.pool ? `Nguồn ${esc(gl.have_label || "")} ${how(vnd(gl.pool.have), "goal.have")} dùng chung cho ${gl.pool.goals.length} mục tiêu (${gl.pool.goals.map(label).join(", ")}): tính một lần, không mục tiêu nào được coi là có tiền mà mục tiêu khác đã tính. ` : "";
+      const me = graph.node("ME") || {};
+      return `${pool}Cả các mục tiêu cần ${how(vnd(me.goal_monthly || 0), "goals.saving")}/tháng · bạn dư ${how(vnd(me.surplus || 0), "goal.surplus")}/tháng.`;
+    }
+    if ((type === "flow" || type === "category") && fl) {
+      const i = graph.node("FL:in"), o = graph.node("FL:out");
+      return `${type === "category" ? `${label(fl.parent)} → ` : ""}Tài sản ròng tháng ${esc(fl.month || "")}: vào ${i ? how(vnd(Math.abs(i.value)), "flow.in") : "—"} − ra ${o ? how(vnd(Math.abs(o.value)), "flow.out") : "—"} = ${i && o ? how(vnd(Math.abs(i.value) - Math.abs(o.value), true), "flow.left") : "—"}.`;
+    }
+    if (A.id === "ME" || B.id === "ME") return `${(graph.node(A.id === "ME" ? B.id : A.id) || {}).liability ? "Trừ khỏi" : "Cộng vào"} tài sản ròng.`;
+    return "—";
+  }
 
   // the person's what-if: their inputs, the server's bounds; running it makes it active like any other
   function customForm(n) {
@@ -140,6 +245,14 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, scenario}) 
     </ol><p class="small muted">${esc(r.note)}</p>`;
   }
 
+  // the goals' monthly saving against the surplus, and each shared pool said once (F3)
+  function goalsTotal(g) {
+    const me = g.nodes.find(x => x.id === "ME") || {}, pools = new Map();
+    for (const x of g.nodes) if (x.kind === "goal" && x.pool) pools.set(Math.round(x.pool.have), x.pool);
+    const line = me.goal_monthly ? `<p class="small">Các mục tiêu cần ${how(vnd(me.goal_monthly), "goals.saving", {surplus: vnd(me.surplus || 0)})}/tháng · bạn dư ${how(vnd(me.surplus || 0), "goal.surplus")}/tháng${me.goal_monthly > Math.max(0, me.surplus || 0) ? ` <span class="pill bad">thiếu ${how(vnd(me.goal_monthly - Math.max(0, me.surplus || 0)), "goals.saving")}/tháng</span>` : ""}</p>` : "";
+    const shared = [...pools.values()].map(pl => `<p class="small muted"><span data-explains>Nguồn ${esc(pl.label || "")}</span> ${how(vnd(pl.have), "goal.have")} dùng chung cho ${pl.goals.length} mục tiêu: tính một lần.</p>`).join("");
+    return line + shared;
+  }
   function list(rows) {
     return `<div class="mlist">${rows.map(x => `<button type="button" class="mrow" data-n="${esc(x.id)}">
       <span class="ic-chip sm" style="--tone:${(LOOK[x.kind] || LOOK.class)[0]}">${icon((LOOK[x.kind] || LOOK.class)[1], {size: 13})}</span>

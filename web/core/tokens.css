@@ -1024,7 +1024,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .wnode.lit .wring, .wnode.mf-focus .wring { opacity: 1; stroke: var(--accent); animation: mf-lit .5s var(--ease-out) both; }
 .wnode.kept .wring { opacity: 1; stroke: var(--accent); stroke-width: 3; }
 .ws-svg .wlbl { fill: var(--ink); font-size: 12px; font-weight: 650; }
-.ws-svg .k-holding .wlbl { font-size: 11px; font-weight: 600; }
+.ws-svg :is(.k-holding, .k-category) .wlbl { font-size: 11px; font-weight: 600; }
 .ws-svg .wfig { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 .ws-svg .wfig.up { fill: var(--up); } .ws-svg .wfig.down { fill: var(--down); }
 .ws-svg .wtag { fill: var(--s7); font-size: 9.5px; font-weight: 700; letter-spacing: .02em; }
@@ -1127,8 +1127,8 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-ins .cert.c-estimate { color: var(--warning); } .ws-ins .cert.c-hypothetical { color: var(--s7); font-style: italic; }
 .cp-panel.cp-docked { position: static; inset: auto; width: auto; flex: 1; min-height: 0; z-index: auto; border: 0; border-radius: 0; box-shadow: none; animation: none; }
 .cp-panel.cp-docked #cp-close, .cp-fab[hidden] { display: none; }
-.ws-svg :is(.k-holding, .quiet) :is(.wlbl, .wfig) { opacity: 0; transition: opacity var(--dur-1) var(--ease-out); }
-.ws-svg.near .k-holding .wlbl, .ws-svg.near .k-holding .wfig, .ws-svg :is(.k-holding, .quiet):is(:hover, :focus-visible, .sel, .lit, .kept, .mf-focus) :is(.wlbl, .wfig) { opacity: 1; }
+.ws-svg :is(.k-holding, .k-category, .quiet) :is(.wlbl, .wfig) { opacity: 0; transition: opacity var(--dur-1) var(--ease-out); }
+.ws-svg.near :is(.k-holding, .k-category) :is(.wlbl, .wfig), .ws-svg :is(.k-holding, .k-category, .quiet):is(:hover, :focus-visible, .sel, .lit, .kept, .mf-focus) :is(.wlbl, .wfig) { opacity: 1; }
 .ws-svg .quiet:is(:hover, :focus-visible, .sel) { z-index: 1; }
 @media (max-width: 1180px) { .ws { --dock-w: 330px; } }
 @media (max-width: 760px) {
@@ -1185,3 +1185,13 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-trace li::marker { color: var(--s7); font-weight: 700; }
 .ws-what-r { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; }
 .ws-what-r input { width: 72px; padding: 4px 6px; border-radius: 8px; border: 1px solid var(--hair); background: var(--surface); color: var(--ink); font: inherit; }
+/* an edge can be picked (UNIFIED_FLOWS_PLAN F9): a wide invisible stroke over the wire takes the pointer and the keyboard */
+.wedge { pointer-events: none; }
+.whit { fill: none; stroke: transparent; stroke-width: 14; pointer-events: stroke; cursor: pointer; }
+.whit:focus { outline: none; }
+.whit:focus-visible { stroke: var(--accent); stroke-opacity: .28; }
+.ws-svg .wedge.picked { stroke-opacity: 1; stroke-width: 3.2px; filter: drop-shadow(0 0 4px var(--tone)); }
+.ws-edge { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 12px; margin: 12px 0 0; }
+.ws-edge dt { color: var(--ink-2); font-size: 12px; font-weight: 600; }
+.ws-edge dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 480px) { .ws-edge { grid-template-columns: 1fr; gap: 2px; } .ws-edge dd { margin-bottom: 8px; } }

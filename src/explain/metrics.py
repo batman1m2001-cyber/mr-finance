@@ -887,3 +887,65 @@ metric(
     "src/engine/scenario.py::propagate",
     branch="Kịch bản",
 )
+# ── the workspace graph's money flows and scenarios (UNIFIED_FLOWS_PLAN F2–F5, F9) ────────────────────────────
+metric(
+    "flow.category",
+    "Một khoản thu chi trong tháng",
+    "Cộng các giao dịch trong tháng thuộc nhóm này: ghi có là tiền vào, ghi nợ là tiền ra (chỉ giao dịch tài khoản). "
+    "Các nhóm của một bên cộng lại đúng bằng tiền vào hoặc tiền ra của tháng.",
+    "src/flows/ops.py::month_flows",
+    rows="Số giao dịch",
+)
+metric(
+    "goal.monthly",
+    "Cần để dành mỗi tháng cho mục tiêu",
+    "Số tiền gửi đều mỗi tháng để có đủ phần còn thiếu đúng hạn, theo lãi tiền gửi an toàn: còn thiếu × r ÷ "
+    "((1 + r)^số tháng − 1), r = lãi năm ÷ 12. Đây là ước tính, không phải giao dịch. Nhiều mục tiêu cùng dựa vào "
+    "một nguồn thì nguồn đó chỉ được tính một lần, không mục tiêu nào được coi là có tiền mà mục tiêu khác đã tính.",
+    "src/scenarios/_sim.py::saving_for",
+    need="Cần",
+    have="Đã có",
+    pool="Nguồn dùng chung",
+)
+metric(
+    "impact.monthly",
+    "Nhịp mỗi tháng của một tin",
+    "Tác động kỳ vọng 3 tháng ÷ 3: chỉ để vẽ độ dày và tốc độ của dòng trên đồ thị; không phải dòng tiền thật, không "
+    "cộng vào tài sản ròng.",
+    "src/overview/ops.py::build",
+    event="Sự kiện",
+)
+metric(
+    "scenario.effect",
+    "Phần tác động của một kịch bản (giả định)",
+    "Mỗi khoản: giá trị sau = giá trị × Π(1 + mức sốc của từng kịch bản đang bật) — các cú sốc nhân với nhau, không "
+    "cộng. Phần của một kịch bản = giá trị Shapley: thay đổi biên trung bình của nó qua mọi thứ tự áp các kịch bản, "
+    "nên các phần cộng lại đúng bằng tổng. Trừ thêm một năm chi phí mà kịch bản này đặt ra (lãi vay thả nổi, chi tiêu "
+    "ngoại tệ). Chỉ là giả định: không cộng vào tài sản ròng.",
+    "src/scenarios/combine.py::combine",
+    scenario="Kịch bản",
+)
+metric(
+    "scenario.combined",
+    "Tài sản ròng nếu các kịch bản đang bật xảy ra",
+    "Sau = tài sản sau các cú sốc (nhân theo từng khoản) − nợ − một năm chi phí giả định. Mỗi loại chi phí (lãi vay "
+    "thả nổi, chi tiêu ngoại tệ) chỉ tính một lần, lấy mức lớn nhất giữa các kịch bản. Thay đổi = sau − tài sản ròng "
+    "hôm nay. Một kịch bản bật riêng cho đúng kết quả stress test của nó. Không cộng vào tài sản ròng.",
+    "src/scenarios/combine.py::combine",
+    scenarios="Kịch bản",
+)
+metric(
+    "scenario.cost",
+    "Chi phí một năm mà kịch bản giả định",
+    "Lãi vay thả nổi: dư nợ lãi thả nổi × mức tăng lãi suất; chi tiêu ngoại tệ: phần chi tiêu bằng ngoại tệ × mức "
+    "tăng tỷ giá. Vào chi tiêu mỗi tháng = chi phí ÷ 12. Hai kịch bản cùng giả định một loại chi phí: tính một lần.",
+    "src/scenarios/_sim.py::cost",
+    scenario="Kịch bản",
+)
+metric(
+    "impact.modelled_share",
+    "Phần tài sản tính bằng đại diện",
+    "Tỷ lệ = giá trị các khoản mà tác động phải ước bằng một đại diện (bất động sản, cổ phần tư nhân: không có giá "
+    "thị trường hằng ngày) ÷ tổng tài sản. Phần này càng lớn, ước tính càng kém chắc chắn.",
+    "src/apply/run.py::compute",
+)

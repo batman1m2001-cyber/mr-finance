@@ -6,10 +6,10 @@
 import {$, esc, followedIds, post, signClass, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261017u3";
-import {render as inspect} from "./inspector.js?v=20261017u3";
-import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w3";
-import {mount as mountStrip} from "./strip.js?v=20261017w1";
+import {createGraph} from "./graph.js?v=20261017u4";
+import {render as inspect} from "./inspector.js?v=20261017u4";
+import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017u4";
+import {mount as mountStrip} from "./strip.js?v=20261017u4";
 
 export function mount(main, {client, scope, go, page}) {
   const root = document.createElement("div");
@@ -53,7 +53,7 @@ export function mount(main, {client, scope, go, page}) {
 
   const kindLabel = (k) => ((graph.data() || {kinds: []}).kinds.find(x => x.kind === k) || {label: k}).label;
   let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph";
-  const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n) tab("i"); $("[data-z=focus]", root).disabled = !n; }});
+  const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n || graph.selectedEdge()) tab("i"); $("[data-z=focus]", root).disabled = !n; }});
   const strip = mountStrip($("#ws-strip", root), {client, scope, lens: (id) => go(lensRoute(id))});
 
   // ── the dock ──────────────────────────────────────────────────────────────────────────────────────
@@ -80,7 +80,7 @@ export function mount(main, {client, scope, go, page}) {
   };
   try { if (localStorage.getItem("mf.ws.fold")) { root.classList.add("folded"); $("#ws-fold", root).setAttribute("aria-expanded", "false"); } } catch (_) { /* private mode */ }
 
-  const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), kindLabel, openSheet,
+  const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), edge: graph.selectedEdge(), kindLabel, openSheet,
     scenario: {on: (id) => active().ids.includes(id), params: (id) => (active().params || {})[id] || null, set: setActive}});
 
   // ── the active stress tests (UNIFIED_FLOWS_PLAN F6): kept per client in this browser (a convenience, like the

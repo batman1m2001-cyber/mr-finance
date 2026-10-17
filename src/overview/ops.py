@@ -27,7 +27,7 @@ from operonx import op
 from apply import reads
 from control.errors import BadRequest
 from people import auth
-from scenarios._sim import SCENARIOS
+from scenarios._sim import SCENARIOS, R
 from views import schema
 from wealth import fixtures
 
@@ -267,6 +267,7 @@ def build(
             gap=gl["gap"],
             by=gl.get("by"),
             monthly=gl.get("monthly"),
+            rate=R()["safe"],  # the deposit rate its monthly saving assumes (_sim.saving_for)
             surplus=gl.get("surplus"),
             value=gl["need"],
         )

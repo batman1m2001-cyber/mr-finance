@@ -286,6 +286,10 @@ async function catalogue() {
   if (!howCatalogue) howCatalogue = get("/api/how").catch((e) => { howCatalogue = null; throw e; });
   return howCatalogue;
 }
+// one metric's entry (label, formula, inputs), from the same catalogue the drawer reads; null when it has none
+export async function formulaOf(id) {
+  try { return (await catalogue())[id] || null; } catch (_) { return null; }
+}
 async function openHowOf(el) {
   const id = el.dataset.metric;
   let inputs = {};

@@ -17,8 +17,11 @@ export const LOOK = {  // colour, icon; the colour follows the kind, status colo
   family: ["var(--accent)", "user"], class: ["var(--s1)", "layers"], holding: ["var(--s1)", "wallet"],
   source: ["var(--s7)", "link"], goal: ["var(--s3)", "target"], risk: ["var(--critical)", "alert"],
   alert: ["var(--s4)", "scale"], event: ["var(--s5)", "news"], flow: ["var(--in)", "salary"],
-  liquidity: ["var(--t2)", "savings"], scenario: ["var(--s7)", "zap"],
+  liquidity: ["var(--t2)", "savings"], scenario: ["var(--s7)", "zap"], category: ["var(--in)", "list"],
 };
+// what a node opens to, behind it on the ring (OWN-GW-15, F11): a class to its holdings, money in or out to its categories
+const KID = {class: "holding", flow: "category"};
+const isKid = (n) => n.kind === "holding" || n.kind === "category";
 const WORDING = "có thể ảnh hưởng";  // a news event's edge: a potential impact under the CIO's scenarios, never a cause
 const SRC = {holding: "khoản", risk: "rủi ro", goal: "mục tiêu", alert: "chính sách", run: "lần áp dụng", txn: "giao dịch", scenario: "kịch bản"};
 // certainty (OWN-GW-12): an edge's own, else what its kind implies
@@ -38,7 +41,7 @@ const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
 // the focus keys a node answers to (FEAT-33): what the assistant's tools name
 export function keysOf(n) {
   const k = {family: ["kpi:net_worth"], goal: [`goal:${n.ref}`], event: [`event:${n.ref}`], alert: [`policy:${n.ref}`],
-    class: [`class:${n.ref}`], liquidity: ["kpi:liquidity"], flow: n.keys || [], scenario: [`scenario:${n.ref}`], group: n.keys || []}[n.kind] || [];
+    class: [`class:${n.ref}`], liquidity: ["kpi:liquidity"], flow: n.keys || [], category: n.keys || [], scenario: [`scenario:${n.ref}`], group: n.keys || []}[n.kind] || [];
   if (n.id === "RK:drawdown") k.push("kpi:risk");
   if (n.id === "RK:liquidity") k.push("kpi:liquidity");
   return k;
@@ -52,13 +55,14 @@ export function howOf(n) {
     holding: ["holding.value", {}], goal: ["goal.need", {}], event: ["impact.expected_3m", {event: n.label}],
     alert: ["policy.impact", {probability: pct(n.probability, false, 0)}],
     risk: [n.id === "RK:drawdown" ? "risk.loss" : n.id === "RK:liquidity" ? "liquidity.value" : "concentration.value", {}],
-    liquidity: ["liquidity.value", {}], flow: [n.side === "in" ? "flow.in" : "flow.out", {}], scenario: ["scenario.effect", {}],
+    liquidity: ["liquidity.value", {}], flow: [n.side === "in" ? "flow.in" : "flow.out", {}], category: [n.side === "in" ? "flow.in" : "flow.out", {}],
+    scenario: ["scenario.effect", {}],
   }[n.kind] || ["holding.value", {}]);
 }
 export const figureOf = (n) => (n.kind === "group" ? (n.value == null ? "" : ["event", "alert"].includes(n.of) ? vnd(n.value, true) : vnd(Math.abs(n.value)))
   : n.kind === "goal" ? `cần ${vnd(n.need)} · ${n.status_label}` : n.kind === "source" ? `${n.count} khoản`
   : n.kind === "liquidity" ? `${vnd(n.value)}${n.months != null ? ` · ${String(n.months).replace(".", ",")} tháng` : ""}`
-    : n.kind === "scenario" ? (n.value == null ? "giả định · chưa chạy" : `nếu xảy ra ${vnd(n.value, true)}`)
+    : n.kind === "scenario" ? (n.value == null ? "giả định · chưa bật" : `nếu xảy ra ${vnd(n.value, true)}`)
       : n.value == null ? "" : ["event", "alert"].includes(n.kind) ? vnd(n.value, true) : vnd(Math.abs(n.value)));
 export const srcText = (e) => [...new Set((e.sources || []).map(s => SRC[s.type] || s.type))].join(", ") + ` · ${(e.sources || []).length} bản ghi`;
 
@@ -103,10 +107,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const hotEdges = new Map();  // "from>to" → "hot" | "bad": a relation a pulse runs along, drawn while it matters
 
   // ── view state (OWN-GW-15): three layers ──────────────────────────────────────────────────────────
-  // a class opens to its holdings on demand, where the lens shows holdings: picked (or one of its holdings picked), or
-  // opened by hand (“Mở rộng”, double-click)
-  const holdingLens = () => !!lens && lens.kinds.includes("holding");
-  const opened = (id) => holdingLens() && !st.shut.has(id) && (st.open.has(id) || st.sel === id || (!!st.sel && (byId[st.sel] || {}).parent === id));
+  // a class opens to its holdings on demand, where the lens shows holdings; money in or out to its categories, where the
+  // lens shows categories (F11): picked (or one of its own picked), or opened by hand (“Mở rộng”, double-click)
+  const kidLens = (n) => !!lens && !!n && !!KID[n.kind] && lens.kinds.includes(KID[n.kind]);
+  const opened = (id) => kidLens(byId[id]) && !st.shut.has(id) && (st.open.has(id) || st.sel === id || (!!st.sel && (byId[st.sel] || {}).parent === id));
   // a folded item hides behind its group node (OWN-GW-30); a group node shows while its fold holds
   let groupNodes = [], fold = new Map(), groupIds = new Set(), groupEdges = [];
   // the active stress tests (UNIFIED_FLOWS_PLAN F6): their hypothetical edges, and what they reach — on Mục tiêu the
@@ -115,14 +119,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const reached = (n) => reach.has(n.id) && (lens.kinds.includes("scenario") || (n.kind === "scenario" && lens.id === "tong-quan"));
   const shows = (n) => lens.kinds.includes(n.kind) || reached(n);
   const visible = (n) => !!lens && (n.kind === "group" ? groupIds.has(n.id)
-    : shows(n) && !fold.has(n.id) && (n.kind !== "holding" || opened(n.parent)));
+    : shows(n) && !fold.has(n.id) && (!isKid(n) || opened(n.parent)));
   const shownAs = (id) => fold.get(id) || id;
   // the edges “My Wealth” has to the second layer are always drawn; any other edge only for what is picked, pointed at,
   // read by the assistant or kept by its answer, and a class's own holdings while it is open
   const spoke = (e) => e.from === "ME" || e.to === "ME";
   // … or the exact path a pulse is taking (a news item to the class it touches): one edge, not the item's whole fan
   const relates = (e, rv) => rv.has(e.from) || rv.has(e.to) || hotEdges.has(`${e.from}>${e.to}`)
-    || (!!e.parent && opened(e.parent) && byId[e.from].kind === "class");
+    || (!!e.parent && opened(e.parent) && (byId[e.from].kind === "class" || byId[e.from].kind === "category" || byId[e.to].kind === "category"));
   const reveal = () => new Set([st.sel, hoverId].filter(Boolean));
   const allEdges = () => g.edges.concat(derived, groupEdges, scnShown());
   // an active scenario's edge to a class folded behind “+n”: on the group's node, the same scenario's amounts summed
@@ -137,7 +141,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   }
   const drawable = (e) => byId[e.from] && byId[e.to] && visible(byId[e.from]) && visible(byId[e.to])
     && !(e.agg && opened(e.agg)) && !(e.parent && !opened(e.parent));
-  const shownEdges = () => { const rv = reveal(); return allEdges().filter(e => drawable(e) && (spoke(e) || e.active || relates(e, rv))); };
+  const shownEdges = () => { const rv = reveal(); return allEdges().filter(e => drawable(e) && (spoke(e) || e.active || `${e.from}>${e.to}` === st.edge || relates(e, rv))); };
   const links = (id) => allEdges().filter(e => drawable(e) && (e.from === id || e.to === id));
   const other = (e, id) => byId[e.from === id ? e.to : e.from];
 
@@ -158,7 +162,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const SUMMABLE = new Set(["event", "alert", "asset", "debt", "risk"]);
   const groupOf = (n) => (n.kind === "flow" ? `flow_${n.side === "out" ? "out" : "in"}` : n.kind === "class" ? (n.liability ? "debt" : "asset") : n.kind === "group" ? n.group : n.kind);
   const weight = (n) => Math.abs(n.value ?? n.need ?? 0);
-  const discR = (n) => (n.kind === "family" ? ME_R : n.kind === "holding" ? 13 : 24);
+  const discR = (n) => (n.kind === "family" ? ME_R : isKid(n) ? 13 : 24);
   const FAN = 64;  // how far behind its class a holding sits
 
   // text widths, measured once per string on a canvas (no layout), with the label's real font
@@ -177,7 +181,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { widths.clear(); pen = null; if (g && lens) draw(); });
   function fontSizes() {  // the CSS decides (a phone's labels are larger): read once per draw from a label on screen
-    const probe = nodeLayer.querySelector(".wnode:not(.k-family):not(.k-holding) .wlbl");
+    const probe = nodeLayer.querySelector(".wnode:not(.k-family):not(.k-holding):not(.k-category) .wlbl");
     const fp = nodeLayer.querySelector(".wnode .wfig");
     const name = probe ? parseFloat(getComputedStyle(probe).fontSize) || 12 : narrow ? 14 : 12;
     const fig = fp ? parseFloat(getComputedStyle(fp).fontSize) || 11 : narrow ? 12.5 : 11;
@@ -196,9 +200,9 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     return best;
   }
   function labelAt(n, where, r) {
-    const max = narrow ? 22 : n.kind === "holding" ? 20 : 28;
+    const max = narrow ? 22 : isKid(n) ? 20 : 28;
     const text = short(n.label, max), {name, fig: fpx, line} = sizes;
-    const fig = n.kind === "source" || n.kind === "holding" ? "" : n.kind === "goal"
+    const fig = n.kind === "source" || isKid(n) ? "" : n.kind === "goal"
       ? `cần ${vnd(n.need)}${n.status && n.status !== "on_track" ? ` · ${n.status_label}` : ""}` : figureOf(n);
     const lines = wrap(text, name, where === "above" || where === "below" ? (narrow ? 11 : 14) : narrow ? 12 : 16);
     const w = Math.max(...lines.map(t => textW(t, name, 650)), fig ? textW(fig, fpx, 400) : 0) + 2;
@@ -249,7 +253,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     const out = {ME: {x: cx, y: cy, a: 0}};
     const byGroup = new Map();
     for (const n of g.nodes) {
-      if (n.kind === "family" || n.kind === "holding" || !lensShows(n)) continue;
+      if (n.kind === "family" || isKid(n) || !lensShows(n)) continue;
       const k = groupOf(n);
       if (!byGroup.has(k)) byGroup.set(k, []);
       byGroup.get(k).push(n);
@@ -407,19 +411,19 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     const [ox0, oy0] = ringAt(phi, rx, ry), x = cx + ox0, y = cy + oy0;
     const [ax, ay] = ringAt(phi - 0.004, rx, ry), [bx, by] = ringAt(phi + 0.004, rx, ry);
     const tl = Math.hypot(bx - ax, by - ay) || 1, tx = (bx - ax) / tl, ty = (by - ay) / tl;  // the ring's direction here
-    const open_ = node.kind === "class" && opened(node.id);
+    const open_ = !!KID[node.kind] && opened(node.id);
     // an opened class's holdings fan out behind it: its label runs along the ring instead (the side it points to)
     const along = Math.abs(tx) >= Math.abs(ty) ? (tx > 0 ? "right" : "left") : ty > 0 ? "below" : "above";
     const tag = node.kind === "scenario" ? 16 : 0;
     const boxes = [[-r - 2, -r - 2, r + 2, r + 2 + tag]];
     const kids = [];
     let reserve = null;
-    if (node.kind === "class" && holdingLens()) {
+    if (kidLens(node)) {
       // the band behind a class where its holdings fan out: kept free on the canvas whether or not it is open
       const ox = ty, oy = -tx;  // outward (the ring runs clockwise)
       reserve = [ox * (FAN + 30) - 14, oy * (FAN + 30) - 14, ox * (FAN + 30) + 14, oy * (FAN + 30) + 14];
       if (open_) {
-        const list = g.nodes.filter(h => h.parent === node.id && h.kind === "holding" && lensShows(h));
+        const list = g.nodes.filter(h => h.parent === node.id && h.kind === KID[node.kind] && lensShows(h));
         const rows = list.length > 8 ? 2 : 1, per = Math.ceil(list.length / rows), step = 30;
         list.forEach((h, i) => {
           const row = rows === 2 ? i % 2 : 0, k = rows === 2 ? Math.floor(i / 2) : i;
@@ -509,7 +513,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     if (el && el.dataset.sig !== sig) { el.remove(); els.delete(n.id); el = null; }  // a group node that now folds another count
     if (el) return el;
     const me = n.kind === "family", r = discR(n);
-    const [tone, ic] = n.kind === "flow" && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind === "group" ? n.of : n.kind] || LOOK.class;
+    const [tone, ic] = (n.kind === "flow" || n.kind === "category") && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind === "group" ? n.of : n.kind] || LOOK.class;
     el = mk("g", {class: `wnode k-${n.kind}${n.active ? " live" : ""}`, tabindex: "0", role: "button", "data-n": n.id, "aria-pressed": "false",
       "aria-label": `${(g.kinds.find(k => k.kind === n.kind) || {}).label || n.kind}: ${n.label}`}, nodeLayer);
     el.style.setProperty("--tone", tone);
@@ -584,14 +588,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     }
     hover(el, `<b>${esc(n.label)}</b><br>${esc((g.kinds.find(k => k.kind === n.kind) || {}).label || "")}${figureOf(n) ? " · " + esc(figureOf(n)) : ""}`);
     el.addEventListener("click", (ev) => { if (!ev.target.closest(".num-svg")) select(n.id); });
-    el.addEventListener("dblclick", () => { if (n.kind === "class") toggle(n.id); });
+    el.addEventListener("dblclick", () => { if (KID[n.kind]) toggle(n.id); });
     // pointing at a node shows its relations (and only then): the web stays out of the way until asked for
     el.addEventListener("pointerenter", () => { if (hoverId !== n.id && n.id !== "ME") { hoverId = n.id; drawEdges(litSet()); } });
     el.addEventListener("pointerleave", () => { if (hoverId === n.id) { hoverId = null; drawEdges(litSet()); } });
     el.addEventListener("keydown", (ev) => {
       if (ev.target !== el) return;
       if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(n.id); }
-      if ((ev.key === "+" || ev.key === "-") && n.kind === "class") { ev.preventDefault(); toggle(n.id); }
+      if ((ev.key === "+" || ev.key === "-") && KID[n.kind]) { ev.preventDefault(); toggle(n.id); }
     });
     els.set(n.id, el);
     return el;
@@ -697,7 +701,12 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     } else { edgeLayer.classList.remove("moving"); drawEdges(lit); }  // a draw inside a move's fade ends the fade too
   }
 
-  function litSet() { return st.sel ? new Set([st.sel, ...links(st.sel).map(e => other(e, st.sel).id)]) : null; }
+  function litSet() {
+    if (st.edge) return new Set(st.edge.split(">"));  // an edge picked (F9): its two ends
+    return st.sel ? new Set([st.sel, ...links(st.sel).map(e => other(e, st.sel).id)]) : null;
+  }
+  // an edge is on when nothing is picked, it is the picked edge, or it joins the picked node to one of its links
+  const isOn = (lit, f0, t0) => !lit || (st.edge ? `${f0}>${t0}` === st.edge : lit.has(f0) && lit.has(t0) && (f0 === st.sel || t0 === st.sel));
 
   // ── routing (OWN-GW-28, plan §2.6): one path per edge and layout, the first candidate clear of every other disc
   // (the centre with its aura) and every label. A spoke runs from the centre's rim to the node's inner side; a relation
@@ -711,7 +720,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const q = pos[n.id];
       if (!q || !visible(n)) continue;
       discs.push({id: n.id, x: q.x, y: q.y, r: n.kind === "family" ? ME_R + 12 : discR(n) + 3});
-      if (q.label && n.kind !== "holding" && n.kind !== "family" && !q.quiet) {
+      if (q.label && !isKid(n) && n.kind !== "family" && !q.quiet) {
         const b = q.label.box;
         boxes.push({id: n.id, b: [b[0] + q.x - 2, b[1] + q.y - 2, b[2] + q.x + 2, b[3] + q.y + 2]});
       }
@@ -761,9 +770,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const c = pick([0.07, -0.07, 0].map(k => { const q = [m[0] - uy * k * len, m[1] + ux * k * len]; return {q, pts: bez([a, q, b])}; }), ends);
       const [p0, p1] = e.from === "ME" ? [a, b] : [b, a];
       r = {d: `M${xy(p0)} Q${xy(c.q)} ${xy(p1)}`};
-    } else if (byId[e.to] && byId[e.to].kind === "holding" && byId[e.from].kind === "class") {
-      const [ux, uy] = unit(B.x - A.x, B.y - A.y);
-      const a = [A.x + ux * 26, A.y + uy * 26], b = [B.x - ux * 15, B.y - uy * 15], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    } else if ((byId[e.to].kind === "holding" && byId[e.from].kind === "class") || (!!e.parent && [byId[e.from].kind, byId[e.to].kind].includes("category"))) {
+      // a holding or category hangs off its parent's outer side (either way round: a category of money in flows into it)
+      const [ux, uy] = unit(B.x - A.x, B.y - A.y), rA = discR(byId[e.from]) + 2, rB = discR(byId[e.to]) + 2;
+      const a = [A.x + ux * rA, A.y + uy * rA], b = [B.x - ux * rB, B.y - uy * rB], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
       const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
       const c = pick([0.1, -0.1, 0].map(k => { const q = [m[0] - uy * k * len, m[1] + ux * k * len]; return {q, pts: bez([a, q, b])}; }), ends);
       r = {d: `M${xy(a)} Q${xy(c.q)} ${xy(b)}`};
@@ -835,7 +845,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // a spark plan for one edge: how many beads a beat, how fast, how long a trail, how bright
   function plan(d, i, cert, m) {
     const len = pathLen(d);
-    if (len < 30) return null;
+    if (len < 16) return null;  // a category hangs ~25 px off its flow: still room for a bead
     const k = 1 + Math.round(2 * i), speed = 140 + 140 * i;
     const base = cert === "hypothetical" ? DOTS : cert === "estimate" ? DASHED : SPARK;
     const scale = (6 + 14 * i) / SPARK_LEN, pattern = cert === "hypothetical" ? base : base.map(x => +(x * scale).toFixed(2));
@@ -882,13 +892,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     if (sig === drawn) {
       for (const p of edgeLayer.querySelectorAll(".wedge")) {
         const [f0, t0] = p.dataset.e.split(">"), e = {from: f0, to: t0};
-        const on = !lit || (lit.has(f0) && lit.has(t0) && (f0 === st.sel || t0 === st.sel));
+        const on = isOn(lit, f0, t0);
         const state = spoke(e) ? pathState.get(f0 === "ME" ? t0 : f0) || "" : hotEdges.get(p.dataset.e) || "";
-        for (const [c, v] of [["on", on && !!lit], ["faint", !on], ["hot", state === "hot"], ["bad", state === "bad"]]) p.classList.toggle(c, v);
+        for (const [c, v] of [["on", on && !!lit], ["faint", !on], ["hot", state === "hot"], ["bad", state === "bad"], ["picked", p.dataset.e === st.edge]]) p.classList.toggle(c, v);
       }
+      for (const h of edgeLayer.querySelectorAll(".whit")) h.setAttribute("aria-pressed", String(h.dataset.e === st.edge));
       for (const q of svg.querySelectorAll(".wspark, .wport")) {
         const [f0, t0] = q.dataset.e.split(">");
-        q.classList.toggle("faint", !!lit && !(lit.has(f0) && lit.has(t0) && (f0 === st.sel || t0 === st.sel)));
+        q.classList.toggle("faint", !isOn(lit, f0, t0));
       }
       flowState();
       return;
@@ -915,14 +926,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     for (const e of es) {
       const a = pos[e.from], b = pos[e.to];
       if (!a || !b) continue;
-      const on = !lit || (lit.has(e.from) && lit.has(e.to) && (e.from === st.sel || e.to === st.sel));
+      const on = isOn(lit, e.from, e.to);
       const cert = certaintyOf(e, byId);
       const far = byId[e.to].kind === "family" ? byId[e.from] : byId[e.to];
-      const tone = far.kind === "flow" && far.side === "out" ? "var(--out)" : (LOOK[far.kind === "group" ? far.of : far.kind] || LOOK.class)[0];
+      const tone = (far.kind === "flow" || far.kind === "category") && far.side === "out" ? "var(--out)" : (LOOK[far.kind === "group" ? far.of : far.kind] || LOOK.class)[0];
       const state = spoke(e) ? pathState.get(e.from === "ME" ? e.to : e.from) || "" : hotEdges.get(`${e.from}>${e.to}`) || "";
       const money = cert === "actual" && !!e.dir;
       const d = route(e).d;
-      const p = mk("path", {d, class: `wedge c-${cert}${money ? " money" : ""}${on && lit ? " on" : ""}${on ? "" : " faint"}${state ? " " + state : ""}${e.derived ? " sum" : ""}`,
+      const p = mk("path", {d, class: `wedge c-${cert}${money ? " money" : ""}${on && lit ? " on" : ""}${on ? "" : " faint"}${state ? " " + state : ""}${e.derived ? " sum" : ""}${st.edge === `${e.from}>${e.to}` ? " picked" : ""}`,
         "data-e": `${e.from}>${e.to}`, "stroke-width": (e.value == null ? 1 : 0.9 + 1.5 * Math.sqrt(Math.abs(e.value) / maxV)).toFixed(2)}, edgeLayer);
       p.style.setProperty("--tone", tone);
       const key = `${e.from}>${e.to}`;
@@ -943,7 +954,12 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const sum = e.derived ? ` · tổng hợp từ ${e.derived} liên kết` : "";
       const paid = e.repaid ? `<br>trả trong tháng: ${vnd(e.repaid)}` : "";
       const rate = e.monthly != null && e.monthly !== Math.abs(e.value) ? ` · ~${vnd(e.monthly)}/tháng` : "";
-      hover(p, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${rate}${paid}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
+      // a wide, invisible stroke over it (F9): a click or Enter picks the edge; Thông tin shows where it comes from
+      const hit = mk("path", {d, class: "whit", "data-e": key, tabindex: "0", role: "button", "aria-pressed": String(st.edge === key),
+        "aria-label": `Liên kết ${byId[e.from].label} → ${byId[e.to].label}: ${e.label}`}, edgeLayer);
+      hit.addEventListener("click", () => selectEdge(key));
+      hit.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); selectEdge(key); } });
+      hover(hit, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${rate}${paid}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
     }
     budget(queue);
     for (const q of queue) {  // in order: the main income first, so the beat is set before the out-flows take it
@@ -1005,7 +1021,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const toSvg = (ev) => { const r = svg.getBoundingClientRect(); return [(ev.clientX - r.left) * W / r.width, (ev.clientY - r.top) * H / r.height]; };
   let drag = null;
   svg.addEventListener("pointerdown", (ev) => {
-    if (ev.button !== 0 || ev.target.closest(".wnode")) return;
+    if (ev.button !== 0 || ev.target.closest(".wnode, .whit")) return;
     const [x, y] = toSvg(ev); drag = {x, y, vx: view().x, vy: view().y, moved: false};
     svg.setPointerCapture(ev.pointerId);
   });
@@ -1016,8 +1032,8 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     view().x = drag.vx + x - drag.x; view().y = drag.vy + y - drag.y; applyView();
   });
   svg.addEventListener("pointerup", (ev) => {
-    if (drag && !drag.moved && !ev.target.closest(".wnode")) {  // a click on the background clears: the pick, then the answer's focus
-      if (st.sel) select(null);
+    if (drag && !drag.moved && !ev.target.closest(".wnode, .whit")) {  // a click on the background clears: the pick, then the answer's focus
+      if (st.sel || st.edge) select(null);
       else if (svg.classList.contains("focusing") && !running.size) activity.reset();
     }
     drag = null;
@@ -1040,11 +1056,21 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
 
   // ── selection and classes ─────────────────────────────────────────────────────────────────────────
   function select(id) {
-    const before = g.nodes.filter(n => n.kind === "class" && opened(n.id)).map(n => n.id).join();
+    const before = g.nodes.filter(n => KID[n.kind] && opened(n.id)).map(n => n.id).join();
     st.sel = id && st.sel === id ? null : id;
-    const after = g.nodes.filter(n => n.kind === "class" && opened(n.id)).map(n => n.id).join();
+    st.edge = null;
+    const after = g.nodes.filter(n => KID[n.kind] && opened(n.id)).map(n => n.id).join();
     draw({moved: before !== after});  // a class opening or closing moves the nodes: the edges follow
     if (onSelect) onSelect(st.sel ? byId[st.sel] : null);
+  }
+  // an edge picked (F9): both its ends lit, its details in Thông tin; the same edge again, or a node, unpicks it
+  function selectEdge(key) {
+    const before = g.nodes.filter(n => KID[n.kind] && opened(n.id)).map(n => n.id).join();
+    st.edge = st.edge === key ? null : key;
+    st.sel = null;
+    const after = g.nodes.filter(n => KID[n.kind] && opened(n.id)).map(n => n.id).join();
+    draw({moved: before !== after});
+    if (onSelect) onSelect(null);
   }
   function toggle(id) {  // by hand: open stays open; closed stays closed even while picked
     if (opened(id)) { st.open.delete(id); st.shut.add(id); } else { st.shut.delete(id); st.open.add(id); }
@@ -1203,7 +1229,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const out = new Set();
       for (const s0 of spec || []) {
         if (byId[s0]) out.add(s0);
-        else for (const n of g.nodes) if (n.kind === s0 && n.kind !== "holding") out.add(n.id);
+        else for (const n of g.nodes) if (n.kind === s0 && !isKid(n)) out.add(n.id);
       }
       return [...out];
     },
@@ -1266,6 +1292,9 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     data: () => g,
     node: (id) => byId[id],
     selected: () => (st && st.sel ? byId[st.sel] : null),
+    selectEdge,
+    // the picked edge, as drawn (a folded item's edge is its group's): null when none, or when it left the lens
+    selectedEdge: () => (st && st.edge ? shownEdges().find(e => `${e.from}>${e.to}` === st.edge) || null : null),
     isOpen: (id) => !!st && opened(id),
     links: (id) => links(id),
     other,
