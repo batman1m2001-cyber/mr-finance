@@ -74,9 +74,11 @@ export function mount(main, {client, scope, go, page}) {
     runScenario: async (n, btn) => {
       btn.disabled = true; btn.textContent = "Đang chạy…";
       try {
-        const r = (await post("/api/scenario", {client_id: client(), scenario: n.ref, params: {}, scope: scope()})).result;
-        n.value = r && typeof r.effect === "number" ? r.effect : r && r.after && r.before ? r.after.net_worth - r.before.net_worth : null;
-        n.detail = (r && (r.summary || r.title)) || n.detail;
+        // POST /api/scenario: before and after the shock, and its summary lines — kept on the node, never on net worth
+        const got = await post("/api/scenario", {client_id: client(), scenario: n.ref, params: {}, scope: scope()});
+        const r = got.result || got, nw = (x) => (x && typeof x.net_worth === "number" ? x.net_worth : null);
+        n.value = nw(r.after) != null && nw(r.before) != null ? nw(r.after) - nw(r.before) : null;
+        n.summary = (r.summary || []).slice(0, 4);
       } catch (e) { n.detail = `Không chạy được kịch bản: ${e.message}`; }
       graph.redraw(); drawInspector();
     }});

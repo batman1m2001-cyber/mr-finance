@@ -19,10 +19,11 @@ export const LOOK = {  // colour, icon; the colour follows the kind, status colo
   liquidity: ["var(--t2)", "savings"], scenario: ["var(--s7)", "zap"],
 };
 // where a kind sits: [from°, to°, radius] (0° = right, clockwise); a lens may move a kind (LAYOUT_BY_LENS)
-const SECTOR = {flow_out: [14, 14, 0.86], risk: [22, 44, 0.74], goal: [56, 124, 0.96], liquidity: [140, 140, 0.7],
-  scenario: [132, 160, 1], flow_in: [164, 164, 0.86], event: [184, 212, 0.96], alert: [134, 178, 0.98],
-  class: [232, 338, 0.8], source: [236, 304, 1.12]};
-const LAYOUT_BY_LENS = {"tai-san": {source: [64, 116, 0.96], class: [188, 352, 0.62]}, "rui-ro": {class: [200, 340, 0.74]}};
+const SECTOR = {flow_out: [0, 0, 0.9], risk: [26, 48, 0.74], goal: [62, 118, 0.96], liquidity: [140, 140, 0.72],
+  scenario: [165, 225, 1], flow_in: [166, 166, 0.9], event: [188, 208, 0.96], alert: [134, 178, 0.98],
+  class: [222, 328, 0.8], source: [236, 304, 1.12]};
+const LAYOUT_BY_LENS = {"tai-san": {source: [64, 116, 0.96], class: [188, 352, 0.62]}, "rui-ro": {class: [200, 340, 0.74]},
+  "muc-tieu": {goal: [28, 152, 0.95], scenario: [212, 328, 0.95]}, "dong-tien": {class: [215, 325, 0.72]}};
 const WORDING = "có thể ảnh hưởng";  // a news event's edge: a potential impact under the CIO's scenarios, never a cause
 const SRC = {holding: "khoản", risk: "rủi ro", goal: "mục tiêu", alert: "chính sách", run: "lần áp dụng", txn: "giao dịch", scenario: "kịch bản"};
 // certainty (OWN-GW-12): an edge's own, else what its kind implies
@@ -125,7 +126,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     let el = els.get(n.id);
     if (el) return el;
     const me = n.kind === "family", r = me ? 58 : n.kind === "holding" ? 13 : 24;
-    const [tone, ic] = LOOK[n.kind] || LOOK.class;
+    const [tone, ic] = n.kind === "flow" && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind] || LOOK.class;
     el = mk("g", {class: `wnode k-${n.kind}`, tabindex: "0", role: "button", "data-n": n.id, "aria-pressed": "false",
       "aria-label": `${(g.kinds.find(k => k.kind === n.kind) || {}).label || n.kind}: ${n.label}`}, nodeLayer);
     el.style.setProperty("--tone", tone);

@@ -11,7 +11,7 @@ export const LENSES = [
   {id: "dong-tien", label: "Dòng tiền", icon: "flow", tip: "Dòng tiền: thu nhập, chi tiêu, thanh khoản",
     kinds: ["family", "flow", "liquidity", "class"], sheets: ["toan-canh"]},
   {id: "muc-tieu", label: "Mục tiêu & kịch bản", icon: "target", tip: "Mục tiêu và kịch bản giả định",
-    kinds: ["family", "goal", "scenario", "class"], sheets: ["ke-hoach"]},
+    kinds: ["family", "goal", "scenario"], sheets: ["ke-hoach"]},
   {id: "tin", label: "Tin & sự kiện", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động",
     kinds: ["family", "event", "alert", "class"], sheets: ["thi-truong", "do-thi", "chinh-sach"]},
   {id: "rui-ro", label: "Rủi ro", icon: "alert", tip: "Rủi ro: mức lỗ khi căng thẳng, tập trung, dự phòng",

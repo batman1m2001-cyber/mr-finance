@@ -992,6 +992,8 @@ body.ws-on .foot { margin-top: 0; }
 .ws-ins .btn { border: 1px solid var(--axis); background: var(--surface); color: var(--ink); padding: 6px 12px; border-radius: 9px; font: inherit;
   font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
 .ws-ins .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.ws-sum { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); }
+.ws-sum b { text-align: right; font-variant-numeric: tabular-nums; }
 .ws-ins .cert.c-estimate { color: var(--warning); } .ws-ins .cert.c-hypothetical { color: var(--s7); font-style: italic; }
 .cp-panel.cp-docked { position: static; inset: auto; width: auto; flex: 1; min-height: 0; z-index: auto; border: 0; border-radius: 0; box-shadow: none; animation: none; }
 .cp-panel.cp-docked #cp-close, .cp-fab[hidden] { display: none; }

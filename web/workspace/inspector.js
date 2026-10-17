@@ -50,13 +50,17 @@ export function render(el, {graph, lens, node, kindLabel, openSheet, runScenario
       n.kind === "alert" && n.source_text && `Nguồn: ${esc(n.source_text)}`,
       n.kind === "flow" && `${n.side === "in" ? "Tiền vào" : "Tiền ra"} tháng ${esc(n.month || "")} <b>${fig(n, vnd(Math.abs(n.value)))}</b> · từ giao dịch đã ghi nhận`,
       n.kind === "flow" && (n.items || []).length && `Lớn nhất: ${n.items.slice(0, 3).map(i => `${esc(i.label)} ${vnd(Math.abs(i.value))}`).join(" · ")}`,
+      n.kind === "flow" && n.rows && `${n.rows} giao dịch · <span class="cert c-actual">thực tế</span>`,
+      n.kind === "liquidity" && (n.items || []).length && `Gồm: ${n.items.slice(0, 3).map(i => `${esc(i.label)} ${vnd(i.value)}`).join(" · ")}`,
       n.kind === "liquidity" && `Tài sản thanh khoản <b>${fig(n, vnd(n.value))}</b>${n.months != null ? ` · đủ chi tiêu <b>${String(n.months).replace(".", ",")} tháng</b> (mốc an toàn 6 tháng)` : ""}`,
       n.kind === "scenario" && `<span class="pill">giả định</span> ${esc(n.detail || "")}`,
       n.kind === "scenario" && (n.value == null ? `Chưa chạy: kết quả không thay đổi tài sản thực của bạn.` : `Nếu xảy ra: <b class="${signClass(n.value)}">${vnd(n.value, true)}</b> — chỉ là ước tính, không cộng vào tài sản ròng.`),
+      n.kind === "scenario" && (n.summary || []).length && `<span class="ws-sum">${n.summary.map(l => `<span>${esc(l.label)}</span><b class="${{bad: "down", good: "up"}[l.tone] || ""}">${esc(l.value)}</b>`).join("")}</span>`,
     ].filter(Boolean);
-    const kindTone = (LOOK[n.kind] || LOOK.class)[0];
+    const look = n.kind === "flow" && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind] || LOOK.class;
+    const kindTone = look[0];
     const sheet = SHEET_OF[n.kind];
-    el.innerHTML = `<div class="row tight"><span class="ic-chip" style="--tone:${kindTone}">${icon(n.kind === "class" ? CLASS_ICON[n.ref] || "layers" : (LOOK[n.kind] || LOOK.class)[1], {size: 16})}</span>
+    el.innerHTML = `<div class="row tight"><span class="ic-chip" style="--tone:${kindTone}">${icon(n.kind === "class" ? CLASS_ICON[n.ref] || "layers" : look[1], {size: 16})}</span>
         <div><div class="small muted">${esc(kindLabel(n.kind))}</div><b>${nameOf(n, esc(n.label))}</b></div>
         <button type="button" class="linkbtn small" id="ws-clear" style="margin-left:auto">Bỏ chọn</button></div>
       ${facts.map(f => `<p class="small mt-xs">${f}</p>`).join("")}

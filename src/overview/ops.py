@@ -10,7 +10,13 @@ list. Edges between a news event and an asset class say “có thể ảnh hư�
 by type, not headline (BRD flow 2), and their impact by asset class only (ADR-0008).
 
 Holding-level edges carry ``parent`` (the class node): the UI shows them when that class is expanded and the
-class-level edge (``agg``) otherwise."""
+class-level edge (``agg``) otherwise.
+
+The workspace (FEAT-40, OWN-GW-11/12) adds the month's money in and out (``flow``, read from the transactions — the
+same month and totals as POST /api/flows), the liquidity reserve (``liquidity``, always, from the dashboard) and the
+stress scenarios (``scenario``: hypothetical, with no value until the person runs one — POST /api/scenario — and
+never added to net worth). Every edge says how certain it is: ``actual`` (a record), ``estimate`` (a news or policy
+impact under the CIO's scenarios) or ``hypothetical`` (a scenario)."""
 
 from __future__ import annotations
 
@@ -21,6 +27,7 @@ from operonx import op
 from apply import reads
 from control.errors import BadRequest
 from people import auth
+from scenarios._sim import SCENARIOS
 from views import schema
 from wealth import fixtures
 
@@ -43,7 +50,11 @@ KINDS = [
     ("risk", "Rủi ro"),
     ("alert", "Chính sách"),
     ("event", "Tin tức"),
+    ("flow", "Dòng tiền"),
+    ("liquidity", "Thanh khoản"),
+    ("scenario", "Kịch bản giả định"),
 ]
+CERTAINTY = {"event": "estimate", "alert": "estimate", "scenario": "hypothetical"}
 TOP_ALERTS = 6
 WORDING = "có thể ảnh hưởng"
 GOAL_STATUS = {"on_track": "Đúng tiến độ", "at_risk": "Cần chú ý", "off_track": "Chậm tiến độ"}
@@ -77,6 +88,7 @@ def build(
     goals: list,
     alerts: list,
     followed: Optional[list] = None,  # None does not bind across ops: the persona's defaults
+    flows: Optional[dict] = None,
 ) -> dict:
     """Nodes and edges of the overview, each edge with its sources."""
     nodes: Dict[str, Dict[str, Any]] = {}
@@ -282,6 +294,56 @@ def build(
             if cid in nodes:
                 edge(eid, cid, ("run", it["run_id"]), WORDING, v)
 
+    # the month's money in and out (FEAT-40): the transactions of the latest month with rows, as on Toàn cảnh
+    if flows and flows.get("month"):
+        m = flows["month"]
+        mm = f"T{int(m[5:])}/{m[2:4]}"
+        sides = (
+            ("in", "inflow", "total_in", f"Thu nhập {mm}", "tiền vào"),
+            ("out", "outflow", "total_out", f"Chi tiêu {mm}", "tiền ra"),
+        )
+        for side, band, total, label, verb in sides:
+            if not flows[total]:
+                continue
+            items = sorted(flows[band], key=lambda b: -b["amount"])
+            fid = node(
+                f"FL:{side}",
+                "flow",
+                label,
+                side=side,
+                month=m,
+                value=flows[total],
+                items=[{"label": b["label"], "value": b["amount"], "category": b["category"]} for b in items],
+                keys=[f"flow:{m}"] + [f"flow:{m}:{side}:{b['category']}" for b in items],
+                rows=sum(len(b["rows"]) for b in items),
+            )
+            a, b = (fid, me) if side == "in" else (me, fid)
+            edge(a, b, ("txn", m), verb, flows[total])
+
+    # the liquidity reserve: always shown (a risk node joins it only when the reserve is short)
+    lid = node(
+        "LQ:reserve",
+        "liquidity",
+        "Thanh khoản dự phòng",
+        value=lq["value"],
+        months=round(lq["months"], 1),
+        status=lq["status"],
+        spending=lq["spending_monthly"],
+        items=[{"label": i["name"], "value": i["value"]} for i in lq["items"]],
+    )
+    edge(me, lid, ("risk", "liquidity"), "dự phòng", lq["value"])
+
+    # the stress scenarios: what if — no figure until one is run, never part of net worth
+    for sid, sc in SCENARIOS.items():
+        if sc["kind"] != "stress":
+            continue
+        scn = node(f"SC:{sid}", "scenario", sc["title"], ref=sid, detail=sc["question"], value=None)
+        edge(me, scn, ("scenario", sid), "nếu xảy ra")
+
+    for e in edges.values():
+        kinds = {nodes[e["from"]]["kind"], nodes[e["to"]]["kind"]}
+        e["certainty"] = next((c for k, c in CERTAINTY.items() if k in kinds), "actual")
+
     return {
         "overview": {
             "client_id": client_id,
@@ -291,7 +353,9 @@ def build(
             "kinds": [{"kind": k, "label": label} for k, label in KINDS],
             "nodes": list(nodes.values()),
             "edges": list(edges.values()),
-            "note": "Mỗi cạnh ghi bản ghi nguồn (khoản tài sản, rủi ro, mục tiêu, chính sách, lần áp dụng tin). "
-            "“Có thể ảnh hưởng” theo kịch bản CIO duyệt; không phải quan hệ nhân quả.",
+            "note": "Mỗi cạnh ghi bản ghi nguồn (khoản tài sản, rủi ro, mục tiêu, chính sách, lần áp dụng tin, "
+            "giao dịch). “Có thể ảnh hưởng” theo kịch bản CIO duyệt; không phải quan hệ nhân quả. "
+            "Kịch bản là giả định, "
+            "không cộng vào tài sản ròng.",
         }
     }

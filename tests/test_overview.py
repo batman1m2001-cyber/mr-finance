@@ -62,6 +62,10 @@ def test_every_edge_comes_from_a_record_it_names():
                     v for c, v in runs[s["id"]]["by_class"].items() if (c if c != "cash" else "deposit") == cls
                 )
                 assert e["label"] == "có thể ảnh hưởng"
+            elif s["type"] == "txn":  # the month's money in or out (FEAT-40)
+                assert "FL:in" in (e["from"], e["to"]) or "FL:out" in (e["from"], e["to"]), e
+            elif s["type"] == "scenario":
+                assert e["to"] == f"SC:{s['id']}" and e["value"] is None, e
             else:
                 raise AssertionError(s)
 
@@ -96,3 +100,37 @@ def test_the_goals_are_the_ones_the_browser_follows():
     picked = {n["ref"] for n in overview(goals=["retire_early"])["nodes"] if n["kind"] == "goal"}
     assert picked == {"retire_early"}
     assert not [n for n in overview(goals=[])["nodes"] if n["kind"] == "goal"]
+
+
+def test_the_workspace_kinds_money_reserve_and_scenarios():
+    # FEAT-40 (OWN-GW-11/12): the month's flows as on Toàn cảnh, the reserve always, the stress scenarios hypothetical
+    from flows.graph import flows_flow
+
+    o = overview()
+    by = {n["id"]: n for n in o["nodes"]}
+    f = asyncio.run(
+        Operon(flows_flow, params={"client_id": None, "scope": None, "month": None}).run(inputs={"client_id": "C01"})
+    )
+    f = f["flows"]
+    assert by["FL:in"]["value"] == f["total_in"] and by["FL:out"]["value"] == f["total_out"]
+    assert by["FL:in"]["month"] == f["month"] and f"flow:{f['month']}" in by["FL:out"]["keys"]
+    top = max(f["outflow"], key=lambda b: b["amount"])
+    assert f"flow:{f['month']}:out:{top['category']}" in by["FL:out"]["keys"]  # the flows answer's focus key lights it
+    d = dashboard()
+    assert by["LQ:reserve"]["value"] == d["liquidity"]["value"]
+    scen = [n for n in o["nodes"] if n["kind"] == "scenario"]
+    assert scen and all(n["value"] is None for n in scen)
+    cert = {(e["from"], e["to"]): e["certainty"] for e in o["edges"]}
+    assert all(cert[("ME", n["id"])] == "hypothetical" for n in scen)
+    assert cert[("FL:in", "ME")] == cert[("ME", "LQ:reserve")] == "actual"
+    assert all(
+        cert[(e["from"], e["to"])] == "estimate"
+        for e in o["edges"]
+        if e["from"].startswith(("EV:", "AL:")) or e["to"].startswith("AL:")
+    )
+    # a scenario is never part of net worth: the classes still add up without it
+    assert (
+        sum(e["value"] for e in o["edges"] if e["from"] == "ME" and e["to"].startswith("CL:"))
+        == d["net_worth"]["assets"]
+    )
+    assert {k["kind"] for k in o["kinds"]} >= {"flow", "liquidity", "scenario"}
