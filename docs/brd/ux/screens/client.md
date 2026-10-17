@@ -347,7 +347,7 @@ the list.
 
 | | |
 |---|---|
-| Route | `#/client/<lens>[/<sheet>[/<param>]]` — lenses `tong-quan`, `tai-san`, `dong-tien`, `muc-tieu`, `tin`, `rui-ro`, `chuyen-gia`, `bo-nho`; every older Customer address resolves (FEAT-40) |
+| Route | `#/client/xem/<lens>` — lenses `tong-quan`, `tai-san`, `dong-tien`, `muc-tieu`, `tin`, `rui-ro`; a sheet keeps its page's old address (`#/client/tai-san`, `#/client/tin/do-thi/<event>`, `#/client/chuyen-gia`, `#/client/bo-nho`, …) and opens over its lens, so the server's links need no change; `#/client` and `#/client/tong-quan/ban-do` are the Tổng quan lens (FEAT-40) |
 | Generation | proposed (experiment, branch `exp/graph-workspace`) |
 | Feature | [FEAT-40](../../features/FEAT-40-persistent-financial-graph.md); reuses FEAT-30 (graph), FEAT-32 (assistant), FEAT-33 (marks) and every Customer page as a sheet |
 | Requirements | OWN-GW-01…14; every requirement of SCR-CL-01…11 through the capability map in FEAT-40 |

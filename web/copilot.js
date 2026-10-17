@@ -11,7 +11,10 @@
 
    Living Interface (B-01): the button and panel show the request's real state (data-state: idle, busy while
    the request is in flight, ok, error, pending a confirmation), and an answer marks the page elements it
-   was read from (its `focus` keys) on this page, or on the evidence page once it opens. */
+   was read from (its `focus` keys) on this page, or on the evidence page once it opens.
+
+   Docked (FEAT-40, OWN-GW-03): in the Customer's workspace the panel lives in the dock's Trợ lý tab, always open,
+   no floating button; dock(host) moves it there and undock() gives it back to the page corner. */
 import {$, esc, followedIds, post} from "./core/core.js";
 import {icon} from "./core/icons.js?v=20261016r1";
 import {progress} from "./charts/mini.js?v=20261016r2";
@@ -125,7 +128,8 @@ export function mount() {
   dropOld();
   let msgs = [], role = null, busy = false, shown = 0, settle = null, later = null;
   let cid = null, resumed = false, listing = null;  // the conversation on screen; the history list when it shows
-  const covers = () => !panel.hidden && matchMedia("(max-width: 560px)").matches;  // phone: the panel hides the page
+  let docked = false;
+  const covers = () => !docked && !panel.hidden && matchMedia("(max-width: 560px)").matches;  // phone: the panel hides the page
 
   // one state for the button and the panel, set only by what the request did
   const setState = (st) => {
@@ -149,7 +153,8 @@ export function mount() {
       const had = role; role = c.role; msgs = []; shown = 0; cid = null; resumed = false; listing = null;
       if (had && !panel.hidden) { draw(); sugg(); resume(); }
     }
-    const page = (document.querySelector("#subnav:not([hidden]) [aria-current=page]") || document.querySelector("#nav [aria-current=page]") || {}).textContent || "";
+    const page = (docked ? document.querySelector("#ws-sheet:not([hidden]) #ws-sheet-t") || document.querySelector("#ws-title")
+      : document.querySelector("#subnav:not([hidden]) [aria-current=page]") || document.querySelector("#nav [aria-current=page]") || {}).textContent || "";
     const name = (($("#client") || {}).selectedOptions || [])[0];
     $("#cp-ctx", panel).textContent = `Đang xem: ${page.trim() || "—"} · ${ROLE_LABEL[role]}${["client", "rm"].includes(role) && name ? " · " + name.textContent.split("·")[0].trim() : ""}`;
   };
@@ -303,11 +308,29 @@ export function mount() {
   $("#cp-hist", panel).onclick = () => { if (listing) { listing = null; draw(); } else showList(); };
 
   const open = () => { drawCtx(); draw(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); resume(); };
-  const close = () => { panel.hidden = true; btn.setAttribute("aria-expanded", "false"); if (btn.dataset.state === "error") setState("idle"); btn.focus();
+  const close = () => { if (docked) return; panel.hidden = true; btn.setAttribute("aria-expanded", "false"); if (btn.dataset.state === "error") setState("idle"); btn.focus();
     if (later) { const k = later; later = null; focus(k); } };
   btn.onclick = () => (panel.hidden ? open() : close());
   $("#cp-close", panel).onclick = close;
   panel.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
   $("#cp-form", panel).onsubmit = (e) => { e.preventDefault(); send($("#cp-q", panel).value); };
-  window.addEventListener("hashchange", () => { if (!panel.hidden) drawCtx(); });
+  window.addEventListener("hashchange", () => { if (!panel.hidden) setTimeout(drawCtx); });  // after the route names its view
+
+  return {
+    dock(host) {
+      if (docked) return;
+      docked = true;
+      panel.classList.add("cp-docked"); panel.setAttribute("role", "region");
+      host.appendChild(panel);
+      btn.hidden = true;
+      drawCtx(); draw(); sugg(); panel.hidden = false; resume();
+    },
+    undock() {
+      if (!docked) return;
+      docked = false;
+      panel.classList.remove("cp-docked"); panel.setAttribute("role", "dialog");
+      document.body.appendChild(panel);
+      panel.hidden = true; btn.hidden = false; btn.setAttribute("aria-expanded", "false");
+    },
+  };
 }

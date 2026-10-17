@@ -5,11 +5,16 @@
    Everyone signs in with their own account (BRD-RULE-SEC-01, pages/signin.js): the shell then shows only that
    person's role, and the client picker only the families they may see (a client: none, their own family). The
    server takes the user from the session, never from the page. Only with sign-in switched off (MF_AUTH=off, a
-   developer's machine) does the old role switcher appear. */
+   developer's machine) does the old role switcher appear.
+
+   The Customer has one page (FEAT-40, ADR-0035): the workspace — toolbar, the persistent graph, the dock, the
+   strip — mounted once; a Customer route changes its lens, and a page of the old menu opens as a sheet over the
+   graph, drawn into #page as before. The other roles keep the menu. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261017r5";
+import {mount as mountCopilot} from "./copilot.js?v=20261017w1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261017r2";
+import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261017w1";
 
 const ROLES = {
   client: {
@@ -132,6 +137,10 @@ export function go(hash, focus) {
 
 // every page of a role, for the header search: label, its parent's label, its route
 function pagesFor(role) {
+  if (role === "client") {  // the workspace: its lenses, then the views that open as sheets
+    return [...LENSES.map(l => ({label: l.label, parent: "Đồ thị", route: lensRoute(l.id)})),
+      ...Object.values(SHEETS).map(s => ({label: s.label, parent: s.lens ? "Xem đầy đủ" : "", route: s.route}))];
+  }
   const out = [];
   for (const n of ROLES[role].nav) {
     if (n.sub) for (const s of n.sub) out.push({label: s.label, parent: n.label, route: `#/${role}/${n.id}/${s.id}`});
@@ -139,7 +148,27 @@ function pagesFor(role) {
   }
   return out;
 }
-let header = null;
+let header = null, copilot = null;
+
+// the Customer's workspace: mounted on the first Customer route, kept until another role routes
+let ws = null, wsLoad = null;
+async function workspace() {
+  if (ws) return ws;
+  wsLoad ||= import("./workspace/workspace.js?v=20261017w1");
+  const mod = await wsLoad;
+  if (!ws) {
+    ws = mod.mount($("#main"), {client, scope, go});
+    document.body.classList.add("ws-on");
+    copilot.dock(ws.dock);
+  }
+  return ws;
+}
+function leaveWorkspace() {
+  if (!ws) return;
+  ws.destroy(); ws = null;
+  document.body.classList.remove("ws-on");
+  copilot.undock();
+}
 
 function drawChrome(rt) {
   const r = ROLES[rt.role];
@@ -182,8 +211,22 @@ async function route() {
   localStore("mf.role", rt.role);
   drawChrome(rt);
   if (header) header.refresh();
-  const target = rt.sub || rt.nav;
+  let target = rt.sub || rt.nav;
   const seq = ++state.seq;
+  if (rt.role === "client") {
+    const w = await workspace();
+    const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent).slice(1);
+    const sheet = await w.route(parts);
+    if (seq !== state.seq) return;
+    if (!sheet) {  // a lens: the graph is the page; nothing to draw into the sheet
+      $("#page").replaceChildren();
+      window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
+      warm(rt.role);
+      return;
+    }
+    target = {page: sheet.page};
+    rt.param = sheet.param;
+  } else leaveWorkspace();
   const ok = await draw(target, rt, seq, false);
   // a page drawn from what was kept: its reads went to the server again; when an answer changed, it is drawn once
   // more from the new answers, unless the person has started using it (their next visit shows the new answers)
@@ -374,7 +417,7 @@ async function start() {
   explainOn(document);  // BRD-NFR-11: any [data-metric] opens its “Cách tính”
   startMotion();
   header = mountHeader({role: () => state.role, user: () => (state.me ? state.me.id : ROLES[state.role].user), client, scope, pages: pagesFor, go, setClient});
-  mountCopilot();
+  copilot = mountCopilot();
   await Promise.all([
     pickers(),
     state.me && (state.me.role === "client" || state.me.role === "specialist") ? null  // the staff list: desk and RMs

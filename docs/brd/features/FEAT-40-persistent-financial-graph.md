@@ -17,7 +17,7 @@
   a sheet or an assistant answer changes **view state**; the graph's DOM, pan, zoom, expanded classes and selection
   survive.
 - **View state** is `{lens, sel, open, pan, zoom, sheet}`, kept per client and scope for the tab's life. The address
-  carries the lens, the sheet and its parameter (`#/client/<lens>[/<sheet>[/<param>]]`), so back and forward,
+  carries the lens or the sheet (`#/client/xem/<lens>` for a lens; a sheet keeps its page's old address, e.g. `#/client/tin/do-thi/<event>`, and opens over the lens that page belongs to), so back and forward,
   reload and links work. A reload keeps the lens and sheet; pan and zoom start fitted.
 - **Lenses** (toolbar, with tooltips; keyboard: arrow keys move, Enter picks): a lens sets which kinds are visible,
   which are emphasised, which classes open, the level of detail and the inspector's default content. It never

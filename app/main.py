@@ -121,6 +121,7 @@ def schedule(**kw):
     own: no fetch and no model call twice; each still runs with `operonx run <job>`)."""
     return None if os.environ.get("MF_JOBS", "").lower() == "off" else _schedule(**kw)
 
+
 APP = Application(
     "mr-finance",
     description="Consolidate every asset a client holds, anywhere, into one picture — and say what is moving it.",
