@@ -1,0 +1,492 @@
+{
+ "id": "cc-04",
+ "category": "concerns",
+ "persona": "con phải gửi tiền về cho bố mẹ (C03)",
+ "client_id": "C03",
+ "title": "Gửi tiền về cho bố mẹ ốm",
+ "why": "Missing information: the amount must be asked for, not assumed.",
+ "brd": [
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền về, liệu em có ổn không?",
+   "expect": {
+    "grounded": false,
+    "says": "bao nhiêu|số tiền|mỗi tháng"
+   }
+  },
+  {
+   "say": "Khoảng 15 triệu một tháng.",
+   "expect": {
+    "tools_any": [
+     "dong_tien",
+     "tong_quan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền về, liệu em có ổn không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước). Thanh khoản dự phòng 300,0 triệu, đủ chi 7 tháng. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 79,8 triệu, tiền ra 56,5 triệu, còn lại 23,3 triệu. Khoản chi lớn nhất: Thanh toán thẻ 27,2 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Thanh toán thẻ",
+         "value": 27190000.0,
+         "text": "27,2 triệu"
+        },
+        {
+         "label": "Tiền thuê nhà",
+         "value": 15000000.0,
+         "text": "15,0 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 14297000.0,
+         "text": "14,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "79,8 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "56,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "23,3 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:card"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "11 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11944,
+     "output_tokens": 892,
+     "requests": 2,
+     "cost_usd": 0.00164,
+     "tools_cost_usd": null
+    },
+    "turn_id": "042636b6d2d542f08d49e50d3b1c5c88",
+    "conversation_id": "29dc11b5e6454d88",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo số liệu trên ứng dụng, em đang ở mức **ổn về thanh khoản nhưng rủi ro danh mục đang vượt ngưỡng**.\n\n**Điểm tích cực:**\n- **Dòng tiền tháng 09/2026:** tiền vào 79,8 triệu, tiền ra 56,5 triệu, còn lại 23,3 triệu.\n- **Thanh khoản dự phòng:** 300 triệu, đủ chi khoảng 7 tháng (ngày 09/10/2026).\n- **Tài sản ròng:** 7,54 tỷ, tăng 309 triệu (4,3%) so với tháng trước.\n\n**Điểm cần lưu ý:**\n- **Rủi ro:** nếu thị trường xấu, mức sụt giảm ước tính là 43%, vượt ngưỡng 30% mà em đặt. Đây là ước tính từ mô phỏng, không phải dự báo.\n- Số liệu hệ thống không tách riêng khoản gửi về quê. Khoản chi lớn nhất tháng 09 là thanh toán thẻ 27,2 triệu, nên em nên kiểm tra lại xem khoản gửi bố mẹ có nằm trong đó hay không.\n\nNếu tiền gửi về là khoản cố định hằng tháng, em có thể xem thêm trang Dòng tiền và Mục tiêu để biết nó chiếm bao nhiêu phần thu nhập. Em muốn anh/chị xem mục nào trước?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn",
+     "11 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:card"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792256629.4952414,
+    "audit_seq": 594,
+    "session": {
+     "id": "29dc11b5e6454d88",
+     "title": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.0248528509400785,
+   "first_event": 1.4844705648720264,
+   "usage": {
+    "cost": 0.00164,
+    "input": 11944,
+    "output": 892,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HrBf9XN9G45oUcrjKh5rkN",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01L8i9YXyoFoN9YN2JqhATBK",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HrBf9XN9G45oUcrjKh5rkN",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 135,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01L8i9YXyoFoN9YN2JqhATBK",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 135,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:card"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Khoảng 15 triệu một tháng.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "5 điều đáng chú ý. 1) Mức sụt giảm ước tính 43,0% khi thị trường xấu — Vượt ngưỡng chấp nhận 30%. 2) Thị trường cổ phiếu: có thể ảnh hưởng −85,2 triệu trong 3 tháng — Tác động kỳ vọng 1,1% tài sản ròng, trên ngưỡng 0,5%. 3) Bất động sản: có thể ảnh hưởng +42,6 triệu trong 3 tháng — Tác động kỳ vọng 0,6% tài sản ròng, trên ngưỡng 0,5%. Còn 2 mục khác trên Toàn cảnh.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 43,0% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 30%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        },
+        {
+         "title": "Thị trường cổ phiếu: có thể ảnh hưởng −85,2 triệu trong 3 tháng",
+         "sub": "Tác động kỳ vọng 1,1% tài sản ròng, trên ngưỡng 0,5%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:run:AR-0001-v1-2"
+        },
+        {
+         "title": "Bất động sản: có thể ảnh hưởng +42,6 triệu trong 3 tháng",
+         "sub": "Tác động kỳ vọng 0,6% tài sản ròng, trên ngưỡng 0,5%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:run:AR-0002-v1-2"
+        },
+        {
+         "title": "Tài sản ròng +309,0 triệu so với tháng trước",
+         "sub": "Thay đổi 4,3% trong tháng, từ 3% trở lên",
+         "chip": "Thông tin",
+         "tone": "",
+         "focus": "feed:dashboard:net_worth"
+        },
+        {
+         "title": "Chi tiêu sinh hoạt tháng 09/2026: 14,3 triệu, +6,7 triệu so với tháng trước",
+         "sub": "Chi một nhóm tăng từ 30% và 5 triệu trở lên so với tháng trước",
+         "chip": "Thông tin",
+         "tone": "",
+         "focus": "feed:transactions:living:2026-09:2026-09:living"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk",
+       "feed:run:AR-0001-v1-2",
+       "feed:run:AR-0002-v1-2"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "2 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Mua thêm BĐS bằng vốn vay: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 10,80 tỷ · có 72,66 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 30,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.017401894559604534,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14207,
+     "output_tokens": 1143,
+     "requests": 2,
+     "cost_usd": 0.001992,
+     "tools_cost_usd": null
+    },
+    "turn_id": "8b78ada599a9439b81dc175ec1c41f77",
+    "conversation_id": "29dc11b5e6454d88",
+    "compacted": false,
+    "status": "ok",
+    "text": "Cảm ơn em đã cho thêm thông tin. Khoản gửi khoảng 15 triệu mỗi tháng chưa thấy tách riêng trong dữ liệu ứng dụng, nên các số dưới đây là từ hệ thống, không tính thêm được.\n\n**Tình hình hiện tại (ghi nhận đến 09/10/2026):**\n- **Dòng tiền tháng 09/2026:** tiền vào 79,8 triệu, tiền ra 56,5 triệu, còn lại 23,3 triệu. Nếu khoản 15 triệu nằm trong 56,5 triệu tiền ra thì dòng tiền vẫn dương, nhưng em nên kiểm tra lại.\n- **Thanh khoản dự phòng:** 300 triệu, đủ chi khoảng 7 tháng.\n- **Rủi ro:** mức sụt giảm ước tính khi thị trường xấu là 43%, vượt ngưỡng 30%. Đây là ước tính từ mô phỏng.\n- **Thị trường cổ phiếu:** có thể ảnh hưởng khoảng −85,2 triệu trong 3 tháng, trên ngưỡng 0,5% tài sản ròng.\n- **Mục tiêu:** nghỉ hưu sớm ở 55 tuổi đang đúng tiến độ; mua thêm bất động sản bằng vốn vay đang chậm tiến độ.\n\n**Nhận xét:** Khoản gửi đều đặn hằng tháng làm giảm khả năng tích lũy, và thanh khoản 300 triệu là vùng đệm quan trọng nếu bố mẹ cần thêm chi phí y tế. Khi thị trường xấu, danh mục hiện nhạy hơn mức em chấp nhận. Em có thể cân nhắc xem lại mức dự phòng và phần đầu tư rủi ro. Đây là thông tin tham khảo, không phải khuyến nghị đầu tư.\n\nEm có muốn anh/chị xem chi tiết mục tiêu nghỉ hưu hoặc chạy kịch bản thị trường cổ phiếu không?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": null,
+    "focus": [
+     "feed:dashboard:risk",
+     "feed:run:AR-0001-v1-2",
+     "feed:run:AR-0002-v1-2"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792256636.8006084,
+    "audit_seq": 595,
+    "session": {
+     "id": "29dc11b5e6454d88",
+     "title": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.280215132981539,
+   "first_event": 2.0559563101269305,
+   "usage": {
+    "cost": 0.001992,
+    "input": 14207,
+    "output": 1143,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0178ix8r2E4vixsJ3r1XnEsr",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016Ut2z2zmmJxgkwU8msx4W3",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016Ut2z2zmmJxgkwU8msx4W3",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 178,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0178ix8r2E4vixsJ3r1XnEsr",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 246,
+     "focus": [
+      "feed:dashboard:risk",
+      "feed:run:AR-0001-v1-2",
+      "feed:run:AR-0002-v1-2"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

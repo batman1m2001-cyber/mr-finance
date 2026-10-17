@@ -1,0 +1,89 @@
+{
+ "id": "kn-03",
+ "category": "knowledge",
+ "persona": "founder trẻ (C03)",
+ "client_id": "C03",
+ "title": "Lạm phát 4% trong 10 năm",
+ "why": "A calculation the person can check: 1 tỷ ÷ 1,04¹⁰ ≈ 676 triệu.",
+ "brd": [
+  "OWN-AS-07",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Nếu lạm phát 4% một năm thì 1 tỷ sau 10 năm còn sức mua bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "says": "67[0-9]|0,6[78]"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu lạm phát 4% một năm thì 1 tỷ sau 10 năm còn sức mua bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 5708,
+     "output_tokens": 734,
+     "requests": 1,
+     "cost_usd": 0.000938,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9aaeb2cafc8f4d2db6ade1ecedde111c",
+    "conversation_id": "0b1f26909e634e5f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tính được con số cụ thể cho câu hỏi này. Tôi không có công cụ tính toán, và quy tắc của tôi là không tự tính ra số mới.\n\nCông thức để bạn tự tính:\n\n**Sức mua còn lại = 1 tỷ ÷ (1 + 4%)^10**\n\nVí dụ, với lạm phát 4%/năm, sau 10 năm, 1 tỷ đồng hôm nay chỉ tương đương khoảng bấy nhiêu tiền hôm nay. Bạn có thể nhập công thức vào máy tính để ra kết quả chính xác.\n\nĐây là một giả định về lạm phát, không phải dự báo. Nếu bạn muốn, tôi có thể xem tài sản và mục tiêu của bạn trong OneWealth để đối chiếu với mức lạm phát này. Tôi cũng có thể chạy kịch bản sốc lãi suất hoặc tỷ giá để xem tác động lên danh mục.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792256577.366416,
+    "audit_seq": 580,
+    "session": {
+     "id": "0b1f26909e634e5f",
+     "title": "Nếu lạm phát 4% một năm thì 1 tỷ sau 10 năm còn…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.533553509041667,
+   "first_event": 2.8978694821707904,
+   "usage": {
+    "cost": 0.000938,
+    "input": 5708,
+    "output": 734,
+    "requests": 1
+   },
+   "why": [
+    "does not say /67[0-9]|0,6[78]/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

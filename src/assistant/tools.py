@@ -5,11 +5,13 @@ here from the tool's result by a template: no model writes it."""
 
 from __future__ import annotations
 
+import ast
+import operator
 import re
 from typing import Any, Dict
 
 from apply import reads
-from assistant.base import Ctx, Tool, ToolFailed, run_graph
+from assistant.base import Ctx, Param, Tool, ToolFailed, run_graph
 from news import store as news_store
 from wealth import store as wealth_store
 
@@ -75,16 +77,29 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     nw, lq, rk = d["net_worth"], d["liquidity"], d["risk"]
     status = {"ok": "an toàn", "near": "gần ngưỡng", "over": "vượt ngưỡng"}[rk["status"]]
     months = f"{lq['months'] / 12:.0f} năm" if lq["months"] >= 24 else f"{lq['months']:.0f} tháng"
+    debts = [h for h in d["holdings"] if h["kind"] == "liability"]
+    owed = "; ".join(f"{h['name']} {_vnd(h['value'])}" for h in debts)
+    mix = ", ".join(f"{a['group']} {_pct(a['share'], 0)}" for a in d["allocation"])
+    over = d["concentration"]["warnings"]
     text = (
         f"Tài sản ròng {_vnd(nw['value'])} ({_vnd(nw['month_change'], True)}, {_pct(nw['month_change_pct'])} so với "
-        f"tháng trước). Thanh khoản dự phòng {_vnd(lq['value'])}, đủ chi {months}. Khi thị trường xấu, mức sụt giảm "
-        f"ước tính {_pct(rk['current'])} so với ngưỡng {_pct(rk['limit'], 0)}: {status}."
+        f"tháng trước) = tổng tài sản {_vnd(nw['assets'])} − nợ {_vnd(nw['liabilities'])}"
+        f"{f' ({owed})' if owed else ''}. Phân bổ tài sản: {mix}."
+        f"{(' Tập trung vượt ngưỡng: ' + '; '.join(over) + '.') if over else ''} Thanh khoản dự phòng "
+        f"{_vnd(lq['value'])}, đủ chi {months}. Khi thị trường xấu, mức sụt giảm ước tính {_pct(rk['current'])} so "
+        f"với ngưỡng {_pct(rk['limit'], 0)}: {status}."
     )
     tone = {"ok": "good", "near": "warn", "over": "bad"}[rk["status"]]
     used = [s for s in d["sources"] if s["count"]]
     return {
         "text": text,
-        "data": {"net_worth": nw["value"], "risk": rk["status"], "as_of": d["as_of"]},
+        "data": {
+            "net_worth": nw["value"],
+            "assets": nw["assets"],
+            "liabilities": nw["liabilities"],
+            "risk": rk["status"],
+            "as_of": d["as_of"],
+        },  # fmt: skip
         "focus": ["kpi:net_worth", "kpi:liquidity", "kpi:risk"],
         "as_of": d["as_of"],
         "sources": [f"Tổng hợp {sum(s['count'] for s in used)} khoản từ {len(used)} nguồn"],
@@ -508,12 +523,56 @@ def verify_fetch(ctx: Ctx, out: Dict[str, Any]):
     return True if not missing else f"{len(missing)} tin báo đã thêm nhưng không có trong kho"
 
 
+_OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
+        ast.Pow: operator.pow, ast.Mod: operator.mod, ast.USub: operator.neg, ast.UAdd: operator.pos}  # fmt: skip
+
+
+def _eval(node: ast.AST) -> float:
+    """Arithmetic only: numbers, + − × ÷, powers (bounded), parentheses. Anything else is refused."""
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
+        return float(node.value)
+    if isinstance(node, ast.UnaryOp) and type(node.op) in _OPS:
+        return _OPS[type(node.op)](_eval(node.operand))
+    if isinstance(node, ast.BinOp) and type(node.op) in _OPS:
+        a, b = _eval(node.left), _eval(node.right)
+        if isinstance(node.op, ast.Pow) and (abs(b) > 600 or abs(a) > 1e6):
+            raise ToolFailed("Luỹ thừa quá lớn")
+        if isinstance(node.op, (ast.Div, ast.Mod)) and b == 0:
+            raise ToolFailed("Chia cho 0")
+        return _OPS[type(node.op)](a, b)
+    raise ToolFailed("Chỉ tính được biểu thức số: + - * / ** và ngoặc")
+
+
+def _num(x: float) -> str:
+    """Vietnamese style: 676.416.857,4 — dots between thousands, a comma before decimals."""
+    digits = 0 if abs(x) >= 1e6 else 2 if abs(x) >= 1 else 6
+    s = f"{x:,.{digits}f}".replace(",", "_").replace(".", ",").replace("_", ".")
+    return s.rstrip("0").rstrip(",") if "," in s else s
+
+
+async def calculate(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    expr = str(args.get("expression") or "").replace("×", "*").replace("÷", "/").replace("^", "**").strip()
+    if not expr or len(expr) > 200:
+        raise ToolFailed("Cần một biểu thức ngắn")
+    try:
+        tree = ast.parse(expr.replace(",", "."), mode="eval")
+    except SyntaxError as exc:
+        raise ToolFailed("Biểu thức không hợp lệ") from exc
+    value = _eval(tree.body)
+    what = str(args.get("what") or "").strip()
+    return {
+        "text": f"{what + ': ' if what else ''}{expr} = {_num(value)}",
+        "data": {"expression": expr, "value": value},
+    }
+
+
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
     for t in [
         Tool(
             "tong_quan",
-            "tài sản ròng, thay đổi trong tháng, thanh khoản dự phòng, mức rủi ro so với ngưỡng",
+            "tài sản ròng, tổng tài sản, các khoản nợ, phân bổ theo lớp tài sản, tập trung vượt ngưỡng, thay đổi trong "
+            "tháng, thanh khoản dự phòng, mức rủi ro so với ngưỡng",
             ("client", "rm"),
             overview,
             page="toan-canh",
@@ -584,6 +643,17 @@ CATALOGUE: Dict[str, Tool] = {
             ("client", "rm", "cio", "compliance", "specialist", "admin"),
             navigate,
             args={"page": list(PAGES)},
+        ),
+        Tool(
+            "tinh",
+            "tính một biểu thức số (cộng, trừ, nhân, chia, phần trăm, luỹ thừa cho lãi kép) từ số của công cụ hoặc của "
+            "người dùng; ghi công thức vào câu trả lời để người dùng kiểm lại",
+            ("client", "rm", "cio", "compliance", "specialist", "admin"),
+            calculate,
+            params={
+                "expression": Param(str, "biểu thức chỉ gồm số và + - * / ** ( ), vd 1000000000/1.04**10"),
+                "what": Param(str, "đang tính gì, vd sức mua sau 10 năm", ""),
+            },
         ),
         Tool(
             "duyet_de_xuat",

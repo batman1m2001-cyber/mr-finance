@@ -1,0 +1,390 @@
+{
+ "id": "nav-03",
+ "category": "navigation",
+ "persona": "đang xem đồ thị, chọn một mục tiêu (C01)",
+ "client_id": "C01",
+ "title": "“Nút này nghĩa là gì?” với một mục tiêu đang chọn",
+ "why": "The person picks a goal node and asks about “this”: the selection must reach the answer.",
+ "brd": [
+  "OWN-GW-47",
+  "OWN-GW-45",
+  "KIT-COPILOT-01"
+ ],
+ "turns": [
+  {
+   "say": "Nút này nói gì vậy?",
+   "expect": {
+    "tools_any": [
+     "lien_ket",
+     "muc_tieu"
+    ],
+    "says": "học phí"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   }
+  },
+  {
+   "say": "Sao nó lại ghi là chậm tiến độ?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu",
+     "lien_ket"
+    ],
+    "says": "chậm|thiếu|cần"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nút này nói gì vậy?",
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "lien_ket",
+      "label": "Liên kết",
+      "status": "ok",
+      "text": "Học phí cho con (trong nước / du học) có 1 liên kết: Bạn — cần để dành/tháng +79,1 triệu (ước tính). Thực tế là số đã ghi nhận; ước tính và giả định không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bạn",
+         "sub": "cần để dành/tháng · ước tính · 1 bản ghi",
+         "chip": "+79,1 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "goal:tuition",
+       "kpi:net_worth"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+      ],
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12639,
+     "output_tokens": 370,
+     "requests": 2,
+     "cost_usd": 0.001449,
+     "tools_cost_usd": null
+    },
+    "turn_id": "bf3c3e8e574242c7bb75fd9cd2cff43b",
+    "conversation_id": "4dba09b6357f4e69",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mục đang chọn là **Học phí cho con (trong nước / du học)**. Nút này cho biết mục tiêu này cần để dành khoảng **79,1 triệu đồng mỗi tháng**.\n\n- **Mức chắc chắn:** đây là **ước tính**, không phải số thực tế. Ước tính và giả định không được cộng vào tài sản ròng.\n- **Liên kết:** mục tiêu nối với \"Bạn\" ở chiều cần để dành mỗi tháng, dựa trên 1 bản ghi.\n- **Ngày dữ liệu:** 09/10/2026, lấy từ đồ thị tài chính.",
+    "citations": [],
+    "sources": [
+     "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "goal:tuition",
+     "kpi:net_worth"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "So sánh các kịch bản đang bật"
+    ],
+    "answered_at": 1792256921.3409781,
+    "audit_seq": 614,
+    "session": {
+     "id": "4dba09b6357f4e69",
+     "title": "Nút này nói gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.749005661346018,
+   "first_event": 2.229619258083403,
+   "usage": {
+    "cost": 0.001449,
+    "input": 12639,
+    "output": 370,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BAcmE8K8JUPp1SWgoykwoR",
+     "tool": "lien_ket",
+     "label": "Liên kết",
+     "nodes": [
+      "GL:tuition"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BAcmE8K8JUPp1SWgoykwoR",
+     "tool": "lien_ket",
+     "ok": true,
+     "ms": 226,
+     "focus": [
+      "goal:tuition",
+      "kpi:net_worth"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Sao nó lại ghi là chậm tiến độ?",
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "lien_ket",
+      "label": "Liên kết",
+      "status": "ok"
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Định cư / con đi du học: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 11,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 8%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 11,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 8%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 20837,
+     "output_tokens": 920,
+     "requests": 3,
+     "cost_usd": 0.002544,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a8a12ac4864340c3beee80ae2efd60f8",
+    "conversation_id": "4dba09b6357f4e69",
+    "compacted": false,
+    "status": "ok",
+    "text": "Công cụ không nêu rõ lý do mục này bị ghi \"chậm tiến độ\". Tôi chỉ biết trạng thái này được tính trên tài sản hiện có, không phải trên dòng tiền dự kiến.\n\nNhững gì tôi xác nhận được:\n- **Mục tiêu:** Học phí cho con (trong nước / du học) đang ở trạng thái \"chậm tiến độ\". Trong 4 mục tiêu đang theo dõi, mục này và \"Định cư / con đi du học\" là hai mục chậm tiến độ. Hai mục còn lại đúng tiến độ.\n- **Con số cần để dành:** khoảng 79,1 triệu đồng/tháng, là ước tính, không phải số thực tế.\n- **Một điều đáng chú ý trên bảng tin:** mức sụt giảm ước tính khi thị trường xấu là 11,8%, vượt ngưỡng chấp nhận 8%. Tôi chưa có dữ liệu xác nhận đây là nguyên nhân khiến mục học phí chậm tiến độ.\n\nĐể xem chi tiết so sánh tài sản hiện có với mục tiêu, bạn có thể mở trang **Kế hoạch** (mục tiêu và tiến độ). Tôi cũng có thể mở trang đó cho bạn.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": null,
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792256930.654199,
+    "audit_seq": 615,
+    "session": {
+     "id": "4dba09b6357f4e69",
+     "title": "Nút này nói gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 9.276369797997177,
+   "first_event": 1.594867235980928,
+   "usage": {
+    "cost": 0.002544,
+    "input": 20837,
+    "output": 920,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Qj8uqoijkvYCy1AKByce78",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Qj8uqoijkvYCy1AKByce78",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 77,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01XbPsYUWmwmcudLkQnHHtDq",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01XbPsYUWmwmcudLkQnHHtDq",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 167,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

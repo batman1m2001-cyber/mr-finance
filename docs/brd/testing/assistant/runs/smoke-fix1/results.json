@@ -1,0 +1,41 @@
+{
+ "tag": "smoke-fix1",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.04979,
+ "conversations": [
+  {
+   "id": "nav-03",
+   "category": "navigation",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003993,
+   "seconds": 14.2,
+   "tokens": 34766
+  },
+  {
+   "id": "pf-01",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003931,
+   "seconds": 9.7,
+   "tokens": 35334
+  },
+  {
+   "id": "kn-03",
+   "category": "knowledge",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001466,
+   "seconds": 4.0,
+   "tokens": 12812
+  }
+ ],
+ "passed": 3,
+ "of": 3,
+ "turns": 6,
+ "turns_failed": 0
+}

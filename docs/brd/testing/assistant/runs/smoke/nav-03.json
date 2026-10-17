@@ -1,0 +1,382 @@
+{
+ "id": "nav-03",
+ "category": "navigation",
+ "persona": "đang xem đồ thị, chọn một mục tiêu (C01)",
+ "client_id": "C01",
+ "title": "“Nút này nghĩa là gì?” với một mục tiêu đang chọn",
+ "why": "The person picks a goal node and asks about “this”: the selection must reach the answer.",
+ "brd": [
+  "OWN-GW-47",
+  "OWN-GW-45",
+  "KIT-COPILOT-01"
+ ],
+ "turns": [
+  {
+   "say": "Nút này nói gì vậy?",
+   "expect": {
+    "tools_any": [
+     "lien_ket",
+     "muc_tieu"
+    ],
+    "says": "học phí"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   }
+  },
+  {
+   "say": "Sao nó lại ghi là chậm tiến độ?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu",
+     "lien_ket"
+    ],
+    "says": "chậm|thiếu|cần"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nút này nói gì vậy?",
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Cách tính] Bấm vào một con số có gạch chân (hoặc nút “Cách tính”) để mở ngăn bên phải: con số là gì, công thức bằng lời, các đầu vào với giá trị của chúng và nơi chúng được tính. Tham số là giả định thì được ghi là giả định. [Trợ lý OneWealth (Copilot)] Bấm ✦ để mở khung trợ lý. Hỏi bằng tiếng Việt về số liệu của mình, về trang đang xem hay cách làm một việc trong ứng dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu bạn đang ở trang nào, vai trò nào, khách hàng nào. - Trợ lý chỉ đọc những gì bạn được phép xem, qua đúng các công cụ của các trang. Câu trả lời có nguồn (“Nguồn: …”), thời điểm số liệu và nút Mở … → để mở trang chứa số đó; số đọc được trên trang hiện tại sẽ được đánh dấu. - Việc làm thay đổi dữ liệu (lưu mục tiêu, gửi đề xuất, ghi nhớ…) luôn hiện Xác nhận / Huỷ trước; không xác nhận thì không có gì được ghi. Sau khi làm, t [Bản đồ tài chính] Bức tranh toàn bộ dưới dạng đồ thị: bạn ở giữa, xung quanh là tài sản, nguồn dữ liệu, mục tiêu, rủi ro, chính sách và tin tức. Bật tắt từng loại bằng các nút phía trên (nguồn dữ liệu và chính sách tắt sẵn). Bấm một nút để xem số liệu và các liên kết của nó; nhóm tài sản mở ra các khoản bằng nhấp đúp hoặc “Mở rộng”. Đường nét đứt là tin “có thể ảnh hưởng”. Mở trang đưa tới trang chi tiết. Trên điện thoại trang mở ở dạng danh sách. [Thanh khoản trên tổng tài sản] Cách tính Thanh khoản trên tổng tài sản: Tỷ lệ = thanh khoản ÷ tổng tài sản.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Cách tính",
+       "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+       "Hướng dẫn sử dụng · Bản đồ tài chính",
+       "Cách tính · Thanh khoản trên tổng tài sản"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bản đồ tài chính",
+       "route": "#/client/tong-quan/ban-do"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12711,
+     "output_tokens": 747,
+     "requests": 2,
+     "cost_usd": 0.001645,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a1b9b495c73548bdad3d333dcbf2957a",
+    "conversation_id": "2669968a61f242cd",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn đang ở trang Tổng quan, nhưng tôi chưa biết bạn đang nhắc đến nút nào. Hướng dẫn sử dụng nói chung như sau:\n\n- **Nút \"Cách tính\"** hoặc **con số có gạch chân**: mở ngăn bên phải, giải thích con số là gì, công thức, các đầu vào và giá trị của chúng. Phần nào là giả định thì được ghi rõ.\n- **Nút ✦**: mở khung trợ lý để hỏi bằng tiếng Việt về số liệu của bạn hoặc cách dùng ứng dụng.\n- **Nút Xác nhận / Huỷ**: xuất hiện trước khi có thao tác ghi dữ liệu, như lưu mục tiêu hay gửi đề xuất. Nếu không xác nhận thì không có gì được ghi.\n\nBạn có thể cho tôi biết chữ trên nút hoặc vị trí của nó trên màn hình không? Tôi sẽ giải thích cụ thể hơn.",
+    "citations": [
+     {
+      "label": "Bản đồ tài chính",
+      "route": "#/client/tong-quan/ban-do"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Cách tính",
+     "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+     "Hướng dẫn sử dụng · Bản đồ tài chính",
+     "Cách tính · Thanh khoản trên tổng tài sản"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792256548.9087267,
+    "audit_seq": 573,
+    "session": {
+     "id": "2669968a61f242cd",
+     "title": "Nút này nói gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 8.69603899307549,
+   "first_event": 3.262106598354876,
+   "usage": {
+    "cost": 0.001645,
+    "input": 12711,
+    "output": 747,
+    "requests": 2
+   },
+   "why": [
+    "called none of ['lien_ket', 'muc_tieu']",
+    "does not say /học phí/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01WK5vsscYPCmCNZseXdwajK",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01WK5vsscYPCmCNZseXdwajK",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 2591,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Sao nó lại ghi là chậm tiến độ?",
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok"
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Định cư / con đi du học: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "lien_ket",
+      "label": "Liên kết",
+      "status": "ok",
+      "text": "Học phí cho con (trong nước / du học) có 1 liên kết: Bạn — cần để dành/tháng +79,1 triệu (ước tính). Thực tế là số đã ghi nhận; ước tính và giả định không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bạn",
+         "sub": "cần để dành/tháng · ước tính · 1 bản ghi",
+         "chip": "+79,1 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "goal:tuition",
+       "kpi:net_worth"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+      ],
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 22725,
+     "output_tokens": 810,
+     "requests": 3,
+     "cost_usd": 0.002678,
+     "tools_cost_usd": null
+    },
+    "turn_id": "72e9532ea6a146bb9bc7af29e61f1276",
+    "conversation_id": "2669968a61f242cd",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mục \"Học phí cho con (trong nước / du học)\" được ghi là **chậm tiến độ** vì hệ thống tính mục này dựa trên tài sản hiện có của bạn, và hiện tài sản chưa đủ theo kế hoạch.\n\nTheo đồ thị, mục này cần để dành khoảng **79,1 triệu đồng mỗi tháng**. Đây là con số ước tính, tính đến ngày 2026-10-09, từ mục tiêu trên đồ thị tài chính. Hệ thống không cho tôi thấy số tiền bạn đang để dành hằng tháng, nên tôi chưa thể nói chính xác khoảng cách là bao nhiêu.\n\nNếu muốn, tôi có thể xem trang Dòng tiền để biết số tiền còn lại mỗi tháng, hoặc trang Mục tiêu để xem chi tiết tiến độ.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "goal:tuition",
+     "kpi:net_worth"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "So sánh các kịch bản đang bật"
+    ],
+    "answered_at": 1792256557.501603,
+    "audit_seq": 574,
+    "session": {
+     "id": "2669968a61f242cd",
+     "title": "Nút này nói gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 8.564962797332555,
+   "first_event": 1.6335809151642025,
+   "usage": {
+    "cost": 0.002678,
+    "input": 22725,
+    "output": 810,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01W5zNWSkkU7NHriCEkFuSYi",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01W5zNWSkkU7NHriCEkFuSYi",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 75,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01X25BND8aq34MRGjqLr91cG",
+     "tool": "lien_ket",
+     "label": "Liên kết",
+     "nodes": [
+      "GL:tuition"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01X25BND8aq34MRGjqLr91cG",
+     "tool": "lien_ket",
+     "ok": true,
+     "ms": 186,
+     "focus": [
+      "goal:tuition",
+      "kpi:net_worth"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

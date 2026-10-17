@@ -1,0 +1,159 @@
+{
+ "tag": "smoke",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.04045,
+ "conversations": [
+  {
+   "id": "nav-03",
+   "category": "navigation",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "called none of ['lien_ket', 'muc_tieu']",
+      "does not say /học phí/"
+     ]
+    ]
+   ],
+   "cost": 0.004323,
+   "seconds": 17.4,
+   "tokens": 36993
+  },
+  {
+   "id": "pf-01",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "does not say /2,4/"
+     ]
+    ],
+    [
+     3,
+     [
+      "does not say /5[,.]\\d|5 ?%|5,3/"
+     ]
+    ]
+   ],
+   "cost": 0.00462,
+   "seconds": 15.2,
+   "tokens": 39602
+  },
+  {
+   "id": "kn-03",
+   "category": "knowledge",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "does not say /67[0-9]|0,6[78]/"
+     ]
+    ]
+   ],
+   "cost": 0.000938,
+   "seconds": 4.6,
+   "tokens": 6442
+  },
+  {
+   "id": "nw-01",
+   "category": "news",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004228,
+   "seconds": 13.9,
+   "tokens": 34699
+  },
+  {
+   "id": "gl-01",
+   "category": "goals",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005187,
+   "seconds": 17.6,
+   "tokens": 42337
+  },
+  {
+   "id": "wi-01",
+   "category": "what_if",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0048,
+   "seconds": 14.5,
+   "tokens": 41179
+  },
+  {
+   "id": "cc-04",
+   "category": "concerns",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003632,
+   "seconds": 13.4,
+   "tokens": 28186
+  },
+  {
+   "id": "act-03",
+   "category": "actions",
+   "turns": 5,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005145,
+   "seconds": 8.7,
+   "tokens": 49280
+  },
+  {
+   "id": "ms-01",
+   "category": "memory_sessions",
+   "turns": 4,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003828,
+   "seconds": 12.6,
+   "tokens": 32144
+  },
+  {
+   "id": "am-02",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001409,
+   "seconds": 4.4,
+   "tokens": 12141
+  },
+  {
+   "id": "oos-03",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000856,
+   "seconds": 4.2,
+   "tokens": 6259
+  },
+  {
+   "id": "adv-02",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001484,
+   "seconds": 5.4,
+   "tokens": 12173
+  }
+ ],
+ "passed": 9,
+ "of": 12,
+ "turns": 29,
+ "turns_failed": 4
+}

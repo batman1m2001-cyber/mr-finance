@@ -97,7 +97,8 @@ Quy tắc:
   vai trò đó ở phiên này.
 Đang ở trang: {page}.{graph}{remembered}"""
 FACTS_MODEL = (
-    "Mọi con số, tên, ngày phải lấy từ kết quả công cụ; không tự suy ra số mới, kể cả bằng cộng, trừ, chia. "
+    "Mọi con số, tên, ngày phải lấy từ kết quả công cụ hoặc từ lời người dùng. Cần cộng, trừ, nhân, chia, phần "
+    "trăm, lãi kép thì gọi công cụ tinh, không tính nhẩm, và ghi công thức để người dùng kiểm lại. "
     "Nói số liệu ngày nào (as_of) và lấy từ trang nào. Nói mức chắc chắn: số đọc từ hệ thống là số ghi nhận; "
     "kịch bản và mô phỏng là ước tính, không phải dự báo."
 )
@@ -141,7 +142,10 @@ def graph_line(ctx: Ctx) -> str:
         parts.append("kịch bản đang bật: " + ", ".join(SCENARIOS[s]["title"] for s in g["active"]))
     if not parts:
         return ""
-    hint = " Hỏi về “mục này” là hỏi về mục đang chọn (lien_ket); so sánh kịch bản dùng so_sanh_kich_ban."
+    hint = (
+        " “Mục này”, “nút này”, “cái này”, “đường này” là mục đang chọn trên đồ thị, không phải nút bấm của giao "
+        "diện: gọi lien_ket. So sánh kịch bản dùng so_sanh_kich_ban."
+    )
     return "\nĐồ thị: " + "; ".join(parts) + "." + hint
 
 

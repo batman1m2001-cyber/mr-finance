@@ -36,6 +36,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "hop_tin": "Hộp tin",
     "tin_bi_giu": "Tin bị giữ",
     "mo_trang": "Mở trang",
+    "tinh": "Tính toán",
     "duyet_de_xuat": "Duyệt đề xuất",
     "lay_tin": "Lấy tin",
     "dong_luc": "Chính sách & dự án",

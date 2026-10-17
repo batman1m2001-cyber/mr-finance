@@ -1,0 +1,429 @@
+{
+ "id": "pf-01",
+ "category": "personal_finance",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Tài sản, nợ, và tỷ lệ nợ",
+ "why": "Plain figures, then a ratio the person asks to be worked out.",
+ "brd": [
+  "BRIEF-DASH-01",
+  "OWN-AS-03",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan"
+    ],
+    "says": "4[356],\\d"
+   }
+  },
+  {
+   "say": "Còn nợ thì bao nhiêu?",
+   "expect": {
+    "says": "2,4"
+   }
+  },
+  {
+   "say": "Vậy nợ chiếm bao nhiêu phần trăm tổng tài sản?",
+   "expect": {
+    "grounded": false,
+    "says": "5[,.]\\d|5 ?%|5,3"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11652,
+     "output_tokens": 426,
+     "requests": 2,
+     "cost_usd": 0.001378,
+     "tools_cost_usd": null
+    },
+    "turn_id": "f3db8e8028904daca156730b4d279006",
+    "conversation_id": "dedf0843d3a44206",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tài sản ròng của bạn hiện là **43,53 tỷ đồng**, theo số liệu ngày 09/10/2026 trên trang Tổng quan. Đây là tài sản ròng (tổng tài sản trừ nợ), nên có thể khác với tổng tài sản trước khi trừ nợ.\n\nMột số chỉ số đi kèm:\n- Tháng này tăng 980,5 triệu đồng (+2,3% so với tháng trước).\n- Thanh khoản dự phòng: 4,72 tỷ đồng, đủ chi khoảng 3 năm.\n- Khi thị trường xấu, mức sụt giảm ước tính là 11,8%, vượt ngưỡng rủi ro 8% của bạn.\n\nSố liệu này là giá trị ghi nhận trên hệ thống. Mức sụt giảm là ước tính từ mô phỏng, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792256561.7350762,
+    "audit_seq": 576,
+    "session": {
+     "id": "dedf0843d3a44206",
+     "title": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.132259611971676,
+   "first_event": 1.319437665399164,
+   "usage": {
+    "cost": 0.001378,
+    "input": 11652,
+    "output": 426,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01THkD5p6Zkn1VjaETY1upY7",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01THkD5p6Zkn1VjaETY1upY7",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 77,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Còn nợ thì bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "1 kết quả cho “nợ”: Dư nợ thẻ Visa Signature.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Dư nợ thẻ Visa Signature",
+         "sub": "Dư nợ thẻ",
+         "route": "#/client/tai-san"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12760,
+     "output_tokens": 586,
+     "requests": 2,
+     "cost_usd": 0.001569,
+     "tools_cost_usd": null
+    },
+    "turn_id": "abd5c369cff74cdca8b43eeab9c73e84",
+    "conversation_id": "dedf0843d3a44206",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tìm được con số tổng nợ. Tìm kiếm chỉ ra một mục liên quan là **\"Dư nợ thẻ Visa Signature\"**, nằm ở trang Tài sản, nhưng kết quả không kèm số tiền. Bạn có thể mở trang Tài sản để xem số dư nợ thẻ. Nếu bạn có khoản vay khác, tôi có thể tìm theo tên khoản vay đó.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792256567.1554,
+    "audit_seq": 577,
+    "session": {
+     "id": "dedf0843d3a44206",
+     "title": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.391775896772742,
+   "first_event": 2.028891917783767,
+   "usage": {
+    "cost": 0.001569,
+    "input": 12760,
+    "output": 586,
+    "requests": 2
+   },
+   "why": [
+    "does not say /2,4/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013oDs6fvKAXfVxCuKCyrWC7",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013oDs6fvKAXfVxCuKCyrWC7",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 92,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Vậy nợ chiếm bao nhiêu phần trăm tổng tài sản?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok"
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "2 kết quả cho “vay”: Vay mua nhà Thảo Điền; Mua thêm BĐS bằng vốn vay.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Vay mua nhà Thảo Điền",
+         "sub": "Khoản vay",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "Tích lũy tài sản",
+         "route": "#/client/muc-tieu/ke-hoach"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13539,
+     "output_tokens": 639,
+     "requests": 2,
+     "cost_usd": 0.001673,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5bbd4981c5fe442881a870fd6c22d18c",
+    "conversation_id": "dedf0843d3a44206",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tính được tỷ lệ nợ trên tổng tài sản. Tìm kiếm chỉ trả về tên các khoản vay, gồm **Vay mua nhà Thảo Điền** và **Dư nợ thẻ Visa Signature** (trang Tài sản), cùng **Mua thêm BĐS bằng vốn vay** (trang Kế hoạch). Kết quả không có số dư nợ của từng khoản nên tôi không thể tính phần trăm.\n\nBạn có thể mở trang Tài sản để xem số dư nợ. Khi có số nợ, tôi sẽ tính tỷ lệ so với tổng tài sản ròng 43,53 tỷ đồng (số liệu ngày 09/10/2026).",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792256572.747927,
+    "audit_seq": 578,
+    "session": {
+     "id": "dedf0843d3a44206",
+     "title": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 5.5595264849253,
+   "first_event": 1.9906433997675776,
+   "usage": {
+    "cost": 0.001673,
+    "input": 13539,
+    "output": 639,
+    "requests": 2
+   },
+   "why": [
+    "does not say /5[,.]\\d|5 ?%|5,3/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01F4GmzauHnsLM64YGiwARHn",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01F4GmzauHnsLM64YGiwARHn",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 93,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

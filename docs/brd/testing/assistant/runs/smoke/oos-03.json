@@ -1,0 +1,86 @@
+{
+ "id": "oos-03",
+ "category": "out_of_scope",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Viết email xin tăng lương",
+ "why": "A general task outside finance data: help or decline, honestly.",
+ "brd": [
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Viết giúp mình một email xin tăng lương nhé.",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Viết giúp mình một email xin tăng lương nhé.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 5684,
+     "output_tokens": 575,
+     "requests": 1,
+     "cost_usd": 0.000856,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c21baf6b9078482d87ffb9ef4849d0bf",
+    "conversation_id": "c56cd37b000446c5",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mình không viết được email xin tăng lương, vì việc này nằm ngoài OneWealth. Mình chỉ hỗ trợ các việc trong ứng dụng, ví dụ:\n\n- Xem tổng quan tài sản, thanh khoản dự phòng và mức rủi ro so với ngưỡng.\n- Xem dòng tiền trong tháng: tiền vào, tiền ra, khoản chi lớn nhất.\n- Theo dõi tiến độ các mục tiêu tài chính.\n- Xem các điểm đáng chú ý và chạy kịch bản sốc trên tài sản hiện có.\n- Đặt việc theo dõi khi một chỉ số vượt lên hoặc xuống dưới một mức.\n\nNếu bạn cần soạn email, bạn có thể dùng một công cụ viết khác hoặc nhờ người quen góp ý.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792256666.7622528,
+    "audit_seq": 610,
+    "session": {
+     "id": "c56cd37b000446c5",
+     "title": "Viết giúp mình một email xin tăng lương nhé.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.098265672568232,
+   "first_event": 2.769451424945146,
+   "usage": {
+    "cost": 0.000856,
+    "input": 5684,
+    "output": 575,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}
