@@ -39,6 +39,21 @@ branch `exp/graph-workspace` and served on its own public link; the live demo is
 | OWN-GW-18 | Distinct flow semantics: actual financial flows, data relationships and hypothetical news/scenario impacts look different; no animation implies a real transaction that did not happen | refinement §4 | documented |
 | OWN-GW-19 | Performance: lightweight, on the existing graph; no edge animates continuously; reduced motion respected; tested on a realistic (larger) graph | refinement §5 | documented |
 
+## SS — Assistant sessions, history and compaction (2026-10-17, experiment)
+
+Source: [`2026-10-17_assistant_sessions.md`](../sources/owner_requests/2026-10-17_assistant_sessions.md). Extends AS (FEAT-37); the global memory (OWN-AS-12…16) stays as it is.
+
+| ID | Requirement | Source | Status |
+|---|---|---|---|
+| OWN-SS-01 | Sessions: create a new one, switch to an earlier one, rename, archive (and bring back) or delete | “Session management” | documented |
+| OWN-SS-02 | A concise, meaningful title generated from the first request and refined when more context is available; a title the person set is kept | “Session management” | documented |
+| OWN-SS-03 | Each session's messages, timestamps, tool activity and metadata persist; reopening or refreshing restores the right conversation, including a turn that was cut by the refresh; the store chosen after checking the deployment | “Conversation persistence” | documented |
+| OWN-SS-04 | Two levels: the person's global memory kept across sessions and retrieved when relevant; each session's history and working context isolated; never another user's data, never an unrelated session mixed in | “Two levels of memory” | documented |
+| OWN-SS-05 | Automatic compaction near the context limit into a structured continuation summary (decisions, preferences, unresolved tasks, entities, tool results, references to persistent data), recent messages kept; recoverable, never silent | “Context compaction” | documented |
+| OWN-SS-06 | Each session keeps its own goal, context summary and history; a new session resets the active context without erasing global memory or earlier sessions | “Session continuity” | documented |
+| OWN-SS-07 | A session switcher and history and a prominent New Chat in the existing assistant panel, compact and consistent with the design, on desktop and phone | “UI integration” | documented |
+| OWN-SS-08 | Tests: persistence across refreshes, session isolation, titles, compaction and continuation, tool-call recovery, multi-user access | “Testing” | documented |
+
 ## AS — Assistant, memory and agent ecosystem (2026-10-16, backlog B-08)
 
 Source: [`2026-10-16_assistant_memory_agents.md`](../sources/owner_requests/2026-10-16_assistant_memory_agents.md);

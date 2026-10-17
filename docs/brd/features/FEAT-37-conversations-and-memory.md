@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Type | Proposed extension (owner request B-08) |
-| Requirements | OWN-AS-10, OWN-AS-11, OWN-AS-12, OWN-AS-13, OWN-AS-14, OWN-AS-15, OWN-AS-16 |
+| Requirements | OWN-AS-10, OWN-AS-11, OWN-AS-12, OWN-AS-13, OWN-AS-14, OWN-AS-15, OWN-AS-16; sessions OWN-SS-01…08 |
 | Users | every signed-in role |
 | Entry points | the assistant panel (conversation list); the **Bộ nhớ** page; `/api/assistant/conversations`, `/api/assistant/memory` |
 | Status | see [traceability](../requirements/requirements_traceability.md) — built in ASSISTANT_PLAN A3–A4 |
@@ -30,6 +30,17 @@ FEAT-39). Any stored message → archive search results with conversation, time 
    corrected or deleted, or all at once.
 6. Compliance's `assistant_retention` (two-person) deletes archived messages past their age (default 365 days) and
    expired facts.
+
+### Sessions (OWN-SS-01…08, planned in [SESSIONS_PLAN.md](../../SESSIONS_PLAN.md))
+7. A conversation is a **session**: it can be renamed, archived (hidden, brought back) or deleted. Its title is generated
+   (≤ 7 words) after the first answer and refined later; a title the person set is kept. Template mode never sends the
+   question to a model for a title.
+8. A turn is written when it starts and completed when it ends. A refresh mid-answer shows the question and the
+   steps that ran, marked interrupted.
+9. Each session keeps a goal and a context summary. Compaction writes the summary in seven fixed sections (goal,
+   decisions, preferences, open tasks, entities, tool results, references); the session keeps every message, and
+   `doc_lai_phien` reads them back.
+10. New Chat starts an empty session: global memory and earlier sessions stay.
 
 ## States
 Conversation: `active` → `idle` (15 min without a turn) → consolidated (A6); deleted. Item: `active` → `expired` |
