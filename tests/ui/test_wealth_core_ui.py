@@ -101,7 +101,8 @@ def test_the_core_answers_selection_the_assistant_and_a_flow(open_page):
     p.page.wait_for_function("document.querySelector('.ws-svg').classList.contains('busy')")
     p.page.wait_for_function("+getComputedStyle(document.querySelector('.wme-act')).opacity > .3")
     assert p.page.evaluate("getComputedStyle(document.querySelector('.wme-act')).stroke") == p.page.evaluate(
-        "getComputedStyle(document.querySelector('.wburst')).stroke")  # --pulse, the data colour
+        "getComputedStyle(document.querySelector('.wburst')).stroke"
+    )  # --pulse, the data colour
     p.page.wait_for_selector(".wme-ripple", state="attached", timeout=4000)  # streaming: a ripple per text event
     p.page.wait_for_selector(".wnode.k-family.kept")
     p.page.wait_for_function("!document.querySelector('.wme-ripple')", timeout=4000)  # ripples leave, none stays
@@ -157,7 +158,7 @@ def test_the_net_worth_stays_readable_whatever_the_light(open_page, theme):
     for _ in range(8):  # through a beat and the breath: the brightest the core gets behind the figure
         shot = Image.open(io.BytesIO(p.page.screenshot(clip=box))).convert("RGB")
         raw = shot.tobytes()
-        worst = max(worst, max(luminance(raw[i:i + 3]) for i in range(0, len(raw), 3)))
+        worst = max(worst, max(luminance(raw[i : i + 3]) for i in range(0, len(raw), 3)))
         p.page.wait_for_timeout(140)
     contrast = (1.0 + 0.05) / (worst + 0.05)
     assert contrast >= 7, f"{theme}: {contrast:.1f}:1"

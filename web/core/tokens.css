@@ -924,7 +924,11 @@ body.signed-out .bellwrap, body.signed-out .cp-fab, body.signed-out #reset { dis
 body.ws-on #nav, body.ws-on #subnav { display: none !important; }
 body.ws-on main#main { max-width: none; padding: 0; }
 body.ws-on .foot { margin-top: 0; }
-.ws { --bar-w: 64px; --dock-w: 384px; display: grid; grid-template-columns: var(--bar-w) minmax(0, 1fr) var(--dock-w);
+/* the dock's width, set on .ws while its divider drags: registered as not inherited, so a change restyles .ws alone,
+   not the thousands of graph nodes under it (an inherited one restyled them all, every frame: ~150 ms a frame) */
+@property --dock-pick { syntax: "*"; inherits: false; }
+@property --dock-w { syntax: "*"; inherits: false; }
+.ws { --bar-w: 64px; --dock-def: 384px; --dock-w: var(--dock-pick, var(--dock-def)); display: grid; grid-template-columns: var(--bar-w) minmax(0, 1fr) var(--dock-w);
   height: calc(100dvh - var(--ws-top, 112px)); min-height: 560px; border-top: 1px solid var(--hair); }
 .ws.folded { --dock-w: 48px; }
 .ws-bar { position: relative; z-index: 6; display: flex; flex-direction: column; gap: 4px; padding: 10px 8px; background: var(--surface);
@@ -1040,7 +1044,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-edges { transition: opacity var(--dur-2) var(--ease-out); }
 .ws-edges.moving { opacity: 0; }
 /* silk (OWN-GW-16, 18): hairlines, solid / dashed / dotted by certainty; a read path glows, a failed one is red */
-/* a static edge is a quiet line: what moves on it, and the core, carry the light (docs/brd/testing/ui/flows_perf.md) */
+/* a static edge is a quiet line: what moves on it, and the core, carry the light (docs/brd/testing/panel_and_flows_report.md) */
 .wedge { fill: none; stroke: var(--tone); stroke-opacity: .3; stroke-linecap: round; transition: opacity var(--dur-2) var(--ease-out); }
 .wedge.money { stroke-opacity: .4; }
 .wedge.c-estimate { stroke-dasharray: 6 4; }
@@ -1111,7 +1115,23 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-sheet-h .iconbtn { margin-left: auto; width: 32px; height: 32px; cursor: pointer; color: var(--ink); }
 .ws-sheet-b { flex: 1; min-height: 0; overflow: auto; padding: 18px 20px 32px; }
 /* the dock: Trợ lý · Thông tin */
-.ws-dock { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--surface); border-left: 1px solid var(--hair); }
+.ws-dock { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--surface); border-left: 1px solid var(--hair); }
+/* the dock's divider (panel UX): a 10 px grip over its left border, a hairline that lights on hover, focus or drag */
+.ws-split { position: absolute; z-index: 7; top: 0; bottom: 0; left: -5px; width: 10px; cursor: col-resize; touch-action: none; outline: none; }
+.ws-split::after { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; border-radius: 2px; background: var(--accent);
+  opacity: 0; transition: opacity var(--dur-1) var(--ease-out); }
+.ws-split:hover::after, .ws-split:focus-visible::after, .ws.resizing .ws-split::after { opacity: 1; }
+.ws-split:focus-visible::after { box-shadow: 0 0 0 2px var(--accent-soft); }
+.ws.resizing { cursor: col-resize; user-select: none; }
+.ws.resizing :is(.ws-center, .ws-dock) { pointer-events: none; }
+.ws.resizing :is(.ws-canvas, .ws-dock) { overflow: hidden; }
+.ws.resizing .ws-pane { align-self: flex-end; }
+.ws.resizing :is(.ws-svg, .ws-fxsvg) { transform-origin: 0 0; will-change: transform; }
+.ws.fold-intent .ws-dock > :not(.ws-split) { opacity: .45; }
+.ws-dockreset { margin-left: auto; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; color: var(--ink-2); }
+.ws-dockreset[hidden] { display: none; }
+.ws-dockreset:not([hidden]) + .ws-fold { margin-left: 0; }
+.ws.folded .ws-dockreset { display: none; }
 .ws-tabs { display: flex; align-items: center; gap: 2px; padding: 6px 8px; border-bottom: 1px solid var(--hair); }
 .ws-tabs [role="tab"] { display: inline-flex; gap: 6px; align-items: center; padding: 7px 12px; border: 0; border-radius: 9px; background: none;
   color: var(--ink-2); font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; }
@@ -1134,10 +1154,54 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-ins .cert.c-estimate { color: var(--warning); } .ws-ins .cert.c-hypothetical { color: var(--s7); font-style: italic; }
 .cp-panel.cp-docked { position: static; inset: auto; width: auto; flex: 1; min-height: 0; z-index: auto; border: 0; border-radius: 0; box-shadow: none; animation: none; }
 .cp-panel.cp-docked #cp-close, .cp-fab[hidden] { display: none; }
+/* ── the Assistant's reading scale (panel UX, 2026-10-18): a long conversation reads compact — answers 13 px at 1.55,
+   emphasis 600 not 700, figures tabular; time, sources, steps and suggestions a step smaller and quieter, so the answer
+   leads; the chrome around the conversation gives its height back (the scroller had 309 of 900 px). A phone keeps
+   14 px answers and a 16 px input (smaller zooms the page on focus). */
+.cp-panel { font-size: 13px; line-height: 1.5; }
+.cp-head { gap: 6px; padding: 8px 12px; }
+.cp-head > b { font-size: 13.5px; font-weight: 650; }
+.cp-panel .badge { font-size: 10.5px; padding: 0 7px; }
+.cp-sess { gap: 8px; padding: 7px 12px; }
+.cp-sess-t { font-size: 13px; }
+.cp-sess-main .small, .cp-sum summary { font-size: 11.5px; }
+.cp-new { gap: 4px; padding: 4px 10px; font-size: 12px; }
+.cp-new .ic { width: 14px; height: 14px; }
+.cp-ctx { padding: 4px 12px; font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp-msgs { gap: 8px; padding: 10px 12px; }
+.cp-me, .cp-bot { font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
+.cp-me { padding: 6px 10px; border-radius: 10px 10px 2px 10px; }
+.cp-bot { padding: 8px 11px; border-radius: 10px 10px 10px 2px; font-variant-numeric: tabular-nums; }
+.cp-bot :is(b, strong) { font-weight: 600; }
+.cp-p { margin-bottom: 5px; }
+.cp-prose { margin-bottom: 5px; padding-left: 16px; } .cp-prose li { margin: 1px 0; }
+.cp-bot .mt { margin-top: 6px; }
+.cp-bot .row { gap: 2px 10px; }
+.cp-bot :is(a.small, .linkbtn.small) { font-size: 11.5px; }
+.cp-meta { margin-top: 4px; font-size: 10.5px; line-height: 1.4; }
+.cp-steps { margin-top: 4px; gap: 3px; }
+.cp-steps .chip { padding: 0 7px; font-size: 10.5px; }
+.cp-card { margin-top: 6px; padding: 8px; gap: 6px; }
+.cp-ct { font-size: 11px; font-weight: 650; }
+.cp-fig b { font-size: 14px; font-weight: 650; }
+.cp-fig span, .cp-fig small, .cp-li small { font-size: 11px; }
+.cp-lt { font-size: 12px; }
+.cp-sugg { gap: 4px; padding: 6px 12px 0; font-size: 11.5px; }
+.cp-sugg .chip { padding: 2px 9px; font-size: 12px; line-height: 1.45; }
+.cp-form { gap: 6px; padding: 8px 12px; }
+.cp-form input { padding: 6px 10px; font-size: 13px; }
+.cp-form .btn { padding: 6px 12px; font-size: 12.5px; }
+.cp-foot { padding: 0 12px 8px; font-size: 10.5px; line-height: 1.4; }
+.ws-tabs { padding: 4px 6px; }
+.ws-tabs [role="tab"] { padding: 5px 10px; font-size: 12.5px; font-weight: 600; }
+@media (max-width: 760px) {
+  .cp-me, .cp-bot { font-size: 14px; }
+  .cp-form input { font-size: 16px; }
+}
 .ws-svg :is(.k-holding, .k-category, .quiet) :is(.wlbl, .wfig) { opacity: 0; transition: opacity var(--dur-1) var(--ease-out); }
 .ws-svg.near :is(.k-holding, .k-category) :is(.wlbl, .wfig), .ws-svg :is(.k-holding, .k-category, .quiet):is(:hover, :focus-visible, .sel, .lit, .kept, .mf-focus) :is(.wlbl, .wfig) { opacity: 1; }
 .ws-svg .quiet:is(:hover, :focus-visible, .sel) { z-index: 1; }
-@media (max-width: 1180px) { .ws { --dock-w: 330px; } }
+@media (max-width: 1180px) { .ws { --dock-def: 330px; } }
 @media (max-width: 760px) {
   .ws { display: flex; flex-direction: column; height: auto; min-height: 0; }
   .ws-bar { flex-direction: row; overflow-x: auto; padding: 6px 8px; border-right: 0; border-bottom: 1px solid var(--hair); }
@@ -1163,7 +1227,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws.sheeted .ws-canvas, .ws.sheeted .ws-list, .ws.sheeted .ws-ctl, .ws.sheeted .ws-strip, .ws.sheeted .ws-head { display: none; }
   .ws-dock { border-left: 0; border-top: 1px solid var(--hair); height: 78dvh; }
   .ws.folded .ws-pane, .ws.folded .ws-tabs [role="tab"] { display: revert; }
-  .ws-fold { display: none; }
+  .ws-fold, .ws-split, .ws-dockreset { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ws-fxsvg, .wspark, .wglow { display: none; }

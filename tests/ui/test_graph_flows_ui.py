@@ -17,8 +17,9 @@ SPARKS = r"""() => {
     const o = out[k] ||= {cert: [...q.classList].find(c => c.startsWith('c-')), m: +q.dataset.m, n: 0, dur,
       trail: +q.style.getPropertyValue('--a'), so: +q.style.getPropertyValue('--so'),
       way: s === ws && e === we ? 'fwd' : s === we && e === ws ? 'back' : '?',
-      dash: q.style.strokeDasharray.split(' ').slice(0, 5).join(' '), width: parseFloat(cs.strokeWidth), filter: cs.filter,
-      glow: !!document.querySelector(`.ws-sparks .wglow[data-e="${k}"]`), stroke: cs.stroke, wire: getComputedStyle(w).stroke};
+      dash: q.style.strokeDasharray.split(' ').slice(0, 5).join(' '), width: parseFloat(cs.strokeWidth),
+      filter: cs.filter, glow: !!document.querySelector(`.ws-sparks .wglow[data-e="${k}"]`), stroke: cs.stroke,
+      wire: getComputedStyle(w).stroke};
     o.n++;
   }
   return out;
@@ -133,6 +134,18 @@ def test_nothing_moves_under_reduced_motion(open_page):
     assert not p.problems()
 
 
+LAYER = """() => { const s = document.querySelector('.ws-svg'), f = document.querySelector('.ws-fxsvg');
+  const moving = [...f.querySelectorAll('.wspark, .wglow')];
+  const quiet = [...document.querySelectorAll('.wedge.money:not(.on):not(.hot)')];
+  return {same_box: s.getAttribute('viewBox') === f.getAttribute('viewBox'),
+          same_view: s.querySelector('.ws-world').getAttribute('transform')
+            === f.firstElementChild.getAttribute('transform'),
+          events: getComputedStyle(f).pointerEvents, inside: f.parentElement === s.parentElement,
+          stray: s.querySelectorAll('.wspark, .wglow').length,
+          filters: moving.filter(q => getComputedStyle(q).filter !== 'none').length,
+          edge: Math.max(...quiet.map(q => +getComputedStyle(q).strokeOpacity))}; }"""
+
+
 def test_a_spark_stands_off_its_edge_on_its_own_layer_without_filters(open_page):
     """The energy flow, tuned against measurement (docs/brd/testing/ui/flows_perf.md): the sparks sit on their own layer
     (same viewBox and pan/zoom as the graph, no pointer events) so a moving dash repaints only that layer; no spark or
@@ -145,20 +158,18 @@ def test_a_spark_stands_off_its_edge_on_its_own_layer_without_filters(open_page)
         p.page.wait_for_selector(".wspark")
         p.page.click("[data-z='in']")  # zoomed: the spark layer follows the graph's pan and zoom
         p.page.wait_for_timeout(300)
-        layer = p.page.evaluate("""() => { const s = document.querySelector('.ws-svg'), f = document.querySelector('.ws-fxsvg');
-          return {same_box: s.getAttribute('viewBox') === f.getAttribute('viewBox'),
-                  same_view: s.querySelector('.ws-world').getAttribute('transform') === f.firstElementChild.getAttribute('transform'),
-                  events: getComputedStyle(f).pointerEvents, inside: f.parentElement === s.parentElement,
-                  stray: s.querySelectorAll('.wspark, .wglow').length,
-                  filters: [...f.querySelectorAll('.wspark, .wglow')].filter(q => getComputedStyle(q).filter !== 'none').length,
-                  edge: Math.max(...[...document.querySelectorAll('.wedge.money:not(.on):not(.hot)')].map(q => +getComputedStyle(q).strokeOpacity))}; }""")
+        layer = p.page.evaluate(LAYER)
         assert layer["same_box"] and layer["same_view"] and layer["inside"], layer
         assert layer["events"] == "none" and layer["stray"] == 0 and layer["filters"] == 0, layer
         got = p.page.evaluate(SPARKS)
         for k, s in got.items():
             assert s["stroke"] != s["wire"], (theme, k, s)  # the core stands off its line
             assert s["cert"] == "c-hypothetical" or s["so"] >= 0.42, (theme, k, s)  # the smallest flow still shows
-        assert layer["edge"] < min(s["so"] for s in got.values()), (theme, layer, got)  # the line quieter than its spark
+        assert layer["edge"] < min(s["so"] for s in got.values()), (
+            theme,
+            layer,
+            got,
+        )  # the line quieter than its spark
         income, spending = got["FL:in>ME"], got["ME>FL:out"]
         assert income["m"] > spending["m"] and income["width"] > spending["width"]
         assert not p.problems()

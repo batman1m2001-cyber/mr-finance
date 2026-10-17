@@ -2,6 +2,18 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — The Assistant panel and the graph's energy flows tuned against measurement (owner request, experiment).
+  - The panel resizes from a divider (300–720 px, the graph keeps 420 px), folds by drag, answers the keyboard, is
+    kept per browser and resets. A drag costs 29 ms frames on the dense graph, against 167 ms for a naive live
+    resize: the graph's layout holds, the width variables are not inherited, a long conversation reflows at rest.
+  - The chat reads compact: 13 px answers at 1.55, emphasis at 600, tabular figures, quieter meta and chrome. The
+    conversation shows 47% more text at 1440×900; a phone keeps 14 px answers and a 16 px input.
+  - Static edges are quieter. A spark is a light core of its edge's hue on its own layer, the glow a faint stroke,
+    not a filter, and the flicker is gone. Chrome's CPU while flows run: 3.80 → 1.20 cores on Tổng quan; a 30-flow
+    graph went from 10 fps to 60 fps.
+  - Documents: docs/brd/testing/panel_and_flows_report.md (new) and its screenshots; scripts/perf_flows.py and
+    scripts/perf_dock_drag.py (new).
+
 - 2026-10-18 — The assistant stress test done (owner request 2026-10-17, ASSISTANT_STRESS_PLAN T0–T4, experiment).
   - 81 multi-turn conversations as real customers, on the real model and a served copy. Final run: 76 of 81 by the
     machine checks, 80 of 81 by hand; 49 BRD requirements exercised, 46 held.

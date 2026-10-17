@@ -674,7 +674,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const sleepers = new Set();
   const sleep = (why, on) => { if (on) sleepers.add(why); else sleepers.delete(why); svg.classList.toggle("asleep", sleepers.size > 0); };
   if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => sleep("off", !e.isIntersecting)).observe(host);
-  new ResizeObserver(([e]) => { const r = e.contentRect; if (!r.width) return; /* hidden (a phone's sheet): keep the last size */ if (!size || r.width !== size.width || r.height !== size.height) { size = {width: r.width, height: r.height}; if (g && lens) draw(); } }).observe(host);
+  // held (the dock's divider dragged): the SVG scales to its box as it is, and one layout follows the release — a
+  // layout per frame of a drag was ~160 ms a frame on a dense graph (docs/brd/testing/panel_and_flows_report.md)
+  let held = false, heldSize = false;
+  new ResizeObserver(([e]) => { const r = e.contentRect; if (!r.width) return; /* hidden (a phone's sheet): keep the last size */ if (!size || r.width !== size.width || r.height !== size.height) { size = {width: r.width, height: r.height}; if (held) heldSize = true; else if (g && lens) draw(); } }).observe(host);
   function draw({moved = false} = {}) {
     if (!g) return;
     const box = size || host.getBoundingClientRect();
@@ -859,7 +862,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // to the largest of its kind, at most .5. A spark is a light core of its edge's own colour (the hue kept: in, out,
   // estimate, hypothesis, risk); an actual transfer's core carries a faint wider glow stroke under it, an estimate's is
   // dashed and unlit, a hypothesis's dots, only while it is active. No CSS filter: two drop-shadows per spark,
-  // repainted every frame, were 61% of the graph's CPU (docs/brd/testing/ui/flows_perf.md). At most 48 spark paths:
+  // repainted every frame, were 61% of the graph's CPU (docs/brd/testing/panel_and_flows_report.md). At most 48 spark paths:
   // the weakest edges thin out first. Reduced motion stills them (tokens.css).
   const SPARK = [1, 2.5, 1.5, 2, 5];  // back to front: crackle, crackle, head (dash, gap)… — short, a bead of light
   const SPARK_LEN = SPARK.reduce((p, q) => p + q, 0);
@@ -1314,6 +1317,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       draw({moved: !first});
     },
     redraw: () => draw(),
+    hold(on) { held = on; if (!on && heldSize) { heldSize = false; if (g && lens) draw(); } },
     /* the active stress tests combined (POST /api/scenario/combine, F6): each scenario's own part on its node, and its
        hypothetical edges — to the classes it moves (by sign) and to the spending its yearly cost adds (÷ 12). Net
        worth never changes: the combined figure is the bar's, “nếu xảy ra”. null clears them. */
