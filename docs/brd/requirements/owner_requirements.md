@@ -15,7 +15,10 @@ Source: [`2026-10-17_persistent_financial_graph.md`](../sources/owner_requests/2
 [FEAT-40](../features/FEAT-40-persistent-financial-graph.md); screen
 [SCR-CL-12](../ux/screens/client.md#scr-cl-12--không-gian-tài-chính-graph-workspace); decision ADR-0035. Built on
 branch `exp/graph-workspace` and served on its own public link; the live demo is unchanged (OWN-GW-14). Refinement
-(OWN-GW-15…19): [`2026-10-17_graph_dataflow_refinement.md`](../sources/owner_requests/2026-10-17_graph_dataflow_refinement.md).
+(OWN-GW-15…19): [`2026-10-17_graph_dataflow_refinement.md`](../sources/owner_requests/2026-10-17_graph_dataflow_refinement.md). The
+centre and the layout (OWN-GW-20…32): [`2026-10-17_central_wealth_core.md`](../sources/owner_requests/2026-10-17_central_wealth_core.md)
+(“Core”) and [`2026-10-17_graph_layout_routing.md`](../sources/owner_requests/2026-10-17_graph_layout_routing.md)
+(“Layout”); plan [`docs/GRAPH_CORE_LAYOUT_PLAN.md`](../../GRAPH_CORE_LAYOUT_PLAN.md).
 
 | ID | Requirement | Source | Doc status |
 |---|---|---|---|
@@ -38,6 +41,19 @@ branch `exp/graph-workspace` and served on its own public link; the live demo is
 | OWN-GW-17 | Motion is meaningful: the assistant processing, streaming, calling a tool or naming an entity animates the relevant paths and nodes in sync with the real events; relevant relationships highlighted, unrelated branches dimmed | refinement §3 | documented |
 | OWN-GW-18 | Distinct flow semantics: actual financial flows, data relationships and hypothetical news/scenario impacts look different; no animation implies a real transaction that did not happen | refinement §4 | documented |
 | OWN-GW-19 | Performance: lightweight, on the existing graph; no edge animates continuously; reduced motion respected; tested on a realistic (larger) graph | refinement §5 | documented |
+| OWN-GW-20 | “My Wealth” is a premium, dimensional financial core, the most compelling element of the graph: layered translucent surfaces, subtle inner illumination, refined rim lighting, restrained glass-like effects — not a flat filled circle or a generic glowing button | Core, bullet 1 | documented |
+| OWN-GW-21 | Slow, elegant ambient motion on the core (breathing light, gently moving concentric rings); no excessive neon, noisy particles, constant spinning or sci-fi game look | Core, bullets 2 and 6 | documented |
+| OWN-GW-22 | The core is part of the dataflow: financial flows and assistant activity produce meaningful, synchronized light pulses through the core and the connected edges | Core, bullet 3 | documented |
+| OWN-GW-23 | The net worth and its supporting figures stay crisp, stable, readable and accessible; no effect competes with them | Core, bullet 4 | documented |
+| OWN-GW-24 | Distinct but subtle core states: idle, selected, assistant thinking/streaming, active financial-flow interaction | Core, bullet 5 | documented |
+| OWN-GW-25 | The core runs on the existing renderer and Studio dataflow patterns, GPU-friendly, with reduced-motion support — no separate, expensive animation system | Core, bullet 7 and closing paragraph | documented |
+| OWN-GW-26 | Collision-free layout: nodes and labels never overlap; spacing adapts to node and label sizes, graph size and viewport | Layout, bullet 1 | documented |
+| OWN-GW-27 | Clear hierarchy: “My Wealth” the anchor, primary assets a well-spaced layer, sources, transactions, risks, goals and scenarios in organized contextual groups; no arbitrary positions, no overcrowded radial layout | Layout, bullet 2 | documented |
+| OWN-GW-28 | Edge routing: few crossings and bends, no edge through a node or a label; curved, bundled or orthogonal routing with consistent entry and exit points | Layout, bullet 3 | documented |
+| OWN-GW-29 | Readable connections: primary financial flows, supporting relationships and hypothetical impacts look different; inactive edges subtle; only the active paths are highlighted | Layout, bullet 4 | documented |
+| OWN-GW-30 | Adaptive exploration: a dense graph reveals secondary nodes progressively, collapses groups and expands a selected branch; fit-to-view, zoom, pan, and focus on the selection without losing context | Layout, bullet 5 | documented |
+| OWN-GW-31 | Stable interaction: predictable layout changes; the mental map is kept — nodes do not jump when an asset is selected, a view switched or an assistant answer arrives | Layout, bullet 6 | documented |
+| OWN-GW-32 | Tested on realistic and dense graphs for node and label collisions, crossings, readability at zoom levels and performance. Acceptance: organized as complexity grows — no overlapping nodes or labels, no edge through a node, no uncontrolled web; when a layout cannot stay readable, visible complexity is reduced instead of squeezed | Layout, testing paragraph and acceptance criterion | documented |
 
 ## SS — Assistant sessions, history and compaction (2026-10-17, experiment)
 

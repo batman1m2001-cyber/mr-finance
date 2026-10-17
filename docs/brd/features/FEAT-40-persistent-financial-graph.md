@@ -143,6 +143,59 @@ the loan and card edges, from the month's spending categories). Bigger flows car
 scenario never runs. Reduced motion hides them. This is the one keyframe that is not transform or opacity
 (`stroke-dashoffset`): idle frames were measured equal with and without it (16.7 ms mean, p95 16.8 vs 16.7 ms).
 
+### The centre and the layout (OWN-GW-20…32)
+Plan: [`docs/GRAPH_CORE_LAYOUT_PLAN.md`](../../GRAPH_CORE_LAYOUT_PLAN.md). Replaces the sectors, the two staggered rings
+and the free relaxation of G8, which the audit showed still drew spokes through other nodes and their labels.
+
+**Layout** (OWN-GW-26…28, 30, 31):
+- **One ring, one node per slot.** Every node joined to “My Wealth” sits on one ring fitted to the canvas, with no
+  other node between it and the centre. A spoke therefore never passes through a node. Labels sit outside the ring,
+  so a spoke never crosses a label.
+- **Groups in a fixed order.** Money in sits at the left, money out at the right. The upper arc holds the assets,
+  then the debts (next to money out, where repayments go). The lower arc holds risks, news and policy, scenarios,
+  goals and the reserve; in the Tài sản lens, also the data sources. Gaps between groups are wider than gaps inside a
+  group. The order is the same in every lens, so a node keeps its place relative to the others.
+- **Slots sized from the labels.** Each slot is the room the node's disc and label need at its place on the ring:
+  beside the node on the sides, above or below it at the top and bottom. Slots are measured along the ring in
+  pixels. The ring is the largest that leaves the labels room on the canvas.
+- **Less, not smaller.** When the slots need more ring than there is, the smallest items of the most crowded group
+  fold into one group node, “+n …”. It carries their count, their focus keys and their records. A click opens it.
+  The selected node, money in and out, and the reserve never fold. The assistant's events on a folded item go to
+  its group node, so an answer never moves the layout.
+- **Branches on demand.** A class picked in the Tài sản lens takes a wider slot, and its holdings fan out behind it.
+  The other nodes slide along the ring in the same order.
+- **Routing.** Spokes run from the centre's rim to the node's inner side, gently curved. Relations (news → class,
+  source → class, class → risk) are shown only on demand. Each one leaves its node on the inner side and is routed
+  clear of “My Wealth”, of every other disc and of every label: the first clear route among an inward curve, a curve
+  bent round the centre on either side, and a path along the inside of the ring. A node's relations leave together
+  as one trunk that splits. Holdings leave a class on its outer side.
+- **Readable connections** (OWN-GW-29). Money: solid, width by value, with sparks. Holdings and class spokes: thin
+  silk. Summaries of news, policy and risk: fainter and dashed. Hypotheses: dotted. With a pick, only the picked
+  node's edges stay strong; the rest drop to a trace.
+- **Exploration** (OWN-GW-30). Fit, zoom and pan, as before. **Tập trung** zooms to the selection and its neighbours,
+  with the rest still visible and dimmed. Group nodes open and close.
+- **Stable** (OWN-GW-31). Selecting a node outside the Tài sản lens moves nothing. An answer moves nothing. A lens
+  switch keeps the order around the ring.
+
+**The centre** (OWN-GW-20…25), drawn in the same SVG with gradients only (no blur filter on anything that moves):
+- **Layers, back to front:** a soft aura; two thin concentric rings; a bezel lit from above (rim light); a deep
+  glass body; an inner light; a top highlight; then a darker inner face under the figures.
+- **Ambient motion:** the aura breathes slowly, and a thin ring drifts outward from the rim and fades. Nothing spins,
+  and there are no particles.
+- **Synced with the money.** Where each money edge meets the rim, a port lights as a spark arrives (income) or
+  leaves (spending, repayments). Each income arrival also sends a soft band of light across the core toward the
+  money out. All of this is timed from the sparks' own animation, on the same clock.
+- **The assistant:**
+  - while a tool runs, the rim takes the data colour and breathes faster;
+  - while the answer streams, each text event sends one ripple from the rim;
+  - when a pulse arrives home, the rim flashes once.
+- **States:** idle, selected (a crisp accent rim), thinking, streaming, and flow (a money edge or flow node pointed
+  at or picked: its port and sparks brighten, the core's inner band tints toward that flow).
+- **Figures:** the net worth and its two lines sit on their own darker face, never animated or filtered, in tabular
+  numerals. They stay buttons with “Cách tính”, readable in both themes.
+- **Reduced motion:** no breathing, ripples or port pulses. The thinking and streaming states become a still rim in
+  the data colour.
+
 ## Capability map — every Customer capability and where it goes (OWN-GW-11)
 
 | Today (screen · route) | Capability | Requirements | In the workspace | Interaction model |

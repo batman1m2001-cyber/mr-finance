@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 66 | 62 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 79 | 62 | 3 | 0 | 13 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -311,6 +311,19 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-GW-17 | FEAT-40 | implemented_verified | G9: start lights the tool's spokes and dims the rest; an ok end sends comets home (news through its two classes); text sets the writing state; the answer's paths stay until a background click — `tests/ui/test_graph_workspace_ui.py::test_the_dataflow_follows_the_stream_and_only_the_stream`, `tests/ui/test_graph_workspace_ui.py::test_the_assistant_stream_drives_the_graph` |
 | OWN-GW-18 | FEAT-40 | implemented_verified | G9: money solid with an end knob, estimate dashed, hypothetical dotted with a hollow pulse; the pulse colour is never a money colour; the legend says a pulse is a read, not a transaction; a failed read sends nothing — `tests/ui/test_graph_workspace_ui.py::test_the_dataflow_follows_the_stream_and_only_the_stream`, `tests/ui/test_graph_workspace_ui.py::test_a_broken_stream_is_said_and_marked_failed` |
 | OWN-GW-19 | FEAT-40 | implemented_verified | G10: at most 8 comets, tracked and paused when hidden, none under reduced motion; real graph burst p95 33 ms, 3× graph p95 50 ms; live-bubble and edge-restyle fixes from profiling (graph_workspace_report.md) — `tests/ui/test_graph_workspace_ui.py::test_a_broken_stream_is_said_and_marked_failed`, `tests/test_graph_workspace.py::test_the_workspace_is_served_and_follows_the_motion_rules` |
+| OWN-GW-20 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md C1 |
+| OWN-GW-21 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md C2 |
+| OWN-GW-22 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md C2 |
+| OWN-GW-23 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md C1 |
+| OWN-GW-24 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md C2 |
+| OWN-GW-25 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md C1–C2 |
+| OWN-GW-26 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md L1–L2 |
+| OWN-GW-27 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md L2 |
+| OWN-GW-28 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md L3 |
+| OWN-GW-29 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md L3 |
+| OWN-GW-30 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md L4 |
+| OWN-GW-31 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md L2–L4 |
+| OWN-GW-32 | FEAT-40 | planned | GRAPH_CORE_LAYOUT_PLAN.md L0, V |
 | OWN-SS-01 | FEAT-37 | implemented_verified | S1, S4: rename, archive, restore, delete, owner and role only; the panel's history with search, Gần đây / Lưu trữ, groups by day — `tests/test_assistant_sessions.py::test_a_session_is_renamed_archived_and_brought_back_by_its_owner_only`, `tests/ui/test_sessions_ui.py::test_a_session_is_named_kept_on_reload_renamed_started_anew_archived_and_restored` |
 | OWN-SS-02 | FEAT-37 | implemented_verified | S2: title (≤ 7 words) and goal by the copilot model after the 1st and 4th answers and after a compaction, asked by the panel once the answer is drawn (no reply latency); never over a name the person set; template mode sends nothing; live: US$0.0001 and 1.3–2.4 s a title — `tests/test_assistant_sessions.py::test_the_title_and_goal_are_written_after_the_first_answer_and_once`, `tests/test_assistant_sessions.py::test_it_is_written_again_at_the_fourth_turn_but_never_over_a_name_the_person_chose`, `tests/test_assistant_sessions.py::test_template_mode_sends_nothing_for_a_title`, `tests/test_assistant_sessions.py::test_a_broken_title_answer_changes_nothing` |
 | OWN-SS-03 | FEAT-37 | implemented_verified | S1: storage kept (assistant.db, ADR-0027, checked against the deployment); a turn written when it starts, each step as it ends; a closed stream does not stop the server's run (measured live: both tools ran and the answer was kept), so the panel follows a running turn after a reload; a turn the server never finished reads as interrupted — `tests/test_assistant_sessions.py::test_a_refresh_mid_answer_keeps_the_question_and_the_tools_that_ran`, `tests/test_assistant_sessions.py::test_a_turn_left_running_by_a_dead_server_reads_as_interrupted`, `tests/test_assistant_sessions.py::test_a_finished_turn_is_one_row_with_its_answer`, `tests/ui/test_sessions_ui.py::test_a_turn_running_at_reload_is_followed_to_its_answer_and_a_dead_one_says_it_was_cut` |

@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Two owner requests recorded: the central wealth core and the graph's layout and routing
+  (OWN-GW-20…32, planned). A stricter audit found spokes through other nodes and labels on every lens (up to 38 on a
+  3× graph). Documents: sources SRC-05, owner_requirements.md, FEAT-40 “The centre and the layout”, matrix,
+  docs/GRAPH_CORE_LAYOUT_PLAN.md.
+
 - 2026-10-17 — Money in motion on the graph (owner's correction to G9). Studio's spark now runs all the time on
   every real money edge: income into “My Wealth”, spending and this month's loan and card repayments out. Not on
   estimates or scenarios; hidden under reduced motion; idle frame cost measured as none. Documents: FEAT-40, OWN-GW-16
