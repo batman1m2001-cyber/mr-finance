@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 53 | 49 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 58 | 49 | 3 | 0 | 5 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -306,6 +306,11 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-GW-12 | FEAT-40 | implemented_verified | G3: certainty on every edge (actual · estimate · hypothetical, dashed); a scenario's effect says “giả định… không cộng vào tài sản ròng” and the net worth does not move — `tests/test_overview.py::test_the_workspace_kinds_money_reserve_and_scenarios`, `tests/ui/test_graph_workspace_ui.py::test_the_inspector_the_strip_and_a_hypothetical_scenario` |
 | OWN-GW-13 | FEAT-40 | implemented_verified | G7: `tests/test_graph_workspace.py` (6), `tests/test_assistant_stream.py` (7), `tests/ui/test_graph_workspace_ui.py` (5) — `tests/ui/test_graph_workspace_ui.py::test_one_page_the_graph_survives_lenses_and_sheets`; results, gaps and performance in docs/brd/testing/graph_workspace_report.md |
 | OWN-GW-14 | FEAT-40 | implemented_verified | G0: branch `exp/graph-workspace`, worktree `~/mr-finance-graph`, port 8040 and its own tunnel; the live demo on :8030 untouched; no job runs twice — `tests/test_graph_workspace.py::test_a_second_copy_of_the_app_runs_no_job_on_its_own` |
+| OWN-GW-15 | FEAT-40 | planned | G8: layers (anchor, second layer per lens, on-demand third), relations only on demand, label collision pass |
+| OWN-GW-16 | FEAT-40 | planned | G9: silk edges, comet pulses (head + trail, transform only), arrival reaction (Studio data-flow pattern) |
+| OWN-GW-17 | FEAT-40 | planned | G9: stream events → lit paths, comets back to the centre, two-hop paths for news/policy, dim the rest |
+| OWN-GW-18 | FEAT-40 | planned | G9: money (solid + direction), estimate (dashed), hypothetical (dotted, hollow pulse); pulse = data read, never money |
+| OWN-GW-19 | FEAT-40 | planned | G10: comet cap, tracked, paused hidden, none under reduced motion; frame times on a 3× graph |
 | OWN-MOTION-01 | FEAT-33 | implemented_unverified | A slow ripple from the panel's status dot while the panel is open and idle; nothing when closed (display:none), paused when the tab is hidden, none under reduced motion. Browser run and screenshots (2026-10-16); cost measured: +9 ms main thread per 5 s, no layout |
 | OWN-MOTION-02 | FEAT-33 | implemented_verified | `tests/ui/test_copilot_ui.py::test_busy_lasts_exactly_as_long_as_the_request` — busy (✦ breathes, three dots, `aria-busy`) from the request sent until its answer, held answer included; no step-by-step progress because the server does not report steps |
 | OWN-MOTION-03 | FEAT-33 | implemented_verified | `tests/test_living_interface.py::test_an_answer_names_the_elements_it_was_read_from`, `tests/test_living_interface.py::test_an_impact_answer_points_at_the_largest_event_and_the_feed_at_its_items`, `tests/test_living_interface.py::test_failures_mark_nothing`, `tests/test_living_interface.py::test_every_focus_key_has_a_page_that_renders_it` — the answer's `focus` keys come from the tool's result; KPIs, flow panel/rows/bands, feed items, events, families and the graph path are marked (browser run). Goals on Kế hoạch are not marked |

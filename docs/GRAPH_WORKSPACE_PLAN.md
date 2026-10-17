@@ -59,6 +59,18 @@ experiment server. No PR to `main`.
 | G6 | Phone layout, keyboard, screen-reader labels, reduced motion, hidden-tab pause; performance (graph render ms, frame time during a stream, animations at once, payload) | OWN-GW-10, 13 | 390 px no horizontal scroll; reduced-motion test; numbers recorded |
 | G7 | Verification and report: full suite, BRD checker, matrix statuses, screenshots, `docs/brd/testing/graph_workspace_report.md` (results, gaps, performance); one live check on the real model (cost reported) | OWN-GW-13 | report written; the owner gets the link |
 
+### Refinement (OWN-GW-15…19, owner 2026-10-17)
+
+Request: [`2026-10-17_graph_dataflow_refinement.md`](brd/sources/owner_requests/2026-10-17_graph_dataflow_refinement.md).
+Behaviour: FEAT-40 “Hierarchy and dataflow”. The refinement keeps the page layout and every existing test, and
+changes only the graph and its CSS (plus one legend line).
+
+| Phase | What | Requirements | Done when |
+|---|---|---|---|
+| G8 | Hierarchy: the three layers, holdings on select (no openAll), relations on demand, the label collision pass, quieter background | OWN-GW-15 | visible edges and crossings counted before and after per lens; no two labels overlap (browser check, desktop + phone); existing tests green |
+| G9 | Dataflow: silk edges by certainty, money knobs, comet pulses (head + trail, transform only, flicker), arrival reaction, stream events mapped to lit paths, two hops, dimming, writing state, failure in red | OWN-GW-16, 17, 18 | browser tests with a stubbed stream: lit paths only after `step`, comets toward the centre only after an ok end, none after a failure, hollow on hypothetical, dimming cleared on reset; motion-rule test still passes |
+| G10 | Performance and report: a 3× synthetic graph, frame times during a stream burst, the comet cap, reduced motion; screenshots; report and matrix | OWN-GW-19, 13 | numbers in graph_workspace_report.md; matrix rows verified; demo link updated |
+
 ## 4. Risks
 
 - **UI tests that drive Customer routes** find their content in a sheet now: adapted in G1, never deleted.

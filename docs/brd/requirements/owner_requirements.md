@@ -14,7 +14,8 @@ Source: [`2026-10-17_persistent_financial_graph.md`](../sources/owner_requests/2
 [`docs/GRAPH_WORKSPACE_PLAN.md`](../../GRAPH_WORKSPACE_PLAN.md); feature
 [FEAT-40](../features/FEAT-40-persistent-financial-graph.md); screen
 [SCR-CL-12](../ux/screens/client.md#scr-cl-12--không-gian-tài-chính-graph-workspace); decision ADR-0035. Built on
-branch `exp/graph-workspace` and served on its own public link; the live demo is unchanged (OWN-GW-14).
+branch `exp/graph-workspace` and served on its own public link; the live demo is unchanged (OWN-GW-14). Refinement
+(OWN-GW-15…19): [`2026-10-17_graph_dataflow_refinement.md`](../sources/owner_requests/2026-10-17_graph_dataflow_refinement.md).
 
 | ID | Requirement | Source | Doc status |
 |---|---|---|---|
@@ -32,6 +33,11 @@ branch `exp/graph-workspace` and served on its own public link; the live demo is
 | OWN-GW-12 | Actual financial data and cash flows are visibly distinct from market estimates, forecasts and unverified items; hypothetical scenarios never change actual portfolio values | §3 last paragraph | documented |
 | OWN-GW-13 | Built incrementally on what exists (the overview graph, the assistant, the page modules, OperonX), with no unnecessary dependency or rewrite; tested for navigation persistence, selection and inspection, assistant-to-graph interaction, streaming and animation sync, BRD coverage, performance, responsive layout, accessibility and reduced motion; actual results, gaps and performance reported | §4 | documented |
 | OWN-GW-14 | An experiment: its own branch and its own public link; the live demo and `main` are not changed by it | instruction with the request | documented |
+| OWN-GW-15 | Graph hierarchy: “My Wealth” the anchor, primary assets (and each lens's own kinds) the second layer, holdings, sources and cross-relationships revealed on demand; fewer edges and crossings, no overlapping labels, no background clutter | refinement §1 | documented |
+| OWN-GW-16 | Studio-style dataflow: thin “silk” edges; directional luminous pulses with a subtle trail along curved edges and a reaction where they arrive, reusing the OperonX Studio data-flow patterns | refinement §2; “tiny like a web string, with glowing energy running through it” | documented |
+| OWN-GW-17 | Motion is meaningful: the assistant processing, streaming, calling a tool or naming an entity animates the relevant paths and nodes in sync with the real events; relevant relationships highlighted, unrelated branches dimmed | refinement §3 | documented |
+| OWN-GW-18 | Distinct flow semantics: actual financial flows, data relationships and hypothetical news/scenario impacts look different; no animation implies a real transaction that did not happen | refinement §4 | documented |
+| OWN-GW-19 | Performance: lightweight, on the existing graph; no edge animates continuously; reduced motion respected; tested on a realistic (larger) graph | refinement §5 | documented |
 
 ## AS — Assistant, memory and agent ecosystem (2026-10-16, backlog B-08)
 

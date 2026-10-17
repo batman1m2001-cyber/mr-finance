@@ -79,13 +79,62 @@
   - `step` `{call_id, state: "ok" | "failed", ms, focus}` when it ends, `focus` = the keys the tool's result names;
   - `text` `{delta}` as the model writes (model mode only; the template mode sends the texts at the end);
   - `wait` when a write needs confirmation; `answer` with the same object `POST /api/assistant` returns; `error`.
-- The graph answers each event and nothing else: a running tool's nodes pulse and a particle travels the edge from
-  “My Wealth” toward them (Studio's live-run pattern); a finished tool's focus keys light; a streamed sentence that
+- The graph answers each event and nothing else (refined by OWN-GW-17 below): a running tool's nodes pulse and the
+  paths to them light; a finished tool's focus keys light; a streamed sentence that
   names a node (its focus key is in a finished step) lights it as the sentence arrives; the final answer's focus and
   citations stay marked until the next question; a failed step turns its nodes' ring red and the dock says what
   failed; a failed turn marks nothing and says so.
 - Motion: transform and opacity only (FEAT-33's rule), particles as tracked Web Animations, at most a few at a time;
   paused in a hidden tab; reduced motion replaces pulses and particles with still outlines.
+
+### Hierarchy and dataflow (refinement, OWN-GW-15…19)
+Studied from the OperonX Studio data-flow view (`operonx_studio/static/canvas.js` `dfComet`, `studio.css` `.dflinks`,
+`motion.js` `liveCanvas`):
+- wires are silk, about 1 px at 55–75 % opacity;
+- one spark per wire says which way the data goes;
+- a picked lineage lights while everything else steps back to about 8 %;
+- a card reacts when the data reaches it;
+- particles are capped.
+
+The Studio animates `stroke-dashoffset`. Here FEAT-33 allows only transform and opacity, so a pulse is a head and a
+short trail of dots moved along the curve by transform, with an opacity flicker.
+
+- **Three layers** (OWN-GW-15):
+  - “My Wealth” is the anchor.
+  - The second layer is what the lens is about: the asset classes, the money in and out, the reserve, goals, risks,
+    news and scenarios.
+  - The third layer is shown on demand. A class's holdings appear when it is selected (the Tài sản lens no longer
+    opens every class). The sources stay a quiet outer ring without edges.
+- **Spokes always, relations on demand.**
+  - The edges between “My Wealth” and the second layer are always drawn.
+  - The edges between two other nodes (news → class, class → policy or risk, source → class, class → holding) are
+    drawn only in four cases: for the selected or pointed-at node, for a node the assistant is reading, for a path
+    a pulse is taking, or for an answer's kept nodes.
+- **Labels never overlap.** After layout, each label takes its first free place among: its side, the opposite side,
+  below, above. A label with no free place is shortened.
+- **Semantics** (OWN-GW-18):
+  - **Money and holdings (actual):** a solid silk line with a small end knob at the receiving side (Studio's
+    bouton). Its width follows the value.
+  - **Estimates (news, policy):** dashed.
+  - **Hypothetical (scenarios):** dotted, plus the “giả định” badge.
+  - **A pulse means the assistant read data along that path. It never means money moved.** It wears the data colour
+    (never the in/out money colours). On a hypothetical edge the pulse head is hollow. The legend says so:
+    “Xung sáng: trợ lý đang đọc dữ liệu, không phải giao dịch”.
+- **Events → motion** (OWN-GW-17). Each stream event is answered once, and nothing moves without an event:
+  - **A tool starts:** its nodes' rings pulse, the paths from “My Wealth” to them light, and the graph enters focus
+    (unrelated nodes and edges dim).
+  - **A tool ends ok:** a pulse runs from each of its nodes back to “My Wealth” (the data reaching the answer), and
+    “My Wealth” reacts when it arrives. For news and policy the path has two hops: the item, then the class it
+    affects, then “My Wealth”.
+  - **A tool fails:** its nodes and paths turn red. No pulse runs, because no data came back.
+  - **Text arrives:** “My Wealth” shows it is writing, as long as text keeps coming.
+  - **The answer completes:** what it named stays lit, with its paths, and the rest stays dimmed until the next
+    question or a click on the background. A failed turn marks nothing.
+- **Performance** (OWN-GW-19):
+  - no edge animates on its own, and a pulse runs only after an event;
+  - at most 8 pulses at once (4 elements each), as tracked Web Animations, paused in a hidden tab;
+  - no pulses or flicker under reduced motion, where lit paths and rings stay still;
+  - measured on a graph three times the demo client's size.
 
 ## Capability map — every Customer capability and where it goes (OWN-GW-11)
 
