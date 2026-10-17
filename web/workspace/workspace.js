@@ -3,13 +3,13 @@
    mounts it once for the client and hands it each route; a route changes the lens and opens or closes a sheet (an
    existing page module, drawn by the shell into #page, which lives inside the sheet). Nothing here re-renders the
    graph on navigation. */
-import {$, esc, followedIds, post, signClass, vnd} from "../core/core.js";
+import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261017u4";
-import {render as inspect} from "./inspector.js?v=20261017u4";
-import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017u4";
-import {mount as mountStrip} from "./strip.js?v=20261017u4";
+import {createGraph} from "./graph.js?v=20261017u5";
+import {render as inspect} from "./inspector.js?v=20261017u5";
+import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017u5";
+import {mount as mountStrip} from "./strip.js?v=20261017u5";
 
 export function mount(main, {client, scope, go, page}) {
   const root = document.createElement("div");
@@ -82,6 +82,14 @@ export function mount(main, {client, scope, go, page}) {
 
   const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), edge: graph.selectedEdge(), kindLabel, openSheet,
     scenario: {on: (id) => active().ids.includes(id), params: (id) => (active().params || {})[id] || null, set: setActive}});
+
+  // what the assistant is told the person is looking at (F10): the lens, the pick, the active scenarios
+  workspaceContext.get = () => {
+    const n = graph.selected(), e = !n && graph.selectedEdge(), a = active();
+    const label = (id) => (graph.node(id) || {label: id}).label;
+    return {lens: lens.id, active: a.ids, params: a.params,
+      selected: n ? {id: n.id, kind: n.kind, label: n.label} : e ? {id: `${e.from}>${e.to}`, kind: "edge", label: `${label(e.from)} → ${label(e.to)}`} : null};
+  };
 
   // ── the active stress tests (UNIFIED_FLOWS_PLAN F6): kept per client in this browser (a convenience, like the
   // followed goals); the server combines them every time (POST /api/scenario/combine), never adding them to net worth

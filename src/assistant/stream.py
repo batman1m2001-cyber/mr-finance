@@ -26,11 +26,23 @@ NODES: Dict[str, List[str]] = {
     "dieu_tra": ["event"],
     "kich_ban": ["scenario"],
     "dong_luc": ["alert"],
+    "lien_ket": [],
+    "so_sanh_kich_ban": ["scenario"],
 }
 
 
-def nodes_for(tool: str, args: Optional[Dict[str, Any]]) -> List[str]:
-    """The graph nodes a call reads; the stress test names its one scenario."""
+def nodes_for(tool: str, args: Optional[Dict[str, Any]], graph: Optional[Dict[str, Any]] = None) -> List[str]:
+    """The graph nodes a call reads: the stress test its one scenario; the links tool the node (both ends of an edge)
+    it reads, else what is picked; the comparison its scenarios, else the active ones (F10)."""
+    graph = graph or {}
+    if tool == "lien_ket":
+        target = str((args or {}).get("node") or (graph.get("selected") or {}).get("id") or "")
+        return [x for x in target.split(">") if x and x != "ME"] if target else []
+    if tool == "so_sanh_kich_ban":
+        from assistant.graphtools import COMPARE
+
+        ids = [COMPARE[w] for w in (args or {}).get("scenarios") or [] if w in COMPARE] or graph.get("active") or []
+        return [f"SC:{s}" for s in ids] or NODES[tool]
     if tool == "kich_ban":
         from assistant.tools import STRESS
 
@@ -63,8 +75,9 @@ def step_end(tool: str, call_id: str, ok: bool, ms: float, got: Optional[Dict[st
 def translate(ev: Any, ctx: Ctx) -> Optional[Dict[str, Any]]:
     """One agent event → one stream event (or None: not something the person sees)."""
     if isinstance(ev, ToolCallStarted):
+        nodes = nodes_for(ev.tool, ev.args, ctx.graph)
         return {"type": "step", "phase": "start", "call_id": ev.call_id, "tool": ev.tool,
-                "label": registry.LABELS.get(ev.tool, ev.tool), "nodes": nodes_for(ev.tool, ev.args)}  # fmt: skip
+                "label": registry.LABELS.get(ev.tool, ev.tool), "nodes": nodes}  # fmt: skip
     if isinstance(ev, ToolCallFinished):
         queue = ctx.trail.get(ev.call_id) or []
         return step_end(ev.tool, ev.call_id, ev.ok, ev.ms, queue[-1] if queue else None)

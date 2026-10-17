@@ -3,8 +3,8 @@
    the lens looks at first. Built from the overview page's side panel (map.js). */
 import {formulaOf, n as how, esc, pct, signClass, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
-import {LOOK, certaintyOf, figureOf, howOf, srcText} from "./graph.js?v=20261017u4";
-import {SHEETS} from "./lenses.js?v=20261017u4";
+import {LOOK, certaintyOf, figureOf, howOf, srcText} from "./graph.js?v=20261017u5";
+import {SHEETS} from "./lenses.js?v=20261017u5";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
 const titled = {event: "data-quote", alert: "data-explains"};  // a news event's title is the outlets' words

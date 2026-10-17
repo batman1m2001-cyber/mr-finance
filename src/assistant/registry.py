@@ -14,11 +14,12 @@ import pydantic
 from operonx_agents import RunContext
 from operonx_agents import tool as agent_tool
 
-from assistant import actions, followups, knowledge, memory, tools
+from assistant import actions, followups, graphtools, knowledge, memory, tools
 from assistant.base import Ctx, Tool, allowed
 
 REGISTRY: Dict[str, Tool] = {**tools.CATALOGUE}
-for _name, _t in {**actions.CATALOGUE, **memory.CATALOGUE, **knowledge.CATALOGUE, **followups.CATALOGUE}.items():
+for _name, _t in {**actions.CATALOGUE, **memory.CATALOGUE, **knowledge.CATALOGUE, **followups.CATALOGUE,
+                  **graphtools.CATALOGUE}.items():  # fmt: skip
     assert _name not in REGISTRY, f"two tools named {_name!r}"
     REGISTRY[_name] = _t
 LABELS = {  # what a step is called in the panel ("Các bước")
@@ -29,6 +30,8 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "tac_dong": "Tác động tin",
     "dieu_tra": "Điều tra tin",
     "kich_ban": "Kịch bản",
+    "lien_ket": "Liên kết",
+    "so_sanh_kich_ban": "So sánh kịch bản",
     "hom_nay": "Hôm nay",
     "hop_tin": "Hộp tin",
     "tin_bi_giu": "Tin bị giữ",

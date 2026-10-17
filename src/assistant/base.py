@@ -43,6 +43,7 @@ class Ctx:
     remembered: List[str] = field(default_factory=list)  # the person's active memory items (A4), for the prompt
     trail: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)  # this request's tool results, by call id
     asked: set = field(default_factory=set)  # call ids of the writes a resumed request answers
+    graph: Dict[str, Any] = field(default_factory=dict)  # the workspace: lens, what is picked, active scenarios (F10)
 
 
 @dataclass

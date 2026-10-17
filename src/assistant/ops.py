@@ -38,14 +38,49 @@ def check_request(
     turn_id: str = None,
     approvals: dict = None,
     conversation_id: str = None,
+    graph: dict = None,
 ) -> dict:
     """Who asks (a customer always as client), what (≤ 2,000 characters), in which conversation (none: a new one),
-    or which parked writes they answer."""
-    return {"request": request_of(message, role, client_id, scope, route, goals, turn_id, approvals, conversation_id)}
+    or which parked writes they answer; what the workspace shows them (``graph``)."""
+    return {"request": request_of(message, role, client_id, scope, route, goals, turn_id, approvals, conversation_id,
+                                  graph)}  # fmt: skip
+
+
+LENSES = {"tong-quan", "tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro"}
+
+
+def graph_of(g: Any) -> Dict[str, Any]:
+    """The workspace's context, checked (UNIFIED_FLOWS_PLAN F10): a known lens; what is picked (an id, its kind, its
+    label — the label reaches a model only in model mode); the active stress tests, known ids only, the person's
+    what-if only with inputs inside the server's bounds. Anything else is dropped, never an error."""
+    if not isinstance(g, dict):
+        return {}
+    from scenarios import _sim
+    from scenarios.combine import MAX
+
+    out: Dict[str, Any] = {}
+    if g.get("lens") in LENSES:
+        out["lens"] = g["lens"]
+    sel = g.get("selected")
+    if isinstance(sel, dict) and isinstance(sel.get("id"), str) and 0 < len(sel["id"]) <= 200:
+        kind, label = str(sel.get("kind") or "")[:20], str(sel.get("label") or "")[:120]
+        out["selected"] = {"id": sel["id"], "kind": kind, "label": label}
+    named = g.get("active") if isinstance(g.get("active"), list) else []
+    active = list(dict.fromkeys(s for s in named if isinstance(s, str) and s in _sim.SHOCKS))[:MAX]
+    prm = g.get("params") if isinstance(g.get("params"), dict) else {}
+    if "custom" in active:
+        mine = prm.get("custom") if isinstance(prm.get("custom"), dict) else {}
+        try:
+            out["params"] = {"custom": _sim.custom_params(mine)}
+        except ValueError:
+            active.remove("custom")
+    if active:
+        out["active"] = active
+    return out
 
 
 def request_of(message=None, role=None, client_id=None, scope=None, route=None, goals=None, turn_id=None,
-               approvals=None, conversation_id=None) -> dict:  # fmt: skip
+               approvals=None, conversation_id=None, graph=None) -> dict:  # fmt: skip
     message = str(message or "").strip()
     if len(message) > 2000:
         raise ValueError("Câu hỏi dài quá 2.000 ký tự")
@@ -64,6 +99,7 @@ def request_of(message=None, role=None, client_id=None, scope=None, route=None, 
         "turn_id": str(turn_id or "") or None,
         "approvals": answers,
         "conversation_id": str(conversation_id or "") or None,
+        "graph": graph_of(graph),
     }
 
 
@@ -84,6 +120,7 @@ def context(r: Dict[str, Any]) -> Ctx:
         user=auth.acting_id(registry.DEMO_USER.get(r["role"])),
         reads=turns.model_reads(),
         route=r["route"],
+        graph=r.get("graph") or {},
     )
 
 
@@ -297,7 +334,7 @@ def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     return out
 
 
-FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id")
+FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id", "graph")
 
 
 @op

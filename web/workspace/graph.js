@@ -1128,6 +1128,15 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     const n = byId[id];
     if (!n || id === "ME" || !visible(n)) return;
     const hollow = n.kind === "scenario";
+    if (n.kind === "scenario" && n.active) {  // its read pulses along its hypothetical edges, then home (F10)
+      const via = scnShown().filter(e => e.from === id && byId[e.to] && visible(byId[e.to])).sort((x, y) => Math.abs(y.value) - Math.abs(x.value)).slice(0, 3);
+      if (via.length) {
+        for (const e of via) { hotEdges.set(`${e.from}>${e.to}`, "hot"); pathState.set(e.to, "hot"); }
+        drawEdges(litSet());
+        for (const e of via) comet(id, e.to, {hollow, then: () => comet(e.to, "ME", {hollow})});
+        return;
+      }
+    }
     if (["event", "alert"].includes(n.kind)) {
       const via = g.edges.filter(e => (e.from === id || e.to === id) && byId[other(e, id).id]?.kind === "class" && visible(byId[other(e, id).id]))
         .sort((x, y) => Math.abs(y.value || 0) - Math.abs(x.value || 0)).slice(0, 2);

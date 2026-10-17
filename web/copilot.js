@@ -21,7 +21,7 @@
    question goes to POST /api/assistant/stream: each real event of the turn (a tool starting and ending, the model's
    words, a write waiting) shows in the panel as it happens and goes to onEvent, which the graph draws (OWN-GW-06…10);
    a stream that breaks is said, never papered over. */
-import {$, esc, followedIds, post, stream} from "./core/core.js";
+import {$, esc, followedIds, post, stream, workspaceContext} from "./core/core.js";
 import {icon} from "./core/icons.js?v=20261017s1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
@@ -50,7 +50,9 @@ function context() {
   const role = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "client";
   const client = ($("#client") || {}).value || null;
   const scope = (document.querySelector("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope;
-  return {role: ROLE_LABEL[role] ? role : "client", client_id: client, scope, route: location.hash, goals: client ? followedIds(client) : null};
+  const graph = role === "client" ? workspaceContext.get() : null;  // the Customer's workspace (F10)
+  return {role: ROLE_LABEL[role] ? role : "client", client_id: client, scope, route: location.hash, goals: client ? followedIds(client) : null,
+    ...(graph ? {graph} : {})};
 }
 
 const RESUME_S = 24 * 3600;  // the latest conversation is picked up again when it moved within a day

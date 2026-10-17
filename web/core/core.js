@@ -265,6 +265,9 @@ export const EVENT_TYPE = {
 export const internal = () => `<div class="internal" role="note"><span class="badge">Nội bộ</span> Chỉ nhân viên xem được; khách hàng không thấy trang này.</div>`;
 
 // the goals the client follows on Kế hoạch, kept in this browser (null: the server's defaults)
+// what the Customer's workspace shows, for the assistant's request (UNIFIED_FLOWS_PLAN F10): set by the workspace
+export const workspaceContext = {get: () => null};
+
 export function followedIds(client) {
   try { return JSON.parse(localStorage.getItem(`mf.goals.${client}`) || "null"); } catch (_) { return null; }
 }

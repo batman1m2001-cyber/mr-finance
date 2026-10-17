@@ -31,6 +31,7 @@ def assistant_flow(
     turn_id=None,
     approvals=None,
     conversation_id=None,
+    graph=None,
 ):
     """Ask OneWealth: the role's tools in as many steps as the question needs; writes wait for the person."""
     ask = check_request(
@@ -43,6 +44,7 @@ def assistant_flow(
         turn_id=turn_id,
         approvals=approvals,
         conversation_id=conversation_id,
+        graph=graph,
     )
     done = turn(request=ask["request"])
     out = answer(request=ask["request"], result=done["result"])
