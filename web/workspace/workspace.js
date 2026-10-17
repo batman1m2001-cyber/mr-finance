@@ -3,11 +3,11 @@
    mounts it once for the client and hands it each route; a route changes the lens and opens or closes a sheet (an
    existing page module, drawn by the shell into #page, which lives inside the sheet). Nothing here re-renders the
    graph on navigation. */
-import {$, esc, followedIds, post} from "../core/core.js";
+import {$, esc, followedIds, post, signClass, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261017u2";
-import {render as inspect} from "./inspector.js?v=20261017w1";
+import {createGraph} from "./graph.js?v=20261017u3";
+import {render as inspect} from "./inspector.js?v=20261017u3";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w3";
 import {mount as mountStrip} from "./strip.js?v=20261017w1";
 
@@ -20,7 +20,8 @@ export function mount(main, {client, scope, go, page}) {
       <button type="button" class="ws-tool ws-ask" aria-label="Hỏi trợ lý">${icon("sparkles", {size: 20})}<span class="ws-tool-l">Trợ lý</span></button></nav>
     <section class="ws-center" aria-label="Đồ thị tài chính">
       <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Tổng quan tài chính</h1>
-        <p class="ws-sub small muted" id="ws-sub"></p></div>
+        <p class="ws-sub small muted" id="ws-sub"></p>
+        <div class="ws-scn" id="ws-scn" role="region" aria-label="Kịch bản đang bật" aria-live="polite" hidden></div></div>
         <div class="ws-legend small" aria-label="Chú giải"><span class="lg c-actual">Thực tế</span><span class="lg c-estimate">Ước tính · tác động</span><span class="lg c-hypothetical">Giả định</span><span class="lg c-pulse" title="Xung sáng chạy khi trợ lý đọc dữ liệu theo đường đó; không phải một giao dịch">Xung sáng: trợ lý đọc dữ liệu, không phải giao dịch</span></div>
       </div>
       <div class="ws-canvas" id="ws-canvas"></div>
@@ -80,17 +81,51 @@ export function mount(main, {client, scope, go, page}) {
   try { if (localStorage.getItem("mf.ws.fold")) { root.classList.add("folded"); $("#ws-fold", root).setAttribute("aria-expanded", "false"); } } catch (_) { /* private mode */ }
 
   const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), kindLabel, openSheet,
-    runScenario: async (n, btn) => {
-      btn.disabled = true; btn.textContent = "Đang chạy…";
-      try {
-        // POST /api/scenario: before and after the shock, and its summary lines — kept on the node, never on net worth
-        const got = await post("/api/scenario", {client_id: client(), scenario: n.ref, params: {}, scope: scope()});
-        const r = got.result || got, nw = (x) => (x && typeof x.net_worth === "number" ? x.net_worth : null);
-        n.value = nw(r.after) != null && nw(r.before) != null ? nw(r.after) - nw(r.before) : null;
-        n.summary = (r.summary || []).slice(0, 4);
-      } catch (e) { n.detail = `Không chạy được kịch bản: ${e.message}`; }
-      graph.redraw(); drawInspector();
-    }});
+    scenario: {on: (id) => active().ids.includes(id), params: (id) => (active().params || {})[id] || null, set: setActive}});
+
+  // ── the active stress tests (UNIFIED_FLOWS_PLAN F6): kept per client in this browser (a convenience, like the
+  // followed goals); the server combines them every time (POST /api/scenario/combine), never adding them to net worth
+  const scnKey = () => `mf.ws.scn.${client()}`;
+  const active = () => {
+    try { const v = JSON.parse(localStorage.getItem(scnKey()) || "null"); if (v && Array.isArray(v.ids)) return {ids: v.ids, params: v.params || {}}; } catch (_) { /* private mode */ }
+    return {ids: [], params: {}};
+  };
+  const keepActive = (v) => { try { localStorage.setItem(scnKey(), JSON.stringify(v)); } catch (_) { /* private mode */ } };
+  let combining = 0;
+  async function recombine() {
+    const a = active(), t = ++combining;
+    if (!a.ids.length) { graph.scenarios(null); drawBar(null); drawInspector(); return; }
+    $("#ws-scn", root).classList.add("busy");
+    try {
+      const got = await post("/api/scenario/combine", {client_id: client(), scenarios: a.ids, params: a.params, scope: scope(), goals: followedIds(client())});
+      if (t !== combining) return;
+      graph.scenarios(got.result); drawBar(got.result);
+    } catch (e) {
+      if (t !== combining) return;
+      graph.scenarios(null); drawBar(null, e.message);
+    }
+    drawInspector();
+  }
+  // id on or off (null: all off); the person's what-if keeps its inputs for next time
+  function setActive(id, on, params) {
+    const a = id == null ? {ids: [], params: active().params} : active();
+    if (id != null) { a.ids = a.ids.filter(x => x !== id); if (on) a.ids.push(id); if (params) a.params[id] = params; }
+    keepActive(a);
+    return recombine();
+  }
+  function drawBar(r, err) {
+    const el = $("#ws-scn", root);
+    el.classList.remove("busy");
+    el.hidden = !r && !err;
+    if (el.hidden) { el.innerHTML = ""; return; }
+    const off = `<button type="button" class="linkbtn small" data-off="*">Bỏ tất cả</button>`;
+    el.innerHTML = err ? `<span class="small">Không tính được kịch bản: ${esc(err)}</span>${off}`
+      : `<span class="pill">giả định</span>${r.scenarios.map(x => `<span class="ws-chip"><button type="button" class="linkbtn small" data-n="SC:${esc(x.id)}">${esc(x.title)}</button><button type="button" class="ws-chip-x" data-off="${esc(x.id)}" aria-label="Tắt kịch bản ${esc(x.title)}">✕</button></span>`).join("")}
+        <span class="small ws-scn-nw">Nếu xảy ra: tài sản ròng <b class="num" data-scn="after" data-v="${Math.round(r.after.net_worth)}">${vnd(r.after.net_worth)}</b> <b class="num ${signClass(r.change)}" data-scn="change" data-v="${Math.round(r.change)}">${vnd(r.change, true)}</b></span>${off}
+        ${r.warnings.length ? `<p class="small muted ws-scn-w">${r.warnings.map(esc).join(" · ")}</p>` : ""}`;
+    for (const b of el.querySelectorAll("[data-off]")) b.onclick = () => setActive(b.dataset.off === "*" ? null : b.dataset.off, false);
+    for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => graph.select(b.dataset.n);
+  }
 
   // ── controls ──────────────────────────────────────────────────────────────────────────────────────
   for (const b of root.querySelectorAll("[data-z]")) {
@@ -125,6 +160,7 @@ export function mount(main, {client, scope, go, page}) {
       if (k !== key) return;
       graph.load(overview, k);
       graph.setLens(lens);
+      recombine();
       $("#ws-sub", root).textContent = `Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn · số liệu ngày ${overview.as_of}`;
       drawInspector();
       strip.load();
@@ -196,7 +232,7 @@ export function mount(main, {client, scope, go, page}) {
     } else if (e.type === "step" && e.phase === "end") {
       if (e.scenario) {  // a stress test's result goes on its node: hypothetical, beside the net worth, never in it
         const n = graph.node(`SC:${e.scenario.id}`);
-        if (n) { n.value = e.scenario.effect; graph.redraw(); }
+        if (n && !n.active) { n.value = e.scenario.effect; graph.redraw(); }  // an active one shows its part in the combination
       }
       a.end(e.call_id, e.ok, e.focus);
       if (e.ok) lit.push(...(e.focus || []));

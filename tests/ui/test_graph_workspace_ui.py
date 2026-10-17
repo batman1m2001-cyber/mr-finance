@@ -86,9 +86,9 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     me = p.page.text_content(".wme-v")
     p.page.click('.wnode[data-n="SC:vni_30"]')
     assert p.page.get_attribute("#ws-tab-i", "aria-selected") == "true"
-    assert "giả định" in p.page.inner_text("#ws-pane-i") and "Chưa chạy" in p.page.inner_text("#ws-pane-i")
-    p.page.click("#ws-run")
-    p.page.wait_for_selector("#ws-pane-i .ws-sum")
+    assert "giả định" in p.page.inner_text("#ws-pane-i") and "Chưa bật" in p.page.inner_text("#ws-pane-i")
+    p.page.click("#ws-run")  # on: combined on the server, traced in Thông tin (test_graph_scenarios_ui)
+    p.page.wait_for_selector("#ws-pane-i .ws-trace")
     assert "không cộng vào tài sản ròng" in p.page.inner_text("#ws-pane-i")
     assert p.page.text_content('.wnode[data-n="SC:vni_30"] .wfig').startswith("nếu xảy ra −")
     assert p.page.text_content(".wme-v") == me  # a scenario never changes the actual net worth

@@ -109,8 +109,13 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const opened = (id) => holdingLens() && !st.shut.has(id) && (st.open.has(id) || st.sel === id || (!!st.sel && (byId[st.sel] || {}).parent === id));
   // a folded item hides behind its group node (OWN-GW-30); a group node shows while its fold holds
   let groupNodes = [], fold = new Map(), groupIds = new Set(), groupEdges = [];
+  // the active stress tests (UNIFIED_FLOWS_PLAN F6): their hypothetical edges, and what they reach — on Mục tiêu the
+  // classes and the spending they move, on Tổng quan the scenarios themselves — shown while they are active
+  let scn = null, scnEdges = [], reach = new Set();
+  const reached = (n) => reach.has(n.id) && (lens.kinds.includes("scenario") || (n.kind === "scenario" && lens.id === "tong-quan"));
+  const shows = (n) => lens.kinds.includes(n.kind) || reached(n);
   const visible = (n) => !!lens && (n.kind === "group" ? groupIds.has(n.id)
-    : lens.kinds.includes(n.kind) && !fold.has(n.id) && (n.kind !== "holding" || opened(n.parent)));
+    : shows(n) && !fold.has(n.id) && (n.kind !== "holding" || opened(n.parent)));
   const shownAs = (id) => fold.get(id) || id;
   // the edges “My Wealth” has to the second layer are always drawn; any other edge only for what is picked, pointed at,
   // read by the assistant or kept by its answer, and a class's own holdings while it is open
@@ -119,10 +124,20 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const relates = (e, rv) => rv.has(e.from) || rv.has(e.to) || hotEdges.has(`${e.from}>${e.to}`)
     || (!!e.parent && opened(e.parent) && byId[e.from].kind === "class");
   const reveal = () => new Set([st.sel, hoverId].filter(Boolean));
-  const allEdges = () => g.edges.concat(derived, groupEdges);
+  const allEdges = () => g.edges.concat(derived, groupEdges, scnShown());
+  // an active scenario's edge to a class folded behind “+n”: on the group's node, the same scenario's amounts summed
+  function scnShown() {
+    const out = new Map();
+    for (const e of scnEdges) {
+      const to = fold.get(e.to) || e.to, k = `${e.from}>${to}`, was = out.get(k);
+      out.set(k, was ? {...was, value: was.value + e.value, monthly: was.monthly != null || e.monthly != null ? (was.monthly || 0) + (e.monthly || 0) : undefined,
+        dir: was.value + e.value > 0 ? "fwd" : "back"} : (to === e.to ? e : {...e, to}));
+    }
+    return [...out.values()];
+  }
   const drawable = (e) => byId[e.from] && byId[e.to] && visible(byId[e.from]) && visible(byId[e.to])
     && !(e.agg && opened(e.agg)) && !(e.parent && !opened(e.parent));
-  const shownEdges = () => { const rv = reveal(); return allEdges().filter(e => drawable(e) && (spoke(e) || relates(e, rv))); };
+  const shownEdges = () => { const rv = reveal(); return allEdges().filter(e => drawable(e) && (spoke(e) || e.active || relates(e, rv))); };
   const links = (id) => allEdges().filter(e => drawable(e) && (e.from === id || e.to === id));
   const other = (e, id) => byId[e.from === id ? e.to : e.from];
 
@@ -194,7 +209,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     const x0 = where === "right" ? lx : where === "left" ? lx - w : -w / 2;
     return {where, text, lines, fig, lx, ly, line, figY: ly + line * nl, box: [x0, ly - asc, x0 + w, ly + under]};
   }
-  const lensShows = (n) => !!lens && lens.kinds.includes(n.kind);
+  const lensShows = (n) => !!lens && shows(n);
 
   // the ring: a rounded square (a superellipse) inside the canvas — convex, so a spoke from the centre still meets
   // nothing before its node, and its corners hold nodes an ellipse would waste
@@ -242,7 +257,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     for (const list of byGroup.values()) list.sort((a, b) => weight(b) - weight(a) || (a.id < b.id ? -1 : 1));
     // what may not fold, by level: 0 nothing of an opened group; 1 a group opened earlier may fold again; 2 even the one
     // opened last folds its smallest (it opens partly: the rest stay behind “+n khác”), never the selection or an open class
-    const keepOut = (n, level) => st.sel === n.id || opened(n.id)
+    const keepOut = (n, level) => st.sel === n.id || opened(n.id) || !!n.active  // an active scenario stays in sight
       || (isOpen(groupOf(n)) && (level === 0 || (level === 1 && groupOf(n) === st.lastGroup)));
     const folded = new Map();  // group key → members folded (the smallest first)
     let warm = null;  // each try starts from the last one's ring and angles: folding one item changes little
@@ -490,12 +505,12 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // ── nodes: created once per id, moved and faded after ───────────────────────────────────────────
   function nodeEl(n) {
     let el = els.get(n.id);
-    const sig = n.kind === "group" ? `${n.label}|${n.value}|${!!n.part}` : "";
+    const sig = n.kind === "group" ? `${n.label}|${n.value}|${!!n.part}` : n.kind === "scenario" ? `${n.value}|${!!n.active}` : "";
     if (el && el.dataset.sig !== sig) { el.remove(); els.delete(n.id); el = null; }  // a group node that now folds another count
     if (el) return el;
     const me = n.kind === "family", r = discR(n);
     const [tone, ic] = n.kind === "flow" && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind === "group" ? n.of : n.kind] || LOOK.class;
-    el = mk("g", {class: `wnode k-${n.kind}`, tabindex: "0", role: "button", "data-n": n.id, "aria-pressed": "false",
+    el = mk("g", {class: `wnode k-${n.kind}${n.active ? " live" : ""}`, tabindex: "0", role: "button", "data-n": n.id, "aria-pressed": "false",
       "aria-label": `${(g.kinds.find(k => k.kind === n.kind) || {}).label || n.kind}: ${n.label}`}, nodeLayer);
     el.style.setProperty("--tone", tone);
     el.dataset.r = r;
@@ -1217,6 +1232,36 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       draw({moved: !first});
     },
     redraw: () => draw(),
+    /* the active stress tests combined (POST /api/scenario/combine, F6): each scenario's own part on its node, and its
+       hypothetical edges — to the classes it moves (by sign) and to the spending its yearly cost adds (÷ 12). Net
+       worth never changes: the combined figure is the bar's, “nếu xảy ra”. null clears them. */
+    scenarios(res) {
+      if (!g) return;
+      for (const n of g.nodes) if (n.kind === "scenario" && n.active) { n.active = false; n.value = null; n.part = null; }
+      scn = res && res.scenarios && res.scenarios.length ? res : null;
+      scnEdges = []; reach = new Set();
+      for (const s of scn ? scn.scenarios : []) {
+        const id = `SC:${s.id}`, n = byId[id];
+        if (!n) continue;
+        const costs = Object.values(s.costs || {}).reduce((t, x) => t + x, 0);
+        Object.assign(n, {active: true, value: s.change - costs, part: s});
+        reach.add(id);
+        const src = [{type: "scenario", id: s.id}];
+        for (const [c, v] of Object.entries(s.by_class || {})) {
+          if (!byId[`CL:${c}`] || !v) continue;
+          scnEdges.push({from: id, to: `CL:${c}`, label: "nếu xảy ra", value: v, dir: v > 0 ? "fwd" : "back", certainty: "hypothetical", active: true, sources: src});
+          reach.add(`CL:${c}`);
+        }
+        for (const c of scn.costs.filter(x => x.by === s.id)) {
+          if (!byId["FL:out"]) continue;
+          scnEdges.push({from: id, to: "FL:out", label: `${c.label} (giả định)`, value: -c.amount, monthly: c.amount / 12, dir: "fwd",
+            certainty: "hypothetical", active: true, sources: src, cost: c});
+          reach.add("FL:out");
+        }
+      }
+      draw({moved: true});
+    },
+    combined: () => scn,
     select, toggle, zoom, fit, focus,
     data: () => g,
     node: (id) => byId[id],
