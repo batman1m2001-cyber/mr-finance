@@ -60,6 +60,6 @@ def test_the_panel_links_the_desk_to_the_map(open_page):
     p.go("#/client/tong-quan/toan-canh")
     p.panel()
     p.page.click("#cp-hist")
-    p.page.wait_for_selector(".cp-st")
+    p.page.wait_for_selector(".cp-hist")
     assert p.page.locator("text=Bản đồ agent →").count() == 0  # a client has no Agent page
     assert not p.problems()

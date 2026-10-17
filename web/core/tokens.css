@@ -442,6 +442,42 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .cp-panel .badge.warn { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
 .cp-panel .badge.assumed { border-style: dashed; color: var(--ink-2); }
 .cp-ctx { padding: 6px 14px; border-bottom: 1px solid var(--hair); }
+/* sessions (OWN-SS-07): the bar naming the session, “Trò chuyện mới”, the history's search, tabs and groups */
+.cp-sess { display: flex; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--hair); }
+.cp-sess-main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.cp-sess-t { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; min-width: 0; max-width: 100%; padding: 0;
+  border: 0; background: none; color: var(--ink); font: inherit; font-weight: 600; line-height: 1.3; text-align: left; cursor: pointer;
+  overflow: hidden; overflow-wrap: anywhere; }
+.cp-sess-t i { display: inline-flex; vertical-align: -2px; margin-left: 6px; color: var(--muted); opacity: 0; transition: opacity var(--dur-1) var(--ease-out); }
+.cp-sess-t:hover i, .cp-sess-t:focus-visible i { opacity: 1; }
+.cp-sess-t.is-new { color: var(--ink-2); cursor: default; }
+.cp-sess-goal { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp-new { flex: none; display: inline-flex; gap: 6px; align-items: center; padding: 7px 12px; border: 1px solid var(--accent);
+  border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.cp-new:hover { background: var(--accent-soft); color: var(--ink); }
+.cp-new:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cp-sum { grid-column: 1 / -1; }
+.cp-sum summary { cursor: pointer; color: var(--accent); width: max-content; }
+.cp-sum[open] { padding: 8px 10px; margin-top: 4px; border: 1px solid var(--hair); border-radius: 10px; background: var(--surface-2); max-height: 260px; overflow: auto; }
+.cp-sum-t .cp-p { margin: 6px 0 2px; font-weight: 600; }
+.cp-ren { display: flex; gap: 6px; align-items: center; width: 100%; }
+.cp-ren input { flex: 1; min-width: 0; padding: 5px 9px; border: 1px solid var(--accent); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; }
+.cp-hist { display: grid; gap: 10px; }
+.cp-hist-top { display: flex; gap: 10px; align-items: center; }
+.cp-hist-top input { flex: 1; min-width: 0; padding: 7px 10px; border: 1px solid var(--axis); border-radius: 9px; background: var(--surface); color: var(--ink); font: inherit; }
+.cp-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--hair); }
+.cp-tabs button { display: inline-flex; gap: 5px; align-items: center; padding: 6px 10px; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent;
+  background: none; color: var(--ink-2); font: inherit; font-size: 13px; cursor: pointer; }
+.cp-tabs button[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--ink); font-weight: 600; }
+.cp-grp { margin: 4px 0 -2px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.cp-conv-goal { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); font-size: 12.5px; }
+.cp-row-acts { display: flex; gap: 0; padding-right: 4px; }
+.cp-row-acts .linkbtn { display: inline-flex; padding: 6px; border-radius: 8px; color: var(--muted); opacity: .55; transition: opacity var(--dur-1) var(--ease-out); }
+.cp-convs li:hover .cp-row-acts .linkbtn, .cp-row-acts .linkbtn:focus-visible { opacity: 1; }
+.cp-row-acts .linkbtn:hover { background: var(--surface-2); color: var(--ink); }
+.cp-convs li .cp-ren { padding: 6px 8px; }
+.cp-hist-none { padding: 14px 2px; }
+@media (hover: none) { .cp-row-acts .linkbtn, .cp-sess-t i { opacity: 1; } }
 .cp-msgs { flex: 1; overflow-y: auto; padding: 12px 14px; display: grid; gap: 10px; align-content: start; }
 .cp-me { justify-self: end; background: var(--accent-soft); padding: 8px 12px; border-radius: 12px 12px 2px 12px; max-width: 85%; }
 .cp-bot { background: var(--surface-2); padding: 10px 12px; border-radius: 12px 12px 12px 2px; max-width: 95%; line-height: 1.45; }

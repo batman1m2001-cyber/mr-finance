@@ -112,6 +112,9 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-10_phone-light-marks.jpg` | SCR-CL-10 Copilot panel | current | phone 390×844, light, viewport | 2026-10-16, dev server: the KPI marks shown after the panel closed |
 | `SCR-CL-10_desktop-light-chain.jpg` | SCR-CL-10 Copilot | current | desktop 1440×900, light, “Vì sao…”: the chain card | 2026-10-16, UI redesign R5, dev server, one approved event (client C01) |
 | `SCR-CL-10_desktop-light-scenario.jpg` | SCR-CL-10 Copilot | current | desktop 1440×900, light, a stress scenario: figures card | 2026-10-16, UI redesign R5, dev server, one approved event (client C01) |
+| `SCR-CL-10-session_desktop-dark.jpg` | SCR-CL-10 Copilot, sessions | current | desktop 1440×900, dark, viewport | 2026-10-17, experiment server :8040, client C01: the session bar (title and goal written by the model, rename pencil) and “Trò chuyện mới” (OWN-SS-07) |
+| `SCR-CL-10-history_desktop-dark.jpg` | SCR-CL-10 Copilot, sessions | current | desktop 1440×900, dark, viewport | 2026-10-17, same: the history — search, Gần đây / Lưu trữ, grouped by day, rename / archive / delete on each row |
+| `SCR-CL-10-history_phone-dark.jpg` | SCR-CL-10 Copilot, sessions | current | phone 390×844, dark, viewport | 2026-10-17, same, on a phone: the docked panel's history |
 | `SCR-CL-10_phone-light-card.jpg` | SCR-CL-10 Copilot | current | phone 390×844, light, the goals card | 2026-10-16, UI redesign R5, dev server, one approved event (client C01) |
 | `SCR-CL-11_desktop-light.jpg` | SCR-CL-11 Bản đồ tài chính | current | desktop 1440×900, light, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |
 | `SCR-CL-11_desktop-dark.jpg` | SCR-CL-11 Bản đồ tài chính | current | desktop 1440×900, dark, full page | 2026-10-16, UI redesign R4, dev server, one approved event (client C01) |

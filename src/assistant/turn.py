@@ -45,7 +45,36 @@ APPROVAL_TTL = 600.0  # a write left unanswered for 10 minutes no longer runs
 # Short-term memory (OWN-AS-11): once a prompt reaches 75 % of this budget, the older exchanges become one summary
 # (written by the same model) and the last ones stay verbatim; the session keeps every item. The budget sits far
 # below the model's window, so a request that finds it passed still fits.
-CONTEXT = ContextPolicy(window=24_000, compact_at=0.75, keep_recent=8, summarizer=Model("copilot", deadline=30))
+# The summary is structured (OWN-SS-05, SESSIONS_PLAN.md S3): our preamble in place of operonx-agents' “notes”, the
+# same segment after it. The session keeps every item, and ``doc_lai_phien`` reads the turns back.
+SUMMARY = """Tóm tắt đoạn hội thoại dưới đây để trợ lý tiếp tục mà không đọc lại nó. Tiếng Việt, gạch đầu dòng ngắn, đủ
+bảy mục, giữ nguyên tiêu đề; mục không có gì ghi “—”:
+## Mục tiêu
+## Quyết định
+## Sở thích và giới hạn người dùng nêu
+## Việc còn dở
+## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)
+## Kết quả công cụ (công cụ — điều chính — ngày số liệu)
+## Tham chiếu (trang, mã để đọc lại)
+Chỉ ghi điều có trong đoạn hội thoại. Số liệu luôn kèm công cụ và ngày. Bỏ lời chào và những lần thử đã bị thay thế.
+Cần chi tiết hơn thì gọi công cụ doc_lai_phien.
+
+Đoạn hội thoại:
+"""
+UPSTREAM_PREAMBLE_END = "Write it as notes, not prose.\n\n"  # where operonx-agents' summary_prompt's segment starts
+
+
+class Summarizer(Model):
+    """The compaction's summariser: the copilot model, asked for the seven sections."""
+
+    async def request(self, messages, **kw):
+        m = messages[-1]
+        text = str(m.get("content") or "")
+        segment = text.split(UPSTREAM_PREAMBLE_END, 1)[1] if UPSTREAM_PREAMBLE_END in text else text
+        return await super().request([*messages[:-1], {**m, "content": SUMMARY + segment}], **kw)
+
+
+CONTEXT = ContextPolicy(window=24_000, compact_at=0.75, keep_recent=8, summarizer=Summarizer("copilot", deadline=30))
 ROLE_NAMES = {
     "client": "khách hàng",
     "rm": "chuyên viên quan hệ khách hàng (RM)",
@@ -299,6 +328,9 @@ async def reply(res, ctx: Ctx, said: Optional[str], fresh: bool, cid: str) -> Di
         # older exchanges became one summary in this turn (ContextPolicy): the panel says so (FEAT-37)
         "compacted": any(i.get("role") == "summary" for i in res.new_items or []),
     }
+    summary = next((i.get("content") for i in reversed(res.new_items or []) if i.get("role") == "summary"), None)
+    if summary:  # the session's context summary, readable by the person (S3)
+        conv.describe(cid, summary=str(summary))
     if res.status == "interrupted":
         waits = []
         for i in res.interruptions:

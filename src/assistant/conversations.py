@@ -2,8 +2,12 @@
 
 ``assistant.db`` beside the state file (WAL), apart from the business data:
 
-- ``conversations``: id, owner, role, client, title, created, updated, turns.
+- ``conversations``: id, owner, role, client, title, created, updated, turns; a session's name (generated while
+  ``title_auto``, else the person's), ``archived`` (when it left the list), its ``goal`` and context ``summary``
+  (SESSIONS_PLAN.md, OWN-SS-01…06).
 - ``turns``: what the panel showed, in order — the question and the answer as sent — to draw it again anywhere.
+  Written when the turn starts (``running``, with each step as it ends) and completed when it ends, so a refresh
+  mid-answer finds the question and the tools that ran (``interrupted``).
 - ``operonx_agents_items``: the model's side (operonx-agents' ``SQLiteSession``, one shared connection per file):
   what it was sent and what it said, one session per mode (``read``: a model allowed to read client data;
   ``template``: the scrubbed question and the tools' statuses). When a prompt passes the budget
@@ -32,7 +36,9 @@ from assistant.base import Ctx
 from control import crypto
 from wealth.paths import state_path
 
-TITLE = 80  # characters of the first question kept as the title
+TITLE = 80  # characters of a title at most
+STALE_S = 80.0  # a turn still ``running`` after this long was cut (the run's wall clock is 60 s + 5)
+CUT = "Bị ngắt giữa chừng (trang được tải lại hoặc mất kết nối); các bước đã chạy ở trên. Hãy hỏi lại nếu cần."
 SCHEMA = """
 create table if not exists conversations (id text primary key, owner text not null, role text not null,
     client_id text, title text, created real not null, updated real not null, turns integer not null default 0);
@@ -69,6 +75,14 @@ def db() -> Iterator[sqlite3.Connection]:
             con.executescript(SCHEMA)
             if "session_id" not in {r[1] for r in con.execute("pragma table_info(assistant_runs)")}:  # A3's
                 con.execute("alter table assistant_runs add column session_id text")
+            have = {r[1] for r in con.execute("pragma table_info(conversations)")}
+            added = (("title_auto", "integer not null default 1"), ("archived", "real"), ("goal", "text"),
+                     ("summary", "text"), ("summary_at", "real"), ("described", "integer"))  # sessions  # fmt: skip
+            for col, kind in added:
+                if col not in have:
+                    con.execute(f"alter table conversations add column {col} {kind}")
+            if "status" not in {r[1] for r in con.execute("pragma table_info(turns)")}:
+                con.execute("alter table turns add column status text")  # null: a turn written whole (before S1)
             _READY.add(p)
         yield con
     finally:
@@ -98,14 +112,69 @@ def _open_json(text: Optional[str], place: bytes) -> Any:
 def start(ctx: Ctx, question: str) -> str:
     cid = uuid.uuid4().hex[:16]
     now = time.time()
-    title = " ".join(str(question or "").split())[:TITLE] or "Cuộc trò chuyện"
+    title = local_title(question)
     with db() as con:
         con.execute(
-            "insert into conversations values (?, ?, ?, ?, ?, ?, ?, 0)",
+            "insert into conversations (id, owner, role, client_id, title, created, updated, turns) "
+            "values (?, ?, ?, ?, ?, ?, ?, 0)",
             (cid, owner(ctx), ctx.role, ctx.client_id, crypto.seal(title, _place("conversations", cid, "title")),
              now, now),
         )  # fmt: skip
     return cid
+
+
+def local_title(question: Optional[str], most: int = 48) -> str:
+    """A title without a model: the question's first clause, cut at a word (template mode, no model, or until the
+    model's title arrives)."""
+    text = " ".join(str(question or "").split())
+    for stop in ("? ", ". ", "! ", "; "):
+        if stop in text:
+            text = text.split(stop)[0] + stop.strip()
+            break
+    if len(text) > most:
+        text = text[:most].rsplit(" ", 1)[0].rstrip(",;:") + "…"
+    return text or "Cuộc trò chuyện"
+
+
+def _seal(text: Optional[str], cid: str, column: str) -> Optional[str]:
+    return None if text is None else crypto.seal(text, _place("conversations", cid, column))
+
+
+def rename(ctx: Ctx, cid: str, title: str) -> Dict[str, Any]:
+    """The person names the session: kept from now on (``title_auto`` = 0)."""
+    c = own(ctx, cid)
+    name = " ".join(str(title or "").split())[:TITLE]
+    if not name:
+        raise ValueError("Tên cuộc trò chuyện không được để trống")
+    with db() as con:
+        con.execute("update conversations set title = ?, title_auto = 0 where id = ?", (_seal(name, c["id"], "title"),
+                    c["id"]))  # fmt: skip
+    return own(ctx, cid)
+
+
+def set_archived(ctx: Ctx, cid: str, on: bool) -> Dict[str, Any]:
+    """Archive (out of the list and the resume; still opened, searched and kept) or bring back."""
+    c = own(ctx, cid)
+    with db() as con:
+        con.execute("update conversations set archived = ? where id = ?", (time.time() if on else None, c["id"]))
+    return own(ctx, cid)
+
+
+def describe(cid: str, title: Optional[str] = None, goal: Optional[str] = None, summary: Optional[str] = None,
+             at: Optional[int] = None) -> None:  # fmt: skip
+    """What the session is about, from the model (S2, S3): a generated title replaces only a generated one; ``at``,
+    the turn count it was written at (asked again at the same count, nothing is spent)."""
+    with db() as con:
+        if at is not None:
+            con.execute("update conversations set described = ? where id = ?", (int(at), cid))
+        if title:
+            con.execute("update conversations set title = ? where id = ? and title_auto = 1",
+                        (_seal(title[:TITLE], cid, "title"), cid))  # fmt: skip
+        if goal:
+            con.execute("update conversations set goal = ? where id = ?", (_seal(goal, cid, "goal"), cid))
+        if summary:
+            con.execute("update conversations set summary = ?, summary_at = ? where id = ?",
+                        (_seal(summary, cid, "summary"), time.time(), cid))  # fmt: skip
 
 
 def own(ctx: Ctx, cid: Optional[str]) -> Dict[str, Any]:
@@ -119,34 +188,72 @@ def own(ctx: Ctx, cid: Optional[str]) -> Dict[str, Any]:
 
 def _row(row: sqlite3.Row) -> Dict[str, Any]:
     out = dict(row)
-    out["title"] = crypto.open_(out["title"], _place("conversations", out["id"], "title"))
+    for col in ("title", "goal", "summary"):
+        if out.get(col) is not None:
+            out[col] = crypto.open_(out[col], _place("conversations", out["id"], col))
     out.pop("owner", None)
     return out
 
 
-def listing(ctx: Ctx, limit: int = 50) -> List[Dict[str, Any]]:
+def listing(ctx: Ctx, limit: int = 50, archived: bool = False) -> List[Dict[str, Any]]:
+    """The person's sessions in this role, newest first: the active ones, or the archived ones."""
+    which = "archived is not null" if archived else "archived is null"
     with db() as con:
         rows = con.execute(
-            "select * from conversations where owner = ? and role = ? order by updated desc limit ?",
+            f"select * from conversations where owner = ? and role = ? and {which} order by updated desc limit ?",
             (owner(ctx), ctx.role, int(limit)),
         ).fetchall()
     return [_row(r) for r in rows]
 
 
-def record(cid: str, question: Optional[str], answer: Dict[str, Any]) -> int:
-    """A turn as the panel showed it; the conversation's ``updated`` and count move with it."""
+def begin(cid: str, question: Optional[str]) -> int:
+    """A turn starting: its question kept now, the answer ``running`` (OWN-SS-03). Returns its seq."""
+    return _write(cid, None, question, {"status": "running", "steps": []}, "running")
+
+
+def progress(cid: str, seq: int, steps: List[Dict[str, Any]]) -> None:
+    """The steps a running turn has finished so far."""
+    with db() as con:
+        con.execute("update turns set answer = ? where conversation_id = ? and seq = ? and status = 'running'",
+                    (_seal_json({"status": "running", "steps": steps}, _place("turns", (cid, seq), "turn")), cid,
+                     seq))  # fmt: skip
+
+
+def interrupt(cid: str, seq: int, steps: List[Dict[str, Any]]) -> None:
+    """A running turn cut before its answer (the stream closed): what had run, said so."""
+    answer = {"status": "interrupted", "steps": steps, "text": CUT}
+    sealed = _seal_json(answer, _place("turns", (cid, seq), "turn"))
+    with db() as con:
+        con.execute("update turns set answer = ?, status = 'interrupted' where conversation_id = ? and seq = ? and "
+                    "status = 'running'", (sealed, cid, seq))  # fmt: skip
+
+
+def record(cid: str, question: Optional[str], answer: Dict[str, Any], seq: Optional[int] = None) -> int:
+    """A turn as the panel showed it — the one begun as ``seq``, or a new one; the conversation's ``updated`` and
+    count move with it."""
+    return _write(cid, seq, question, answer, str(answer.get("status") or "ok"))
+
+
+def _write(cid: str, seq: Optional[int], question: Optional[str], answer: Dict[str, Any], status: str) -> int:
     now = time.time()
     with db() as con:
         con.execute("begin immediate")
-        (seq,) = con.execute(
-            "select coalesce(max(seq), -1) + 1 from turns where conversation_id = ?", (cid,)
-        ).fetchone()
-        place = _place("turns", (cid, seq), "turn")
-        con.execute(
-            "insert into turns values (?, ?, ?, ?, ?)",
-            (cid, seq, now, crypto.seal(question, place) if question else None, _seal_json(answer, place)),
-        )
-        con.execute("update conversations set updated = ?, turns = turns + 1 where id = ?", (now, cid))
+        if seq is None or not con.execute("select 1 from turns where conversation_id = ? and seq = ?",
+                                          (cid, seq)).fetchone():  # fmt: skip
+            (seq,) = con.execute(
+                "select coalesce(max(seq), -1) + 1 from turns where conversation_id = ?", (cid,)
+            ).fetchone()
+            place = _place("turns", (cid, seq), "turn")
+            con.execute(
+                "insert into turns (conversation_id, seq, at, question, answer, status) values (?, ?, ?, ?, ?, ?)",
+                (cid, seq, now, crypto.seal(question, place) if question else None, _seal_json(answer, place),
+                 status),
+            )  # fmt: skip
+            con.execute("update conversations set updated = ?, turns = turns + 1 where id = ?", (now, cid))
+        else:
+            con.execute("update turns set answer = ?, status = ? where conversation_id = ? and seq = ?",
+                        (_seal_json(answer, _place("turns", (cid, seq), "turn")), status, cid, seq))  # fmt: skip
+            con.execute("update conversations set updated = ? where id = ?", (now, cid))
         con.execute("commit")
     return seq
 
@@ -174,16 +281,16 @@ def turns_of(cid: str) -> List[Dict[str, Any]]:
     with db() as con:
         rows = con.execute("select * from turns where conversation_id = ? order by seq", (cid,)).fetchall()
     out = []
+    now = time.time()
     for r in rows:
         place = _place("turns", (cid, r["seq"]), "turn")
-        out.append(
-            {
-                "seq": r["seq"],
-                "at": r["at"],
-                "question": crypto.open_(r["question"], place),
-                "answer": _open_json(r["answer"], place),
-            }
-        )
+        answer = _open_json(r["answer"], place) or {}
+        status = r["status"] or answer.get("status") or "ok"
+        if status == "running" and now - r["at"] > STALE_S:  # the server stopped mid-turn: nothing will finish it
+            status = "interrupted"
+            answer = {**answer, "status": status, "text": CUT}
+        out.append({"seq": r["seq"], "at": r["at"], "question": crypto.open_(r["question"], place), "answer": answer,
+                    "status": status})  # fmt: skip
     return out
 
 
@@ -287,6 +394,8 @@ def census(con: sqlite3.Connection) -> Dict[str, int]:
 
     for sql in (
         "select title from conversations",
+        "select goal from conversations",
+        "select summary from conversations",
         "select question from turns",
         "select answer from turns",
         "select state from assistant_runs",
@@ -309,9 +418,12 @@ def rotate(con: sqlite3.Connection) -> Dict[str, int]:
     def again(text: Optional[str], place: bytes) -> Optional[str]:
         return None if text is None else crypto.seal(crypto.open_(text, place), place)
 
-    for cid, title in con.execute("select id, title from conversations").fetchall():
-        place = _place("conversations", cid, "title")
-        con.execute("update conversations set title = ? where id = ?", (again(title, place), cid))
+    for cid, title, goal, summary in con.execute("select id, title, goal, summary from conversations").fetchall():
+        con.execute(
+            "update conversations set title = ?, goal = ?, summary = ? where id = ?",
+            (again(title, _place("conversations", cid, "title")), again(goal, _place("conversations", cid, "goal")),
+             again(summary, _place("conversations", cid, "summary")), cid),
+        )  # fmt: skip
         out["conversations"] += 1
     for cid, seq, q, a in con.execute("select conversation_id, seq, question, answer from turns").fetchall():
         place = _place("turns", (cid, seq), "turn")

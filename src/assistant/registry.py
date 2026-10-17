@@ -51,6 +51,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "ghi_nho": "Ghi nhớ",
     "quen": "Quên",
     "tim_lich_su": "Tìm lịch sử",
+    "doc_lai_phien": "Đọc lại phiên",
     "huong_dan": "Hướng dẫn sử dụng",
     "tai_lieu": "Tài liệu của bạn",
     "tim_tren_web": "Tìm trên web",

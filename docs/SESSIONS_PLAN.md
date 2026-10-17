@@ -4,7 +4,10 @@ Owner request: [`2026-10-17_assistant_sessions.md`](brd/sources/owner_requests/2
 → OWN-SS-01…08 ([owner_requirements.md](brd/requirements/owner_requirements.md)), feature FEAT-37. Experiment
 branch `exp/graph-workspace` (with the graph workspace); no PR to main.
 
-**Status (2026-10-17): S0 done.**
+**Status (2026-10-17): S0–S5 done.** OWN-SS-01…08 verified; report:
+[`sessions_report.md`](brd/testing/sessions_report.md). Changed from the plan by measurement: a closed stream does
+not stop the server's run, so a reload follows the running turn instead of marking it cut (decision 2); the title
+is asked by the panel after the answer (`describe`), not by a hidden task (decision 3).
 
 ## 1. Audit — what exists (read 2026-10-17)
 

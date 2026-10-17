@@ -11,7 +11,7 @@ from operonx import op
 from operonx.core.loggings import LOGGER
 
 from assistant import conversations as conv
-from assistant import knowledge, memory, registry, stream
+from assistant import knowledge, memory, registry, sessions, stream
 from assistant import turn as turns
 from assistant.base import Ctx
 from control import audit, db, roles
@@ -142,9 +142,15 @@ async def turn_events(r: Dict[str, Any]):
 
     Yields the turn's events as they happen (FEAT-40: ``step``, ``text``, ``wait``), then ``{"type": "result"}``."""
     ctx = context(r)
+    seq: Optional[int] = None  # the turn's row, written now (OWN-SS-03)
+    ran: List[Dict[str, Any]] = []  # its steps as they end
+    labels: Dict[str, str] = {}
+    ended = False
 
     def done(result: Dict[str, Any]) -> Dict[str, Any]:
-        return {"type": "result", "result": result}
+        nonlocal ended
+        ended = True
+        return {"type": "result", "result": {**result, "turn_seq": seq} if seq is not None else result}
 
     async def fall(why: str, cid: Optional[str]):
         async for e in fallback_events(r, why):
@@ -155,6 +161,29 @@ async def turn_events(r: Dict[str, Any]):
     except ValueError as exc:  # someone else's conversation, or one deleted
         yield done({"status": "failed", "mode": "model", "steps": [], "text": str(exc)})
         return
+    if cid is None:  # a confirm: the conversation the parked write came from, when it is this person's
+        try:
+            cid = turns.parked(r["turn_id"], ctx)["conversation_id"]
+        except ValueError:
+            cid = None  # said below, by resume_events
+    if cid is not None:
+        seq = conv.begin(cid, r["message"] or None)
+    try:
+        async for e in _turn(r, ctx, cid, done, fall):
+            if seq is not None and e.get("type") == "step":
+                if e.get("phase") == "start":
+                    labels[e["call_id"]] = e.get("label") or e["tool"]
+                elif e.get("phase") == "end":
+                    ran.append({"tool": e["tool"], "label": labels.get(e["call_id"], e["tool"]),
+                                "status": "ok" if e.get("ok") else "failed"})  # fmt: skip
+                    conv.progress(cid, seq, ran)
+            yield e
+    finally:  # the stream closed before the answer (a refresh, a closed tab): what ran stays, said so
+        if seq is not None and not ended:
+            conv.interrupt(cid, seq, ran)
+
+
+async def _turn(r: Dict[str, Any], ctx: Ctx, cid: Optional[str], done, fall):
     if not turns.live():
         async for e in fall("chưa cấu hình mô hình cho trợ lý", cid):
             yield e
@@ -213,6 +242,8 @@ def answer(request: dict, result: dict) -> dict:
 
 
 def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
+    result = dict(result)
+    turn_seq = result.pop("turn_seq", None)
     steps = result.get("steps") or []
     seen_pages = set()
     citations = []
@@ -256,7 +287,13 @@ def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
         "audit_seq": seq,
     }
     if out.get("conversation_id"):  # the turn as the panel shows it, to draw again on any device (A3)
-        conv.record(out["conversation_id"], r["message"] or None, out)
+        conv.record(out["conversation_id"], r["message"] or None, out, seq=turn_seq)
+        try:  # the session as the panel names it; it asks for the title and goal once this answer is drawn (S2)
+            c = conv.own(context(r), out["conversation_id"])
+            out["session"] = {k: c.get(k) for k in ("id", "title", "goal", "summary", "title_auto", "turns")}
+            out["describe"] = sessions.due(c["turns"], bool(out.get("compacted"))) and c.get("described") != c["turns"]
+        except ValueError:
+            pass
     return out
 
 
@@ -291,14 +328,24 @@ async def stream_turn(item: dict = None):
 
 
 @op
-def conversations(action: str = None, conversation_id: str = None, role: str = None, client_id: str = None) -> dict:
-    """The person's conversations in this role: ``list`` (newest first), ``open`` one (its turns as shown, and the
-    writes still waiting in it), ``delete`` one (its turns and the model's side; audited without its text)."""
+async def conversations(action: str = None, conversation_id: str = None, role: str = None, client_id: str = None,
+                  title: str = None) -> dict:  # fmt: skip
+    """The person's sessions in this role: ``list`` (newest first) or ``list_archived``, ``open`` one (its turns as
+    shown, and the writes still waiting in it), ``rename``, ``archive``, ``restore``, ``describe`` (the title and
+    goal written by the model when due, S2), ``delete`` one (its turns and the model's side; audited without its
+    text)."""
     r = {**who(role, client_id), "message": "", "route": "", "followed": None}
     ctx = context(r)
     action = str(action or "list")
-    if action == "list":
-        return {"conversations": {"items": conv.listing(ctx)}}
+    if action in ("list", "list_archived"):
+        return {"conversations": {"items": conv.listing(ctx, archived=action == "list_archived")}}
+    if action == "rename":
+        return {"conversations": {"conversation": conv.rename(ctx, conversation_id, title)}}
+    if action == "describe":
+        c = conv.own(ctx, conversation_id)
+        return {"conversations": {"conversation": await sessions.after_turn(ctx, c["id"]) or c}}
+    if action in ("archive", "restore"):
+        return {"conversations": {"conversation": conv.set_archived(ctx, conversation_id, action == "archive")}}
     if action == "open":
         c = conv.own(ctx, conversation_id)
         with conv.db() as con:
@@ -315,7 +362,7 @@ def conversations(action: str = None, conversation_id: str = None, role: str = N
                 con, actor, "assistant.conversation.delete", str(conversation_id), {"role": r["role"], "turns": n}
             )
         return {"conversations": {"deleted": conversation_id, "turns": n}}
-    raise ValueError("action là list, open hoặc delete")
+    raise ValueError("action là list, list_archived, open, rename, archive, restore, describe hoặc delete")
 
 
 # -- the Bộ nhớ page (A4): list, correct, forget, forget all, search the archive ---------------------------------

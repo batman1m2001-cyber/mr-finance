@@ -197,6 +197,29 @@ conversations — open, search, delete.
   `assistant_retention` job (02:30 daily) deletes conversations whose last turn is older, with their turns, model
   items and run states, purges expired items, scrubs, and audits the counts.
 
+### As built (sessions, 2026-10-17) — OWN-SS-01…08, [SESSIONS_PLAN.md](../../SESSIONS_PLAN.md)
+
+- **Storage kept.** The owner asked to check the deployment before choosing a store. The app is one `operonx serve`
+  process on one host; `assistant.db` (WAL) was measured at ~127 turns/s against a busy hour of ~10 (§8,
+  ADR-0027). The sessions are new columns on `conversations` and `turns`, added in place.
+- **A session** is a conversation with a name, a goal and a summary. It can be renamed (kept from then on), archived
+  (out of the panel's list and the resume, still on Bộ nhớ and in search) and restored. All of these are keyed by
+  the owner the server resolved.
+- **A turn is written when it starts** (`running`) and updated as each step ends. Measured on the experiment
+  server: when the browser closes the stream, operonx serve does not cancel the run. Both tools ran, and the answer
+  was recorded about 3 s later. So the panel follows a `running` turn after a reload, re-opening the session every
+  2 s. Only a turn still `running` 80 s after it started (the run's wall clock is 65 s) reads as interrupted.
+- **Titles and goals** come from the copilot model in one small request (≤ 400 tokens; it thinks first). It runs
+  after the 1st and 4th answers and after a compaction. The answer says `describe: true` and the panel asks once
+  it has drawn the answer, so no reply waits for it. Live: US$0.0001 and 1.3–2.4 s a title. In template mode no
+  model is asked; the title is the question's first clause.
+- **Compaction** stays operonx-agents' `ContextPolicy`. Our `Summarizer` swaps upstream's “notes” preamble for seven
+  fixed sections: goal, decisions, the person's preferences and limits, open tasks, entities, tool results with
+  their dates, and references. A test guards the preamble's shape. The summary is copied to the session and shown
+  as “Tóm tắt phiên”. Every item and turn is kept, and `doc_lai_phien` reads the session's own turns back.
+- **Two levels.** The A4 items are unchanged and go into every session's instructions. A session's model side, its
+  summary and the read-back tool see that session only.
+
 ## 6. Knowledge *(built in A5, 2026-10-17)* — ADR-0029, ADR-0030
 
 `operonx-kb` (0.2.6) in `data/kb/` beside the state file: catalog, blobs and a lexical index (FTS5, Vietnamese

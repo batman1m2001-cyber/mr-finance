@@ -1,8 +1,9 @@
 """assistant_flow: a message (or the person's answers to the writes it waits on) → one assistant turn → the answer
-(POST /api/assistant, A2), kept in its conversation (A3). assistant_conversations_flow: the person's conversations —
-list, open, delete (POST /api/assistant/conversations). The Copilot's ``copilot_flow`` stays as the fallback path
-and its own endpoint. assistant_stream_flow: the same turn said as it happens (POST /api/assistant/stream with
-``Accept: text/event-stream``, FEAT-40): one numbered server-sent event per step, text, wait and the answer."""
+(POST /api/assistant, A2), kept in its conversation (A3). assistant_conversations_flow: the person's sessions — list,
+open, rename, archive, restore, describe, delete (POST /api/assistant/conversations). The Copilot's ``copilot_flow``
+stays as the fallback path and its own endpoint. assistant_stream_flow: the same turn said as it happens
+(POST /api/assistant/stream with ``Accept: text/event-stream``, FEAT-40): one numbered server-sent event per step,
+text, wait and the answer."""
 
 from operonx import END, START, graph
 from operonx.app.serve import egress, ingress
@@ -58,9 +59,9 @@ def assistant_stream_flow():
 
 
 @graph
-def assistant_conversations_flow(action="list", conversation_id=None, role="client", client_id=None):
-    """The person's conversations with the assistant: list, open one, delete one."""
-    got = conversations(action=action, conversation_id=conversation_id, role=role, client_id=client_id)
+def assistant_conversations_flow(action="list", conversation_id=None, role="client", client_id=None, title=None):
+    """The person's sessions with the assistant: list (active or archived), open, rename, archive, restore, delete."""
+    got = conversations(action=action, conversation_id=conversation_id, role=role, client_id=client_id, title=title)
     START >> got >> END
 
 

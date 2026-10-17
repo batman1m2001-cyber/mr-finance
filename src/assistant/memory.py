@@ -242,6 +242,26 @@ async def _history(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     return {"text": text, "data": {"hits": len(hits)}}
 
 
+async def _reread(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """The current session's own turns, verbatim (OWN-SS-05): what a compaction summary left out, read back."""
+    from assistant import conversations as conv
+
+    turns = conv.turns_of(ctx.conversation) if ctx.conversation else []
+    words = fast_fold(str(args.get("q") or "")).split()
+    rows = []
+    for t in turns:
+        said = " ".join(str((t.get("answer") or {}).get("text") or "").split())
+        both = f"{t.get('question') or ''} {said}"
+        if not words or all(w in fast_fold(both) for w in words):
+            rows.append((t["seq"], t.get("question") or "(xác nhận)", said))
+    last = max(1, min(int(args.get("n") or 4), 8))
+    rows = rows[-last:]
+    if not rows:
+        return {"text": "Không thấy lượt nào như vậy trong cuộc trò chuyện này.", "data": {"turns": 0}}
+    text = " ".join(f"[lượt {seq + 1}] Bạn: {q[:300]} — Trợ lý: {a[:600]}" for seq, q, a in rows)
+    return {"text": text, "data": {"turns": len(rows)}}
+
+
 CATALOGUE = {
     t.name: t
     for t in [
@@ -289,6 +309,18 @@ CATALOGUE = {
             EVERYONE,
             _history,
             params={"q": Param(str, "từ khóa cần tìm, ngắn")},
+            page="bo-nho",
+        ),
+        Tool(
+            "doc_lai_phien",
+            "đọc lại nguyên văn các lượt trước của chính cuộc trò chuyện này (khi phần đầu đã được tóm tắt và cần chi "
+            "tiết)",
+            EVERYONE,
+            _reread,
+            params={
+                "q": Param(str, "từ khóa để lọc, để trống là các lượt gần nhất", ""),
+                "n": Param(int, "số lượt, tối đa 8", 4),
+            },
             page="bo-nho",
         ),
     ]

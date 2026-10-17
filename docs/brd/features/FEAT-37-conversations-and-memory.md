@@ -31,12 +31,13 @@ FEAT-39). Any stored message → archive search results with conversation, time 
 6. Compliance's `assistant_retention` (two-person) deletes archived messages past their age (default 365 days) and
    expired facts.
 
-### Sessions (OWN-SS-01…08, planned in [SESSIONS_PLAN.md](../../SESSIONS_PLAN.md))
+### Sessions (OWN-SS-01…08, built in [SESSIONS_PLAN.md](../../SESSIONS_PLAN.md) S1–S4, 2026-10-17)
 7. A conversation is a **session**: it can be renamed, archived (hidden, brought back) or deleted. Its title is generated
    (≤ 7 words) after the first answer and refined later; a title the person set is kept. Template mode never sends the
    question to a model for a title.
-8. A turn is written when it starts and completed when it ends. A refresh mid-answer shows the question and the
-   steps that ran, marked interrupted.
+8. A turn is written when it starts and completed when it ends. The server keeps answering when the page goes
+   away, so after a reload the panel shows the steps so far and follows the turn to its answer. A turn the server
+   never finished (it stopped) shows what ran, marked “Bị ngắt”.
 9. Each session keeps a goal and a context summary. Compaction writes the summary in seven fixed sections (goal,
    decisions, preferences, open tasks, entities, tool results, references); the session keeps every message, and
    `doc_lai_phien` reads them back.
@@ -67,6 +68,13 @@ across runs). A4 (2026-10-17): `src/assistant/memory.py` (the rules, the tools, 
 `src/assistant/retention.py` (the daily sweep), `assistant_memory_flow` (`POST /api/assistant/memory`), the Bộ nhớ
 page (`web/pages/memory.js`); the generic store and tools are operonx-agents 0.3.0 `memory` (Operonx #189).
 
+Sessions (2026-10-17): `src/assistant/conversations.py` (columns `title_auto`, `archived`, `goal`, `summary`,
+`summary_at`, `described`; `turns.status`; `begin` / `progress` / `interrupt` / `record`; `rename`, `set_archived`,
+`describe`), `src/assistant/sessions.py` (titles and goals), `src/assistant/turn.py` (`Summarizer`, the summary kept),
+`src/assistant/memory.py` (`doc_lai_phien`), `assistant_conversations_flow` (actions `list_archived`, `rename`,
+`archive`, `restore`, `describe`), the panel's session bar and history (`web/copilot.js`), Bộ nhớ lists archived
+sessions too.
+
 ## Dependencies
 FEAT-32 (the assistant), FEAT-39 (the consolidator), FEAT-14 (retention configuration).
 
@@ -80,6 +88,14 @@ next conversation, template mode never sends items, the page's corrections audit
 memory never another's, the archive searched with conversation, time and author, nothing readable on disk after
 forgetting, sealing, retention; `tests/ui/test_memory_ui.py` (the page: correct, forget, forget all; find a past
 conversation and open it in the panel, phone).
+
+Sessions: `tests/test_assistant_sessions.py` — rename, archive and restore by the owner only; a turn kept from its
+start, cut and stale turns; one row per finished turn; two signed-in customers over HTTP; titles and goals written
+once, again at the fourth turn, never over the person's name, nothing sent in template mode, a broken answer
+ignored; compaction in seven sections kept on the session, the next turn continuing from it, the read-back limited
+to the session, upstream's prompt shape guarded. `tests/ui/test_sessions_ui.py` — named, kept on reload, renamed,
+started anew, searched, archived and restored; a running turn followed to its answer after a reload and a dead one
+marked cut (phone).
 
 ## Limitations
 Archive search scans one person's messages (sealed content has no plain index): 0.5 s for a year of daily 10-turn

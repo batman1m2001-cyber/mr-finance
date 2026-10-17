@@ -13,8 +13,9 @@ export async function render(box, ctx) {
   const mem = (action, body = {}) => post("/api/assistant/memory", {...who, action, ...body}).then(r => r.memory);
   const convs = (action, body = {}) => post("/api/assistant/conversations", {...who, action, ...body}).then(r => r.conversations);
   const look = (path, action) => read(path, {...who, action}).then(r => r.memory || r.conversations);  // lists: forget nothing
-  const [m, c, d, f] = await Promise.all([look("/api/assistant/memory", "list"), look("/api/assistant/conversations", "list"),
-    look("/api/assistant/memory", "materials"), look("/api/assistant/memory", "follow_ups")]);
+  const [m, c0, ca, d, f] = await Promise.all([look("/api/assistant/memory", "list"), look("/api/assistant/conversations", "list"),
+    look("/api/assistant/conversations", "list_archived"), look("/api/assistant/memory", "materials"), look("/api/assistant/memory", "follow_ups")]);
+  const c = {items: [...(c0.items || []), ...(ca.items || [])]};  // archived sessions (OWN-SS-01) stay here, marked
   if (!box.isConnected) return;
 
   const item = (i) => `<li class="mem-item" data-item="${esc(i.id)}">
@@ -22,7 +23,7 @@ export async function render(box, ctx) {
       <div class="small muted">Ghi ${esc(day(i.created))}${i.updated - i.created > 60 ? ` · sửa ${esc(day(i.updated))}` : ""}${i.expires ? ` · hết hạn ${esc(day(i.expires))}` : " · không hết hạn"}${i.source && i.source.conversation ? ` · <a href="#" data-conv="${esc(i.source.conversation)}">từ cuộc trò chuyện</a>` : ""}${i.source && i.source.by === "consolidator" ? " · trợ lý tự rút ra" : ""}</div>
       <div class="row mt-xs"><button type="button" class="btn sm ghostbtn" data-edit="${esc(i.id)}">Sửa</button><button type="button" class="btn sm ghostbtn" data-forget="${esc(i.id)}">Quên</button></div>
     </li>`;
-  const conv = (x) => `<li class="mem-conv"><div><b>${esc(x.title || "Cuộc trò chuyện")}</b><div class="small muted">${esc(when(x.updated))} · ${x.turns} lượt</div></div>
+  const conv = (x) => `<li class="mem-conv"><div><b>${esc(x.title || "Cuộc trò chuyện")}</b><div class="small muted">${esc(when(x.updated))} · ${x.turns} lượt${x.archived ? " · đã lưu trữ" : ""}</div></div>
       <div class="row"><button type="button" class="btn sm ghostbtn" data-open="${esc(x.id)}">Mở</button><button type="button" class="btn sm ghostbtn" data-delconv="${esc(x.id)}">Xoá</button></div></li>`;
 
   const doc = (x) => `<li class="mem-conv" data-doc="${esc(x.key)}"><div><b>${esc(x.name)}</b><div class="small muted">${x.added ? esc(when(x.added)) : ""}${x.own ? "" : " · của khách hàng"}</div></div>

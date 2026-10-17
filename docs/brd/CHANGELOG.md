@@ -2,6 +2,15 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Assistant sessions (experiment, SESSIONS_PLAN S0–S5, OWN-SS-01…08).
+  - Sessions renamed, archived and restored. Titles and goals are written by the model after the answer, never over
+    the person's name.
+  - A turn is kept from its start, and a reload follows it to its answer.
+  - Compaction writes seven fixed sections, kept on the session; `doc_lai_phien` reads past them.
+  - The panel has a session bar, “Trò chuyện mới”, and a history with search, tabs and day groups.
+  - Documents: FEAT-37, assistant.md §5, matrix OWN-SS-01…08, sessions_report.md, screenshots SCR-CL-10-session
+    and -history.
+
 - 2026-10-17 — The graph refined: hierarchy and Studio-style dataflow (experiment, G8–G10, OWN-GW-15…19).
   - Spokes by default, relations on demand, holdings on pick, labels and nodes that never overlap (crossings 104 → 0
     on Tổng quan); the centre's text fits its disc.

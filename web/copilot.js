@@ -6,8 +6,11 @@
    Copilot's keyword path when no model answers (POST /api/copilot, whose confirm it still uses).
 
    Conversations live on the server (A3, POST /api/assistant/conversations): opening the panel resumes the
-   person's latest conversation in this role when it moved in the last day — on any device — the clock button
-   lists them (open, delete), “Mới” starts another. Nothing is kept in the browser.
+   person's latest conversation in this role when it moved in the last day — on any device. Sessions (OWN-SS,
+   SESSIONS_PLAN.md S4): the bar under the header names the session (rename in place), its goal and its context
+   summary, with “Trò chuyện mới” beside it; the clock button lists the sessions (search, Gần đây / Lưu trữ, grouped
+   by day; rename, archive, restore, delete). A turn still running after a refresh shows what has run and is
+   followed until it ends. Nothing is kept in the browser.
 
    Living Interface (B-01): the button and panel show the request's real state (data-state: idle, busy while
    the request is in flight, ok, error, pending a confirmation), and an answer marks the page elements it
@@ -19,7 +22,7 @@
    words, a write waiting) shows in the panel as it happens and goes to onEvent, which the graph draws (OWN-GW-06…10);
    a stream that breaks is said, never papered over. */
 import {$, esc, followedIds, post, stream} from "./core/core.js";
-import {icon} from "./core/icons.js?v=20261016r1";
+import {icon} from "./core/icons.js?v=20261017s1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
 
@@ -38,7 +41,7 @@ const MODE = {  // how the answer was written: the badge and the line under the 
   template: () => ["mẫu cố định", "Mô hình chỉ thấy câu hỏi đã che tên và số, không thấy số liệu; câu trả lời ghép từ kết quả công cụ theo mẫu. Không phải khuyến nghị đầu tư."],
   fallback: () => ["dự phòng: từ khóa", "Chế độ dự phòng: bộ định tuyến từ khóa chọn một công cụ; câu trả lời viết theo mẫu. Không phải khuyến nghị đầu tư."],
 };
-const BADGE = {failed: ["bad", "Không thực hiện được"], forbidden: ["bad", "Không có quyền"], pending: ["warn", "Chờ xác nhận"]};
+const BADGE = {failed: ["bad", "Không thực hiện được"], forbidden: ["bad", "Không có quyền"], pending: ["warn", "Chờ xác nhận"], interrupted: ["warn", "Bị ngắt"]};
 const STATE = {idle: "Sẵn sàng", busy: "Đang xử lý", ok: "Đã trả lời", error: "Không thực hiện được", pending: "Chờ bạn xác nhận"};
 const FOR = {ok: "ok", pending: "pending", failed: "error", forbidden: "error", unknown: "idle"};
 const STEP = {ok: "✓", failed: "✕", declined: "–", forbidden: "✕"};
@@ -118,9 +121,10 @@ export function mount() {
   panel.className = "cp-panel"; panel.hidden = true;
   panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "OneWealth Copilot");
   panel.innerHTML = `<header class="cp-head"><span class="cp-dot" id="cp-dot" aria-hidden="true"></span><b>OneWealth Copilot</b><span class="sr-only" id="cp-state">Sẵn sàng</span><span class="badge assumed" id="cp-router">trợ lý</span>
-      <span class="cp-tools"><button type="button" class="linkbtn small" id="cp-new" title="Cuộc trò chuyện mới">+ Mới</button>
-      <button type="button" class="linkbtn" id="cp-hist" title="Các cuộc trò chuyện" aria-pressed="false">${icon("history", {size: 18})}<span class="sr-only">Các cuộc trò chuyện</span></button>
+      <span class="cp-tools"><button type="button" class="linkbtn" id="cp-hist" title="Các cuộc trò chuyện" aria-pressed="false">${icon("history", {size: 18})}<span class="sr-only">Các cuộc trò chuyện</span></button>
       <button type="button" class="linkbtn" id="cp-close" aria-label="Đóng">✕</button></span></header>
+    <div class="cp-sess" id="cp-sess"><div class="cp-sess-main" id="cp-sess-main"></div>
+      <button type="button" class="cp-new" id="cp-new" title="Bắt đầu cuộc trò chuyện mới: bộ nhớ của bạn vẫn giữ, các cuộc trước vẫn còn">${icon("plus", {size: 16})}<span>Trò chuyện mới</span></button></div>
     <div class="cp-ctx small muted" id="cp-ctx"></div>
     <div class="cp-msgs" id="cp-msgs" aria-live="polite"></div>
     <div class="cp-sugg" id="cp-sugg"></div>
@@ -131,6 +135,7 @@ export function mount() {
   dropOld();
   let msgs = [], role = null, busy = false, shown = 0, settle = null, later = null;
   let cid = null, resumed = false, listing = null;  // the conversation on screen; the history list when it shows
+  let sess = null, poll = 0;  // the session on screen as the server names it; the timer following a running turn
   let docked = false, live = null, run = null;  // run: the turn in flight, as its events tell it
   const covers = () => !docked && !panel.hidden && matchMedia("(max-width: 560px)").matches;  // phone: the panel hides the page
 
@@ -153,7 +158,7 @@ export function mount() {
   const drawCtx = () => {
     const c = context();
     if (c.role !== role) {  // another role: its own conversations
-      const had = role; role = c.role; msgs = []; shown = 0; cid = null; resumed = false; listing = null;
+      const had = role; role = c.role; msgs = []; shown = 0; cid = null; sess = null; resumed = false; listing = null; drawSess();
       if (had && !panel.hidden) { draw(); sugg(); resume(); }
     }
     const page = (docked ? document.querySelector("#ws-sheet:not([hidden]) #ws-sheet-t") || document.querySelector("#ws-title")
@@ -169,14 +174,17 @@ export function mount() {
   const draw = () => {
     const box = $("#cp-msgs", panel);
     $("#cp-hist", panel).setAttribute("aria-pressed", String(!!listing));
-    if (listing) { drawList(box); return; }
+    $("#cp-sugg", panel).style.display = listing ? "none" : "";  // the history needs the room; the chips are for asking
+    if (listing) { drawList(box); box.scrollTop = 0; return; }
     const fresh = (i) => (i >= shown ? " cp-in" : "");
     box.innerHTML = msgs.length ? msgs.map((m, i) => m.me
       ? `<div class="cp-me${fresh(i)}">${esc(m.text)}</div>`
+      : m.status === "running"  // a turn still answering on the server (the page was reloaded): what has run so far
+      ? `<div class="cp-bot cp-think" data-running><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Vẫn đang trả lời…${(m.steps || []).length ? `<div class="cp-steps small">${m.steps.map(x => `<span class="chip ${x.status === "ok" ? "" : "bad"}">${esc(x.label || x.tool)} ${STEP[x.status] || ""}</span>`).join(" ")}</div>` : ""}</div>`
       : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${m.mode === "model" ? prose(m.text) : esc(m.text)}
           ${(m.waits || []).length > 1 ? `<ul class="cp-notes">${m.waits.map(w => `<li>${esc(w.summary)}</li>`).join("")}</ul>` : ""}
           ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) : ""}
-          ${(m.steps || []).length > 1 || (m.steps || []).some(s => s.status !== "ok") ? `<div class="cp-steps small muted">Các bước: ${m.steps.map(s => `<span class="chip ${s.status === "ok" ? "" : "bad"}" title="${esc(s.text || "")}">${esc(s.label || s.tool)} ${STEP[s.status] || ""}</span>`).join(" ")}</div>` : ""}
+          ${(m.steps || []).length > 1 || m.status === "interrupted" || (m.steps || []).some(s => s.status !== "ok") ? `<div class="cp-steps small muted">Các bước: ${m.steps.map(s => `<span class="chip ${s.status === "ok" ? "" : "bad"}" title="${esc(s.text || "")}">${esc(s.label || s.tool)} ${STEP[s.status] || ""}</span>`).join(" ")}</div>` : ""}
           ${(m.confirm || (m.waits || []).length) && !m.done ? `<div class="row mt"><button type="button" class="btn sm" data-ok="${i}">Xác nhận</button><button type="button" class="btn sm ghostbtn" data-no="${i}">Huỷ</button></div>` : ""}
           ${(m.citations || []).length || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${(m.citations || []).filter(c => !(m.here && c.route === location.hash)).map(c => `<a class="small" data-ev="${i}" href="${esc(c.route)}">Mở ${esc(c.label)} →</a>`).join("")}</div>` : ""}
           ${m.compacted ? `<div class="small muted mt">Các lượt trước đã được tóm tắt để trợ lý nhớ gọn; cuộc trò chuyện vẫn được lưu đủ.</div>` : ""}
@@ -255,6 +263,7 @@ export function mount() {
         const a = docked && live ? await streamed(req) : (await post("/api/assistant", req)).assistant;
         if (a.conversation_id) cid = a.conversation_id;
         m = fromAssistant(a);
+        named(a);
       }
     } catch (e) { m = {status: "failed", text: docked && live ? e.message : `Không gọi được trợ lý: ${e.message}`}; }
     busy = false;
@@ -282,9 +291,63 @@ export function mount() {
     msgs.push({me: true, text: "Huỷ"}); call({turn_id: m.turn_id, approvals: answers(m, "deny")});  // the run ends, nothing written
   };
 
+  // -- the session bar (S4): its name (renamed in place), its goal, its context summary --------------------------
+  const drawSess = () => {
+    const box = $("#cp-sess-main", panel);
+    if (!sess) {
+      box.innerHTML = `<span class="cp-sess-t is-new">Cuộc trò chuyện mới</span><span class="cp-sess-goal small muted">Câu hỏi đầu tiên sẽ đặt tên cho nó · bộ nhớ của bạn vẫn dùng</span>`;
+      return;
+    }
+    box.innerHTML = `<button type="button" class="cp-sess-t" id="cp-title" title="Đổi tên cuộc trò chuyện">${esc(sess.title || "Cuộc trò chuyện")}<i>${icon("edit", {size: 13})}</i></button>
+      ${sess.goal ? `<span class="cp-sess-goal small muted" title="${esc(sess.goal)}">Mục tiêu: ${esc(sess.goal)}</span>` : ""}
+      ${sess.summary ? `<details class="cp-sum small"><summary>Tóm tắt phiên</summary><div class="cp-sum-t">${prose(sess.summary)}</div><div class="muted">Các lượt cũ đã được tóm tắt để trợ lý nhớ gọn; nguyên văn vẫn lưu đủ và trợ lý đọc lại được.</div></details>` : ""}`;
+    $("#cp-title", panel).onclick = () => renameHere();
+  };
+  const renameHere = () => {
+    if (!sess || busy) return;
+    const box = $("#cp-sess-main", panel);
+    box.innerHTML = `<form class="cp-ren" id="cp-ren"><input id="cp-ren-q" maxlength="80" aria-label="Tên cuộc trò chuyện" value="${esc(sess.title || "")}"><button type="submit" class="linkbtn small">Lưu</button><button type="button" class="linkbtn small" id="cp-ren-x">Huỷ</button></form>`;
+    const q = $("#cp-ren-q", panel); q.focus(); q.select();
+    $("#cp-ren-x", panel).onclick = drawSess;
+    q.onkeydown = (e) => { if (e.key === "Escape") { e.stopPropagation(); drawSess(); } };
+    $("#cp-ren", panel).onsubmit = async (e) => {
+      e.preventDefault();
+      try { sess = (await convs("rename", sess.id, {title: q.value})).conversation; } catch (err) { alert(`Không đổi tên được: ${err.message}`); }
+      drawSess();
+    };
+  };
+  // after an answer: the session it is in, and its generated title and goal when the server says they are due
+  const named = (a) => {
+    if (!a.session) return;
+    sess = a.session; drawSess();
+    if (!a.describe) return;
+    const id = sess.id;
+    convs("describe", id).then((got) => { if (cid === id && got.conversation) { sess = got.conversation; drawSess(); } }).catch(() => {});
+  };
+  // a turn still running on the server after a reload: open the session again every 2 s until it ends
+  const follow = () => {
+    clearTimeout(poll);
+    const last = msgs[msgs.length - 1];
+    if (!cid || !last || last.status !== "running") return;
+    const id = cid;
+    poll = setTimeout(async () => {
+      if (cid !== id) return;
+      if (busy || listing) { follow(); return; }
+      try {
+        const got = await convs("open", id);
+        if (cid !== id) return;
+        msgs = replay(got.turns, got.waiting || []); sess = got.conversation; shown = msgs.length;
+        draw(); drawSess();
+        const end = msgs[msgs.length - 1];
+        if (end && end.status !== "running") { mode(end); sugg(end.suggest); }
+      } catch (_) { /* the server is restarting: try again */ }
+      follow();
+    }, 2000);
+  };
+
   // -- conversations on the server (A3) ---------------------------------------------------------------------------
-  const convs = async (action, conversation_id) =>
-    (await post("/api/assistant/conversations", {role, client_id: context().client_id, action, conversation_id})).conversations;
+  const convs = async (action, conversation_id, extra = {}) =>
+    (await post("/api/assistant/conversations", {role, client_id: context().client_id, action, conversation_id, ...extra})).conversations;
   // a stored turn as the panel draws it: the question, then the answer (a write still waiting keeps its buttons)
   const replay = (turns, waiting) => {
     const out = [];
@@ -292,6 +355,7 @@ export function mount() {
       const a = t.answer || {};
       if (t.question) out.push({me: true, text: t.question});
       else out.push({me: true, text: (a.steps || []).some(s => s.status === "declined") ? "Huỷ" : "Xác nhận"});
+      if (t.status === "running") { out.push({status: "running", steps: a.steps || []}); continue; }
       const m = fromAssistant(a);
       if ((m.waits || []).length && !waiting.includes(a.turn_id)) m.done = true;  // answered, or too late
       if (m.confirm) m.done = true;  // the keyword path's confirm is not kept on the server
@@ -303,9 +367,9 @@ export function mount() {
     busy = true; listing = null; draw();
     try {
       const got = await convs("open", id);
-      cid = got.conversation.id; msgs = replay(got.turns, got.waiting || []);
-    } catch (e) { msgs = [{status: "failed", text: `Không mở được cuộc trò chuyện: ${e.message}`}]; cid = null; }
-    busy = false; shown = msgs.length; draw();
+      cid = got.conversation.id; sess = got.conversation; msgs = replay(got.turns, got.waiting || []);
+    } catch (e) { msgs = [{status: "failed", text: `Không mở được cuộc trò chuyện: ${e.message}`}]; cid = null; sess = null; }
+    busy = false; shown = msgs.length; draw(); drawSess(); follow();
     const last = msgs[msgs.length - 1];
     mode([...msgs].reverse().find(m => m.mode));
     sugg(last && last.suggest);
@@ -318,25 +382,91 @@ export function mount() {
       if (items[0] && Date.now() / 1000 - items[0].updated < RESUME_S && !msgs.length) await openConv(items[0].id);
     } catch (_) { /* signed out, or the server is down: start fresh */ }
   };
-  const fresh = () => { cid = null; msgs = []; shown = 0; listing = null; setState("idle"); draw(); sugg(); $("#cp-q", panel).focus(); };
+  const fresh = () => { clearTimeout(poll); cid = null; sess = null; msgs = []; shown = 0; listing = null; setState("idle"); draw(); drawSess(); sugg(); $("#cp-q", panel).focus(); };
+  // the history (S4): search, recent or archived, grouped by day; each row opens, renames, archives or restores, deletes
+  const GROUPS = [["Hôm nay", 0], ["Hôm qua", 1], ["7 ngày qua", 7], ["Cũ hơn", Infinity]];
+  const groupOf = (t) => {
+    const d0 = new Date(); d0.setHours(0, 0, 0, 0);
+    const days = Math.ceil((d0.getTime() / 1000 - t) / 86400);  // 0 today, 1 yesterday…
+    return GROUPS.find(([, n]) => days <= n)[0];
+  };
+  const fold = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
   const drawList = (box) => {
-    const rows = listing.items || [];
-    box.innerHTML = `<div class="cp-st row">Các cuộc trò chuyện của bạn (${ROLE_LABEL[role]})<a class="small" style="margin-left:auto" href="#/${role}/bo-nho" data-memory>Bộ nhớ →</a>${DESK.has(role) ? `<a class="small" href="#/${role}/agent" data-memory>Bản đồ agent →</a>` : ""}</div>` + (rows.length
-      ? `<ul class="cp-convs">${rows.map(c => `<li${c.id === cid ? ' aria-current="true"' : ""}><button type="button" class="cp-conv" data-open="${esc(c.id)}"><b>${esc(c.title || "Cuộc trò chuyện")}</b><small>${esc(when(c.updated))} · ${c.turns} lượt</small></button>
-          <button type="button" class="linkbtn small" data-del="${esc(c.id)}" title="Xoá cuộc trò chuyện này">${icon("x", {size: 16})}<span class="sr-only">Xoá</span></button></li>`).join("")}</ul>`
-      : `<div class="small muted">Chưa có cuộc trò chuyện nào.</div>`);
-    for (const b of box.querySelectorAll("[data-open]")) b.onclick = () => openConv(b.dataset.open);
+    const arch = listing.view === "archived";
+    box.innerHTML = `<div class="cp-hist">
+      <div class="cp-hist-top"><input type="search" id="cp-hq" placeholder="Tìm cuộc trò chuyện…" aria-label="Tìm cuộc trò chuyện" value="${esc(listing.q || "")}">
+        <a class="small" href="#/${role}/bo-nho" data-memory>Bộ nhớ →</a>${DESK.has(role) ? `<a class="small" href="#/${role}/agent" data-memory>Bản đồ agent →</a>` : ""}</div>
+      <div class="cp-tabs" role="tablist"><button type="button" role="tab" data-view="recent" aria-selected="${!arch}">Gần đây (${listing.items.length})</button><button type="button" role="tab" data-view="archived" aria-selected="${arch}">${icon("archive", {size: 14})} Lưu trữ (${listing.archived.length})</button></div>
+      <div id="cp-hl"></div></div>`;
+    drawRows();
+    const q = $("#cp-hq", panel);
+    q.oninput = () => { listing.q = q.value; drawRows(); };
+    for (const b of box.querySelectorAll("[data-view]")) b.onclick = () => { listing.view = b.dataset.view; draw(); };
     for (const a of box.querySelectorAll("[data-memory]")) a.onclick = () => { if (covers()) close(); };  // phone: the page shows
-    for (const b of box.querySelectorAll("[data-del]")) b.onclick = async () => {
-      if (!confirm("Xoá cuộc trò chuyện này? Không lấy lại được.")) return;
+  };
+  const drawRows = () => {
+    const arch = listing.view === "archived";
+    const words = fold(listing.q).split(/\s+/).filter(Boolean);
+    const rows = (arch ? listing.archived : listing.items).filter(c => words.every(w => fold(`${c.title} ${c.goal || ""}`).includes(w)));
+    const el = $("#cp-hl", panel);
+    if (!rows.length) {
+      el.innerHTML = `<div class="small muted cp-hist-none">${words.length ? "Không có cuộc trò chuyện nào khớp." : arch ? "Chưa lưu trữ cuộc trò chuyện nào." : "Chưa có cuộc trò chuyện nào. Hỏi một câu để bắt đầu."}</div>`;
+      return;
+    }
+    let html = "", last = null;
+    for (const c of rows) {
+      const g = groupOf(c.updated);
+      if (g !== last) { if (last) html += "</ul>"; html += `<div class="cp-grp">${g}</div><ul class="cp-convs">`; last = g; }
+      html += `<li${c.id === cid ? ' aria-current="true"' : ""} data-row="${esc(c.id)}"><button type="button" class="cp-conv" data-open="${esc(c.id)}"><b>${esc(c.title || "Cuộc trò chuyện")}</b>${c.goal ? `<span class="cp-conv-goal">${esc(c.goal)}</span>` : ""}<small>${esc(when(c.updated))} · ${c.turns} lượt</small></button>
+        <span class="cp-row-acts"><button type="button" class="linkbtn small" data-ren="${esc(c.id)}" title="Đổi tên">${icon("edit", {size: 15})}<span class="sr-only">Đổi tên</span></button>
+        ${arch ? `<button type="button" class="linkbtn small" data-res="${esc(c.id)}" title="Khôi phục về Gần đây">${icon("undo", {size: 15})}<span class="sr-only">Khôi phục</span></button>`
+               : `<button type="button" class="linkbtn small" data-arc="${esc(c.id)}" title="Lưu trữ (ẩn khỏi danh sách, không xoá)">${icon("archive", {size: 15})}<span class="sr-only">Lưu trữ</span></button>`}
+        <button type="button" class="linkbtn small" data-del="${esc(c.id)}" title="Xoá hẳn">${icon("x", {size: 15})}<span class="sr-only">Xoá</span></button></span></li>`;
+    }
+    el.innerHTML = html + "</ul>";
+    for (const b of el.querySelectorAll("[data-open]")) b.onclick = () => openConv(b.dataset.open);
+    for (const b of el.querySelectorAll("[data-arc]")) b.onclick = () => act("archive", b.dataset.arc);
+    for (const b of el.querySelectorAll("[data-res]")) b.onclick = () => act("restore", b.dataset.res);
+    for (const b of el.querySelectorAll("[data-ren]")) b.onclick = () => renameRow(b.dataset.ren);
+    for (const b of el.querySelectorAll("[data-del]")) b.onclick = async () => {
+      if (!confirm("Xoá hẳn cuộc trò chuyện này? Không lấy lại được. (Lưu trữ thì chỉ ẩn đi.)")) return;
       try { await convs("delete", b.dataset.del); } catch (e) { alert(`Không xoá được: ${e.message}`); }
-      if (b.dataset.del === cid) { cid = null; msgs = []; shown = 0; }
+      if (b.dataset.del === cid) { cid = null; sess = null; msgs = []; shown = 0; drawSess(); }
       showList();
+    };
+  };
+  const act = async (action, id) => {
+    try {
+      const got = (await convs(action, id)).conversation;
+      if (id === cid) { sess = got; drawSess(); }
+    } catch (e) { alert(`Không thực hiện được: ${e.message}`); }
+    showList();
+  };
+  const renameRow = (id) => {
+    const li = $(`[data-row="${CSS.escape(id)}"]`, panel);
+    const c = [...listing.items, ...listing.archived].find(x => x.id === id);
+    if (!li || !c) return;
+    li.innerHTML = `<form class="cp-ren"><input maxlength="80" aria-label="Tên cuộc trò chuyện" value="${esc(c.title || "")}"><button type="submit" class="linkbtn small">Lưu</button><button type="button" class="linkbtn small" data-x>Huỷ</button></form>`;
+    const q = li.querySelector("input"); q.focus(); q.select();
+    li.querySelector("[data-x]").onclick = drawRows;
+    q.onkeydown = (e) => { if (e.key === "Escape") { e.stopPropagation(); drawRows(); } };
+    li.querySelector("form").onsubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const got = (await convs("rename", id, {title: q.value})).conversation;
+        Object.assign(c, got);
+        if (id === cid) { sess = got; drawSess(); }
+      } catch (err) { alert(`Không đổi tên được: ${err.message}`); }
+      drawRows();
     };
   };
   const showList = async () => {
     if (busy) return;
-    try { listing = await convs("list"); } catch (e) { listing = {items: []}; }
+    const keep = listing ? {view: listing.view, q: listing.q} : {view: "recent", q: ""};
+    try {
+      const [a, b] = await Promise.all([convs("list"), convs("list_archived")]);
+      listing = {...keep, items: a.items || [], archived: b.items || []};
+    } catch (e) { listing = {...keep, items: [], archived: []}; }
     draw();
   };
   $("#cp-new", panel).onclick = () => { if (!busy) fresh(); };
@@ -349,7 +479,7 @@ export function mount() {
   });
   $("#cp-hist", panel).onclick = () => { if (listing) { listing = null; draw(); } else showList(); };
 
-  const open = () => { drawCtx(); draw(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); resume(); };
+  const open = () => { drawCtx(); draw(); drawSess(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); resume(); };
   const close = () => { if (docked) return; panel.hidden = true; btn.setAttribute("aria-expanded", "false"); if (btn.dataset.state === "error") setState("idle"); btn.focus();
     if (later) { const k = later; later = null; focus(k); } };
   btn.onclick = () => (panel.hidden ? open() : close());
@@ -365,7 +495,7 @@ export function mount() {
       panel.classList.add("cp-docked"); panel.setAttribute("role", "region");
       host.appendChild(panel);
       btn.hidden = true;
-      drawCtx(); draw(); sugg(); panel.hidden = false; resume();
+      drawCtx(); draw(); drawSess(); sugg(); panel.hidden = false; resume();
     },
     undock() {
       if (!docked) return;

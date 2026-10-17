@@ -11,7 +11,7 @@
    strip — mounted once; a Customer route changes its lens, and a page of the old menu opens as a sheet over the
    graph, drawn into #page as before. The other roles keep the menu. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261017w1";
+import {mount as mountCopilot} from "./copilot.js?v=20261017s1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261017r2";
 import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261017w3";
@@ -242,7 +242,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261017w2`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261017s1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
