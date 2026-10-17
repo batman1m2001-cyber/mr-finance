@@ -196,6 +196,32 @@ and the free relaxation of G8, which the audit showed still drew spokes through 
 - **Reduced motion:** no breathing, ripples or port pulses. The thinking and streaming states become a still rim in
   the data colour.
 
+**As built (2026-10-17, `web/workspace/graph.js`, `web/core/tokens.css`):**
+- **The ring is a rounded square** (a superellipse, exponent 2.7), not an ellipse: it is still convex, so a spoke
+  meets nothing before its node, and its corners hold nodes an ellipse would waste on a wide canvas.
+- **Slots come from the measured labels** (canvas text width, the CSS font sizes), projected on the ring's direction
+  at each place. Above or below a node a long name wraps onto two lines (14 characters on desktop, 11 on a phone).
+  Overlaps found after a pass widen the slots between the two items by the overlap's depth. A spoke that would touch
+  another node's disc or label widens them too. The ring shrinks until every label is on the canvas.
+- **What folds first:** the group taking the most ring per member, weighted: data sources, news and policy fold first,
+  assets last, and money in and out and the reserve never. The lens's own subject folds last (the news on Tin, the
+  goals on Mục tiêu, the classes on Tài sản). While money in and out are
+  pinned to the sides, only groups on the crowded half fold. Folded debts still repay on their group's edge.
+- **Opening a group** shows its members and a “Thu gọn” node, and is remembered per lens. If its half cannot hold
+  it, the flows leave their sides (closing the group puts them back). If the whole ring still cannot hold it,
+  groups opened earlier fold again. If even that is not enough, the group opens partly: its largest members show,
+  and the rest stay behind “+n khác” (“không đủ chỗ để mở hết”, all of them in Danh sách). Labels are never squeezed
+  onto discs to make room.
+- **An open class's label** takes the first side clear of its holdings and its own spoke, along the ring first. At
+  a corner of the ring, the side it points to is where a holding fans out.
+- **Routes** are checked against every disc (the centre's with its aura) and every label box. A relation takes the
+  first clear route: an inward curve, then curves bent round the centre on either side, then a path along the
+  inside of the ring. If none is clear, it takes the least crossed.
+- **The core** is SVG gradients and CSS opacity and transform only. Each money edge runs one, two or three sparks
+  per 0.9 s beat. Its port peaks on the beat. The band crosses on the income's arrival, and the out-flows leave
+  0.36 s later. Streaming ripples are Web Animations, at most one per 350 ms.
+- **Tập trung** is a toolbar button (enabled once something is picked) and the key `f`; `0` fits the whole graph.
+
 ## Capability map — every Customer capability and where it goes (OWN-GW-11)
 
 | Today (screen · route) | Capability | Requirements | In the workspace | Interaction model |

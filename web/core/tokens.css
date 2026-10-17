@@ -22,6 +22,8 @@
   --up: #0f7a3d; --down: #c0332b; --flat: #6b6785;
   --in: #2a78d6; --out: #eb6834;
   --pulse: #0d9488;  /* a pulse: data read by the assistant — never a money colour (OWN-GW-18) */
+  --core-hi: #8f7dff; --core-mid: #4a37c8; --core-deep: #1b1458; --core-face: #150f44; --core-aura: #6a55e6;
+  --core-ring: #6a55e6; --core-glow: #7fd8ff; --core-aura-a: .2;  /* the financial core (OWN-GW-20): a deep glass jewel in both themes */
   --ai: #2a78d6; --ai-soft: #e6f0fc; --human: #c4561f; --human-soft: #fcebe1; --data: #6b6785;
   --t1: #184f95; --t2: #3987e5; --t3: #86b6ef;
   --band: rgba(91, 71, 214, .14); --band-2: rgba(91, 71, 214, .26);
@@ -46,6 +48,8 @@
     --up: #5fd38d; --down: #ff8a7a; --flat: #a39cd0;
     --in: #3987e5; --out: #d95926;
     --pulse: #2dd4bf;
+    --core-hi: #9b8bff; --core-mid: #4a37c6; --core-deep: #120d3e; --core-face: #0f0a34; --core-aura: #8f7dff;
+    --core-ring: #b3a7ff; --core-glow: #8ae2ff; --core-aura-a: .34;
     --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
     --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
     --band: rgba(179, 167, 255, .16); --band-2: rgba(179, 167, 255, .30);
@@ -66,6 +70,8 @@
   --up: #5fd38d; --down: #ff8a7a; --flat: #a39cd0;
   --in: #3987e5; --out: #d95926;
   --pulse: #2dd4bf;
+  --core-hi: #9b8bff; --core-mid: #4a37c6; --core-deep: #120d3e; --core-face: #0f0a34; --core-aura: #8f7dff;
+  --core-ring: #b3a7ff; --core-glow: #8ae2ff; --core-aura-a: .34;
   --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
   --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
   --band: rgba(179, 167, 255, .16); --band-2: rgba(179, 167, 255, .30);
@@ -962,7 +968,52 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .wnode.gone { display: none; }
 .wnode.dim { opacity: .3; }
 .wcore { fill: var(--surface); stroke: var(--tone); stroke-width: 2; }
-.wcore.me { stroke: none; filter: drop-shadow(0 10px 24px rgba(74, 54, 196, .45)); }
+.k-group .wcore { stroke-dasharray: 3.5 3; }  /* a group node: what the ring folded (OWN-GW-30) */
+.ws-svg .wcount { fill: var(--tone); font-size: 13px; font-weight: 750; font-variant-numeric: tabular-nums; pointer-events: none; }
+.ws-svg .wcore.me { fill: url(#ws-body); stroke: none; fill-opacity: .96; }
+/* the financial core (OWN-GW-20…25, GRAPH_CORE_LAYOUT_PLAN §3): gradients only, nothing blurred; motion is opacity and
+   transform; the figures sit on their own face and never move */
+.ws-svg stop.c-aura { stop-color: var(--core-aura); stop-opacity: var(--core-aura-a, .34); } .ws-svg stop.c-aura0 { stop-color: var(--core-aura); stop-opacity: 0; }
+.ws-svg stop.c-hi { stop-color: var(--core-hi); } .ws-svg stop.c-mid { stop-color: var(--core-mid); } .ws-svg stop.c-deep { stop-color: var(--core-deep); }
+.ws-svg stop.c-rim { stop-color: #fff; stop-opacity: .85; } .ws-svg stop.c-rim2 { stop-color: var(--core-ring); stop-opacity: .45; } .ws-svg stop.c-rim0 { stop-color: var(--core-ring); stop-opacity: .08; }
+.ws-svg stop.c-glow { stop-color: var(--core-glow); stop-opacity: .5; } .ws-svg stop.c-glow0 { stop-color: var(--core-glow); stop-opacity: 0; }
+.ws-svg stop.c-spec { stop-color: #fff; stop-opacity: .3; } .ws-svg stop.c-spec0 { stop-color: #fff; stop-opacity: 0; }
+.ws-svg stop.c-face { stop-color: var(--core-face); stop-opacity: .62; } .ws-svg stop.c-face2 { stop-color: var(--core-face); stop-opacity: 0; }
+.wnode.k-family .wring { display: none; }  /* the core has its own rings */
+.wme-back, .wme-ports, .wme-ripples { pointer-events: none; }
+.wme-aura, .wme-inner { animation: ws-breathe 7s ease-in-out infinite; }
+@keyframes ws-breathe { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.wme-orbit { fill: none; stroke: var(--core-ring); stroke-width: 1; opacity: .2; }
+.wme-orbit.o2 { stroke-dasharray: 1 5; opacity: .32; }
+.wme-drift { fill: none; stroke: var(--core-ring); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center;
+  animation: ws-drift 9s cubic-bezier(.25, .6, .35, 1) infinite; }
+.wme-drift.d2 { animation-delay: -4.5s; }
+@keyframes ws-drift { 0% { transform: scale(1); opacity: 0; } 12% { opacity: .5; } 100% { transform: scale(1.3); opacity: 0; } }
+.wme-ticks { fill: none; stroke: #fff; stroke-opacity: .16; stroke-width: 1; stroke-dasharray: 1 4.6; }
+.wme-bezel { fill: none; stroke-width: 1.6; }
+.wme-act, .wme-sel { fill: none; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.wme-act { stroke: var(--pulse); stroke-width: 2; }
+.wme-sel { stroke: var(--accent); stroke-width: 2; }
+.wme-band { fill: var(--band, var(--core-glow)); opacity: 0; animation: ws-band linear infinite; pointer-events: none; }
+@keyframes ws-band { 0% { transform: translateX(var(--from)); opacity: 0; } 7% { opacity: .55; } 42% { transform: translateX(var(--to)); opacity: 0; } 100% { transform: translateX(var(--to)); opacity: 0; } }
+.wport { fill: none; stroke: var(--tone); stroke-width: 3; stroke-linecap: round; opacity: .22; animation: ws-port linear infinite; }
+@keyframes ws-port { 0% { opacity: 1; } 35% { opacity: .22; } 100% { opacity: .22; } }
+.wport.faint, .ws-svg.focusing .wport { animation: none; opacity: .1; }
+.wme-ripple { fill: none; stroke: var(--pulse); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; }
+.ws-svg .wme-face { pointer-events: none; }
+/* states: selected — a crisp accent ring, the aura still; thinking — the rim in the data colour, breathing faster;
+   streaming — the rim stays lit while ripples leave it; a pulse home — the rim flashes; flow — the band takes the flow's colour */
+.wnode.k-family:is(.sel, :focus-visible) .wme-sel { opacity: 1; }
+.wnode.k-family.sel .wme-aura { animation: none; opacity: 1; }
+.wnode.k-family:is(.lit, .kept) .wme-sel { opacity: .75; }
+.ws-svg.busy .wnode.k-family .wme-act, .wnode.k-family.act .wme-act { opacity: .9; animation: ws-breathe 1.6s ease-in-out infinite; }
+.ws-svg.busy .wnode.k-family .wme-aura { animation-duration: 1.6s; }
+.wnode.k-family.writing .wme-act { opacity: .75; }
+.wnode.k-family.hit .wme-act { animation: ws-flash .7s var(--ease-out) both; }
+@keyframes ws-flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+.wnode.k-family.flow .wme-band { --band: var(--flow-tone); }
+.wnode.k-family.flow .wme-inner { opacity: 1; animation: none; }
+.ws-svg .wnode.k-family:is(.sel, :focus-visible) .wcore.me { stroke: none; filter: none; }
 .whalo { fill: color-mix(in srgb, var(--halo) 16%, transparent); stroke: none; }
 .wring { fill: none; stroke: var(--tone); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
 .wnode:focus-visible .wcore, .wnode.sel .wcore { stroke-width: 3.5; filter: drop-shadow(0 0 8px var(--band-2)); }
@@ -985,12 +1036,13 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-edges { transition: opacity var(--dur-2) var(--ease-out); }
 .ws-edges.moving { opacity: 0; }
 /* silk (OWN-GW-16, 18): hairlines, solid / dashed / dotted by certainty; a read path glows, a failed one is red */
-.wedge { fill: none; stroke: var(--tone); stroke-opacity: .55; stroke-linecap: round; transition: opacity var(--dur-2) var(--ease-out); }
+.wedge { fill: none; stroke: var(--tone); stroke-opacity: .45; stroke-linecap: round; transition: opacity var(--dur-2) var(--ease-out); }
+.wedge.money { stroke-opacity: .62; }
 .wedge.c-estimate { stroke-dasharray: 6 4; }
 .wedge.c-hypothetical { stroke-dasharray: 1 4.5; }
-.wedge.sum { stroke-opacity: .42; }
+.wedge.sum { stroke-opacity: .3; }
 .wedge.on { stroke-opacity: .95; }
-.wedge.faint { opacity: .12; }
+.wedge.faint { opacity: .08; }
 .wedge.hot { stroke: var(--pulse); stroke-opacity: .95; filter: drop-shadow(0 0 3px var(--pulse)); }
 .wedge.bad { stroke: var(--critical); stroke-opacity: .9; }
 .wknob { fill: var(--tone); stroke: var(--plane); stroke-width: 1.5; }
@@ -1011,7 +1063,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 @keyframes ws-hit { from { transform: scale(.9); opacity: .95; } to { transform: scale(1.55); opacity: 0; } }
 /* focus: while the assistant works, and after, on what its answer rests on — the rest steps back */
 .ws-svg.focusing .wnode:not(.act):not(.ok):not(.bad):not(.lit):not(.kept):not(.k-family):not(.sel) { opacity: .3; }
-.ws-svg.focusing .wedge:not(.hot):not(.bad):not(.on) { opacity: .1; }
+.ws-svg.focusing .wedge:not(.hot):not(.bad):not(.on) { opacity: .08; }
 .ws-svg.focusing .wknob { opacity: .3; }
 /* “My Wealth” while the model writes */
 .wnode.k-family .wring { stroke: var(--pulse); }
@@ -1103,11 +1155,14 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wspark { display: none; }
-  .wnode, .wedge, .ws-edges, .ws-tool::after, .scard, .ws-fold .ic, .ws-svg :is(.k-holding, .quiet) :is(.wlbl, .wfig) { transition: none !important; }
+  .wnode, .wedge, .wme-act, .wme-sel, .ws-edges, .ws-tool::after, .scard, .ws-fold .ic, .ws-svg :is(.k-holding, .quiet) :is(.wlbl, .wfig) { transition: none !important; }
   .ws-sheet, .wnode .wring, .wnode .wburst, .ws-tool.ping { animation: none !important; }
   .ws-tool.ping { box-shadow: 0 0 0 2px var(--accent); }
   .wnode.act .wring { opacity: 1; stroke-dasharray: 3 3; }
   .wcomet { display: none; }
+  .wme-aura, .wme-inner, .wport, .ws-svg.busy .wnode.k-family .wme-act, .wnode.k-family.act .wme-act { animation: none !important; }
+  .wme-aura, .wme-inner { opacity: .78; } .wport { opacity: .5; }
+  .wme-drift, .wme-band, .wme-ripple { display: none; }
   .wnode .wburst { animation: none !important; }
   .wnode.writing .wring { opacity: .7; }
 }

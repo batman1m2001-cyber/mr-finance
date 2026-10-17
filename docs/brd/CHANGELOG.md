@@ -2,6 +2,17 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The central wealth core and the graph's layout built (experiment, GRAPH_CORE_LAYOUT_PLAN C0–V,
+  OWN-GW-20…32 implemented_verified).
+  - One rounded ring with slots sized from the measured labels. Groups fold into “+n” nodes instead of squeezing,
+    and a group too big opens partly. Routes are checked against every disc and label.
+  - The audit is at 0 everywhere: edges through nodes went 3/9 → 0 on the real graph and 38/66 → 0 on the 3× graph.
+  - Tập trung (`f`) and Vừa khung (`0`). Edge emphasis: money first, summaries faint, a pick keeps only its edges.
+  - The core: layered glass, a slow breath, ports and band on the sparks' beat, assistant and flow states,
+    still under reduced motion, net worth ≥ 7:1. Idle frame cost unchanged.
+  - Documents: FEAT-40 “As built”, matrix OWN-GW-20…32, graph_core_layout_report.md (new), the plan's status,
+    screenshots SCR-CL-12 replaced plus -core (dark, light), -dense and -group.
+
 - 2026-10-17 — Two owner requests recorded: the central wealth core and the graph's layout and routing
   (OWN-GW-20…32, planned). A stricter audit found spokes through other nodes and labels on every lens (up to 38 on a
   3× graph). Documents: sources SRC-05, owner_requirements.md, FEAT-40 “The centre and the layout”, matrix,

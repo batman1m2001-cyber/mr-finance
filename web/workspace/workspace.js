@@ -6,7 +6,7 @@
 import {$, esc, followedIds, post} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261017m3";
+import {createGraph} from "./graph.js?v=20261017c2";
 import {render as inspect} from "./inspector.js?v=20261017w1";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w3";
 import {mount as mountStrip} from "./strip.js?v=20261017w1";
@@ -29,7 +29,8 @@ export function mount(main, {client, scope, go, page}) {
         <div class="seg" role="group" aria-label="Cách xem"><button type="button" data-v="graph" aria-pressed="true">Đồ thị</button><button type="button" data-v="list" aria-pressed="false">Danh sách</button></div>
         <button type="button" class="iconbtn" data-z="in" aria-label="Phóng to">+</button>
         <button type="button" class="iconbtn" data-z="out" aria-label="Thu nhỏ">−</button>
-        <button type="button" class="iconbtn" data-z="fit" aria-label="Vừa khung">${icon("eye", {size: 15})}</button>
+        <button type="button" class="iconbtn" data-z="focus" aria-label="Tập trung vào mục đang chọn (f)" title="Tập trung (f)" disabled>${icon("target", {size: 15})}</button>
+        <button type="button" class="iconbtn" data-z="fit" aria-label="Vừa khung (0)" title="Vừa khung (0)">${icon("eye", {size: 15})}</button>
       </div>
       <div class="ws-strip" id="ws-strip"></div>
       <section class="ws-sheet" id="ws-sheet" hidden aria-labelledby="ws-sheet-t">
@@ -51,7 +52,7 @@ export function mount(main, {client, scope, go, page}) {
 
   const kindLabel = (k) => ((graph.data() || {kinds: []}).kinds.find(x => x.kind === k) || {label: k}).label;
   let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph";
-  const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n) tab("i"); }});
+  const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n) tab("i"); $("[data-z=focus]", root).disabled = !n; }});
   const strip = mountStrip($("#ws-strip", root), {client, scope, lens: (id) => go(lensRoute(id))});
 
   // ── the dock ──────────────────────────────────────────────────────────────────────────────────────
@@ -92,7 +93,9 @@ export function mount(main, {client, scope, go, page}) {
     }});
 
   // ── controls ──────────────────────────────────────────────────────────────────────────────────────
-  for (const b of root.querySelectorAll("[data-z]")) b.onclick = () => (b.dataset.z === "in" ? graph.zoom(1.2) : b.dataset.z === "out" ? graph.zoom(1 / 1.2) : graph.fit());
+  for (const b of root.querySelectorAll("[data-z]")) {
+    b.onclick = () => (b.dataset.z === "in" ? graph.zoom(1.2) : b.dataset.z === "out" ? graph.zoom(1 / 1.2) : b.dataset.z === "focus" ? graph.focus() : graph.fit());
+  }
   for (const b of root.querySelectorAll("[data-v]")) b.onclick = () => setView(b.dataset.v);
   const setView = (v) => {
     view = v;

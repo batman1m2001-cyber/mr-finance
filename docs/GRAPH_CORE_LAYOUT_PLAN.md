@@ -1,5 +1,9 @@
 # The central wealth core and the graph's layout and routing — plan
 
+**Status (2026-10-17): DONE.** C0, L0–L4, C1–C2 and V are built and their gates pass. The audit is at 0 on
+every count, on the real and the 3× graph, desktop and phone. OWN-GW-20…32 are implemented_verified. Results and
+gaps: [graph_core_layout_report.md](brd/testing/graph_core_layout_report.md).
+
 Owner requests (2026-10-17):
 - [`2026-10-17_central_wealth_core.md`](brd/sources/owner_requests/2026-10-17_central_wealth_core.md) (“Core”);
 - [`2026-10-17_graph_layout_routing.md`](brd/sources/owner_requests/2026-10-17_graph_layout_routing.md) (“Layout”).

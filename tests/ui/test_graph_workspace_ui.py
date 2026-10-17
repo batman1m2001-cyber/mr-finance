@@ -270,7 +270,7 @@ def test_the_dataflow_follows_the_stream_and_only_the_stream(open_page):
 def test_money_runs_the_way_it_goes_and_only_where_it_really_moved(open_page):
     """The money sparks (Studio's data-flow spark): always running on the real money edges — income into “My Wealth”,
     spending and this month's repayments out of it — moving forward along their way, never on an estimate or a
-    scenario, and gone under reduced motion."""
+    scenario, and gone under reduced motion. Debts folded into their group repay on the group's edge."""
     p = open_page()
     p.go("#/client/tong-quan/toan-canh")
     p.page.wait_for_selector(".wspark")
@@ -280,13 +280,15 @@ def test_money_runs_the_way_it_goes_and_only_where_it_really_moved(open_page):
       const start = (d) => d.match(/^M(\\S+)/)[1], end = (d) => d.match(/(\\S+)$/)[1];
       return {keys: [...new Set(sp.map(q => q.dataset.e))].sort(),
               actual: sp.every(q => wire(q.dataset.e).classList.contains('c-actual')),
-              forward: sp.filter(q => q.dataset.e.endsWith('>ME') && !q.dataset.e.startsWith('CL:'))
+              forward: sp.filter(q => q.dataset.e.endsWith('>ME') && !/^(CL|GR):/.test(q.dataset.e))
                          .every(q => start(q.getAttribute('d')) === start(wire(q.dataset.e).getAttribute('d'))),
-              outward: sp.filter(q => q.dataset.e.startsWith('CL:'))
+              outward: sp.filter(q => /^(CL|GR):/.test(q.dataset.e))
                          .every(q => start(q.getAttribute('d')) === end(wire(q.dataset.e).getAttribute('d'))),
               a: getComputedStyle(sp[0]).strokeDashoffset};
     }""")
-    assert got["keys"] == ["CL:card>ME", "CL:loan>ME", "FL:in>ME", "ME>FL:out"], got["keys"]
+    folded = p.page.evaluate("!document.querySelector('.wnode[data-n=\"CL:loan\"]:not(.off):not(.gone)')")
+    repay = ["GR:debt>ME"] if folded else ["CL:card>ME", "CL:loan>ME"]  # the debts shown, or folded into “+2 nợ khác”
+    assert got["keys"] == sorted(repay + ["FL:in>ME", "ME>FL:out"]), got["keys"]
     assert got["actual"] and got["forward"] and got["outward"]
     p.page.wait_for_timeout(300)
     b = p.page.evaluate("getComputedStyle(document.querySelector('.wspark')).strokeDashoffset")

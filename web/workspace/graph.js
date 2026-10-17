@@ -19,13 +19,6 @@ export const LOOK = {  // colour, icon; the colour follows the kind, status colo
   alert: ["var(--s4)", "scale"], event: ["var(--s5)", "news"], flow: ["var(--in)", "salary"],
   liquidity: ["var(--t2)", "savings"], scenario: ["var(--s7)", "zap"],
 };
-// where a kind sits: [from°, to°, radius] (0° = right, clockwise); a lens may move a kind (LAYOUT_BY_LENS)
-const SECTOR = {flow_out: [0, 0, 0.9], risk: [26, 48, 0.74], goal: [62, 118, 0.96], liquidity: [140, 140, 0.72],
-  scenario: [165, 225, 1], flow_in: [166, 166, 0.9], event: [188, 208, 0.96], alert: [134, 178, 0.98],
-  class: [222, 328, 0.8], source: [236, 304, 1.12]};
-const NARROW = {class: [198, 342, 0.86], source: [38, 142, 0.98]};  // a phone's tall canvas: the arcs open wider
-const LAYOUT_BY_LENS = {"tai-san": {source: [36, 144, 0.96], class: [186, 354, 0.74]}, "rui-ro": {class: [200, 340, 0.74]},
-  "muc-tieu": {goal: [28, 152, 0.95], scenario: [212, 328, 0.95]}, "dong-tien": {class: [215, 325, 0.72]}};
 const WORDING = "có thể ảnh hưởng";  // a news event's edge: a potential impact under the CIO's scenarios, never a cause
 const SRC = {holding: "khoản", risk: "rủi ro", goal: "mục tiêu", alert: "chính sách", run: "lần áp dụng", txn: "giao dịch", scenario: "kịch bản"};
 // certainty (OWN-GW-12): an edge's own, else what its kind implies
@@ -45,7 +38,7 @@ const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
 // the focus keys a node answers to (FEAT-33): what the assistant's tools name
 export function keysOf(n) {
   const k = {family: ["kpi:net_worth"], goal: [`goal:${n.ref}`], event: [`event:${n.ref}`], alert: [`policy:${n.ref}`],
-    class: [`class:${n.ref}`], liquidity: ["kpi:liquidity"], flow: n.keys || [], scenario: [`scenario:${n.ref}`]}[n.kind] || [];
+    class: [`class:${n.ref}`], liquidity: ["kpi:liquidity"], flow: n.keys || [], scenario: [`scenario:${n.ref}`], group: n.keys || []}[n.kind] || [];
   if (n.id === "RK:drawdown") k.push("kpi:risk");
   if (n.id === "RK:liquidity") k.push("kpi:liquidity");
   return k;
@@ -62,7 +55,8 @@ export function howOf(n) {
     liquidity: ["liquidity.value", {}], flow: [n.side === "in" ? "flow.in" : "flow.out", {}], scenario: ["scenario.effect", {}],
   }[n.kind] || ["holding.value", {}]);
 }
-export const figureOf = (n) => (n.kind === "goal" ? `cần ${vnd(n.need)} · ${n.status_label}` : n.kind === "source" ? `${n.count} khoản`
+export const figureOf = (n) => (n.kind === "group" ? (n.value == null ? "" : ["event", "alert"].includes(n.of) ? vnd(n.value, true) : vnd(Math.abs(n.value)))
+  : n.kind === "goal" ? `cần ${vnd(n.need)} · ${n.status_label}` : n.kind === "source" ? `${n.count} khoản`
   : n.kind === "liquidity" ? `${vnd(n.value)}${n.months != null ? ` · ${String(n.months).replace(".", ",")} tháng` : ""}`
     : n.kind === "scenario" ? (n.value == null ? "giả định · chưa chạy" : `nếu xảy ra ${vnd(n.value, true)}`)
       : n.value == null ? "" : ["event", "alert"].includes(n.kind) ? vnd(n.value, true) : vnd(Math.abs(n.value)));
@@ -86,9 +80,15 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const states = {};  // per client|scope: selection, opened classes, pan, zoom
   const svg = mk("svg", {class: "ws-svg", role: "group", "aria-label": "Đồ thị tài chính", tabindex: "-1"});
   const defs = mk("defs", {}, svg);
-  const grad = mk("radialGradient", {id: "ws-me", cx: "50%", cy: "40%", r: "65%"}, defs);
-  mk("stop", {offset: "0", "stop-color": "#8b76ff"}, grad);
-  mk("stop", {offset: "1", "stop-color": "#3a2aa8"}, grad);
+  // the centre's surfaces (OWN-GW-20, plan §3.1): gradients only, their colours CSS tokens on the stops (both themes)
+  const grad = (tag, id, attrs, stops) => { const el = mk(tag, {id, ...attrs}, defs); for (const [o, c] of stops) mk("stop", {offset: o, class: c}, el); };
+  grad("radialGradient", "ws-aura", {r: "50%"}, [["0.6", "c-aura"], ["1", "c-aura0"]]);
+  grad("radialGradient", "ws-body", {cx: "50%", cy: "34%", r: "72%", fx: "50%", fy: "20%"}, [["0", "c-hi"], ["0.55", "c-mid"], ["1", "c-deep"]]);
+  grad("linearGradient", "ws-bezel", {x1: 0, y1: 0, x2: 0, y2: 1}, [["0", "c-rim"], ["0.5", "c-rim2"], ["1", "c-rim0"]]);
+  grad("radialGradient", "ws-inner", {r: "50%"}, [["0", "c-glow"], ["1", "c-glow0"]]);
+  grad("radialGradient", "ws-spec", {r: "50%"}, [["0", "c-spec"], ["1", "c-spec0"]]);
+  grad("radialGradient", "ws-face", {cy: "46%", r: "52%"}, [["0", "c-face"], ["1", "c-face2"]]);
+  mk("circle", {r: ME_R - 1}, mk("clipPath", {id: "ws-core-clip"}, defs));
   const world = mk("g", {class: "ws-world"}, svg);
   const edgeLayer = mk("g", {class: "ws-edges"}, world);
   const fxLayer = mk("g", {class: "ws-fx", "aria-hidden": "true"}, world);
@@ -103,7 +103,11 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // opened by hand (“Mở rộng”, double-click)
   const holdingLens = () => !!lens && lens.kinds.includes("holding");
   const opened = (id) => holdingLens() && !st.shut.has(id) && (st.open.has(id) || st.sel === id || (!!st.sel && (byId[st.sel] || {}).parent === id));
-  const visible = (n) => !!lens && lens.kinds.includes(n.kind) && (n.kind !== "holding" || opened(n.parent));
+  // a folded item hides behind its group node (OWN-GW-30); a group node shows while its fold holds
+  let groupNodes = [], fold = new Map(), groupIds = new Set(), groupEdges = [];
+  const visible = (n) => !!lens && (n.kind === "group" ? groupIds.has(n.id)
+    : lens.kinds.includes(n.kind) && !fold.has(n.id) && (n.kind !== "holding" || opened(n.parent)));
+  const shownAs = (id) => fold.get(id) || id;
   // the edges “My Wealth” has to the second layer are always drawn; any other edge only for what is picked, pointed at,
   // read by the assistant or kept by its answer, and a class's own holdings while it is open
   const spoke = (e) => e.from === "ME" || e.to === "ME";
@@ -111,82 +115,387 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const relates = (e, rv) => rv.has(e.from) || rv.has(e.to) || hotEdges.has(`${e.from}>${e.to}`)
     || (!!e.parent && opened(e.parent) && byId[e.from].kind === "class");
   const reveal = () => new Set([st.sel, hoverId].filter(Boolean));
-  const allEdges = () => g.edges.concat(derived);
+  const allEdges = () => g.edges.concat(derived, groupEdges);
   const drawable = (e) => byId[e.from] && byId[e.to] && visible(byId[e.from]) && visible(byId[e.to])
     && !(e.agg && opened(e.agg)) && !(e.parent && !opened(e.parent));
   const shownEdges = () => { const rv = reveal(); return allEdges().filter(e => drawable(e) && (spoke(e) || relates(e, rv))); };
   const links = (id) => allEdges().filter(e => drawable(e) && (e.from === id || e.to === id));
   const other = (e, id) => byId[e.from === id ? e.to : e.from];
 
-  function layout() {
-    // the room kept for labels at the sides: less on a phone, where the labels find their own free place (placeLabels)
-    const cx = W / 2, cy = H / 2, rx = W / 2 - Math.min(170, W * (narrow ? 0.17 : 0.24)), ry = H / 2 - 70;
-    const out = {ME: {x: cx, y: cy, a: 0}};
-    const at = (deg, r) => ({x: cx + Math.cos(deg * Math.PI / 180) * rx * r, y: cy + Math.sin(deg * Math.PI / 180) * ry * r, a: deg});
-    const sectors = {...SECTOR, ...(LAYOUT_BY_LENS[lens.id] || {})};
-    const nOpen = g.nodes.filter(n => n.kind === "class" && opened(n.id)).length;
-    if (narrow && holdingLens() && nOpen <= 1) Object.assign(sectors, NARROW);  // a phone: wider sweeps
-    const place = (list, [a0, a1, r], stagger) => list.forEach((n, i) => {
-      const rr = stagger && i % 2 ? r - 0.17 : r;
-      out[n.id] = {...at(list.length === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * i / (list.length - 1), rr), inner: rr < r};
-    });
-    for (const kind of ["class", "source", "goal", "risk", "event", "alert", "scenario", "liquidity"]) {
-      const list = g.nodes.filter(n => n.kind === kind && visible(n));
-      // a crowded arc takes two rings, so neighbours' labels fall on opposite sides (OWN-GW-15)
-      if (list.length) place(list, sectors[kind], ["goal", "source", "scenario"].includes(kind) || list.length >= 7);
+  // ── layout (OWN-GW-26…31, GRAPH_CORE_LAYOUT_PLAN.md §2): one ring, one node per slot ─────────────────
+  // Every node joined to “My Wealth” sits on one ellipse, nothing between it and the centre, so no spoke crosses a
+  // disc; its label sits outside the ring, so no spoke crosses a label. A slot is the room the node and its label take
+  // along the ring at their place, in pixels; the ellipse is the largest that keeps every label on the canvas. When the
+  // slots need more ring than there is, the smallest items of the most crowded group fold into one group node.
+  const RING = ["flow_out", "risk", "alert", "event", "scenario", "goal", "liquidity", "source", "flow_in", "asset", "debt"];
+  const HOME = {flow_out: 0, risk: 26, alert: 50, event: 74, scenario: 98, goal: 126, liquidity: 156, source: 112, flow_in: 180, asset: 255, debt: 322};
+  const NEVER_FOLD = new Set(["flow_out", "flow_in", "liquidity"]);
+  // which group folds first when the ring is short: news, policy and sources first, the assets last (OWN-GW-27)
+  const FOLD_FIRST = {source: 1, event: 1, alert: 1, scenario: 0.8, goal: 0.7, risk: 0.6, debt: 0.45, asset: 0.3};
+  // … and a lens's own subject folds last there: the news on Tin, the goals on Mục tiêu (OWN-GW-27)
+  const SUBJECT = {"tin": ["event", "alert"], "muc-tieu": ["goal", "scenario"], "rui-ro": ["risk"], "tai-san": ["asset", "debt"], "dong-tien": ["liquidity"]};
+  const foldWeight = (key) => (FOLD_FIRST[key] || 0.5) * ((SUBJECT[lens.id] || []).includes(key) ? 0.15 : 1);
+  const GROUP_WORD = {risk: "rủi ro", alert: "chính sách", event: "tin tức", scenario: "kịch bản", goal: "mục tiêu", source: "nguồn dữ liệu", asset: "lớp tài sản", debt: "khoản nợ"};
+  const SUMMABLE = new Set(["event", "alert", "asset", "debt", "risk"]);
+  const groupOf = (n) => (n.kind === "flow" ? `flow_${n.side === "out" ? "out" : "in"}` : n.kind === "class" ? (n.liability ? "debt" : "asset") : n.kind === "group" ? n.group : n.kind);
+  const weight = (n) => Math.abs(n.value ?? n.need ?? 0);
+  const discR = (n) => (n.kind === "family" ? ME_R : n.kind === "holding" ? 13 : 24);
+  const FAN = 64;  // how far behind its class a holding sits
+
+  // text widths, measured once per string on a canvas (no layout), with the label's real font
+  let pen = null, family = "", sizes = null;
+  const widths = new Map();
+  function textW(text, px, weight_) {
+    const k = `${px}|${weight_}|${text}`;
+    let w = widths.get(k);
+    if (w == null) {
+      if (!pen) { pen = document.createElement("canvas").getContext("2d"); family = getComputedStyle(svg).fontFamily || "sans-serif"; }
+      pen.font = `${weight_} ${px}px ${family}`;
+      w = pen.measureText(text).width;
+      widths.set(k, w);
     }
-    place(g.nodes.filter(n => n.kind === "flow" && n.side === "in" && visible(n)), sectors.flow_in);
-    place(g.nodes.filter(n => n.kind === "flow" && n.side === "out" && visible(n)), sectors.flow_out);
-    const open = g.nodes.filter(n => n.kind === "class" && opened(n.id) && out[n.id]).map(n => n.id).sort((a, b) => out[a].a - out[b].a);
-    if (open.length > 1) {  // classes open together: they step inward, all holdings share the arc
-      const kids = open.flatMap(cid => g.nodes.filter(n => n.parent === cid && visible(n)));
-      for (const cid of open) Object.assign(out[cid], at(out[cid].a, 0.5));
-      const [a0, a1] = sectors.class;
-      kids.forEach((n, i) => { out[n.id] = {...at(a0 - 14 + (a1 - a0 + 28) * i / Math.max(1, kids.length - 1), i % 2 ? 0.98 : 1.2), kid: true}; });
-    } else for (const cid of open) {  // one class open: its holdings fan out behind it, the class stepping inward
-      const kids = g.nodes.filter(n => n.parent === cid && visible(n)), p = out[cid];
-      if (!kids.length) continue;
-      Object.assign(p, at(p.a, 0.5));
-      const spread = Math.min(8, 64 / Math.max(1, kids.length));
-      kids.forEach((n, i) => { out[n.id] = {...at(p.a + (i - (kids.length - 1) / 2) * spread, i % 2 ? 0.98 : 1.14), kid: true}; });
+    return w;
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { widths.clear(); pen = null; if (g && lens) draw(); });
+  function fontSizes() {  // the CSS decides (a phone's labels are larger): read once per draw from a label on screen
+    const probe = nodeLayer.querySelector(".wnode:not(.k-family):not(.k-holding) .wlbl");
+    const fp = nodeLayer.querySelector(".wnode .wfig");
+    const name = probe ? parseFloat(getComputedStyle(probe).fontSize) || 12 : narrow ? 14 : 12;
+    const fig = fp ? parseFloat(getComputedStyle(fp).fontSize) || 11 : narrow ? 12.5 : 11;
+    return {name, fig, line: Math.round(name * 1.3)};
+  }
+  // a label's lines and its box at one of four places around its disc (relative to the node's centre). Above or below
+  // a node, where its width takes ring, a long name wraps onto two lines; a goal's figure says its status only when it
+  // is off track (its halo says so too; the tooltip and the inspector keep the full figure)
+  function wrap(text, px, limit) {
+    if (text.length <= limit || !text.includes(" ")) return [text];
+    let best = [text], w = Infinity;
+    for (let i = text.indexOf(" "); i > 0; i = text.indexOf(" ", i + 1)) {
+      const a = text.slice(0, i), b = text.slice(i + 1), m = Math.max(textW(a, px, 650), textW(b, px, 650));
+      if (m < w) { w = m; best = [a, b]; }
     }
-    return relax(out, cx, cy, rx, ry);
+    return best;
+  }
+  function labelAt(n, where, r) {
+    const max = narrow ? 22 : n.kind === "holding" ? 20 : 28;
+    const text = short(n.label, max), {name, fig: fpx, line} = sizes;
+    const fig = n.kind === "source" || n.kind === "holding" ? "" : n.kind === "goal"
+      ? `cần ${vnd(n.need)}${n.status && n.status !== "on_track" ? ` · ${n.status_label}` : ""}` : figureOf(n);
+    const lines = wrap(text, name, where === "above" || where === "below" ? (narrow ? 11 : 14) : narrow ? 12 : 16);
+    const w = Math.max(...lines.map(t => textW(t, name, 650)), fig ? textW(fig, fpx, 400) : 0) + 2;
+    const tag = n.kind === "scenario" ? 14 : 0, nl = lines.length;
+    const asc = name * 0.95, under = fig ? line * nl + fpx * 0.3 : line * (nl - 1) + name * 0.3;  // below the first baseline
+    const lx = where === "right" ? r + 8 : where === "left" ? -r - 8 : 0;
+    const ly = where === "below" ? r + 4 + tag + asc : where === "above" ? -r - 5 - under : asc - (asc + under) / 2;
+    const x0 = where === "right" ? lx : where === "left" ? lx - w : -w / 2;
+    return {where, text, lines, fig, lx, ly, line, figY: ly + line * nl, box: [x0, ly - asc, x0 + w, ly + under]};
+  }
+  const lensShows = (n) => !!lens && lens.kinds.includes(n.kind);
+
+  // the ring: a rounded square (a superellipse) inside the canvas — convex, so a spoke from the centre still meets
+  // nothing before its node, and its corners hold nodes an ellipse would waste
+  const SQ = 2 / 2.7;
+  const ringAt = (t, rx, ry) => { const c = Math.cos(t), s = Math.sin(t); return [rx * Math.sign(c) * Math.abs(c) ** SQ, ry * Math.sign(s) * Math.abs(s) ** SQ]; };
+  // the arc length of the ring, sampled once per size: positions along the ring are in pixels, not degrees
+  function arcTable(rx, ry) {
+    const N = 720, S = new Float64Array(N + 1);
+    let [px, py] = ringAt(0, rx, ry);
+    for (let k = 1; k <= N; k++) {
+      const [x, y] = ringAt(2 * Math.PI * k / N, rx, ry);
+      S[k] = S[k - 1] + Math.hypot(x - px, y - py); px = x; py = y;
+    }
+    const P = S[N];
+    const phiAt = (s) => {
+      s = ((s % P) + P) % P;
+      let lo = 0, hi = N;
+      while (hi - lo > 1) { const m = (lo + hi) >> 1; if (S[m] <= s) lo = m; else hi = m; }
+      return 2 * Math.PI * (lo + (s - S[lo]) / Math.max(1e-9, S[hi] - S[lo])) / N;
+    };
+    const sAt = (phi) => { const u = ((phi / (2 * Math.PI)) % 1 + 1) % 1 * N, k = Math.floor(u); return S[k] + (S[Math.min(N, k + 1)] - S[k]) * (u - k); };
+    return {P, phiAt, sAt};
   }
 
-  // no two nodes on top of each other, whatever the screen (OWN-GW-15): a few rounds pushing overlapping pairs apart,
-  // “My Wealth” fixed, everything inside the canvas; the angle is read again for the label's side
-  const radius = (id) => (id === "ME" ? ME_R : (byId[id] || {}).kind === "holding" ? 13 : 24) + 7;
-  function relax(out, cx, cy, rx, ry) {
-    const ids = Object.keys(out);
-    for (let round = 0; round < 24; round++) {
-      let moved = false;
-      for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
-        const a = out[ids[i]], b = out[ids[j]], need = radius(ids[i]) + radius(ids[j]);
-        let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
-        if (d >= need) continue;
-        if (d < 0.01) { dx = 1; dy = 0; d = 1; }
-        const push = (need - d) / 2 + 0.5, ux = dx / d, uy = dy / d;
-        const fa = ids[i] === "ME" ? 0 : ids[j] === "ME" ? 2 : 1, fb = 2 - fa;
-        a.x -= ux * push * fa; a.y -= uy * push * fa; b.x += ux * push * fb; b.y += uy * push * fb;
-        moved = true;
-      }
-      for (const id of ids) { const q = out[id], r = radius(id); q.x = Math.min(W - r, Math.max(r, q.x)); q.y = Math.min(H - r, Math.max(r, q.y)); }
-      if (!moved) break;
+  // the synthetic node a folded group shows as (kind `group`), or the “Thu gọn” node of a group opened by hand
+  function groupNode(key, members, close) {
+    const of = members[0].kind, sum = members.reduce((t, n) => t + (n.value || 0), 0);
+    return close
+      ? {id: `GR:${key}:close`, kind: "group", group: key, of, close: true, label: "Thu gọn", title: `Thu gọn ${GROUP_WORD[key] || ""}`.trim(), members: [], keys: [], value: null}
+      : {id: `GR:${key}`, kind: "group", group: key, of, label: `${members.length} ${GROUP_WORD[key] || "mục"} khác`, members: members.map(n => n.id),
+        keys: [...new Set(members.flatMap(keysOf))], value: SUMMABLE.has(key) ? sum : null};
+  }
+
+  function layout() {
+    const cx = W / 2, cy = H / 2, M = narrow ? 8 : 12;
+    sizes = fontSizes();
+    const out = {ME: {x: cx, y: cy, a: 0}};
+    const byGroup = new Map();
+    for (const n of g.nodes) {
+      if (n.kind === "family" || n.kind === "holding" || !lensShows(n)) continue;
+      const k = groupOf(n);
+      if (!byGroup.has(k)) byGroup.set(k, []);
+      byGroup.get(k).push(n);
     }
-    for (const id of ids) if (id !== "ME") out[id].a = Math.atan2((out[id].y - cy) / ry, (out[id].x - cx) / rx) * 180 / Math.PI;
+    for (const list of byGroup.values()) list.sort((a, b) => weight(b) - weight(a) || (a.id < b.id ? -1 : 1));
+    // what may not fold, by level: 0 nothing of an opened group; 1 a group opened earlier may fold again; 2 even the one
+    // opened last folds its smallest (it opens partly: the rest stay behind “+n khác”), never the selection or an open class
+    const keepOut = (n, level) => st.sel === n.id || opened(n.id)
+      || (isOpen(groupOf(n)) && (level === 0 || (level === 1 && groupOf(n) === st.lastGroup)));
+    const folded = new Map();  // group key → members folded (the smallest first)
+    let warm = null;  // each try starts from the last one's ring and angles: folding one item changes little
+    let unpin = false;  // the flows leave their sides only when their half cannot hold what the person opened
+    for (let tries = 0; tries < 400; tries++) {
+      const items = [], made = [];
+      for (const key of RING) {
+        const list = byGroup.get(key);
+        if (!list) continue;
+        const gone = new Set((folded.get(key) || []).map(n => n.id));
+        for (const n of list) if (!gone.has(n.id)) items.push(n);
+        if (gone.size) { const gn = groupNode(key, folded.get(key)); gn.part = isOpen(key); items.push(gn); made.push(gn); }
+        if (isOpen(key) && list.length > 1) { const gn = groupNode(key, list, true); items.push(gn); made.push(gn); }
+      }
+      const res = placeRing(items, cx, cy, M, false, warm, unpin);
+      warm = res.warm || warm;
+      if (res.ok || !items.length) return finish(out, res, made, folded);
+      // fold one more: in the group taking the most ring per member, its smallest member not kept out; failing that,
+      // from a group opened earlier; failing that (and the flows unpinned), from the one opened last
+      let best = null;
+      for (const level of unpin || !res.arc ? [0, 1, 2] : [0, 1]) {
+        for (const key of RING) {
+          const list = byGroup.get(key);
+          if (!list || NEVER_FOLD.has(key) || (res.arc && !res.arc.has(key))) continue;
+          const f = folded.get(key) || [], open_ = list.filter(n => !f.includes(n) && !keepOut(n, level));
+          if (open_.length < (f.length ? 1 : 2)) continue;  // a group node takes a slot: folding one alone gains nothing
+          const room = (res.demand[key] || 0) / Math.max(1, list.length - f.length) * foldWeight(key);  // ring per member
+          if (!best || room > best.room) best = {key, room, open_, f};
+        }
+        if (best) break;
+      }
+      if (!best && res.arc && !unpin) { unpin = true; continue; }
+      if (!best) return finish(out, placeRing(items, cx, cy, M, true, warm, true), made, folded);  // nothing left to fold: the best the ring can do
+      const add = best.open_.slice(-(best.f.length ? 1 : 2));
+      folded.set(best.key, [...best.f, ...add].sort((a, b) => weight(b) - weight(a)));
+    }
+    return finish(out, {ok: false, pos: {}}, [], folded);
+  }
+  function finish(out, res, made, folded) {
+    Object.assign(out, res.pos || {});
+    out.ring = res.rx ? {rx: res.rx, ry: res.ry} : null;
+    out.groups = made;
+    out.fold = new Map();
+    for (const [key, list] of folded) for (const n of list) out.fold.set(n.id, `GR:${key}`);
+    return out;
+  }
+
+  // the ring for these items, in order: their slots, labels and holdings, sized to the canvas
+  function placeRing(items, cx, cy, M, force = false, warm = null, unpin = false) {
+    const n = items.length;
+    if (!n) return {ok: true, pos: {}, demand: {}};
+    let rx = warm ? warm.rx : W / 2 - M - 40, ry = warm ? warm.ry : H / 2 - M - 30;
+    const minR = ME_R + 70;
+    const bump = new Float64Array(n);  // extra room asked for after a box overlapped, per pair (i, i+1)
+    const gapBase = narrow ? 7 : 8;
+    const gw = items.map((it, i) => (groupOf(it) !== groupOf(items[(i + 1) % n]) ? 1.8 : 1));
+    // start from the last try's angles where the item was there, else between its neighbours, else evenly
+    let phis = items.map((it, i) => (warm && warm.phi[it.id] != null ? warm.phi[it.id] : null));
+    if (phis.every(v => v == null)) phis = items.map((_, i) => 2 * Math.PI * i / n);
+    else phis = phis.map((v, i) => {
+      if (v != null) return v;
+      let a = i - 1, b = i + 1;
+      while (phis[(a + n) % n] == null) a--;
+      while (phis[b % n] == null) b++;
+      const pa = phis[(a + n) % n], pb = phis[b % n], span = ((pb - pa) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+      return pa + span * (i - a) / (b - a);
+    });
+    let result = null;
+    const keep = (rx_, ry_) => ({rx: rx_, ry: ry_, phi: Object.fromEntries(items.map((it, i) => [it.id, phis[i]]))});
+    const passes = force ? 8 : 24;
+    for (let pass = 0; pass < passes; pass++) {
+      const last = pass === passes - 1;
+      if (rx < minR || ry < minR * 0.8) {
+        if (!force) return {ok: false, pos: {}, demand: result ? result.demand : {}};
+        rx = Math.max(rx, minR); ry = Math.max(ry, minR * 0.8);
+      }
+      const T = arcTable(rx, ry);
+      let s = null, place = null;
+      for (let it = 0; it < 8; it++) {  // the angle decides the label's side, the side decides the slot: to a fixed point
+        place = items.map((node, i) => slot(node, phis[i], rx, ry, cx, cy));
+        const need = (i) => place[i].hi + place[(i + 1) % n].lo + gapBase * gw[i] + bump[i];
+        s = allocate(items, need, T, gw, force, unpin);
+        if (!s) {
+          if (it < 3) { phis = phis.map((v, i) => v); continue; }  // a flipped label may make room on the next round
+          const demand = {};
+          items.forEach((node, i) => { const k = groupOf(node); demand[k] = (demand[k] || 0) + place[i].lo + place[i].hi + gapBase * gw[i]; });
+          let total = 0; for (let i = 0; i < n; i++) total += need(i);
+          return {ok: false, pos: {}, demand, short: total - T.P, arc: allocate.short, warm: keep(rx, ry)};
+        }
+        const next = s.map(T.phiAt);
+        let moved = 0;
+        phis = phis.map((v, i) => {  // damped: half way, the short way round
+          const d = ((next[i] - v + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+          moved = Math.max(moved, Math.abs(d));
+          return it < 2 ? next[i] : v + d / 2;
+        });
+        if (moved < 0.002) break;
+      }
+      place = items.map((node, i) => slot(node, phis[i], rx, ry, cx, cy));
+      result = {demand: {}};
+      items.forEach((node, i) => { const k = groupOf(node); result.demand[k] = (result.demand[k] || 0) + place[i].lo + place[i].hi; });
+      // boxes on the canvas: from the centre's disc, every disc, label and holding
+      const abs = place.map(p => p.boxes.map(b => [b[0] + p.x, b[1] + p.y, b[2] + p.x, b[3] + p.y]));
+      let fixed = false;
+      const depth = (a, b, m) => Math.max(0, Math.min(a[2] + m - b[0], b[2] + m - a[0], a[3] + m - b[1], b[3] + m - a[1]));
+      const widen = (i, j, by) => {  // more room between items i and j, on the shorter way round
+        const fwd = (j - i + n) % n <= n / 2, [p, q] = fwd ? [i, j] : [j, i];
+        const steps = (q - p + n) % n;
+        for (let k = 0; k < steps; k++) bump[(p + k) % n] += by / steps;
+        fixed = true;
+      };
+      for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+        let d = 0;
+        for (const a of abs[i]) for (const b of abs[j]) d = Math.max(d, depth(a, b, 3));
+        if (d > 0) widen(i, j, d + 2);
+      }
+      // a spoke never crosses another node's disc or label (the slots between are widened instead)
+      const meBox = [cx - ME_R - 10, cy - ME_R - 10, cx + ME_R + 10, cy + ME_R + 10];
+      for (let j = 0; j < n; j++) {
+        const pts = spokePts(cx, cy, place[j].x, place[j].y, discR(items[j]));
+        for (let i = 0; i < n; i++) {
+          if (i !== j && abs[i].some(b => pts.some(([x, y]) => x > b[0] - 2 && x < b[2] + 2 && y > b[1] - 2 && y < b[3] + 2))) widen(i, j, 6);
+        }
+      }
+      if (fixed && !last) continue;
+      // keep everything on the canvas: shrink the ellipse by what spills over
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (const bs of abs.concat([[meBox]], place.map(p => p.reserve ? [[p.reserve[0] + p.x, p.reserve[1] + p.y, p.reserve[2] + p.x, p.reserve[3] + p.y]] : []))) {
+        for (const b of bs) { x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[2]); y1 = Math.max(y1, b[3]); }
+      }
+      const dx = Math.max(0, M - x0, x1 - (W - M)), dy = Math.max(0, M - y0, y1 - (H - M));
+      if ((dx > 0.5 || dy > 0.5) && !last) { rx -= dx + 1; ry -= dy + 1; continue; }
+      const pos = {};
+      items.forEach((node, i) => {
+        const p = place[i];
+        pos[node.id] = {x: p.x, y: p.y, a: phis[i] * 180 / Math.PI, label: p.label, ring: true, quiet: fixed && !!p.label.text};
+        for (const k of p.kids) pos[k.id] = {x: k.x, y: k.y, a: phis[i] * 180 / Math.PI, kid: true, label: k.label};
+      });
+      return {ok: !fixed && !force, pos, demand: result.demand, rx, ry, warm: keep(rx, ry)};
+    }
+    return {ok: false, pos: {}, demand: result ? result.demand : {}};
+  }
+
+  // one node's slot at angle phi: its position, label, holdings, and the room it takes along the ring (lo before, hi after)
+  function slot(node, phi, rx, ry, cx, cy) {
+    const c = Math.cos(phi), s = Math.sin(phi), r = discR(node);
+    const [ox0, oy0] = ringAt(phi, rx, ry), x = cx + ox0, y = cy + oy0;
+    const [ax, ay] = ringAt(phi - 0.004, rx, ry), [bx, by] = ringAt(phi + 0.004, rx, ry);
+    const tl = Math.hypot(bx - ax, by - ay) || 1, tx = (bx - ax) / tl, ty = (by - ay) / tl;  // the ring's direction here
+    const open_ = node.kind === "class" && opened(node.id);
+    // an opened class's holdings fan out behind it: its label runs along the ring instead (the side it points to)
+    const along = Math.abs(tx) >= Math.abs(ty) ? (tx > 0 ? "right" : "left") : ty > 0 ? "below" : "above";
+    const tag = node.kind === "scenario" ? 16 : 0;
+    const boxes = [[-r - 2, -r - 2, r + 2, r + 2 + tag]];
+    const kids = [];
+    let reserve = null;
+    if (node.kind === "class" && holdingLens()) {
+      // the band behind a class where its holdings fan out: kept free on the canvas whether or not it is open
+      const ox = ty, oy = -tx;  // outward (the ring runs clockwise)
+      reserve = [ox * (FAN + 30) - 14, oy * (FAN + 30) - 14, ox * (FAN + 30) + 14, oy * (FAN + 30) + 14];
+      if (open_) {
+        const list = g.nodes.filter(h => h.parent === node.id && h.kind === "holding" && lensShows(h));
+        const rows = list.length > 8 ? 2 : 1, per = Math.ceil(list.length / rows), step = 30;
+        list.forEach((h, i) => {
+          const row = rows === 2 ? i % 2 : 0, k = rows === 2 ? Math.floor(i / 2) : i;
+          const along = (k - (per - 1) / 2) * step + (row ? step / 2 : 0), dist = FAN + (row ? 34 : 0);
+          const kx = ox * dist + tx * along, ky = oy * dist + ty * along;
+          const lbl = labelAt(h, ky + y < cy ? "above" : "below", 13);
+          kids.push({id: h.id, x: x + kx, y: y + ky, label: lbl});
+          boxes.push([kx - 15, ky - 15, kx + 15, ky + 15]);
+        });
+      }
+    }
+    // the label's side: an open class tries along the ring first, then the other sides, and takes the first clear of its
+    // holdings (at a corner of the ring the side it points to is where a holding fans out)
+    const flip = {right: "left", left: "right", above: "below", below: "above"};
+    const sides = open_ ? [along, flip[along], ...["above", "below", "right", "left"].filter(w => w !== along && w !== flip[along])]
+      : [!narrow && Math.abs(c) > 0.38 ? (c > 0 ? "right" : "left") : s < 0 ? "above" : "below"];
+    const own = open_ ? spokePts(cx, cy, x, y, r).map(([px, py]) => [px - x, py - y]) : [];  // and of its own spoke
+    const clear = (b) => boxes.slice(1).every(k => b[2] <= k[0] - 3 || b[0] >= k[2] + 3 || b[3] <= k[1] - 3 || b[1] >= k[3] + 3)
+      && !own.some(([px, py]) => px > b[0] - 2 && px < b[2] + 2 && py > b[1] - 2 && py < b[3] + 2);
+    const label = sides.map(w => labelAt(node, w, r)).find(l => clear(l.box)) || labelAt(node, sides[0], r);
+    boxes.splice(1, 0, label.box);
+    let lo = 0, hi = 0;
+    for (const b of boxes) for (const [bx, by] of [[b[0], b[1]], [b[2], b[1]], [b[0], b[3]], [b[2], b[3]]]) {
+      const t = bx * tx + by * ty;
+      lo = Math.max(lo, -t); hi = Math.max(hi, t);
+    }
+    return {x, y, lo, hi, label, boxes, kids, reserve, kid: false};
+  }
+
+  // positions along the ring (pixels from the right, clockwise): money in and out pinned left and right when both
+  // show; otherwise the ring is turned so its groups sit near their usual places. Null when the ring is too short.
+  function allocate(items, need, T, gw, force = false, unpin = false) {
+    allocate.short = null;
+    const n = items.length, ids = items.map(groupOf);
+    const iOut = ids.indexOf("flow_out"), iIn = ids.indexOf("flow_in");
+    const spread = (from, to, start, len) => {  // pairs from..to-1 (cyclic), first item at `start`
+      let req = 0, wsum = 0;
+      for (let i = from; i !== to; i = (i + 1) % n) { req += need(i); wsum += gw[i]; }
+      if (req > len + 0.01) return null;
+      const slack = len - req, out = [[from, start]];
+      let p = start;
+      for (let i = from; i !== to; i = (i + 1) % n) { p += need(i) + slack * gw[i] / wsum; out.push([(i + 1) % n, p]); }
+      return out;
+    };
+    const s = new Array(n);
+    if (iOut >= 0 && iIn >= 0 && n > 2 && !unpin) {  // pinned, always: money in stays left and money out right (the mental map)
+      const half = T.sAt(Math.PI);
+      const a = spread(iOut, iIn, 0, half), b = spread(iIn, iOut, half, T.P - half);
+      if (a && b) { for (const [i, p] of a.concat(b)) s[i] = p; return s; }
+      if (!force) {  // say which arc is short: only its groups fold
+        const arc = new Set();
+        const [from, to] = a ? [iIn, iOut] : [iOut, iIn];
+        for (let i = from; i !== to; i = (i + 1) % n) arc.add(ids[i]);
+        allocate.short = arc;
+        return null;
+      }
+    }
+    if (n === 1) { s[0] = T.sAt(HOME[ids[0]] * Math.PI / 180); return s; }
+    let req = 0, wsum = 0;
+    for (let i = 0; i < n; i++) { req += need(i); wsum += gw[i]; }
+    if (req > T.P + 0.01 && !force) return null;
+    const squeeze = Math.min(1, T.P / req), slack = Math.max(0, T.P - req);  // forced: everything shrinks alike
+    s[0] = 0;
+    for (let i = 0; i < n - 1; i++) s[i + 1] = s[i] + need(i) * squeeze + slack * gw[i] / wsum;
+    // turn: the circular mean of how far each item is from its group's usual place
+    let sx = 0, sy = 0;
+    for (let i = 0; i < n; i++) {  // money in and out weigh most: they keep near their sides
+      const d = (T.sAt(HOME[ids[i]] * Math.PI / 180) - s[i]) / T.P * 2 * Math.PI, wt = ids[i].startsWith("flow_") ? 8 : 1;
+      sx += wt * Math.cos(d); sy += wt * Math.sin(d);
+    }
+    const shift = Math.atan2(sy, sx) / (2 * Math.PI) * T.P;
+    return s.map(v => v + shift);
+  }
+
+  // a spoke's points (the centre's rim to the node's inner side), for the layout's checks
+  function spokePts(cx, cy, x, y, r) {
+    const dx = x - cx, dy = y - cy, l = Math.hypot(dx, dy) || 1, ux = dx / l, uy = dy / l, out = [];
+    const a = ME_R + 2, b = l - r - 2;
+    for (let d = a; d <= b; d += 6) out.push([cx + ux * d, cy + uy * d]);
     return out;
   }
 
   // ── nodes: created once per id, moved and faded after ───────────────────────────────────────────
   function nodeEl(n) {
     let el = els.get(n.id);
+    const sig = n.kind === "group" ? `${n.label}|${n.value}|${!!n.part}` : "";
+    if (el && el.dataset.sig !== sig) { el.remove(); els.delete(n.id); el = null; }  // a group node that now folds another count
     if (el) return el;
-    const me = n.kind === "family", r = me ? ME_R : n.kind === "holding" ? 13 : 24;
-    const [tone, ic] = n.kind === "flow" && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind] || LOOK.class;
+    const me = n.kind === "family", r = discR(n);
+    const [tone, ic] = n.kind === "flow" && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind === "group" ? n.of : n.kind] || LOOK.class;
     el = mk("g", {class: `wnode k-${n.kind}`, tabindex: "0", role: "button", "data-n": n.id, "aria-pressed": "false",
       "aria-label": `${(g.kinds.find(k => k.kind === n.kind) || {}).label || n.kind}: ${n.label}`}, nodeLayer);
     el.style.setProperty("--tone", tone);
     el.dataset.r = r;
+    el.dataset.sig = sig;
     const keys = keysOf(n);
     if (keys.length) el.setAttribute("data-focus", keys.join(" "));
     mk("circle", {r: r + 9, class: "wring", "aria-hidden": "true"}, el);  // the activity ring (transform/opacity)
@@ -194,8 +503,28 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     if (n.kind === "risk" || (n.kind === "goal" && n.status !== "on_track")) {
       mk("circle", {r: r + 5, class: "whalo", style: `--halo:${n.kind === "goal" && n.status === "at_risk" ? "var(--warning)" : "var(--critical)"}`}, el);
     }
-    mk("circle", {r, class: me ? "wcore me" : "wcore", fill: me ? "url(#ws-me)" : null}, el);
+    if (me) {  // the financial core (OWN-GW-20…25): aura, rings, bezel, glass body, inner light, face, figures
+      const back = mk("g", {class: "wme-back", "aria-hidden": "true"}, el);
+      mk("circle", {r: r + 34, class: "wme-aura", fill: "url(#ws-aura)"}, back);
+      mk("circle", {r: r + 12, class: "wme-orbit"}, back);
+      mk("circle", {r: r + 21, class: "wme-orbit o2"}, back);
+      mk("circle", {r: r + 3, class: "wme-drift"}, back);
+      mk("circle", {r: r + 3, class: "wme-drift d2"}, back);
+    }
+    mk("circle", {r, class: me ? "wcore me" : "wcore", fill: me ? "url(#ws-body)" : null}, el);
     if (me) {
+      const glass = mk("g", {"clip-path": "url(#ws-core-clip)", "aria-hidden": "true"}, el);
+      mk("ellipse", {cy: r * 0.48, rx: r * 0.82, ry: r * 0.44, class: "wme-inner", fill: "url(#ws-inner)"}, glass);
+      mk("g", {class: "wme-bandhost"}, glass);  // the light a payment sends across (drawEdges, on the sparks' clock)
+      mk("ellipse", {cy: -r * 0.56, rx: r * 0.62, ry: r * 0.3, class: "wme-spec", fill: "url(#ws-spec)"}, glass);
+      const rim = mk("g", {"aria-hidden": "true"}, el);
+      mk("circle", {r: r - 6, class: "wme-ticks"}, rim);
+      mk("circle", {r: r + 1.5, class: "wme-bezel", stroke: "url(#ws-bezel)"}, rim);
+      mk("circle", {r: r + 1.5, class: "wme-act"}, rim);
+      mk("circle", {r: r + 5.5, class: "wme-sel"}, rim);
+      mk("g", {class: "wme-ports"}, rim);  // where each money edge meets the rim (drawEdges)
+      mk("g", {class: "wme-ripples"}, rim);
+      mk("circle", {r: r * 0.86, class: "wme-face", fill: "url(#ws-face)", "aria-hidden": "true"}, el);  // a soft dark vignette under the figures
       // four short lines, each narrower than the disc at its height (a 128 px line crossed the border)
       const t1 = mk("text", {y: -22, "text-anchor": "middle", class: "wme-l"}, el); t1.textContent = staffLabel || "Tài sản ròng";
       const t2 = mk("text", {y: 4, "text-anchor": "middle", class: "wme-v num-svg", "data-metric": "net_worth", tabindex: "0", role: "button",
@@ -206,6 +535,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       t3.textContent = `tài sản ${vnd(n.assets)}`;
       const t4 = mk("text", {y: 44, "text-anchor": "middle", class: "wme-s"}, el);
       t4.textContent = `nợ ${vnd(n.liabilities)}`;
+    } else if (n.kind === "group") {  // “+n”: what the ring folded, opened on a click
+      mk("text", {y: 5, "text-anchor": "middle", class: "wcount"}, el).textContent = n.close ? "−" : `+${n.members.length}`;
+      mk("text", {class: "wlbl"}, el);
+      if (n.value != null) mk("text", {class: `wfig ${["event", "alert"].includes(n.of) ? signClass(n.value) : ""}`}, el);
     } else {
       const inner = mk("svg", {x: -r * 0.52, y: -r * 0.52, width: r * 1.04, height: r * 1.04, viewBox: "0 0 24 24", fill: "none",
         stroke: tone, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round", class: "wicon"}, el);
@@ -217,6 +550,18 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         const [m, i] = howOf(n);
         if (n.value != null) { f.setAttribute("data-metric", m); f.setAttribute("data-in", JSON.stringify(i)); f.setAttribute("tabindex", "0"); f.setAttribute("role", "button"); f.classList.add("num-svg"); }
       }
+    }
+    if (n.kind === "group") {
+      // a group opened only partly (the ring cannot hold all of it): the rest stay here, listed, and Danh sách has them all
+      el.setAttribute("aria-label", n.close ? n.title : n.part ? `${n.label}: không đủ chỗ trên đồ thị` : `${n.label}: mở nhóm`);
+      el.setAttribute("aria-expanded", String(!!n.close || !!n.part));
+      hover(el, n.close ? esc(n.title) : `<b>${esc(n.label)}</b><br>${n.members.slice(0, 6).map(id => esc(byId[id].label)).join("<br>")}${n.members.length > 6 ? "<br>…" : ""}<br><span class="muted">${n.part ? "Không đủ chỗ để mở hết · xem đủ trong Danh sách" : "Bấm để mở nhóm"}</span>`);
+      if (!n.part) {
+        el.addEventListener("click", () => openGroup(n));
+        el.addEventListener("keydown", (ev) => { if (ev.target === el && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); openGroup(n); } });
+      }
+      els.set(n.id, el);
+      return el;
     }
     hover(el, `<b>${esc(n.label)}</b><br>${esc((g.kinds.find(k => k.kind === n.kind) || {}).label || "")}${figureOf(n) ? " · " + esc(figureOf(n)) : ""}`);
     el.addEventListener("click", (ev) => { if (!ev.target.closest(".num-svg")) select(n.id); });
@@ -233,51 +578,46 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     return el;
   }
 
-  // ── labels (OWN-GW-15): each takes the first free place — its own side, the other side, below, above — clear of
-  // every node and every label placed before it; with none free it is shortened. Widths are estimated from the
-  // characters (measuring the text would force a layout per draw).
-  const PRIORITY = {family: 0, class: 1, flow: 1, liquidity: 1, goal: 2, risk: 2, scenario: 3, event: 3, alert: 4, source: 5, holding: 6};
+  // ── labels (OWN-GW-26): the ring gave each its place, outside the ring and clear of every disc, label and spoke
   function placeLabels(list) {
-    const cw = narrow ? 8.4 : 7.2, fw = narrow ? 7.5 : 6.3, gap = narrow ? 18 : 15;  // a phone's labels are larger (CSS)
-    const boxes = list.map(n => { const q = pos[n.id], r = Number(els.get(n.id).dataset.r) + 3; return [q.x - r, q.y - r, q.x + r, q.y + r]; });
-    const free = (b) => b[0] > 2 && b[2] < W - 2 && b[1] > 2 && b[3] < H - 2 && !boxes.some(o => b[0] < o[2] && o[0] < b[2] && b[1] < o[3] && o[1] < b[3]);
-    const order = list.filter(n => n.kind !== "family").sort((a, b) => (PRIORITY[a.kind] ?? 9) - (PRIORITY[b.kind] ?? 9) || Math.abs(b.value || 0) - Math.abs(a.value || 0));
-    for (const n of order) {
-      const el = els.get(n.id), lbl = el.querySelector(".wlbl"), f = el.querySelector(".wfig");
-      if (!lbl) continue;
-      const q = pos[n.id], r = Number(el.dataset.r), tag = n.kind === "scenario" ? 14 : 0;
-      const c = Math.cos(q.a * Math.PI / 180), side = Math.abs(c) > 0.38 ? Math.sign(c) : 0;
-      const below = side === 0 && (q.y >= H / 2) !== !!q.inner;
-      const pref = side > 0 ? "right" : side < 0 ? "left" : below ? "below" : "above";
-      const tries = [pref, ...{right: ["left", "below", "above"], left: ["right", "below", "above"], below: ["above", "right", "left"], above: ["below", "right", "left"]}[pref]];
-      const full = f ? figureOf(n) : "", max = narrow ? 15 : n.kind === "holding" ? 20 : n.kind === "goal" ? 24 : 28;
-      let fig = full;
-      const at = (where, text) => {
-        const w = Math.max(text.length * cw, fig.length * fw), h = fig ? gap + 16 : 17;
-        const lx = where === "right" ? r + 9 : where === "left" ? -r - 9 : 0, ly = where === "below" ? r + 16 + tag : where === "above" ? -r - (fig ? 22 : 8) : -3;
-        const x0 = where === "right" ? lx : where === "left" ? lx - w : -w / 2;
-        return {where, text, lx, ly, box: [q.x + x0, q.y + ly - 13, q.x + x0 + w, q.y + ly - 13 + h]};
-      };
-      // no free place: drop the figure line (it stays in the tooltip and the inspector), then shorten the name
-      let pick = null;
-      for (const [text, withFig] of [[short(n.label, max), true], [short(n.label, max), false], [short(n.label, 12), false]]) {
-        fig = withFig ? full : "";
-        pick = tries.map(t => at(t, text)).find(p => free(p.box));
-        if (pick) break;
-      }
-      // still none: the name waits to be asked for (pointed at, focused, picked, lit), like a holding's; the icon, the
-      // tooltip and the accessible name stay
-      const quiet = !pick;
-      if (quiet) { fig = full; pick = at(pref, short(n.label, max)); }
-      el.classList.toggle("quiet", quiet);
-      if (n.kind !== "holding" && !quiet) boxes.push(pick.box);  // what shows on demand does not push the others
-      const anchor = pick.where === "right" ? "start" : pick.where === "left" ? "end" : "middle";
-      lbl.setAttribute("x", pick.lx); lbl.setAttribute("y", pick.ly); lbl.setAttribute("text-anchor", anchor);
-      lbl.textContent = pick.text;
-      if (pick.text !== n.label) lbl.setAttribute("data-full", n.label); else lbl.removeAttribute("data-full");
-      if (f) { f.setAttribute("x", pick.lx); f.setAttribute("y", pick.ly + gap); f.setAttribute("text-anchor", anchor); f.textContent = fig; }
-      el.classList.toggle("tight", !quiet && !!full && !fig);
+    for (const n of list) {
+      if (n.kind === "family") continue;
+      const el = els.get(n.id), q = pos[n.id], lbl = el && el.querySelector(".wlbl");
+      if (!lbl || !q) continue;
+      const L = q.label || labelAt(n, "below", discR(n)), f = el.querySelector(".wfig");
+      const anchor = L.where === "right" ? "start" : L.where === "left" ? "end" : "middle";
+      lbl.setAttribute("x", L.lx); lbl.setAttribute("y", L.ly); lbl.setAttribute("text-anchor", anchor);
+      if (L.lines.length > 1) {
+        lbl.replaceChildren(...L.lines.map((t, i) => { const sp = mk("tspan", {x: L.lx, dy: i ? L.line : 0}); sp.textContent = t; return sp; }));
+      } else lbl.textContent = L.text;
+      if (L.text !== n.label) lbl.setAttribute("data-full", n.label); else lbl.removeAttribute("data-full");
+      if (f) { f.setAttribute("x", L.lx); f.setAttribute("y", L.figY); f.setAttribute("text-anchor", anchor); f.textContent = L.fig; }
+      el.classList.toggle("quiet", !!q.quiet);  // only when even folding could not make room
     }
+  }
+
+  // group nodes and their spokes (one per group: the sum of what it folds, with all their records)
+  function applyGroups(list, f) {
+    for (const gn of groupNodes) if (!list.some(x => x.id === gn.id)) delete byId[gn.id];
+    groupNodes = list; fold = f; groupIds = new Set(list.map(x => x.id));
+    for (const gn of list) byId[gn.id] = gn;
+    const base = g.edges.concat(derived);
+    groupEdges = list.filter(x => !x.close).map(x => {
+      const es = x.members.map(id => base.find(e => (e.from === id && e.to === "ME") || (e.from === "ME" && e.to === id))).filter(Boolean);
+      const into = !es.length || es[0].to === "ME", vals = es.filter(e => e.value != null);
+      return {from: into ? x.id : "ME", to: into ? "ME" : x.id, label: `${x.members.length} mục gộp`, derived: es.length,
+        value: vals.length ? vals.reduce((t, e) => t + e.value, 0) : null, certainty: es.length ? certaintyOf(es[0], byId) : undefined,
+        // folded debts still repay: their month's repayments run on the group's edge (money stays in motion, OWN-GW-16)
+        repaid: es.reduce((t, e) => t + (e.repaid && certaintyOf(e, byId) === "actual" ? e.repaid : 0), 0) || undefined,
+        sources: es.flatMap(e => e.sources || []).filter((y, i, a) => a.findIndex(z => z.type === y.type && z.id === y.id) === i)};
+    });
+  }
+  // a group opened by hand stays open in its lens (only there), the last one opened kept first
+  const isOpen = (key) => !!lens && st.groups.has(`${lens.id}|${key}`);
+  function openGroup(n) {
+    const k = `${lens.id}|${n.group}`;
+    if (n.close) st.groups.delete(k); else { st.groups.add(k); st.lastGroup = n.group; }
+    draw({moved: true});
   }
 
   // the canvas size, kept by a ResizeObserver: reading it on every draw forced a layout per lens change
@@ -291,10 +631,13 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     W = Math.max(narrow ? 520 : 720, Math.round(box.width || 1000)); H = Math.max(narrow ? 640 : 520, Math.round(box.height || 640));
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     pos = layout();
+    ring = pos.ring;
+    applyGroups(pos.groups, pos.fold);
     layoutRun++;
+    routes = new Map(); obstacles = null;
     const lit = litSet();
     const back = [];  // nodes coming back into the lens: placed first, then one layout, then faded in together
-    for (const n of g.nodes) {
+    for (const n of g.nodes.concat(groupNodes)) {
       const el = nodeEl(n), q = pos[n.id], on = visible(n) && q;
       el.setAttribute("aria-hidden", String(!on));
       el.tabIndex = on ? 0 : -1;
@@ -309,7 +652,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       el.classList.toggle("sel", st.sel === n.id);
       el.setAttribute("aria-pressed", String(st.sel === n.id));
     }
-    placeLabels(g.nodes.filter(n => visible(n) && pos[n.id]));
+    placeLabels(g.nodes.concat(groupNodes).filter(n => visible(n) && pos[n.id]));
     if (back.length) {  // styled once in place, still faded, then faded in: no forced layout (one cost ~60 ms)
       requestAnimationFrame(() => requestAnimationFrame(() => { for (const el of back) if (!el.classList.contains("gone")) el.classList.remove("off"); }));
     }
@@ -324,17 +667,106 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
 
   function litSet() { return st.sel ? new Set([st.sel, ...links(st.sel).map(e => other(e, st.sel).id)]) : null; }
 
-  // a gentle arc: the control point off the chord's middle, bent the same way round; with an edge, it starts and ends at
-  // the two discs' borders (a wire into a port, not under the node)
-  function curve(a, b, e) {
-    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
-    const bend = Math.min(60, len * 0.16), qx = mx - dy / len * bend, qy = my + dx / len * bend;
-    const trim = (p, id) => {
-      const r = e ? radius(id) - 5 : 0, ux = qx - p.x, uy = qy - p.y, l = Math.hypot(ux, uy) || 1;
-      return [p.x + ux / l * r, p.y + uy / l * r];
-    };
-    const [x0, y0] = trim(a, e && e.from), [x1, y1] = trim(b, e && e.to);
-    return `M${x0.toFixed(1)},${y0.toFixed(1)} Q${qx.toFixed(1)},${qy.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`;
+  // ── routing (OWN-GW-28, plan §2.6): one path per edge and layout, the first candidate clear of every other disc
+  // (the centre with its aura) and every label. A spoke runs from the centre's rim to the node's inner side; a relation
+  // leaves both nodes toward the centre (a node's relations share that first stretch: a trunk that splits) and bends
+  // round the centre if it must, else follows the inside of the ring; a holding hangs off its class's outer side.
+  let routes = new Map(), obstacles = null, ring = null;
+  function obstaclesNow() {
+    if (obstacles) return obstacles;
+    const discs = [], boxes = [];
+    for (const n of g.nodes.concat(groupNodes)) {
+      const q = pos[n.id];
+      if (!q || !visible(n)) continue;
+      discs.push({id: n.id, x: q.x, y: q.y, r: n.kind === "family" ? ME_R + 12 : discR(n) + 3});
+      if (q.label && n.kind !== "holding" && n.kind !== "family" && !q.quiet) {
+        const b = q.label.box;
+        boxes.push({id: n.id, b: [b[0] + q.x - 2, b[1] + q.y - 2, b[2] + q.x + 2, b[3] + q.y + 2]});
+      }
+    }
+    return (obstacles = {discs, boxes});
+  }
+  function hits(pts, ends) {
+    const {discs, boxes} = obstaclesNow();
+    let k = 0;
+    for (const [x, y] of pts) {
+      for (const d of discs) if (!ends.includes(d.id) && Math.hypot(x - d.x, y - d.y) < d.r) k++;
+      for (const o of boxes) if (!ends.includes(o.id) && x > o.b[0] && x < o.b[2] && y > o.b[1] && y < o.b[3]) k++;
+    }
+    return k;
+  }
+  const bez = (ps) => {  // points every ~5 px along a quadratic or cubic Bézier
+    const len = ps.slice(1).reduce((t, p, i) => t + Math.hypot(p[0] - ps[i][0], p[1] - ps[i][1]), 0), N = Math.max(6, Math.ceil(len / 5)), out = [];
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, u = 1 - t;
+      out.push(ps.length === 3
+        ? [u * u * ps[0][0] + 2 * u * t * ps[1][0] + t * t * ps[2][0], u * u * ps[0][1] + 2 * u * t * ps[1][1] + t * t * ps[2][1]]
+        : [u * u * u * ps[0][0] + 3 * u * u * t * ps[1][0] + 3 * u * t * t * ps[2][0] + t * t * t * ps[3][0],
+          u * u * u * ps[0][1] + 3 * u * u * t * ps[1][1] + 3 * u * t * t * ps[2][1] + t * t * t * ps[3][1]]);
+    }
+    return out;
+  };
+  const xy = (p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+  function pick(cands, ends) {  // the first clear candidate, else the least crossed
+    let best = null;
+    for (const c of cands) {
+      const k = hits(c.pts, ends);
+      if (!k) return c;
+      if (!best || k < best.k) best = {...c, k};
+    }
+    return best;
+  }
+  function route(e) {
+    const key = `${e.from}>${e.to}`;
+    if (routes.has(key)) return routes.get(key);
+    const A = pos[e.from], B = pos[e.to], C = pos.ME, ends = [e.from, e.to];
+    const unit = (dx, dy) => { const l = Math.hypot(dx, dy) || 1; return [dx / l, dy / l]; };
+    let r;
+    if (e.from === "ME" || e.to === "ME") {
+      const id = e.from === "ME" ? e.to : e.from, N = pos[id], [ux, uy] = unit(N.x - C.x, N.y - C.y);
+      const a = [C.x + ux * (ME_R + 2), C.y + uy * (ME_R + 2)], b = [N.x - ux * (discR(byId[id]) + 2), N.y - uy * (discR(byId[id]) + 2)];
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]), m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      const c = pick([0.07, -0.07, 0].map(k => { const q = [m[0] - uy * k * len, m[1] + ux * k * len]; return {q, pts: bez([a, q, b])}; }), ends);
+      const [p0, p1] = e.from === "ME" ? [a, b] : [b, a];
+      r = {d: `M${xy(p0)} Q${xy(c.q)} ${xy(p1)}`};
+    } else if (byId[e.to] && byId[e.to].kind === "holding" && byId[e.from].kind === "class") {
+      const [ux, uy] = unit(B.x - A.x, B.y - A.y);
+      const a = [A.x + ux * 26, A.y + uy * 26], b = [B.x - ux * 15, B.y - uy * 15], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      const c = pick([0.1, -0.1, 0].map(k => { const q = [m[0] - uy * k * len, m[1] + ux * k * len]; return {q, pts: bez([a, q, b])}; }), ends);
+      r = {d: `M${xy(a)} Q${xy(c.q)} ${xy(b)}`};
+    } else {
+      const rA = discR(byId[e.from]) + 2, rB = discR(byId[e.to]) + 2;
+      const [ax, ay] = unit(C.x - A.x, C.y - A.y), [bx, by] = unit(C.x - B.x, C.y - B.y);
+      const dA = Math.hypot(C.x - A.x, C.y - A.y), dB = Math.hypot(C.x - B.x, C.y - B.y);
+      const kA = Math.max(28, Math.min(95, 0.32 * (dA - ME_R))), kB = Math.max(28, Math.min(95, 0.32 * (dB - ME_R)));
+      const a = [A.x + ax * rA, A.y + ay * rA], b = [B.x + bx * rB, B.y + by * rB];
+      const c1 = [A.x + ax * kA, A.y + ay * kA], c2 = [B.x + bx * kB, B.y + by * kB];
+      const [px, py] = unit(-(B.y - A.y), B.x - A.x), side = ME_R + 34;
+      const cands = [0, 1, -1].map(sg => {
+        const q1 = [c1[0] + px * side * sg, c1[1] + py * side * sg], q2 = [c2[0] + px * side * sg, c2[1] + py * side * sg];
+        return {d: `M${xy(a)} C${xy(q1)} ${xy(q2)} ${xy(b)}`, pts: bez([a, q1, q2, b])};
+      });
+      // inside the ring: the ring itself between the two, drawn in toward the centre (both ring nodes: their angle
+      // on the ring is known), never outside it where the labels are
+      const inner = [];
+      if (A.ring && B.ring && ring) {
+        const ta = A.a * Math.PI / 180;
+        let d0 = (B.a - A.a) * Math.PI / 180;
+        d0 = ((d0 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+        const depth = Math.min(80, (Math.min(ring.rx, ring.ry) - ME_R - 30) * 0.55) / Math.min(ring.rx, ring.ry);
+        for (let i = 0; i <= 48; i++) {
+          const t = i / 48, hump = Math.sin(Math.PI * Math.min(1, t / 0.2, (1 - t) / 0.2) / 2), at = ta + d0 * (t < 0.1 ? 0 : t > 0.9 ? 1 : (t - 0.1) / 0.8);
+          const [ox, oy] = ringAt(at, ring.rx, ring.ry), f = 1 - depth * hump;
+          inner.push([C.x + ox * f, C.y + oy * f]);
+        }
+      }
+      const trimmed = inner.filter(([x, y]) => Math.hypot(x - A.x, y - A.y) > rA && Math.hypot(x - B.x, y - B.y) > rB);
+      if (trimmed.length > 1) cands.push({d: `M${xy(trimmed[0])} L${trimmed.slice(1).map(xy).join(" ")}`, pts: trimmed});
+      r = {d: pick(cands, ends).d};
+    }
+    routes.set(key, r);
+    return r;
   }
 
   // ── edges (OWN-GW-16, 18): silk — a hairline whose width follows the value (Studio's data-flow wires); solid for
@@ -347,26 +779,42 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const SPARK = [1, 2.5, 1.5, 2, 5];  // back to front: crackle, crackle, head (dash, gap)… — short, a bead of light
   const SPARK_LEN = SPARK.reduce((p, q) => p + q, 0);
   const MONEY_SPEED = 210;  // px per second: steady, readable; Studio's data runs at 560
-  const SPARK_EVERY = 95;  // px between sparks on one edge: the stream reads as continuous
-  function sparks(d, key, tone, share) {
+  // The core's heartbeat (OWN-GW-22, plan §3.3): every money edge keeps one beat (or a half or third of it), so its
+  // sparks reach “My Wealth” on the beat; where an edge meets the rim a port lights as a spark arrives or leaves, and
+  // the main income's arrival sends a band of light across the core toward the money going out, whose sparks leave
+  // just after. All CSS animations created in the same frame: one clock, no script per frame.
+  const BEAT = 0.9;  // seconds
+  const ACROSS = 0.36;  // the band's crossing: the out-flows leave this long after the income lands
+  const mod = (x, m) => ((x % m) + m) % m;
+  function sparks(d, key, tone, share, offset = 0) {
     const probe = mk("path", {d}, edgeLayer);
-    let total = 0;
-    try { total = probe.getTotalLength(); } catch (_) { total = 0; }
+    let len = 0;
+    try { len = probe.getTotalLength(); } catch (_) { len = 0; }
     probe.remove();
-    const n = Math.max(2, Math.round(total / SPARK_EVERY * (0.7 + 0.6 * Math.sqrt(share))));  // more for a bigger flow
+    if (len < 30) return null;
+    const k = 1 + Math.round(2 * Math.sqrt(Math.min(1, share))), per = BEAT / k;  // a bigger flow: more sparks a beat
+    const n = Math.max(1, Math.round(len / MONEY_SPEED / per)), dur = n * per;
     for (let i = 0; i < n; i++) {
       const q = mk("path", {d, class: "wspark", "data-e": key}, edgeLayer);
-      let len = 0;
-      try { len = q.getTotalLength(); } catch (_) { len = 0; }
-      if (len < 30) { q.remove(); return; }
-      const dur = Math.max(1.2, len / MONEY_SPEED);
       q.style.strokeDasharray = `${SPARK.join(" ")} ${len + 40}`;
       q.style.setProperty("--a", SPARK_LEN);
       q.style.setProperty("--b", -len);
       q.style.setProperty("--tone", tone);
-      q.style.animationDuration = `${dur.toFixed(2)}s, .16s`;
-      q.style.animationDelay = `${(-dur * i / n).toFixed(2)}s, ${(-Math.random() * .16).toFixed(2)}s`;
+      q.style.animationDuration = `${dur.toFixed(3)}s, .16s`;
+      q.style.animationDelay = `${(mod(offset - dur * i / n, dur) - dur).toFixed(3)}s, ${(-Math.random() * .16).toFixed(2)}s`;
     }
+    // when a spark's head reaches the end (it moves len + SPARK_LEN in dur), and when one leaves the start
+    return {per, arr: mod(dur * len / (len + SPARK_LEN) + offset, per), dep: mod(offset, per)};
+  }
+  // a port: a short arc of the rim at the edge's angle, lit on the beat of its sparks
+  function port(host, angle, tone, per, at, key) {
+    const R = ME_R + 1.5, a0 = angle - 0.2, a1 = angle + 0.2;
+    const q = mk("path", {d: `M${(R * Math.cos(a0)).toFixed(1)},${(R * Math.sin(a0)).toFixed(1)} A${R},${R} 0 0 1 ${(R * Math.cos(a1)).toFixed(1)},${(R * Math.sin(a1)).toFixed(1)}`,
+      class: "wport", "data-e": key}, host);
+    q.style.setProperty("--tone", tone);
+    q.style.animationDuration = `${per.toFixed(3)}s`;
+    q.style.animationDelay = `${(at - per).toFixed(3)}s`;
+    return q;
   }
   const pathState = new Map();  // non-centre node id → "hot" | "bad": its edges wear it
   let drawn = "";  // the edges on screen and the layout they were drawn for: an event that changes neither only restyles
@@ -379,44 +827,75 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         const state = spoke(e) ? pathState.get(f0 === "ME" ? t0 : f0) || "" : hotEdges.get(p.dataset.e) || "";
         for (const [c, v] of [["on", on && !!lit], ["faint", !on], ["hot", state === "hot"], ["bad", state === "bad"]]) p.classList.toggle(c, v);
       }
-      for (const q of edgeLayer.querySelectorAll(".wspark")) {
+      for (const q of svg.querySelectorAll(".wspark, .wport")) {
         const [f0, t0] = q.dataset.e.split(">");
         q.classList.toggle("faint", !!lit && !(lit.has(f0) && lit.has(t0) && (f0 === st.sel || t0 === st.sel)));
       }
+      flowState();
       return;
     }
     drawn = sig;
     edgeLayer.replaceChildren();
+    const meEl = els.get("ME"), ports = meEl && meEl.querySelector(".wme-ports"), bandHost = meEl && meEl.querySelector(".wme-bandhost");
+    if (ports) ports.replaceChildren();
+    if (bandHost) bandHost.replaceChildren();
     const maxV = Math.max(1, ...es.filter(e => e.value != null).map(e => Math.abs(e.value)));
+    const income = (e) => e.to === "ME" && byId[e.from].kind === "flow";
+    es.sort((x, y) => (income(y) ? Math.abs(y.value || 0) + 1 : 0) - (income(x) ? Math.abs(x.value || 0) + 1 : 0));
+    let beat = null;  // the main income's arrival: the core's beat
+    const C = pos.ME;
+    const rimAngle = (id) => Math.atan2(pos[id].y - C.y, pos[id].x - C.x);
     for (const e of es) {
       const a = pos[e.from], b = pos[e.to];
       if (!a || !b) continue;
       const on = !lit || (lit.has(e.from) && lit.has(e.to) && (e.from === st.sel || e.to === st.sel));
       const cert = certaintyOf(e, byId);
       const far = byId[e.to].kind === "family" ? byId[e.from] : byId[e.to];
-      const tone = far.kind === "flow" && far.side === "out" ? "var(--out)" : (LOOK[far.kind] || LOOK.class)[0];
+      const tone = far.kind === "flow" && far.side === "out" ? "var(--out)" : (LOOK[far.kind === "group" ? far.of : far.kind] || LOOK.class)[0];
       const state = spoke(e) ? pathState.get(e.from === "ME" ? e.to : e.from) || "" : hotEdges.get(`${e.from}>${e.to}`) || "";
       const money = cert === "actual" && (byId[e.from].kind === "flow" || byId[e.to].kind === "flow");
-      const d = curve(a, b, e);
-      const p = mk("path", {d, class: `wedge c-${cert}${on && lit ? " on" : ""}${on ? "" : " faint"}${state ? " " + state : ""}${e.derived ? " sum" : ""}`,
+      const d = route(e).d;
+      const p = mk("path", {d, class: `wedge c-${cert}${money ? " money" : ""}${on && lit ? " on" : ""}${on ? "" : " faint"}${state ? " " + state : ""}${e.derived ? " sum" : ""}`,
         "data-e": `${e.from}>${e.to}`, "stroke-width": (e.value == null ? 1 : 0.9 + 1.5 * Math.sqrt(Math.abs(e.value) / maxV)).toFixed(2)}, edgeLayer);
       p.style.setProperty("--tone", tone);
+      const key = `${e.from}>${e.to}`;
       if (money) {  // the receiving end: where the money lands (into “My Wealth”, or out to spending)
         const [x, y] = d.split(" ").pop().split(",").map(Number);
         mk("circle", {cx: x, cy: y, r: 3, class: "wknob"}, edgeLayer).style.setProperty("--tone", tone);
-        sparks(d, `${e.from}>${e.to}`, tone, e.value == null ? 0.3 : Math.abs(e.value) / maxV);
-        if (!on) for (const q of edgeLayer.querySelectorAll(`.wspark[data-e="${e.from}>${e.to}"]`)) q.classList.add("faint");
+        const into = e.to === "ME", t = sparks(d, key, tone, e.value == null ? 0.3 : Math.abs(e.value) / maxV, into ? 0 : (beat ? beat.at + ACROSS : 0));
+        if (t && into && !beat) beat = {at: t.arr, angle: rimAngle(e.from)};
+        if (t && ports && (into || e.from === "ME")) port(ports, rimAngle(into ? e.from : e.to), tone, t.per, into ? t.arr : t.dep, key);
       }
-      if (e.repaid && cert === "actual") {  // a debt paid down this month: money runs from “My Wealth” out to it
+      if (e.repaid && cert === "actual") {  // a debt paid down this month: money runs from “My Wealth” out to it, on the beat
         const [, p0, q, p1] = d.match(/^M(\S+) Q(\S+) (\S+)$/);  // the same wire, walked the other way
-        sparks(`M${p1} Q${q} ${p0}`, `${e.from}>${e.to}`, "var(--out)", Math.min(1, Math.abs(e.repaid) / maxV));
-        if (!on) for (const q of edgeLayer.querySelectorAll(`.wspark[data-e="${e.from}>${e.to}"]`)) q.classList.add("faint");
+        const t = sparks(`M${p1} Q${q} ${p0}`, key, "var(--out)", Math.min(1, Math.abs(e.repaid) / maxV), beat ? beat.at + ACROSS : 0);
+        if (t && ports) port(ports, rimAngle(e.from), "var(--out)", t.per, t.dep, key);
       }
+      if (!on) for (const q of edgeLayer.querySelectorAll(`.wspark[data-e="${key}"]`)) q.classList.add("faint");
+      if (!on && ports) for (const q of ports.querySelectorAll(`.wport[data-e="${key}"]`)) q.classList.add("faint");
       const word = {actual: "thực tế", estimate: "ước tính", hypothetical: "giả định"}[cert];
       const sum = e.derived ? ` · tổng hợp từ ${e.derived} liên kết` : "";
       const paid = e.repaid ? `<br>trả trong tháng: ${vnd(e.repaid)}` : "";
       hover(p, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${paid}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
     }
+    if (beat && bandHost) {  // light crossing the core from where the income lands, once a beat
+      const turn = mk("g", {transform: `rotate(${(beat.angle * 180 / Math.PI).toFixed(1)})`}, bandHost);
+      const band = mk("g", {class: "wme-band"}, turn);
+      for (const [rx, o] of [[18, 0.22], [10, 0.38], [4, 0.6]]) mk("ellipse", {rx, ry: ME_R * 0.92, "fill-opacity": o}, band);
+      band.style.setProperty("--from", `${ME_R}px`);
+      band.style.setProperty("--to", `${-ME_R}px`);
+      band.style.animationDuration = `${BEAT}s`;
+      band.style.animationDelay = `${(beat.at - BEAT).toFixed(3)}s`;
+    }
+    flowState();
+  }
+  // a money edge or a flow node pointed at or picked: the core leans toward that flow (OWN-GW-24)
+  function flowState() {
+    const me = els.get("ME");
+    if (!me) return;
+    const f = [st.sel, hoverId].map(i => byId[i]).find(n => n && n.kind === "flow");
+    me.classList.toggle("flow", !!f);
+    if (f) me.style.setProperty("--flow-tone", f.side === "out" ? "var(--out)" : "var(--in)");
   }
 
   // ── pan and zoom: one transform on the world group, set by the person's hand only ─────────────────
@@ -431,6 +910,21 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     applyView();
   }
   function fit() { st.view = {x: 0, y: 0, k: 1}; applyView(); }
+  // Tập trung (OWN-GW-30): the view fits the selection, its neighbours and their labels; the rest stays drawn, dimmed
+  function focus() {
+    if (!st.sel || !pos[st.sel]) return false;
+    const ids = [st.sel, ...links(st.sel).map(e => other(e, st.sel).id)].filter(id => pos[id]);
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const id of ids) {
+      const q = pos[id], r = discR(byId[id]) + 6, b = q.label && id !== "ME" ? q.label.box : [-r, -r, r, r];
+      x0 = Math.min(x0, q.x - r, q.x + b[0]); y0 = Math.min(y0, q.y - r, q.y + b[1]);
+      x1 = Math.max(x1, q.x + r, q.x + b[2]); y1 = Math.max(y1, q.y + r, q.y + b[3]);
+    }
+    const k = Math.max(1, Math.min(1.8, 0.88 * Math.min(W / (x1 - x0), H / (y1 - y0))));
+    st.view = {x: W / 2 - k * (x0 + x1) / 2, y: H / 2 - k * (y0 + y1) / 2, k};
+    applyView();
+    return true;
+  }
   const toSvg = (ev) => { const r = svg.getBoundingClientRect(); return [(ev.clientX - r.left) * W / r.width, (ev.clientY - r.top) * H / r.height]; };
   let drag = null;
   svg.addEventListener("pointerdown", (ev) => {
@@ -453,6 +947,11 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   });
   svg.addEventListener("wheel", (ev) => { ev.preventDefault(); const [x, y] = toSvg(ev); zoom(ev.deltaY < 0 ? 1.12 : 1 / 1.12, x, y); }, {passive: false});
   svg.addEventListener("keydown", (ev) => {
+    if (!ev.ctrlKey && !ev.metaKey && !ev.altKey && (ev.key === "f" || ev.key === "0")) {  // on the canvas or a node
+      if (ev.key === "0") fit(); else if (!focus()) return;
+      ev.preventDefault();
+      return;
+    }
     if (ev.target !== svg) return;
     const step = 40, v = view();
     if (ev.key === "ArrowLeft") v.x += step; else if (ev.key === "ArrowRight") v.x -= step;
@@ -483,7 +982,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // and its trail are moved along points of the curve as tracked Web Animations, paused in a hidden tab, none under
   // reduced motion.
   const running = new Map();  // call id → node ids
-  let comets = 0, writingTimer = 0;
+  let comets = 0, writingTimer = 0, lastRipple = 0;
   const SPEED = 520;  // px per second (Studio: 560)
   const TRAIL = [[3.4, 1, 0], [2.5, 0.55, 34], [1.8, 0.32, 68], [1.2, 0.18, 102]];  // radius, opacity, delay ms
   const edgePath = (x, y) => edgeLayer.querySelector(`.wedge[data-e="${CSS.escape(x)}>${CSS.escape(y)}"], .wedge[data-e="${CSS.escape(y)}>${CSS.escape(x)}"]`);
@@ -546,7 +1045,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const activity = {
     // a tool started: its nodes work, the paths to them glow, the rest steps back
     run(id, ids) {
-      const known = (ids || []).filter(x => byId[x]);
+      const known = [...new Set((ids || []).filter(x => byId[x]).map(shownAs))];
       running.set(id, known);
       for (const el of nodeEls(known)) { el.classList.remove("ok", "bad"); el.classList.add("act"); }
       for (const x of known) pathState.set(x, "hot");
@@ -577,6 +1076,13 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     writing() {
       const me = els.get("ME");
       if (!me) return;
+      const now = performance.now(), host = me.querySelector(".wme-ripples");
+      if (host && !reduced() && !document.hidden && now - lastRipple > 350) {  // the answer streaming: a ripple from the rim
+        lastRipple = now;
+        const c = mk("circle", {r: ME_R + 2, class: "wme-ripple"}, host);
+        const a = track(c.animate([{transform: "scale(1)", opacity: 0.75}, {transform: "scale(1.42)", opacity: 0}], {duration: 1100, easing: "cubic-bezier(.2,.6,.3,1)"}));
+        a.finished.then(() => c.remove(), () => c.remove());
+      }
       me.classList.add("writing");
       clearTimeout(writingTimer);
       writingTimer = setTimeout(() => me.classList.remove("writing"), 1200);
@@ -633,7 +1139,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     load(overview, key) {
       g = overview; byId = Object.fromEntries(g.nodes.map(n => [n.id, n]));
       derived = spokesFor(g);
-      st = states[key] ||= {sel: null, open: new Set(), shut: new Set(), view: {x: 0, y: 0, k: 1}};
+      st = states[key] ||= {sel: null, open: new Set(), shut: new Set(), groups: new Set(), view: {x: 0, y: 0, k: 1}};
       if (st.sel && !byId[st.sel]) st.sel = null;
       for (const el of els.values()) el.remove();
       els.clear();
@@ -648,7 +1154,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       draw({moved: !first});
     },
     redraw: () => draw(),
-    select, toggle, zoom, fit,
+    select, toggle, zoom, fit, focus,
     data: () => g,
     node: (id) => byId[id],
     selected: () => (st && st.sel ? byId[st.sel] : null),
