@@ -1,0 +1,546 @@
+{
+ "id": "nw-01",
+ "category": "news",
+ "persona": "chuyên gia, hoài nghi (C01)",
+ "client_id": "C01",
+ "title": "Tin nào ảnh hưởng nhất, chắc hay ước, nguồn đâu",
+ "why": "The biggest impact, then fact against estimate, then the source.",
+ "brd": [
+  "BR-08",
+  "BRD-RULE-CONTENT-01",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "chu_y"
+    ],
+    "sourced": true
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "expect": {
+    "says": "ước tính"
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "dieu_tra",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "text": "2 sự kiện đang có hiệu lực; tác động kỳ vọng 3 tháng cộng lại +0,2 triệu. Lớn nhất: Bất động sản (+98,6 triệu). Đây là ước tính theo kịch bản CIO duyệt, không phải khuyến nghị.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bất động sản",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "+98,6 triệu",
+         "tone": "good",
+         "focus": "event:EV-2026-0002"
+        },
+        {
+         "title": "Thị trường cổ phiếu",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "−98,4 triệu",
+         "tone": "bad",
+         "focus": "event:EV-2026-0001"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "2 lần áp dụng CIO duyệt",
+       "CafeF",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "16 yếu tố đang tác động: 12 rủi ro, 4 cơ hội; tổng ước tính +2,15 tỷ. Lớn nhất: Sân bay Long Thành đưa giai đoạn 1 vào khai thác — Cơ hội: BĐS gần dự án (Đất Long Thành (tự khai), Đất Long Thành (tự khai)) ước tính +2,7 tỷ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Sân bay Long Thành đưa giai đoạn 1 vào khai thác",
+         "sub": "+1,35 tỷ · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Metro số 1 Bến Thành – Suối Tiên vận hành",
+         "sub": "+777,6 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+354,9 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Bảng giá đất điều chỉnh hằng năm (Luật Đất đai 2024)",
+         "sub": "−97,2 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Chính sách quản lý vàng miếng",
+         "sub": "−81,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+       "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 19019,
+     "output_tokens": 977,
+     "requests": 3,
+     "cost_usd": 0.00239,
+     "tools_cost_usd": null
+    },
+    "turn_id": "791a805e4c96455fa1cde2be53bb572f",
+    "conversation_id": "fe40bc981c7b4973",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo dữ liệu ngày 09/10/2026, có 2 tin đã được CIO duyệt đang ảnh hưởng tới tài sản của bạn.\n\n- **Tác động lớn nhất là bất động sản: +98,6 triệu** (ước tính, theo kịch bản CIO duyệt). Tổng tác động kỳ vọng trong 3 tháng của cả 2 tin chỉ khoảng **+0,2 triệu**.\n- **Yếu tố lớn nhất trong danh sách rộng hơn là sân bay Long Thành** đưa giai đoạn 1 vào khai thác, tạo cơ hội cho đất gần dự án, ước tính **+2,7 tỷ**. Đây là ước tính, chưa phải dự báo, và nguồn ghi chú cần kiểm tra lại tiến độ.\n\nNgoài ra, hệ thống đang theo dõi 16 yếu tố (12 rủi ro, 4 cơ hội), tổng ước tính **+2,15 tỷ**. Con số này khác với +0,2 triệu ở trên vì nó bao gồm mọi yếu tố, không chỉ hai tin đã được CIO duyệt.\n\nNguồn: trang Tác động và trang Động lực (chính sách). Đây là số ước tính từ hệ thống, không phải khuyến nghị đầu tư.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "2 lần áp dụng CIO duyệt",
+     "CafeF",
+     "Vietstock",
+     "VnEconomy",
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+     "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "event:EV-2026-0002"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257273.534439,
+    "audit_seq": 681,
+    "session": {
+     "id": "fe40bc981c7b4973",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.441229643300176,
+   "first_event": 1.396176264155656,
+   "usage": {
+    "cost": 0.00239,
+    "input": 19019,
+    "output": 977,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012cPeXRHvfaJcUjULGtRJZe",
+     "tool": "tac_dong",
+     "label": "Tác động tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012cPeXRHvfaJcUjULGtRJZe",
+     "tool": "tac_dong",
+     "ok": true,
+     "ms": 32,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KrgQwkRspCzjHmY2Bz5b6k",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KrgQwkRspCzjHmY2Bz5b6k",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 88,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7196,
+     "output_tokens": 570,
+     "requests": 1,
+     "cost_usd": 0.001005,
+     "tools_cost_usd": null
+    },
+    "turn_id": "d06f3bd03c284f0b95f644c57da451db",
+    "conversation_id": "fe40bc981c7b4973",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Đây là ước tính, không phải con số chắc chắn.**\n\n- **+98,6 triệu (bất động sản)** và **+0,2 triệu (tổng 3 tháng của 2 tin đã duyệt)** là mô phỏng từ kịch bản do CIO duyệt. Đây là ước tính kỳ vọng, không phải dự báo hay mức đảm bảo.\n- **+2,7 tỷ (Long Thành)** và **+2,15 tỷ (tổng 16 yếu tố)** cũng là ước tính. Một số nguồn trong hệ thống còn được ghi chú \"cần kiểm tra\", ví dụ tiến độ khai thác giai đoạn 1 và thời điểm nâng hạng thị trường của FTSE Russell.\n\nPhần số liệu đã ghi nhận, như giá trị tài sản hay dòng tiền thực tế, được hệ thống đọc từ bản ghi. Phần tác động tương lai thì là mô phỏng và có thể thay đổi khi tin hoặc giả định thay đổi.\n\nDữ liệu tính đến ngày 09/10/2026. Đây là thông tin tham khảo, không phải khuyến nghị đầu tư.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257277.1517568,
+    "audit_seq": 682,
+    "session": {
+     "id": "fe40bc981c7b4973",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.58507935423404,
+   "first_event": 1.735369450878352,
+   "usage": {
+    "cost": 0.001005,
+    "input": 7196,
+    "output": 570,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     },
+     {
+      "tool": "dieu_tra",
+      "label": "Điều tra tin",
+      "status": "ok",
+      "text": "Bất động sản: 4 tin, CIO duyệt 3 kịch bản (chính: Trung tính, thị trường đi ngang · 55%); đi qua VN-Index, Giá nhà ở Việt Nam; tới Bất động sản, Cổ phiếu, Chứng chỉ quỹ. Tác động kỳ vọng 3 tháng +98,6 triệu. Có thể ảnh hưởng theo kịch bản, không phải quan hệ nhân quả.",
+      "card": {
+       "kind": "chain",
+       "steps": [
+        {
+         "label": "Tin",
+         "items": [
+          "VnEconomy · 15/10 19:51",
+          "VnEconomy · 15/10 15:31"
+         ]
+        },
+        {
+         "label": "Sự kiện",
+         "items": [
+          "Bất động sản"
+         ]
+        },
+        {
+         "label": "Kịch bản",
+         "items": [
+          "Trung tính, thị trường đi ngang · 55%",
+          "Chính sách cụ thể hóa, tâm lý cải thiện · 25%",
+          "Cầu suy yếu kéo dài, căng thẳng tín dụng · 20%"
+         ]
+        },
+        {
+         "label": "Yếu tố",
+         "items": [
+          "VN-Index",
+          "Giá nhà ở Việt Nam",
+          "Chênh lệch tín dụng DN bất động sản"
+         ]
+        },
+        {
+         "label": "Tài sản",
+         "items": [
+          "Bất động sản +66,8 triệu",
+          "Cổ phiếu +29,7 triệu",
+          "Chứng chỉ quỹ +2,9 triệu"
+         ]
+        },
+        {
+         "label": "Mục tiêu",
+         "items": [
+          "Học phí du học (Úc) – Minh An: Đạt → Đạt",
+          "Quyết toán thuế TNCN 2026: Đạt → Đạt"
+         ]
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": null,
+      "sources": [
+       "Lần áp dụng AR-0002-v1-2",
+       "Nhận định VW-0002-v1",
+       "CafeF",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Đồ thị tác động",
+       "route": "#/client/tin/do-thi"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15610,
+     "output_tokens": 1102,
+     "requests": 2,
+     "cost_usd": 0.002112,
+     "tools_cost_usd": null
+    },
+    "turn_id": "f4c3a1c19d3b49288d791147bf72f8ae",
+    "conversation_id": "fe40bc981c7b4973",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tin bất động sản có tác động +98,6 triệu đến từ các nguồn sau:\n\n- **Báo CafeF** và **VnEconomy**: nguồn tin báo chí.\n- **Vietstock**: nguồn được ghi trong trang Tác động.\n- **Nhận định VW-0002-v1** và **lần áp dụng AR-0002-v1-2**: nội bộ, cho thấy CIO đã duyệt tin này và kịch bản áp dụng.\n\nTin này có 4 bản tin, CIO duyệt 3 kịch bản. Kịch bản chính là \"thị trường đi ngang\" với xác suất 55%. Tác động được tính lan qua VN-Index và giá nhà ở Việt Nam, rồi tới bất động sản, cổ phiếu và chứng chỉ quỹ.\n\nLưu ý: hệ thống ghi đây là ảnh hưởng theo kịch bản, không phải quan hệ nhân quả đã được chứng minh.\n\nVề yếu tố sân bay Long Thành (+2,7 tỷ), tôi chưa xác định được nguồn riêng cho nó. Danh sách nguồn tôi thấy ở trang Động lực áp dụng chung cho cả 16 yếu tố, gồm FTSE Russell, kế hoạch khai thác giai đoạn 1 và tuyến Metro số 1. Nếu bạn cần nguồn cụ thể cho Long Thành, tôi có thể mở trang Điều tra để xem thêm.\n\nDữ liệu tính đến ngày 09/10/2026. Đây là thông tin tham khảo, không phải khuyến nghị đầu tư.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     },
+     {
+      "label": "Đồ thị tác động",
+      "route": "#/client/tin/do-thi"
+     }
+    ],
+    "sources": [
+     "Lần áp dụng AR-0002-v1-2",
+     "Nhận định VW-0002-v1",
+     "CafeF",
+     "VnEconomy"
+    ],
+    "as_of": null,
+    "focus": [
+     "event:EV-2026-0002"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tạo kịch bản VN-Index giảm mạnh",
+     "Tin nào ảnh hưởng tới tôi?"
+    ],
+    "answered_at": 1792257283.6778376,
+    "audit_seq": 683,
+    "session": {
+     "id": "fe40bc981c7b4973",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 6.494087939150631,
+   "first_event": 2.143932150211185,
+   "usage": {
+    "cost": 0.002112,
+    "input": 15610,
+    "output": 1102,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QG8iTKxrLDTsqEJdxt57V4",
+     "tool": "dieu_tra",
+     "label": "Điều tra tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QG8iTKxrLDTsqEJdxt57V4",
+     "tool": "dieu_tra",
+     "ok": true,
+     "ms": 96,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

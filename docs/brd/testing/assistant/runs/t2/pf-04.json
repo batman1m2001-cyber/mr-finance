@@ -1,0 +1,244 @@
+{
+ "id": "pf-04",
+ "category": "personal_finance",
+ "persona": "founder trẻ, gõ tắt trên điện thoại (C03)",
+ "client_id": "C03",
+ "title": "phân bổ có ổn ko",
+ "why": "Typos and slang; allocation and concentration risk.",
+ "brd": [
+  "BRIEF-DASH-02",
+  "BRIEF-DASH-04",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "phân bổ tài sản của e có ổn ko a",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "chu_y"
+    ]
+   }
+  },
+  {
+   "say": "rủi ro tập trung là sao, e bị ko",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "chu_y",
+     "huong_dan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "phân bổ tài sản của e có ổn ko a",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước) = tổng tài sản 8,17 tỷ − nợ 628,0 triệu (Vay ký quỹ TCBS 600,0 triệu; Dư nợ thẻ Visa Platinum 28,0 triệu). Phân bổ tài sản: Cổ phiếu 4,38 tỷ (54%), Tài sản số 2,56 tỷ (31%), Chứng chỉ quỹ 930,0 triệu (11%), Tiền & tiền gửi 300,0 triệu (4%). Tập trung vượt ngưỡng: Tổ chức phát hành SSI: 16,2% tài sản (ngưỡng 10%); Tổ chức phát hành Đức Giang: 11,3% tài sản (ngưỡng 10%); Tổ chức phát hành Hòa Phát: 10,1% tài sản (ngưỡng 10%). Thanh khoản dự phòng 300,0 triệu, đủ chi 7 tháng theo mức chi 45,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,25 tỷ; lớn nhất: Bitcoin −1,26 tỷ (sốc 60%); Cổ phiếu SSI −495,0 triệu (sốc 38%); Cổ phiếu DGC −299,0 triệu (sốc 32%); Quỹ cổ phiếu TCEF −279,0 triệu (sốc 30%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14977,
+     "output_tokens": 844,
+     "requests": 2,
+     "cost_usd": 0.00192,
+     "tools_cost_usd": null
+    },
+    "turn_id": "452a99f3b13440209eadce3f95ec0fbd",
+    "conversation_id": "1078a77aaba248cc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Em nhìn chung chưa ổn, chủ yếu vì tập trung quá nhiều vào cổ phiếu và vài mã riêng lẻ. Số liệu tính đến 09/10/2026, từ trang Tổng quan.\n\n- **Cơ cấu:** Cổ phiếu 54%, tài sản số 31%, chứng chỉ quỹ 11%, tiền mặt 4%.\n- **Vượt ngưỡng tập trung (10%):** SSI 16,2%, Đức Giang 11,3%, Hòa Phát 10,1%.\n- **Khi thị trường xấu:** mức sụt giảm ước tính 43%, vượt ngưỡng 30%. Bitcoin chiếm phần lớn mức này.\n- **Thanh khoản:** 300 triệu, đủ chi khoảng 7 tháng.\n- **Nợ:** vay ký quỹ 600 triệu, cần theo dõi vì có thể bị gọi thêm tiền khi giá giảm.\n\nĐây là ước tính từ mô phỏng, không phải dự báo. Nếu muốn, em có thể xem kỹ từng kịch bản giảm giá hoặc mục tiêu đang theo dõi.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792259283.71071,
+    "audit_seq": 866,
+    "session": {
+     "id": "1078a77aaba248cc",
+     "title": "phân bổ tài sản của e có ổn ko a",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.860719527117908,
+   "first_event": 1.4683905080892146,
+   "usage": {
+    "cost": 0.00192,
+    "input": 14977,
+    "output": 844,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01AB2NsL29RwtkFhVu6cQa64",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01AB2NsL29RwtkFhVu6cQa64",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 119,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "rủi ro tập trung là sao, e bị ko",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8398,
+     "output_tokens": 496,
+     "requests": 1,
+     "cost_usd": 0.001088,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a62cb3e9ad3146a0bb7abade40bca724",
+    "conversation_id": "1078a77aaba248cc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Rủi ro tập trung là khi phần lớn tiền nằm ở một tài sản hoặc một tổ chức. Nếu nó giảm mạnh, tổng tài sản sẽ giảm nhiều, dù phần còn lại vẫn ổn.\n\nEm có bị: **có**. Ba tổ chức phát hành đang vượt ngưỡng 10% của hệ thống:\n- SSI: 16,2% tài sản\n- Đức Giang: 11,3%\n- Hòa Phát: 10,1%\n\nSố liệu tính đến 09/10/2026, từ trang Tổng quan. Đây là mức ghi nhận, không phải dự báo. Nếu muốn giảm rủi ro này, em có thể xem kỹ từng khoản để cân nhắc.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259287.0124145,
+    "audit_seq": 867,
+    "session": {
+     "id": "1078a77aaba248cc",
+     "title": "phân bổ tài sản của e có ổn ko a",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.266583251301199,
+   "first_event": 2.1650564852170646,
+   "usage": {
+    "cost": 0.001088,
+    "input": 8398,
+    "output": 496,
+    "requests": 1
+   },
+   "why": [
+    "called none of ['tong_quan', 'chu_y', 'huong_dan']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

@@ -2,6 +2,18 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — The assistant stress test done (owner request 2026-10-17, ASSISTANT_STRESS_PLAN T0–T4, experiment).
+  - 81 multi-turn conversations as real customers, on the real model and a served copy. Final run: 76 of 81 by the
+    machine checks, 80 of 81 by hand; 49 BRD requirements exercised, 46 held.
+  - 32 defects; 28 fixed with tests that fail without their fix. The S1 (D13): a customer naming another family's
+    id was answered with that family's data, because the tools' nested runs saw no session. Fixed here; `main` has
+    the same code (the owner's decision).
+  - Most defects shared one cause: a tool told the model a headline and left the rest on the page. Open: D29
+    (intermittent guide retrieval), D31, D18 (data), D05 (rounding).
+  - Not production-ready until D13 is on the branch that serves customers (readiness.md). US$1.97 of the US$3 cap.
+  - Documents: docs/brd/testing/assistant/ (catalogue, results, defects, coverage, readiness, browser, runs),
+    traceability OWN-AS-03, OWN-AS-04, BRD-RULE-ROLE-02, the customer guide's graph section, the plan's progress.
+
 - 2026-10-17 — The unified graph and its money flows built (experiment, UNIFIED_FLOWS_PLAN U1–V; OWN-GW-33…50:
   17 implemented_verified, OWN-GW-34 partially implemented because the data has no transfer rows).
   - Money edges carry amount, monthly rate and direction, and their motion follows them. Actual, estimate and

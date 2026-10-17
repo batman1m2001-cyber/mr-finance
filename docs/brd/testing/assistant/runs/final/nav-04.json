@@ -1,0 +1,263 @@
+{
+ "id": "nav-04",
+ "category": "navigation",
+ "persona": "người lớn tuổi, viết trang trọng (C04)",
+ "client_id": "C04",
+ "title": "Tìm lại bài khẩu vị rủi ro",
+ "why": "An older customer looks for the risk questionnaire and worries about losing the old result.",
+ "brd": [
+  "OWN-AS-02",
+  "KIT-COPILOT-02"
+ ],
+ "turns": [
+  {
+   "say": "Cháu ơi, tôi muốn xem lại bảng câu hỏi khẩu vị rủi ro thì vào đâu?",
+   "expect": {
+    "tools_any": [
+     "mo_trang",
+     "huong_dan"
+    ],
+    "says": "khẩu vị"
+   }
+  },
+  {
+   "say": "Nếu tôi làm lại bài đó thì kết quả cũ có bị mất không?",
+   "expect": {
+    "tools_any": [
+     "huong_dan"
+    ],
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Cháu ơi, tôi muốn xem lại bảng câu hỏi khẩu vị rủi ro thì vào đâu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Khẩu vị rủi ro] Bài kiểm tra khẩu vị rủi ro: bấm “Bắt đầu”, trả lời 8–12 câu tình huống (câu sau tùy câu trước, có thanh tiến độ và nút “← Câu trước”). Kết quả: mức chịu đựng rủi ro và khả năng chịu rủi ro trên năm mức, câu giải thích khi hai mức khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở trang Chi tiết. [Đồ thị tài chính (màn hình chính)] Màn hình chính của khách hàng là một đồ thị luôn hiện. Vòng tròn lớn ở giữa là bạn: con số trong vòng là tài sản ròng (tổng tài sản trừ nợ). Ở chế độ Gia đình vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách. - Góc nhìn (thanh công cụ): Tổng quan, Tài sản (#/client/xem/tai-san), Dòng tiền (…/dong-tien), Mục tiêu & kịch bản (…/muc-tieu), Tin & sự kiện (…/tin), Rủi ro (…/rui-ro) [Chi tiết] Bảng tổng quan đầy đủ: tài sản ròng (tài sản, nợ, ngày số liệu) và tài sản theo nguồn dữ liệu; phân bổ tài sản; lãi / lỗ danh mục (đã thực hiện, chưa thực hiện, lợi nhuận từ đầu năm so với VN-Index); rủi ro (mức sụt giảm chấp nhận so với ước tính khi căng thẳng, cảnh báo tập trung); thanh khoản dự phòng; dòng tiền 6 tháng qua và dự báo 12/24/36 tháng với các khoản chi lớn; các tin chính sách nổi bật. Chưa làm bài kiểm tra rủi ro thì ngưỡng lấy theo hồ sơ. [Ngưỡng sụt giảm chấp nhận] Cách tính Ngưỡng sụt giảm chấp nhận: Ngưỡng theo bài kiểm tra khẩu vị rủi ro gần nhất, nếu chưa có thì theo hồ sơ khách hàng (một thiết lập, không phải kết quả tính).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Khẩu vị rủi ro",
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Hướng dẫn sử dụng · Chi tiết",
+       "Cách tính · Ngưỡng sụt giảm chấp nhận"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Khẩu vị rủi ro",
+       "route": "#/client/muc-tieu/khau-vi"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16387,
+     "output_tokens": 353,
+     "requests": 2,
+     "cost_usd": 0.001815,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fd7869b2380940a0bd2bbd478c1c8dc4",
+    "conversation_id": "9bae6f3992c44634",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn xem lại bảng câu hỏi khẩu vị rủi ro ở trang Mục tiêu & kịch bản, mục “Khẩu vị rủi ro”. Bạn có thể vào trực tiếp bằng đường dẫn #/client/muc-tieu/khau-vi.\n\nKết quả bài kiểm tra gồm mức chịu đựng và khả năng chịu rủi ro, cùng ngưỡng sụt giảm chấp nhận. Nếu bạn muốn làm lại, bấm “Bắt đầu” và trả lời 8–12 câu tình huống.\n\nBạn có muốn tôi mở trang đó luôn không?",
+    "citations": [
+     {
+      "label": "Khẩu vị rủi ro",
+      "route": "#/client/muc-tieu/khau-vi"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Khẩu vị rủi ro",
+     "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+     "Hướng dẫn sử dụng · Chi tiết",
+     "Cách tính · Ngưỡng sụt giảm chấp nhận"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263057.6738245,
+    "audit_seq": 1358,
+    "session": {
+     "id": "9bae6f3992c44634",
+     "title": "Cháu ơi, tôi muốn xem lại bảng câu hỏi khẩu vị…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.973524776287377,
+   "first_event": 2.9921348448842764,
+   "usage": {
+    "cost": 0.001815,
+    "input": 16387,
+    "output": 353,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013iBnW7ev6DAWyZknnrX8dX",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013iBnW7ev6DAWyZknnrX8dX",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 79,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Nếu tôi làm lại bài đó thì kết quả cũ có bị mất không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Khẩu vị rủi ro] Bài kiểm tra khẩu vị rủi ro: bấm “Bắt đầu”, trả lời 8–12 câu tình huống (câu sau tùy câu trước, có thanh tiến độ và nút “← Câu trước”). Kết quả: mức chịu đựng rủi ro và khả năng chịu rủi ro trên năm mức, câu giải thích khi hai mức khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở trang Chi tiết. [Chi tiết] Bảng tổng quan đầy đủ: tài sản ròng (tài sản, nợ, ngày số liệu) và tài sản theo nguồn dữ liệu; phân bổ tài sản; lãi / lỗ danh mục (đã thực hiện, chưa thực hiện, lợi nhuận từ đầu năm so với VN-Index); rủi ro (mức sụt giảm chấp nhận so với ước tính khi căng thẳng, cảnh báo tập trung); thanh khoản dự phòng; dòng tiền 6 tháng qua và dự báo 12/24/36 tháng với các khoản chi lớn; các tin chính sách nổi bật. Chưa làm bài kiểm tra rủi ro thì ngưỡng lấy theo hồ sơ. [Chi phí chính sách] Chính sách (lãi suất, thuế, quy định…) có thể làm bạn mất hay được bao nhiêu: Tác động lên tài sản ròng theo từng chính sách (lọc tất cả / rủi ro / cơ hội), nhận định của các nhà nghiên cứu khớp với tài sản của bạn (dữ liệu giả định), và từng thẻ chính sách: mức độ, tình trạng pháp lý, tác động có xác suất, cách tính (giá trị × độ nhạy × xác suất) và nguồn. [Ngưỡng sụt giảm chấp nhận] Cách tính Ngưỡng sụt giảm chấp nhận: Ngưỡng theo bài kiểm tra khẩu vị rủi ro gần nhất, nếu chưa có thì theo hồ sơ khách hàng (một thiết lập, không phải kết quả tính).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Khẩu vị rủi ro",
+       "Hướng dẫn sử dụng · Chi tiết",
+       "Hướng dẫn sử dụng · Chi phí chính sách",
+       "Cách tính · Ngưỡng sụt giảm chấp nhận"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Khẩu vị rủi ro",
+       "route": "#/client/muc-tieu/khau-vi"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 19456,
+     "output_tokens": 469,
+     "requests": 2,
+     "cost_usd": 0.00218,
+     "tools_cost_usd": null
+    },
+    "turn_id": "323bb767b7904360819b880a53537627",
+    "conversation_id": "9bae6f3992c44634",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tài liệu hướng dẫn không nói rõ kết quả cũ có được giữ lại hay bị ghi đè khi bạn làm lại bài. Tôi không muốn đoán.\n\nĐiều tài liệu có nói là ngưỡng sụt giảm chấp nhận dùng kết quả của bài kiểm tra gần nhất. Vì vậy sau khi làm lại, ngưỡng ở trang Chi tiết sẽ theo kết quả mới.\n\nNếu bạn muốn giữ lại kết quả cũ, hãy ghi lại mức chịu đựng và ngưỡng hiện tại trước khi làm lại. Bạn cũng có thể hỏi bộ phận hỗ trợ hoặc RM của bạn để biết chắc về việc lưu trữ.",
+    "citations": [
+     {
+      "label": "Khẩu vị rủi ro",
+      "route": "#/client/muc-tieu/khau-vi"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Khẩu vị rủi ro",
+     "Hướng dẫn sử dụng · Chi tiết",
+     "Hướng dẫn sử dụng · Chi phí chính sách",
+     "Cách tính · Ngưỡng sụt giảm chấp nhận"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263062.4629025,
+    "audit_seq": 1359,
+    "session": {
+     "id": "9bae6f3992c44634",
+     "title": "Cháu ơi, tôi muốn xem lại bảng câu hỏi khẩu vị…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 4.7438752562738955,
+   "first_event": 1.9243792141787708,
+   "usage": {
+    "cost": 0.00218,
+    "input": 19456,
+    "output": 469,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Dse4uubUhuFgwkQpCrXUA2",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Dse4uubUhuFgwkQpCrXUA2",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 228,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

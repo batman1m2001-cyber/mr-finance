@@ -1,0 +1,55 @@
+{
+ "tag": "t2-fail",
+ "base": "http://127.0.0.1:8042",
+ "spent_total": 0.0,
+ "conversations": [
+  {
+   "id": "fm-01",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 2.0,
+   "tokens": 0
+  },
+  {
+   "id": "fm-02",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.6,
+   "tokens": 0
+  },
+  {
+   "id": "fm-03",
+   "category": "failure_modes",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "status forbidden (want pending)",
+      "no confirmation asked for gui_de_xuat (waits [])"
+     ]
+    ],
+    [
+     2,
+     [
+      "no_answer: "
+     ]
+    ]
+   ],
+   "cost": 0.0,
+   "seconds": 1.6,
+   "tokens": 0
+  }
+ ],
+ "passed": 2,
+ "of": 3,
+ "turns": 4,
+ "turns_failed": 2
+}

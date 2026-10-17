@@ -1,0 +1,284 @@
+{
+ "id": "wi-02",
+ "category": "what_if",
+ "persona": "đang bật hai kịch bản trên đồ thị (C01)",
+ "client_id": "C01",
+ "title": "So sánh hai kịch bản đang bật",
+ "why": "The active scenarios reach the tool without being named.",
+ "brd": [
+  "OWN-GW-47",
+  "OWN-GW-40",
+  "OWN-GW-45"
+ ],
+ "turns": [
+  {
+   "say": "So sánh giúp tôi hai kịch bản đang bật.",
+   "expect": {
+    "tools_any": [
+     "so_sanh_kich_ban"
+    ],
+    "says": "3,8"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "active": [
+     "vni_30",
+     "rates_up"
+    ]
+   }
+  },
+  {
+   "say": "Kịch bản nào tệ hơn với tôi?",
+   "expect": {
+    "says": "lãi suất"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "active": [
+     "vni_30",
+     "rates_up"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "So sánh giúp tôi hai kịch bản đang bật.",
+   "graph": {
+    "lens": "muc-tieu",
+    "active": [
+     "vni_30",
+     "rates_up"
+    ]
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "so_sanh_kich_ban",
+      "label": "So sánh kịch bản",
+      "status": "ok",
+      "text": "Riêng từng kịch bản: VN-Index giảm 30% −1,82 tỷ; Lãi suất tăng 2% −2,22 tỷ. Cùng lúc: tài sản ròng 43,53 tỷ → 39,65 tỷ (−3,87 tỷ). Cộng riêng lẻ ra −4,04 tỷ, khác +164,4 triệu: các cú sốc nhân nhau trên cùng một khoản và chi phí trùng chỉ tính một lần. Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ → chậm tiến độ; Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "VN-Index giảm 30%",
+         "value": "−1,82 tỷ"
+        },
+        {
+         "label": "Lãi suất tăng 2%",
+         "value": "−2,22 tỷ"
+        },
+        {
+         "label": "Cùng lúc",
+         "value": "−3,87 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:vni_30",
+       "scenario:rates_up",
+       "class:real_estate",
+       "class:stock",
+       "class:bond",
+       "class:fund",
+       "goal:retire_early"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13090,
+     "output_tokens": 911,
+     "requests": 2,
+     "cost_usd": 0.001765,
+     "tools_cost_usd": null
+    },
+    "turn_id": "eb24b2afe9c34cf9acf691ebec2bc3aa",
+    "conversation_id": "7d9419af3338425a",
+    "compacted": false,
+    "status": "ok",
+    "text": "**So sánh hai kịch bản đang bật** (ước tính trên tài sản hiện có, không phải dự báo; ngày 09/10/2026)\n\n| Kịch bản | Tác động lên tài sản ròng |\n|---|---|\n| VN-Index giảm 30% | −1,82 tỷ |\n| Lãi suất tăng 2% | −2,22 tỷ |\n| **Cả hai cùng lúc** | **−3,87 tỷ** (43,53 tỷ → 39,65 tỷ) |\n\n- Cộng riêng lẻ: −1,82 + (−2,22) = −4,04 tỷ. Khi chạy cùng lúc, kết quả khác +164,4 triệu, vì các cú sốc tác động lên cùng một khoản và chi phí trùng chỉ tính một lần.\n- Theo lớp tài sản, cả hai cùng lúc: bất động sản −1,62 tỷ, cổ phiếu −1,97 tỷ, quỹ −0,17 tỷ, trái phiếu −0,06 tỷ.\n- Mục tiêu: học phí cho con và định cư/du học đều chậm tiến độ ở cả hai kịch bản. Chi phí y tế lớn giữ nguyên tiến độ. Nghỉ hưu sớm năm 55 tuổi vẫn đúng tiến độ với VN-Index giảm, nhưng chậm tiến độ khi lãi suất tăng.\n\nNguồn: mô phỏng trên các khoản hiện có trong trang Mục tiêu / kế hoạch.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:vni_30",
+     "scenario:rates_up",
+     "class:real_estate",
+     "class:stock",
+     "class:bond",
+     "class:fund",
+     "goal:retire_early"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Mục tiêu của tôi thế nào?",
+     "Kịch bản lãi suất tăng"
+    ],
+    "answered_at": 1792257461.4960604,
+    "audit_seq": 713,
+    "session": {
+     "id": "7d9419af3338425a",
+     "title": "So sánh giúp tôi hai kịch bản đang bật.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.165824293158948,
+   "first_event": 1.7254076832905412,
+   "usage": {
+    "cost": 0.001765,
+    "input": 13090,
+    "output": 911,
+    "requests": 2
+   },
+   "why": [
+    "numbers not from the tools or the person: ['−1,62 tỷ', '−1,97 tỷ', '−0,17 tỷ', '−0,06 tỷ']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013uqY2Bk8RrRBf217TQ1VJa",
+     "tool": "so_sanh_kich_ban",
+     "label": "So sánh kịch bản",
+     "nodes": [
+      "SC:vni_30",
+      "SC:rates_up"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013uqY2Bk8RrRBf217TQ1VJa",
+     "tool": "so_sanh_kich_ban",
+     "ok": true,
+     "ms": 223,
+     "focus": [
+      "scenario:vni_30",
+      "scenario:rates_up",
+      "class:real_estate",
+      "class:stock",
+      "class:bond",
+      "class:fund",
+      "goal:retire_early"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Kịch bản nào tệ hơn với tôi?",
+   "graph": {
+    "lens": "muc-tieu",
+    "active": [
+     "vni_30",
+     "rates_up"
+    ]
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "so_sanh_kich_ban",
+      "label": "So sánh kịch bản",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7480,
+     "output_tokens": 312,
+     "requests": 1,
+     "cost_usd": 0.000904,
+     "tools_cost_usd": null
+    },
+    "turn_id": "bd3cd7357a09425b81e66e4b412648cb",
+    "conversation_id": "7d9419af3338425a",
+    "compacted": false,
+    "status": "ok",
+    "text": "Với tài sản hiện tại, **lãi suất tăng 2%** tệ hơn. Kịch bản này làm tài sản ròng giảm khoảng 2,22 tỷ, còn VN-Index giảm 30% làm giảm khoảng 1,82 tỷ.\n\nLãi suất tăng cũng khiến mục tiêu nghỉ hưu sớm năm 55 tuổi chậm tiến độ, trong khi VN-Index giảm thì mục tiêu này vẫn đúng tiến độ.\n\nĐây là ước tính trên tài sản hiện có, không phải dự báo. Ngày số liệu: 09/10/2026.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Mục tiêu của tôi thế nào?",
+     "Kịch bản lãi suất tăng"
+    ],
+    "answered_at": 1792257463.9603002,
+    "audit_seq": 714,
+    "session": {
+     "id": "7d9419af3338425a",
+     "title": "So sánh giúp tôi hai kịch bản đang bật.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.4398354832082987,
+   "first_event": 1.5574333174154162,
+   "usage": {
+    "cost": 0.000904,
+    "input": 7480,
+    "output": 312,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

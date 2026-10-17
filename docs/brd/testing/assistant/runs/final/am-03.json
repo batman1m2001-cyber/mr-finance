@@ -1,0 +1,424 @@
+{
+ "id": "am-03",
+ "category": "ambiguous",
+ "persona": "chuyên gia, sửa lại câu hỏi (C01)",
+ "client_id": "C01",
+ "title": "Tháng trước — à không, tháng này",
+ "why": "A correction mid-conversation, then a comparison.",
+ "brd": [
+  "OWN-AS-11"
+ ],
+ "turns": [
+  {
+   "say": "Tháng trước tôi chi bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "dong_tien"
+    ]
+   }
+  },
+  {
+   "say": "À không, ý tôi là tháng này.",
+   "expect": {
+    "tools_any": [
+     "dong_tien"
+    ]
+   }
+  },
+  {
+   "say": "So với thu nhập thì sao?",
+   "expect": {}
+  }
+ ],
+ "run": [
+  {
+   "say": "Tháng trước tôi chi bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 120,4 triệu, tiền ra 90,4 triệu, còn lại 30,0 triệu. Khoản chi lớn nhất: Trả nợ vay 38,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 38,0 triệu; Thanh toán thẻ 34,8 triệu; Chi tiêu sinh hoạt 17,6 triệu. Nguồn tiền vào: Lương 120,4 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 38000000.0,
+         "text": "38,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 34770000.0,
+         "text": "34,8 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 17623000.0,
+         "text": "17,6 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "120,4 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "90,4 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "30,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15516,
+     "output_tokens": 568,
+     "requests": 2,
+     "cost_usd": 0.001836,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ba66004e8f40488ebdaf9fbdcc17b0ce",
+    "conversation_id": "cec843dfa68a485c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tháng gần nhất có dữ liệu là 09/2026 (theo dữ liệu ghi nhận, trang Toàn cảnh). Tổng chi là **90,4 triệu đồng**, gồm:\n\n- Trả nợ vay: 38,0 triệu (một giao dịch, cũng là khoản chi lớn nhất)\n- Thanh toán thẻ: 34,8 triệu\n- Chi tiêu sinh hoạt: 17,6 triệu\n\nTiền vào 120,4 triệu (toàn bộ là lương), còn lại 30,0 triệu.\n\nNếu bạn muốn xem một tháng khác, hãy cho tôi biết tháng (dạng YYYY-MM).",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263636.9928796,
+    "audit_seq": 1521,
+    "session": {
+     "id": "cec843dfa68a485c",
+     "title": "Tháng trước tôi chi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.599853770341724,
+   "first_event": 1.8285193690098822,
+   "usage": {
+    "cost": 0.001836,
+    "input": 15516,
+    "output": 568,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01E4duLewGgGpTiYNXBBgrUJ",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01E4duLewGgGpTiYNXBBgrUJ",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 86,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "À không, ý tôi là tháng này.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "failed",
+      "text": "Không thực hiện được: Không có giao dịch trong tháng 10/2026",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16472,
+     "output_tokens": 294,
+     "requests": 2,
+     "cost_usd": 0.001794,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7ad730db8268460a9422386898446c15",
+    "conversation_id": "cec843dfa68a485c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống chưa có giao dịch nào của tháng 10/2026, nên tôi chưa xem được số chi của tháng này. Dữ liệu gần nhất tôi thấy là tháng 09/2026, với tổng chi 90,4 triệu đồng như trên.\n\nNếu bạn muốn, tôi có thể xem lại tháng 09/2026 chi tiết hơn, hoặc bạn cập nhật giao dịch tháng 10 rồi tôi sẽ kiểm tra lại.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263640.649249,
+    "audit_seq": 1522,
+    "session": {
+     "id": "cec843dfa68a485c",
+     "title": "Tháng trước tôi chi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.6113322000019252,
+   "first_event": 1.3844578890129924,
+   "usage": {
+    "cost": 0.001794,
+    "input": 16472,
+    "output": 294,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LSrHCSi6W6NqkoKDMFGCp1",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LSrHCSi6W6NqkoKDMFGCp1",
+     "tool": "dong_tien",
+     "ok": false,
+     "ms": 89,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "So với thu nhập thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tỷ lệ chi so với thu nhập tháng 09/2026: 90.4/120.4*100 = 75,08",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17157,
+     "output_tokens": 328,
+     "requests": 2,
+     "cost_usd": 0.00188,
+     "tools_cost_usd": null
+    },
+    "turn_id": "340dda5b01904de6a2c2e4ebdb10c719",
+    "conversation_id": "cec843dfa68a485c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tháng 09/2026 (dữ liệu ghi nhận), bạn chi 90,4 triệu trên thu nhập 120,4 triệu, tức khoảng **75%** thu nhập (90,4 / 120,4 × 100 = 75,08%). Phần còn lại là 30,0 triệu.\n\nTôi chưa có dữ liệu tháng 10/2026 để so sánh.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263643.9959571,
+    "audit_seq": 1523,
+    "session": {
+     "id": "cec843dfa68a485c",
+     "title": "Tháng trước tôi chi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 3.309112485963851,
+   "first_event": 1.7367491428740323,
+   "usage": {
+    "cost": 0.00188,
+    "input": 17157,
+    "output": 328,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KWLNJKXZh9BrZLWvx95icT",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KWLNJKXZh9BrZLWvx95icT",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  }
+ ]
+}

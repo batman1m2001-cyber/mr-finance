@@ -107,6 +107,7 @@ def who(role: Optional[str], client_id: Optional[str], scope: Optional[str] = No
     role = auth.role_for(str(role or "client"))
     if role not in registry.DEMO_USER:
         raise roles.Forbidden(f"vai trò {role!r} không có")
+    client_id = auth.client_for(client_id)  # a customer is always themselves; staff only their families (D13)
     return {"role": role, "client_id": client_id or None, "scope": scope or "personal"}
 
 
@@ -150,7 +151,11 @@ async def fallback_events(r: Dict[str, Any], why: str):
     )
     if known:
         yield stream.step_end(got["tool"], "fallback", step["status"] == "ok", (time.monotonic() - t0) * 1000, step)
-    out = {"status": step["status"], "mode": "fallback", "why": why, "seen": seen, "text": step["text"]}
+    text = step["text"]
+    if step["status"] == "unknown":  # not the person's wording: the model is what is missing (stress test D04)
+        text = ("Trợ lý AI hiện không trả lời được, nên tôi chỉ làm được các việc có sẵn dưới đây. Câu này cần trợ lý "
+                "AI: bạn thử lại sau ít phút nhé.")  # fmt: skip
+    out = {"status": step["status"], "mode": "fallback", "why": why, "seen": seen, "text": text}
     if step["status"] == "pending":  # the Copilot's own confirm (POST /api/copilot) runs it
         out["confirm"] = step["confirm"]
     out["steps"] = [] if step["status"] in ("pending", "unknown") else [step]

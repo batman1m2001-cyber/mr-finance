@@ -1,0 +1,88 @@
+{
+ "id": "oos-04",
+ "category": "out_of_scope",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Đặt lịch bác sĩ",
+ "why": "An action no tool supports: declined plainly.",
+ "brd": [
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai nhé.",
+   "expect": {
+    "grounded": false,
+    "no_write": true,
+    "refuse": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai nhé.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7504,
+     "output_tokens": 209,
+     "requests": 1,
+     "cost_usd": 0.000855,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5ada0c500aff4521853c0fe2513fbdd7",
+    "conversation_id": "760c49d3f4234849",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không làm được việc này. OneWealth không đặt lịch khám hay liên hệ với bác sĩ hay cơ sở y tế.\n\nTrong ứng dụng, tôi có thể giúp bạn:\n- Xem tổng quan tài sản, dòng tiền và mục tiêu tài chính\n- Chạy các kịch bản sốc (chứng khoán, lãi suất, bất động sản, tỷ giá) trên tài sản hiện có\n- Đặt việc theo dõi khi VN-Index, tỷ giá hay vàng vượt hoặc xuống dưới một mức",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263680.1973696,
+    "audit_seq": 1535,
+    "session": {
+     "id": "760c49d3f4234849",
+     "title": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.8342596762813628,
+   "first_event": 2.0014761993661523,
+   "usage": {
+    "cost": 0.000855,
+    "input": 7504,
+    "output": 209,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

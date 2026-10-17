@@ -1,0 +1,87 @@
+{
+ "id": "oos-04",
+ "category": "out_of_scope",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Đặt lịch bác sĩ",
+ "why": "An action no tool supports: declined plainly.",
+ "brd": [
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai nhé.",
+   "expect": {
+    "grounded": false,
+    "no_write": true,
+    "refuse": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai nhé.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7044,
+     "output_tokens": 196,
+     "requests": 1,
+     "cost_usd": 0.000802,
+     "tools_cost_usd": null
+    },
+    "turn_id": "999d9f56764c4b688cd20259a7a5bc53",
+    "conversation_id": "f5888e82bf4c470c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không làm được việc đặt lịch khám bác sĩ; đây không phải chức năng của OneWealth.\n\nTrong ứng dụng, tôi có thể giúp bạn:\n- Xem tổng quan tài sản, dòng tiền và mục tiêu tài chính\n- Chạy kịch bản sốc thị trường để xem tác động lên tài sản\n- Đặt việc theo dõi khi VN-Index, tỷ giá hay vàng vượt hoặc xuống dưới một mức\n\nBạn cần tôi giúp việc nào không?",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259829.8192296,
+    "audit_seq": 1023,
+    "session": {
+     "id": "f5888e82bf4c470c",
+     "title": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.6488186079077423,
+   "first_event": 2.69260191405192,
+   "usage": {
+    "cost": 0.000802,
+    "input": 7044,
+    "output": 196,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

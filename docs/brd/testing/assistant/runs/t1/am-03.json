@@ -1,0 +1,372 @@
+{
+ "id": "am-03",
+ "category": "ambiguous",
+ "persona": "chuyên gia, sửa lại câu hỏi (C01)",
+ "client_id": "C01",
+ "title": "Tháng trước — à không, tháng này",
+ "why": "A correction mid-conversation, then a comparison.",
+ "brd": [
+  "OWN-AS-11"
+ ],
+ "turns": [
+  {
+   "say": "Tháng trước tôi chi bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "dong_tien"
+    ]
+   }
+  },
+  {
+   "say": "À không, ý tôi là tháng này.",
+   "expect": {
+    "tools_any": [
+     "dong_tien"
+    ]
+   }
+  },
+  {
+   "say": "So với thu nhập thì sao?",
+   "expect": {}
+  }
+ ],
+ "run": [
+  {
+   "say": "Tháng trước tôi chi bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 120,4 triệu, tiền ra 90,4 triệu, còn lại 30,0 triệu. Khoản chi lớn nhất: Trả nợ vay 38,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 38000000.0,
+         "text": "38,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 34770000.0,
+         "text": "34,8 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 17623000.0,
+         "text": "17,6 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "120,4 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "90,4 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "30,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12265,
+     "output_tokens": 399,
+     "requests": 2,
+     "cost_usd": 0.001426,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5ee2bfb7c0564607ab52a37929613399",
+    "conversation_id": "9c156626ff5148a6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo dữ liệu hệ thống, tháng gần nhất là **tháng 09/2026**, tổng chi là **90,4 triệu đồng**.\n\n- Tiền vào: 120,4 triệu\n- Tiền ra: 90,4 triệu\n- Còn lại: 30,0 triệu\n- Khoản chi lớn nhất: trả nợ vay 38,0 triệu (1 giao dịch)\n\nSố liệu này lấy từ 9 giao dịch của tháng 09/2026 trên trang tổng quan dòng tiền. Tôi không chắc đây có phải đúng tháng trước so với hôm nay không, nên nếu bạn cần tháng khác, cho tôi biết.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257730.8477576,
+    "audit_seq": 797,
+    "session": {
+     "id": "9c156626ff5148a6",
+     "title": "Tháng trước tôi chi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.7560399868525565,
+   "first_event": 4.116194462869316,
+   "usage": {
+    "cost": 0.001426,
+    "input": 12265,
+    "output": 399,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JqPhQn1tvjZPK8vBu2f6mD",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JqPhQn1tvjZPK8vBu2f6mD",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 58,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "À không, ý tôi là tháng này.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6502,
+     "output_tokens": 404,
+     "requests": 1,
+     "cost_usd": 0.000852,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a40f99d003a644f18a8d701bd6255290",
+    "conversation_id": "9c156626ff5148a6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống chỉ có dữ liệu dòng tiền cho **tháng 09/2026**, và đó là tháng gần nhất có trong dữ liệu. Tôi không thấy số liệu riêng cho tháng hiện tại, nên không thể xác nhận tổng chi tháng này là bao nhiêu.\n\nNếu bạn muốn xem tháng hiện tại, bạn có thể mở trang dòng tiền trong ứng dụng để kiểm tra. Tôi cũng có thể mở trang tổng quan để bạn xem thêm.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257733.8448095,
+    "audit_seq": 798,
+    "session": {
+     "id": "9c156626ff5148a6",
+     "title": "Tháng trước tôi chi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.9814004376530647,
+   "first_event": 2.2114742267876863,
+   "usage": {
+    "cost": 0.000852,
+    "input": 6502,
+    "output": 404,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "So với thu nhập thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tỷ lệ chi trên tiền vào tháng 09/2026: 90.4/120.4*100 = 75,08",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13621,
+     "output_tokens": 495,
+     "requests": 2,
+     "cost_usd": 0.00161,
+     "tools_cost_usd": null
+    },
+    "turn_id": "131509104b8f4414afd4576079988992",
+    "conversation_id": "9c156626ff5148a6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Trong tháng 09/2026, tổng chi 90,4 triệu bằng khoảng **75%** tiền vào 120,4 triệu (90,4 / 120,4 × 100 = 75,08%). Phần còn lại là 30,0 triệu.\n\nHệ thống ghi \"tiền vào\" chứ không tách riêng thu nhập, nên con số này có thể gồm cả các khoản không phải lương. Tôi chưa có dữ liệu thu nhập tách riêng để so sánh chính xác hơn.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257739.320319,
+    "audit_seq": 799,
+    "session": {
+     "id": "9c156626ff5148a6",
+     "title": "Tháng trước tôi chi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 5.428414653986692,
+   "first_event": 3.159141816198826,
+   "usage": {
+    "cost": 0.00161,
+    "input": 13621,
+    "output": 495,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01TiaBVqBWc2mwigXXU2VegC",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01TiaBVqBWc2mwigXXU2VegC",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

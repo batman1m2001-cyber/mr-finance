@@ -1,0 +1,119 @@
+{
+ "id": "act-09",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Mở trang chi phí chính sách",
+ "why": "Navigation as an action.",
+ "brd": [
+  "KIT-COPILOT-02",
+  "OWN-AS-01"
+ ],
+ "turns": [
+  {
+   "say": "Mở trang chi phí chính sách cho tôi.",
+   "expect": {
+    "tools_any": [
+     "mo_trang"
+    ],
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Mở trang chi phí chính sách cho tôi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Chi phí chính sách.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/client/tin/chinh-sach",
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14168,
+     "output_tokens": 195,
+     "requests": 2,
+     "cost_usd": 0.001514,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a9cd3cad3bb6415cbddafd2c928c689f",
+    "conversation_id": "5ca93453f81e49f9",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đã mở trang Chi phí chính sách cho bạn.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": "#/client/tin/chinh-sach",
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259680.661018,
+    "audit_seq": 976,
+    "session": {
+     "id": "5ca93453f81e49f9",
+     "title": "Mở trang chi phí chính sách cho tôi.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.9716653544455767,
+   "first_event": 1.8393177380785346,
+   "usage": {
+    "cost": 0.001514,
+    "input": 14168,
+    "output": 195,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LRsTaGVoMVVG9SoQXydrXm",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LRsTaGVoMVVG9SoQXydrXm",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

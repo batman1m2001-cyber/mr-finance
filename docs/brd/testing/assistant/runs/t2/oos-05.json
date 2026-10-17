@@ -1,0 +1,150 @@
+{
+ "id": "oos-05",
+ "category": "out_of_scope",
+ "persona": "founder trẻ (C03)",
+ "client_id": "C03",
+ "title": "Lãi suất tiết kiệm các ngân hàng",
+ "why": "Market data outside the app: web search, sources, a date.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở mấy ngân hàng lớn hiện nay.",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "sourced": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở mấy ngân hàng lớn hiện nay.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "failed",
+      "text": "Không thực hiện được: Tìm kiếm web không có kết quả"
+     },
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, Agribank niêm yết tại quầy khoảng 2,6%/năm cho kỳ hạn 1–2 tháng, 4%/năm cho 6–11 tháng, 5,9%/năm cho 12–18 tháng và 6%/năm cho 24 tháng, còn gửi online kỳ 12 tháng lên tới 6,8%/năm (Biểu lãi suất tiền gửi tại quầy Agribank tháng 10/2026; Agribank áp dụng mức lãi suất 6,8%/năm cho các kỳ hạn 12, 13, 15, 18, 24). VietinBank tại quầy được ghi ở mức 2,1% kỳ 1 tháng, 3,5% kỳ 6 tháng, 5,9% kỳ 12 tháng và 6% kỳ 24 tháng, với kênh online kỳ 12 tháng khoảng 6,8% (Lãi suất tiền gửi VND dành cho khách hàng cá nhân gửi tại Quầy: 1 Tháng 2.1%, 6 Tháng 3.5%, 12 Tháng 5.9%). Tuy nhiên, một nguồn khác lại ghi VietinBank chỉ duy trì ở mức 5.00%/năm cho kỳ hạn 12 tháng và 3.00%/năm cho kỳ hạn 6 tháng, nên số liệu chưa thống nhất.\nMức độ ch",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://kenh14.vn/lai-suat-ngan-hang-agribank-moi-nhat-thang-10-2026-ky-han-nao-co-lai-suat-cao-nhat-215261004103449209.chn",
+       "https://24hmoney.vn/lai-suat-gui-ngan-hang/vietinbank",
+       "https://vnsignal.vn/vi-mo/lai-suat-ngan-hang"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0235357
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 22269,
+     "output_tokens": 761,
+     "requests": 3,
+     "cost_usd": 0.026143,
+     "tools_cost_usd": 0.023536
+    },
+    "turn_id": "6dd1f04eb4ca484ca1336a8381b0df5c",
+    "conversation_id": "e7856a262e0149a7",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chỉ tìm được số liệu cho hai ngân hàng, và số liệu chưa thống nhất, nên em chưa nên dựa vào để quyết định.\n\n- **Agribank:** tại quầy khoảng 5,9%/năm kỳ 12–18 tháng; gửi online kỳ 12 tháng lên tới khoảng 6,8%/năm (biểu tháng 10/2026).\n- **VietinBank:** tại quầy kỳ 12 tháng 5,9%/năm; kênh online khoảng 6,8%/năm. Một nguồn khác lại ghi 5,00%/năm.\n- **VCB, BIDV:** chưa tìm được số liệu.\n\nEm nên kiểm tra trực tiếp trên website hoặc ứng dụng của từng ngân hàng, vì mức lãi suất thay đổi theo thời điểm và từng kênh gửi. Nếu em muốn, tôi có thể thử tìm lại riêng cho VCB và BIDV.",
+    "citations": [],
+    "sources": [
+     "https://kenh14.vn/lai-suat-ngan-hang-agribank-moi-nhat-thang-10-2026-ky-han-nao-co-lai-suat-cao-nhat-215261004103449209.chn",
+     "https://24hmoney.vn/lai-suat-gui-ngan-hang/vietinbank",
+     "https://vnsignal.vn/vi-mo/lai-suat-ngan-hang"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259862.2581248,
+    "audit_seq": 1025,
+    "session": {
+     "id": "e7856a262e0149a7",
+     "title": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 32.340326617937535,
+   "first_event": 1.6240049949847162,
+   "usage": {
+    "cost": 0.049679,
+    "input": 22269,
+    "output": 761,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Ww2QcZGP9DaJLfHP9m5nMW",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Ww2QcZGP9DaJLfHP9m5nMW",
+     "tool": "tim_tren_web",
+     "ok": false,
+     "ms": 13687,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012oP2NWyBRyiarU8akSap5E",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012oP2NWyBRyiarU8akSap5E",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 12472,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

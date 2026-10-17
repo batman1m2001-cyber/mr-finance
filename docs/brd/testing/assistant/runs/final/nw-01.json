@@ -1,0 +1,435 @@
+{
+ "id": "nw-01",
+ "category": "news",
+ "persona": "chuyên gia, hoài nghi (C01)",
+ "client_id": "C01",
+ "title": "Tin nào ảnh hưởng nhất, chắc hay ước, nguồn đâu",
+ "why": "The biggest impact, then fact against estimate, then the source.",
+ "brd": [
+  "BR-08",
+  "BRD-RULE-CONTENT-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "chu_y"
+    ],
+    "sourced": true
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "expect": {
+    "says": "ước tính"
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "dieu_tra",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "text": "2 sự kiện đang có hiệu lực; tác động kỳ vọng 3 tháng cộng lại +0,2 triệu. Lớn nhất: Bất động sản (+98,6 triệu). Đây là ước tính theo kịch bản CIO duyệt, không phải khuyến nghị.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bất động sản",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "+98,6 triệu",
+         "tone": "good",
+         "focus": "event:EV-2026-0002"
+        },
+        {
+         "title": "Thị trường cổ phiếu",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "−98,4 triệu",
+         "tone": "bad",
+         "focus": "event:EV-2026-0001"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "2 lần áp dụng CIO duyệt",
+       "CafeF",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "16 yếu tố đang tác động: 12 rủi ro, 4 cơ hội; tổng ước tính +2,15 tỷ. Lớn nhất: Sân bay Long Thành đưa giai đoạn 1 vào khai thác — Cơ hội: BĐS gần dự án (Đất Long Thành (tự khai), Đất Long Thành (tự khai)) ước tính +2,7 tỷ. Từng yếu tố: Sân bay Long Thành đưa giai đoạn 1 vào khai thác (dự án hạ tầng, đang lấy ý kiến / dự kiến) +1,35 tỷ; Metro số 1 Bến Thành – Suối Tiên vận hành (dự án hạ tầng, đã thông qua / đã diễn ra) +777,6 triệu; Nâng hạng thị trường chứng khoán (chính sách, đã thông qua / đã diễn ra) +354,9 triệu; Bảng giá đất điều chỉnh hằng năm (Luật Đất đai 2024) (chính sách, đã thông qua / đã diễn ra) −97,2 triệu; Chính sách quản lý vàng miếng (chính sách, đã thông qua / đã diễn ra) −81,0 triệu; Giới hạn sở hữu cổ phần ngân hàng (Luật Các TCTD 2024) (chính sách, đã thông qua / đã diễn ra) −57,2 triệu; Tỷ giá USD/VND tăng 3% (vĩ mô, đang lấy ý kiến / dự kiến) −27,0 triệu; Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh (chính sách, đã thông qua / đã diễn ra) +26,2 triệu; Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định) (chính sách, dự thảo) −24,4 triệu; Siết điều kiện nhà đầu tư chuyên nghiệp mua trái phiếu DN (chính sách, đã thông qua / đã diễn ra) −22,1 triệu; Thuế với người sở hữu từ 2 bất động sản trở lên (chính sách, dự thảo) −14,4 triệu; Quy định ngoại hối, chuyển tiền du học (chính sách, đang lấy ý kiến / dự kiến) −9,0 triệu; Quy định bảo hiểm liên kết đầu tư (chính sách, đã thông qua / đã diễn ra) −8,1 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −7,3 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −6,0 triệu; Thay đổi thuế chuyển nhượng chứng khoán (chính sách, dự thảo) −2,0 triệu.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Sân bay Long Thành đưa giai đoạn 1 vào khai thác",
+         "sub": "+1,35 tỷ · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Metro số 1 Bến Thành – Suối Tiên vận hành",
+         "sub": "+777,6 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+354,9 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Bảng giá đất điều chỉnh hằng năm (Luật Đất đai 2024)",
+         "sub": "−97,2 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Chính sách quản lý vàng miếng",
+         "sub": "−81,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+       "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24616,
+     "output_tokens": 978,
+     "requests": 3,
+     "cost_usd": 0.002951,
+     "tools_cost_usd": null
+    },
+    "turn_id": "93ab530c7ca2435b9d28ae5fd5fe5920",
+    "conversation_id": "167852f59dc346f2",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo dữ liệu ngày 09/10/2026, các yếu tố ảnh hưởng nhiều nhất tới tài sản của bạn là:\n\n- **Sân bay Long Thành đưa giai đoạn 1 vào khai thác:** ước tính +1,35 tỷ, chủ yếu qua đất gần dự án.\n- **Metro số 1 Bến Thành – Suối Tiên vận hành:** ước tính +777,6 triệu.\n- **Nâng hạng thị trường chứng khoán:** ước tính +354,9 triệu.\n- **Bảng giá đất điều chỉnh hằng năm:** ước tính −97,2 triệu.\n- **Chính sách quản lý vàng miếng:** ước tính −81 triệu.\n\nTổng hợp 16 yếu tố ước tính +2,15 tỷ. Riêng hai sự kiện CIO đã duyệt, tác động kỳ vọng trong 3 tháng chỉ khoảng +0,2 triệu, trong đó bất động sản +98,6 triệu.\n\nĐây là ước tính từ các kịch bản, không phải dự báo. Một số nguồn ghi \"cần kiểm tra\" về tiến độ dự án và thời điểm hiệu lực, nên bạn nên xác minh trước khi quyết định.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "2 lần áp dụng CIO duyệt",
+     "CafeF",
+     "Vietstock",
+     "VnEconomy",
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+     "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "event:EV-2026-0002"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263233.0485013,
+    "audit_seq": 1405,
+    "session": {
+     "id": "167852f59dc346f2",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.3395798853598535,
+   "first_event": 1.5170369842089713,
+   "usage": {
+    "cost": 0.002951,
+    "input": 24616,
+    "output": 978,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PJfqN16n5Rq7d3vnWSUY8c",
+     "tool": "tac_dong",
+     "label": "Tác động tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PJfqN16n5Rq7d3vnWSUY8c",
+     "tool": "tac_dong",
+     "ok": true,
+     "ms": 32,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014odLrwoLUWEYQo2QvR1dXe",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014odLrwoLUWEYQo2QvR1dXe",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 132,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9634,
+     "output_tokens": 650,
+     "requests": 1,
+     "cost_usd": 0.001288,
+     "tools_cost_usd": null
+    },
+    "turn_id": "205de3a6712944aca9150f75b9ae72ae",
+    "conversation_id": "167852f59dc346f2",
+    "compacted": false,
+    "status": "ok",
+    "text": "Con số đó là **ước tính**, không phải số chắc chắn.\n\n- **Bản chất:** Các mức +1,35 tỷ, +777,6 triệu... là mô phỏng theo kịch bản, không phải dự báo.\n- **Mức chắc chắn khác nhau:** Metro số 1 đã vận hành nên tác động ít bất định hơn. Sân bay Long Thành mới ở giai đoạn lấy ý kiến hoặc dự kiến nên là khoản kém chắc nhất, và nó chiếm phần lớn tổng +2,15 tỷ.\n- **Nguồn cần kiểm tra:** Một số nguồn về tiến độ Long Thành và thời điểm nâng hạng thị trường đang được đánh dấu \"cần kiểm tra\".\n\nDữ liệu là ngày 09/10/2026, lấy từ trang Tin tức (chính sách). Nếu muốn xem mức ảnh hưởng nếu một kịch bản xấu xảy ra, tôi có thể chạy kịch bản sốc trên tài sản hiện tại.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263236.8628612,
+    "audit_seq": 1406,
+    "session": {
+     "id": "167852f59dc346f2",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.774037677794695,
+   "first_event": 2.2695064609870315,
+   "usage": {
+    "cost": 0.001288,
+    "input": 9634,
+    "output": 650,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10033,
+     "output_tokens": 827,
+     "requests": 1,
+     "cost_usd": 0.001417,
+     "tools_cost_usd": null
+    },
+    "turn_id": "10d69c3f7fe54cc98bff22d69d24ea78",
+    "conversation_id": "167852f59dc346f2",
+    "compacted": false,
+    "status": "ok",
+    "text": "Kết quả chỉ liệt kê nguồn chung, chưa gắn từng yếu tố với nguồn cụ thể. Các nguồn được ghi nhận gồm:\n\n- **FTSE Russell:** công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026. Ghi chú \"cần kiểm tra\".\n- **Kế hoạch khai thác giai đoạn 1 năm 2026:** liên quan đến sân bay Long Thành. Ghi chú \"cần kiểm tra tiến độ\".\n- **Tuyến Metro số 1 TP.HCM:** ghi nhận đưa vào khai thác cuối 2024.\n- **Báo chí:** CafeF, Vietstock và VnEconomy, nguồn của các sự kiện đã được CIO duyệt.\n\nNếu bạn cần biết chính xác nguồn của từng yếu tố, tôi có thể chạy công cụ điều tra đường đi của tin đã duyệt.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263241.0650632,
+    "audit_seq": 1407,
+    "session": {
+     "id": "167852f59dc346f2",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 4.179617387242615,
+   "first_event": 2.809860522393137,
+   "usage": {
+    "cost": 0.001417,
+    "input": 10033,
+    "output": 827,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  }
+ ]
+}

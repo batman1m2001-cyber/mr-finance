@@ -1,0 +1,157 @@
+{
+ "id": "nav-06",
+ "category": "navigation",
+ "persona": "đang chọn một đường trên đồ thị (C01)",
+ "client_id": "C01",
+ "title": "“Đường này là tôi đang chuyển tiền đi à?”",
+ "why": "A picked goal edge is an estimate, not a transfer: the answer must say so.",
+ "brd": [
+  "OWN-GW-38",
+  "OWN-GW-46",
+  "OWN-GW-47"
+ ],
+ "turns": [
+  {
+   "say": "Đường này nghĩa là tôi đang chuyển tiền đi mỗi tháng à?",
+   "expect": {
+    "tools_any": [
+     "lien_ket",
+     "muc_tieu"
+    ],
+    "says": "không phải|ước tính|cần để dành|chưa"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "ME>GL:tuition",
+     "kind": "edge",
+     "label": "Bạn → Học phí cho con"
+    }
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Đường này nghĩa là tôi đang chuyển tiền đi mỗi tháng à?",
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "ME>GL:tuition",
+     "kind": "edge",
+     "label": "Bạn → Học phí cho con"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "lien_ket",
+      "label": "Liên kết",
+      "status": "ok",
+      "text": "Liên kết Bạn → Học phí cho con (trong nước / du học): cần để dành/tháng +79,1 triệu (ước tính). Học phí cho con (trong nước / du học) có 1 liên kết: Bạn — cần để dành/tháng +79,1 triệu (ước tính). Thực tế là số đã ghi nhận; ước tính và giả định không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bạn",
+         "sub": "cần để dành/tháng · ước tính · 1 bản ghi",
+         "chip": "+79,1 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "goal:tuition",
+       "kpi:net_worth"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+      ],
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12760,
+     "output_tokens": 531,
+     "requests": 2,
+     "cost_usd": 0.001541,
+     "tools_cost_usd": null
+    },
+    "turn_id": "da23a3959c584c37a8f8b2c3d8f36e2e",
+    "conversation_id": "4f14af0b661d4e94",
+    "compacted": false,
+    "status": "ok",
+    "text": "Không hẳn. Đường này không phải khoản chuyển tiền thực tế.\n\nTheo đồ thị, đây là **số tiền cần để dành mỗi tháng** cho mục tiêu học phí của con (trong nước / du học): khoảng **79,1 triệu đồng/tháng**. Đây là con số **ước tính**, tính từ mục tiêu, chưa phải khoản bạn đã để dành hay chuyển đi. Số liệu tính đến 09/10/2026.\n\nNếu bạn muốn xem tiền thực tế vào và ra mỗi tháng, tôi có thể lấy thông tin dòng tiền.",
+    "citations": [],
+    "sources": [
+     "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "goal:tuition",
+     "kpi:net_worth"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "So sánh các kịch bản đang bật"
+    ],
+    "answered_at": 1792257076.6344147,
+    "audit_seq": 640,
+    "session": {
+     "id": "4f14af0b661d4e94",
+     "title": "Đường này nghĩa là tôi đang chuyển tiền đi mỗi…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.563826960045844,
+   "first_event": 1.6667365292087197,
+   "usage": {
+    "cost": 0.001541,
+    "input": 12760,
+    "output": 531,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BXdyivB9AwcmzMyXtYMtjR",
+     "tool": "lien_ket",
+     "label": "Liên kết",
+     "nodes": [
+      "GL:tuition"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BXdyivB9AwcmzMyXtYMtjR",
+     "tool": "lien_ket",
+     "ok": true,
+     "ms": 182,
+     "focus": [
+      "goal:tuition",
+      "kpi:net_worth"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

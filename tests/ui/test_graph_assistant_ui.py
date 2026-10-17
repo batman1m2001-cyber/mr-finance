@@ -55,3 +55,14 @@ def test_a_question_carries_the_workspace_and_a_comparison_lights_its_scenarios(
     assert p.page.locator(".wnode.ok[data-n='SC:vni_30']").count() == 1
     p.page.wait_for_selector("#cp-msgs .cp-bot:not([data-busy])")
     assert not p.problems()
+
+
+def test_the_panel_names_the_lens_on_screen_after_a_reload_and_a_lens_change(open_page):
+    """Stress test D30: on Mục tiêu & kịch bản the docked panel said “Đang xem: Tổng quan tài chính” — it was drawn
+    before the workspace named its lens, and never again."""
+    p = open_page(theme="dark")
+    p.go("#/client/xem/muc-tieu")
+    p.page.wait_for_function("document.querySelector('#ws-title').textContent.startsWith('Mục tiêu')")
+    p.page.wait_for_function("document.querySelector('#cp-ctx').textContent.startsWith('Đang xem: Mục tiêu')")
+    p.page.click('[data-tool="rui-ro"]')
+    p.page.wait_for_function("document.querySelector('#cp-ctx').textContent.startsWith('Đang xem: Rủi ro')")

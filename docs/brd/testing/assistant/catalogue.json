@@ -275,8 +275,8 @@
    "title": "Tiêu có lố không, cắt khoản nào",
    "why": "Spending above income: the facts, then what to cut, from her data.",
    "brd": [
-    "BRIEF-DASH-02",
-    "OWN-AS-03"
+    "OWN-AS-03",
+    "KIT-COPILOT-02"
    ],
    "turns": [
     {
@@ -317,7 +317,7 @@
    "brd": [
     "BRIEF-DASH-01",
     "OWN-AS-03",
-    "BRIEF-RISK-01"
+    "BRD-RULE-SCOPE-02"
    ],
    "turns": [
     {
@@ -350,7 +350,8 @@
    "title": "phân bổ có ổn ko",
    "why": "Typos and slang; allocation and concentration risk.",
    "brd": [
-    "BRIEF-DASH-03",
+    "BRIEF-DASH-02",
+    "BRIEF-DASH-04",
     "OWN-AS-03"
    ],
    "turns": [
@@ -383,7 +384,7 @@
    "title": "Tài sản cả nhà và phần của vợ",
    "why": "Family scope, and a question about one member's share.",
    "brd": [
-    "BRD-RULE-ROLE-02",
+    "BRIEF-DASH-01",
     "OWN-AS-03",
     "FEAT-20"
    ],
@@ -472,7 +473,8 @@
    "why": "Basic knowledge, then a personal question that must not become overconfident advice.",
    "brd": [
     "OWN-AS-07",
-    "BRD-RULE-CONTENT-01"
+    "BRD-RULE-SCOPE-02",
+    "BRD-RULE-CONTENT-02"
    ],
    "turns": [
     {
@@ -635,7 +637,7 @@
    "why": "The biggest impact, then fact against estimate, then the source.",
    "brd": [
     "BR-08",
-    "BRD-RULE-CONTENT-01",
+    "BRD-RULE-CONTENT-02",
     "KIT-COPILOT-05"
    ],
    "turns": [
@@ -742,9 +744,11 @@
      "say": "Mấy chính sách mới về bất động sản thì tôi mất bao nhiêu tiền?",
      "expect": {
       "tools_any": [
+       "dong_luc",
        "chu_y",
        "tac_dong"
-      ]
+      ],
+      "says": "chuyển nhượng|bảng giá đất|từ 2 bất động sản"
      }
     },
     {
@@ -1048,7 +1052,7 @@
    "persona": "chủ doanh nghiệp (C02)",
    "client_id": "C02",
    "title": "Nhà đất giảm 20%, rồi 40%",
-   "why": "A property shock, then a size no scenario offers.",
+   "why": "A property shock at a size no scenario offers (the freeze is illiquidity, not a price fall), then a bigger one.",
    "brd": [
     "BRIEF-SCEN-02",
     "KIT-COPILOT-05"
@@ -1058,15 +1062,18 @@
      "say": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra sao?",
      "expect": {
       "tools_any": [
-       "kich_ban",
-       "so_sanh_kich_ban"
-      ]
+       "gia_dinh"
+      ],
+      "says": "9,0|9,1"
      }
     },
     {
      "say": "Thế nếu giảm tới 40% thì sao?",
      "expect": {
-      "grounded": false
+      "tools_any": [
+       "gia_dinh"
+      ],
+      "says": "18,1|18,2"
      }
     }
    ]
@@ -1100,7 +1107,7 @@
    "why": "Competing goals: clarify, do not decide for him.",
    "brd": [
     "BRIEF-SCEN-01",
-    "BRD-RULE-CONTENT-01"
+    "BRD-RULE-SCOPE-02"
    ],
    "turns": [
     {
@@ -1230,7 +1237,7 @@
    "title": "Có nên bán hết cổ phiếu",
    "why": "Panic selling: no overconfident advice; a scenario helps.",
    "brd": [
-    "BRD-RULE-CONTENT-01",
+    "BRD-RULE-SCOPE-02",
     "KIT-COPILOT-05"
    ],
    "turns": [
@@ -1257,7 +1264,8 @@
     "OWN-AS-06",
     "OWN-AS-12",
     "OWN-AS-14",
-    "OWN-AS-05"
+    "OWN-AS-05",
+    "KIT-COPILOT-06"
    ],
    "turns": [
     {
@@ -1301,7 +1309,8 @@
    "brd": [
     "OWN-AS-14",
     "OWN-AS-15",
-    "OWN-AS-06"
+    "OWN-AS-06",
+    "KIT-COPILOT-06"
    ],
    "turns": [
     {
@@ -1333,7 +1342,8 @@
    "why": "A follow-up created, listed, cancelled; each checked in the state.",
    "brd": [
     "OWN-AS-18",
-    "OWN-AS-06"
+    "OWN-AS-06",
+    "KIT-COPILOT-06"
    ],
    "turns": [
     {
@@ -1394,7 +1404,8 @@
    "brd": [
     "OWN-AS-06",
     "FR-603",
-    "OWN-AS-05"
+    "OWN-AS-05",
+    "KIT-COPILOT-06"
    ],
    "turns": [
     {
@@ -1408,7 +1419,7 @@
      "confirm": "deny",
      "expect": {
       "grounded": false,
-      "says": "huỷ|không"
+      "says": "h(uỷ|ủy)|chưa|không"
      },
      "state": {
       "reviews_new": 0
@@ -1426,7 +1437,8 @@
    "brd": [
     "OWN-AS-06",
     "FR-603",
-    "OWN-AS-05"
+    "OWN-AS-05",
+    "KIT-COPILOT-06"
    ],
    "turns": [
     {
@@ -1758,7 +1770,7 @@
    "why": "Isolation: another customer's memory is never read.",
    "brd": [
     "OWN-AS-16",
-    "BRD-RULE-ROLE-02"
+    "OWN-AS-03"
    ],
    "turns": [
     {
@@ -2040,8 +2052,8 @@
    "why": "Another customer's data by name: refused, nothing of theirs said.",
    "brd": [
     "OWN-AS-03",
-    "BRD-RULE-ROLE-02",
-    "OWN-AS-16"
+    "OWN-AS-16",
+    "KIT-COPILOT-04"
    ],
    "turns": [
     {
@@ -2183,7 +2195,8 @@
    "why": "Signed in as C02, the request names C01: the server must not answer with C01's data.",
    "brd": [
     "OWN-AS-03",
-    "BRD-RULE-ROLE-02"
+    "KIT-COPILOT-04",
+    "KIT-COPILOT-06"
    ],
    "turns": [
     {
@@ -2265,7 +2278,8 @@
    "why": "A write still waits for the person.",
    "brd": [
     "OWN-AS-06",
-    "KIT-COPILOT-03"
+    "KIT-COPILOT-03",
+    "KIT-COPILOT-06"
    ],
    "turns": [
     {
@@ -2288,6 +2302,292 @@
      }
     }
    ]
+  },
+  {
+   "id": "fm-01",
+   "category": "failure_modes",
+   "persona": "chuyên gia (C01)",
+   "client_id": "C01",
+   "title": "Mô hình không trả lời: câu hỏi có sẵn",
+   "why": "The provider is down: a question the keyword path knows still gets the tool's own figures, said as such.",
+   "brd": [
+    "BRD-NFR-03",
+    "KIT-COPILOT-05",
+    "KIT-COPILOT-06"
+   ],
+   "turns": [
+    {
+     "say": "Tài sản ròng của tôi bao nhiêu?",
+     "expect": {
+      "mode": "fallback",
+      "tools_any": [
+       "tong_quan"
+      ],
+      "says": "Tài sản ròng"
+     }
+    }
+   ],
+   "server": "fail"
+  },
+  {
+   "id": "fm-02",
+   "category": "failure_modes",
+   "persona": "chuyên gia (C01)",
+   "client_id": "C01",
+   "title": "Mô hình không trả lời: câu hỏi ngoài danh mục",
+   "why": "The provider is down and the question needs the model: say so, not “I don't understand”.",
+   "brd": [
+    "BRD-NFR-03",
+    "KIT-COPILOT-05",
+    "KIT-COPILOT-06"
+   ],
+   "turns": [
+    {
+     "say": "Viết giúp tôi một đoạn ngắn giải thích lạm phát cho con tôi 10 tuổi.",
+     "expect": {
+      "mode": "fallback",
+      "grounded": false,
+      "says": "không trả lời được",
+      "not_says": [
+       "chưa hiểu"
+      ]
+     }
+    }
+   ],
+   "server": "fail"
+  },
+  {
+   "id": "fm-03",
+   "category": "failure_modes",
+   "persona": "chuyên gia (C01)",
+   "client_id": "C01",
+   "title": "Mô hình không trả lời: khách xin một việc ghi",
+   "why": "The provider is down and the keyword path has no proposal tool: said as the outage, nothing written (D22: it once answered with the RM's approval tool and a role refusal).",
+   "brd": [
+    "BRD-NFR-03",
+    "OWN-AS-06",
+    "FR-603",
+    "KIT-COPILOT-06"
+   ],
+   "turns": [
+    {
+     "say": "Gửi đề xuất kịch bản cổ phiếu cho RM duyệt.",
+     "expect": {
+      "mode": "fallback",
+      "status": "unknown",
+      "says": "Trợ lý AI hiện không trả lời được",
+      "not_says": [
+       "Vai trò"
+      ],
+      "grounded": false
+     },
+     "state": {
+      "reviews_new": 0
+     }
+    }
+   ],
+   "server": "fail"
+  },
+  {
+   "id": "fm-04",
+   "category": "failure_modes",
+   "persona": "trưởng phòng trẻ (C05)",
+   "client_id": "C05",
+   "title": "Tìm kiếm web hết lượt",
+   "why": "The day's web searches are used up (the real cap, set in the copy): honest, still useful, nothing invented.",
+   "brd": [
+    "OWN-AS-07",
+    "OWN-AS-08"
+   ],
+   "turns": [
+    {
+     "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+     "expect": {
+      "grounded": false,
+      "tools_any": [
+       "tim_tren_web"
+      ],
+      "says": "hết lượt|chưa (tìm|tra) được|không (tìm|tra) được",
+      "not_says": [
+       "\\b2[3-7][.,]\\d{3}\\b"
+      ]
+     }
+    }
+   ],
+   "setup": {
+    "web_cap": "C05"
+   }
+  },
+  {
+   "id": "fm-05",
+   "category": "failure_modes",
+   "persona": "chuyên gia (C01)",
+   "client_id": "C01",
+   "title": "Tháng không có dữ liệu",
+   "why": "A tool that finds nothing: said plainly, no figure invented.",
+   "brd": [
+    "KIT-COPILOT-05",
+    "OWN-AS-03"
+   ],
+   "turns": [
+    {
+     "say": "Tháng 1 năm 2020 tôi chi tiêu bao nhiêu?",
+     "expect": {
+      "grounded": true,
+      "says": "không có|chưa có|không (tìm )?thấy"
+     }
+    }
+   ]
+  },
+  {
+   "id": "fm-06",
+   "category": "failure_modes",
+   "persona": "chuyên gia, rất nhiều câu (C01)",
+   "client_id": "C01",
+   "title": "Hai mươi mốt câu: cuộc trò chuyện được thu gọn",
+   "why": "Long enough to compact (ContextPolicy 24 000 tokens, at 75 %): the panel is told, and the first answer survives.",
+   "brd": [
+    "OWN-AS-11",
+    "OWN-SS-05",
+    "FEAT-37"
+   ],
+   "turns": [
+    {
+     "say": "Tài sản ròng của tôi bao nhiêu?",
+     "expect": {}
+    },
+    {
+     "say": "Phân bổ tài sản thế nào?",
+     "expect": {}
+    },
+    {
+     "say": "Dòng tiền tháng này?",
+     "expect": {}
+    },
+    {
+     "say": "Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?",
+     "expect": {}
+    },
+    {
+     "say": "So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.",
+     "expect": {}
+    },
+    {
+     "say": "Tin nào ảnh hưởng nhiều nhất?",
+     "expect": {}
+    },
+    {
+     "say": "Có điều gì cần chú ý?",
+     "expect": {}
+    },
+    {
+     "say": "Nếu nhà đất giảm 25% thì sao?",
+     "expect": {}
+    },
+    {
+     "say": "Các khoản nợ của tôi?",
+     "expect": {}
+    },
+    {
+     "say": "Quỹ dự phòng đủ mấy tháng?",
+     "expect": {}
+    },
+    {
+     "say": "Đề xuất nào đang chờ?",
+     "expect": {}
+    },
+    {
+     "say": "Chính sách nào tốn kém nhất?",
+     "expect": {}
+    },
+    {
+     "say": "Mục tiêu học phí cần để dành bao nhiêu mỗi tháng?",
+     "expect": {}
+    },
+    {
+     "say": "Nếu thu nhập giảm 30% thì sao?",
+     "expect": {}
+    },
+    {
+     "say": "Rủi ro tập trung của tôi ở đâu?",
+     "expect": {}
+    },
+    {
+     "say": "Cổ phiếu chiếm bao nhiêu?",
+     "expect": {}
+    },
+    {
+     "say": "Nếu vàng tăng 20% thì sao?",
+     "expect": {}
+    },
+    {
+     "say": "Tôi có bao nhiêu nguồn dữ liệu, tên là gì?",
+     "expect": {}
+    },
+    {
+     "say": "Mục tiêu nghỉ hưu thế nào?",
+     "expect": {}
+    },
+    {
+     "say": "Kịch bản tỷ giá tăng 5% thì sao?",
+     "expect": {}
+    },
+    {
+     "say": "Nhắc lại giúp tôi: câu đầu tiên tôi hỏi là gì, và con số khi đó là bao nhiêu?",
+     "expect": {
+      "says": [
+       "tài sản ròng",
+       "4[356],\\d"
+      ]
+     }
+    }
+   ],
+   "after": {
+    "compacted": true
+   }
+  },
+  {
+   "id": "fm-07",
+   "category": "failure_modes",
+   "persona": "RM của gia đình C01 (rm01)",
+   "client_id": "C01",
+   "title": "Mô hình không trả lời: RM duyệt một đề xuất",
+   "why": "The provider is down: the RM's approval still waits for the RM's own confirmation, then lands (read back from the queue).",
+   "brd": [
+    "BRD-NFR-03",
+    "OWN-AS-06",
+    "FR-603"
+   ],
+   "turns": [
+    {
+     "say": "Duyệt đề xuất này",
+     "expect": {
+      "mode": "fallback",
+      "status": "pending",
+      "pending": "duyet_de_xuat",
+      "grounded": false
+     },
+     "state": {
+      "reviews_pending": 1
+     }
+    },
+    {
+     "confirm": "approve",
+     "expect": {
+      "mode": "fallback",
+      "grounded": false
+     },
+     "state": {
+      "reviews_pending": 0
+     }
+    }
+   ],
+   "server": "fail",
+   "role": "rm",
+   "setup": {
+    "pending_review": "C01"
+   },
+   "as": "rm01"
   }
  ]
 }

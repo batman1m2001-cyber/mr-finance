@@ -28,6 +28,7 @@ NODES: Dict[str, List[str]] = {
     "dong_luc": ["alert"],
     "lien_ket": [],
     "so_sanh_kich_ban": ["scenario"],
+    "gia_dinh": ["scenario"],
 }
 
 

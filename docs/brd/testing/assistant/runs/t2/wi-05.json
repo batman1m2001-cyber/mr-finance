@@ -1,0 +1,266 @@
+{
+ "id": "wi-05",
+ "category": "what_if",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Lạm phát 8%",
+ "why": "No inflation scenario exists: honest, with what can be said.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi sẽ thế nào?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi sẽ thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 29,20 tỷ (60%), Tiền & tiền gửi 8,50 tỷ (18%), Trái phiếu 5,08 tỷ (11%), Vàng 3,00 tỷ (6%), Chứng chỉ quỹ 2,60 tỷ (5%), Bảo hiểm 0,0 triệu (0%). Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm theo mức chi 40,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,64 tỷ; lớn nhất: Nhà phố Quận 3 (đang ở) −1,80 tỷ (sốc 10%); Căn hộ Võ Văn Tần (cho thuê) −1,12 tỷ (sốc 10%); Vàng miếng SJC −300,0 triệu (sốc 10%); Trái phiếu TCB12401 (Techcombank) −161,9 triệu (sốc 8%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "3 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 2,10 tỷ (55 tuổi), có 19,18 tỷ (dự kiến có lúc 55 tuổi), dư 17,08 tỷ, dòng tiền dư −3,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 400,0 triệu (dự phòng sẵn), có 10,86 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 10,46 tỷ, dòng tiền dư −3,0 triệu/tháng; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ, cần 3,00 tỷ (trong 12 tháng), có 10,86 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 7,86 tỷ, dòng tiền dư −3,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 2,10 tỷ · có 19,18 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 400,0 triệu · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Mục tiêu nghỉ hưu 2,1 tỷ (tính theo giá hôm nay) sau 10 năm với lạm phát 8%/năm, minh họa: 2100000000*1.08**10 = 4.533.742.494",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24699,
+     "output_tokens": 1661,
+     "requests": 3,
+     "cost_usd": 0.0033,
+     "tools_cost_usd": null
+    },
+    "turn_id": "09726a0c767846d09a497aaf759ec2a4",
+    "conversation_id": "f14c25e7ba744a83",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống chưa có mô phỏng lạm phát, nên đây là phép tính minh họa, không phải dự báo.\n\n- **Mục tiêu nghỉ hưu** cần 2,10 tỷ theo giá hôm nay (trang Mục tiêu, 2026-10-09).\n- Nếu lạm phát 8%/năm kéo dài **10 năm**, cùng mức sống sẽ cần khoảng **4,53 tỷ**.\n  - Công thức: 2100000000 × 1,08^10 = 4.533.742.494\n- **Tài sản hiện có**: tài sản ròng 48,38 tỷ (trang Tổng quan, 2026-10-09). Mục tiêu nghỉ hưu đang ghi 19,18 tỷ \"dự kiến có lúc 55 tuổi\", vượt xa 4,53 tỷ.\n\nTuy vậy, phần lớn tài sản là bất động sản (60%), tiền gửi chỉ 18%, nên lạm phát cao sẽ làm tiền mặt và trái phiếu mất giá trị thực. Dòng tiền hiện âm 3 triệu/tháng, cần lưu ý thêm.\n\nNếu muốn, tôi có thể chạy kịch bản \"lạm phát cao\" với các giả định cụ thể về nhà đất, lãi suất hoặc thu nhập.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259567.7674606,
+    "audit_seq": 934,
+    "session": {
+     "id": "f14c25e7ba744a83",
+     "title": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 11.380554066039622,
+   "first_event": 2.163837121799588,
+   "usage": {
+    "cost": 0.0033,
+    "input": 24699,
+    "output": 1661,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BZpaHPL7WhCwtHnTKn2AXr",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011QB1MVh2jK65Hy7XC9esM3",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BZpaHPL7WhCwtHnTKn2AXr",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 199,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011QB1MVh2jK65Hy7XC9esM3",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 199,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CQhnR5PeRWUr5MxeyHfE7C",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CQhnR5PeRWUr5MxeyHfE7C",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

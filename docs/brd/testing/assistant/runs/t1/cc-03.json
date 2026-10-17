@@ -1,0 +1,244 @@
+{
+ "id": "cc-03",
+ "category": "concerns",
+ "persona": "bố thấy mình không đủ (C01)",
+ "client_id": "C01",
+ "title": "Không bao giờ để dành đủ cho con",
+ "why": "Self-doubt about a goal: facts without judgment.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "FEAT-26"
+ ],
+ "turns": [
+  {
+   "say": "Tôi thấy mình chẳng bao giờ để dành đủ cho con cái cả.",
+   "expect": {
+    "tools_any": [
+     "muc_tieu",
+     "tong_quan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tôi thấy mình chẳng bao giờ để dành đủ cho con cái cả.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Định cư / con đi du học: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12901,
+     "output_tokens": 727,
+     "requests": 2,
+     "cost_usd": 0.001654,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b365c607c81a42f09c102808e8f36ac5",
+    "conversation_id": "2c6afeb796b44e5d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Cảm giác đó dễ hiểu, nhất là khi lo cho con. Nhìn số liệu thì có một phần đúng và một phần chưa hẳn:\n\n- **Đang chậm tiến độ:** mục tiêu học phí cho con (trong nước / du học) và mục tiêu định cư / con đi du học. Đây là hai mục tiêu cần để ý nhất.\n- **Đúng tiến độ:** nghỉ hưu sớm năm 55 tuổi và chi phí y tế lớn.\n- **Nền tảng hiện có:** tài sản ròng 43,53 tỷ, tiền dự phòng 4,72 tỷ đủ chi khoảng 3 năm (theo tổng quan ngày 09/10/2026).\n\nPhần lớn tài sản đang nằm ở bất động sản (70%), nên tiền để dành cho con chưa thật sự linh hoạt. Nếu bạn muốn, tôi có thể xem dòng tiền hằng tháng để biết cần để dành thêm bao nhiêu mỗi tháng cho mục tiêu học phí, hoặc mở trang kế hoạch để xem chi tiết từng mục tiêu. Bạn muốn bắt đầu từ đâu?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792257554.7054467,
+    "audit_seq": 730,
+    "session": {
+     "id": "2c6afeb796b44e5d",
+     "title": "Tôi thấy mình chẳng bao giờ để dành đủ cho con…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.416868969798088,
+   "first_event": 1.732022849842906,
+   "usage": {
+    "cost": 0.001654,
+    "input": 12901,
+    "output": 727,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018NGgf1QDJudzcj3oZAmnS2",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CFuTVvmLRCnArDY63Cas8K",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018NGgf1QDJudzcj3oZAmnS2",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 150,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CFuTVvmLRCnArDY63Cas8K",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 150,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

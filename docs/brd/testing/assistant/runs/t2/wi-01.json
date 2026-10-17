@@ -1,0 +1,373 @@
+{
+ "id": "wi-01",
+ "category": "what_if",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Chứng khoán sập 30%, thêm lãi suất, có trừ vào tài sản không",
+ "why": "One shock, then two together, then whether it touches net worth.",
+ "brd": [
+  "BRIEF-SCEN-02",
+  "OWN-GW-40",
+  "OWN-GW-38"
+ ],
+ "turns": [
+  {
+   "say": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "kich_ban",
+     "so_sanh_kich_ban"
+    ],
+    "says": "1,8"
+   }
+  },
+  {
+   "say": "Còn nếu cùng lúc lãi suất tăng thêm 2% nữa?",
+   "expect": {
+    "tools_any": [
+     "so_sanh_kich_ban"
+    ],
+    "says": "3,8"
+   }
+  },
+  {
+   "say": "Số đó có bị trừ vào tài sản ròng hiện tại của tôi không?",
+   "expect": {
+    "says": "không"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: giá cổ phiếu và quỹ cổ phiếu −30%. Kịch bản của bạn: tài sản ròng 43,53 tỷ → 41,86 tỷ (−1,66 tỷ). Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ → chậm tiến độ; Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "−1,66 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "class:stock",
+       "class:fund",
+       "goal:retire_early"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14710,
+     "output_tokens": 501,
+     "requests": 2,
+     "cost_usd": 0.001721,
+     "tools_cost_usd": null
+    },
+    "turn_id": "78ed5ec99bbd4dd09bc7c88bdc9b3b46",
+    "conversation_id": "a34d948d734a49d7",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu cổ phiếu và quỹ cổ phiếu giảm 30%, tài sản ròng của bạn sẽ giảm khoảng 1,66 tỷ đồng, từ 43,53 tỷ xuống còn khoảng 41,86 tỷ.\n\n- Cổ phiếu: giảm khoảng 1,48 tỷ\n- Quỹ cổ phiếu: giảm khoảng 0,19 tỷ\n\nHai mục tiêu sẽ chậm tiến độ thêm: nghỉ hưu sớm năm 55 tuổi và học phí cho con (mục học phí vốn đã chậm).\n\nĐây là ước tính từ mô phỏng trên số liệu ghi nhận ngày 09/10/2026, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "class:stock",
+     "class:fund",
+     "goal:retire_early"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792259521.3273609,
+    "audit_seq": 922,
+    "session": {
+     "id": "a34d948d734a49d7",
+     "title": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.167958443053067,
+   "first_event": 2.042227264959365,
+   "usage": {
+    "cost": 0.001721,
+    "input": 14710,
+    "output": 501,
+    "requests": 2
+   },
+   "why": [
+    "called none of ['kich_ban', 'so_sanh_kich_ban']",
+    "numbers not from the tools or the person: ['1,48 tỷ', '0,19 tỷ']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JAi25vBeKv7ztd6BiCs9yV",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JAi25vBeKv7ztd6BiCs9yV",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 110,
+     "focus": [
+      "scenario:custom",
+      "class:stock",
+      "class:fund",
+      "goal:retire_early"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Còn nếu cùng lúc lãi suất tăng thêm 2% nữa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: giá cổ phiếu và quỹ cổ phiếu −30%, lãi vay thả nổi +2 điểm %/năm. Kịch bản của bạn: tài sản ròng 43,53 tỷ → 41,81 tỷ (−1,71 tỷ). Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ → chậm tiến độ; Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "−1,71 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "class:stock",
+       "class:fund",
+       "goal:retire_early"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16630,
+     "output_tokens": 393,
+     "requests": 2,
+     "cost_usd": 0.00186,
+     "tools_cost_usd": null
+    },
+    "turn_id": "62f9a0dec8154f7bb9aadc26ec21ec79",
+    "conversation_id": "a34d948d734a49d7",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu cổ phiếu giảm 30% và lãi vay thả nổi tăng thêm 2 điểm %/năm cùng lúc, tài sản ròng giảm khoảng 1,71 tỷ, từ 43,53 tỷ xuống còn khoảng 41,81 tỷ.\n\nSo với chỉ cổ phiếu giảm 30%, lãi suất tăng thêm làm mất thêm khoảng 48 triệu. Các mục tiêu không đổi so với trường hợp trước.\n\nĐây là ước tính từ mô phỏng trên số liệu ghi nhận ngày 09/10/2026, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "class:stock",
+     "class:fund",
+     "goal:retire_early"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792259525.2952337,
+    "audit_seq": 923,
+    "session": {
+     "id": "a34d948d734a49d7",
+     "title": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.9347682469524443,
+   "first_event": 1.372738836798817,
+   "usage": {
+    "cost": 0.00186,
+    "input": 16630,
+    "output": 393,
+    "requests": 2
+   },
+   "why": [
+    "called none of ['so_sanh_kich_ban']",
+    "does not say /3,8/",
+    "numbers not from the tools or the person: ['48 triệu']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KTKwL87MwncCVudSohEKzk",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KTKwL87MwncCVudSohEKzk",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 108,
+     "focus": [
+      "scenario:custom",
+      "class:stock",
+      "class:fund",
+      "goal:retire_early"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Số đó có bị trừ vào tài sản ròng hiện tại của tôi không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8915,
+     "output_tokens": 224,
+     "requests": 1,
+     "cost_usd": 0.001004,
+     "tools_cost_usd": null
+    },
+    "turn_id": "27641d4d481c4ad49266ede336c5a7e3",
+    "conversation_id": "a34d948d734a49d7",
+    "compacted": false,
+    "status": "ok",
+    "text": "Không. Đây chỉ là mô phỏng. Tài sản ròng hiện tại của bạn vẫn là 43,53 tỷ, theo số ghi nhận ngày 09/10/2026. Con số giảm khoảng 1,71 tỷ chỉ xuất hiện trong kịch bản giả định, không ghi vào hồ sơ tài sản của bạn.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259527.526742,
+    "audit_seq": 924,
+    "session": {
+     "id": "a34d948d734a49d7",
+     "title": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 2.1944163548760116,
+   "first_event": 1.5534717021510005,
+   "usage": {
+    "cost": 0.001004,
+    "input": 8915,
+    "output": 224,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

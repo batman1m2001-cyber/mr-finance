@@ -1,0 +1,425 @@
+{
+ "id": "ms-02",
+ "category": "memory_sessions",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Phiên mới không biết điều chưa được ghi nhớ",
+ "why": "A fact said in one session, not saved: a new session must not pretend to know it.",
+ "brd": [
+  "OWN-AS-11",
+  "OWN-AS-12",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "expect": {
+    "grounded": false
+   },
+   "new_session": true
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7496,
+     "output_tokens": 524,
+     "requests": 1,
+     "cost_usd": 0.001012,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0de03b051c7c4b34a39c9f77e86e3ca8",
+    "conversation_id": "ab4e33b48b1e44f7",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chúc mừng bạn! Bạn đang có kế hoạch gì cho khoản chi phí sắp tới không?\n\nTôi có thể giúp bạn:\n- **Xem dòng tiền** để đánh giá khả năng chi trả cho sinh nở và chăm con.\n- **Kiểm tra mục tiêu** đang theo dõi, xem có cần thêm mục tiêu quỹ dự phòng cho em bé không.\n- **Mô phỏng** tình huống thu nhập giảm trong thời gian nghỉ thai sản.\n\nNếu bạn muốn tôi ghi nhớ thông tin này cho những lần trò chuyện sau, hãy nói rõ với tôi.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263553.6801128,
+    "audit_seq": 1494,
+    "session": {
+     "id": "ab4e33b48b1e44f7",
+     "title": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.743462424725294,
+   "first_event": 2.600888646673411,
+   "usage": {
+    "cost": 0.001012,
+    "input": 7496,
+    "output": 524,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ, cần 1,72 tỷ (trong 24 tháng), có 800,0 triệu (thanh khoản ngoài 6 tháng chi tiêu), thiếu 924,0 triệu, cần để dành 36,7 triệu/tháng, dòng tiền dư 30,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 16,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 15%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 16,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 15%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “tháng 3” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "nho_lai",
+      "label": "Bộ nhớ",
+      "status": "ok",
+      "text": "Chưa có điều gì được ghi nhớ về bạn.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "6 yếu tố đang tác động: 3 rủi ro, 3 cơ hội; tổng ước tính +161,6 triệu. Lớn nhất: Đường Vành đai 3 TP.HCM hoàn thành — Cơ hội: BĐS gần dự án (Căn hộ Vinhomes Grand Park) ước tính +234 triệu. Từng yếu tố: Đường Vành đai 3 TP.HCM hoàn thành (dự án hạ tầng, đang lấy ý kiến / dự kiến) +117,0 triệu; Nâng hạng thị trường chứng khoán (chính sách, đã thông qua / đã diễn ra) +32,3 triệu; Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh (chính sách, đã thông qua / đã diễn ra) +20,4 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −5,2 triệu; Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định) (chính sách, dự thảo) −2,6 triệu; Thay đổi thuế chuyển nhượng chứng khoán (chính sách, dự thảo) −0,2 triệu.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Đường Vành đai 3 TP.HCM hoàn thành",
+         "sub": "+117,0 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+32,3 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh",
+         "sub": "+20,4 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Lãi suất điều hành tăng 0,5%",
+         "sub": "−5,2 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định)",
+         "sub": "−2,6 triệu · Dự thảo",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch thông xe 2026 (cần kiểm tra tiến độ)",
+       "Mức giảm trừ gia cảnh 15,5 triệu (bản thân) và 6,2 triệu (mỗi người phụ thuộc) từ 2026 (cần kiểm tra)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 33084,
+     "output_tokens": 1220,
+     "requests": 4,
+     "cost_usd": 0.003918,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e4321baa090e47c8bd3113727e8cb581",
+    "conversation_id": "e01223fb266c4c93",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tìm thấy việc nào được đặt vào tháng 3 năm sau (tháng 3/2027).\n\nThứ gần nhất tôi thấy là mục tiêu **mua thêm BĐS bằng vốn vay**, đang chậm tiến độ. Mục tiêu cần 1,72 tỷ đồng trong 24 tháng, hiện có 800 triệu, còn thiếu khoảng 924 triệu. Hồ sơ không ghi ngày cụ thể, nên tôi chưa xác định được mục tiêu rơi vào tháng nào.\n\nSố liệu tính đến 09/10/2026, lấy từ trang Mục tiêu và trang Tổng quan. Ngoài ra, bảng tin đang cảnh báo mức sụt giảm ước tính khi thị trường xấu là 16,8%, vượt ngưỡng chấp nhận 15%.\n\nNếu bạn có kế hoạch cụ thể cho tháng 3 (ví dụ đóng tiền, đáo hạn khoản vay hay mua nhà), bạn cho tôi biết để tôi kiểm tra trong dữ liệu. Bạn cũng có thể xem dòng tiền từng tháng ở trang Dòng tiền.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt",
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch thông xe 2026 (cần kiểm tra tiến độ)",
+     "Mức giảm trừ gia cảnh 15,5 triệu (bản thân) và 6,2 triệu (mỗi người phụ thuộc) từ 2026 (cần kiểm tra)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263563.9542348,
+    "audit_seq": 1495,
+    "session": {
+     "id": "e01223fb266c4c93",
+     "title": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 10.24042954761535,
+   "first_event": 2.1972833117470145,
+   "usage": {
+    "cost": 0.003918,
+    "input": 33084,
+    "output": 1220,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01U2Yu7a93kNzr1PRZEZJQc9",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013Dkmx1owZN3KpieBDKqHPG",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01U2Yu7a93kNzr1PRZEZJQc9",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 197,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013Dkmx1owZN3KpieBDKqHPG",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 277,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016L56uQqxYSucNrZC1bhytW",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JGuZ5kjP8zbPVAAJcwzpL3",
+     "tool": "nho_lai",
+     "label": "Bộ nhớ",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JGuZ5kjP8zbPVAAJcwzpL3",
+     "tool": "nho_lai",
+     "ok": true,
+     "ms": 83,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016L56uQqxYSucNrZC1bhytW",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 130,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QDKzM3jNWNkRSKZxiyfcL7",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QDKzM3jNWNkRSKZxiyfcL7",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 129,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

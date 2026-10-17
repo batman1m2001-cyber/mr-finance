@@ -32,6 +32,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "kich_ban": "Kịch bản",
     "lien_ket": "Liên kết",
     "so_sanh_kich_ban": "So sánh kịch bản",
+    "gia_dinh": "Giả định của bạn",
     "hom_nay": "Hôm nay",
     "hop_tin": "Hộp tin",
     "tin_bi_giu": "Tin bị giữ",
@@ -114,12 +115,21 @@ def _seen(tool: Tool, ctx: Ctx, out: Dict[str, Any]) -> Seen:
     return s
 
 
-def _signature(tool: Tool):
+def _choices(tool: Tool, name: str, role: str) -> List[str]:
+    """An enumeration as the role sees it: ``mo_trang`` offers only the pages the role can open (stress test D26: a
+    customer was offered the admins' Hệ thống page)."""
+    if tool.name == "mo_trang" and name == "page":
+        return [p for p in tool.args[name] if role in tools.PAGES[p][1]]
+    return tool.args[name]
+
+
+def _signature(tool: Tool, role: str):
     """The tool's arguments as a Python signature (RunContext first), so operonx-agents types and validates them:
     enumerations as ``Literal`` (optional: the tool has a default), free arguments as declared."""
     required, optional, docs = [], [], []
     hints: Dict[str, Any] = {"rctx": RunContext}
-    for name, choices in tool.args.items():
+    for name in tool.args:
+        choices = _choices(tool, name, role)
         hints[name] = Optional[Literal[tuple(choices)]]
         optional.append(inspect.Parameter(name, inspect.Parameter.KEYWORD_ONLY, default=None))
         docs.append(f"    {name}: một trong {', '.join(choices)}")
@@ -135,7 +145,7 @@ def _signature(tool: Tool):
     return inspect.Signature([first, *required, *optional]), hints, doc
 
 
-def _agent_tool(tool: Tool):
+def _agent_tool(tool: Tool, role: str):
     async def call(rctx: RunContext, **kwargs) -> Seen:
         ctx: Ctx = rctx.deps
         allowed(tool, ctx.role)  # the role's toolset holds only its tools; checked again on the person given
@@ -150,7 +160,7 @@ def _agent_tool(tool: Tool):
     def verify(rctx: RunContext, args: Dict[str, Any], result: Seen):
         return tool.verify(rctx.deps, result._out)
 
-    call.__signature__, call.__annotations__, call.__doc__ = _signature(tool)
+    call.__signature__, call.__annotations__, call.__doc__ = _signature(tool, role)
     call.__name__ = call.__qualname__ = tool.name
     return agent_tool(
         call,
@@ -165,4 +175,4 @@ def _agent_tool(tool: Tool):
 @functools.lru_cache(maxsize=None)
 def agent_tools(role: str) -> tuple:
     """The role's tools for an operonx-agents ``Agent``; the person rides in ``RunContext.deps``."""
-    return tuple(_agent_tool(t) for t in for_role(role))
+    return tuple(_agent_tool(t, role) for t in for_role(role))

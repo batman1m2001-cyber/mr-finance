@@ -1,0 +1,245 @@
+{
+ "id": "cc-03",
+ "category": "concerns",
+ "persona": "bố thấy mình không đủ (C01)",
+ "client_id": "C01",
+ "title": "Không bao giờ để dành đủ cho con",
+ "why": "Self-doubt about a goal: facts without judgment.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "FEAT-26"
+ ],
+ "turns": [
+  {
+   "say": "Tôi thấy mình chẳng bao giờ để dành đủ cho con cái cả.",
+   "expect": {
+    "tools_any": [
+     "muc_tieu",
+     "tong_quan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tôi thấy mình chẳng bao giờ để dành đủ cho con cái cả.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ, cần 7,56 tỷ (2030), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 3,53 tỷ, cần để dành 79,1 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 27,60 tỷ (55 tuổi), có 27,30 tỷ (dự kiến có lúc 55 tuổi), thiếu 302,6 triệu, cần để dành 1,3 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 1,00 tỷ (dự phòng sẵn), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 3,03 tỷ, dòng tiền dư 5,0 triệu/tháng; Định cư / con đi du học: chậm tiến độ, cần 5,53 tỷ (trong 12 tháng), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 1,50 tỷ, cần để dành 122,4 triệu/tháng, dòng tiền dư 5,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16046,
+     "output_tokens": 766,
+     "requests": 2,
+     "cost_usd": 0.001988,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b3d7e3e7959a4a949515cd380ad4a354",
+    "conversation_id": "ff1cff4bfc04458b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi hiểu cảm giác đó. Theo số liệu hệ thống, mục tiêu học phí cho con đang chậm tiến độ:\n\n- **Cần:** 7,56 tỷ vào năm 2030\n- **Đã có:** 4,03 tỷ\n- **Còn thiếu:** 3,53 tỷ\n- **Cần để dành:** khoảng 79,1 triệu/tháng\n- **Dòng tiền dư hiện tại:** 5,0 triệu/tháng\n\nMục tiêu định cư hoặc du học cho con cũng đang chậm, thiếu khoảng 1,50 tỷ trong 12 tháng tới. Các mục tiêu này tính trên tài sản hiện có, theo hồ sơ ngày 2026-10-09.\n\nTôi có thể xem dòng tiền từng tháng để tìm chỗ tiết kiệm được, hoặc xem lại thời hạn và số tiền của mục tiêu học phí. Bạn muốn xem phần nào?",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792259608.02068,
+    "audit_seq": 943,
+    "session": {
+     "id": "ff1cff4bfc04458b",
+     "title": "Tôi thấy mình chẳng bao giờ để dành đủ cho con…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.069218497723341,
+   "first_event": 3.0986249428242445,
+   "usage": {
+    "cost": 0.001988,
+    "input": 16046,
+    "output": 766,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01F5qWCHyPEr8QzWCm2kaRW3",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Q7p37ESTvsD4SUUD83YZcf",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01F5qWCHyPEr8QzWCm2kaRW3",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 198,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Q7p37ESTvsD4SUUD83YZcf",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 198,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

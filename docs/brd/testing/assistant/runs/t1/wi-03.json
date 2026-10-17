@@ -1,0 +1,311 @@
+{
+ "id": "wi-03",
+ "category": "what_if",
+ "persona": "trưởng phòng sợ mất việc (C05)",
+ "client_id": "C05",
+ "title": "Mất việc 6 tháng",
+ "why": "Income loss: the tools have no job-loss scenario by name; months of reserve are the honest answer.",
+ "brd": [
+  "BRIEF-SCEN-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Nếu mình mất việc 6 tháng thì sao?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien",
+     "kich_ban"
+    ],
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu mình mất việc 6 tháng thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 69%, Tiền & tiền gửi 17%, Cổ phiếu 8%, Chứng chỉ quỹ 5%. Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Tổng chi 6 tháng khi không còn thu nhập (theo chi tháng 09/2026): 51.2*6 = 307,2",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Thanh khoản còn lại sau 6 tháng (triệu đồng): 980-51.2*6 = 672,8",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 20083,
+     "output_tokens": 1322,
+     "requests": 3,
+     "cost_usd": 0.002669,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c6f815024e9d46b8bfd1f829c3548b40",
+    "conversation_id": "8334d6a790344889",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu mất việc 6 tháng, theo số liệu hiện có, thanh khoản dự phòng vẫn đủ, nhưng mức chi hiện tại sẽ ăn khoảng một nửa quỹ đó.\n\n- **Thanh khoản dự phòng:** 980,0 triệu đồng (trang Tổng quan, ngày 09/10/2026).\n- **Chi hàng tháng:** 51,2 triệu đồng (tháng 09/2026), trong đó trả nợ vay 26,0 triệu.\n- **Tổng chi 6 tháng:** 51,2 × 6 = 307,2 triệu đồng.\n- **Còn lại sau 6 tháng:** 980 − 51,2 × 6 = 672,8 triệu đồng.\n\nĐây là ước tính giả định bạn không có thu nhập và chi tiêu giữ nguyên, không phải dự báo. Nếu cắt được chi tiêu không thiết yếu thì quỹ sẽ kéo dài hơn. Nếu bạn muốn, mình có thể xem thêm tình hình danh mục khi thị trường xấu. Phần này hiện đang vượt ngưỡng rủi ro: mức sụt giảm ước tính 16,8% so với ngưỡng 15%.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn",
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257473.0171456,
+    "audit_seq": 716,
+    "session": {
+     "id": "8334d6a790344889",
+     "title": "Nếu mình mất việc 6 tháng thì sao?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 8.974441633094102,
+   "first_event": 1.8816524520516396,
+   "usage": {
+    "cost": 0.002669,
+    "input": 20083,
+    "output": 1322,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PfaLSMpXe7Mcd8AnaxEoSA",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LLuD65Fh2ksxziWzH32Hq1",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PfaLSMpXe7Mcd8AnaxEoSA",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 127,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LLuD65Fh2ksxziWzH32Hq1",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 127,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GvRQCm9PrTAHPEy1eeHhsb",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_019oHoxJvfgJnHYaLvXs2Fjg",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GvRQCm9PrTAHPEy1eeHhsb",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_019oHoxJvfgJnHYaLvXs2Fjg",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

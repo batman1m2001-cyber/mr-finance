@@ -1,0 +1,402 @@
+{
+ "id": "cc-04",
+ "category": "concerns",
+ "persona": "con phải gửi tiền về cho bố mẹ (C03)",
+ "client_id": "C03",
+ "title": "Gửi tiền về cho bố mẹ ốm",
+ "why": "Missing information: the amount must be asked for, not assumed.",
+ "brd": [
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền về, liệu em có ổn không?",
+   "expect": {
+    "grounded": false,
+    "says": "bao nhiêu|số tiền|mỗi tháng"
+   }
+  },
+  {
+   "say": "Khoảng 15 triệu một tháng.",
+   "expect": {
+    "tools_any": [
+     "dong_tien",
+     "tong_quan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền về, liệu em có ổn không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước) = tổng tài sản 8,17 tỷ − nợ 628,0 triệu (Vay ký quỹ TCBS 600,0 triệu; Dư nợ thẻ Visa Platinum 28,0 triệu). Phân bổ tài sản: Cổ phiếu 54%, Tài sản số 31%, Chứng chỉ quỹ 11%, Tiền & tiền gửi 4%. Tập trung vượt ngưỡng: Tổ chức phát hành SSI: 16,2% tài sản (ngưỡng 10%); Tổ chức phát hành Đức Giang: 11,3% tài sản (ngưỡng 10%); Tổ chức phát hành Hòa Phát: 10,1% tài sản (ngưỡng 10%). Thanh khoản dự phòng 300,0 triệu, đủ chi 7 tháng. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 79,8 triệu, tiền ra 56,5 triệu, còn lại 23,3 triệu. Khoản chi lớn nhất: Thanh toán thẻ 27,2 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Thanh toán thẻ",
+         "value": 27190000.0,
+         "text": "27,2 triệu"
+        },
+        {
+         "label": "Tiền thuê nhà",
+         "value": 15000000.0,
+         "text": "15,0 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 14297000.0,
+         "text": "14,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "79,8 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "56,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "23,3 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:card"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "11 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12917,
+     "output_tokens": 1124,
+     "requests": 2,
+     "cost_usd": 0.001854,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9368d6a6cd2c48a1822840f3c65b11fb",
+    "conversation_id": "82f64af607894f0b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Em đang gánh một khoản lo lớn, và các số liệu cho thấy tình hình hiện tại vẫn ổn định, nhưng có vài điểm em nên để ý.\n\n**Dòng tiền tháng 09/2026** (nguồn: trang tổng quan, ghi nhận đến ngày 09/10/2026)\n- Tiền vào: 79,8 triệu\n- Tiền ra: 56,5 triệu\n- Còn lại: 23,3 triệu\n- Khoản chi lớn nhất là thanh toán thẻ 27,2 triệu. Hệ thống không tách riêng khoản gửi về quê, nên em hãy cho tôi biết số tiền gửi hằng tháng để tôi tính chính xác hơn.\n\n**Tình hình tài chính**\n- Tài sản ròng 7,54 tỷ, tăng 309 triệu (4,3%) so với tháng trước.\n- Tiền dự phòng 300 triệu, đủ chi khoảng 7 tháng. Đây là điểm tựa quan trọng khi bố mẹ đau ốm đột xuất.\n- Nợ 628 triệu, gồm vay ký quỹ TCBS 600 triệu và dư nợ thẻ 28 triệu. Khoản vay ký quỹ cần theo dõi vì nó làm rủi ro tăng khi thị trường giảm.\n\n**Điểm cần lưu ý**\n- Danh mục đang tập trung: SSI chiếm 16,2% tài sản, Đức Giang 11,3%, Hòa Phát 10,1%, đều vượt ngưỡng 10%.\n- Nếu thị trường xấu, mức sụt giảm ước tính khoảng 43%, vượt ngưỡng 30%. Đây là ước tính từ mô hình, không phải dự báo.\n\nNhìn chung, dòng tiền hằng tháng còn dương và có quỹ dự phòng, nên em chưa gặp rủi ro ngay. Tuy vậy, nếu khoản gửi về tăng hoặc bố mẹ cần chi phí y tế lớn, khoản vay ký quỹ và danh mục tập trung có thể khiến em bị áp lực hơn. Em có muốn tôi chạy kịch bản sốc cổ phiếu để xem danh mục chịu được đến đâu không?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn",
+     "11 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:card"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257562.1125374,
+    "audit_seq": 732,
+    "session": {
+     "id": "82f64af607894f0b",
+     "title": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.317755484953523,
+   "first_event": 1.5447320379316807,
+   "usage": {
+    "cost": 0.001854,
+    "input": 12917,
+    "output": 1124,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018wWHqg3UaFsgkCbmyDJ8pj",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016Rs4BE64rD3ZfSWzwSDWfJ",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018wWHqg3UaFsgkCbmyDJ8pj",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 133,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016Rs4BE64rD3ZfSWzwSDWfJ",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 132,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:card"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Khoảng 15 triệu một tháng.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Còn lại tháng 09/2026 sau khi gửi về quê 15 triệu, nếu khoản này chưa nằm trong 56,5 triệu tiền ra: 23.313-15 = 8,31",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Số tháng tiền dự phòng 300 triệu có thể chi khoản gửi về 15 triệu mỗi tháng: 300/15 = 20",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15913,
+     "output_tokens": 1067,
+     "requests": 2,
+     "cost_usd": 0.002125,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7cb6316974aa4b52ab2c2bd461072cad",
+    "conversation_id": "82f64af607894f0b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu khoản 15 triệu **chưa** nằm trong 56,5 triệu tiền ra tháng 09, thì sau khi gửi về quê, phần còn lại khoảng **8,3 triệu** (23,313 − 15 = 8,313 triệu). Nếu khoản này **đã** nằm trong 56,5 triệu, thì 23,3 triệu vẫn là con số đúng. Hệ thống không tách riêng khoản gửi về quê nên em kiểm tra lại giúp tôi.\n\nVề quỹ dự phòng, 300 triệu đủ trả khoản 15 triệu mỗi tháng trong khoảng **20 tháng** (300 / 15 = 20), nếu không có khoản chi nào khác. Con số 7 tháng mà hệ thống báo trước đó dựa trên tổng chi tiêu của em, nên hai con số này không mâu thuẫn.\n\nĐiều em cần cân nhắc là dòng tiền còn lại chỉ khoảng 8 đến 23 triệu mỗi tháng. Nếu bố mẹ cần chi phí y tế lớn đột xuất, em có thể phải rút từ quỹ dự phòng. Em có muốn tôi ghi nhớ khoản gửi về 15 triệu mỗi tháng để lần sau tính toán chính xác hơn không?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257569.2739258,
+    "audit_seq": 733,
+    "session": {
+     "id": "82f64af607894f0b",
+     "title": "Bố mẹ em ốm, tháng nào em cũng phải gửi tiền…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.138400162104517,
+   "first_event": 3.178468868136406,
+   "usage": {
+    "cost": 0.002125,
+    "input": 15913,
+    "output": 1067,
+    "requests": 2
+   },
+   "why": [
+    "numbers not from the tools or the person: ['23 triệu']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01FiLzA6w4mV8mscwMrtYBWo",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016uBwsjpicyHY6JPJuw7kWY",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01FiLzA6w4mV8mscwMrtYBWo",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016uBwsjpicyHY6JPJuw7kWY",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

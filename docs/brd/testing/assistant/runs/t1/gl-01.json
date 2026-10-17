@@ -1,0 +1,682 @@
+{
+ "id": "gl-01",
+ "category": "goals",
+ "persona": "bố lo học phí (C01)",
+ "client_id": "C01",
+ "title": "Học phí cho con, du học, để dành mỗi tháng",
+ "why": "A goal's status, a variant, the monthly need.",
+ "brd": [
+  "BRIEF-SCEN-01",
+  "FEAT-26",
+  "OWN-GW-36"
+ ],
+ "turns": [
+  {
+   "say": "Tiền học phí cho con tôi có đủ không?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu"
+    ]
+   }
+  },
+  {
+   "say": "Nếu con đi du học thay vì học trong nước thì sao?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu",
+     "kich_ban"
+    ]
+   }
+  },
+  {
+   "say": "Vậy mỗi tháng tôi cần để dành bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu"
+    ],
+    "says": "triệu"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tiền học phí cho con tôi có đủ không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Định cư / con đi du học: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 120,4 triệu, tiền ra 90,4 triệu, còn lại 30,0 triệu. Khoản chi lớn nhất: Trả nợ vay 38,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 38000000.0,
+         "text": "38,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 34770000.0,
+         "text": "34,8 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 17623000.0,
+         "text": "17,6 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "120,4 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "90,4 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "30,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "1 kết quả cho “học phí”: Học phí cho con (trong nước / du học).",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "Gia đình & con cái",
+         "route": "#/client/muc-tieu/ke-hoach"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 26486,
+     "output_tokens": 1215,
+     "requests": 4,
+     "cost_usd": 0.003256,
+     "tools_cost_usd": null
+    },
+    "turn_id": "02f9552158ca4402bfa197f24699c499",
+    "conversation_id": "1316eff196b94377",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện tại học phí cho con **chưa đúng tiến độ**. Hệ thống ghi mục tiêu \"Học phí cho con (trong nước / du học)\" là **chậm tiến độ**. Tôi chưa có con số cụ thể về tổng học phí cần chuẩn bị hay số tiền đã tích lũy, nên chưa thể nói chính xác còn thiếu bao nhiêu.\n\nMột số số liệu liên quan:\n- **Dòng tiền tháng 09/2026** (trang Toàn cảnh): tiền vào 120,4 triệu, tiền ra 90,4 triệu, còn lại 30,0 triệu. Khoản chi lớn nhất là trả nợ vay 38,0 triệu.\n- **Thanh khoản dự phòng**: 4,72 tỷ, đủ chi khoảng 3 năm (trang Toàn cảnh, ngày 09/10/2026).\n- **Tài sản ròng**: 43,53 tỷ, tăng 980,5 triệu so với tháng trước (ngày 09/10/2026).\n\nĐể biết cụ thể, bạn có thể mở trang Kế hoạch (mục tiêu học phí) để xem số tiền cần, số đã có và thời điểm cần tiền. Nếu bạn cho tôi biết học phí dự kiến mỗi năm và số năm còn lại, tôi có thể tính giúp mức tiết kiệm cần thêm mỗi tháng.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "9 giao dịch của tháng",
+     "Tổng hợp 21 khoản từ 7 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792257342.6991332,
+    "audit_seq": 694,
+    "session": {
+     "id": "1316eff196b94377",
+     "title": "Tiền học phí cho con tôi có đủ không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 9.854911720845848,
+   "first_event": 1.590708496980369,
+   "usage": {
+    "cost": 0.003256,
+    "input": 26486,
+    "output": 1215,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Xs6o5FcqWrpDzz8gXVhTkp",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013fkpPpifscHRHqdCjXVAN7",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Xs6o5FcqWrpDzz8gXVhTkp",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 130,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013fkpPpifscHRHqdCjXVAN7",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 130,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SjKAj8GJ2s1eokRGSmJ9oe",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SjKAj8GJ2s1eokRGSmJ9oe",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 94,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QvUjNio4SE12yQejmvLEKw",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QvUjNio4SE12yQejmvLEKw",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 82,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Nếu con đi du học thay vì học trong nước thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok"
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "2 kết quả cho “du học”: Học phí cho con (trong nước / du học); Định cư / con đi du học.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "Gia đình & con cái",
+         "route": "#/client/muc-tieu/ke-hoach"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "Gia đình & con cái",
+         "route": "#/client/muc-tieu/ke-hoach"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15757,
+     "output_tokens": 919,
+     "requests": 2,
+     "cost_usd": 0.002035,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5f876a43089b41ff83488e4ca0ce470c",
+    "conversation_id": "1316eff196b94377",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa có số liệu để so sánh trực tiếp. Hệ thống không ghi học phí trong nước hay học phí du học, nên chưa thể nói du học cần thêm bao nhiêu.\n\nĐiều hệ thống ghi nhận:\n- Mục tiêu **Học phí cho con (trong nước / du học)** đang **chậm tiến độ**, tính trên tài sản hiện có.\n- Mục tiêu **Định cư / con đi du học** cũng đang **chậm tiến độ**. Đây là mục tiêu riêng, và nó đã được ghi nhận chậm trước khi bạn hỏi về du học.\n\nNếu bạn cho tôi học phí dự kiến hằng năm ở trong nước và ở nước ngoài, cùng số năm học, tôi sẽ tính tổng chi phí của từng phương án và mức tiết kiệm cần thêm mỗi tháng bằng công cụ tính, có ghi công thức để bạn kiểm lại. Kết quả là ước tính dựa trên số bạn cung cấp, không phải dự báo. Tôi cũng có thể tìm mặt bằng học phí du học trên web để bạn tham khảo, nhưng đó là số chung, không phải số của gia đình bạn.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257349.9084642,
+    "audit_seq": 695,
+    "session": {
+     "id": "1316eff196b94377",
+     "title": "Tiền học phí cho con tôi có đủ không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.175725372042507,
+   "first_event": 1.7182354959659278,
+   "usage": {
+    "cost": 0.002035,
+    "input": 15757,
+    "output": 919,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01S5h1TXMUumrrJwPPsaBfiv",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01S5h1TXMUumrrJwPPsaBfiv",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 90,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Vậy mỗi tháng tôi cần để dành bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok"
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok"
+     },
+     {
+      "tool": "tai_lieu",
+      "label": "Tài liệu của bạn",
+      "status": "ok",
+      "text": "Không thấy trong tài liệu bạn đã thêm.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17043,
+     "output_tokens": 527,
+     "requests": 2,
+     "cost_usd": 0.001968,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9376f8b0395e40a491434134fa370233",
+    "conversation_id": "1316eff196b94377",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tính được số tiền cần để dành mỗi tháng, vì hệ thống chưa có các số cần thiết:\n- Tổng học phí dự kiến (trong nước hoặc du học) và số năm học còn lại.\n- Số tiền đã tích lũy cho mục tiêu này.\n- Lợi suất kỳ vọng của khoản tiết kiệm.\n\nTôi cũng đã tìm trong tài liệu bạn tự thêm ở trang Bộ nhớ, và không có thông tin nào về học phí.\n\nBạn cho tôi ba con số trên, tôi sẽ tính bằng công cụ và ghi rõ công thức. Ví dụ, nếu bạn cho biết học phí mỗi năm, số năm, và số đã có, tôi sẽ tính phần còn thiếu rồi chia đều theo tháng. Kết quả là ước tính theo giả định bạn đưa ra, không phải dự báo lợi nhuận.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257354.433907,
+    "audit_seq": 696,
+    "session": {
+     "id": "1316eff196b94377",
+     "title": "Tiền học phí cho con tôi có đủ không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 4.495323013979942,
+   "first_event": 1.956701863091439,
+   "usage": {
+    "cost": 0.001968,
+    "input": 17043,
+    "output": 527,
+    "requests": 2
+   },
+   "why": [
+    "does not say /triệu/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018DWek3HfW7fRa5Edwuqhq3",
+     "tool": "tai_lieu",
+     "label": "Tài liệu của bạn",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018DWek3HfW7fRa5Edwuqhq3",
+     "tool": "tai_lieu",
+     "ok": true,
+     "ms": 37,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

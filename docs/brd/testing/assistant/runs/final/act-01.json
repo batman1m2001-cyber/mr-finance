@@ -1,0 +1,402 @@
+{
+ "id": "act-01",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Ghi nhớ một sở thích, rồi dùng nó ở phiên mới",
+ "why": "A memory write: confirmation, the state read back, then used in a new session.",
+ "brd": [
+  "OWN-AS-06",
+  "OWN-AS-12",
+  "OWN-AS-14",
+  "OWN-AS-05",
+  "KIT-COPILOT-06"
+ ],
+ "turns": [
+  {
+   "say": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm vào bất động sản nữa.",
+   "expect": {
+    "status": "pending",
+    "pending": "ghi_nho",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "status": "ok",
+    "grounded": false
+   },
+   "state": {
+    "memory_has": "bất động sản"
+   }
+  },
+  {
+   "say": "Bạn nhớ gì về tôi?",
+   "expect": {
+    "tools_any": [
+     "nho_lai"
+    ],
+    "says": "bất động sản",
+    "grounded": false
+   },
+   "new_session": true
+  }
+ ],
+ "run": [
+  {
+   "say": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm vào bất động sản nữa.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7618,
+     "output_tokens": 95,
+     "requests": 1,
+     "cost_usd": 0.000809,
+     "tools_cost_usd": null
+    },
+    "turn_id": "67303274799f42578645d47d019d4734",
+    "conversation_id": "d17e9b009ebd46c9",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "79ab945fc281d569f88ff11cf3a9af5d",
+      "tool": "ghi_nho",
+      "summary": "Ghi nhớ (Sở thích): “Không muốn đầu tư thêm vào bất động sản nữa”?"
+     }
+    ],
+    "text": "Ghi nhớ (Sở thích): “Không muốn đầu tư thêm vào bất động sản nữa”?",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263480.5663912,
+    "audit_seq": 1461,
+    "session": {
+     "id": "d17e9b009ebd46c9",
+     "title": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.5731902327388525,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000809,
+    "input": 7618,
+    "output": 95,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01FPUqkYsnj5ZLFkedcik3c6",
+     "tool": "ghi_nho",
+     "label": "Ghi nhớ"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ghi_nho",
+      "label": "Ghi nhớ",
+      "status": "ok",
+      "text": "Đã ghi nhớ: “Không muốn đầu tư thêm vào bất động sản nữa”. Bạn xem, sửa hoặc xoá ở trang Bộ nhớ.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15497,
+     "output_tokens": 167,
+     "requests": 2,
+     "cost_usd": 0.001633,
+     "tools_cost_usd": null
+    },
+    "turn_id": "67303274799f42578645d47d019d4734",
+    "conversation_id": "d17e9b009ebd46c9",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã ghi nhớ: bạn không muốn đầu tư thêm vào bất động sản nữa. Bạn có thể xem, sửa hoặc xoá ở trang Bộ nhớ.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263482.088594,
+    "audit_seq": 1462,
+    "session": {
+     "id": "d17e9b009ebd46c9",
+     "title": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.4733805060386658,
+   "first_event": 0.17728125909343362,
+   "usage": {
+    "cost": 0.001633,
+    "input": 15497,
+    "output": 167,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01FPUqkYsnj5ZLFkedcik3c6",
+     "tool": "ghi_nho",
+     "label": "Ghi nhớ",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01FPUqkYsnj5ZLFkedcik3c6",
+     "tool": "ghi_nho",
+     "ok": true,
+     "ms": 143,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "16121da710c24d89857233bb31b3fc2d",
+      "kind": "preference",
+      "text": "Không muốn đầu tư thêm vào bất động sản nữa",
+      "source": {
+       "conversation": "d17e9b009ebd46c9"
+      },
+      "confidence": 1.0,
+      "created": 1792263480.8119326,
+      "updated": 1792263480.8119326,
+      "expires": null,
+      "kind_label": "Sở thích"
+     },
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Bạn nhớ gì về tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "nho_lai",
+      "label": "Bộ nhớ",
+      "status": "ok",
+      "text": "Điều bạn đã nhờ ghi nhớ: (Sở thích) Không muốn đầu tư thêm vào bất động sản nữa. (Sở thích) Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15568,
+     "output_tokens": 294,
+     "requests": 2,
+     "cost_usd": 0.001704,
+     "tools_cost_usd": null
+    },
+    "turn_id": "099403ba05a5458d995019dd7ba5f924",
+    "conversation_id": "68fc98178ce54d1c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đang ghi nhớ hai điều từ bạn:\n\n- Không muốn đầu tư thêm vào bất động sản nữa.\n- Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản.\n\nTôi chỉ ghi nhớ những gì bạn nhờ, và bạn có thể xem hoặc sửa ở trang Bộ nhớ. Nếu bạn muốn, tôi có thể xem tổng quan tài sản hoặc mục tiêu học phí hiện tại của bạn.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263485.3857582,
+    "audit_seq": 1463,
+    "session": {
+     "id": "68fc98178ce54d1c",
+     "title": "Bạn nhớ gì về tôi?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.2621694151312113,
+   "first_event": 1.5064054941758513,
+   "usage": {
+    "cost": 0.001704,
+    "input": 15568,
+    "output": 294,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LH267PGz1HShmVJPVykQqx",
+     "tool": "nho_lai",
+     "label": "Bộ nhớ",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LH267PGz1HShmVJPVykQqx",
+     "tool": "nho_lai",
+     "ok": true,
+     "ms": 4,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "16121da710c24d89857233bb31b3fc2d",
+      "kind": "preference",
+      "text": "Không muốn đầu tư thêm vào bất động sản nữa",
+      "source": {
+       "conversation": "d17e9b009ebd46c9"
+      },
+      "confidence": 1.0,
+      "created": 1792263480.8119326,
+      "updated": 1792263480.8119326,
+      "expires": null,
+      "kind_label": "Sở thích"
+     },
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  }
+ ]
+}

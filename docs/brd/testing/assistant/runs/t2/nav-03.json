@@ -1,0 +1,323 @@
+{
+ "id": "nav-03",
+ "category": "navigation",
+ "persona": "đang xem đồ thị, chọn một mục tiêu (C01)",
+ "client_id": "C01",
+ "title": "“Nút này nghĩa là gì?” với một mục tiêu đang chọn",
+ "why": "The person picks a goal node and asks about “this”: the selection must reach the answer.",
+ "brd": [
+  "OWN-GW-47",
+  "OWN-GW-45",
+  "KIT-COPILOT-01"
+ ],
+ "turns": [
+  {
+   "say": "Nút này nói gì vậy?",
+   "expect": {
+    "tools_any": [
+     "lien_ket",
+     "muc_tieu"
+    ],
+    "says": "học phí"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   }
+  },
+  {
+   "say": "Sao nó lại ghi là chậm tiến độ?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu",
+     "lien_ket"
+    ],
+    "says": "chậm|thiếu|cần"
+   },
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nút này nói gì vậy?",
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "lien_ket",
+      "label": "Liên kết",
+      "status": "ok",
+      "text": "Học phí cho con (trong nước / du học) có 1 liên kết: Bạn — cần để dành/tháng +79,1 triệu (ước tính). Thực tế là số đã ghi nhận; ước tính và giả định không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bạn",
+         "sub": "cần để dành/tháng · ước tính · 1 bản ghi",
+         "chip": "+79,1 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "goal:tuition",
+       "kpi:net_worth"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+      ],
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14663,
+     "output_tokens": 434,
+     "requests": 2,
+     "cost_usd": 0.001683,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3e44353fc070483d81618a99c45719e4",
+    "conversation_id": "624cdea9f12a4109",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mục đang chọn là mục tiêu **“Học phí cho con (trong nước / du học)”**. Nó nối với bạn và cho biết bạn **cần để dành khoảng 79,1 triệu đồng mỗi tháng** cho mục tiêu này.\n\nĐây là **số ước tính**, không phải số thực tế đã ghi nhận, nên không cộng vào tài sản ròng. Số liệu tính theo ngày 09/10/2026, lấy từ đồ thị tài chính.",
+    "citations": [],
+    "sources": [
+     "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "goal:tuition",
+     "kpi:net_worth"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "So sánh các kịch bản đang bật"
+    ],
+    "answered_at": 1792259207.8667946,
+    "audit_seq": 844,
+    "session": {
+     "id": "624cdea9f12a4109",
+     "title": "Nút này nói gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.239534942898899,
+   "first_event": 1.4974956172518432,
+   "usage": {
+    "cost": 0.001683,
+    "input": 14663,
+    "output": 434,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Wo7remHAvba8WPAsz44Acm",
+     "tool": "lien_ket",
+     "label": "Liên kết",
+     "nodes": [
+      "GL:tuition"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Wo7remHAvba8WPAsz44Acm",
+     "tool": "lien_ket",
+     "ok": true,
+     "ms": 262,
+     "focus": [
+      "goal:tuition",
+      "kpi:net_worth"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Sao nó lại ghi là chậm tiến độ?",
+   "graph": {
+    "lens": "muc-tieu",
+    "selected": {
+     "id": "GL:tuition",
+     "kind": "goal",
+     "label": "Học phí cho con (trong nước / du học)"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ, cần 7,56 tỷ (2030), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 3,53 tỷ, cần để dành 79,1 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 27,60 tỷ (55 tuổi), có 27,30 tỷ (dự kiến có lúc 55 tuổi), thiếu 302,6 triệu, cần để dành 1,3 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 1,00 tỷ (dự phòng sẵn), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 3,03 tỷ, dòng tiền dư 5,0 triệu/tháng; Định cư / con đi du học: chậm tiến độ, cần 5,53 tỷ (trong 12 tháng), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 1,50 tỷ, cần để dành 122,4 triệu/tháng, dòng tiền dư 5,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16305,
+     "output_tokens": 754,
+     "requests": 2,
+     "cost_usd": 0.002008,
+     "tools_cost_usd": null
+    },
+    "turn_id": "bf5385ff70af496e8ec2fe4556f6ce79",
+    "conversation_id": "624cdea9f12a4109",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mục này ghi **chậm tiến độ** vì khoản tiền hiện có chưa đủ cho mục tiêu, và dòng tiền hằng tháng không đủ để bù phần thiếu:\n\n- **Cần:** 7,56 tỷ đồng vào năm 2030.\n- **Có:** 4,03 tỷ đồng, là thanh khoản ngoài quỹ dự phòng 6 tháng chi tiêu.\n- **Thiếu:** 3,53 tỷ đồng.\n- **Cần để dành:** khoảng 79,1 triệu đồng mỗi tháng.\n- **Dòng tiền dư thực tế:** khoảng 5,0 triệu đồng mỗi tháng.\n\nVì dòng tiền dư chỉ 5,0 triệu, thấp hơn nhiều so với 79,1 triệu cần để dành, hệ thống đánh dấu mục này chậm tiến độ. Số 79,1 triệu là ước tính. Số liệu lấy từ trang Mục tiêu theo hồ sơ hiện tại, ngày 09/10/2026.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792259213.3186944,
+    "audit_seq": 845,
+    "session": {
+     "id": "624cdea9f12a4109",
+     "title": "Nút này nói gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.415185248944908,
+   "first_event": 1.4223291268572211,
+   "usage": {
+    "cost": 0.002008,
+    "input": 16305,
+    "output": 754,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RedraNpyRPr47Y1H6ucS4R",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RedraNpyRPr47Y1H6ucS4R",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 115,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

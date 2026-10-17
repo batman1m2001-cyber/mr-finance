@@ -1,0 +1,447 @@
+{
+ "id": "gl-03",
+ "category": "goals",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Quỹ khẩn cấp bao nhiêu tháng, mình đủ chưa",
+ "why": "A rule of thumb, then her own months.",
+ "brd": [
+  "BRIEF-DASH-05",
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Mình đã đủ chưa?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "says": "tháng"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 69%, Tiền & tiền gửi 17%, Cổ phiếu 8%, Chứng chỉ quỹ 5%. Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số tháng chi tiêu được bao phủ bởi thanh khoản dự phòng, dựa trên tiền ra tháng 09/2026: 980000000/51200000 = 19,14",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 33496,
+     "output_tokens": 1941,
+     "requests": 5,
+     "cost_usd": 0.00432,
+     "tools_cost_usd": null
+    },
+    "turn_id": "2aae8460151c4eeaa024f1c2e9e06ea1",
+    "conversation_id": "9a64b4f23a134c00",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nên có **khoảng 3–6 tháng chi tiêu** trong quỹ khẩn cấp. Đây là mức tham khảo phổ biến, không phải khuyến nghị đầu tư. Với gia đình đang có khoản vay mua nhà lớn và tài sản tập trung vào bất động sản, nhiều người chọn mức cao hơn, khoảng 6 tháng.\n\nTheo dữ liệu của bạn:\n- **Thanh khoản dự phòng:** 980,0 triệu (trang Tổng quan, ngày 09/10/2026).\n- **Tiền ra tháng 09/2026:** 51,2 triệu (trang Dòng tiền).\n- **Số tháng được bao phủ:** 980 triệu ÷ 51,2 triệu ≈ 19,1 tháng (phép tính: 980000000/51200000).\n\nNhư vậy quỹ hiện tại đủ chi khoảng 19 tháng, vượt xa mức 3–6 tháng. Lưu ý:\n- Hệ thống ghi \"đủ chi 3 năm\" ở trang Tổng quan, nhưng con số đó không khớp với mức chi tháng 09 (19 tháng ≈ 1,6 năm). Có thể hệ thống tính trên một mức chi khác, nên bạn nên kiểm tra lại.\n- Mức chi tiêu chỉ lấy từ một tháng, nên kết quả chỉ mang tính tham khảo. Nếu tính theo khoản chi thiết yếu hằng tháng (không gồm trả nợ vay và các khoản không thường xuyên) thì số tháng sẽ khác.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn",
+     "9 giao dịch của tháng",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257400.6769388,
+    "audit_seq": 702,
+    "session": {
+     "id": "9a64b4f23a134c00",
+     "title": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 14.913291826844215,
+   "first_event": 1.9184856177307665,
+   "usage": {
+    "cost": 0.00432,
+    "input": 33496,
+    "output": 1941,
+    "requests": 5
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013GLZ55butWmv36bqqBavnG",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013GLZ55butWmv36bqqBavnG",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 83,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0135GJ5Z3DZhEMwkBrxUCKge",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0135GJ5Z3DZhEMwkBrxUCKge",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 58,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BZrEsdxbSkurWGu76c9JTk",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BZrEsdxbSkurWGu76c9JTk",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 74,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016jweJ7JzpzD9v5RncZmVfi",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016jweJ7JzpzD9v5RncZmVfi",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Mình đã đủ chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok"
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7770,
+     "output_tokens": 787,
+     "requests": 1,
+     "cost_usd": 0.001171,
+     "tools_cost_usd": null
+    },
+    "turn_id": "86ac691ac9184e3d8e9d07d33f636585",
+    "conversation_id": "9a64b4f23a134c00",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Có, quỹ khẩn cấp hiện tại đã đủ.** Với mức chi tham khảo 3–6 tháng, quỹ của bạn đang bao phủ khoảng 19 tháng chi tiêu.\n\n- **Thanh khoản dự phòng:** 980,0 triệu (trang Tổng quan, ngày 09/10/2026)\n- **Tiền ra tháng 09/2026:** 51,2 triệu, đã gồm 26,0 triệu trả nợ vay (trang Dòng tiền)\n- **Số tháng bao phủ:** 980 triệu ÷ 51,2 triệu ≈ 19,1 tháng\n\nLưu ý:\n- Đây là ước tính từ dữ liệu một tháng. Nếu tháng sau chi nhiều hơn hoặc thu nhập giảm, số tháng sẽ thay đổi.\n- Hệ thống ghi \"đủ chi 3 năm\" nhưng con số này không khớp với phép tính trên (19 tháng ≈ 1,6 năm). Bạn nên kiểm tra lại cách hệ thống tính.\n- Hiện danh mục đang tập trung quá mức vào bất động sản (69,2% tài sản, vượt ngưỡng 35%). Đây là rủi ro riêng, không liên quan đến việc quỹ khẩn cấp đã đủ hay chưa.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257405.253148,
+    "audit_seq": 703,
+    "session": {
+     "id": "9a64b4f23a134c00",
+     "title": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 4.551086294930428,
+   "first_event": 2.6114947511814535,
+   "usage": {
+    "cost": 0.001171,
+    "input": 7770,
+    "output": 787,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

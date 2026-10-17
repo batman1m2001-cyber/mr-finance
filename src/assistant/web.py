@@ -29,6 +29,7 @@ SYSTEM = (
     "có thống nhất, có mới không). Không đưa khuyến nghị đầu tư. Nếu kết quả không trả lời được, nói thẳng như vậy."
 )
 PLACEHOLDER = re.compile(r"<(?:người|số|mã)>")
+URL = re.compile(r"https?://[^\s)\]>\"']+")
 
 
 def query_of(question: str) -> str:
@@ -93,6 +94,14 @@ async def search(ctx: Ctx, question: str) -> Dict[str, Any]:
     text = (msg.content or "").strip()
     if not text:
         raise ToolFailed("Tìm kiếm web không có kết quả")
+    for url in URL.findall(text):  # the provider sometimes leaves the links in the text, not as citations
+        if url not in [x["url"] for x in cites]:
+            cites.append({"url": url, "title": url})
+    if not cites:  # and sometimes sends none at all (stress test D23): never a sourced-looking answer then
+        text += (
+            "\nKết quả này không kèm đường dẫn nguồn nào, nên chưa kiểm chứng được: mức độ chắc chắn thấp, cần "
+            "kiểm tra lại ở nguồn chính thức."
+        )
     from operonx_agents import Usage
 
     cost = Usage.from_completion(getattr(resp, "usage", None)).cost_usd  # what OpenRouter charged (A8)

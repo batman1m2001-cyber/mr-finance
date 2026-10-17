@@ -1,0 +1,268 @@
+{
+ "id": "act-02",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Quên điều đã nhớ",
+ "why": "Forget: confirmation, and the item really gone.",
+ "brd": [
+  "OWN-AS-14",
+  "OWN-AS-15",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Hãy quên điều bạn nhớ về chuyện bất động sản của tôi.",
+   "expect": {
+    "status": "pending",
+    "pending": "quen",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "status": "ok",
+    "grounded": false
+   },
+   "state": {
+    "memory_lacks": "bất động sản"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Hãy quên điều bạn nhớ về chuyện bất động sản của tôi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "nho_lai",
+      "label": "Bộ nhớ",
+      "status": "ok",
+      "text": "Điều bạn đã nhờ ghi nhớ: (Sở thích) Không muốn đầu tư thêm vào bất động sản.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12481,
+     "output_tokens": 167,
+     "requests": 2,
+     "cost_usd": 0.001332,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3838afd64faa4302ad5b4a4bbd713f46",
+    "conversation_id": "20de9035f5a744f7",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "819bef58f97327bd54bc4de7c14b5860",
+      "tool": "quen",
+      "summary": "Quên “Không muốn đầu tư thêm vào bất động sản”?"
+     }
+    ],
+    "text": "Quên “Không muốn đầu tư thêm vào bất động sản”?",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257586.5771675,
+    "audit_seq": 741,
+    "session": {
+     "id": "20de9035f5a744f7",
+     "title": "Hãy quên điều bạn nhớ về chuyện bất động sản…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.6907399683259428,
+   "first_event": 1.4522487539798021,
+   "usage": {
+    "cost": 0.001332,
+    "input": 12481,
+    "output": 167,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016gPBmEHhMXqAMRiMuAjR6t",
+     "tool": "nho_lai",
+     "label": "Bộ nhớ",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016gPBmEHhMXqAMRiMuAjR6t",
+     "tool": "nho_lai",
+     "ok": true,
+     "ms": 4,
+     "focus": []
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_019BresZiu6b4tDzT4aByif4",
+     "tool": "quen",
+     "label": "Quên"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "5da79b4ffd8c43c5a668013698f6d259",
+      "kind": "preference",
+      "text": "Không muốn đầu tư thêm vào bất động sản",
+      "source": {
+       "conversation": "bcee01bee9aa47aa"
+      },
+      "confidence": 1.0,
+      "created": 1792257579.193424,
+      "updated": 1792257579.193424,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "quen",
+      "label": "Quên",
+      "status": "ok",
+      "text": "Đã quên mục này.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18997,
+     "output_tokens": 235,
+     "requests": 3,
+     "cost_usd": 0.002017,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3838afd64faa4302ad5b4a4bbd713f46",
+    "conversation_id": "20de9035f5a744f7",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đã xóa mục ghi nhớ \"Không muốn đầu tư thêm vào bất động sản\". Từ giờ tôi sẽ không dùng thông tin này nữa.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257588.1789513,
+    "audit_seq": 742,
+    "session": {
+     "id": "20de9035f5a744f7",
+     "title": "Hãy quên điều bạn nhớ về chuyện bất động sản…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.569780063815415,
+   "first_event": 0.03731747390702367,
+   "usage": {
+    "cost": 0.002017,
+    "input": 18997,
+    "output": 235,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_019BresZiu6b4tDzT4aByif4",
+     "tool": "quen",
+     "label": "Quên",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_019BresZiu6b4tDzT4aByif4",
+     "tool": "quen",
+     "ok": true,
+     "ms": 94,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

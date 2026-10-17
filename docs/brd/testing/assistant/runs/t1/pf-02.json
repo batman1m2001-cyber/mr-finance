@@ -1,0 +1,683 @@
+{
+ "id": "pf-02",
+ "category": "personal_finance",
+ "persona": "nghỉ hưu, chi nhiều hơn thu (C04)",
+ "client_id": "C04",
+ "title": "Tiêu có lố không, cắt khoản nào",
+ "why": "Spending above income: the facts, then what to cut, from her data.",
+ "brd": [
+  "BRIEF-DASH-02",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tháng này tôi tiêu có lố không?",
+   "expect": {
+    "tools_any": [
+     "dong_tien"
+    ]
+   }
+  },
+  {
+   "say": "Lương hưu của tôi 37 triệu mà tiêu 40 triệu thì có sao không?",
+   "expect": {
+    "tools_any": [
+     "dong_tien",
+     "tong_quan"
+    ]
+   }
+  },
+  {
+   "say": "Vậy tôi nên cắt bớt khoản nào trước?",
+   "expect": {
+    "tools_any": [
+     "dong_luc",
+     "dong_tien"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tháng này tôi tiêu có lố không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 37,0 triệu, tiền ra 17,5 triệu, còn lại 19,5 triệu. Khoản chi lớn nhất: Chi tiêu sinh hoạt 11,1 triệu (6 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 11083000.0,
+         "text": "11,1 triệu"
+        },
+        {
+         "label": "Y tế",
+         "value": 6450000.0,
+         "text": "6,5 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "37,0 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "17,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "19,5 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:living"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "3 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 2,10 tỷ · có 19,18 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 400,0 triệu · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "nho_lai",
+      "label": "Bộ nhớ",
+      "status": "ok",
+      "text": "Chưa có điều gì được ghi nhớ về bạn.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 25338,
+     "output_tokens": 1043,
+     "requests": 4,
+     "cost_usd": 0.003055,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fd18e9e138ca45858e3ce56726404d5a",
+    "conversation_id": "4726cb4c95c5467c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tháng 09/2026, bạn chi 17,5 triệu và còn lại 19,5 triệu (tiền vào 37,0 triệu). Khoản chi lớn nhất là chi tiêu sinh hoạt, 11,1 triệu với 6 giao dịch.\n\nTôi chưa thấy hệ thống có ngân sách chi tiêu hàng tháng cho bạn, nên chưa kết luận được là có lố hay không. Nếu bạn cho tôi con số ngân sách mong muốn (ví dụ 11 triệu cho sinh hoạt), tôi sẽ so sánh với tháng này. Bạn cũng có thể nhờ tôi ghi nhớ mức đó để các lần sau dùng luôn.\n\nSố liệu lấy từ trang dòng tiền, dữ liệu đến hết tháng 09/2026.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:living"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257095.2783525,
+    "audit_seq": 646,
+    "session": {
+     "id": "4726cb4c95c5467c",
+     "title": "Tháng này tôi tiêu có lố không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 9.032276092097163,
+   "first_event": 1.3986721490509808,
+   "usage": {
+    "cost": 0.003055,
+    "input": 25338,
+    "output": 1043,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Y5dkYsuv3TACAqyb2vhuxa",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Y5dkYsuv3TACAqyb2vhuxa",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 57,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:living"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SLwWG5GdarPUvgriZBnqvT",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SLwWG5GdarPUvgriZBnqvT",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 72,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Tpz43hfsGNL2ARKuUwuLpC",
+     "tool": "nho_lai",
+     "label": "Bộ nhớ",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Tpz43hfsGNL2ARKuUwuLpC",
+     "tool": "nho_lai",
+     "ok": true,
+     "ms": 3,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Lương hưu của tôi 37 triệu mà tiêu 40 triệu thì có sao không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "nho_lai",
+      "label": "Bộ nhớ",
+      "status": "ok",
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 60%, Tiền & tiền gửi 18%, Trái phiếu 11%, Vàng 6%, Chứng chỉ quỹ 5%, Bảo hiểm 0%. Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "chênh lệch chi so với lương hưu mỗi năm (triệu đồng): (40-37)*12 = 36",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 21928,
+     "output_tokens": 1472,
+     "requests": 3,
+     "cost_usd": 0.002929,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fbb89324a3c04a9492dbf956c947981e",
+    "conversation_id": "4726cb4c95c5467c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu mỗi tháng bạn chi 40 triệu mà lương hưu chỉ 37 triệu, bạn thiếu 3 triệu mỗi tháng, tức 36 triệu mỗi năm (công thức: (40 − 37) × 12 = 36 triệu).\n\nSố này không gây nguy hiểm ngay vì bạn đang có khoản dự phòng lớn. Theo trang tổng quan (ngày 09/10/2026), thanh khoản dự phòng là 14,16 tỷ đồng, và hệ thống ước tính đủ chi trong 30 năm. Tuy vậy, con số 30 năm này do hệ thống tính theo mức chi hiện tại, tôi không kiểm tra lại được với mức 40 triệu. Khoản thiếu hụt sẽ rút dần vào khoản dự phòng.\n\nCó một điểm chưa khớp: trang dòng tiền ghi nhận tháng 09/2026 bạn chi 17,5 triệu, không phải 40 triệu. Nếu 40 triệu là mức chi thường xuyên, có thể một số khoản chưa được ghi nhận. Bạn nên kiểm tra lại.\n\nNgoài ra, tổng quan cũng cho thấy danh mục đang tập trung: bất động sản chiếm 60% tài sản, và khu vực Võ Văn Tần (Quận 3) vượt ngưỡng 35%. Khi thị trường xấu, mức sụt giảm ước tính là 7,5%, gần ngưỡng 8%. Đây là ước tính của hệ thống, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 5 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257105.0517983,
+    "audit_seq": 647,
+    "session": {
+     "id": "4726cb4c95c5467c",
+     "title": "Tháng này tôi tiêu có lố không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 9.748851821757853,
+   "first_event": 2.0570135097950697,
+   "usage": {
+    "cost": 0.002929,
+    "input": 21928,
+    "output": 1472,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0184YTbJyU3xnpMouBoqVMSQ",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0184YTbJyU3xnpMouBoqVMSQ",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 82,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MsdRNxMMb4QfmHxJL5qEjS",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MsdRNxMMb4QfmHxJL5qEjS",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Vậy tôi nên cắt bớt khoản nào trước?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "nho_lai",
+      "label": "Bộ nhớ",
+      "status": "ok",
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok"
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 7,5% khi thị trường xấu — Gần ngưỡng chấp nhận 8%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 7,5% khi thị trường xấu",
+         "sub": "Gần ngưỡng chấp nhận 8%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16560,
+     "output_tokens": 976,
+     "requests": 2,
+     "cost_usd": 0.002144,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0efe4b2e463040bdbf9703c8f88adab6",
+    "conversation_id": "4726cb4c95c5467c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa xác định được khoản nào nên cắt trước, vì hệ thống không có bảng chi tiết cho mức 40 triệu của bạn.\n\nNhững gì hệ thống ghi nhận:\n- **Tháng 09/2026**: chi 17,5 triệu trên 6 giao dịch sinh hoạt. Khoản lớn nhất là chi tiêu sinh hoạt, 11,1 triệu.\n- **Chênh lệch 40 và 37 triệu**: 3 triệu mỗi tháng, tức 36 triệu mỗi năm.\n\nVì 17,5 triệu và 40 triệu chênh nhau khá nhiều, bạn nên liệt kê toàn bộ khoản chi hàng tháng, kể cả các khoản chưa vào hệ thống. Sau đó xếp theo số tiền và chọn khoản nào cắt được mà ít ảnh hưởng đến sinh hoạt. Nếu chỉ cần lấp 3 triệu mỗi tháng, bạn có thể bắt đầu từ khoản lớn nhất trong danh sách đó.\n\nVề rủi ro tài sản, mục đáng chú ý nhất là tập trung bất động sản (60% tài sản, khu vực Quận 3 vượt ngưỡng 35%). Việc này liên quan đến cấu trúc danh mục hơn là chi tiêu hằng tháng, nên tôi không đề xuất bán hay cắt tài sản nào ở đây.\n\nNếu bạn cho tôi danh sách chi tiêu hoặc mức chi mong muốn, tôi sẽ so sánh với lương hưu 37 triệu và ghi nhớ mức đó cho các lần sau.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": null,
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792257111.91387,
+    "audit_seq": 648,
+    "session": {
+     "id": "4726cb4c95c5467c",
+     "title": "Tháng này tôi tiêu có lố không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 6.831354659050703,
+   "first_event": 1.9658632799983025,
+   "usage": {
+    "cost": 0.002144,
+    "input": 16560,
+    "output": 976,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013KumvCG9VttMTeqDbUCxo3",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013KumvCG9VttMTeqDbUCxo3",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 167,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

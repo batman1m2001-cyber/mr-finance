@@ -285,8 +285,10 @@ def _catalogue():
                  params={"q": Param(str, "câu hỏi về cách dùng, ngắn")}),
             Tool("tai_lieu", "tìm trong tài liệu người dùng đã tự thêm ở trang Bộ nhớ", everyone, _materials,
                  params={"q": Param(str, "từ khóa cần tìm, ngắn")}, page="bo-nho"),
-            Tool("tim_tren_web", "tìm trên web cho câu hỏi ngoài dữ liệu của OneWealth (tin tức, quy định, kiến thức "
-                 "chung); không dùng cho số liệu của người dùng; trả về câu trả lời kèm nguồn và mức độ chắc chắn",
+            Tool("tim_tren_web", "tìm trên web (tốn phí) khi cần thông tin mới hoặc phải kiểm chứng ngoài dữ liệu của "
+                 "OneWealth: tin tức, giá, lãi suất, tỷ giá, quy định hiện hành; kiến thức tài chính phổ thông thì tự "
+                 "trả lời, không tìm; không dùng cho số liệu của người dùng; trả về câu trả lời kèm nguồn và mức độ "
+                 "chắc chắn",
                  everyone, _web, params={"q": Param(str, "câu hỏi cần tìm, không tên người, không số tài khoản")},
                  timeout=45.0, cost="paid"),
         ]

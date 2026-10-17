@@ -1,0 +1,345 @@
+{
+ "id": "pf-05",
+ "category": "personal_finance",
+ "persona": "chủ doanh nghiệp, hỏi cả gia đình (C02)",
+ "client_id": "C02",
+ "title": "Tài sản cả nhà và phần của vợ",
+ "why": "Family scope, and a question about one member's share.",
+ "brd": [
+  "BRIEF-DASH-01",
+  "OWN-AS-03",
+  "FEAT-20"
+ ],
+ "turns": [
+  {
+   "say": "Tài sản của cả gia đình tôi bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan"
+    ]
+   },
+   "scope": "family"
+  },
+  {
+   "say": "Trong đó phần đứng tên vợ tôi là bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "tim_kiem"
+    ]
+   },
+   "scope": "family"
+  }
+ ],
+ "run": [
+  {
+   "say": "Tài sản của cả gia đình tôi bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45,39 tỷ (45%), Cổ phiếu 21,69 tỷ (22%), Cổ phần DN 12,00 tỷ (12%), Tiền & tiền gửi 8,90 tỷ (9%), Vàng 7,50 tỷ (7%), Trái phiếu 4,94 tỷ (5%). Thanh khoản dự phòng 8,90 tỷ, đủ chi 4 năm theo mức chi 180,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 15,16 tỷ; lớn nhất: 30% cổ phần Logistics Phát Đạt −3,00 tỷ (sốc 25%); Biệt thự Phú Mỹ Hưng −2,38 tỷ (sốc 10%); Cổ phiếu TCB −2,29 tỷ (sốc 29%); Đất nền Long Thành −1,80 tỷ (sốc 10%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16051,
+     "output_tokens": 444,
+     "requests": 2,
+     "cost_usd": 0.001827,
+     "tools_cost_usd": null
+    },
+    "turn_id": "42150a456cd34f538e29ebf261ff8c2e",
+    "conversation_id": "e65449e9c2d0444c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tài sản ròng của gia đình bạn là **95,30 tỷ đồng**, tính đến ngày 09/10/2026. Con số này tăng 1,44 tỷ (1,5%) so với tháng trước.\n\n- **Tổng tài sản:** 100,42 tỷ đồng\n- **Tổng nợ:** 5,12 tỷ đồng, gồm vay mua đất Long Thành 5,00 tỷ và dư nợ thẻ 120 triệu đồng\n\nBất động sản chiếm lớn nhất, khoảng 45% (45,39 tỷ). Sau đó là cổ phiếu 21,69 tỷ, cổ phần doanh nghiệp 12,00 tỷ, tiền gửi 8,90 tỷ, vàng 7,50 tỷ và trái phiếu 4,94 tỷ.\n\nĐây là số ghi nhận từ 17 khoản trong hệ thống và thông tin bạn tự khai. Nguồn là trang Tổng quan.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792263128.369929,
+    "audit_seq": 1380,
+    "session": {
+     "id": "e65449e9c2d0444c",
+     "title": "Tài sản của cả gia đình tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.9048652229830623,
+   "first_event": 1.289779560174793,
+   "usage": {
+    "cost": 0.001827,
+    "input": 16051,
+    "output": 444,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Jj53d6ZzSAWcvFbBK36GnK",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Jj53d6ZzSAWcvFbBK36GnK",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 128,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792261319.1340644,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Trong đó phần đứng tên vợ tôi là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "2 kết quả cho “vợ”: Mua thêm BĐS bằng vốn vay; Doanh nghiệp cần vốn gấp.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "Tích lũy tài sản",
+         "route": "#/client/muc-tieu/ke-hoach"
+        },
+        {
+         "title": "Doanh nghiệp cần vốn gấp",
+         "sub": "Tích lũy tài sản",
+         "route": "#/client/muc-tieu/ke-hoach"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “đứng tên” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 27140,
+     "output_tokens": 519,
+     "requests": 3,
+     "cost_usd": 0.002974,
+     "tools_cost_usd": null
+    },
+    "turn_id": "499141945df34e9e8dc04878703bbff1",
+    "conversation_id": "e65449e9c2d0444c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tìm thấy phần tài sản đứng tên vợ bạn. Tìm theo từ \"vợ\" chỉ ra hai mục là \"Mua thêm BĐS bằng vốn vay\" và \"Doanh nghiệp cần vốn gấp\", nhưng hai mục này không cho biết tên chủ sở hữu. Tìm theo \"đứng tên\" thì không có kết quả.\n\nHệ thống hiện không hiển thị tài sản theo chủ sở hữu, nên tôi không thể tách số liệu cho vợ bạn. Nếu bạn muốn, tôi có thể mở trang Tài sản để bạn xem chi tiết từng khoản và tên đứng tên trên đó.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263134.0356743,
+    "audit_seq": 1381,
+    "session": {
+     "id": "e65449e9c2d0444c",
+     "title": "Tài sản của cả gia đình tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.626074584200978,
+   "first_event": 1.4773047543130815,
+   "usage": {
+    "cost": 0.002974,
+    "input": 27140,
+    "output": 519,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NuwYNDZZsWSYAGoJjgehCg",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NuwYNDZZsWSYAGoJjgehCg",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 135,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VWyYqc3zteFH2w7gq4rjT8",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VWyYqc3zteFH2w7gq4rjT8",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 147,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792261319.1340644,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,406 @@
+{
+ "id": "nw-04",
+ "category": "news",
+ "persona": "chủ doanh nghiệp có nhiều bất động sản (C02)",
+ "client_id": "C02",
+ "title": "Chính sách bất động sản, tôi mất bao nhiêu",
+ "why": "Policy cost: an estimate with its basis.",
+ "brd": [
+  "BRIEF-IMPACT-01",
+  "FEAT-25"
+ ],
+ "turns": [
+  {
+   "say": "Mấy chính sách mới về bất động sản thì tôi mất bao nhiêu tiền?",
+   "expect": {
+    "tools_any": [
+     "dong_luc",
+     "chu_y",
+     "tac_dong"
+    ],
+    "says": "chuyển nhượng|bảng giá đất|từ 2 bất động sản"
+   }
+  },
+  {
+   "say": "Cái đó tính dựa trên giả định gì?",
+   "expect": {
+    "grounded": false,
+    "says": "giả định|ước tính|dựa"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Mấy chính sách mới về bất động sản thì tôi mất bao nhiêu tiền?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "18 yếu tố đang tác động: 14 rủi ro, 4 cơ hội; tổng ước tính −392,8 triệu. Lớn nhất: Nâng hạng thị trường chứng khoán — Cơ hội: dòng vốn ngoại vào nhóm vốn hóa lớn (HPG, MBB, TCB, VCB, VHM); 21,7 tỷ đang nắm giữ, ước tính +1,74 tỷ. Từng yếu tố: Nâng hạng thị trường chứng khoán (chính sách, đã thông qua / đã diễn ra) +1,56 tỷ; Sân bay Long Thành đưa giai đoạn 1 vào khai thác (dự án hạ tầng, đang lấy ý kiến / dự kiến) +1,35 tỷ; Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán (chính sách, đang lấy ý kiến / dự kiến) −920,0 triệu; Giới hạn sở hữu cổ phần ngân hàng (Luật Các TCTD 2024) (chính sách, đã thông qua / đã diễn ra) −901,3 triệu; Thuế tối thiểu toàn cầu, thay đổi ưu đãi đầu tư (chính sách, đã thông qua / đã diễn ra) −432,0 triệu; Chính sách quản lý vàng miếng (chính sách, đã thông qua / đã diễn ra) −405,0 triệu; Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định) (chính sách, dự thảo) −284,7 triệu; Siết điều kiện nhà đầu tư chuyên nghiệp mua trái phiếu DN (chính sách, đã thông qua / đã diễn ra) −222,3 triệu; Đường Vành đai 3 TP.HCM hoàn thành (dự án hạ tầng, đang lấy ý kiến / dự kiến) +109,2 triệu; Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán (chính sách, đang lấy ý kiến / dự kiến) −97,6 triệu; Bảng giá đất điều chỉnh hằng năm (Luật Đất đai 2024) (chính sách, đã thông qua / đã diễn ra) −97,2 triệu; Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh (chính sách, đã thông qua / đã diễn ra) +26,2 triệu; Tỷ giá USD/VND tăng 3% (vĩ mô, đang lấy ý kiến / dự kiến) −18,0 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −17,4 triệu; Thuế với người sở hữu từ 2 bất động sản trở lên (chính sách, dự thảo) −17,3 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −12,5 triệu; Thay đổi thuế chuyển nhượng chứng khoán (chính sách, dự thảo) −8,7 triệu; Quy định ngoại hối, chuyển tiền du học (chính sách, đang lấy ý kiến / dự kiến) −6,0 triệu.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+1,56 tỷ · Đã thông qua / đã diễn ra",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Sân bay Long Thành đưa giai đoạn 1 vào khai thác",
+         "sub": "+1,35 tỷ · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán",
+         "sub": "−920,0 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Trung bình",
+         "tone": "warn"
+        },
+        {
+         "title": "Giới hạn sở hữu cổ phần ngân hàng (Luật Các TCTD 2024)",
+         "sub": "−901,3 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "warn"
+        },
+        {
+         "title": "Thuế tối thiểu toàn cầu, thay đổi ưu đãi đầu tư",
+         "sub": "−432,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Tổng ước tính tác động các chính sách bất động sản (triệu đồng): -920.0-97.6-97.2-17.3 = -1.132,1",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 25983,
+     "output_tokens": 1353,
+     "requests": 3,
+     "cost_usd": 0.003275,
+     "tools_cost_usd": null
+    },
+    "turn_id": "f1fddcabd1a042ecb9d2efda6c0ca30e",
+    "conversation_id": "5dc5dd972e984443",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo dữ liệu ngày 09/10/2026 (trang Tin chính sách), các chính sách bất động sản đang ước tính làm bạn mất khoảng **1,13 tỷ đồng**:\n\n- Tính thuế chuyển nhượng BĐS theo lãi thực tế: **−920,0 triệu** (đang lấy ý kiến)\n- Tính thuế chuyển nhượng BĐS theo lãi thực tế (mục thứ hai): **−97,6 triệu** (đang lấy ý kiến)\n- Bảng giá đất điều chỉnh hằng năm: **−97,2 triệu** (đã thông qua)\n- Thuế với người sở hữu từ 2 bất động sản trở lên: **−17,3 triệu** (dự thảo)\n\nPhép cộng: −920,0 − 97,6 − 97,2 − 17,3 = −1.132,1 triệu.\n\nHệ thống ghi hai mục thuế chuyển nhượng riêng, nên có thể là hai tài sản khác nhau hoặc một khoản trùng lặp. Bạn nên kiểm tra lại trước khi dùng con số này.\n\nĐây là ước tính, chưa phải dự báo chắc chắn. Nếu muốn xem tác động khi nhà đất giảm giá, tôi có thể chạy mô phỏng.",
+    "citations": [
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263264.542356,
+    "audit_seq": 1413,
+    "session": {
+     "id": "5dc5dd972e984443",
+     "title": "Mấy chính sách mới về bất động sản thì tôi mất…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 8.623464465141296,
+   "first_event": 1.4614799371920526,
+   "usage": {
+    "cost": 0.003275,
+    "input": 25983,
+    "output": 1353,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Lk1XVAkJF2s86CDqh9A1Sh",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Lk1XVAkJF2s86CDqh9A1Sh",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 130,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013Z6N3cTeXjhLPmV7PTFukP",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013Z6N3cTeXjhLPmV7PTFukP",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792261319.1340644,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Cái đó tính dựa trên giả định gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dieu_tra",
+      "label": "Điều tra tin",
+      "status": "ok",
+      "text": "Thị trường cổ phiếu: 4 tin, CIO duyệt 3 kịch bản (chính: Dao động tích lũy quanh vùng hỗ trợ · 50%); đi qua VN-Index, Chênh lệch tín dụng DN bất động sản; tới Cổ phiếu, Cổ phần tư nhân, Vàng. Tác động kỳ vọng 3 tháng −433,6 triệu. Có thể ảnh hưởng theo kịch bản, không phải quan hệ nhân quả.",
+      "card": {
+       "kind": "chain",
+       "steps": [
+        {
+         "label": "Tin",
+         "items": [
+          "VnEconomy · 15/10 19:38",
+          "Vietstock · 15/10 19:28"
+         ]
+        },
+        {
+         "label": "Sự kiện",
+         "items": [
+          "Thị trường cổ phiếu"
+         ]
+        },
+        {
+         "label": "Kịch bản",
+         "items": [
+          "Dao động tích lũy quanh vùng hỗ trợ · 50%",
+          "Thủng vùng hỗ trợ 1.650–1.680 · 30%",
+          "Hồi phục kỹ thuật nhờ dòng tiền nội · 20%"
+         ]
+        },
+        {
+         "label": "Yếu tố",
+         "items": [
+          "VN-Index",
+          "Chênh lệch tín dụng DN bất động sản",
+          "Dòng vốn ngoại trên HOSE"
+         ]
+        },
+        {
+         "label": "Tài sản",
+         "items": [
+          "Cổ phiếu −367,8 triệu",
+          "Cổ phần tư nhân −90,0 triệu",
+          "Vàng +31,8 triệu"
+         ]
+        },
+        {
+         "label": "Mục tiêu",
+         "items": [
+          "Học phí đại học (Mỹ) – Phát Đạt: Đạt → Đạt",
+          "Góp vốn mở rộng kho bãi: Đạt → Đạt"
+         ]
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0001"
+      ],
+      "as_of": null,
+      "sources": [
+       "Lần áp dụng AR-0001-v1-2",
+       "Nhận định VW-0001-v1",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Đồ thị tác động",
+       "route": "#/client/tin/do-thi"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 19940,
+     "output_tokens": 1212,
+     "requests": 2,
+     "cost_usd": 0.0026,
+     "tools_cost_usd": null
+    },
+    "turn_id": "d1893facc3024f7182828d5b4a041ac6",
+    "conversation_id": "5dc5dd972e984443",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tìm được giả định cụ thể đằng sau con số −1.132,1 triệu.\n\nKết quả từ công cụ cho thấy:\n\n- **Nội dung chính sách:** tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho mức 2% giá bán. Đây là mô tả chính sách, không phải giả định về số tiền.\n- **Trạng thái:** mục 920 triệu và 97,6 triệu đang lấy ý kiến, bảng giá đất đã thông qua, thuế với người sở hữu từ 2 bất động sản trở lên đang ở dạng dự thảo.\n- **Nguồn:** dự thảo Luật Thuế TNCN, được gắn nhãn \"cần kiểm tra trạng thái\".\n\nCông cụ điều tra đường đi của tin lại trả về một chuỗi khác (EV-2026-0001, về cổ phiếu và dao động quanh vùng hỗ trợ), không liên quan đến các khoản thuế này nên tôi không dùng được.\n\nVì vậy, các con số trên là ước tính của hệ thống, nhưng tôi không thấy được số tài sản, tỷ lệ lãi hay thời điểm bán mà hệ thống dùng để tính. Bạn nên xem trang Tin chính sách để kiểm tra từng mục, đặc biệt là mục thuế chuyển nhượng đang được ghi hai lần.",
+    "citations": [
+     {
+      "label": "Đồ thị tác động",
+      "route": "#/client/tin/do-thi"
+     }
+    ],
+    "sources": [
+     "Lần áp dụng AR-0001-v1-2",
+     "Nhận định VW-0001-v1",
+     "Vietstock",
+     "VnEconomy"
+    ],
+    "as_of": null,
+    "focus": [
+     "event:EV-2026-0001"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tạo kịch bản VN-Index giảm mạnh",
+     "Tin nào ảnh hưởng tới tôi?"
+    ],
+    "answered_at": 1792263272.3268108,
+    "audit_seq": 1414,
+    "session": {
+     "id": "5dc5dd972e984443",
+     "title": "Mấy chính sách mới về bất động sản thì tôi mất…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.746501985006034,
+   "first_event": 2.056148820091039,
+   "usage": {
+    "cost": 0.0026,
+    "input": 19940,
+    "output": 1212,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Db5SvpX68URjE2iSGydGRX",
+     "tool": "dieu_tra",
+     "label": "Điều tra tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Db5SvpX68URjE2iSGydGRX",
+     "tool": "dieu_tra",
+     "ok": true,
+     "ms": 102,
+     "focus": [
+      "event:EV-2026-0001"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792261319.1340644,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

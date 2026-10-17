@@ -1,0 +1,271 @@
+{
+ "id": "kn-06",
+ "category": "knowledge",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Beta là gì, beta của danh mục tôi",
+ "why": "A concept, then a figure that must come from a tool or be said to be unavailable.",
+ "brd": [
+  "OWN-AS-07",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Giải thích giúp tôi hệ số beta của cổ phiếu là gì?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Beta của danh mục cổ phiếu của tôi là bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "chu_y",
+     "tac_dong",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Giải thích giúp tôi hệ số beta của cổ phiếu là gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6036,
+     "output_tokens": 870,
+     "requests": 1,
+     "cost_usd": 0.001039,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c5736aa4d9304baebcffabe7f2e29f46",
+    "conversation_id": "debbb4f2415e4266",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Hệ số beta** đo mức độ biến động của một cổ phiếu so với thị trường chung (thường là chỉ số như VN-Index).\n\n- **Beta = 1:** cổ phiếu thường biến động cùng mức với thị trường.\n- **Beta > 1:** biến động mạnh hơn thị trường. Ví dụ beta 1,5: nếu thị trường giảm 10%, cổ phiếu có thể giảm khoảng 15%, và khi thị trường tăng thì nó cũng thường tăng mạnh hơn.\n- **Beta < 1:** biến động nhẹ hơn thị trường, thường thấy ở các ngành phòng thủ như điện, nước, hàng tiêu dùng thiết yếu.\n- **Beta < 0:** hiếm, nghĩa là cổ phiếu thường đi ngược chiều thị trường.\n\nBeta được tính từ dữ liệu lịch sử, nên có vài điều cần lưu ý:\n\n- Kết quả phụ thuộc vào khoảng thời gian và chỉ số dùng để so sánh.\n- Beta chỉ phản ánh rủi ro thị trường chung, không phản ánh rủi ro riêng của doanh nghiệp như kết quả kinh doanh hay pháp lý.\n- Beta là số liệu quá khứ, không phải dự báo cho tương lai.\n\nNếu bạn muốn, tôi có thể chạy kịch bản sốc cổ phiếu trên danh mục hiện tại để xem mức ảnh hưởng ước tính. Kết quả đó là ước tính, không phải dự báo.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257259.4461813,
+    "audit_seq": 678,
+    "session": {
+     "id": "debbb4f2415e4266",
+     "title": "Giải thích giúp tôi hệ số beta của cổ phiếu là…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.917566610034555,
+   "first_event": 2.6506902328692377,
+   "usage": {
+    "cost": 0.001039,
+    "input": 6036,
+    "output": 870,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Beta của danh mục cổ phiếu của tôi là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “beta” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 21067,
+     "output_tokens": 667,
+     "requests": 3,
+     "cost_usd": 0.00244,
+     "tools_cost_usd": null
+    },
+    "turn_id": "6200d9eab406422cb16fff80b3b9a746",
+    "conversation_id": "debbb4f2415e4266",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tìm thấy hệ số beta cho danh mục cổ phiếu của bạn, nên chưa thể cho con số cụ thể. Tìm kiếm trong dữ liệu bạn được xem cũng không có mục nào về beta.\n\nDữ liệu tổng quan ngày 09/10/2026 cho thấy cổ phiếu chiếm khoảng 11% tổng tài sản (tổng tài sản 45,97 tỷ đồng). Khi thị trường xấu, mức sụt giảm ước tính của toàn danh mục là 11,8%, vượt ngưỡng 8%. Đây là ước tính, không phải dự báo, và không tách riêng phần cổ phiếu.\n\nNếu bạn muốn, tôi có thể chạy kịch bản sốc cổ phiếu để xem mức ảnh hưởng ước tính lên phần cổ phiếu. Kết quả đó cũng chỉ là ước tính.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257266.0007045,
+    "audit_seq": 679,
+    "session": {
+     "id": "debbb4f2415e4266",
+     "title": "Giải thích giúp tôi hệ số beta của cổ phiếu là…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 6.521805769763887,
+   "first_event": 1.78582478268072,
+   "usage": {
+    "cost": 0.00244,
+    "input": 21067,
+    "output": 667,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012tFZfgtjUGSV4szkpUyWjb",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012tFZfgtjUGSV4szkpUyWjb",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 82,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_015vP6t9RwHJmcrR2g7magvR",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_015vP6t9RwHJmcrR2g7magvR",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 98,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

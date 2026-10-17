@@ -1,0 +1,207 @@
+{
+ "id": "act-06",
+ "category": "actions",
+ "persona": "founder trẻ (C03)",
+ "client_id": "C03",
+ "title": "Tạo mục tiêu mua nhà",
+ "why": "No tool creates a goal: an honest answer that points to where it is done.",
+ "brd": [
+  "OWN-AS-08",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tạo giúp em một mục tiêu mua nhà 5 tỷ vào năm 2031.",
+   "expect": {
+    "no_write": true,
+    "grounded": false,
+    "says": "không|chưa|Kế hoạch|trang"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tạo giúp em một mục tiêu mua nhà 5 tỷ vào năm 2031.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Kế hoạch] Cố vấn kế hoạch tài sản: các chỉ số tổng (tài sản ròng, lãi / lỗ danh mục, mục tiêu đã đủ tiền, dòng tiền ròng 12 tháng), số cần so với số có cho từng mục tiêu và số tiền cần để dành mỗi tháng. - Mục tiêu cuộc sống: nhóm theo gia đình và con cái, tích lũy, hưu trí và chuyển giao, quỹ dự phòng, quyết định và kịch bản căng thẳng. Chọn một mục để xem trạng thái (cần / có / thiếu), theo dõi so với dự kiến, Việc cần làm xếp theo thứ tự, Chi tiết tính toán (sửa giả định rồi Chạy lại, bảng trước / sau) và phương án nhẹ / mạnh. - Gửi chuyên gia duyệt: gửi một việc hay phương án tới RM; theo dõi ở tran [Đồ thị tác động] Tin nào chạm tới tiền của bạn, qua đường nào, tới mục tiêu nào — đọc từ trái sang phải qua bảy cột: Tin, Sự kiện, Kịch bản, Yếu tố, Tài sản, Gia đình, Mục tiêu. Bấm một nút để làm sáng đường đi của nó; bấm lần nữa hoặc “Bỏ chọn” để bỏ. Chọn một sự kiện mở bảng tác động: hướng, kịch bản chính, các nhóm tài sản và mục tiêu trước → sau. Có nút chuyển “Đồ thị / Danh sách” và bộ lọc theo loại. [Đồ thị tài chính (màn hình chính)] Màn hình chính của khách hàng là một đồ thị luôn hiện. Vòng tròn lớn ở giữa là bạn: con số trong vòng là tài sản ròng (tổng tài sản trừ nợ). Ở chế độ Gia đình vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách. - Góc nhìn (thanh công cụ): Tổng quan, Tài sản (#/client/xem/tai-san), Dòng tiền (…/dong-tien), Mục tiêu & kịch bản (…/muc-tieu), Tin & sự kiện (…/tin), Rủi ro (…/rui-ro) [Chi tiêu mỗi tháng] Cách tính Chi tiêu mỗi tháng: Chi tiêu mỗi tháng theo hồ sơ khách hàng (cộng các thành viên khi xem cả gia đình).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Kế hoạch",
+       "Hướng dẫn sử dụng · Đồ thị tác động",
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Cách tính · Chi tiêu mỗi tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Kế hoạch] Cố vấn kế hoạch tài sản: các chỉ số tổng (tài sản ròng, lãi / lỗ danh mục, mục tiêu đã đủ tiền, dòng tiền ròng 12 tháng), số cần so với số có cho từng mục tiêu và số tiền cần để dành mỗi tháng. - Mục tiêu cuộc sống: nhóm theo gia đình và con cái, tích lũy, hưu trí và chuyển giao, quỹ dự phòng, quyết định và kịch bản căng thẳng. Chọn một mục để xem trạng thái (cần / có / thiếu), theo dõi so với dự kiến, Việc cần làm xếp theo thứ tự, Chi tiết tính toán (sửa giả định rồi Chạy lại, bảng trước / sau) và phương án nhẹ / mạnh. - Gửi chuyên gia duyệt: gửi một việc hay phương án tới RM; theo dõi ở tran [Chuyên gia] Chuyên viên quan hệ khách hàng của bạn (tên, liên hệ — dữ liệu demo) và Hàng chờ chuyên gia duyệt: các phương án bạn đã gửi từ Kế hoạch, đang chờ hay đã được duyệt / từ chối kèm ghi chú. Trang này chỉ để xem; RM và chuyên gia quyết định ở trang của họ. [Đồ thị tài chính (màn hình chính)] Trợ lý (thẻ Trợ lý cạnh ô Thông tin) biết bạn đang ở góc nhìn nào và đang chọn gì: hỏi “mục này là gì?” là hỏi về mục đang chọn. Các mục trợ lý đang đọc sáng lên trên đồ thị. - Các trang chi tiết (Toàn cảnh, Tài sản, Kế hoạch, …) mở thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như cũ. [Số tiền mục tiêu cần] Cách tính Số tiền mục tiêu cần: Cần = chi phí của mục tiêu theo giả định của trang Kế hoạch (học phí, nghỉ hưu, mua nhà…), quy về thời điểm cần tiền.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Kế hoạch",
+       "Hướng dẫn sử dụng · Chuyên gia",
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Cách tính · Số tiền mục tiêu cần"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Kế hoạch.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/client/muc-tieu/ke-hoach",
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 36624,
+     "output_tokens": 1106,
+     "requests": 4,
+     "cost_usd": 0.004215,
+     "tools_cost_usd": null
+    },
+    "turn_id": "d3e341cdbf454609920852b115ddba9b",
+    "conversation_id": "04bfe4e9d9774eb4",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa có công cụ tạo mục tiêu mới trực tiếp từ trợ lý, nên tôi đã mở trang **Kế hoạch** cho bạn. Theo hướng dẫn của ứng dụng, bạn xem các mục tiêu hiện có trên trang này và thêm mục tiêu mới tại đó.\n\nKhi thêm mục tiêu mua nhà 5 tỷ vào năm 2031, bạn có thể nhập:\n- Số tiền cần: 5 tỷ đồng\n- Thời điểm cần tiền: năm 2031\n\nNếu bạn muốn, tôi có thể xem sẵn số tiền cần để dành mỗi tháng sau khi mục tiêu được thêm.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Kế hoạch",
+     "Hướng dẫn sử dụng · Đồ thị tác động",
+     "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+     "Cách tính · Chi tiêu mỗi tháng",
+     "Hướng dẫn sử dụng · Chuyên gia",
+     "Cách tính · Số tiền mục tiêu cần"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": "#/client/muc-tieu/ke-hoach",
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263525.2346656,
+    "audit_seq": 1481,
+    "session": {
+     "id": "04bfe4e9d9774eb4",
+     "title": "Tạo giúp em một mục tiêu mua nhà 5 tỷ vào năm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 10.20812069857493,
+   "first_event": 2.560087002813816,
+   "usage": {
+    "cost": 0.004215,
+    "input": 36624,
+    "output": 1106,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KytqLSScUSiLFY8hEwNfwU",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KytqLSScUSiLFY8hEwNfwU",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 264,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01UxN8m5HLHo7qMaFH3oK24C",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01UxN8m5HLHo7qMaFH3oK24C",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 81,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01EQtedBbJsaCa3AJckVzNip",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01EQtedBbJsaCa3AJckVzNip",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

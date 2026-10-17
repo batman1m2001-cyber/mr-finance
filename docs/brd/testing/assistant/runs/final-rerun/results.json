@@ -1,0 +1,44 @@
+{
+ "tag": "final-rerun",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 1.969152,
+ "conversations": [
+  {
+   "id": "wi-02",
+   "category": "what_if",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "numbers not from the tools or the person: ['−1,62 tỷ', '−0,49 tỷ', '−0,06 tỷ']"
+     ]
+    ],
+    [
+     2,
+     [
+      "numbers not from the tools or the person: ['−1,62 tỷ']"
+     ]
+    ]
+   ],
+   "cost": 0.003085,
+   "seconds": 9.1,
+   "tokens": 26474
+  },
+  {
+   "id": "fm-05",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001667,
+   "seconds": 3.3,
+   "tokens": 15583
+  }
+ ],
+ "passed": 1,
+ "of": 2,
+ "turns": 3,
+ "turns_failed": 2
+}

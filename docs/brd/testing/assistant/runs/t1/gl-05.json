@@ -1,0 +1,404 @@
+{
+ "id": "gl-05",
+ "category": "goals",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Tự do tài chính là gì, tôi đạt chưa",
+ "why": "A concept applied to his data.",
+ "brd": [
+  "OWN-AS-07",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tự do tài chính nghĩa là gì, và tôi đã đạt được chưa?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tự do tài chính nghĩa là gì, và tôi đã đạt được chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "6 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): đúng tiến độ; Mua thêm BĐS bằng vốn vay: cần chú ý; Chuyển giao tài sản cho con: đúng tiến độ; Doanh nghiệp cần vốn gấp: đúng tiến độ; Định cư / con đi du học: đúng tiến độ; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 5,04 tỷ · có 5,04 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 7,82 tỷ",
+         "chip": "cần chú ý",
+         "tone": "warn",
+         "progress": 1.0,
+         "focus": "goal:leverage_buy"
+        },
+        {
+         "title": "Chuyển giao tài sản cho con",
+         "sub": "cần 1,97 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:pass_on"
+        },
+        {
+         "title": "Doanh nghiệp cần vốn gấp",
+         "sub": "cần 5,00 tỷ · có 5,00 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:business_cash"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:emigrate"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45%, Cổ phiếu 22%, Cổ phần DN 12%, Tiền & tiền gửi 9%, Vàng 7%, Trái phiếu 5%. Thanh khoản dự phòng 8,90 tỷ, đủ chi 4 năm. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “tự do tài chính” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 263,8 triệu, tiền ra 251,0 triệu, còn lại 12,8 triệu. Khoản chi lớn nhất: Thanh toán thẻ 90,8 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Thanh toán thẻ",
+         "value": 90760000.0,
+         "text": "90,8 triệu"
+        },
+        {
+         "label": "Trả nợ vay",
+         "value": 85000000.0,
+         "text": "85,0 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 75253000.0,
+         "text": "75,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "263,8 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "251,0 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "12,8 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:card"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "12 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Ước tính quy mô tài sản theo quy tắc 25 lần chi tiêu năm (chi tiêu tháng 09/2026 × 12 × 25), đơn vị triệu đồng: 251.0*12*25 = 75.300",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 27594,
+     "output_tokens": 2191,
+     "requests": 4,
+     "cost_usd": 0.003855,
+     "tools_cost_usd": null
+    },
+    "turn_id": "26c94143296146c0b46d4cf1f5a3ecf3",
+    "conversation_id": "72c533c0860c45b5",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Tự do tài chính** thường nghĩa là tài sản của bạn đủ tạo ra thu nhập (lãi, cổ tức, cho thuê) hoặc đủ lớn để chi tiêu mà không phải phụ thuộc vào lương. Một cách ước lượng phổ biến là quy tắc 25 lần chi tiêu một năm (tương ứng rút khoảng 4% mỗi năm). Đây là quy ước tham khảo, không phải cam kết.\n\n**Bạn đã đạt chưa?** Theo quy tắc này, con số tham chiếu là:\n\n- Chi tiêu tháng 09/2026: 251,0 triệu (tiền ra, theo trang Dòng tiền)\n- Quy mô cần có: 251,0 × 12 × 25 = **75,3 tỷ** (phép tính này do công cụ tính)\n- Tài sản ròng hiện tại: **95,3 tỷ** (tính đến 09/10/2026, trang Tổng quan)\n\nTrên con số, bạn vượt mức tham chiếu. Tuy nhiên có ba điểm cần lưu ý:\n\n1. **Tài sản ròng bao gồm bất động sản (45%)**, khó chuyển thành tiền nhanh. Phần tài sản có thể dùng ngay thấp hơn nhiều so với 95,3 tỷ.\n2. **Chi tiêu 251 triệu là một tháng cụ thể** và có một khoản thanh toán thẻ 90,8 triệu. Chi tiêu thực tế cả năm có thể khác.\n3. **Ứng dụng chưa có mục \"tự do tài chính\"** riêng cho bạn. Sáu mục tiêu đang theo dõi là học phí, mua bất động sản, chuyển giao tài sản cho con, doanh nghiệp, định cư/du học và cưới hỏi. Nếu bạn muốn ghi nhận mốc tự do tài chính của mình (ví dụ mức chi tiêu mong muốn hoặc số tuổi), tôi có thể ghi nh",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Tổng hợp 17 khoản từ 5 nguồn",
+     "12 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:card"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257437.069646,
+    "audit_seq": 707,
+    "session": {
+     "id": "72c533c0860c45b5",
+     "title": "Tự do tài chính nghĩa là gì, và tôi đã đạt được…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 14.397526204120368,
+   "first_event": 1.9479935299605131,
+   "usage": {
+    "cost": 0.003855,
+    "input": 27594,
+    "output": 2191,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QsVAmGnCcAyn8P52XJGhxh",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013Rb86Wfzbek9f5QnEwrcCo",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QsVAmGnCcAyn8P52XJGhxh",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 163,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013Rb86Wfzbek9f5QnEwrcCo",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 163,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Uvh74ogoDUkfTtZGUd8iS9",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HfF8v2K1oS29U9XwtDnDHF",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Uvh74ogoDUkfTtZGUd8iS9",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 150,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HfF8v2K1oS29U9XwtDnDHF",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 150,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:card"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016LHf2n6ejxT91eFFbJXeTE",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016LHf2n6ejxT91eFFbJXeTE",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

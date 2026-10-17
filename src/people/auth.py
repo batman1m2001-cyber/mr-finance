@@ -28,6 +28,8 @@ import json
 import os
 import secrets
 import time
+from contextlib import contextmanager
+from contextvars import ContextVar
 from http.cookies import SimpleCookie
 from typing import Any, Dict, List, Optional
 
@@ -257,19 +259,36 @@ def from_cookie_header(cookie: Optional[str]) -> Optional[Dict[str, Any]]:
 # -- the checks inside a served run --------------------------------------------------------------
 
 
+_CARRIED: ContextVar = ContextVar("mf_carried_session", default=None)
+
+
 def _session() -> Any:
-    """The request that started this run, or None when no request did (a schedule, a direct run)."""
+    """The request that started this run, or None when no request did (a schedule, a direct run). A run nested in a
+    served one (the assistant's tools run served graphs in-process) has no session of its own: it has the request
+    around it, carried in (:func:`carried`)."""
     try:
         from operonx.app.serve.protocol import current_session
     except ImportError:  # pragma: no cover
         return None
-    session = current_session()
+    session = current_session() or _CARRIED.get()
     if session is None:
         return None
     meta = getattr(session, "meta", None) or {}
     if meta.get("trigger") == "schedule" or meta.get("job"):  # a schedule, or `operonx run <job>` on the server
         return None
     return session
+
+
+@contextmanager
+def carried():
+    """Around a nested run: the request that started the outer one stays the request of every op inside, so its
+    sign-in, family and duty checks apply there too. Without it a nested run saw no request and checked nothing —
+    the assistant read another family's data when the request named it (stress test D13)."""
+    token = _CARRIED.set(_session())
+    try:
+        yield
+    finally:
+        _CARRIED.reset(token)
 
 
 _UNSET = object()
@@ -327,6 +346,22 @@ def require_client(client_id: str) -> None:
         raise NotSignedIn("Cần đăng nhập")
     if not may_see(v, client_id):
         raise Forbidden(f"{v['name']} không được xem dữ liệu của khách hàng này")
+
+
+def client_for(client_id: Optional[str]) -> Optional[str]:
+    """The family a request may read. A customer is always themselves: naming a family they may not see reads their
+    own (the panel only ever names theirs). Staff are refused a family they may not see. Outside a checked request:
+    as named. (Stress test D13: the assistant's requests read the family they named, unchecked.)"""
+    if not checking():
+        return client_id
+    v = signed_in()
+    if v is None:
+        raise NotSignedIn("Cần đăng nhập")
+    if v["role"] == "client":
+        return client_id if client_id and may_see(v, client_id) else v["id"]
+    if client_id:
+        require_client(client_id)
+    return client_id
 
 
 def visible(client_ids: List[str]) -> List[str]:

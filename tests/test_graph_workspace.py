@@ -68,8 +68,9 @@ def test_every_route_the_server_builds_for_a_customer_resolves():
     assert len(routes) >= 9
     parts = [r.removeprefix("#/client/").split("/") for r in sorted(routes)]
     got = lenses(f"{json.dumps(parts)}.map(p => L.resolve(p))")
-    for route, r in zip(sorted(routes), got):
-        assert r["sheet"] or route.endswith(("/ban-do", "/tong-quan")), (route, r)
+    for route, r, part in zip(sorted(routes), got, parts):
+        lens = part[0] == "xem" and r["lens"] == part[1]  # a lens of its own (the assistant's mo_trang, D20)
+        assert r["sheet"] or lens or route.endswith(("/ban-do", "/tong-quan")), (route, r)
 
 
 def test_the_workspace_is_served_and_follows_the_motion_rules():

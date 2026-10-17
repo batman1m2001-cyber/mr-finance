@@ -1,0 +1,909 @@
+{
+ "tag": "t2",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.938698,
+ "conversations": [
+  {
+   "id": "nav-01",
+   "category": "navigation",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.006386,
+   "seconds": 15.0,
+   "tokens": 58168
+  },
+  {
+   "id": "nav-02",
+   "category": "navigation",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "called none of ['tong_quan', 'huong_dan', 'tim_kiem']"
+     ]
+    ]
+   ],
+   "cost": 0.004368,
+   "seconds": 10.4,
+   "tokens": 37966
+  },
+  {
+   "id": "nav-03",
+   "category": "navigation",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003691,
+   "seconds": 9.8,
+   "tokens": 32156
+  },
+  {
+   "id": "nav-04",
+   "category": "navigation",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004014,
+   "seconds": 10.3,
+   "tokens": 35248
+  },
+  {
+   "id": "nav-05",
+   "category": "navigation",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003822,
+   "seconds": 8.6,
+   "tokens": 34969
+  },
+  {
+   "id": "nav-06",
+   "category": "navigation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001711,
+   "seconds": 4.8,
+   "tokens": 15233
+  },
+  {
+   "id": "pf-01",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004466,
+   "seconds": 10.3,
+   "tokens": 41460
+  },
+  {
+   "id": "pf-02",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     3,
+     [
+      "called none of ['dong_luc', 'dong_tien']"
+     ]
+    ]
+   ],
+   "cost": 0.006031,
+   "seconds": 17.3,
+   "tokens": 51170
+  },
+  {
+   "id": "pf-03",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00491,
+   "seconds": 13.1,
+   "tokens": 42280
+  },
+  {
+   "id": "pf-04",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "called none of ['tong_quan', 'chu_y', 'huong_dan']"
+     ]
+    ]
+   ],
+   "cost": 0.003008,
+   "seconds": 9.3,
+   "tokens": 24715
+  },
+  {
+   "id": "pf-05",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004539,
+   "seconds": 10.0,
+   "tokens": 41583
+  },
+  {
+   "id": "pf-06",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003749,
+   "seconds": 9.2,
+   "tokens": 33082
+  },
+  {
+   "id": "pf-07",
+   "category": "personal_finance",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001936,
+   "seconds": 6.0,
+   "tokens": 15956
+  },
+  {
+   "id": "kn-01",
+   "category": "knowledge",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004552,
+   "seconds": 17.0,
+   "tokens": 34782
+  },
+  {
+   "id": "kn-02",
+   "category": "knowledge",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004831,
+   "seconds": 13.9,
+   "tokens": 41364
+  },
+  {
+   "id": "kn-03",
+   "category": "knowledge",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001638,
+   "seconds": 4.0,
+   "tokens": 14755
+  },
+  {
+   "id": "kn-04",
+   "category": "knowledge",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.02588,
+   "seconds": 17.7,
+   "tokens": 15810
+  },
+  {
+   "id": "kn-05",
+   "category": "knowledge",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002944,
+   "seconds": 9.9,
+   "tokens": 24232
+  },
+  {
+   "id": "kn-06",
+   "category": "knowledge",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002759,
+   "seconds": 8.1,
+   "tokens": 23772
+  },
+  {
+   "id": "nw-01",
+   "category": "news",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     3,
+     [
+      "called none of ['tac_dong', 'dieu_tra', 'tim_kiem']"
+     ]
+    ]
+   ],
+   "cost": 0.004106,
+   "seconds": 12.8,
+   "tokens": 33399
+  },
+  {
+   "id": "nw-02",
+   "category": "news",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002073,
+   "seconds": 6.6,
+   "tokens": 16671
+  },
+  {
+   "id": "nw-03",
+   "category": "news",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003143,
+   "seconds": 10.5,
+   "tokens": 25629
+  },
+  {
+   "id": "nw-04",
+   "category": "news",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "called none of ['chu_y', 'tac_dong']"
+     ]
+    ]
+   ],
+   "cost": 0.005136,
+   "seconds": 15.7,
+   "tokens": 42711
+  },
+  {
+   "id": "nw-05",
+   "category": "news",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.026091,
+   "seconds": 12.4,
+   "tokens": 15499
+  },
+  {
+   "id": "gl-01",
+   "category": "goals",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "called none of ['muc_tieu', 'kich_ban']"
+     ]
+    ],
+    [
+     3,
+     [
+      "called none of ['muc_tieu']"
+     ]
+    ]
+   ],
+   "cost": 0.00573,
+   "seconds": 15.3,
+   "tokens": 47848
+  },
+  {
+   "id": "gl-02",
+   "category": "goals",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.008343,
+   "seconds": 23.4,
+   "tokens": 69361
+  },
+  {
+   "id": "gl-03",
+   "category": "goals",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003814,
+   "seconds": 10.7,
+   "tokens": 32565
+  },
+  {
+   "id": "gl-04",
+   "category": "goals",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003322,
+   "seconds": 10.5,
+   "tokens": 26987
+  },
+  {
+   "id": "gl-05",
+   "category": "goals",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004861,
+   "seconds": 16.4,
+   "tokens": 38352
+  },
+  {
+   "id": "wi-01",
+   "category": "what_if",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "called none of ['kich_ban', 'so_sanh_kich_ban']",
+      "numbers not from the tools or the person: ['1,48 tỷ', '0,19 tỷ']"
+     ]
+    ],
+    [
+     2,
+     [
+      "called none of ['so_sanh_kich_ban']",
+      "does not say /3,8/",
+      "numbers not from the tools or the person: ['48 triệu']"
+     ]
+    ]
+   ],
+   "cost": 0.004585,
+   "seconds": 10.5,
+   "tokens": 41373
+  },
+  {
+   "id": "wi-02",
+   "category": "what_if",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002958,
+   "seconds": 8.7,
+   "tokens": 24716
+  },
+  {
+   "id": "wi-03",
+   "category": "what_if",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003345,
+   "seconds": 11.6,
+   "tokens": 26322
+  },
+  {
+   "id": "wi-04",
+   "category": "what_if",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "called none of ['kich_ban', 'so_sanh_kich_ban']"
+     ]
+    ]
+   ],
+   "cost": 0.003625,
+   "seconds": 8.4,
+   "tokens": 32806
+  },
+  {
+   "id": "wi-05",
+   "category": "what_if",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0033,
+   "seconds": 11.5,
+   "tokens": 26360
+  },
+  {
+   "id": "wi-06",
+   "category": "what_if",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004544,
+   "seconds": 14.5,
+   "tokens": 36691
+  },
+  {
+   "id": "cc-01",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001992,
+   "seconds": 6.5,
+   "tokens": 16220
+  },
+  {
+   "id": "cc-02",
+   "category": "concerns",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "numbers not from the tools or the person: ['32']"
+     ]
+    ]
+   ],
+   "cost": 0.003341,
+   "seconds": 12.1,
+   "tokens": 25605
+  },
+  {
+   "id": "cc-03",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001988,
+   "seconds": 7.2,
+   "tokens": 16812
+  },
+  {
+   "id": "cc-04",
+   "category": "concerns",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "called none of ['dong_tien', 'tong_quan']",
+      "numbers not from the tools or the person: ['19%']"
+     ]
+    ]
+   ],
+   "cost": 0.004292,
+   "seconds": 12.8,
+   "tokens": 35259
+  },
+  {
+   "id": "cc-05",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002005,
+   "seconds": 6.6,
+   "tokens": 16423
+  },
+  {
+   "id": "act-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003903,
+   "seconds": 6.4,
+   "tokens": 36504
+  },
+  {
+   "id": "act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00386,
+   "seconds": 6.1,
+   "tokens": 36937
+  },
+  {
+   "id": "act-03",
+   "category": "actions",
+   "turns": 5,
+   "ok": true,
+   "failed": [],
+   "cost": 0.006388,
+   "seconds": 9.5,
+   "tokens": 60627
+  },
+  {
+   "id": "act-04",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002673,
+   "seconds": 5.6,
+   "tokens": 22389
+  },
+  {
+   "id": "act-05",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004329,
+   "seconds": 9.5,
+   "tokens": 38105
+  },
+  {
+   "id": "act-06",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001079,
+   "seconds": 4.6,
+   "tokens": 7794
+  },
+  {
+   "id": "act-07",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002018,
+   "seconds": 6.3,
+   "tokens": 15921
+  },
+  {
+   "id": "act-08",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000834,
+   "seconds": 2.2,
+   "tokens": 7377
+  },
+  {
+   "id": "act-09",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001514,
+   "seconds": 3.1,
+   "tokens": 14363
+  },
+  {
+   "id": "ms-01",
+   "category": "memory_sessions",
+   "turns": 4,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "called none of ['dong_tien']"
+     ]
+    ]
+   ],
+   "cost": 0.00518,
+   "seconds": 12.6,
+   "tokens": 46608
+  },
+  {
+   "id": "ms-02",
+   "category": "memory_sessions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004679,
+   "seconds": 15.7,
+   "tokens": 39006
+  },
+  {
+   "id": "ms-03",
+   "category": "memory_sessions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001784,
+   "seconds": 5.0,
+   "tokens": 15281
+  },
+  {
+   "id": "ms-04",
+   "category": "memory_sessions",
+   "turns": 12,
+   "ok": false,
+   "failed": [
+    [
+     6,
+     [
+      "numbers not from the tools or the person: ['−1,48 tỷ', '−186,0 triệu']"
+     ]
+    ]
+   ],
+   "cost": 0.023403,
+   "seconds": 40.1,
+   "tokens": 217573
+  },
+  {
+   "id": "ms-05",
+   "category": "memory_sessions",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "status ok (want pending)",
+      "no confirmation asked for ghi_nho (waits [])"
+     ]
+    ],
+    [
+     2,
+     [
+      "no_answer: "
+     ]
+    ]
+   ],
+   "cost": 0.001729,
+   "seconds": 4.8,
+   "tokens": 15036
+  },
+  {
+   "id": "ms-06",
+   "category": "memory_sessions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002698,
+   "seconds": 8.4,
+   "tokens": 22893
+  },
+  {
+   "id": "am-01",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001777,
+   "seconds": 5.7,
+   "tokens": 14937
+  },
+  {
+   "id": "am-02",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00176,
+   "seconds": 4.2,
+   "tokens": 15495
+  },
+  {
+   "id": "am-03",
+   "category": "ambiguous",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.006615,
+   "seconds": 15.2,
+   "tokens": 58975
+  },
+  {
+   "id": "am-04",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002115,
+   "seconds": 5.5,
+   "tokens": 17807
+  },
+  {
+   "id": "am-05",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002016,
+   "seconds": 6.3,
+   "tokens": 16343
+  },
+  {
+   "id": "oos-01",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001008,
+   "seconds": 3.8,
+   "tokens": 7640
+  },
+  {
+   "id": "oos-02",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "no source named"
+     ]
+    ]
+   ],
+   "cost": 0.026082,
+   "seconds": 14.3,
+   "tokens": 15448
+  },
+  {
+   "id": "oos-03",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000977,
+   "seconds": 3.8,
+   "tokens": 7578
+  },
+  {
+   "id": "oos-04",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000802,
+   "seconds": 3.7,
+   "tokens": 7240
+  },
+  {
+   "id": "oos-05",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.049679,
+   "seconds": 32.4,
+   "tokens": 23030
+  },
+  {
+   "id": "adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000776,
+   "seconds": 1.7,
+   "tokens": 7192
+  },
+  {
+   "id": "adv-02",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000937,
+   "seconds": 3.6,
+   "tokens": 7501
+  },
+  {
+   "id": "adv-03",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001825,
+   "seconds": 6.0,
+   "tokens": 15415
+  },
+  {
+   "id": "adv-04",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000941,
+   "seconds": 3.4,
+   "tokens": 7520
+  },
+  {
+   "id": "adv-05",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00077,
+   "seconds": 1.9,
+   "tokens": 7188
+  },
+  {
+   "id": "adv-06",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000855,
+   "seconds": 2.4,
+   "tokens": 7341
+  },
+  {
+   "id": "adv-07",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001675,
+   "seconds": 5.9,
+   "tokens": 15450
+  },
+  {
+   "id": "adv-08",
+   "category": "adversarial",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001903,
+   "seconds": 7.2,
+   "tokens": 15086
+  },
+  {
+   "id": "adv-09",
+   "category": "adversarial",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00273,
+   "seconds": 6.4,
+   "tokens": 22537
+  },
+  {
+   "id": "fm-04",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002496,
+   "seconds": 6.8,
+   "tokens": 22164
+  },
+  {
+   "id": "fm-05",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001565,
+   "seconds": 4.5,
+   "tokens": 14470
+  },
+  {
+   "id": "fm-06",
+   "category": "failure_modes",
+   "turns": 21,
+   "ok": false,
+   "failed": [
+    [
+     10,
+     [
+      "numbers not from the tools or the person: ['720']"
+     ]
+    ]
+   ],
+   "cost": 0.058494,
+   "seconds": 101.3,
+   "tokens": 532007
+  }
+ ],
+ "passed": 62,
+ "of": 77,
+ "turns": 161,
+ "turns_failed": 18
+}

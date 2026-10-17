@@ -1,0 +1,456 @@
+{
+ "id": "nav-02",
+ "category": "navigation",
+ "persona": "chuyên gia, hỏi sâu (C01)",
+ "client_id": "C01",
+ "title": "Tài sản ròng tính thế nào, từ nguồn nào, mới đến đâu",
+ "why": "An expert challenges the headline figure: the formula, its sources, its date.",
+ "brd": [
+  "OWN-AS-02",
+  "KIT-COPILOT-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Con số tài sản ròng của tôi được tính như thế nào?",
+   "expect": {
+    "tools_any": [
+     "huong_dan",
+     "tong_quan"
+    ],
+    "says": "nợ"
+   }
+  },
+  {
+   "say": "Những nguồn dữ liệu nào tạo nên con số đó?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "huong_dan",
+     "tim_kiem"
+    ]
+   }
+  },
+  {
+   "say": "Dữ liệu này cập nhật lần cuối khi nào?",
+   "expect": {
+    "says": "20\\d\\d|ngày"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Con số tài sản ròng của tôi được tính như thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Chi phí chính sách] Chính sách (lãi suất, thuế, quy định…) có thể làm bạn mất hay được bao nhiêu: Tác động lên tài sản ròng theo từng chính sách (lọc tất cả / rủi ro / cơ hội), nhận định của các nhà nghiên cứu khớp với tài sản của bạn (dữ liệu giả định), và từng thẻ chính sách: mức độ, tình trạng pháp lý, tác động có xác suất, cách tính (giá trị × độ nhạy × xác suất) và nguồn. [Toàn cảnh] Mở từ góc nhìn Tổng quan của đồ thị (tấm phủ “Toàn cảnh”): trong một màn hình, bạn có bao nhiêu và thay đổi thế nào, tháng trước tiền vào ra bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu. - Bốn thẻ nhịp tài chính: tài sản ròng và các nhóm tài sản làm nó thay đổi nhiều nhất trong tháng; dòng tiền tháng (vào, ra, phần để dành) với sáu tháng gần nhất; thanh khoản dự phòng tính bằng số tháng chi tiêu (vòng tròn, mốc an toàn 6 tháng); mức lỗ khi thị trường căng thẳng so với ngưỡng bạn chấp nhận. - Dòng tiền của bạn: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức… [Đồ thị tài chính (màn hình chính)] Màn hình chính của khách hàng là một đồ thị luôn hiện. Vòng tròn lớn ở giữa là bạn: con số trong vòng là tài sản ròng (tổng tài sản trừ nợ). Ở chế độ Gia đình vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách. - Góc nhìn (thanh công cụ): Tổng quan, Tài sản (#/client/xem/tai-san), Dòng tiền (…/dong-tien), Mục tiêu & kịch bản (…/muc-tieu), Tin & sự kiện (…/tin), Rủi ro (…/rui-ro) [Tài sản ròng] Cách tính Tài sản ròng: Tài sản ròng = tổng giá trị tài sản − tổng nợ, giá ngày định giá.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Chi phí chính sách",
+       "Hướng dẫn sử dụng · Toàn cảnh",
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Cách tính · Tài sản ròng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17576,
+     "output_tokens": 616,
+     "requests": 2,
+     "cost_usd": 0.002066,
+     "tools_cost_usd": null
+    },
+    "turn_id": "aded48b69be34939912ca6cc175f7892",
+    "conversation_id": "6967274fdb054c8b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tài sản ròng của bạn là **43,53 tỷ đồng**, tính theo công thức:\n\n**Tài sản ròng = tổng tài sản − tổng nợ**\n= 45,97 tỷ − 2,44 tỷ = **43,53 tỷ**\n\n- **Tổng tài sản (45,97 tỷ):** gồm 21 khoản, lấy từ ngân hàng, công ty chứng khoán, công ty quản lý quỹ, dịch vụ định giá nhà đất, sao kê bạn tải lên và các khoản bạn tự khai (vàng, bất động sản ngoài hệ thống, cổ phần, bảo hiểm).\n- **Nợ (2,44 tỷ):** khoản vay mua nhà Thảo Điền 2,40 tỷ và dư nợ thẻ Visa Signature 45,0 triệu.\n\nSố liệu tính đến ngày 09/10/2026, lấy từ trang Tổng quan. Đây là số ghi nhận trong hệ thống, tính theo giá ngày định giá. So với tháng trước, tài sản ròng tăng 980,5 triệu (2,3%).",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Hướng dẫn sử dụng · Chi phí chính sách",
+     "Hướng dẫn sử dụng · Toàn cảnh",
+     "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+     "Cách tính · Tài sản ròng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263035.777084,
+    "audit_seq": 1351,
+    "session": {
+     "id": "6967274fdb054c8b",
+     "title": "Con số tài sản ròng của tôi được tính như thế…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.655787656083703,
+   "first_event": 1.620582061354071,
+   "usage": {
+    "cost": 0.002066,
+    "input": 17576,
+    "output": 616,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GmjUwgGPmhfRfKigCR436K",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Er6jAov36peYfvnVdi7Pfj",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GmjUwgGPmhfRfKigCR436K",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 134,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Er6jAov36peYfvnVdi7Pfj",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 208,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Những nguồn dữ liệu nào tạo nên con số đó?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10405,
+     "output_tokens": 455,
+     "requests": 1,
+     "cost_usd": 0.001268,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ff94447aa8fd4432a05e3e5619a3ae3c",
+    "conversation_id": "6967274fdb054c8b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Con số 43,53 tỷ được tổng hợp từ **21 khoản** lấy từ **7 nguồn**:\n\n- **Techcombank (4 khoản):** tiền gửi, thẻ, khoản vay, giao dịch.\n- **TCBS (6 khoản):** cổ phiếu, trái phiếu, lãi lỗ.\n- **Techcom Capital (2 khoản):** chứng chỉ quỹ.\n- **OneHousing (1 khoản):** định giá bất động sản.\n- **Open API (1 khoản):** số dư và danh mục từ ngân hàng hoặc công ty chứng khoán khác.\n- **Sao kê tải lên (3 khoản):** đọc từ file PDF hoặc Excel bạn đã tải lên.\n- **Bạn tự khai (4 khoản):** vàng, bất động sản ngoài hệ thống, cổ phần, bảo hiểm.\n\nSố liệu tính đến 09/10/2026. Các khoản bạn tự khai không được hệ thống xác minh, nên nếu giá trị đã cũ thì tài sản ròng cũng sẽ lệch theo.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263038.8724267,
+    "audit_seq": 1352,
+    "session": {
+     "id": "6967274fdb054c8b",
+     "title": "Con số tài sản ròng của tôi được tính như thế…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.0578700928017497,
+   "first_event": 1.623983417171985,
+   "usage": {
+    "cost": 0.001268,
+    "input": 10405,
+    "output": 455,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Dữ liệu này cập nhật lần cuối khi nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Tài sản] Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: Đã xác thực (từ ngân hàng), Từ sao kê, Bạn tự khai; ngày và giá mua, giá vốn, giá trị hiện tại, lãi / lỗ; cuối bảng là tổng tài sản, nợ và tài sản ròng. - Tải sao kê: chọn tệp PDF, Excel hoặc CSV của công ty chứng khoán hay ngân hàng khác (hoặc dùng sao kê mẫu); các khoản đọc được hiện với nhãn “Từ sao kê”. - Bổ sung tài sản: gõ một câu như “Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ”; ứng dụng trả lời đã ghi gì và bảng có thêm dòng. [Trợ lý OneWealth (Copilot)] Bấm ✦ để mở khung trợ lý. Hỏi bằng tiếng Việt về số liệu của mình, về trang đang xem hay cách làm một việc trong ứng dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu bạn đang ở trang nào, vai trò nào, khách hàng nào. - Trợ lý chỉ đọc những gì bạn được phép xem, qua đúng các công cụ của các trang. Câu trả lời có nguồn (“Nguồn: …”), thời điểm số liệu và nút Mở … → để mở trang chứa số đó; số đọc được trên trang hiện tại sẽ được đánh dấu. - Việc làm thay đổi dữ liệu (lưu mục tiêu, gửi đề xuất, ghi nhớ…) luôn hiện Xác nhận / Huỷ trước; không xác nhận thì không có gì được ghi. Sau khi làm, t [Đăng nhập] Nhập e-mail hoặc mã khách hàng và mật khẩu rồi bấm Đăng nhập. Sai tên hoặc mật khẩu thì ứng dụng chỉ báo “Sai tên đăng nhập hoặc mật khẩu”, không nói sai phần nào. Chưa đăng nhập thì không thấy gì của ứng dụng: không menu, không chọn gia đình, không trợ lý. Trên bản demo công khai có mục Tài khoản demo: danh sách tài khoản theo vai trò (khách hàng, RM, CIO, Tuân thủ, Quản trị, Chuyên gia), bấm một lần là vào. Sau khi đăng nhập, góc trên hiện tên, chức danh và nút Đăng xuất; menu chỉ có các trang của vai trò mình, mở địa chỉ trang của vai trò khác sẽ quay về trang của mình. [Tổng đọc được từ sao kê] Cách tính Tổng đọc được từ sao kê: Tổng = cộng giá trị hôm nay các khoản đọc được từ tệp sao kê (giá theo dữ liệu thị trường ngày định giá khi sao kê có mã, số dư khi là tiền gửi).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Tài sản",
+       "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+       "Hướng dẫn sử dụng · Đăng nhập",
+       "Cách tính · Tổng đọc được từ sao kê"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tài sản",
+       "route": "#/client/tai-san"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 23118,
+     "output_tokens": 700,
+     "requests": 2,
+     "cost_usd": 0.002662,
+     "tools_cost_usd": null
+    },
+    "turn_id": "34f178201ab346d8a41a0baed33346b2",
+    "conversation_id": "6967274fdb054c8b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống chỉ cho tôi biết **ngày số liệu là 09/10/2026**, theo trang Tổng quan. Tôi chưa có thời điểm đồng bộ cụ thể của từng nguồn (Techcombank, TCBS, Techcom Capital, OneHousing, Open API hay sao kê), nên không xác định được chính xác lần cập nhật cuối.\n\nMức độ tin cậy của từng khoản được ghi trên trang Tài sản:\n- **Đã xác thực (từ ngân hàng):** lấy trực tiếp từ hệ thống kết nối.\n- **Từ sao kê:** phụ thuộc vào file bạn đã tải lên, nên sẽ cũ dần nếu bạn không tải file mới.\n- **Bạn tự khai:** cần bạn tự cập nhật giá trị.\n\nĐể xem ngày cập nhật của từng khoản, bạn mở trang Tài sản.",
+    "citations": [
+     {
+      "label": "Tài sản",
+      "route": "#/client/tai-san"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Tài sản",
+     "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+     "Hướng dẫn sử dụng · Đăng nhập",
+     "Cách tính · Tổng đọc được từ sao kê"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263044.400123,
+    "audit_seq": 1353,
+    "session": {
+     "id": "6967274fdb054c8b",
+     "title": "Con số tài sản ròng của tôi được tính như thế…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 5.484476578887552,
+   "first_event": 2.5222363718785346,
+   "usage": {
+    "cost": 0.002662,
+    "input": 23118,
+    "output": 700,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01AqPHeopofPgdCYyzyZqXUV",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01AqPHeopofPgdCYyzyZqXUV",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 86,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  }
+ ]
+}

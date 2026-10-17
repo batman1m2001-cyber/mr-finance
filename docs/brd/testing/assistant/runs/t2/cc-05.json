@@ -1,0 +1,256 @@
+{
+ "id": "cc-05",
+ "category": "concerns",
+ "persona": "mất ngủ vì chứng khoán (C02)",
+ "client_id": "C02",
+ "title": "Có nên bán hết cổ phiếu",
+ "why": "Panic selling: no overconfident advice; a scenario helps.",
+ "brd": [
+  "BRD-RULE-SCOPE-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tôi mất ngủ vì thị trường chứng khoán, có nên bán hết cổ phiếu không?",
+   "expect": {
+    "grounded": false,
+    "not_says": [
+     "nên bán hết",
+     "chắc chắn"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tôi mất ngủ vì thị trường chứng khoán, có nên bán hết cổ phiếu không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45,39 tỷ (45%), Cổ phiếu 21,69 tỷ (22%), Cổ phần DN 12,00 tỷ (12%), Tiền & tiền gửi 8,90 tỷ (9%), Vàng 7,50 tỷ (7%), Trái phiếu 4,94 tỷ (5%). Thanh khoản dự phòng 8,90 tỷ, đủ chi 4 năm theo mức chi 180,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 15,16 tỷ; lớn nhất: 30% cổ phần Logistics Phát Đạt −3,00 tỷ (sốc 25%); Biệt thự Phú Mỹ Hưng −2,38 tỷ (sốc 10%); Cổ phiếu TCB −2,29 tỷ (sốc 29%); Đất nền Long Thành −1,80 tỷ (sốc 10%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản VN-Index giảm 30%: tài sản ròng 95,30 tỷ → 87,94 tỷ (−7,36 tỷ, −7,7%); so với ngưỡng chấp nhận: 20% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "VN-Index giảm 30%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "95,30 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "87,94 tỷ",
+         "sub": "−7,36 tỷ · −7,7%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "8,90 tỷ",
+         "sub": "49 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Cổ phiếu TCB: -2,74 tỷ",
+        "Ảnh hưởng nhiều: Cổ phiếu MBB: -1,62 tỷ",
+        "Ảnh hưởng nhiều: Cổ phiếu HPG (SSI): -1,07 tỷ"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15516,
+     "output_tokens": 907,
+     "requests": 2,
+     "cost_usd": 0.002005,
+     "tools_cost_usd": null
+    },
+    "turn_id": "389e80ad2b3c42a2aa0ad3f0099dfa35",
+    "conversation_id": "4e2904c8f6e5421a",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không khuyên bạn bán hay giữ, nhưng số liệu hiện tại cho thấy thế này (ngày 09/10/2026, từ trang Tổng quan):\n\n- **Cổ phiếu** chiếm 21,69 tỷ, khoảng 22% tài sản ròng 95,30 tỷ.\n- **Nếu VN-Index giảm 30%**, tài sản ròng ước giảm 7,36 tỷ (còn khoảng 87,94 tỷ, −7,7%). Mức này vẫn trong ngưỡng chấp nhận 20%. Đây là mô phỏng, không phải dự báo.\n- **Thanh khoản dự phòng** 8,90 tỷ, đủ chi khoảng 4 năm theo mức chi trong hồ sơ.\n\nNếu bạn mất ngủ vì đầu tư, bạn nên trao đổi với RM của mình để xem lại mức cổ phiếu phù hợp với khẩu vị rủi ro và mục tiêu, trong đó có mục tiêu bán công ty vào năm 2027. Tôi cũng có thể đặt báo cho bạn khi VN-Index vượt hoặc xuống dưới một mức bạn chọn, để bạn đỡ phải theo dõi liên tục.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Kịch bản lãi suất tăng",
+     "Kịch bản bất động sản đóng băng",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792259627.3259075,
+    "audit_seq": 948,
+    "session": {
+     "id": "4e2904c8f6e5421a",
+     "title": "Tôi mất ngủ vì thị trường chứng khoán, có nên…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.451441436074674,
+   "first_event": 2.0651794793084264,
+   "usage": {
+    "cost": 0.002005,
+    "input": 15516,
+    "output": 907,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01J9TkFWSMTPBrUc9qPQAe6e",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01FFe1eAxdnbS5M6DaeC8e9L",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:vni_30"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01J9TkFWSMTPBrUc9qPQAe6e",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 210,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01FFe1eAxdnbS5M6DaeC8e9L",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 210,
+     "focus": [
+      "scenario:vni_30"
+     ],
+     "scenario": {
+      "id": "vni_30",
+      "effect": -7356450000.0
+     }
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

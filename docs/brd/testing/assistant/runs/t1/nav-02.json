@@ -1,0 +1,432 @@
+{
+ "id": "nav-02",
+ "category": "navigation",
+ "persona": "chuyên gia, hỏi sâu (C01)",
+ "client_id": "C01",
+ "title": "Tài sản ròng tính thế nào, từ nguồn nào, mới đến đâu",
+ "why": "An expert challenges the headline figure: the formula, its sources, its date.",
+ "brd": [
+  "OWN-AS-02",
+  "KIT-COPILOT-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Con số tài sản ròng của tôi được tính như thế nào?",
+   "expect": {
+    "tools_any": [
+     "huong_dan",
+     "tong_quan"
+    ],
+    "says": "nợ"
+   }
+  },
+  {
+   "say": "Những nguồn dữ liệu nào tạo nên con số đó?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "huong_dan",
+     "tim_kiem"
+    ]
+   }
+  },
+  {
+   "say": "Dữ liệu này cập nhật lần cuối khi nào?",
+   "expect": {
+    "says": "20\\d\\d|ngày"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Con số tài sản ròng của tôi được tính như thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Toàn cảnh] Trang đầu tiên sau khi đăng nhập: trong một màn hình, bạn có bao nhiêu và thay đổi thế nào, tháng trước tiền vào ra bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu. - Bốn thẻ nhịp tài chính: tài sản ròng và các nhóm tài sản làm nó thay đổi nhiều nhất trong tháng; dòng tiền tháng (vào, ra, phần để dành) với sáu tháng gần nhất; thanh khoản dự phòng tính bằng số tháng chi tiêu (vòng tròn, mốc an toàn 6 tháng); mức lỗ khi thị trường căng thẳng so với ngưỡng bạn chấp nhận. - Dòng tiền của bạn: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức…) sang các nhóm chi và ph [Chi phí chính sách] Chính sách (lãi suất, thuế, quy định…) có thể làm bạn mất hay được bao nhiêu: Tác động lên tài sản ròng theo từng chính sách (lọc tất cả / rủi ro / cơ hội), nhận định của các nhà nghiên cứu khớp với tài sản của bạn (dữ liệu giả định), và từng thẻ chính sách: mức độ, tình trạng pháp lý, tác động có xác suất, cách tính (giá trị × độ nhạy × xác suất) và nguồn. [Tài sản] Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: Đã xác thực (từ ngân hàng), Từ sao kê, Bạn tự khai; ngày và giá mua, giá vốn, giá trị hiện tại, lãi / lỗ; cuối bảng là tổng tài sản, nợ và tài sản ròng. - Tải sao kê: chọn tệp PDF, Excel hoặc CSV của công ty chứng khoán hay ngân hàng khác (hoặc dùng sao kê mẫu); các khoản đọc được hiện với nhãn “Từ sao kê”. - Bổ sung tài sản: gõ một câu như “Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ”; ứng dụng trả lời đã ghi gì và bảng có thêm dòng. [Tài sản ròng] Cách tính Tài sản ròng: Tài sản ròng = tổng giá trị tài sản − tổng nợ, giá ngày định giá.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Toàn cảnh",
+       "Hướng dẫn sử dụng · Chi phí chính sách",
+       "Hướng dẫn sử dụng · Tài sản",
+       "Cách tính · Tài sản ròng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13897,
+     "output_tokens": 675,
+     "requests": 2,
+     "cost_usd": 0.001727,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ff881fc717fd48d5b47ceedd96bf620d",
+    "conversation_id": "c60989de22ee4572",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tài sản ròng được tính theo công thức: **tổng giá trị tài sản − tổng nợ**, tại ngày định giá.\n\nSố hiện tại (ngày 09/10/2026, lấy từ trang Toàn cảnh):\n\n- **Tổng tài sản:** 45,97 tỷ đồng\n- **Tổng nợ:** 2,44 tỷ đồng, gồm vay mua nhà Thảo Điền 2,40 tỷ và dư nợ thẻ Visa Signature 45,0 triệu\n- **Tài sản ròng:** 45,97 − 2,44 = **43,53 tỷ đồng**, tăng 980,5 triệu (2,3%) so với tháng trước\n\nTổng tài sản được tổng hợp từ 21 khoản thuộc 7 nguồn. Mỗi khoản có mức tin cậy riêng: đã xác thực từ ngân hàng, từ sao kê, hoặc bạn tự khai. Bạn có thể xem chi tiết ở trang Tài sản.\n\nĐây là số ghi nhận trong hệ thống, chưa phải số thẩm định. Nếu bạn thấy một khoản thiếu hoặc sai, bạn có thể tải sao kê hoặc bổ sung tài sản để cập nhật.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn",
+     "Hướng dẫn sử dụng · Toàn cảnh",
+     "Hướng dẫn sử dụng · Chi phí chính sách",
+     "Hướng dẫn sử dụng · Tài sản",
+     "Cách tính · Tài sản ròng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257034.7446647,
+    "audit_seq": 627,
+    "session": {
+     "id": "c60989de22ee4572",
+     "title": "Con số tài sản ròng của tôi được tính như thế…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.714971314184368,
+   "first_event": 1.5422231289558113,
+   "usage": {
+    "cost": 0.001727,
+    "input": 13897,
+    "output": 675,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_015DXYvTjW1QpEySZdpo1v5P",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BP4BAS6VpvVmRTGMDFmqQg",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_015DXYvTjW1QpEySZdpo1v5P",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 95,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BP4BAS6VpvVmRTGMDFmqQg",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 166,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Những nguồn dữ liệu nào tạo nên con số đó?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok"
+     },
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Tài sản.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/client/tai-san",
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16796,
+     "output_tokens": 719,
+     "requests": 2,
+     "cost_usd": 0.002039,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5b2cc73d42b54e62b52a0185c09565a9",
+    "conversation_id": "c60989de22ee4572",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đã mở trang **Tài sản** cho bạn. Tuy nhiên, công cụ tổng quan chỉ cho biết con số được tổng hợp từ **21 khoản thuộc 7 nguồn**. Tôi chưa có tên từng nguồn, nên không liệt kê được cụ thể.\n\nTrên trang Tài sản, mỗi khoản được gắn một trong ba mức tin cậy:\n- **Đã xác thực (từ ngân hàng)**\n- **Từ sao kê**\n- **Bạn tự khai**\n\nBạn có thể xem nguồn của từng khoản ở đó. Nếu muốn, tôi có thể tìm một khoản cụ thể, ví dụ \"vay mua nhà\" hoặc \"thẻ Visa\", để xem nó nối với đâu.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": "#/client/tai-san",
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257040.3530352,
+    "audit_seq": 628,
+    "session": {
+     "id": "c60989de22ee4572",
+     "title": "Con số tài sản ròng của tôi được tính như thế…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.584481327794492,
+   "first_event": 2.205020865891129,
+   "usage": {
+    "cost": 0.002039,
+    "input": 16796,
+    "output": 719,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VezsF4dezcRrZ3PVSxxieo",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VezsF4dezcRrZ3PVSxxieo",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Dữ liệu này cập nhật lần cuối khi nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok"
+     },
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok"
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8761,
+     "output_tokens": 215,
+     "requests": 1,
+     "cost_usd": 0.000984,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a1e29c5d0a37458392b4eccdc69b0f11",
+    "conversation_id": "c60989de22ee4572",
+    "compacted": false,
+    "status": "ok",
+    "text": "Số liệu tổng quan có ngày ghi nhận là **09/10/2026**. Công cụ không cho biết giờ cập nhật cụ thể hay thời điểm đồng bộ gần nhất với từng nguồn, nên tôi không xác nhận được chi tiết đó.\n\nNếu cần kiểm tra mức độ mới của từng khoản, bạn xem ở trang Tài sản. Mỗi khoản có ngày và nguồn riêng.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257042.54073,
+    "audit_seq": 629,
+    "session": {
+     "id": "c60989de22ee4572",
+     "title": "Con số tài sản ròng của tôi được tính như thế…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 2.1520930947735906,
+   "first_event": 1.3435870106332004,
+   "usage": {
+    "cost": 0.000984,
+    "input": 8761,
+    "output": 215,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

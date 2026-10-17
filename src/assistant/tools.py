@@ -17,6 +17,13 @@ from wealth import store as wealth_store
 
 USER = {"client": None, "rm": "rm01", "cio": "cio", "compliance": "compliance"}
 PAGES = {  # page key → (label, route per role); the router may name a key, never a route
+    # the customer's graph workspace, by lens (D20: “bật trên đồ thị” opened the old impact graph)
+    "do-thi-tai-chinh": ("Đồ thị tài chính", {"client": "#/client/xem/tong-quan"}),
+    "do-thi-tai-san": ("Đồ thị · Tài sản", {"client": "#/client/xem/tai-san"}),
+    "do-thi-dong-tien": ("Đồ thị · Dòng tiền", {"client": "#/client/xem/dong-tien"}),
+    "do-thi-muc-tieu": ("Đồ thị · Mục tiêu & kịch bản", {"client": "#/client/xem/muc-tieu"}),
+    "do-thi-tin": ("Đồ thị · Tin & sự kiện", {"client": "#/client/xem/tin"}),
+    "do-thi-rui-ro": ("Đồ thị · Rủi ro", {"client": "#/client/xem/rui-ro"}),
     "toan-canh": ("Toàn cảnh", {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/toan-canh"}),
     "ban-do": ("Bản đồ tài chính", {"client": "#/client/tong-quan/ban-do", "rm": "#/rm/khach-hang/ban-do"}),
     "chi-tiet": ("Chi tiết tài sản", {"client": "#/client/tong-quan/chi-tiet", "rm": "#/rm/khach-hang/tong-quan"}),
@@ -79,16 +86,26 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     months = f"{lq['months'] / 12:.0f} năm" if lq["months"] >= 24 else f"{lq['months']:.0f} tháng"
     debts = [h for h in d["holdings"] if h["kind"] == "liability"]
     owed = "; ".join(f"{h['name']} {_vnd(h['value'])}" for h in debts)
-    mix = ", ".join(f"{a['group']} {_pct(a['share'], 0)}" for a in d["allocation"])
+    mix = ", ".join(f"{a['group']} {_vnd(a['value'])} ({_pct(a['share'], 0)})" for a in d["allocation"])  # D08
     over = d["concentration"]["warnings"]
-    text = (
+    text = (  # the reserve's months are against the profile's spending, said so (D11)
         f"Tài sản ròng {_vnd(nw['value'])} ({_vnd(nw['month_change'], True)}, {_pct(nw['month_change_pct'])} so với "
         f"tháng trước) = tổng tài sản {_vnd(nw['assets'])} − nợ {_vnd(nw['liabilities'])}"
         f"{f' ({owed})' if owed else ''}. Phân bổ tài sản: {mix}."
         f"{(' Tập trung vượt ngưỡng: ' + '; '.join(over) + '.') if over else ''} Thanh khoản dự phòng "
-        f"{_vnd(lq['value'])}, đủ chi {months}. Khi thị trường xấu, mức sụt giảm ước tính {_pct(rk['current'])} so "
+        f"{_vnd(lq['value'])}, đủ chi {months} theo mức chi {_vnd(lq['spending_monthly'])}/tháng trong hồ sơ. "
+        f"Khi thị trường xấu, mức sụt giảm ước tính {_pct(rk['current'])} so "
         f"với ngưỡng {_pct(rk['limit'], 0)}: {status}."
     )
+    if rk.get("top"):  # what the stress loss is made of: each holding at its own stress factor (D17)
+        top: Dict[str, Dict[str, Any]] = {}
+        for t in rk["top"]:  # two records of one name (a declared plot in two parts) said once
+            top.setdefault(t["name"], {"loss": 0, "stress": t["stress"]})["loss"] += t["loss"]
+        text += (
+            f" Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất {_vnd(rk['stress_loss'])}; lớn nhất: "
+            + "; ".join(f"{n} −{_vnd(t['loss'])} (sốc {_pct(t['stress'], 0)})" for n, t in top.items())
+            + "."
+        )
     tone = {"ok": "good", "near": "warn", "over": "bad"}[rk["status"]]
     used = [s for s in d["sources"] if s["count"]]
     return {
@@ -102,7 +119,10 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         },  # fmt: skip
         "focus": ["kpi:net_worth", "kpi:liquidity", "kpi:risk"],
         "as_of": d["as_of"],
-        "sources": [f"Tổng hợp {sum(s['count'] for s in used)} khoản từ {len(used)} nguồn"],
+        "sources": [
+            f"Tổng hợp {sum(s['count'] for s in used)} khoản từ {len(used)} nguồn: "
+            + "; ".join(f"{s['label']} ({s['count']} khoản, {s['what'].lower()})" for s in used)
+        ],  # D16
         "card": {
             "kind": "figures",
             "items": [
@@ -125,17 +145,27 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 MONTH = re.compile(r"(?:tháng|t)\s*(\d{1,2})(?:\s*[/\-]\s*(\d{2,4}))?", re.I)
+FUTURE = re.compile(r"^\s*(?:năm|sang năm)\s*(?:sau|tới)|^\s*tới", re.I)
 
 
 async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     from flows.graph import flows_flow
 
-    month = None
-    m = MONTH.search(ctx.question or "")  # parsed here, from the original question; the router never sees it
+    month, mm, yy = None, None, None
+    if "month" in args:  # a model chose the month it means (or none: the latest), not a month merely mentioned
+        said = str(args["month"] or "").strip()
+        y_first = re.fullmatch(r"(\d{4})[-/](\d{1,2})", said)
+        m_first = re.fullmatch(r"(\d{1,2})(?:[-/](\d{2,4}))?", said)
+        if y_first:
+            mm, yy = int(y_first.group(2)), y_first.group(1)
+        elif m_first:
+            mm, yy = int(m_first.group(1)), m_first.group(2)
+    else:  # the keyword path: parsed here, from the original question (the router never sees a digit)
+        m = MONTH.search(ctx.question or "")
+        if m and not FUTURE.search(ctx.question[m.end() : m.end() + 12]):  # “tháng 3 năm sau” is not past (D14)
+            mm, yy = int(m.group(1)), m.group(2)
     first = (await _graph(flows_flow, client_id=_need_client(ctx), scope=ctx.scope, month=None))["flows"]
-    if m:
-        mm = int(m.group(1))
-        yy = m.group(2)
+    if mm:
         cands = [x for x in first["months"] if int(x[5:]) == mm and (not yy or x[:4].endswith(yy[-2:]))]
         month = cands[-1] if cands else None
         if not cands:
@@ -151,6 +181,12 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         f"Tháng {f['month'][5:]}/{f['month'][:4]}: tiền vào {_vnd(f['total_in'])}, tiền ra {_vnd(f['total_out'])}, "
         f"{left} {_vnd(abs(f['left']))}."
         + (f" Khoản chi lớn nhất: {top['label']} {_vnd(top['amount'])} ({len(top['rows'])} giao dịch)." if top else "")
+        # every group, as the card shows them: “what do I cut first?” needs them all (stress test D25)
+        + "".join(
+            f" {name}: " + "; ".join(f"{x['label']} {_vnd(x['amount'])}" for x in rows) + "."
+            for name, rows in (("Các nhóm chi", f["outflow"]), ("Nguồn tiền vào", f["inflow"]))
+            if rows
+        )
     )
     focus = [f"flow:{f['month']}"] + ([f"flow:{f['month']}:out:{top['category']}"] if top else [])
     return {
@@ -213,7 +249,21 @@ async def goals(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     out = (await _graph(goals_flow, client_id=_need_client(ctx), scope=ctx.scope))["goals"]
     followed = [g for g in out if (g["id"] in ctx.followed if ctx.followed is not None else g["followed"])]
     label = {"on_track": "đúng tiến độ", "at_risk": "cần chú ý", "off_track": "chậm tiến độ"}
-    lines = [f"{g['title']}: {label.get(g['goal']['status'], g['goal']['status'])}" for g in followed]
+
+    def line(g: Dict[str, Any]) -> str:  # the amounts too, not only the status: the model reads this (D10)
+        x = g["goal"]
+        have = f"có {_vnd(x['have'])}" + (f" ({x['have_label'].lower()})" if x.get("have_label") else "")
+        need = f"cần {_vnd(x['need'])}" + (f" ({x['by']})" if x.get("by") else "")
+        parts = [label.get(x["status"], x["status"]), need, have]
+        if x.get("gap"):
+            parts.append(f"thiếu {_vnd(x['gap'])}" if x["gap"] > 0 else f"dư {_vnd(-x['gap'])}")
+        if x.get("monthly"):
+            parts.append(f"cần để dành {_vnd(x['monthly'])}/tháng")
+        if x.get("surplus") is not None:
+            parts.append(f"dòng tiền dư {_vnd(x['surplus'])}/tháng")
+        return f"{g['title']}: " + ", ".join(parts)
+
+    lines = [line(g) for g in followed]
     text = (
         f"{len(followed)} mục tiêu đang theo dõi. " + "; ".join(lines) + "."
         if followed
@@ -222,7 +272,13 @@ async def goals(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     tone = {"on_track": "good", "at_risk": "warn", "off_track": "bad"}
     return {
         "text": text,
-        "data": {"followed": len(followed)},
+        "data": {
+            "followed": len(followed),
+            "goals": {
+                g["id"]: {k: g["goal"].get(k) for k in ("need", "have", "gap", "monthly", "surplus", "by")}
+                for g in followed
+            },
+        },  # fmt: skip
         "sources": ["Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"],
         "card": {
             "kind": "list",
@@ -583,6 +639,7 @@ CATALOGUE: Dict[str, Tool] = {
             "tiền vào, tiền ra, còn lại trong một tháng, khoản chi lớn nhất",
             ("client", "rm"),
             money_flow,
+            params={"month": Param(str, "tháng cần xem, dạng YYYY-MM; để trống: tháng gần nhất có dữ liệu", "")},
             page="toan-canh",
             follow=["Có gì cần chú ý?", "Mục tiêu của tôi thế nào?"],
         ),
@@ -620,7 +677,13 @@ CATALOGUE: Dict[str, Tool] = {
         ),
         Tool(
             "kich_ban",
-            "chạy một kịch bản sốc thị trường trên tài sản hiện có",
+            "chạy một trong năm kịch bản sốc của trang Kế hoạch trên tài sản hiện có, mỗi kịch bản ở mức cố định: "
+            "co_phieu là VN-Index giảm ba mươi phần trăm (cổ phiếu theo beta, quỹ cổ phiếu, tài sản số); lai_suat là "
+            "lãi suất tăng hai điểm phần trăm (giá trái phiếu, cổ phiếu, nhà đất và lãi vay thả nổi); trai_phieu là "
+            "khủng hoảng trái phiếu doanh nghiệp như năm hai nghìn không trăm hai mươi hai; bat_dong_san là nhà đất "
+            "đóng băng mười tám tháng; ty_gia là USD/VND tăng năm phần trăm. Người dùng nêu đúng mức này (vd chứng "
+            "khoán sập ba mươi phần trăm, lãi suất tăng hai phần trăm) thì dùng công cụ này, để con số khớp trang Kế "
+            "hoạch",
             ("client", "rm"),
             stress,
             args={"scenario": list(STRESS)},

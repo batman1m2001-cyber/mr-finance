@@ -1,0 +1,248 @@
+{
+ "id": "cc-01",
+ "category": "concerns",
+ "persona": "nghỉ hưu, lo lắng (C04)",
+ "client_id": "C04",
+ "title": "Sợ hết tiền",
+ "why": "Anxiety: empathy and facts, no false reassurance.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tôi lo quá, tháng nào cũng tiêu nhiều hơn tiền hưu, liệu tôi có hết tiền không?",
+   "expect": {
+    "tools_any": [
+     "dong_tien",
+     "tong_quan"
+    ],
+    "not_says": [
+     "đừng lo",
+     "không có gì phải lo"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tôi lo quá, tháng nào cũng tiêu nhiều hơn tiền hưu, liệu tôi có hết tiền không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 37,0 triệu, tiền ra 17,5 triệu, còn lại 19,5 triệu. Khoản chi lớn nhất: Chi tiêu sinh hoạt 11,1 triệu (6 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 11083000.0,
+         "text": "11,1 triệu"
+        },
+        {
+         "label": "Y tế",
+         "value": 6450000.0,
+         "text": "6,5 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "37,0 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "17,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "19,5 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:living"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 60%, Tiền & tiền gửi 18%, Trái phiếu 11%, Vàng 6%, Chứng chỉ quỹ 5%, Bảo hiểm 0%. Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12841,
+     "output_tokens": 1053,
+     "requests": 2,
+     "cost_usd": 0.001811,
+     "tools_cost_usd": null
+    },
+    "turn_id": "74136f2af7264fbbb832bc4058820dd5",
+    "conversation_id": "e82cb96a31304b92",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo dữ liệu hiện có, bạn chưa có dấu hiệu hết tiền.\n\n**Dòng tiền tháng 09/2026** (trang Toàn cảnh):\n- Tiền vào: 37,0 triệu\n- Tiền ra: 17,5 triệu\n- Còn lại: 19,5 triệu\n- Khoản chi lớn nhất: chi tiêu sinh hoạt 11,1 triệu (6 giao dịch)\n\nHệ thống chỉ có dữ liệu tháng 09, nên tôi không thấy các tháng bạn tiêu nhiều hơn tiền hưu. Nếu bạn nhớ tháng cụ thể, tôi có thể kiểm tra lại. Hệ thống cũng không tách riêng khoản tiền hưu, nên tôi chưa xác nhận được tiền hưu chiếm bao nhiêu trong 37,0 triệu tiền vào.\n\n**Tình hình tài sản** (số ghi nhận ngày 09/10/2026):\n- Tài sản ròng: 48,38 tỷ, không có nợ.\n- Tiền và tiền gửi dự phòng: 14,16 tỷ, theo hệ thống đủ chi trong 30 năm.\n\nĐiểm cần lưu ý là tập trung tài sản: khoảng 60% tài sản nằm ở bất động sản khu Võ Văn Tần, Quận 3, trong khi ngưỡng là 35%. Khi thị trường xấu, mức sụt giảm ước tính là 7,5%, sát ngưỡng 8%. Đây là ước tính, không phải dự báo.\n\nNếu bạn muốn, tôi có thể chạy kịch bản sốc để xem tài sản chịu ảnh hưởng ra sao, hoặc mở trang Kế hoạch để xem mục tiêu hưu trí.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng",
+     "Tổng hợp 11 khoản từ 5 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792257535.3087244,
+    "audit_seq": 726,
+    "session": {
+     "id": "e82cb96a31304b92",
+     "title": "Tôi lo quá, tháng nào cũng tiêu nhiều hơn tiền…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.711409228853881,
+   "first_event": 1.6282994388602674,
+   "usage": {
+    "cost": 0.001811,
+    "input": 12841,
+    "output": 1053,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CsubJPi2cAcmZzCwwhPM2S",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CYceuJDvsAx4HHhcWeKdgm",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CsubJPi2cAcmZzCwwhPM2S",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 136,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:living"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CYceuJDvsAx4HHhcWeKdgm",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 137,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

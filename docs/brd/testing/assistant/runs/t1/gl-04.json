@@ -1,0 +1,376 @@
+{
+ "id": "gl-04",
+ "category": "goals",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Tiền có đủ tiêu tới 85 tuổi",
+ "why": "Longevity: honest about what the app can compute.",
+ "brd": [
+  "BRIEF-SCEN-01",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tôi 63 tuổi rồi, tiền của tôi có đủ tiêu đến năm 85 tuổi không?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tong_quan",
+     "dong_tien",
+     "muc_tieu"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tôi 63 tuổi rồi, tiền của tôi có đủ tiêu đến năm 85 tuổi không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 60%, Tiền & tiền gửi 18%, Trái phiếu 11%, Vàng 6%, Chứng chỉ quỹ 5%, Bảo hiểm 0%. Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 37,0 triệu, tiền ra 17,5 triệu, còn lại 19,5 triệu. Khoản chi lớn nhất: Chi tiêu sinh hoạt 11,1 triệu (6 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 11083000.0,
+         "text": "11,1 triệu"
+        },
+        {
+         "label": "Y tế",
+         "value": 6450000.0,
+         "text": "6,5 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "37,0 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "17,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "19,5 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:living"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "3 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 2,10 tỷ · có 19,18 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 400,0 triệu · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Số năm tiền thanh khoản dự phòng chi theo mức tiền ra tháng 09/2026 (không tính lợi suất, không tính lạm phát): 14160000000/(17467000*12) = 67,56",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Số năm thanh khoản dự phòng chi theo tiền ra 17,5 triệu/tháng (tháng 09/2026), không tính lợi suất và lạm phát: 14160000000/(17500000*12) = 67,43",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 27945,
+     "output_tokens": 2756,
+     "requests": 4,
+     "cost_usd": 0.004172,
+     "tools_cost_usd": null
+    },
+    "turn_id": "bbead197691945fc9fcefb5a6eb15b93",
+    "conversation_id": "2d895edccc124953",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo số liệu hiện có, tiền của bạn **có vẻ đủ** cho 22 năm, từ 63 đến 85 tuổi, nhưng cần lưu ý vài điểm.\n\n**Những con số chính**\n- Tài sản ròng: 48,38 tỷ đồng, không có nợ (trang Tổng quan, ngày 09/10/2026).\n- Thanh khoản dự phòng: 14,16 tỷ đồng. Hệ thống ghi nhận mức này đủ chi 30 năm.\n- Tiền ra tháng 09/2026: 17,5 triệu đồng (trang Dòng tiền). Tiền vào 37,0 triệu, còn lại 19,5 triệu.\n- Mục tiêu \"Nghỉ hưu sớm năm 55 tuổi\" đang đúng tiến độ.\n\n**Phép tính đơn giản**\n14.160.000.000 / (17.500.000 × 12) = 67,4 năm.\n\nPhép này giả định chi tiêu giữ ở 17,5 triệu mỗi tháng, không tính lạm phát và không tính lợi suất. Con số 30 năm của hệ thống dựa trên cách tính khác mà tôi không có chi tiết, nên hai con số chưa khớp. Dù dùng con số nào, 14,16 tỷ đều vượt xa 22 năm cần chi nếu chi tiêu không tăng mạnh. Chi tiêu sau khi nghỉ hưu cũng có thể khác mức tháng 09, nên bạn nên xem lại theo chi phí thực tế.\n\n**Điều cần chú ý**\n- 60% tài sản nằm ở bất động sản, và khu vực Võ Văn Tần, Quận 3 chiếm 60,4%, vượt ngưỡng 35%. Bất động",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 5 nguồn",
+     "9 giao dịch của tháng",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:living"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257422.5947452,
+    "audit_seq": 705,
+    "session": {
+     "id": "2d895edccc124953",
+     "title": "Tôi 63 tuổi rồi, tiền của tôi có đủ tiêu đến…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 17.242871389724314,
+   "first_event": 1.7613627319224179,
+   "usage": {
+    "cost": 0.004172,
+    "input": 27945,
+    "output": 2756,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01N6AyQBE8LTY45Ret3bJqmZ",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01DVufyd5dGTgM2ZCWnFDZLo",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_017Tsof5maq121funiyyhP33",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01N6AyQBE8LTY45Ret3bJqmZ",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 196,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01DVufyd5dGTgM2ZCWnFDZLo",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 196,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:living"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_017Tsof5maq121funiyyhP33",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 196,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01E1ZoqZQrtbApP8M3Gx4cDw",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01E1ZoqZQrtbApP8M3Gx4cDw",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GUeZLoNL2FZ358wgQ4nGVm",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GUeZLoNL2FZ358wgQ4nGVm",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

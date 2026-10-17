@@ -1,0 +1,643 @@
+{
+ "id": "wi-01",
+ "category": "what_if",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Chứng khoán sập 30%, thêm lãi suất, có trừ vào tài sản không",
+ "why": "One shock, then two together, then whether it touches net worth.",
+ "brd": [
+  "BRIEF-SCEN-02",
+  "OWN-GW-40",
+  "OWN-GW-38"
+ ],
+ "turns": [
+  {
+   "say": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "kich_ban",
+     "so_sanh_kich_ban"
+    ],
+    "says": "1,8"
+   }
+  },
+  {
+   "say": "Còn nếu cùng lúc lãi suất tăng thêm 2% nữa?",
+   "expect": {
+    "tools_any": [
+     "so_sanh_kich_ban"
+    ],
+    "says": "3,8"
+   }
+  },
+  {
+   "say": "Số đó có bị trừ vào tài sản ròng hiện tại của tôi không?",
+   "expect": {
+    "says": "không"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản VN-Index giảm 30%: tài sản ròng 43,53 tỷ → 41,71 tỷ (−1,82 tỷ, −4,2%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "VN-Index giảm 30%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "43,53 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "41,71 tỷ",
+         "sub": "−1,82 tỷ · −4,2%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "4,72 tỷ",
+         "sub": "41 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Cổ phiếu FPT: -605 triệu",
+        "Ảnh hưởng nhiều: Cổ phiếu TCB: -366 triệu",
+        "Ảnh hưởng nhiều: Cổ phiếu SSI (VPS): -223 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12960,
+     "output_tokens": 854,
+     "requests": 2,
+     "cost_usd": 0.001723,
+     "tools_cost_usd": null
+    },
+    "turn_id": "379de8dc4e984c9aa4edca1bc4ad33b3",
+    "conversation_id": "4a441f04d62b48dc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu VN-Index giảm 30%, tài sản ròng của bạn ước giảm khoảng **1,82 tỷ đồng (−4,2%)**, từ 43,53 tỷ xuống còn khoảng 41,71 tỷ.\n\n- **Nguồn:** kịch bản \"cổ phiếu\" trên trang Kế hoạch, số liệu ngày 09/10/2026.\n- **Mức chắc chắn:** đây là mô phỏng trên các khoản hiện có, không phải dự báo.\n- **So với ngưỡng:** mức sụt này nằm trong ngưỡng chấp nhận 8% của bạn.\n\nTrang tổng quan có một lưu ý khác: khi thị trường xấu, mức sụt giảm ước tính của toàn danh mục là 11,8%, vượt ngưỡng 8%. Phần lớn rủi ro nằm ở bất động sản, cụ thể là khu đất nền Long Thành (Đồng Nai) chiếm 39,2% tài sản, vượt ngưỡng 35%. Cổ phiếu chỉ chiếm khoảng 11% nên cú sập thị trường chứng khoán tác động không lớn bằng.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)",
+     "Tổng hợp 21 khoản từ 7 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792257442.9440982,
+    "audit_seq": 709,
+    "session": {
+     "id": "4a441f04d62b48dc",
+     "title": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.776168477255851,
+   "first_event": 1.7991682500578463,
+   "usage": {
+    "cost": 0.001723,
+    "input": 12960,
+    "output": 854,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LwgbtQuZupwEpzWJmAYypC",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:vni_30"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VCSzMEtRP6cb7L5rvV7f44",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LwgbtQuZupwEpzWJmAYypC",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 150,
+     "focus": [
+      "scenario:vni_30"
+     ],
+     "scenario": {
+      "id": "vni_30",
+      "effect": -1817510000.0
+     }
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VCSzMEtRP6cb7L5rvV7f44",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 150,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Còn nếu cùng lúc lãi suất tăng thêm 2% nữa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản Lãi suất tăng 2%: tài sản ròng 43,53 tỷ → 41,31 tỷ (−2,22 tỷ, −5,1%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "Lãi suất tăng 2%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "43,53 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "41,31 tỷ",
+         "sub": "−2,22 tỷ · −5,1%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "4,72 tỷ",
+         "sub": "41 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Căn hộ Thảo Điền: -720 triệu",
+        "Ảnh hưởng nhiều: Đất Long Thành (tự khai): -450 triệu",
+        "Ảnh hưởng nhiều: Đất Long Thành (tự khai): -450 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "so_sanh_kich_ban",
+      "label": "So sánh kịch bản",
+      "status": "ok",
+      "text": "Riêng từng kịch bản: VN-Index giảm 30% −1,82 tỷ; Lãi suất tăng 2% −2,22 tỷ. Cùng lúc: tài sản ròng 43,53 tỷ → 39,65 tỷ (−3,87 tỷ). Cộng riêng lẻ ra −4,04 tỷ, khác +164,4 triệu: các cú sốc nhân nhau trên cùng một khoản và chi phí trùng chỉ tính một lần. Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ → chậm tiến độ; Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "VN-Index giảm 30%",
+         "value": "−1,82 tỷ"
+        },
+        {
+         "label": "Lãi suất tăng 2%",
+         "value": "−2,22 tỷ"
+        },
+        {
+         "label": "Cùng lúc",
+         "value": "−3,87 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:vni_30",
+       "scenario:rates_up",
+       "class:real_estate",
+       "class:stock",
+       "class:bond",
+       "class:fund",
+       "goal:retire_early"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tỷ lệ sụt giảm tài sản ròng khi hai kịch bản cùng xảy ra: 3872395000/43526000000*100 = 8,9",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24568,
+     "output_tokens": 1009,
+     "requests": 3,
+     "cost_usd": 0.002961,
+     "tools_cost_usd": null
+    },
+    "turn_id": "516c7476843645fea0a1906a0edafd46",
+    "conversation_id": "4a441f04d62b48dc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu lãi suất tăng thêm 2% và VN-Index giảm 30% cùng lúc, tài sản ròng ước giảm khoảng **3,87 tỷ đồng (−8,9%)**, từ 43,53 tỷ xuống còn khoảng 39,65 tỷ.\n\n- **Lãi suất tăng 2% riêng lẻ:** giảm 2,22 tỷ (−5,1%).\n- **VN-Index giảm 30% riêng lẻ:** giảm 1,82 tỷ (−4,2%).\n- **Cùng lúc:** giảm 3,87 tỷ, ít hơn tổng hai kịch bản riêng (4,04 tỷ). Lý do là hai cú sốc tác động chồng lên cùng một số khoản, nên chi phí trùng được tính một lần.\n\nCông thức: 3.872.395.000 ÷ 43.526.000.000 × 100 = 8,9%.\n\nMức sụt 8,9% này vượt ngưỡng chấp nhận 8% của bạn. Đây là mô phỏng trên tài sản hiện có tính đến ngày 09/10/2026, không phải dự báo. Theo kịch bản này, mục tiêu học phí cho con và mục tiêu định cư/du học bị chậm tiến độ, còn mục tiêu nghỉ hưu sớm năm 55 tuổi cũng chậm tiến độ.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)",
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:vni_30",
+     "scenario:rates_up",
+     "class:real_estate",
+     "class:stock",
+     "class:bond",
+     "class:fund",
+     "goal:retire_early"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257452.6365771,
+    "audit_seq": 710,
+    "session": {
+     "id": "4a441f04d62b48dc",
+     "title": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 9.663625821936876,
+   "first_event": 1.478418666869402,
+   "usage": {
+    "cost": 0.002961,
+    "input": 24568,
+    "output": 1009,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01U2U1sYR5tssodKfQmAr7du",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:rates_up"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0143yYyM8jzCum6V6MKC9af7",
+     "tool": "so_sanh_kich_ban",
+     "label": "So sánh kịch bản",
+     "nodes": [
+      "SC:vni_30",
+      "SC:rates_up"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01U2U1sYR5tssodKfQmAr7du",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 165,
+     "focus": [
+      "scenario:rates_up"
+     ],
+     "scenario": {
+      "id": "rates_up",
+      "effect": -2219276000.0
+     }
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0143yYyM8jzCum6V6MKC9af7",
+     "tool": "so_sanh_kich_ban",
+     "ok": true,
+     "ms": 327,
+     "focus": [
+      "scenario:vni_30",
+      "scenario:rates_up",
+      "class:real_estate",
+      "class:stock",
+      "class:bond",
+      "class:fund",
+      "goal:retire_early"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VchE4RY6Y3BF19zQDdtoQk",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VchE4RY6Y3BF19zQDdtoQk",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Số đó có bị trừ vào tài sản ròng hiện tại của tôi không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "so_sanh_kich_ban",
+      "label": "So sánh kịch bản",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok"
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9236,
+     "output_tokens": 330,
+     "requests": 1,
+     "cost_usd": 0.001089,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b55c0a738c0c4aeeb2a7343b5d6822ae",
+    "conversation_id": "4a441f04d62b48dc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Không. Con số 3,87 tỷ chỉ là kết quả mô phỏng. Tài sản ròng hiện tại của bạn vẫn là **43,53 tỷ đồng**, tính đến ngày 09/10/2026 theo trang Tổng quan. Kịch bản không thay đổi số dư, tài khoản hay khoản đầu tư nào của bạn.\n\nKết quả mô phỏng cũng không được cộng vào tài sản ròng. Nó chỉ cho biết mức ảnh hưởng nếu hai cú sốc cùng xảy ra trên các khoản hiện có.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257455.2291734,
+    "audit_seq": 711,
+    "session": {
+     "id": "4a441f04d62b48dc",
+     "title": "Nếu chứng khoán sập 30% thì tôi mất bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 2.556913406122476,
+   "first_event": 1.659355808980763,
+   "usage": {
+    "cost": 0.001089,
+    "input": 9236,
+    "output": 330,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,51 @@
+{
+ "tag": "final-fail",
+ "base": "http://127.0.0.1:8042",
+ "spent_total": 0.0,
+ "conversations": [
+  {
+   "id": "fm-01",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.6,
+   "tokens": 0
+  },
+  {
+   "id": "fm-02",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.4,
+   "tokens": 0
+  },
+  {
+   "id": "fm-03",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.5,
+   "tokens": 0
+  },
+  {
+   "id": "fm-07",
+   "category": "failure_modes",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.6,
+   "tokens": 0
+  }
+ ],
+ "passed": 4,
+ "of": 4,
+ "turns": 5,
+ "turns_failed": 0
+}

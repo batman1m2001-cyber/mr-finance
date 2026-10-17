@@ -1,0 +1,352 @@
+{
+ "id": "nw-03",
+ "category": "news",
+ "persona": "nghỉ hưu, sống nhờ lãi tiết kiệm (C04)",
+ "client_id": "C04",
+ "title": "Lãi suất tiết kiệm giảm",
+ "why": "A rate change against her deposits.",
+ "brd": [
+  "BR-08",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Nghe nói lãi suất tiết kiệm đang giảm, tôi có bị ảnh hưởng gì không?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "chu_y",
+     "kich_ban",
+     "tong_quan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nghe nói lãi suất tiết kiệm đang giảm, tôi có bị ảnh hưởng gì không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "6 yếu tố đang tác động: 5 rủi ro, 1 cơ hội; tổng ước tính −943,6 triệu. Lớn nhất: Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán — Nếu bán Căn hộ Võ Văn Tần (cho thuê): thuế cũ 224 triệu, cách tính mới 1,64 tỷ — tốn thêm 1,42 tỷ. Thời điểm bán trước hay sau khi luật có hiệu lực tạo ra chênh lệch này.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán",
+         "sub": "−708,0 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "bad"
+        },
+        {
+         "title": "Chính sách quản lý vàng miếng",
+         "sub": "−162,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "warn"
+        },
+        {
+         "title": "Lãi suất điều hành tăng 0,5%",
+         "sub": "−69,5 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh",
+         "sub": "+14,6 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "good"
+        },
+        {
+         "title": "Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định)",
+         "sub": "−9,7 triệu · Dự thảo",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+       "Kịch bản giả định cho demo",
+       "Nghị định sửa đổi Nghị định 24/2012 về quản lý kinh doanh vàng (cần kiểm tra)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 60%, Tiền & tiền gửi 18%, Trái phiếu 11%, Vàng 6%, Chứng chỉ quỹ 5%, Bảo hiểm 0%. Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Tiền và tiền gửi (18% tổng tài sản 48,38 tỷ): 48.38*0.18 = 8,71",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản Lãi suất tăng 2%: tài sản ròng 48,38 tỷ → 46,37 tỷ (−2,02 tỷ, −4,2%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "Lãi suất tăng 2%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "48,38 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "46,37 tỷ",
+         "sub": "−2,02 tỷ · −4,2%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "11,10 tỷ",
+         "sub": "278 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Nhà phố Quận 3 (đang ở): -900 triệu",
+        "Ảnh hưởng nhiều: Căn hộ Võ Văn Tần (cho thuê): -560 triệu",
+        "Ảnh hưởng nhiều: Trái phiếu TD2535 (Kho bạc Nhà nước): -459 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 20610,
+     "output_tokens": 1501,
+     "requests": 3,
+     "cost_usd": 0.002811,
+     "tools_cost_usd": null
+    },
+    "turn_id": "db673466402649e4afb156d45c071a5e",
+    "conversation_id": "c5af6a1cca3449bc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Lãi suất tiết kiệm giảm sẽ ảnh hưởng đến phần tiền gửi của bạn, nhưng tôi chưa có con số cụ thể cho trường hợp này.\n\n- **Tiền gửi:** Theo trang Tổng quan (ngày 9/10/2026), tiền và tiền gửi chiếm 18% tổng tài sản 48,38 tỷ, tương đương khoảng 8,71 tỷ (48,38 × 18%). Lãi suất giảm sẽ làm khoản lãi từ phần này thấp hơn khi gửi lại.\n- **Mô phỏng:** Tôi chỉ chạy được kịch bản lãi suất **tăng** 2%. Kết quả là tài sản ròng giảm từ 48,38 tỷ xuống 46,37 tỷ (−2,02 tỷ, −4,2%), vẫn trong ngưỡng chấp nhận 8%. Đây là ước tính trên tài sản hiện có, không phải dự báo, và kịch bản này không phản ánh riêng việc lãi tiết kiệm giảm.\n- **Mức chắc chắn:** Số liệu tài sản là số ghi nhận trên hệ thống. Tác động của lãi suất là ước tính.\n\nNgoài ra, trang Tổng quan cho thấy rủi ro lớn hơn nằm ở tập trung bất động sản: khu vực Võ Văn Tần, Quận 3 chiếm 60,4% tài sản, vượt ngưỡng 35%. Thanh khoản dự phòng là 14,16 tỷ, đủ chi 30 năm.\n\nBạn có muốn tôi xem thêm trang Chính sách để kiểm tra các thông tin về lãi suất không?",
+    "citations": [
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+     "Kịch bản giả định cho demo",
+     "Nghị định sửa đổi Nghị định 24/2012 về quản lý kinh doanh vàng (cần kiểm tra)",
+     "Tổng hợp 11 khoản từ 5 nguồn",
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Kịch bản lãi suất tăng",
+     "Kịch bản bất động sản đóng băng",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257300.1609242,
+    "audit_seq": 687,
+    "session": {
+     "id": "c5af6a1cca3449bc",
+     "title": "Nghe nói lãi suất tiết kiệm đang giảm, tôi có…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 10.13129282090813,
+   "first_event": 2.03741542622447,
+   "usage": {
+    "cost": 0.002811,
+    "input": 20610,
+    "output": 1501,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011PvEa9p5qS6RNEkhYSZXoL",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NxmTSjwBGSosbXWY5jhzcP",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011PvEa9p5qS6RNEkhYSZXoL",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 168,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NxmTSjwBGSosbXWY5jhzcP",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 168,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012hAKfuyeheULRC6Y4TQqK7",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01E96MpCQDYxLJRJUrnoTFwn",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:rates_up"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012hAKfuyeheULRC6Y4TQqK7",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 17,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01E96MpCQDYxLJRJUrnoTFwn",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 83,
+     "focus": [
+      "scenario:rates_up"
+     ],
+     "scenario": {
+      "id": "rates_up",
+      "effect": -2016152000.0
+     }
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

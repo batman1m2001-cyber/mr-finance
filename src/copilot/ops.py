@@ -51,6 +51,7 @@ def check_request(
     question = str(question or "").strip()[:500]
     if not question and not confirm:
         raise ValueError("Hãy nhập câu hỏi")
+    client_id = auth.client_for(client_id)  # as the assistant's requests; the tools' nested runs are checked too (D13)
     return {
         "question": question,
         "role": role,

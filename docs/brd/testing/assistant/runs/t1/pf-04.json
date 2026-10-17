@@ -1,0 +1,441 @@
+{
+ "id": "pf-04",
+ "category": "personal_finance",
+ "persona": "founder trẻ, gõ tắt trên điện thoại (C03)",
+ "client_id": "C03",
+ "title": "phân bổ có ổn ko",
+ "why": "Typos and slang; allocation and concentration risk.",
+ "brd": [
+  "BRIEF-DASH-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "phân bổ tài sản của e có ổn ko a",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "chu_y"
+    ]
+   }
+  },
+  {
+   "say": "rủi ro tập trung là sao, e bị ko",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "chu_y",
+     "huong_dan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "phân bổ tài sản của e có ổn ko a",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước) = tổng tài sản 8,17 tỷ − nợ 628,0 triệu (Vay ký quỹ TCBS 600,0 triệu; Dư nợ thẻ Visa Platinum 28,0 triệu). Phân bổ tài sản: Cổ phiếu 54%, Tài sản số 31%, Chứng chỉ quỹ 11%, Tiền & tiền gửi 4%. Tập trung vượt ngưỡng: Tổ chức phát hành SSI: 16,2% tài sản (ngưỡng 10%); Tổ chức phát hành Đức Giang: 11,3% tài sản (ngưỡng 10%); Tổ chức phát hành Hòa Phát: 10,1% tài sản (ngưỡng 10%). Thanh khoản dự phòng 300,0 triệu, đủ chi 7 tháng. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "5 điều đáng chú ý. 1) Mức sụt giảm ước tính 43,0% khi thị trường xấu — Vượt ngưỡng chấp nhận 30%. 2) Thị trường cổ phiếu: có thể ảnh hưởng −85,2 triệu trong 3 tháng — Tác động kỳ vọng 1,1% tài sản ròng, trên ngưỡng 0,5%. 3) Bất động sản: có thể ảnh hưởng +42,6 triệu trong 3 tháng — Tác động kỳ vọng 0,6% tài sản ròng, trên ngưỡng 0,5%. Còn 2 mục khác trên Toàn cảnh.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 43,0% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 30%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        },
+        {
+         "title": "Thị trường cổ phiếu: có thể ảnh hưởng −85,2 triệu trong 3 tháng",
+         "sub": "Tác động kỳ vọng 1,1% tài sản ròng, trên ngưỡng 0,5%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:run:AR-0001-v1-2"
+        },
+        {
+         "title": "Bất động sản: có thể ảnh hưởng +42,6 triệu trong 3 tháng",
+         "sub": "Tác động kỳ vọng 0,6% tài sản ròng, trên ngưỡng 0,5%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:run:AR-0002-v1-2"
+        },
+        {
+         "title": "Tài sản ròng +309,0 triệu so với tháng trước",
+         "sub": "Thay đổi 4,3% trong tháng, từ 3% trở lên",
+         "chip": "Thông tin",
+         "tone": "",
+         "focus": "feed:dashboard:net_worth"
+        },
+        {
+         "title": "Chi tiêu sinh hoạt tháng 09/2026: 14,3 triệu, +6,7 triệu so với tháng trước",
+         "sub": "Chi một nhóm tăng từ 30% và 5 triệu trở lên so với tháng trước",
+         "chip": "Thông tin",
+         "tone": "",
+         "focus": "feed:transactions:living:2026-09:2026-09:living"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk",
+       "feed:run:AR-0001-v1-2",
+       "feed:run:AR-0002-v1-2"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13033,
+     "output_tokens": 779,
+     "requests": 2,
+     "cost_usd": 0.001693,
+     "tools_cost_usd": null
+    },
+    "turn_id": "61c4a5eebc744cfc87cc1804619b6c26",
+    "conversation_id": "645a1dfccb054561",
+    "compacted": false,
+    "status": "ok",
+    "text": "Phân bổ hiện **chưa ổn**: mức rủi ro đang vượt ngưỡng. (Số liệu ghi nhận ngày 09/10/2026, từ trang Toàn cảnh.)\n\n**Tổng quan**\n- Tài sản ròng: 7,54 tỷ (tăng 309 triệu, +4,3% so với tháng trước)\n- Tổng tài sản 8,17 tỷ, nợ 628 triệu (vay ký quỹ TCBS 600 triệu, thẻ Visa 28 triệu)\n- Phân bổ: cổ phiếu 54%, tài sản số 31%, chứng chỉ quỹ 11%, tiền và tiền gửi 4%\n\n**Vấn đề chính**\n1. **Sụt giảm khi thị trường xấu:** ước tính 43% so với ngưỡng chấp nhận 30%. Đây là mức ước tính từ mô phỏng, không phải dự báo.\n2. **Tập trung vào một tổ chức phát hành:** ba mã vượt ngưỡng 10% tài sản. SSI 16,2%, Đức Giang 11,3%, Hòa Phát 10,1%.\n3. **Tỷ trọng cổ phiếu cao:** 54% tài sản, cộng thêm khoản vay ký quỹ 600 triệu làm rủi ro tăng khi thị trường giảm.\n\n**Điểm tích cực:** tiền dự phòng 300 triệu, đủ chi khoảng 7 tháng.\n\nNếu muốn, tôi có thể chạy kịch bản sốc cổ phiếu để xem mức thua lỗ cụ thể, hoặc mở trang Kế hoạch để xem các điều chỉnh đang được đề xuất.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "feed:dashboard:risk",
+     "feed:run:AR-0001-v1-2",
+     "feed:run:AR-0002-v1-2"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792257132.963844,
+    "audit_seq": 653,
+    "session": {
+     "id": "645a1dfccb054561",
+     "title": "phân bổ tài sản của e có ổn ko a",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.498222055844963,
+   "first_event": 1.5221203337423503,
+   "usage": {
+    "cost": 0.001693,
+    "input": 13033,
+    "output": 779,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01ADFZxAkxsuv26U4nd9S59G",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Ja5grcmP9yqwYJpvJL26Cq",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01ADFZxAkxsuv26U4nd9S59G",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 152,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Ja5grcmP9yqwYJpvJL26Cq",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 226,
+     "focus": [
+      "feed:dashboard:risk",
+      "feed:run:AR-0001-v1-2",
+      "feed:run:AR-0002-v1-2"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "rủi ro tập trung là sao, e bị ko",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "giá trị ước tính của SSI theo 16,2% tổng tài sản 8,173 tỷ: 8173000000*0.162 = 1.324.026.000",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "giá trị ước tính của Đức Giang theo 11,3% tổng tài sản 8,173 tỷ: 8173000000*0.113 = 923.549.000",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "giá trị ước tính của Hòa Phát theo 10,1% tổng tài sản 8,173 tỷ: 8173000000*0.101 = 825.473.000",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16007,
+     "output_tokens": 1369,
+     "requests": 2,
+     "cost_usd": 0.002285,
+     "tools_cost_usd": null
+    },
+    "turn_id": "46d9d5057b0c423aaf70bf0ffe09a39a",
+    "conversation_id": "645a1dfccb054561",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Rủi ro tập trung** là khi phần lớn tài sản nằm ở một vài mã hoặc một tổ chức phát hành. Nếu các mã này giảm, cả danh mục giảm mạnh, dù phần còn lại ổn.\n\n**Có, bạn đang bị.** Ba tổ chức phát hành vượt ngưỡng 10% tài sản (số ghi nhận ngày 09/10/2026):\n\n- **SSI:** 16,2%, khoảng 1,32 tỷ\n- **Đức Giang:** 11,3%, khoảng 924 triệu\n- **Hòa Phát:** 10,1%, khoảng 825 triệu\n\nSố tiền là ước tính, tính bằng tỷ trọng nhân với tổng tài sản 8,173 tỷ. Công thức: 8.173.000.000 × tỷ trọng.\n\nĐiều này có nghĩa là nếu SSI giảm 20%, riêng mã này có thể mất khoảng 265 triệu. Mức giảm đó chỉ là ví dụ để minh họa, không phải dự báo.\n\nMuốn giảm rủi ro này, bạn có thể xem trang Kế hoạch để biết các đề xuất điều chỉnh đang chờ. Tôi cũng có thể chạy kịch bản sốc cổ phiếu để xem mức thiệt hại cụ thể hơn.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257140.662855,
+    "audit_seq": 654,
+    "session": {
+     "id": "645a1dfccb054561",
+     "title": "phân bổ tài sản của e có ổn ko a",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.670108363032341,
+   "first_event": 3.8309961641207337,
+   "usage": {
+    "cost": 0.002285,
+    "input": 16007,
+    "output": 1369,
+    "requests": 2
+   },
+   "why": [
+    "numbers not from the tools or the person: ['20%', '265 triệu']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PJjQmKfsrsFYQLKie4NPg6",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RD1Xdf7YYokEJC8PNA7oZk",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SJjxutzkBnrdPJrJys6NYN",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PJjQmKfsrsFYQLKie4NPg6",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RD1Xdf7YYokEJC8PNA7oZk",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SJjxutzkBnrdPJrJys6NYN",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

@@ -9,6 +9,7 @@ state); every transcript is also read by hand (the results say which failures we
 
     .venv/bin/python scripts/stress_assistant.py --base http://127.0.0.1:8041 --state <copy>/state.db --tag run1
     … --only nav-01,act-02   … --category actions   … --budget 2.7
+    … --server fail --base http://127.0.0.1:8042 --state <dead-provider copy>/state.db   (the failure modes)
 
 Writes `docs/brd/testing/assistant/runs/<tag>/`: one JSON and one Markdown transcript per conversation, and
 `results.json` (pass/fail per turn, cost, tokens, latency). Stops before the budget (US$, model and tools) is spent.
@@ -88,7 +89,18 @@ class Session:
             if verdict == "deny":
                 return {"answer": {"status": "denied_locally", "text": "Đã huỷ, không có gì được ghi.", "steps": []},
                         "events": [], "seconds": 0.0}  # fmt: skip
-            return self.stream({**self.body(turn), "confirm": a["confirm"], "conversation_id": None})
+            # as the panel: the keyword path's confirm goes to the Copilot (POST /api/copilot), which runs it
+            t0 = time.monotonic()
+            r = self.http.post("/api/copilot", json={**self.body(turn), "question": "", "confirm": a["confirm"]})
+            c = (r.json() if r.status_code == 200 else {}).get("copilot") or {}
+            res = c.get("result") or c
+            ans = {
+                "status": res.get("status") or f"http_{r.status_code}",
+                "mode": "fallback",
+                "text": res.get("text") or c.get("text") or r.text[:300],
+                "steps": [res] if res.get("tool") else [],
+            }
+            return {"answer": ans, "events": [], "seconds": time.monotonic() - t0}  # fmt: skip
         approvals = {w["id"]: verdict for w in a.get("waits") or []}
         return self.stream(
             {**self.body(turn), "turn_id": a.get("turn_id"), "approvals": approvals, "conversation_id": None}
@@ -121,11 +133,16 @@ def usage(a: Dict[str, Any]) -> Dict[str, float]:
             "requests": int(u.get("requests") or 0)}  # fmt: skip
 
 
+ADDRESS = re.compile(r"anh/chị|(?:^|[.!?:]\s+)(?:Em|Anh|Chị)\s(?!bé)", re.M)
+
+
 def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any]], said: List[str],
           state: Dict[str, Any]) -> List[str]:  # fmt: skip
     """The turn's machine checks. `history`: the conversation's earlier answers; `said`: every message so far."""
     e, a = turn.get("expect") or {}, got["answer"]
-    called, text, why = EVAL.called_tools(a), a.get("text") or "", []
+    # this turn's calls, from its own stream (the answer's steps once held the whole conversation's: D06)
+    called = [x["tool"] for x in got["events"] if x.get("type") == "step" and x.get("phase") == "start"]
+    called, text, why = called or EVAL.called_tools(a), a.get("text") or "", []
     if a.get("status") in ("http_error", "no_answer"):
         return [f"{a.get('status')}: {text[:200]}"]
     if e.get("status") and a.get("status") != e["status"]:
@@ -136,7 +153,8 @@ def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any
     for t in e.get("tools_all", []):
         if t not in called:
             why.append(f"did not call {t}")
-    if e.get("tools_any") and not set(e["tools_any"]) & set(called):
+    earlier = {t for h in history for t in EVAL.called_tools(h)}  # a follow-up may answer from what is in context
+    if e.get("tools_any") and not set(e["tools_any"]) & (set(called) | earlier):
         why.append(f"called none of {e['tools_any']}")
     for t in e.get("tools_none", []):
         if t in called:
@@ -151,6 +169,8 @@ def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any
     for rx in [e["says"]] if isinstance(e.get("says"), str) else e.get("says", []):
         if not re.search(rx, text, re.I | re.S):
             why.append(f"does not say /{rx}/")
+    if ADDRESS.search(text):  # every answer: “tôi” and “bạn”, never em / anh/chị (D19)
+        why.append(f"address: {ADDRESS.search(text).group(0).strip()!r}")
     for rx in e.get("not_says", []):
         if re.search(rx, text, re.I | re.S):
             why.append(f"says /{rx}/")
@@ -173,6 +193,8 @@ def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any
             why.append(f"memory still has /{rx}/")
         if k == "follow_ups" and len(state["follow_ups"]) != rx:
             why.append(f"{len(state['follow_ups'])} follow-ups (want {rx})")
+        if k == "reviews_pending" and state["reviews_pending"] != rx:
+            why.append(f"{state['reviews_pending']} reviews waiting (want {rx})")
         if k == "reviews_new" and state["reviews_new"] != rx:
             why.append(f"{state['reviews_new']} new reviews in the queue (want {rx})")
     return why
@@ -186,7 +208,8 @@ def transcript(conv: Dict[str, Any], turns: List[Dict[str, Any]]) -> str:
         lines += [f"## Turn {i}", "", f"**Người dùng:** {t['say']}", ""]
         if t.get("graph"):
             lines += [f"*Đồ thị:* `{json.dumps(t['graph'], ensure_ascii=False)}`", ""]
-        tools = ", ".join(f"{s.get('tool')}{'' if s.get('ok', True) else ' (lỗi)'}" for s in a.get("steps") or [])
+        ran = [e for e in t.get("events") or [] if e.get("type") == "step" and e.get("phase") == "end"]
+        tools = ", ".join(f"{e.get('tool')}{'' if e.get('ok', True) else ' (lỗi)'}" for e in ran)
         waits = ", ".join(w.get("tool", "") for w in a.get("waits") or [])
         lines += [f"*Công cụ:* {tools or '—'}" + (f" · *chờ xác nhận:* {waits}" if waits else "")
                   + f" · *trạng thái:* {a.get('status')} · *chế độ:* {a.get('mode')} · {t['seconds']:.1f} s · "
@@ -195,7 +218,32 @@ def transcript(conv: Dict[str, Any], turns: List[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
+def setup(conv: Dict[str, Any], state: Path) -> None:
+    """What a conversation needs of the copy first, done for real: ``web_cap`` uses up that person's web searches
+    for today in the copy's ``assistant.db`` (as twenty searches would), so the cap itself refuses; ``pending_review``
+    puts one proposal of that client in the review queue (a copy of one of theirs, waiting), for an RM to decide."""
+    pending = (conv.get("setup") or {}).get("pending_review")
+    if pending:
+        con = sqlite3.connect(state)
+        with con:
+            row = con.execute("select kind, title, data from reviews where client_id = ?", (pending,)).fetchone()
+            rid, now = f"R-st{int(time.time()) % 10**6:06d}", time.strftime("%Y-%m-%dT%H:%M:%S")
+            con.execute("insert into reviews (id, client_id, kind, title, data, status, note, created) "
+                        "values (?, ?, ?, ?, ?, 'pending', '', ?)", (rid, pending, *row, now))  # fmt: skip
+        con.close()
+    who = (conv.get("setup") or {}).get("web_cap")
+    if who:
+        con = sqlite3.connect(state.parent / "assistant.db")
+        with con:
+            con.execute("create table if not exists web_usage (day text not null, owner text not null, n integer "
+                        "not null, primary key (day, owner))")  # fmt: skip
+            con.execute("insert into web_usage values (?, ?, 20) on conflict (day, owner) do update set n = 20",
+                        (time.strftime("%Y-%m-%d"), who))  # fmt: skip
+        con.close()
+
+
 def run_conversation(conv: Dict[str, Any], base: str, state: Path, out: Path, spent: float, budget: float):
+    setup(conv, state)
     who = conv.get("as", conv.get("client_id", "C01"))
     role = conv.get("role", "client")
     client = conv.get("client_id", who if role == "client" else None)
@@ -218,6 +266,7 @@ def run_conversation(conv: Dict[str, Any], base: str, state: Path, out: Path, sp
         said.append(said_now)
         st = s.memory()
         st["reviews_new"] = (len(reviews(state, client)) - before) if client else 0
+        st["reviews_pending"] = sum(r["status"] == "pending" for r in reviews(state, client)) if client else 0
         why = check(turn, got, history, said, st)
         u = usage(got["answer"])
         spent += u["cost"]
@@ -232,6 +281,8 @@ def run_conversation(conv: Dict[str, Any], base: str, state: Path, out: Path, sp
         why = []
         if conv["after"].get("titled") and not (mine and mine.get("title")):
             why.append("the conversation has no title")
+        if conv["after"].get("compacted") and not any(t["answer"].get("compacted") for t in done):
+            why.append("the conversation was never compacted")
         if done:
             done[-1]["why"] += why
     (out / f"{conv['id']}.json").write_text(json.dumps({**conv, "run": done}, ensure_ascii=False, indent=1))
@@ -249,10 +300,12 @@ def main() -> None:
     ap.add_argument("--category", default="")
     ap.add_argument("--budget", type=float, default=2.7)
     ap.add_argument("--spent", type=float, default=0.0, help="already spent in earlier runs (US$)")
+    ap.add_argument("--server", default="copy", help="which conversations: `copy` (:8041) or `fail` (:8042)")
     a = ap.parse_args()
     cat = json.loads(Path(a.catalogue).read_text())
     convs = [c for c in cat["conversations"] if (not a.only or c["id"] in a.only.split(","))
-             and (not a.category or c["category"] == a.category)]  # fmt: skip
+             and (not a.category or c["category"] == a.category)
+             and c.get("server", "copy") == a.server]  # fmt: skip
     out = HERE / "runs" / a.tag
     out.mkdir(parents=True, exist_ok=True)
     spent, rows = a.spent, []

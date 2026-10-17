@@ -1,0 +1,144 @@
+{
+ "id": "ms-03",
+ "category": "memory_sessions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Lần trước tôi hỏi gì",
+ "why": "Session history: search and read back, nothing invented.",
+ "brd": [
+  "OWN-AS-13",
+  "OWN-SS-03"
+ ],
+ "turns": [
+  {
+   "say": "Lần trước tôi đã hỏi bạn về kịch bản gì?",
+   "expect": {
+    "tools_any": [
+     "tim_lich_su",
+     "doc_lai_phien"
+    ],
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Lần trước tôi đã hỏi bạn về kịch bản gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_lich_su",
+      "label": "Tìm lịch sử",
+      "status": "ok",
+      "text": "8 chỗ trong các cuộc trò chuyện trước: 1) “Lần trước tôi đã hỏi bạn về kịch bản gì?”, bạn: …Lần trước tôi đã hỏi bạn về kịch bản gì?… 2) “Bật kịch bản lãi suất tăng 2% trên đồ thị giúp…”, bạn: …Bật kịch bản lãi suất tăng 2% trên đồ thị giúp tôi.… 3) “Bật kịch bản lãi suất tăng 2% trên đồ thị giúp…”, trợ lý: …Tôi đã chạy kịch bản lãi suất tăng 2% và mở trang Đồ thị tác động. Tôi chưa xác nhận được công tắc kịch bản đã bật trên đồ thị hay chưa, nên bạn kiểm tr… 4) “Gửi cho RM phương án giảm tỷ trọng cổ phiếu…”, bạn: …Gửi cho RM phương án giảm tỷ trọng cổ phiếu trong kịch bản chứng khoán giảm 30% để duyệt.…",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15703,
+     "output_tokens": 814,
+     "requests": 2,
+     "cost_usd": 0.001977,
+     "tools_cost_usd": null
+    },
+    "turn_id": "d9e49d2a4f07408f872814c9642944e5",
+    "conversation_id": "23f562b06f194bba",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo lịch sử trò chuyện, bạn đã hỏi về hai kịch bản:\n\n1. **Lãi suất tăng 2%**: bạn nhờ bật kịch bản này trên đồ thị. Lúc đó tôi đã chạy kịch bản và mở trang Đồ thị tác động, nhưng chưa xác nhận được công tắc đã bật, nên bạn nên kiểm tra lại trên trang đó.\n2. **Chứng khoán giảm 30%**: bạn nhờ gửi cho RM phương án giảm tỷ trọng cổ phiếu trong kịch bản này để duyệt.\n\nLịch sử không ghi rõ thứ tự hai việc này, nên tôi chưa chắc cái nào hỏi trước. Nếu bạn muốn, tôi có thể chạy lại một trong hai kịch bản trên tài sản hiện tại.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263571.023751,
+    "audit_seq": 1497,
+    "session": {
+     "id": "23f562b06f194bba",
+     "title": "Lần trước tôi đã hỏi bạn về kịch bản gì?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.965625099372119,
+   "first_event": 1.9001950044184923,
+   "usage": {
+    "cost": 0.001977,
+    "input": 15703,
+    "output": 814,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RchoePnMG1T4skGHhPwjx7",
+     "tool": "tim_lich_su",
+     "label": "Tìm lịch sử",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RchoePnMG1T4skGHhPwjx7",
+     "tool": "tim_lich_su",
+     "ok": true,
+     "ms": 124,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  }
+ ]
+}

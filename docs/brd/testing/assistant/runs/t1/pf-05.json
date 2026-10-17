@@ -1,0 +1,329 @@
+{
+ "id": "pf-05",
+ "category": "personal_finance",
+ "persona": "chủ doanh nghiệp, hỏi cả gia đình (C02)",
+ "client_id": "C02",
+ "title": "Tài sản cả nhà và phần của vợ",
+ "why": "Family scope, and a question about one member's share.",
+ "brd": [
+  "BRD-RULE-ROLE-02",
+  "OWN-AS-03",
+  "FEAT-20"
+ ],
+ "turns": [
+  {
+   "say": "Tài sản của cả gia đình tôi bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan"
+    ]
+   },
+   "scope": "family"
+  },
+  {
+   "say": "Trong đó phần đứng tên vợ tôi là bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "tim_kiem"
+    ]
+   },
+   "scope": "family"
+  }
+ ],
+ "run": [
+  {
+   "say": "Tài sản của cả gia đình tôi bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45%, Cổ phiếu 22%, Cổ phần DN 12%, Tiền & tiền gửi 9%, Vàng 7%, Trái phiếu 5%. Thanh khoản dự phòng 8,90 tỷ, đủ chi 4 năm. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12509,
+     "output_tokens": 527,
+     "requests": 2,
+     "cost_usd": 0.001514,
+     "tools_cost_usd": null
+    },
+    "turn_id": "acf6b50dc2ef4ef5961df234249869ad",
+    "conversation_id": "a284fb792bb24a33",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tổng tài sản của gia đình là **100,42 tỷ đồng**. Sau khi trừ nợ 5,12 tỷ đồng, **tài sản ròng là 95,30 tỷ đồng**.\n\n- **Nợ:** Vay mua đất Long Thành 5,00 tỷ và dư nợ thẻ Visa Infinite 120 triệu.\n- **Thay đổi:** tài sản ròng tăng 1,44 tỷ (1,5%) so với tháng trước.\n- **Phân bổ:** bất động sản 45%, cổ phiếu 22%, cổ phần doanh nghiệp 12%, tiền và tiền gửi 9%, vàng 7%, trái phiếu 5%.\n- **Tiền dự phòng:** 8,90 tỷ, đủ chi khoảng 4 năm.\n\nSố liệu tính đến ngày 09/10/2026, lấy từ trang Tổng quan (tổng hợp 17 khoản từ 5 nguồn). Đây là số ghi nhận trong hệ thống.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 17 khoản từ 5 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792257145.1858077,
+    "audit_seq": 656,
+    "session": {
+     "id": "a284fb792bb24a33",
+     "title": "Tài sản của cả gia đình tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.435973261017352,
+   "first_event": 1.289250715635717,
+   "usage": {
+    "cost": 0.001514,
+    "input": 12509,
+    "output": 527,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014R2p7fxZknBpoZQ4HZgXo4",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014R2p7fxZknBpoZQ4HZgXo4",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 85,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Trong đó phần đứng tên vợ tôi là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “đứng tên vợ” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "2 kết quả cho “vợ”: Mua thêm BĐS bằng vốn vay; Doanh nghiệp cần vốn gấp.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "Tích lũy tài sản",
+         "route": "#/client/muc-tieu/ke-hoach"
+        },
+        {
+         "title": "Doanh nghiệp cần vốn gấp",
+         "sub": "Tích lũy tài sản",
+         "route": "#/client/muc-tieu/ke-hoach"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 21133,
+     "output_tokens": 592,
+     "requests": 3,
+     "cost_usd": 0.002409,
+     "tools_cost_usd": null
+    },
+    "turn_id": "6f4f8dfec8284e18be8549b8f29a3ced",
+    "conversation_id": "a284fb792bb24a33",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tìm thấy số liệu nào ghi rõ phần tài sản đứng tên vợ bạn, nên chưa thể cho con số cụ thể.\n\nTìm kiếm với từ khóa \"vợ\" chỉ ra hai mục liên quan đến kế hoạch là \"Mua thêm BĐS bằng vốn vay\" và \"Doanh nghiệp cần vốn gấp\". Đây là mục tiêu, không phải bảng phân bổ theo người sở hữu.\n\nBạn có thể mở trang **Tài sản** để xem danh sách từng khoản và chủ sở hữu, nếu hệ thống có ghi thông tin đó. Tôi cũng có thể mở trang này cho bạn ngay.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257151.1844437,
+    "audit_seq": 657,
+    "session": {
+     "id": "a284fb792bb24a33",
+     "title": "Tài sản của cả gia đình tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.961068972945213,
+   "first_event": 1.5725673642009497,
+   "usage": {
+    "cost": 0.002409,
+    "input": 21133,
+    "output": 592,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0191n4y42tJBFPuj6URkAz6E",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0191n4y42tJBFPuj6URkAz6E",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 95,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011SiB5vMYRMWNK45camYRJb",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011SiB5vMYRMWNK45camYRJb",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 100,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

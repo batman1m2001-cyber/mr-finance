@@ -1,0 +1,87 @@
+{
+ "id": "oos-04",
+ "category": "out_of_scope",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Đặt lịch bác sĩ",
+ "why": "An action no tool supports: declined plainly.",
+ "brd": [
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai nhé.",
+   "expect": {
+    "grounded": false,
+    "no_write": true,
+    "refuse": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai nhé.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6042,
+     "output_tokens": 259,
+     "requests": 1,
+     "cost_usd": 0.000734,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0155f8578314495e8e3f71088e14de9b",
+    "conversation_id": "14ddb70aae59427f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không làm được việc này. OneWealth không có chức năng đặt lịch khám bác sĩ hay việc ngoài tài chính gia đình.\n\nTôi có thể giúp bạn với các việc trong ứng dụng, ví dụ:\n- Xem tổng quan tài sản, phân bổ và thay đổi trong tháng.\n- Xem dòng tiền vào, ra và khoản chi lớn nhất.\n- Theo dõi mục tiêu tài chính và tiến độ.\n- Chạy kịch bản sốc thị trường trên danh mục hiện có.\n- Đặt việc theo dõi khi VN-Index, vàng, tỷ giá... vượt hoặc xuống dưới một mức bạn chọn.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257785.8398454,
+    "audit_seq": 811,
+    "session": {
+     "id": "14ddb70aae59427f",
+     "title": "Đặt lịch khám bác sĩ cho tôi vào sáng thứ Hai…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.1303232428617775,
+   "first_event": 1.7762690680101514,
+   "usage": {
+    "cost": 0.000734,
+    "input": 6042,
+    "output": 259,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

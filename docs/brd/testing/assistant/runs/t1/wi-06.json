@@ -1,0 +1,352 @@
+{
+ "id": "wi-06",
+ "category": "what_if",
+ "persona": "founder trẻ, hai mục tiêu tranh nhau (C03)",
+ "client_id": "C03",
+ "title": "Mua nhà hay khởi nghiệp lần hai",
+ "why": "Competing goals: clarify, do not decide for him.",
+ "brd": [
+  "BRIEF-SCEN-01",
+  "BRD-RULE-CONTENT-01"
+ ],
+ "turns": [
+  {
+   "say": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần hai, nên ưu tiên cái nào?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Khởi nghiệp chắc cần 2 tỷ, nhà thì 5 tỷ.",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần hai, nên ưu tiên cái nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước) = tổng tài sản 8,17 tỷ − nợ 628,0 triệu (Vay ký quỹ TCBS 600,0 triệu; Dư nợ thẻ Visa Platinum 28,0 triệu). Phân bổ tài sản: Cổ phiếu 54%, Tài sản số 31%, Chứng chỉ quỹ 11%, Tiền & tiền gửi 4%. Tập trung vượt ngưỡng: Tổ chức phát hành SSI: 16,2% tài sản (ngưỡng 10%); Tổ chức phát hành Đức Giang: 11,3% tài sản (ngưỡng 10%); Tổ chức phát hành Hòa Phát: 10,1% tài sản (ngưỡng 10%). Thanh khoản dự phòng 300,0 triệu, đủ chi 7 tháng. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "2 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Mua thêm BĐS bằng vốn vay: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 10,80 tỷ · có 72,66 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 30,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.017401894559604534,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12915,
+     "output_tokens": 1042,
+     "requests": 2,
+     "cost_usd": 0.001812,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3c8b761538214e0bb250ecb5678b325e",
+    "conversation_id": "5dae7c5e3c2e4232",
+    "compacted": false,
+    "status": "ok",
+    "text": "Em nên ưu tiên việc nào là quyết định cá nhân, mình không thay em chọn được. Nhưng dữ liệu hiện tại có vài điểm đáng cân nhắc:\n\n- **Mua nhà bằng vốn vay đang chậm tiến độ**, còn nghỉ hưu sớm ở 55 tuổi đúng tiến độ (theo mục tiêu, tính trên tài sản hiện có, ngày 09/10/2026).\n- **Thanh khoản dự phòng 300 triệu**, đủ chi khoảng 7 tháng. Khởi nghiệp thường cần vốn dự phòng dài hơn, nên đây là điểm cần tính kỹ.\n- **Đòn bẩy đã có sẵn**: nợ 628 triệu, trong đó 600 triệu là vay ký quỹ chứng khoán. Nếu thị trường xấu, mức sụt giảm ước tính 43%, vượt ngưỡng 30% của em. Thêm khoản vay mua nhà sẽ làm rủi ro này nặng hơn.\n- **Tập trung tài sản cao**: SSI chiếm 16,2% tài sản, vượt ngưỡng 10%. Nếu cần bán cổ phiếu để có vốn khởi nghiệp hoặc trả nợ, điều này cần lưu ý.\n\nTheo mình, trước khi chọn, em nên trả lời được ba câu:\n1. Khởi nghiệp cần bao nhiêu vốn, trong bao lâu, và có thu nhập gì trong giai đoạn đầu?\n2. Mua nhà cần vay bao nhiêu và trả góp hằng tháng bao nhiêu?\n3. Nếu cả hai cùng đến, em giữ được bao nhiêu tháng chi tiêu sau khi trả nợ?\n\nNếu em cho mình biết số vốn khởi nghiệp và khoản vay nhà dự kiến, mình có thể tính tác động lên thanh khoản và mức rủi ro để em so sánh. Em có muốn không?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792257518.656359,
+    "audit_seq": 723,
+    "session": {
+     "id": "5dae7c5e3c2e4232",
+     "title": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.59147933870554,
+   "first_event": 1.5766982887871563,
+   "usage": {
+    "cost": 0.001812,
+    "input": 12915,
+    "output": 1042,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01TuyZUxEw77vRiucQFh5tJN",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01L9UirXd4izbLiT7e6wKfQG",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01TuyZUxEw77vRiucQFh5tJN",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 153,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01L9UirXd4izbLiT7e6wKfQG",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 153,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Khởi nghiệp chắc cần 2 tỷ, nhà thì 5 tỷ.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Tỷ lệ 7 tỷ (khởi nghiệp 2 tỷ + nhà 5 tỷ) so với tổng tài sản 8,173 tỷ: (2000000000+5000000000)/8173000000*100 = 85,65",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15543,
+     "output_tokens": 1617,
+     "requests": 2,
+     "cost_usd": 0.002363,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c0d2a61d51a249c9a363ccca0f804805",
+    "conversation_id": "5dae7c5e3c2e4232",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu cả hai khoản đều lấy từ tài sản hiện có, tổng cần là 7 tỷ, bằng **85,6%** tổng tài sản 8,17 tỷ (ngày 09/10/2026, trang Tổng quan).\n\nCông thức: (2 tỷ + 5 tỷ) / 8,173 tỷ × 100 = 85,6%.\n\nNếu làm vậy, phần còn lại khoảng 1,17 tỷ, và em vẫn còn khoản nợ 628 triệu. Thanh khoản dự phòng hiện chỉ 300 triệu, và mức sụt giảm khi thị trường xấu đã ước tính vượt ngưỡng 30%. Đây là ước tính từ hệ thống, không phải dự báo.\n\nHai điểm cần làm rõ:\n- **Mua nhà 5 tỷ có phải tiền mặt không?** Thường người mua chỉ trả một phần (đặt cọc) và vay phần còn lại. Nếu vậy, nhu cầu tiền mặt thật sự thấp hơn nhiều, nhưng khoản trả góp hằng tháng sẽ tăng. Em cho mình biết tỷ lệ vay và thời hạn, mình sẽ tính tiếp.\n- **Khởi nghiệp 2 tỷ** có thu nhập bù không? Nếu không, 2 tỷ đó là vốn rút ra từ danh mục, nên cần xem nên bán tài sản nào.\n\nEm muốn mình mô phỏng thêm kịch bản thị trường giảm để xem danh mục còn lại chịu được đến đâu không?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257528.5059261,
+    "audit_seq": 724,
+    "session": {
+     "id": "5dae7c5e3c2e4232",
+     "title": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 9.819131557829678,
+   "first_event": 3.9533194871619344,
+   "usage": {
+    "cost": 0.002363,
+    "input": 15543,
+    "output": 1617,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NzhAPQ2uix2Ne4XcP2K8iS",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NzhAPQ2uix2Ne4XcP2K8iS",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

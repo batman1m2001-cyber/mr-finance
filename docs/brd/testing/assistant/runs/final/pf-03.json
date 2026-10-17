@@ -1,0 +1,399 @@
+{
+ "id": "pf-03",
+ "category": "personal_finance",
+ "persona": "trưởng phòng trẻ, có nợ (C05)",
+ "client_id": "C05",
+ "title": "Nợ bao nhiêu, trả bao nhiêu, có nên trả sớm",
+ "why": "Debt facts, then advice without overconfidence.",
+ "brd": [
+  "BRIEF-DASH-01",
+  "OWN-AS-03",
+  "BRD-RULE-SCOPE-02"
+ ],
+ "turns": [
+  {
+   "say": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng trả bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "says": "2,1"
+   }
+  },
+  {
+   "say": "Có nên dồn tiền trả hết nợ sớm không?",
+   "expect": {
+    "grounded": false,
+    "not_says": [
+     "chắc chắn nên",
+     "bạn phải"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng trả bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 26,0 triệu; Thanh toán thẻ 15,9 triệu; Chi tiêu sinh hoạt 9,3 triệu. Nguồn tiền vào: Lương 60,1 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24562,
+     "output_tokens": 611,
+     "requests": 3,
+     "cost_usd": 0.002762,
+     "tools_cost_usd": null
+    },
+    "turn_id": "52c4508e01cf4aa9896208f985a14c87",
+    "conversation_id": "280c88df630342b6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn đang nợ tổng cộng khoảng **2,11 tỷ đồng**, gồm:\n- Vay mua căn hộ Vinhomes Grand Park: 2,10 tỷ\n- Dư nợ thẻ Visa Platinum: 12,0 triệu\n\nTrong tháng 09/2026, khoản trả nợ vay ghi nhận là **26,0 triệu đồng**, và thanh toán thẻ là 15,9 triệu. Đây là số phát sinh thực tế của một tháng, chưa phải mức trả cố định. Số liệu nợ lấy đến ngày 09/10/2026 từ trang Tổng quan. Dòng tiền tháng 09 lấy từ trang Dòng tiền.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)",
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263105.8321695,
+    "audit_seq": 1374,
+    "session": {
+     "id": "280c88df630342b6",
+     "title": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.586852878797799,
+   "first_event": 1.341757230926305,
+   "usage": {
+    "cost": 0.002762,
+    "input": 24562,
+    "output": 611,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01YcA9Jd4SJL7Y4uSBEUgTGi",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01YcA9Jd4SJL7Y4uSBEUgTGi",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 117,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Y5VRfZQgcrZ75BEGR4uYBJ",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Y5VRfZQgcrZ75BEGR4uYBJ",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 86,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Có nên dồn tiền trả hết nợ sớm không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "2 kết quả cho “vay”: Vay mua căn hộ Vinhomes Grand Park; Mua thêm BĐS bằng vốn vay.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Vay mua căn hộ Vinhomes Grand Park",
+         "sub": "Khoản vay",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "Tích lũy tài sản",
+         "route": "#/client/muc-tieu/ke-hoach"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “lãi suất” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 27485,
+     "output_tokens": 1226,
+     "requests": 3,
+     "cost_usd": 0.003361,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1ec856ded5d141b8ab7fcc0f81a79060",
+    "conversation_id": "280c88df630342b6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa đủ dữ liệu để khuyên nên hay không. Hệ thống không có lãi suất và điều kiện trả trước hạn của khoản vay 2,10 tỷ.\n\nCó hai điểm cần cân nhắc:\n- **Tiền mặt hiện có là 980 triệu**, còn nợ là 2,10 tỷ, nên không thể trả hết chỉ bằng tiền đang có. Nếu trả một phần lớn, bạn sẽ mất phần dự phòng đang đủ chi khoảng 3 năm.\n- **Lãi suất vay so với lợi suất khoản tiền gửi.** Nếu lãi vay cao hơn lợi suất bạn đang nhận, trả bớt nợ có lợi hơn. Ngược lại thì giữ tiền có thể hợp lý hơn.\n\nBạn nên xem hợp đồng vay để biết lãi suất hiện tại, loại lãi suất (cố định hay thả nổi) và phí trả trước hạn. Nếu bạn gửi các số này, tôi sẽ tính cụ thể việc trả bớt nợ giảm được bao nhiêu tiền lãi.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263116.1068053,
+    "audit_seq": 1375,
+    "session": {
+     "id": "280c88df630342b6",
+     "title": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 10.237091233022511,
+   "first_event": 3.0631778850220144,
+   "usage": {
+    "cost": 0.003361,
+    "input": 27485,
+    "output": 1226,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014mLLrhDnxWZh1oPdUfudEr",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014mLLrhDnxWZh1oPdUfudEr",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 128,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_017iERWqwz4VUrhhv9zb6x9Z",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_017iERWqwz4VUrhhv9zb6x9Z",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 123,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

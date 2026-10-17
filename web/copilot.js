@@ -489,6 +489,7 @@ export function mount() {
   panel.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
   $("#cp-form", panel).onsubmit = (e) => { e.preventDefault(); send($("#cp-q", panel).value); };
   window.addEventListener("hashchange", () => { if (!panel.hidden) setTimeout(drawCtx); });  // after the route names its view
+  let watched = false;
 
   return {
     dock(host, hooks) {
@@ -497,6 +498,13 @@ export function mount() {
       panel.classList.add("cp-docked"); panel.setAttribute("role", "region");
       host.appendChild(panel);
       btn.hidden = true;
+      if (!watched) {  // the lens or the sheet changes without a route change, or after it: name what is on screen (D30)
+        watched = true;
+        const redraw = new MutationObserver(() => { if (docked) drawCtx(); });
+        for (const el of [document.querySelector("#ws-title"), document.querySelector("#ws-sheet")]) {
+          if (el) redraw.observe(el, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+        }
+      }
       drawCtx(); draw(); drawSess(); sugg(); panel.hidden = false; resume();
     },
     undock() {

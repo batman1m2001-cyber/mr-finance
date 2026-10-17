@@ -1,0 +1,3074 @@
+{
+ "id": "fm-06",
+ "category": "failure_modes",
+ "persona": "chuyên gia, rất nhiều câu (C01)",
+ "client_id": "C01",
+ "title": "Hai mươi mốt câu: cuộc trò chuyện được thu gọn",
+ "why": "Long enough to compact (ContextPolicy 24 000 tokens, at 75 %): the panel is told, and the first answer survives.",
+ "brd": [
+  "OWN-AS-11",
+  "OWN-SS-05",
+  "FEAT-37"
+ ],
+ "turns": [
+  {
+   "say": "Tài sản ròng của tôi bao nhiêu?",
+   "expect": {}
+  },
+  {
+   "say": "Phân bổ tài sản thế nào?",
+   "expect": {}
+  },
+  {
+   "say": "Dòng tiền tháng này?",
+   "expect": {}
+  },
+  {
+   "say": "Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?",
+   "expect": {}
+  },
+  {
+   "say": "So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.",
+   "expect": {}
+  },
+  {
+   "say": "Tin nào ảnh hưởng nhiều nhất?",
+   "expect": {}
+  },
+  {
+   "say": "Có điều gì cần chú ý?",
+   "expect": {}
+  },
+  {
+   "say": "Nếu nhà đất giảm 25% thì sao?",
+   "expect": {}
+  },
+  {
+   "say": "Các khoản nợ của tôi?",
+   "expect": {}
+  },
+  {
+   "say": "Quỹ dự phòng đủ mấy tháng?",
+   "expect": {}
+  },
+  {
+   "say": "Đề xuất nào đang chờ?",
+   "expect": {}
+  },
+  {
+   "say": "Chính sách nào tốn kém nhất?",
+   "expect": {}
+  },
+  {
+   "say": "Mục tiêu học phí cần để dành bao nhiêu mỗi tháng?",
+   "expect": {}
+  },
+  {
+   "say": "Nếu thu nhập giảm 30% thì sao?",
+   "expect": {}
+  },
+  {
+   "say": "Rủi ro tập trung của tôi ở đâu?",
+   "expect": {}
+  },
+  {
+   "say": "Cổ phiếu chiếm bao nhiêu?",
+   "expect": {}
+  },
+  {
+   "say": "Nếu vàng tăng 20% thì sao?",
+   "expect": {}
+  },
+  {
+   "say": "Tôi có bao nhiêu nguồn dữ liệu, tên là gì?",
+   "expect": {}
+  },
+  {
+   "say": "Mục tiêu nghỉ hưu thế nào?",
+   "expect": {}
+  },
+  {
+   "say": "Kịch bản tỷ giá tăng 5% thì sao?",
+   "expect": {}
+  },
+  {
+   "say": "Nhắc lại giúp tôi: câu đầu tiên tôi hỏi là gì, và con số khi đó là bao nhiêu?",
+   "expect": {
+    "says": [
+     "tài sản ròng",
+     "4[356],\\d"
+    ]
+   }
+  }
+ ],
+ "after": {
+  "compacted": true
+ },
+ "run": [
+  {
+   "say": "Tài sản ròng của tôi bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16183,
+     "output_tokens": 287,
+     "requests": 2,
+     "cost_usd": 0.001762,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5969d59c696b4037aa3f7f9914df4f51",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tài sản ròng của bạn là **43,53 tỷ đồng**, tính đến ngày 09/10/2026 (nguồn: trang Tổng quan). Con số này tăng 980,5 triệu (2,3%) so với tháng trước.\n\n- Tổng tài sản: 45,97 tỷ\n- Nợ: 2,44 tỷ (chủ yếu là vay mua nhà Thảo Điền 2,40 tỷ)\n\nBất động sản chiếm khoảng 70% tài sản. Mức tập trung vào đất nền Long Thành (Đồng Nai) đang vượt ngưỡng 35%, ở mức 39,2%.\n\nĐây là số ghi nhận từ hệ thống, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792263758.4769974,
+    "audit_seq": 1563,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.338495580945164,
+   "first_event": 1.2531381780281663,
+   "usage": {
+    "cost": 0.001762,
+    "input": 16183,
+    "output": 287,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01DiXJVhRtGX1C8HBAmcF5m4",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01DiXJVhRtGX1C8HBAmcF5m4",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 128,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Phân bổ tài sản thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8864,
+     "output_tokens": 280,
+     "requests": 1,
+     "cost_usd": 0.001026,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0ab199d6b3f34a0fb23d30d3eaa31b09",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Phân bổ tài sản theo số liệu ngày 09/10/2026 (trang Tổng quan):\n\n- Bất động sản: 32,40 tỷ (70%)\n- Cổ phiếu: 4,93 tỷ (11%)\n- Tiền và tiền gửi: 3,72 tỷ (8%)\n- Chứng chỉ quỹ: 1,62 tỷ (4%)\n- Trái phiếu: 1,50 tỷ (3%)\n- Vàng: 1,50 tỷ (3%)\n- Bảo hiểm: 300 triệu (1%)\n\nBất động sản đang chiếm tỷ trọng lớn nhất. Riêng đất nền Long Thành đã vượt ngưỡng tập trung 35%, ở mức 39,2% tổng tài sản.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263760.6950378,
+    "audit_seq": 1564,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.1817441037856042,
+   "first_event": 1.2038910896517336,
+   "usage": {
+    "cost": 0.001026,
+    "input": 8864,
+    "output": 280,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Dòng tiền tháng này?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 120,4 triệu, tiền ra 90,4 triệu, còn lại 30,0 triệu. Khoản chi lớn nhất: Trả nợ vay 38,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 38,0 triệu; Thanh toán thẻ 34,8 triệu; Chi tiêu sinh hoạt 17,6 triệu. Nguồn tiền vào: Lương 120,4 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 38000000.0,
+         "text": "38,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 34770000.0,
+         "text": "34,8 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 17623000.0,
+         "text": "17,6 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "120,4 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "90,4 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "30,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18620,
+     "output_tokens": 370,
+     "requests": 2,
+     "cost_usd": 0.002047,
+     "tools_cost_usd": null
+    },
+    "turn_id": "41aba912fb934488b6b169aebf163534",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Dòng tiền gần nhất có dữ liệu là **tháng 09/2026** (tháng 10 chưa có dữ liệu trong hệ thống):\n\n- Tiền vào: 120,4 triệu (toàn bộ là lương)\n- Tiền ra: 90,4 triệu\n- Còn lại: 30,0 triệu\n\nCác khoản chi chính:\n- Trả nợ vay: 38,0 triệu (cũng là khoản chi lớn nhất)\n- Thanh toán thẻ: 34,8 triệu\n- Chi tiêu sinh hoạt: 17,6 triệu\n\nSố liệu này là số ghi nhận từ 9 giao dịch của tháng, lấy từ trang Tổng quan.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263764.628342,
+    "audit_seq": 1565,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 3.8842397928237915,
+   "first_event": 1.2994131306186318,
+   "usage": {
+    "cost": 0.002047,
+    "input": 18620,
+    "output": 370,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PQmSLYnkLwujefsJ1htGtH",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PQmSLYnkLwujefsJ1htGtH",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 90,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ, cần 7,56 tỷ (2030), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 3,53 tỷ, cần để dành 79,1 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 27,60 tỷ (55 tuổi), có 27,30 tỷ (dự kiến có lúc 55 tuổi), thiếu 302,6 triệu, cần để dành 1,3 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 1,00 tỷ (dự phòng sẵn), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 3,03 tỷ, dòng tiền dư 5,0 triệu/tháng; Định cư / con đi du học: chậm tiến độ, cần 5,53 tỷ (trong 12 tháng), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 1,50 tỷ, cần để dành 122,4 triệu/tháng, dòng tiền dư 5,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 20433,
+     "output_tokens": 647,
+     "requests": 2,
+     "cost_usd": 0.002367,
+     "tools_cost_usd": null
+    },
+    "turn_id": "38281d67695349ae8aa9be1a086a79d1",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hai mục tiêu đang chậm tiến độ:\n\n- **Học phí cho con** (cần đủ vào 2030): thiếu 3,53 tỷ. Cần để dành **79,1 triệu/tháng**.\n- **Định cư / con đi du học** (cần trong 12 tháng): thiếu 1,50 tỷ. Cần để dành **122,4 triệu/tháng**.\n\nDòng tiền dư hiện ước tính khoảng **5,0 triệu/tháng**, thấp hơn nhiều so với mức cần thiết. Hai mục tiêu còn lại (nghỉ hưu sớm và chi phí y tế) đang đúng tiến độ.\n\nCác con số này tính trên tài sản hiện có, lấy từ trang Mục tiêu. Đây là số ước tính theo hồ sơ, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792263769.69351,
+    "audit_seq": 1566,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 4
+    },
+    "describe": true
+   },
+   "seconds": 5.031778302974999,
+   "first_event": 1.3305410500615835,
+   "usage": {
+    "cost": 0.002367,
+    "input": 20433,
+    "output": 647,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Lx477Vzi7fJTVVjkXzXe5G",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Lx477Vzi7fJTVVjkXzXe5G",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 116,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản VN-Index giảm 30%: tài sản ròng 43,53 tỷ → 41,71 tỷ (−1,82 tỷ, −4,2%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "VN-Index giảm 30%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "43,53 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "41,71 tỷ",
+         "sub": "−1,82 tỷ · −4,2%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "4,72 tỷ",
+         "sub": "41 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Cổ phiếu FPT: -605 triệu",
+        "Ảnh hưởng nhiều: Cổ phiếu TCB: -366 triệu",
+        "Ảnh hưởng nhiều: Cổ phiếu SSI (VPS): -223 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản Lãi suất tăng 2%: tài sản ròng 43,53 tỷ → 41,31 tỷ (−2,22 tỷ, −5,1%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "Lãi suất tăng 2%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "43,53 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "41,31 tỷ",
+         "sub": "−2,22 tỷ · −5,1%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "4,72 tỷ",
+         "sub": "41 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Căn hộ Thảo Điền: -720 triệu",
+        "Ảnh hưởng nhiều: Đất Long Thành (tự khai): -450 triệu",
+        "Ảnh hưởng nhiều: Đất Long Thành (tự khai): -450 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 22696,
+     "output_tokens": 555,
+     "requests": 2,
+     "cost_usd": 0.002547,
+     "tools_cost_usd": null
+    },
+    "turn_id": "6f5b52f993d14d3eb2e85419937c9476",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đây là hai kịch bản mô phỏng chạy riêng trên tài sản hiện có, lấy từ trang Kế hoạch (ngày 09/10/2026):\n\n| Kịch bản | Tài sản ròng | Thay đổi | Ngưỡng 8% |\n|---|---|---|---|\n| VN-Index giảm 30% | 43,53 → 41,71 tỷ | −1,82 tỷ (−4,2%) | Trong ngưỡng |\n| Lãi suất tăng 2 điểm | 43,53 → 41,31 tỷ | −2,22 tỷ (−5,1%) | Trong ngưỡng |\n\nLãi suất tăng 2% gây thiệt hại lớn hơn một chút so với cổ phiếu giảm 30%. Đây là ước tính, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Kịch bản lãi suất tăng",
+     "Kịch bản bất động sản đóng băng",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263774.2962108,
+    "audit_seq": 1567,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 5
+    },
+    "describe": false
+   },
+   "seconds": 4.560840516351163,
+   "first_event": 1.67862512730062,
+   "usage": {
+    "cost": 0.002547,
+    "input": 22696,
+    "output": 555,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014jAYmq9qnLKg2d2WuxUH8Z",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:vni_30"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Et9cQCEGkT59z5Q1gv9U5D",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:rates_up"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014jAYmq9qnLKg2d2WuxUH8Z",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 204,
+     "focus": [
+      "scenario:vni_30"
+     ],
+     "scenario": {
+      "id": "vni_30",
+      "effect": -1817510000.0
+     }
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Et9cQCEGkT59z5Q1gv9U5D",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 204,
+     "focus": [
+      "scenario:rates_up"
+     ],
+     "scenario": {
+      "id": "rates_up",
+      "effect": -2219276000.0
+     }
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Tin nào ảnh hưởng nhiều nhất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "text": "2 sự kiện đang có hiệu lực; tác động kỳ vọng 3 tháng cộng lại +0,2 triệu. Lớn nhất: Bất động sản (+98,6 triệu). Đây là ước tính theo kịch bản CIO duyệt, không phải khuyến nghị.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bất động sản",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "+98,6 triệu",
+         "tone": "good",
+         "focus": "event:EV-2026-0002"
+        },
+        {
+         "title": "Thị trường cổ phiếu",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "−98,4 triệu",
+         "tone": "bad",
+         "focus": "event:EV-2026-0001"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "2 lần áp dụng CIO duyệt",
+       "CafeF",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "dieu_tra",
+      "label": "Điều tra tin",
+      "status": "ok",
+      "text": "Bất động sản: 4 tin, CIO duyệt 3 kịch bản (chính: Trung tính, thị trường đi ngang · 55%); đi qua VN-Index, Giá nhà ở Việt Nam; tới Bất động sản, Cổ phiếu, Chứng chỉ quỹ. Tác động kỳ vọng 3 tháng +98,6 triệu. Có thể ảnh hưởng theo kịch bản, không phải quan hệ nhân quả.",
+      "card": {
+       "kind": "chain",
+       "steps": [
+        {
+         "label": "Tin",
+         "items": [
+          "VnEconomy · 15/10 19:51",
+          "VnEconomy · 15/10 15:31"
+         ]
+        },
+        {
+         "label": "Sự kiện",
+         "items": [
+          "Bất động sản"
+         ]
+        },
+        {
+         "label": "Kịch bản",
+         "items": [
+          "Trung tính, thị trường đi ngang · 55%",
+          "Chính sách cụ thể hóa, tâm lý cải thiện · 25%",
+          "Cầu suy yếu kéo dài, căng thẳng tín dụng · 20%"
+         ]
+        },
+        {
+         "label": "Yếu tố",
+         "items": [
+          "VN-Index",
+          "Giá nhà ở Việt Nam",
+          "Chênh lệch tín dụng DN bất động sản"
+         ]
+        },
+        {
+         "label": "Tài sản",
+         "items": [
+          "Bất động sản +66,8 triệu",
+          "Cổ phiếu +29,7 triệu",
+          "Chứng chỉ quỹ +2,9 triệu"
+         ]
+        },
+        {
+         "label": "Mục tiêu",
+         "items": [
+          "Học phí du học (Úc) – Minh An: Đạt → Đạt",
+          "Quyết toán thuế TNCN 2026: Đạt → Đạt"
+         ]
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": null,
+      "sources": [
+       "Lần áp dụng AR-0002-v1-2",
+       "Nhận định VW-0002-v1",
+       "CafeF",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Đồ thị tác động",
+       "route": "#/client/tin/do-thi"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 36788,
+     "output_tokens": 755,
+     "requests": 3,
+     "cost_usd": 0.004056,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a8e5c2b5ad31487ab32c9070d3adac0f",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo trang Tin, hiện có 2 sự kiện đang có hiệu lực. Tác động kỳ vọng trong 3 tháng cộng lại chỉ khoảng **+0,2 triệu**.\n\nSự kiện ảnh hưởng nhiều nhất là **nhóm bất động sản** (mã EV-2026-0002), với tác động kỳ vọng **+98,6 triệu**:\n- Gồm 4 tin, và CIO đã duyệt 3 kịch bản.\n- Kịch bản chính (55%) là thị trường đi ngang.\n- Tác động đi qua VN-Index và giá nhà ở, rồi tới bất động sản, cổ phiếu và chứng chỉ quỹ của bạn.\n\nĐây là ước tính theo kịch bản đã duyệt, không phải quan hệ nhân quả chắc chắn và không phải khuyến nghị đầu tư.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Đồ thị tác động",
+      "route": "#/client/tin/do-thi"
+     }
+    ],
+    "sources": [
+     "2 lần áp dụng CIO duyệt",
+     "CafeF",
+     "Vietstock",
+     "VnEconomy",
+     "Lần áp dụng AR-0002-v1-2",
+     "Nhận định VW-0002-v1"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "event:EV-2026-0002"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tạo kịch bản VN-Index giảm mạnh",
+     "Tin nào ảnh hưởng tới tôi?"
+    ],
+    "answered_at": 1792263781.0986106,
+    "audit_seq": 1568,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 6
+    },
+    "describe": false
+   },
+   "seconds": 6.770834633149207,
+   "first_event": 1.4905318971723318,
+   "usage": {
+    "cost": 0.004056,
+    "input": 36788,
+    "output": 755,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0195sVCoedL4NHbLBMzco2D5",
+     "tool": "tac_dong",
+     "label": "Tác động tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0195sVCoedL4NHbLBMzco2D5",
+     "tool": "tac_dong",
+     "ok": true,
+     "ms": 35,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_017dUqTJwaPU6HtL6iArMrL9",
+     "tool": "dieu_tra",
+     "label": "Điều tra tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_017dUqTJwaPU6HtL6iArMrL9",
+     "tool": "dieu_tra",
+     "ok": true,
+     "ms": 101,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Có điều gì cần chú ý?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 11,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 8%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 11,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 8%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 25999,
+     "output_tokens": 288,
+     "requests": 2,
+     "cost_usd": 0.002744,
+     "tools_cost_usd": null
+    },
+    "turn_id": "800afe1635d9400086e8e84c2d8982ba",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 1 điều đáng chú ý:\n\n**Mức sụt giảm ước tính khi thị trường xấu là 11,8%, vượt ngưỡng chấp nhận 8%.** Đây là ước tính theo kịch bản sốc trên tài sản hiện có, không phải dự báo. Phần lớn thiệt hại đến từ căn hộ Thảo Điền, đất Long Thành và cổ phiếu FPT.\n\nLiên quan đến điều này, đất nền Long Thành đang chiếm 39,2% tổng tài sản, vượt ngưỡng 35%. Nếu bạn muốn, tôi có thể chạy thêm một giả định cụ thể để xem tác động của việc giảm giá bất động sản.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": null,
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792263784.8363605,
+    "audit_seq": 1569,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 7
+    },
+    "describe": false
+   },
+   "seconds": 3.6847305740229785,
+   "first_event": 1.3926216741092503,
+   "usage": {
+    "cost": 0.002744,
+    "input": 25999,
+    "output": 288,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01N4NiiB9LWQuvqXDKPy5b57",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01N4NiiB9LWQuvqXDKPy5b57",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 211,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Nếu nhà đất giảm 25% thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: giá nhà đất −25%. Kịch bản của bạn: tài sản ròng 43,53 tỷ → 35,43 tỷ (−8,10 tỷ). Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ (giữ nguyên); Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "−8,10 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "class:real_estate"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 27376,
+     "output_tokens": 320,
+     "requests": 2,
+     "cost_usd": 0.002898,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b9b34882d6574f9fa2b691115cbe2f4c",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu giá nhà đất giảm 25%, tài sản ròng của bạn sẽ giảm từ **43,53 tỷ xuống còn 35,43 tỷ**, tức mất khoảng **8,10 tỷ**.\n\nCác mục tiêu đang chậm tiến độ (học phí và định cư) vẫn chậm như hiện tại. Nghỉ hưu sớm và chi phí y tế vẫn đúng tiến độ.\n\nĐây là giả định đơn giản: mỗi khoản nhà đất giảm đúng 25%, không tính lãi vay hay thay đổi thu nhập. Kết quả là mô phỏng trên tài sản hiện có, không phải dự báo, và chưa được cộng vào tài sản ròng.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "class:real_estate"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263788.5280514,
+    "audit_seq": 1570,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 8
+    },
+    "describe": false
+   },
+   "seconds": 3.6537776459008455,
+   "first_event": 1.3679762240499258,
+   "usage": {
+    "cost": 0.002898,
+    "input": 27376,
+    "output": 320,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_015rnRCv1FtpsTPwtf7k8im4",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_015rnRCv1FtpsTPwtf7k8im4",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 117,
+     "focus": [
+      "scenario:custom",
+      "class:real_estate"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Các khoản nợ của tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14274,
+     "output_tokens": 277,
+     "requests": 1,
+     "cost_usd": 0.001566,
+     "tools_cost_usd": null
+    },
+    "turn_id": "55d0e1117d14410e9843676ec92ebd5f",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tổng nợ hiện tại là **2,44 tỷ đồng**, theo số liệu ngày 09/10/2026 (trang Tổng quan):\n\n- **Vay mua nhà Thảo Điền:** 2,40 tỷ\n- **Dư nợ thẻ Visa Signature:** 45,0 triệu\n\nKhoản vay mua nhà chiếm gần như toàn bộ nợ. Đây là số ghi nhận từ hệ thống.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263790.8154683,
+    "audit_seq": 1571,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 9
+    },
+    "describe": false
+   },
+   "seconds": 2.243809869978577,
+   "first_event": 1.653405805118382,
+   "usage": {
+    "cost": 0.001566,
+    "input": 14274,
+    "output": 277,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Quỹ dự phòng đủ mấy tháng?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số tháng chi tiêu được bằng quỹ dự phòng: 4720000000/115000000 = 41,04",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 29106,
+     "output_tokens": 654,
+     "requests": 2,
+     "cost_usd": 0.003238,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b92c35e66fb84b1eaad3481ea691a00d",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Quỹ dự phòng hiện có **4,72 tỷ**, đủ chi khoảng **41 tháng** (gần 3 năm 5 tháng), theo mức chi 115,0 triệu/tháng trong hồ sơ.\n\nCông thức: 4.720.000.000 ÷ 115.000.000 = 41,04 tháng.\n\nSố dư lấy từ trang Tổng quan, ngày 09/10/2026. Mức chi là con số trong hồ sơ, nên nếu chi tiêu thực tế khác thì số tháng sẽ thay đổi.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263795.7004464,
+    "audit_seq": 1572,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 10
+    },
+    "describe": false
+   },
+   "seconds": 4.842166626825929,
+   "first_event": 2.4163280399516225,
+   "usage": {
+    "cost": 0.003238,
+    "input": 29106,
+    "output": 654,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01N98rXMbcaBCwW8KTRtQgyc",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01N98rXMbcaBCwW8KTRtQgyc",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Đề xuất nào đang chờ?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "text": "6 đề xuất, 4 đang chờ. 1) VN-Index giảm 30% — Giảm điểm nóng — chờ RM duyệt. 2) VN-Index giảm 30% — Giảm điểm nóng — chờ RM duyệt. 3) VN-Index giảm 30% — Giảm điểm nóng — chờ RM duyệt. 4) VN-Index giảm 30% — Giảm điểm nóng — chờ RM duyệt.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "VN-Index giảm 30% — Giảm điểm nóng",
+         "sub": "Nguyễn Minh Khoa · chờ RM duyệt",
+         "chip": "R-81046a52",
+         "tone": "warn",
+         "focus": "review:R-81046a52"
+        },
+        {
+         "title": "VN-Index giảm 30% — Giảm điểm nóng",
+         "sub": "Nguyễn Minh Khoa · chờ RM duyệt",
+         "chip": "R-a8fff006",
+         "tone": "warn",
+         "focus": "review:R-a8fff006"
+        },
+        {
+         "title": "VN-Index giảm 30% — Giảm điểm nóng",
+         "sub": "Nguyễn Minh Khoa · chờ RM duyệt",
+         "chip": "R-151a644d",
+         "tone": "warn",
+         "focus": "review:R-151a644d"
+        },
+        {
+         "title": "VN-Index giảm 30% — Giảm điểm nóng",
+         "sub": "Nguyễn Minh Khoa · chờ RM duyệt",
+         "chip": "R-520eade5",
+         "tone": "warn",
+         "focus": "review:R-520eade5"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-821ffb1b",
+         "tone": "",
+         "focus": "review:R-821ffb1b"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-a4a7e60d",
+         "tone": "",
+         "focus": "review:R-a4a7e60d"
+        }
+       ]
+      },
+      "focus": [
+       "review:R-81046a52",
+       "review:R-a8fff006",
+       "review:R-151a644d",
+       "review:R-520eade5"
+      ],
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/client/chuyen-gia"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 30258,
+     "output_tokens": 283,
+     "requests": 2,
+     "cost_usd": 0.003167,
+     "tools_cost_usd": null
+    },
+    "turn_id": "44d501cfce6746dbbe4bf417b9416a37",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có **4 đề xuất đang chờ RM duyệt**, đều thuộc kịch bản \"VN-Index giảm 30% – Giảm điểm nóng\". Có 2 đề xuất khác về học phí cho con đã được duyệt.\n\nĐây là trạng thái trong hệ thống. Bạn không duyệt được đề xuất ở phiên này, vì việc đó thuộc về RM.",
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/client/chuyen-gia"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [
+     "review:R-81046a52",
+     "review:R-a8fff006",
+     "review:R-151a644d",
+     "review:R-520eade5"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263800.2810183,
+    "audit_seq": 1573,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 11
+    },
+    "describe": false
+   },
+   "seconds": 4.5438486761413515,
+   "first_event": 1.4056306132115424,
+   "usage": {
+    "cost": 0.003167,
+    "input": 30258,
+    "output": 283,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_019DtrUxfLG8M5P2HzeohkQa",
+     "tool": "de_xuat",
+     "label": "Hàng chờ đề xuất",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_019DtrUxfLG8M5P2HzeohkQa",
+     "tool": "de_xuat",
+     "ok": true,
+     "ms": 42,
+     "focus": [
+      "review:R-81046a52",
+      "review:R-a8fff006",
+      "review:R-151a644d",
+      "review:R-520eade5"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Chính sách nào tốn kém nhất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "16 yếu tố đang tác động: 12 rủi ro, 4 cơ hội; tổng ước tính +2,15 tỷ. Lớn nhất: Sân bay Long Thành đưa giai đoạn 1 vào khai thác — Cơ hội: BĐS gần dự án (Đất Long Thành (tự khai), Đất Long Thành (tự khai)) ước tính +2,7 tỷ. Từng yếu tố: Sân bay Long Thành đưa giai đoạn 1 vào khai thác (dự án hạ tầng, đang lấy ý kiến / dự kiến) +1,35 tỷ; Metro số 1 Bến Thành – Suối Tiên vận hành (dự án hạ tầng, đã thông qua / đã diễn ra) +777,6 triệu; Nâng hạng thị trường chứng khoán (chính sách, đã thông qua / đã diễn ra) +354,9 triệu; Bảng giá đất điều chỉnh hằng năm (Luật Đất đai 2024) (chính sách, đã thông qua / đã diễn ra) −97,2 triệu; Chính sách quản lý vàng miếng (chính sách, đã thông qua / đã diễn ra) −81,0 triệu; Giới hạn sở hữu cổ phần ngân hàng (Luật Các TCTD 2024) (chính sách, đã thông qua / đã diễn ra) −57,2 triệu; Tỷ giá USD/VND tăng 3% (vĩ mô, đang lấy ý kiến / dự kiến) −27,0 triệu; Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh (chính sách, đã thông qua / đã diễn ra) +26,2 triệu; Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định) (chính sách, dự thảo) −24,4 triệu; Siết điều kiện nhà đầu tư chuyên nghiệp mua trái phiếu DN (chính sách, đã thông qua / đã diễn ra) −22,1 triệu; Thuế với người sở hữu từ 2 bất động sản trở lên (chính sách, dự thảo) −14,4 triệu; Quy định ngoại hối, chuyển tiền du học (chính sách, đang lấy ý kiến / dự kiến) −9,0 triệu; Quy định bảo hiểm liên kết đầu tư (chính sách, đã thông qua / đã diễn ra) −8,1 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −7,3 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −6,0 triệu; Thay đổi thuế chuyển nhượng chứng khoán (chính sách, dự thảo) −2,0 triệu.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Sân bay Long Thành đưa giai đoạn 1 vào khai thác",
+         "sub": "+1,35 tỷ · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Metro số 1 Bến Thành – Suối Tiên vận hành",
+         "sub": "+777,6 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+354,9 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Bảng giá đất điều chỉnh hằng năm (Luật Đất đai 2024)",
+         "sub": "−97,2 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Chính sách quản lý vàng miếng",
+         "sub": "−81,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+       "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 32406,
+     "output_tokens": 546,
+     "requests": 2,
+     "cost_usd": 0.003514,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3ce62abd920b4b9da7396d3a550e5cb8",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Trong các chính sách gây tổn thất, mục lớn nhất là **bảng giá đất điều chỉnh hằng năm** (Luật Đất đai 2024), ước tính **−97,2 triệu**. Tiếp theo là **chính sách quản lý vàng miếng**, ước tính **−81,0 triệu**.\n\nXét về độ lớn, mục tác động mạnh nhất lại là tích cực: **Sân bay Long Thành** giai đoạn 1, ước tính **+1,35 tỷ** cho bất động sản gần dự án. Tổng ước tính của 16 yếu tố đang là +2,15 tỷ.\n\nĐây là ước tính theo dữ liệu ngày 09/10/2026 trên trang Tin. Một số nguồn trong danh sách vẫn được đánh dấu cần kiểm tra lại, nên bạn nên đối chiếu thêm trước khi quyết định.",
+    "citations": [
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+     "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263805.2163615,
+    "audit_seq": 1574,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 12
+    },
+    "describe": false
+   },
+   "seconds": 4.898109165020287,
+   "first_event": 1.4325056741945446,
+   "usage": {
+    "cost": 0.003514,
+    "input": 32406,
+    "output": 546,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0159Hf7FG9ZCxPMKLsM1cB4b",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0159Hf7FG9ZCxPMKLsM1cB4b",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 136,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Mục tiêu học phí cần để dành bao nhiêu mỗi tháng?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "phần cần thêm mỗi tháng cho học phí, ngoài dòng tiền dư hiện tại: 79131493-5000000 = 74.131.493",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 34629,
+     "output_tokens": 536,
+     "requests": 2,
+     "cost_usd": 0.003731,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b047330ed6ba44a690bdf426ec7abc88",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mục tiêu học phí cho con cần để dành **khoảng 79,1 triệu/tháng** để đủ 7,56 tỷ vào năm 2030. Số liệu này lấy từ trang Mục tiêu, ngày 09/10/2026.\n\nDòng tiền dư hiện ước tính khoảng 5,0 triệu/tháng, nên mức còn thiếu mỗi tháng là khoảng **74,1 triệu**.\n\nCông thức: 79.131.493 − 5.000.000 = 74.131.493.\n\nĐây là ước tính theo hồ sơ, không phải dự báo.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263809.6545837,
+    "audit_seq": 1575,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 13
+    },
+    "describe": false
+   },
+   "seconds": 4.391070256009698,
+   "first_event": 2.4521667240187526,
+   "usage": {
+    "cost": 0.003731,
+    "input": 34629,
+    "output": 536,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013WRenNLCdAS4H8w85s5rAg",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013WRenNLCdAS4H8w85s5rAg",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Nếu thu nhập giảm 30% thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: thu nhập hằng tháng −30%. Kịch bản của bạn: tài sản ròng 43,53 tỷ → 43,53 tỷ (0,0 triệu). Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ → chậm tiến độ; Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "0,0 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "goal:retire_early"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 43923,
+     "output_tokens": 4130,
+     "requests": 3,
+     "cost_usd": 0.006457,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fc3d42193a1b45098b161d2bb470145e",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": true,
+    "status": "ok",
+    "text": "Nếu thu nhập hằng tháng giảm 30%, tài sản ròng **không đổi** (vẫn 43,53 tỷ), vì mô phỏng chỉ tính trên tài sản hiện có.\n\nTuy vậy, mục tiêu **nghỉ hưu sớm** sẽ chuyển sang **chậm tiến độ**. Ba mục tiêu còn lại giữ nguyên trạng thái hiện tại: học phí và định cư vẫn chậm, y tế vẫn đúng tiến độ.\n\nĐây là giả định đơn giản, không phải dự báo. Kết quả này không tính đến mức chi tiêu thay đổi theo thu nhập.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "goal:retire_early"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263827.1465454,
+    "audit_seq": 1576,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu hỏi \"Chính sách nào tốn kém nhất?\". Chưa gọi công cụ nào cho câu này.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản chiếm phần lớn thiệt hại khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư / du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ; mức sụt giảm khi thị trường xấu 11,8%, vượt ngưỡng 8% — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn 30,0 triệu — tháng 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — dựa trên số liệu 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 14
+    },
+    "describe": true
+   },
+   "seconds": 17.44870461896062,
+   "first_event": 1.414698685053736,
+   "usage": {
+    "cost": 0.006457,
+    "input": 43923,
+    "output": 4130,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01F7JNejcGfaSYoCGkTUx1Ft",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01F7JNejcGfaSYoCGkTUx1Ft",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 119,
+     "focus": [
+      "scenario:custom",
+      "goal:retire_early"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Rủi ro tập trung của tôi ở đâu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 25771,
+     "output_tokens": 535,
+     "requests": 2,
+     "cost_usd": 0.002845,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e99674051f654dc2b0df53547ce0343d",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Rủi ro tập trung lớn nhất của bạn nằm ở **bất động sản**, chiếm **70%** tổng tài sản (32,40 tỷ). Cụ thể:\n\n- **Đất nền Long Thành, Đồng Nai** chiếm **39,2%** tài sản, vượt ngưỡng 35%.\n- Nếu thị trường xấu, tổn thất ước tính là **5,15 tỷ**, tương đương 11,8%, vượt ngưỡng 8%. Hai khoản lớn nhất là Đất Long Thành (−1,80 tỷ) và Căn hộ Thảo Điền (−1,44 tỷ). Cổ phiếu FPT giảm khoảng 504 triệu.\n\nSố liệu lấy từ trang Tổng quan, ngày 09/10/2026. Phần tổn thất là ước tính theo mức sốc của từng khoản, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792263831.4980812,
+    "audit_seq": 1577,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu hỏi \"Chính sách nào tốn kém nhất?\". Chưa gọi công cụ nào cho câu này.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản chiếm phần lớn thiệt hại khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư / du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ; mức sụt giảm khi thị trường xấu 11,8%, vượt ngưỡng 8% — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn 30,0 triệu — tháng 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — dựa trên số liệu 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 15
+    },
+    "describe": false
+   },
+   "seconds": 4.3080586749129,
+   "first_event": 1.28797413315624,
+   "usage": {
+    "cost": 0.002845,
+    "input": 25771,
+    "output": 535,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01TwsTCC4g4niQuMYuyNLWwR",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01TwsTCC4g4niQuMYuyNLWwR",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 118,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Cổ phiếu chiếm bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13727,
+     "output_tokens": 203,
+     "requests": 1,
+     "cost_usd": 0.001474,
+     "tools_cost_usd": null
+    },
+    "turn_id": "26061edbe5f649c1bf91b5bd1e8c0697",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Cổ phiếu chiếm **4,93 tỷ**, tương đương **11%** tổng tài sản (45,97 tỷ). Số liệu lấy từ trang Tổng quan, ngày 09/10/2026.\n\nCổ phiếu FPT là khoản có tổn thất ước tính trong kịch bản thị trường xấu, khoảng 504 triệu.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263834.319519,
+    "audit_seq": 1578,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu hỏi \"Chính sách nào tốn kém nhất?\". Chưa gọi công cụ nào cho câu này.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản chiếm phần lớn thiệt hại khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư / du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ; mức sụt giảm khi thị trường xấu 11,8%, vượt ngưỡng 8% — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn 30,0 triệu — tháng 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — dựa trên số liệu 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 16
+    },
+    "describe": false
+   },
+   "seconds": 2.7743445998057723,
+   "first_event": 2.3404786000028253,
+   "usage": {
+    "cost": 0.001474,
+    "input": 13727,
+    "output": 203,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Nếu vàng tăng 20% thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: giá vàng +20%. Kịch bản của bạn: tài sản ròng 43,53 tỷ → 43,83 tỷ (+300,0 triệu). Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ (giữ nguyên); Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "+300,0 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "class:gold"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 28350,
+     "output_tokens": 293,
+     "requests": 2,
+     "cost_usd": 0.002981,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1ca0446c9c884faa8ff2335b311415da",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu giá vàng tăng 20%, tài sản ròng tăng khoảng **300 triệu**, từ 43,53 tỷ lên khoảng 43,83 tỷ. Mức tăng này chỉ tính trên khoản vàng hiện có, trị giá 1,50 tỷ.\n\nTrạng thái các mục tiêu không đổi so với hiện tại.\n\nĐây là mô phỏng trên tài sản hiện có, không phải dự báo giá vàng. Số liệu lấy từ trang Kế hoạch, ngày 09/10/2026.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "class:gold"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263838.0296917,
+    "audit_seq": 1579,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu hỏi \"Chính sách nào tốn kém nhất?\". Chưa gọi công cụ nào cho câu này.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản chiếm phần lớn thiệt hại khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư / du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ; mức sụt giảm khi thị trường xấu 11,8%, vượt ngưỡng 8% — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn 30,0 triệu — tháng 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — dựa trên số liệu 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 17
+    },
+    "describe": false
+   },
+   "seconds": 3.669520854949951,
+   "first_event": 1.646095098927617,
+   "usage": {
+    "cost": 0.002981,
+    "input": 28350,
+    "output": 293,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01EgBvB2c9CkThKRot4xsEii",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01EgBvB2c9CkThKRot4xsEii",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 113,
+     "focus": [
+      "scenario:custom",
+      "class:gold"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Tôi có bao nhiêu nguồn dữ liệu, tên là gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14703,
+     "output_tokens": 636,
+     "requests": 1,
+     "cost_usd": 0.001788,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5519f1aa819044a7845cf324b210c05f",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tài sản của bạn được tổng hợp từ **7 nguồn**, gồm **21 khoản**:\n\n1. **Techcombank**: 4 khoản (tiền gửi, thẻ, khoản vay, giao dịch)\n2. **TCBS**: 6 khoản (cổ phiếu, trái phiếu, lãi lỗ)\n3. **Techcom Capital**: 2 khoản (chứng chỉ quỹ)\n4. **OneHousing**: 1 khoản (định giá bất động sản)\n5. **Open API** (ngân hàng hoặc công ty chứng khoán khác): 1 khoản (số dư, danh mục)\n6. **Sao kê tải lên**: 3 khoản (đọc từ file PDF hoặc Excel)\n7. **Bạn tự khai**: 4 khoản (vàng, bất động sản ngoài hệ thống, cổ phần, bảo hiểm)\n\nSố liệu lấy từ trang Tổng quan, ngày 09/10/2026.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263841.1490982,
+    "audit_seq": 1580,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu hỏi \"Chính sách nào tốn kém nhất?\". Chưa gọi công cụ nào cho câu này.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản chiếm phần lớn thiệt hại khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư / du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ; mức sụt giảm khi thị trường xấu 11,8%, vượt ngưỡng 8% — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn 30,0 triệu — tháng 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — dựa trên số liệu 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 18
+    },
+    "describe": false
+   },
+   "seconds": 3.0786638110876083,
+   "first_event": 1.9846453159116209,
+   "usage": {
+    "cost": 0.001788,
+    "input": 14703,
+    "output": 636,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Mục tiêu nghỉ hưu thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ, cần 7,56 tỷ (2030), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 3,53 tỷ, cần để dành 79,1 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 27,60 tỷ (55 tuổi), có 27,30 tỷ (dự kiến có lúc 55 tuổi), thiếu 302,6 triệu, cần để dành 1,3 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 1,00 tỷ (dự phòng sẵn), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 3,03 tỷ, dòng tiền dư 5,0 triệu/tháng; Định cư / con đi du học: chậm tiến độ, cần 5,53 tỷ (trong 12 tháng), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 1,50 tỷ, cần để dành 122,4 triệu/tháng, dòng tiền dư 5,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 31081,
+     "output_tokens": 578,
+     "requests": 2,
+     "cost_usd": 0.003397,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a9c084230e9e40e697ab7be2984235cc",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mục tiêu **nghỉ hưu sớm lúc 55 tuổi** đang **đúng tiến độ**:\n\n- Cần: 27,60 tỷ\n- Dự kiến có: 27,30 tỷ\n- Còn thiếu: khoảng 302,6 triệu, cần để dành thêm khoảng **1,3 triệu/tháng**\n\nNếu thu nhập giảm 30%, mục tiêu này sẽ chuyển sang chậm tiến độ, như mô phỏng trước đó.\n\nSố liệu lấy từ trang Kế hoạch, ngày 09/10/2026, dựa trên tài sản hiện có và hồ sơ của bạn. Đây không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792263845.6544592,
+    "audit_seq": 1581,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu hỏi \"Chính sách nào tốn kém nhất?\". Chưa gọi công cụ nào cho câu này.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản chiếm phần lớn thiệt hại khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư / du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ; mức sụt giảm khi thị trường xấu 11,8%, vượt ngưỡng 8% — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn 30,0 triệu — tháng 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — dựa trên số liệu 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 19
+    },
+    "describe": false
+   },
+   "seconds": 4.462135724723339,
+   "first_event": 1.537845699582249,
+   "usage": {
+    "cost": 0.003397,
+    "input": 31081,
+    "output": 578,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01EpoMq1QhRYqtmZaAwotaBT",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01EpoMq1QhRYqtmZaAwotaBT",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 115,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Kịch bản tỷ giá tăng 5% thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản USD/VND tăng 5%: tài sản ròng 43,53 tỷ → 43,46 tỷ (−67,5 triệu, −0,2%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "USD/VND tăng 5%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "43,53 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "43,46 tỷ",
+         "sub": "−67,5 triệu · −0,2%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "4,72 tỷ",
+         "sub": "41 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Vàng miếng SJC: +22,5 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 32867,
+     "output_tokens": 226,
+     "requests": 2,
+     "cost_usd": 0.0034,
+     "tools_cost_usd": null
+    },
+    "turn_id": "cdd98e43a5a84036911973c94c840293",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu tỷ giá USD/VND tăng 5%, tài sản ròng giảm khoảng **67,5 triệu** (−0,2%), từ 43,53 tỷ xuống khoảng 43,46 tỷ. Mức này vẫn **trong ngưỡng chấp nhận 8%**.\n\nĐây là mô phỏng trên tài sản hiện có, không phải dự báo. Số liệu lấy từ trang Kế hoạch, ngày 09/10/2026.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Kịch bản lãi suất tăng",
+     "Kịch bản bất động sản đóng băng",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792263851.036185,
+    "audit_seq": 1582,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu hỏi \"Chính sách nào tốn kém nhất?\". Chưa gọi công cụ nào cho câu này.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản chiếm phần lớn thiệt hại khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư / du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ; mức sụt giảm khi thị trường xấu 11,8%, vượt ngưỡng 8% — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn 30,0 triệu — tháng 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — dựa trên số liệu 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 20
+    },
+    "describe": false
+   },
+   "seconds": 5.334171763155609,
+   "first_event": 2.7314903549849987,
+   "usage": {
+    "cost": 0.0034,
+    "input": 32867,
+    "output": 226,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GGjcw24VFVpvqVtt8qCbAT",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:usd_up"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GGjcw24VFVpvqVtt8qCbAT",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 110,
+     "focus": [
+      "scenario:usd_up"
+     ],
+     "scenario": {
+      "id": "usd_up",
+      "effect": -67500000.0
+     }
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  },
+  {
+   "say": "Nhắc lại giúp tôi: câu đầu tiên tôi hỏi là gì, và con số khi đó là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "doc_lai_phien",
+      "label": "Đọc lại phiên",
+      "status": "ok",
+      "text": "[lượt 14] Bạn: Nếu thu nhập giảm 30% thì sao? — Trợ lý: Nếu thu nhập hằng tháng giảm 30%, tài sản ròng **không đổi** (vẫn 43,53 tỷ), vì mô phỏng chỉ tính trên tài sản hiện có. Tuy vậy, mục tiêu **nghỉ hưu sớm** sẽ chuyển sang **chậm tiến độ**. Ba mục tiêu còn lại giữ nguyên trạng thái hiện tại: học phí và định cư vẫn chậm, y tế vẫn đúng tiến độ. Đây là giả định đơn giản, không phải dự báo. Kết quả này không tính đến mức chi tiêu thay đổi theo thu nhập. [lượt 15] Bạn: Rủi ro tập trung của tôi ở đâu? — Trợ lý: Rủi ro tập trung lớn nhất của bạn nằm ở **bất động sản**, chiếm **70%** tổng tài sản (32,40 tỷ). Cụ thể: - **Đất nền Long Thành, Đồng Nai** chiếm **39,2%** tài sản, vượt ngưỡng 35%. - Nếu thị trường xấu, tổn thất ước tính là **5,15 tỷ**, tương đương 11,8%, vượt ngưỡng 8%. Hai khoản lớn nhất là Đất Long Thành (−1,80 tỷ) và Căn hộ Thảo Điền (−1,44 tỷ). Cổ phiếu FPT giảm khoảng 504 triệu. Số liệu lấy từ trang Tổng quan, ngày 09/10/2026. Phần tổn thất là ước tính theo mức sốc của từng khoản, không phải dự báo. [lượt 16] Bạn: Cổ phiếu chiếm bao nhiêu? — Trợ lý: Cổ phiếu chiếm **4,93 tỷ**, tương đương **11%** tổng tài sản (45,97 tỷ). Số liệu lấy từ trang Tổng quan, ngày 09/10/2026. Cổ phiếu FPT là khoản có tổn thất ước tính trong kịch bản thị trường xấu, khoảng 504 triệu. [lượt 17] Bạn: Nếu vàng tăng 20% thì sao? — Trợ lý: Nếu giá vàng tăng 20%, tài sản ròng tăng khoảng **300 triệu**, từ 43,53 tỷ lên khoảng 43,83 tỷ. Mức tăng này chỉ tính trên khoản vàng hiện có, trị giá 1,50 tỷ. Trạng thái các mục tiêu không đổi so với hiện tại. Đây là mô phỏng trên tài sản hiện có, không phải dự báo giá vàng. Số liệu lấy từ trang Kế hoạch, ngày 09/10/2026. [lượt 18] Bạn: Tôi có bao nhiêu nguồn dữ liệu, tên là gì? — Trợ lý: Tài sản của bạn được tổng hợp từ **7 nguồn**, gồm **21 khoản**: 1. **Techcombank**: 4 khoản (tiền gửi, thẻ, khoản vay, giao dịch) 2. **TCBS**: 6 khoản (cổ phiếu, trái phiếu, lãi lỗ) 3. **Techcom Capital**: 2 khoản (chứng chỉ quỹ) 4. **OneHousing**: 1 khoản (định giá bất động sản) 5. **Open API** (ngân hàng hoặc công ty chứng khoán khác): 1 khoản (số dư, danh mục) 6. **Sao kê tải lên**: 3 khoản (đọc từ file PDF hoặc Excel) 7. **Bạn tự khai**: 4 khoản (vàng, bất động sản ngoài hệ thống, cổ phần, bảo hiểm) Số liệu lấy từ trang Tổng quan, ngày 09/10/2026. [lượt 19] Bạn: Mục tiêu nghỉ hưu thế nào? — Trợ lý: Mục tiêu **nghỉ hưu sớm lúc 55 tuổi** đang **đúng tiến độ**: - Cần: 27,60 tỷ - Dự kiến có: 27,30 tỷ - Còn thiếu: khoảng 302,6 triệu, cần để dành thêm khoảng **1,3 triệu/tháng** Nếu thu nhập giảm 30%, mục tiêu này sẽ chuyển sang chậm tiến độ, như mô phỏng trước đó. Số liệu lấy từ trang Kế hoạch, ngày 09/10/2026, dựa trên tài sản hiện có và hồ sơ của bạn. Đây không phải dự báo. [lượt 20] Bạn: Kịch bản tỷ giá tăng 5% thì sao? — Trợ lý: Nếu tỷ giá USD/VND tăng 5%, tài sản ròng giảm khoảng **67,5 triệu** (−0,2%), từ 43,53 tỷ xuống khoảng 43,46 tỷ. Mức này vẫn **trong ngưỡng chấp nhận 8%**. Đây là mô phỏng trên tài sản hiện có, không phải dự báo. Số liệu lấy từ trang Kế hoạch, ngày 09/10/2026. [lượt 21] Bạn: Nhắc lại giúp tôi: câu đầu tiên tôi hỏi là gì, và con số khi đó là bao nhiêu? — Trợ lý: ",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 43425,
+     "output_tokens": 5683,
+     "requests": 3,
+     "cost_usd": 0.007184,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7d79fe6681874074af9eb1c60751f545",
+    "conversation_id": "b80a431aeec2481c",
+    "compacted": true,
+    "status": "ok",
+    "text": "Câu đầu tiên bạn hỏi là **\"Tài sản ròng bao nhiêu?\"**. Khi đó tôi trả lời tài sản ròng là **43,53 tỷ**, theo trang Tổng quan ngày 09/10/2026.\n\nTôi chỉ đọc lại được 8 lượt gần nhất, nên câu này lấy từ bản tóm tắt của cuộc trò chuyện chứ không đọc được nguyên văn.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263874.2797093,
+    "audit_seq": 1583,
+    "session": {
+     "id": "b80a431aeec2481c",
+     "title": "Tài sản ròng của tôi bao nhiêu?",
+     "goal": null,
+     "summary": "## Mục tiêu\n- Theo dõi tài sản ròng, dòng tiền, mục tiêu tài chính, rủi ro và đề xuất của khách hàng.\n\n## Người dùng đã hỏi (theo thứ tự, mỗi câu một dòng ngắn)\n- Tài sản ròng bao nhiêu?\n- Phân bổ tài sản thế nào?\n- Dòng tiền tháng này?\n- Mục tiêu nào đang chậm, cần bao nhiêu mỗi tháng?\n- So sánh kịch bản cổ phiếu giảm 30% và lãi suất tăng 2%.\n- Tin nào ảnh hưởng nhiều nhất?\n- Có điều gì cần chú ý?\n- Nếu nhà đất giảm 25% thì sao?\n- Các khoản nợ?\n- Quỹ dự phòng đủ mấy tháng?\n- Đề xuất nào đang chờ?\n- Chính sách nào tốn kém nhất?\n- Mục tiêu học phí cần để dành bao nhiêu mỗi tháng?\n- Nếu thu nhập giảm 30% thì sao?\n- Rủi ro tập trung của tôi ở đâu?\n- Cổ phiếu chiếm bao nhiêu?\n- Nếu vàng tăng 20% thì sao?\n- Tôi có bao nhiêu nguồn dữ liệu, tên là gì?\n- Mục tiêu nghỉ hưu thế nào?\n\n## Quyết định\n- —\n\n## Sở thích và giới hạn người dùng nêu\n- —\n\n## Việc còn dở\n- Chưa trả lời câu \"Mục tiêu nghỉ hưu thế nào?\". Chưa gọi công cụ nào cho câu này (có thể dùng muc_tieu).\n- Dòng tiền dư \"khoảng 5,0 triệu/tháng\" trợ lý đã nêu khi trả lời về học phí, nhưng không có công cụ nào xác nhận. dong_tien ghi tháng 09/2026 còn dư 30,0 triệu. Cần đối chiếu lại.\n- Số \"7,56 tỷ vào năm 2030\" cho học phí chưa có trong kết quả công cụ. Cần kiểm tra trước khi dùng.\n- Đất nền Long Thành vượt ngưỡng tập trung 35% (đang 39,2%). Người dùng chưa quyết định có chạy thêm giả định nào không.\n- Một số nguồn của dong_luc còn đánh dấu cần kiểm tra: FTSE nâng hạng (09/2026), kế hoạch khai thác Long Thành giai đoạn 1 (tiến độ), Metro số 1.\n\n## Thực thể (mã, tài sản, mục tiêu, tin, khách hàng)\n- Tài sản ròng 43,53 tỷ; tổng tài sản 45,97 tỷ; nợ 2,44 tỷ.\n- Phân bổ: bất động sản 32,40 tỷ (70%); cổ phiếu 4,93 tỷ (11%); tiền và tiền gửi 3,72 tỷ (8%); chứng chỉ quỹ 1,62 tỷ (4%); trái phiếu 1,50 tỷ (3%); vàng 1,50 tỷ (3%); bảo hiểm 300,0 triệu (1%).\n- Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%).\n- Căn hộ Thảo Điền, cổ phiếu FPT: hai khoản có tổn thất lớn khi thị trường xấu.\n- Vay mua nhà Thảo Điền 2,40 tỷ; dư nợ thẻ Visa Signature 45,0 triệu.\n- Mục tiêu học phí con: thiếu 3,53 tỷ, cần 79,1 triệu/tháng, đến 2030.\n- Mục tiêu định cư/du học: thiếu 1,50 tỷ, cần 122,4 triệu/tháng, trong 12 tháng.\n- Mục tiêu nghỉ hưu sớm (55 tuổi): thiếu 302,6 triệu, cần 1,3 triệu/tháng.\n- Mục tiêu chi phí y tế: dư 3,03 tỷ.\n- Sự kiện EV-2026-0002 (bất động sản, 4 tin).\n- Đề xuất đang chờ RM duyệt: R-81046a52, R-a8fff006, R-151a644d, R-520eade5.\n- Đề xuất đã duyệt (học phí): R-821ffb1b, R-a4a7e60d.\n\n## Kết quả công cụ (công cụ — điều chính — ngày số liệu)\n- tong_quan — tài sản ròng 43,53 tỷ (tăng 980,5 triệu, 2,3% so tháng trước); thị trường xấu sụt 11,8% (5,15 tỷ), vượt ngưỡng 8%; lớn nhất: Đất Long Thành −1,80 tỷ, Căn hộ Thảo Điền −1,44 tỷ, cổ phiếu FPT −504,0 triệu — 09/10/2026\n- dong_tien — tháng 09/2026: vào 120,4 triệu, ra 90,4 triệu, còn dư 30,0 triệu — 09/2026\n- muc_tieu — 2 mục chậm (học phí, định cư), 2 mục đúng tiến độ — không ghi ngày\n- kich_ban — VN-Index −30%: −1,82 tỷ (−4,2%); lãi suất +2%: −2,22 tỷ (−5,1%); cả hai trong ngưỡng 8% — 09/10/2026\n- tac_dong — 2 sự kiện đang hiệu lực; tác động 3 tháng +0,2 triệu; bất động sản +98,6 triệu — 09/10/2026\n- dieu_tra — EV-2026-0002: kịch bản chính trung tính, đi ngang (55%) — 09/10/2026\n- chu_y — 1 điều đáng chú ý: sụt giảm 11,8% vượt ngưỡng 8% — 09/10/2026\n- gia_dinh — nhà đất −25%: tài sản ròng 43,53 → 35,43 tỷ (−8,10 tỷ) — 09/10/2026\n- gia_dinh — thu nhập −30%: tài sản ròng không đổi; nghỉ hưu sớm chuyển sang chậm tiến độ; các mục còn lại giữ nguyên — 09/10/2026\n- gia_dinh — vàng +20%: tài sản ròng +300,0 triệu (43,53 → 43,83 tỷ); trạng thái mục tiêu không đổi — 09/10/2026\n- tinh — quỹ dự phòng 4,72 tỷ ÷ 115,0 triệu = 41,04 tháng — 09/10/2026\n- tinh — phần cần thêm mỗi tháng cho học phí: 79.131.493 − 5.000.000 = 74.131.493 — 09/10/2026\n- dong_luc — 16 yếu tố (12 rủi ro, 4 cơ hội), tổng ước tính +2,15 tỷ; cơ hội lớn nhất: Sân bay Long Thành giai đoạn 1 (+1,35 tỷ); rủi ro lớn nhất: bảng giá đất hằng năm (−97,2 triệu), quản lý vàng miếng (−81,0 triệu) — 09/10/2026\n- de_xuat — 6 đề xuất, 4 đang chờ RM duyệt — không ghi ngày\n\n## Tham chiếu (trang, mã để đọc lại)\n- Trang Tổng quan: #/client/tong-quan/toan-canh\n- Trang Mục tiêu / Kế hoạch: #/client/muc-tieu/ke-hoach\n- Trang Tin thị trường: #/client/tin/thi-truong\n- Trang Tin đồ thị: #/client/tin/do-thi\n- Trang Tin chính sách: #/client/tin/chinh-sach\n- Trang Chuyên gia: #/client/chuyen-gia\n- Mã sự kiện và lần áp dụng: EV-2026-0002, AR-0002-v1-2, VW-0002-v1",
+     "title_auto": 1,
+     "turns": 21
+    },
+    "describe": true
+   },
+   "seconds": 23.203663516789675,
+   "first_event": 2.3953076479956508,
+   "usage": {
+    "cost": 0.007184,
+    "input": 43425,
+    "output": 5683,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Axkr3UUVXFq7xHoegXHR1H",
+     "tool": "doc_lai_phien",
+     "label": "Đọc lại phiên",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Axkr3UUVXFq7xHoegXHR1H",
+     "tool": "doc_lai_phien",
+     "ok": true,
+     "ms": 7,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  }
+ ]
+}

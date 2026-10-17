@@ -1,0 +1,432 @@
+{
+ "id": "pf-03",
+ "category": "personal_finance",
+ "persona": "trưởng phòng trẻ, có nợ (C05)",
+ "client_id": "C05",
+ "title": "Nợ bao nhiêu, trả bao nhiêu, có nên trả sớm",
+ "why": "Debt facts, then advice without overconfidence.",
+ "brd": [
+  "BRIEF-DASH-01",
+  "OWN-AS-03",
+  "BRIEF-RISK-01"
+ ],
+ "turns": [
+  {
+   "say": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng trả bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "says": "2,1"
+   }
+  },
+  {
+   "say": "Có nên dồn tiền trả hết nợ sớm không?",
+   "expect": {
+    "grounded": false,
+    "not_says": [
+     "chắc chắn nên",
+     "bạn phải"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng trả bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 69%, Tiền & tiền gửi 17%, Cổ phiếu 8%, Chứng chỉ quỹ 5%. Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12872,
+     "output_tokens": 551,
+     "requests": 2,
+     "cost_usd": 0.001563,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0fcf4a4618534e43acc10ec6c07d62c4",
+    "conversation_id": "ba7844c7de4f4840",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Tổng nợ: khoảng 2,11 tỷ đồng** (số ghi nhận tại ngày 09/10/2026, từ trang Tổng quan):\n- Vay mua căn hộ Vinhomes Grand Park: 2,10 tỷ đồng\n- Dư nợ thẻ Visa Platinum: 12,0 triệu đồng\n\n**Trả nợ mỗi tháng: khoảng 26,0 triệu đồng**, theo khoản \"Trả nợ vay\" trong tháng 09/2026. Đây là một giao dịch trong tháng đó, nên mình chưa xác nhận được đây là số trả cố định hằng tháng. Hệ thống không có số tiền trả góp cố định hay số tiền trả thẻ hằng tháng, nên bạn xem lại lịch trả nợ với ngân hàng để có con số chính xác.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn",
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257116.929536,
+    "audit_seq": 650,
+    "session": {
+     "id": "ba7844c7de4f4840",
+     "title": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.9267059080302715,
+   "first_event": 1.4594733980484307,
+   "usage": {
+    "cost": 0.001563,
+    "input": 12872,
+    "output": 551,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GGsMTjkj21bQPAzZ1ojSmV",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01F3YgX4KwMoTy8BgTLNg9LZ",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GGsMTjkj21bQPAzZ1ojSmV",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 132,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01F3YgX4KwMoTy8BgTLNg9LZ",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 132,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Có nên dồn tiền trả hết nợ sớm không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tỷ lệ nợ trên tổng tài sản: 2112000000/5638000000*100 = 37,46",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 22005,
+     "output_tokens": 1462,
+     "requests": 3,
+     "cost_usd": 0.002932,
+     "tools_cost_usd": null
+    },
+    "turn_id": "26a7172e881b4c17bba34cbfd95dda29",
+    "conversation_id": "ba7844c7de4f4840",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mình không đưa ra khuyến nghị có nên trả sớm hay không được, nhưng có một số số liệu bạn nên cân nhắc:\n\n- **Tỷ lệ nợ:** nợ 2,11 tỷ chiếm khoảng 37,5% tổng tài sản 5,64 tỷ (tính từ số ghi nhận ngày 09/10/2026).\n- **Thanh khoản:** dự phòng hiện có 980 triệu, đủ chi khoảng 3 năm. Nếu dồn tiền trả nợ, phần dự phòng này sẽ giảm mạnh.\n- **Dòng tiền:** tháng 09/2026 còn dư 9,0 triệu sau khi đã trả nợ vay 26,0 triệu. Dư này khá mỏng.\n- **Tập trung:** 69% tài sản nằm ở khu vực BĐS Vinhomes Grand Park, vượt ngưỡng 35%. Mức sụt giảm ước tính khi thị trường xấu là 16,8%, vượt ngưỡng 15%. Việc trả nợ sớm không làm giảm mức tập trung này.\n- **Mục tiêu:** mục tiêu mua thêm BĐS bằng vốn vay đang chậm tiến độ.\n\nHệ thống không có lãi suất khoản vay hay điều khoản trả trước hạn, nên mình chưa tính được lợi ích hay chi phí cụ thể. Trước khi quyết định, bạn nên hỏi ngân hàng về lãi suất hiện tại, phí trả trước hạn và số tiền để lại trong quỹ dự phòng.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257127.374132,
+    "audit_seq": 651,
+    "session": {
+     "id": "ba7844c7de4f4840",
+     "title": "Mình đang nợ tổng cộng bao nhiêu và mỗi tháng…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 10.412020734976977,
+   "first_event": 2.229688799008727,
+   "usage": {
+    "cost": 0.002932,
+    "input": 22005,
+    "output": 1462,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MJMREcKR4U1o4H3ZQQZM2U",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MJMREcKR4U1o4H3ZQQZM2U",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 77,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018eCdnjUBjuhekdtnFyxnp2",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018eCdnjUBjuhekdtnFyxnp2",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

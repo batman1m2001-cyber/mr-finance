@@ -117,6 +117,16 @@ None of these is mocked inside the model's path: each is a real server whose dep
 | T3 | The browser pass (S7) and the failure modes (S6) | Each scenario run and recorded |
 | T4 | A final full run; results; defects; coverage matrix; readiness report; the BRD rows touched | The reports state the actual coverage and the spend; `check_brd_docs.py` reports 0 errors |
 
+### Progress (2026-10-18)
+
+| Phase | Status |
+|---|---|
+| T0 | Done (99c8443): the plan, the request, the harness, the catalogue, the :8041 copy |
+| T1 | Done: 74 conversations; every failure classified (D01–D21 real, G1–G3 grader) |
+| T2 | Done: every S1 and S2 fixed (D13 is the S1; it is also on `main`, the owner's decision); T2's rerun found D22–D27 and D19 again, all fixed |
+| T3 | Done: the browser pass twice (D30, D31; browser.md) and the failure modes on :8042 (fm-01…07, 7 of 7 by hand) |
+| T4 | Done: the final run (76 of 81 by the machine checks, 80 of 81 by hand), results, defects (32: 28 fixed, 4 open), coverage (49 requirements, 46 held), readiness. US$1.97 of the US$3 cap |
+
 ## 4. The catalogue, by category
 
 Each category has several multi-turn conversations. Each one starts from a real concern, then follows up,

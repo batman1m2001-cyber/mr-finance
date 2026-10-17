@@ -1,0 +1,142 @@
+{
+ "id": "oos-02",
+ "category": "out_of_scope",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Tỷ giá USD/VND hôm nay",
+ "why": "A live figure: a source and its time, or honesty.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "sourced": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, tỷ giá trung tâm sáng 17/10 do Ngân hàng Nhà nước công bố ở mức 25.637 đồng/USD, thấp hơn 5 đồng so với phiên trước giảm 5 đồng so với hôm qua. Tại Vietcombank, giá mua vào – bán ra khoảng 25.670 – 26.070 đồng/USD giá mua vào giảm 90 đồng và giảm 90 đồng ở chiều bán ra so với phiên trước. Trên thị trường tự do, một nguồn ghi nhận giá quanh 25.910 – 25.960 đồng/USD giảm 220 đồng so với cuối tuần trước, trong khi nguồn khác ghi nhận khoảng 26.000 – 26.050 đồng/USD, nên mức này chênh nhau tùy nguồn.\n\nMức độ chắc chắn: trung bình. Các nguồn thống nhất về tỷ giá trung tâm và đều cập nhật ngày 17/10/2026, nhưng giá mua bán tại ngân hàng và chợ đen khác nhau vài chục đồng giữa các trang, nên bạn nên kiểm tra trực tiếp tại ngân hàng trước khi giao dịch.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://vietbao.vn/ty-gia-usd-hom-nay-1710-ty-gia-trung-tam-giam-con-25637-dongusd-611762.html",
+       "http://vov.vn/thi-truong/ty-gia-usd-hom-nay-1710-ty-gia-trung-tam-giam-con-25637-dongusd-post1341967.vov",
+       "https://thoibaotaichinhvietnam.vn/ty-gia-usd-hom-nay-17-10-usd-tu-do-giam-sau-dxy-mat-moc-102-diem-truoc-them-cuoc-hop-fed-205521.html"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0119575
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15966,
+     "output_tokens": 531,
+     "requests": 2,
+     "cost_usd": 0.01382,
+     "tools_cost_usd": 0.011957
+    },
+    "turn_id": "87a8d7fcea2a45ed80270a623faa68ca",
+    "conversation_id": "5ec43db3d27e4a3f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo nguồn trên web, tỷ giá trung tâm sáng 17/10/2026 do Ngân hàng Nhà nước công bố là **25.637 đồng/USD**.\n\n- **Vietcombank:** mua vào – bán ra khoảng 25.670 – 26.070 đồng/USD.\n- **Chợ đen:** khoảng 25.910 – 26.050 đồng/USD, tùy nguồn.\n\nMức chắc chắn là trung bình. Các nguồn thống nhất về tỷ giá trung tâm, nhưng giá ngân hàng và chợ đen khác nhau vài chục đồng giữa các trang. Bạn nên kiểm tra trực tiếp tại ngân hàng trước khi giao dịch.\n\nSố này lấy từ web, không phải dữ liệu trong OneWealth.",
+    "citations": [],
+    "sources": [
+     "https://vietbao.vn/ty-gia-usd-hom-nay-1710-ty-gia-trung-tam-giam-con-25637-dongusd-611762.html",
+     "http://vov.vn/thi-truong/ty-gia-usd-hom-nay-1710-ty-gia-trung-tam-giam-con-25637-dongusd-post1341967.vov",
+     "https://thoibaotaichinhvietnam.vn/ty-gia-usd-hom-nay-17-10-usd-tu-do-giam-sau-dxy-mat-moc-102-diem-truoc-them-cuoc-hop-fed-205521.html"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263673.9022243,
+    "audit_seq": 1531,
+    "session": {
+     "id": "5ec43db3d27e4a3f",
+     "title": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 15.537166129332036,
+   "first_event": 1.7812924142926931,
+   "usage": {
+    "cost": 0.025777,
+    "input": 15966,
+    "output": 531,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013E6w3gsvGi8jwWRYxK7WXE",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013E6w3gsvGi8jwWRYxK7WXE",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 11362,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792263615.020105,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

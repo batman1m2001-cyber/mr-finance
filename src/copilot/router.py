@@ -17,7 +17,10 @@ from copilot.scrub import fold
 from copilot.tools import PAGES, TOOLS
 from wealth import ai
 
-RULES: List[Tuple[str, str]] = [  # (tool, folded keywords as a regex); first match wins
+RULES: List[Tuple[Optional[str], str]] = [  # (tool, folded keywords as a regex); first match wins
+    # sending something to the RM or a specialist: no tool here does it, and its “… cho RM duyệt” is not an approval
+    # (stress test D22: a customer's request to send was refused as the RM's approval)
+    (None, r"\bgui\b.*\b(de xuat|phuong an|rm|chuyen gia)\b"),
     ("lay_tin", r"lay tin|cap nhat tin|tai tin"),
     ("duyet_de_xuat", r"\bduyet\b|tu choi"),
     (
@@ -70,6 +73,8 @@ def keyword(scrubbed: str, route: str) -> Dict[str, Any]:
     q = fold(scrubbed)
     for tool, pat in RULES:
         if re.search(pat, q):
+            if tool is None:
+                return {"tool": None, "args": {}}
             args: Dict[str, Any] = {}
             if tool == "mo_trang":
                 args["page"] = next((k for k, w in PAGE_WORDS.items() if w in q.split("mo", 1)[-1]), None)

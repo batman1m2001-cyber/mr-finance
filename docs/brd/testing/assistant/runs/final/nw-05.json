@@ -1,0 +1,131 @@
+{
+ "id": "nw-05",
+ "category": "news",
+ "persona": "founder trẻ, nghe tin đồn (C03)",
+ "client_id": "C03",
+ "title": "Tin đồn đóng băng tài khoản",
+ "why": "A rumour: no confirmation without a source.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Nghe nói ngân hàng nhà nước sắp đóng băng tài khoản tiết kiệm, có đúng không anh?",
+   "expect": {
+    "grounded": false,
+    "not_says": [
+     "đúng (là|vậy)",
+     "sẽ đóng băng"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nghe nói ngân hàng nhà nước sắp đóng băng tài khoản tiết kiệm, có đúng không anh?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, không thấy tài liệu nào cho thấy Ngân hàng Nhà nước trực tiếp đóng băng sổ tiết kiệm. Việc phong tỏa thường do ngân hàng thực hiện khi có yêu cầu của cơ quan như công an, viện kiểm sát, tòa án hoặc cơ quan thi hành án, và các cơ quan này có quyền yêu cầu ngân hàng phong tỏa tài khoản của một cá nhân hoặc tổ chức. Sổ tiết kiệm dùng làm tài sản đảm bảo cho khoản vay thế chấp hoặc thẻ tín dụng cũng sẽ bị ngân hàng phong tỏa cho đến khi nghĩa vụ được thanh toán xong. Về phía NHNN, đây mới là dự thảo Nghị định sửa đổi, bổ sung một số nội dung của Nghị định 52/2024/NĐ-CP về thanh toán không dùng tiền mặt, trong đó đề xuất cho phép ngân hàng đóng các tài khoản không phát sinh giao dịch từ 3 năm trở lên, trừ trường hợp có thỏa thuận khác với khách hàng, và tiền còn lại vẫn được bảo lưu để hoàn trả. Đề xuất này nhắm vào tài khoản thanh toán chứ không phải sổ tiết kiệm.\n\nMức độ chắc chắn: trung bình — các nguồn đều không ghi nhận",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://cafef.vn/tu-nay-tai-khoan-ngan-hang-bi-dong-bang-dot-ngot-la-do-6-nguyen-nhan-nay-188251110183103884.chn",
+       "https://vietnamnet.vn/truong-hop-nao-so-tiet-kiem-tai-ngan-hang-bi-phong-toa-2377278.html",
+       "https://nguoiquansat.vn/ngan-hang-nha-nuoc-tiep-tuc-de-xuat-loai-bo-tai-khoan-ngan-hang-co-dac-diem-sau-295949.html",
+       "https://nguoiquansat.vn/ngan-hang-dong-loat-dong-tai-khoan-ngu-dong-305150.html"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0233642
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15989,
+     "output_tokens": 698,
+     "requests": 2,
+     "cost_usd": 0.025312,
+     "tools_cost_usd": 0.023364
+    },
+    "turn_id": "7295ee57553c4747864e6e0ad698e0e1",
+    "conversation_id": "f36190cba3154bd9",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo kết quả tìm trên web, thông tin này chưa đúng như bạn nghe.\n\n- **Không thấy nguồn nào** cho thấy Ngân hàng Nhà nước trực tiếp đóng băng sổ tiết kiệm. Mức chắc chắn trung bình.\n- **Phong tỏa sổ tiết kiệm** thường do ngân hàng thực hiện theo yêu cầu của công an, viện kiểm sát, tòa án hoặc cơ quan thi hành án. Sổ dùng làm tài sản đảm bảo cho khoản vay hoặc thẻ tín dụng cũng bị phong tỏa đến khi nghĩa vụ được thanh toán xong.\n- **Dự thảo của NHNN** sửa Nghị định 52/2024 về thanh toán không dùng tiền mặt. Dự thảo đề xuất cho ngân hàng đóng các tài khoản không phát sinh giao dịch từ 3 năm trở lên, trừ khi có thỏa thuận khác, và số dư còn lại vẫn được hoàn trả. Đề xuất này nhắm vào tài khoản thanh toán, không phải sổ tiết kiệm.\n\nNếu bạn lo về một tài khoản cụ thể, hãy liên hệ trực tiếp ngân hàng đang giữ tài khoản đó để xác nhận.",
+    "citations": [],
+    "sources": [
+     "https://cafef.vn/tu-nay-tai-khoan-ngan-hang-bi-dong-bang-dot-ngot-la-do-6-nguyen-nhan-nay-188251110183103884.chn",
+     "https://vietnamnet.vn/truong-hop-nao-so-tiet-kiem-tai-ngan-hang-bi-phong-toa-2377278.html",
+     "https://nguoiquansat.vn/ngan-hang-nha-nuoc-tiep-tuc-de-xuat-loai-bo-tai-khoan-ngan-hang-co-dac-diem-sau-295949.html",
+     "https://nguoiquansat.vn/ngan-hang-dong-loat-dong-tai-khoan-ngu-dong-305150.html"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263289.2513378,
+    "audit_seq": 1416,
+    "session": {
+     "id": "f36190cba3154bd9",
+     "title": "Nghe nói ngân hàng nhà nước sắp đóng băng tài…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 16.816792749799788,
+   "first_event": 1.826968438923359,
+   "usage": {
+    "cost": 0.048676,
+    "input": 15989,
+    "output": 698,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PKzgCT8htW3Tk83dd8PSK3",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PKzgCT8htW3Tk83dd8PSK3",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 11942,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,239 @@
+{
+ "id": "kn-06",
+ "category": "knowledge",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Beta là gì, beta của danh mục tôi",
+ "why": "A concept, then a figure that must come from a tool or be said to be unavailable.",
+ "brd": [
+  "OWN-AS-07",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Giải thích giúp tôi hệ số beta của cổ phiếu là gì?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Beta của danh mục cổ phiếu của tôi là bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "chu_y",
+     "tac_dong",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Giải thích giúp tôi hệ số beta của cổ phiếu là gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7038,
+     "output_tokens": 496,
+     "requests": 1,
+     "cost_usd": 0.000952,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b71fa77cd8c74e4e9d356f0ffab38e07",
+    "conversation_id": "7c9093dd56b24b62",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Beta** đo mức độ biến động của một cổ phiếu so với thị trường chung (thường là chỉ số như VN-Index).\n\n- **Beta = 1:** cổ phiếu thường tăng giảm cùng tỷ lệ với thị trường.\n- **Beta > 1:** biến động mạnh hơn thị trường. Ví dụ beta 1,5 thì khi thị trường giảm 10%, cổ phiếu có thể giảm khoảng 15%, và ngược lại khi thị trường tăng.\n- **Beta < 1:** biến động nhẹ hơn thị trường, thường là các ngành ổn định.\n- **Beta âm:** có xu hướng đi ngược thị trường, hiếm gặp.\n\nBeta được tính từ dữ liệu giá quá khứ, nên chỉ cho biết mức độ nhạy cảm trong quá khứ, không phải dự báo chắc chắn cho tương lai.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259378.3796144,
+    "audit_seq": 891,
+    "session": {
+     "id": "7c9093dd56b24b62",
+     "title": "Giải thích giúp tôi hệ số beta của cổ phiếu là…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.4058610857464373,
+   "first_event": 2.011015912052244,
+   "usage": {
+    "cost": 0.000952,
+    "input": 7038,
+    "output": 496,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Beta của danh mục cổ phiếu của tôi là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15779,
+     "output_tokens": 459,
+     "requests": 2,
+     "cost_usd": 0.001807,
+     "tools_cost_usd": null
+    },
+    "turn_id": "18d2ec0e909148c6bf8068b9371d5257",
+    "conversation_id": "7c9093dd56b24b62",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống hiện chưa có số beta cho danh mục của bạn, nên tôi không thể cung cấp con số này.\n\nNhững gì tôi có là số liệu cổ phiếu ghi nhận ngày 09/10/2026 (trang Tổng quan): cổ phiếu chiếm 4,93 tỷ, khoảng 11% tài sản. Trong kịch bản sốc, cổ phiếu FPT được ước tính giảm khoảng 26%, tương ứng mất khoảng 504 triệu.\n\nNếu bạn muốn, tôi có thể chạy kịch bản sốc cổ phiếu để xem danh mục phản ứng thế nào khi thị trường giảm. Kết quả này là ước tính, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792259382.9481661,
+    "audit_seq": 892,
+    "session": {
+     "id": "7c9093dd56b24b62",
+     "title": "Giải thích giúp tôi hệ số beta của cổ phiếu là…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 4.53617685707286,
+   "first_event": 1.4781061680987477,
+   "usage": {
+    "cost": 0.001807,
+    "input": 15779,
+    "output": 459,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01YFmsFzShKw8FzaJAc3r1Xd",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01YFmsFzShKw8FzaJAc3r1Xd",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 119,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

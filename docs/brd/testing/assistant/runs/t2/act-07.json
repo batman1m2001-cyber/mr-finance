@@ -1,0 +1,179 @@
+{
+ "id": "act-07",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Bật kịch bản trên đồ thị",
+ "why": "No tool turns a scenario on: say so, and still be useful.",
+ "brd": [
+  "OWN-AS-08",
+  "OWN-GW-47"
+ ],
+ "turns": [
+  {
+   "say": "Bật kịch bản lãi suất tăng 2% trên đồ thị giúp tôi.",
+   "expect": {
+    "no_write": true,
+    "says": "không|chưa|bấm|nút|tự"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Bật kịch bản lãi suất tăng 2% trên đồ thị giúp tôi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: lãi vay thả nổi +2 điểm %/năm. Kịch bản của bạn: tài sản ròng 43,53 tỷ → 43,48 tỷ (−48,0 triệu). Mục tiêu: Học phí cho con (trong nước / du học) chậm tiến độ (giữ nguyên); Nghỉ hưu sớm năm 55 tuổi đúng tiến độ → chậm tiến độ; Chi phí y tế lớn đúng tiến độ (giữ nguyên); Định cư / con đi du học chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "−48,0 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "goal:retire_early"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Đồ thị tài chính.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/client/xem/tong-quan",
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14856,
+     "output_tokens": 1065,
+     "requests": 2,
+     "cost_usd": 0.002018,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7d45215a7cd94b7ebd60e8582e2c6ba2",
+    "conversation_id": "74ff3aa0596341bf",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đã chạy kịch bản lãi vay thả nổi tăng 2 điểm % mỗi năm và mở trang Đồ thị tài chính. Tôi chưa xác nhận được công tắc kịch bản đã bật trên đồ thị, nên bạn kiểm tra lại trên màn hình giúp tôi.\n\nKết quả mô phỏng (ngày 2026-10-09):\n- Tài sản ròng: 43,53 tỷ → 43,48 tỷ, giảm khoảng 48 triệu.\n- Mục tiêu Nghỉ hưu sớm năm 55 tuổi chuyển sang chậm tiến độ.\n- Mục tiêu Học phí cho con và Định cư/du học vẫn chậm tiến độ như trước.\n- Mục tiêu Chi phí y tế vẫn đúng tiến độ.\n\nĐây là ước tính trên tài sản hiện có, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "goal:retire_early"
+    ],
+    "navigate": "#/client/xem/tong-quan",
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259675.3783686,
+    "audit_seq": 972,
+    "session": {
+     "id": "74ff3aa0596341bf",
+     "title": "Bật kịch bản lãi suất tăng 2% trên đồ thị giúp…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.178997050970793,
+   "first_event": 3.107305023819208,
+   "usage": {
+    "cost": 0.002018,
+    "input": 14856,
+    "output": 1065,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012bJyvgx8PL12Q2MoHu3Jo2",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01UDwpMYHMLWavvkEsWCKqqb",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01UDwpMYHMLWavvkEsWCKqqb",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 23,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012bJyvgx8PL12Q2MoHu3Jo2",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 124,
+     "focus": [
+      "scenario:custom",
+      "goal:retire_early"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

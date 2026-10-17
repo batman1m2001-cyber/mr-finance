@@ -1,0 +1,371 @@
+{
+ "id": "act-05",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Gửi đề xuất cho RM, xác nhận, hỏi trạng thái",
+ "why": "A proposal confirmed: it is in the queue, pending, and the assistant reads it back.",
+ "brd": [
+  "OWN-AS-06",
+  "FR-603",
+  "OWN-AS-05"
+ ],
+ "turns": [
+  {
+   "say": "Gửi cho RM phương án giảm tỷ trọng cổ phiếu trong kịch bản chứng khoán giảm 30% để duyệt.",
+   "expect": {
+    "status": "pending",
+    "pending": "gui_de_xuat"
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "status": "ok",
+    "grounded": false
+   },
+   "state": {
+    "reviews_new": 1
+   }
+  },
+  {
+   "say": "Đề xuất tôi vừa gửi đang ở trạng thái nào?",
+   "expect": {
+    "tools_any": [
+     "de_xuat"
+    ],
+    "says": "chờ",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Gửi cho RM phương án giảm tỷ trọng cổ phiếu trong kịch bản chứng khoán giảm 30% để duyệt.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6060,
+     "output_tokens": 282,
+     "requests": 1,
+     "cost_usd": 0.000747,
+     "tools_cost_usd": null
+    },
+    "turn_id": "848a7dd17bef4b708dcad35f71491e91",
+    "conversation_id": "4a9850fe8aef4e03",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "f297d40629390f714281c9a363582b17",
+      "tool": "gui_de_xuat",
+      "summary": "Gửi “Giảm điểm nóng” (kịch bản VN-Index giảm 30%) cho RM duyệt?"
+     }
+    ],
+    "text": "Gửi “Giảm điểm nóng” (kịch bản VN-Index giảm 30%) cho RM duyệt?",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257605.0180345,
+    "audit_seq": 753,
+    "session": {
+     "id": "4a9850fe8aef4e03",
+     "title": "Gửi cho RM phương án giảm tỷ trọng cổ phiếu…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.332790410146117,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000747,
+    "input": 6060,
+    "output": 282,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01QTZ1JuYocKFqFBEoeMUtNJ",
+     "tool": "gui_de_xuat",
+     "label": "Gửi đề xuất"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gui_de_xuat",
+      "label": "Gửi đề xuất",
+      "status": "ok",
+      "text": "Đã gửi “VN-Index giảm 30% — Giảm điểm nóng” cho RM, đang chờ duyệt.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12321,
+     "output_tokens": 584,
+     "requests": 2,
+     "cost_usd": 0.001524,
+     "tools_cost_usd": null
+    },
+    "turn_id": "848a7dd17bef4b708dcad35f71491e91",
+    "conversation_id": "4a9850fe8aef4e03",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã gửi đề xuất \"VN-Index giảm 30% — Giảm điểm nóng\" lên RM và đang chờ duyệt (mã R-520eade5).\n\nBạn chưa chọn phương án nhẹ hay nặng, nên hệ thống gửi phương án mặc định. Nếu cần phương án cụ thể, bạn cho tôi biết là \"nhẹ\" hay \"nặng\" để gửi thêm.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257607.664136,
+    "audit_seq": 754,
+    "session": {
+     "id": "4a9850fe8aef4e03",
+     "title": "Gửi cho RM phương án giảm tỷ trọng cổ phiếu…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.6161539666354656,
+   "first_event": 0.06307605560868979,
+   "usage": {
+    "cost": 0.001524,
+    "input": 12321,
+    "output": 584,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QTZ1JuYocKFqFBEoeMUtNJ",
+     "tool": "gui_de_xuat",
+     "label": "Gửi đề xuất",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QTZ1JuYocKFqFBEoeMUtNJ",
+     "tool": "gui_de_xuat",
+     "ok": true,
+     "ms": 106,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 1
+   }
+  },
+  {
+   "say": "Đề xuất tôi vừa gửi đang ở trạng thái nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gui_de_xuat",
+      "label": "Gửi đề xuất",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "text": "3 đề xuất, 1 đang chờ. 1) VN-Index giảm 30% — Giảm điểm nóng — chờ RM duyệt. 2) Học phí cho con (trong nước / du học) — Tích lũy đều — đã duyệt. 3) Học phí cho con (trong nước / du học) — Tích lũy đều — đã duyệt.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "VN-Index giảm 30% — Giảm điểm nóng",
+         "sub": "Nguyễn Minh Khoa · chờ RM duyệt",
+         "chip": "R-520eade5",
+         "tone": "warn",
+         "focus": "review:R-520eade5"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-821ffb1b",
+         "tone": "",
+         "focus": "review:R-821ffb1b"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-a4a7e60d",
+         "tone": "",
+         "focus": "review:R-a4a7e60d"
+        }
+       ]
+      },
+      "focus": [
+       "review:R-520eade5"
+      ],
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/client/chuyen-gia"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13240,
+     "output_tokens": 157,
+     "requests": 2,
+     "cost_usd": 0.001403,
+     "tools_cost_usd": null
+    },
+    "turn_id": "bd3f41311ae341349d08f4ff7cdf1d1d",
+    "conversation_id": "4a9850fe8aef4e03",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đề xuất \"VN-Index giảm 30% — Giảm điểm nóng\" (mã R-520eade5) đang ở trạng thái **chờ RM duyệt**.\n\nHàng chờ hiện có 3 đề xuất: 1 đang chờ (đề xuất này) và 2 đề xuất về học phí cho con, cả hai đã được duyệt.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/client/chuyen-gia"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [
+     "review:R-520eade5"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257610.5360918,
+    "audit_seq": 755,
+    "session": {
+     "id": "4a9850fe8aef4e03",
+     "title": "Gửi cho RM phương án giảm tỷ trọng cổ phiếu…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 2.8400109028443694,
+   "first_event": 1.3165347198955715,
+   "usage": {
+    "cost": 0.001403,
+    "input": 13240,
+    "output": 157,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01377EQtncY27jz4Wvy8vKZe",
+     "tool": "de_xuat",
+     "label": "Hàng chờ đề xuất",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01377EQtncY27jz4Wvy8vKZe",
+     "tool": "de_xuat",
+     "ok": true,
+     "ms": 24,
+     "focus": [
+      "review:R-520eade5"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 1
+   }
+  }
+ ]
+}

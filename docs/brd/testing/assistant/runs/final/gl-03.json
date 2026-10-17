@@ -1,0 +1,272 @@
+{
+ "id": "gl-03",
+ "category": "goals",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Quỹ khẩn cấp bao nhiêu tháng, mình đủ chưa",
+ "why": "A rule of thumb, then her own months.",
+ "brd": [
+  "BRIEF-DASH-05",
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Mình đã đủ chưa?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "says": "tháng"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7501,
+     "output_tokens": 261,
+     "requests": 1,
+     "cost_usd": 0.000881,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a69033de0c3546e797b5cd9ad5a2b00e",
+    "conversation_id": "a0773375503e4ba0",
+    "compacted": false,
+    "status": "ok",
+    "text": "Thông thường, quỹ khẩn cấp nên đủ chi tiêu **3 đến 6 tháng**. Với thu nhập không ổn định, đông người phụ thuộc hoặc công việc khó tìm lại, nhiều người chọn 6 tháng trở lên.\n\nNếu bạn muốn, tôi có thể xem tiền thanh khoản dự phòng hiện tại của bạn trong OneWealth để so với mức này.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263333.2046866,
+    "audit_seq": 1426,
+    "session": {
+     "id": "a0773375503e4ba0",
+     "title": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.465540945995599,
+   "first_event": 1.605770607944578,
+   "usage": {
+    "cost": 0.000881,
+    "input": 7501,
+    "output": 261,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Mình đã đủ chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số tháng chi tiêu được bảo đảm bởi tiền thanh khoản dự phòng: 980000000/30000000 = 32,67",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24959,
+     "output_tokens": 811,
+     "requests": 3,
+     "cost_usd": 0.002901,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e98e577c538c47178bb93e179dc6c3e5",
+    "conversation_id": "a0773375503e4ba0",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn đã đủ, và còn dư nhiều. Theo trang Tổng quan (số liệu ngày 09/10/2026), tiền thanh khoản dự phòng là **980 triệu**. Với mức chi **30 triệu/tháng** trong hồ sơ, con số này đủ chi khoảng **32,7 tháng** (980 ÷ 30 = 32,67), vượt xa mức 3 đến 6 tháng.\n\nLưu ý: đây là số ghi nhận từ hệ thống, và giả định 980 triệu chỉ là tiền dự phòng. Nếu một phần trong đó dành cho mục tiêu khác thì số tháng sẽ thấp hơn.\n\nĐiều cần chú ý là tài sản đang tập trung nhiều vào bất động sản: khoảng 69% tổng tài sản nằm ở khu Vinhomes Grand Park, cao hơn ngưỡng 35%. Điều này không ảnh hưởng đến quỹ khẩn cấp, nhưng làm tài sản dễ giảm mạnh hơn khi thị trường xấu.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263340.280932,
+    "audit_seq": 1427,
+    "session": {
+     "id": "a0773375503e4ba0",
+     "title": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.032476834952831,
+   "first_event": 1.3420262900181115,
+   "usage": {
+    "cost": 0.002901,
+    "input": 24959,
+    "output": 811,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016CWXkkRMwUTgKm8c7piDxg",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016CWXkkRMwUTgKm8c7piDxg",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 119,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Uo2HJmqmfMTyPcRG4t2iEz",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Uo2HJmqmfMTyPcRG4t2iEz",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

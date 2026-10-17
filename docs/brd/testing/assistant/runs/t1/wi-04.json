@@ -1,0 +1,522 @@
+{
+ "id": "wi-04",
+ "category": "what_if",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Nhà đất giảm 20%, rồi 40%",
+ "why": "A property shock, then a size no scenario offers.",
+ "brd": [
+  "BRIEF-SCEN-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra sao?",
+   "expect": {
+    "tools_any": [
+     "kich_ban",
+     "so_sanh_kich_ban"
+    ]
+   }
+  },
+  {
+   "say": "Thế nếu giảm tới 40% thì sao?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản BĐS đóng băng như 2022–2023: tài sản ròng 95,30 tỷ → 82,81 tỷ (−12,49 tỷ, −13,1%); so với ngưỡng chấp nhận: 20% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "BĐS đóng băng như 2022–2023",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "95,30 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "82,81 tỷ",
+         "sub": "−12,49 tỷ · −13,1%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "8,90 tỷ",
+         "sub": "49 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Biệt thự Phú Mỹ Hưng: -3,56 tỷ",
+        "Ảnh hưởng nhiều: Đất nền Long Thành: -2,7 tỷ",
+        "Ảnh hưởng nhiều: Cổ phiếu TCB: -2,38 tỷ"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45%, Cổ phiếu 22%, Cổ phần DN 12%, Tiền & tiền gửi 9%, Vàng 7%, Trái phiếu 5%. Thanh khoản dự phòng 8,90 tỷ, đủ chi 4 năm. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "mức giảm tài sản ròng khi giá BĐS giảm 20% (kịch bản đóng băng): (95.3-82.8095)/95.3*100 = 13,11",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 19979,
+     "output_tokens": 1155,
+     "requests": 3,
+     "cost_usd": 0.002575,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3a42fb4c11d34633ba62f403e6e0ab35",
+    "conversation_id": "17c7353cc1014589",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu giá bất động sản giảm mạnh như kịch bản \"đóng băng\" 2022–2023, tài sản ròng của bạn ước giảm khoảng **12,49 tỷ (13,1%)**, từ 95,30 tỷ xuống còn 82,81 tỷ.\n\nLưu ý: kịch bản hệ thống có sẵn là mô phỏng kiểu 2022–2023, không phải đúng mức giảm 20%. Tôi chưa chạy riêng mức giảm 20%, nên đây là ước tính gần đúng chứ không phải con số chính xác cho đúng 20%.\n\n- **Mức giảm ước tính:** (95,30 − 82,81) / 95,30 × 100 = 13,1%\n- **So với ngưỡng chấp nhận 20%:** vẫn trong ngưỡng.\n- **Bối cảnh:** bất động sản chiếm khoảng 45% tổng tài sản, nên đây là nhóm chịu tác động lớn nhất.\n- **Thanh khoản dự phòng:** 8,90 tỷ, đủ chi khoảng 4 năm.\n\nSố liệu tài sản ròng lấy từ trang Tổng quan, tính đến 09/10/2026. Kết quả kịch bản là ước tính trên các khoản hiện có, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)",
+     "Tổng hợp 17 khoản từ 5 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257480.9810662,
+    "audit_seq": 718,
+    "session": {
+     "id": "17c7353cc1014589",
+     "title": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.868611445184797,
+   "first_event": 1.9830213943496346,
+   "usage": {
+    "cost": 0.002575,
+    "input": 19979,
+    "output": 1155,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LZSmhXR9U2w1RB5ggNKsxu",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:re_freeze"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LxTa5DGEDQGHhM9youYrCt",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LZSmhXR9U2w1RB5ggNKsxu",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 158,
+     "focus": [
+      "scenario:re_freeze"
+     ],
+     "scenario": {
+      "id": "re_freeze",
+      "effect": -12490500000.0
+     }
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LxTa5DGEDQGHhM9youYrCt",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 158,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RKJ84GWaPqvzT1Q2oUpgwi",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RKJ84GWaPqvzT1Q2oUpgwi",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Thế nếu giảm tới 40% thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok"
+     },
+     {
+      "tool": "so_sanh_kich_ban",
+      "label": "So sánh kịch bản",
+      "status": "ok",
+      "text": "BĐS đóng băng như 2022–2023: tài sản ròng 95,30 tỷ → 82,81 tỷ (−12,49 tỷ). Mục tiêu: Học phí cho con (trong nước / du học) đúng tiến độ (giữ nguyên); Mua thêm BĐS bằng vốn vay cần chú ý (giữ nguyên); Chuyển giao tài sản cho con đúng tiến độ (giữ nguyên); Doanh nghiệp cần vốn gấp đúng tiến độ (giữ nguyên); Định cư / con đi du học đúng tiến độ (giữ nguyên); Cưới hỏi / hỗ trợ con mua nhà đúng tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "BĐS đóng băng như 2022–2023",
+         "value": "−12,49 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:re_freeze",
+       "class:real_estate",
+       "class:stock"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "ước tính mức giảm giá trị BĐS khi giá giảm 40%, dựa trên BĐS 45% tổng tài sản (chỉ tính phần BĐS): 100.42*0.45*0.40 = 18,08",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "mức giảm tài sản ròng ước tính khi BĐS giảm 40% (chỉ phần BĐS): (95.3-18.0756)/95.3*100 = 81,03",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "mức giảm tài sản ròng theo tỷ lệ khi BĐS giảm 40%: 18.0756/95.3*100 = 18,97",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 33723,
+     "output_tokens": 3220,
+     "requests": 4,
+     "cost_usd": 0.004982,
+     "tools_cost_usd": null
+    },
+    "turn_id": "25829080ea244f61bfd944b6d21d66ed",
+    "conversation_id": "17c7353cc1014589",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu giá bất động sản giảm 40%, tài sản ròng ước giảm khoảng **18,1 tỷ (≈19%)**, từ 95,30 tỷ xuống còn khoảng 77,2 tỷ.\n\nĐây là ước tính đơn giản của tôi, không phải kết quả mô phỏng của hệ thống:\n- Bất động sản chiếm 45% tổng tài sản 100,42 tỷ, nên giá trị BĐS khoảng 45,19 tỷ.\n- Giảm 40%: 100,42 × 0,45 × 0,40 = 18,08 tỷ.\n- Tỷ lệ so với tài sản ròng: 18,08 / 95,30 × 100 = 18,97%.\n\nLưu ý:\n- Hệ thống chỉ có kịch bản \"đóng băng\" 2022–2023, cho mức giảm 13,1% (12,49 tỷ). Trong kịch bản đó, phần BĐS mất 6,81 tỷ và cổ phiếu mất 5,68 tỷ.\n- Ước tính 40% giả định toàn bộ BĐS giảm đúng 40%, và nợ vay 5 tỷ mua đất Long Thành không đổi. Nếu tính cả cổ phiếu cùng giảm, mức sụt sẽ lớn hơn.\n- Mục tiêu \"Mua thêm BĐS bằng vốn vay\" được đánh dấu là cần chú ý. Các mục tiêu còn lại vẫn đúng tiến độ trong kịch bản đóng băng.\n- Với mức giảm 40%, tài sản ròng vẫn dương và thanh khoản dự phòng 8,90 tỷ (đủ chi khoảng 4 năm) không đổi.\n\nĐể có con số mô phỏng chính thức cho mức giảm 40%, bạn có thể hỏi RM hoặc xem thêm trang Kế hoạch.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:re_freeze",
+     "class:real_estate",
+     "class:stock"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257500.626954,
+    "audit_seq": 719,
+    "session": {
+     "id": "17c7353cc1014589",
+     "title": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 19.62115727365017,
+   "first_event": 3.532440620008856,
+   "usage": {
+    "cost": 0.004982,
+    "input": 33723,
+    "output": 3220,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01WLp1CaoUUYqL8UHqKxaG7R",
+     "tool": "so_sanh_kich_ban",
+     "label": "So sánh kịch bản",
+     "nodes": [
+      "SC:re_freeze"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01WLp1CaoUUYqL8UHqKxaG7R",
+     "tool": "so_sanh_kich_ban",
+     "ok": true,
+     "ms": 78,
+     "focus": [
+      "scenario:re_freeze",
+      "class:real_estate",
+      "class:stock"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Hr88QTxa5GSCMWWEHKnbut",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Y4wp74x6G5AuBE5cWXi4wa",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Hr88QTxa5GSCMWWEHKnbut",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Y4wp74x6G5AuBE5cWXi4wa",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MzZwnSt26ei1LyEzXvK59a",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MzZwnSt26ei1LyEzXvK59a",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

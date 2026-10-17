@@ -1,0 +1,147 @@
+{
+ "id": "am-01",
+ "category": "ambiguous",
+ "persona": "chuyên gia, câu cụt (C01)",
+ "client_id": "C01",
+ "title": "“Có nên không?”",
+ "why": "No context: one targeted question back.",
+ "brd": [
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Có nên không?",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có nên không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 11,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 8%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 11,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 8%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14229,
+     "output_tokens": 708,
+     "requests": 2,
+     "cost_usd": 0.001777,
+     "tools_cost_usd": null
+    },
+    "turn_id": "47d3d90b39e44771b3f09b5b9deb42bf",
+    "conversation_id": "03aaf7ce871745b1",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có một điều đáng chú ý: theo ước tính, danh mục có thể sụt khoảng **11,8%** khi thị trường xấu, vượt ngưỡng chấp nhận **8%** của bạn. Số này lấy từ bảng tin trên số liệu tổng hợp, giao dịch và tin đã duyệt, và là ước tính chứ không phải dự báo.\n\nBạn đang hỏi có nên làm gì với điều này, hay có nên làm việc khác? Tôi có thể:\n- Chạy thêm một kịch bản sốc (cổ phiếu, trái phiếu, bất động sản, lãi suất, tỷ giá) để xem tài sản nào kéo mức sụt giảm lên.\n- Xem các đề xuất đang chờ.\n\nTôi không đưa khuyến nghị đầu tư, nhưng có thể giúp bạn xem rõ số liệu để tự quyết định.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": null,
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792259773.0203645,
+    "audit_seq": 1005,
+    "session": {
+     "id": "03aaf7ce871745b1",
+     "title": "Có nên không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.59725581202656,
+   "first_event": 2.0596129302866757,
+   "usage": {
+    "cost": 0.001777,
+    "input": 14229,
+    "output": 708,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0137egS3hAuCTj6Ajc5QhFes",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0137egS3hAuCTj6Ajc5QhFes",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 250,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

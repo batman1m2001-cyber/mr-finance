@@ -1,0 +1,88 @@
+{
+ "id": "act-06",
+ "category": "actions",
+ "persona": "founder trẻ (C03)",
+ "client_id": "C03",
+ "title": "Tạo mục tiêu mua nhà",
+ "why": "No tool creates a goal: an honest answer that points to where it is done.",
+ "brd": [
+  "OWN-AS-08",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tạo giúp em một mục tiêu mua nhà 5 tỷ vào năm 2031.",
+   "expect": {
+    "no_write": true,
+    "grounded": false,
+    "says": "không|chưa|Kế hoạch|trang"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tạo giúp em một mục tiêu mua nhà 5 tỷ vào năm 2031.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7044,
+     "output_tokens": 750,
+     "requests": 1,
+     "cost_usd": 0.001079,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7f09149e62bd433c9f49c91124fe53b4",
+    "conversation_id": "e1ab8a5e78994801",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện tại tôi chưa có công cụ tạo mục tiêu mới trong OneWealth, nên em cần tạo mục tiêu này trong ứng dụng hoặc nhờ RM hỗ trợ.\n\nTôi có thể giúp em những việc sau:\n- **Ghi nhớ** \"mục tiêu mua nhà 5 tỷ vào năm 2031\" để các cuộc trò chuyện sau tôi nhắc đến. Đây chỉ là ghi nhớ, không phải mục tiêu trong hệ thống theo dõi.\n- **Xem các mục tiêu đang theo dõi** và tiến độ hiện có.\n- **Mở trang Mục tiêu** để em tự tạo mục tiêu mới.\n\nEm muốn tôi làm việc nào?",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259669.0996976,
+    "audit_seq": 970,
+    "session": {
+     "id": "e1ab8a5e78994801",
+     "title": "Tạo giúp em một mục tiêu mua nhà 5 tỷ vào năm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.55754532199353,
+   "first_event": 3.3729202020913363,
+   "usage": {
+    "cost": 0.001079,
+    "input": 7044,
+    "output": 750,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

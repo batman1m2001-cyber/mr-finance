@@ -1,0 +1,135 @@
+{
+ "id": "oos-02",
+ "category": "out_of_scope",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Tỷ giá USD/VND hôm nay",
+ "why": "A live figure: a source and its time, or honesty.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "sourced": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, tỷ giá trung tâm do Ngân hàng Nhà nước công bố sáng 17/10/2026 là 25.637 đồng/USD, giảm 5 đồng so với phiên trước. Tại Vietcombank, USD được mua vào ở 25.670 và bán ra ở 26.080 đồng ([nguồn 2](https://thoibaotaichinhvietnam.vn/ty-gia-usd-hom-nay-17-10-usd-tu-do-giam-sau-dxy-mat-moc-102-diem-truoc-them-cuoc-hop-fed-205521.html)). Trên thị trường tự do, USD giao dịch quanh 25.910–25.960 đồng, thấp hơn giá bán tại ngân hàng thương mại ([nguồn 2](https://thoibaotaichinhvietnam.vn/ty-gia-usd-hom-nay-17-10-usd-tu-do-giam-sau-dxy-mat-moc-102-diem-truoc-them-cuoc-hop-fed-205521.html)). Mức độ chắc chắn: trung bình, vì tỷ giá trung tâm được nhiều nguồn thống nhất, nhưng giá ngân hàng khác nhau giữa các nguồn và thời điểm cập nhật (ví dụ một nguồn ghi Vietcombank bán ra 26.070, một nguồn khác ghi 26.080).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [],
+      "navigate": null,
+      "cost_usd": 0.0121549
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14880,
+     "output_tokens": 568,
+     "requests": 2,
+     "cost_usd": 0.013927,
+     "tools_cost_usd": 0.012155
+    },
+    "turn_id": "30b47881da584920acbeb946a40aa99a",
+    "conversation_id": "b656a6d191e14e6c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo tìm kiếm trên web, tỷ giá trung tâm do Ngân hàng Nhà nước công bố sáng 17/10/2026 là **25.637 đồng/USD**, giảm 5 đồng so với phiên trước.\n\n- **Vietcombank:** mua vào 25.670, bán ra khoảng 26.070–26.080 đồng/USD. Hai nguồn ghi khác nhau ở giá bán.\n- **Thị trường tự do:** khoảng 25.910–25.960 đồng/USD.\n\nMức chắc chắn trung bình. Đây là số từ web, không phải dữ liệu trong OneWealth, và giá ngân hàng thay đổi theo thời điểm. Bạn nên kiểm tra lại trên app ngân hàng trước khi giao dịch.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259822.2974558,
+    "audit_seq": 1019,
+    "session": {
+     "id": "b656a6d191e14e6c",
+     "title": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 14.236977722961456,
+   "first_event": 2.2471797657199204,
+   "usage": {
+    "cost": 0.026082,
+    "input": 14880,
+    "output": 568,
+    "requests": 2
+   },
+   "why": [
+    "no source named"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JoNYxfZoJWhudY1sJLfEHM",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JoNYxfZoJWhudY1sJLfEHM",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 9598,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,388 @@
+{
+ "id": "ms-02",
+ "category": "memory_sessions",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Phiên mới không biết điều chưa được ghi nhớ",
+ "why": "A fact said in one session, not saved: a new session must not pretend to know it.",
+ "brd": [
+  "OWN-AS-11",
+  "OWN-AS-12",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "expect": {
+    "grounded": false
+   },
+   "new_session": true
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 03/2026: tiền vào 60,3 triệu, tiền ra 49,1 triệu, còn lại 11,2 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 16500000.0,
+         "text": "16,5 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 6586000.0,
+         "text": "6,6 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,3 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "49,1 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "11,2 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-03",
+       "flow:2026-03:out:loan"
+      ],
+      "as_of": "2026-03",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12502,
+     "output_tokens": 953,
+     "requests": 2,
+     "cost_usd": 0.001727,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7b371b1725d2457691bb1b85264ee4d2",
+    "conversation_id": "04e074dbe17d4c5d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chúc mừng gia đình bạn sắp đón em bé!\n\nTừ dữ liệu hiện có, mình thấy:\n- **Mục tiêu đang theo dõi:** mua thêm bất động sản bằng vốn vay, hiện đang chậm tiến độ (trang Kế hoạch).\n- **Dòng tiền tháng 03/2026:** tiền vào 60,3 triệu, tiền ra 49,1 triệu, còn lại 11,2 triệu. Khoản chi lớn nhất là trả nợ vay 26,0 triệu (nguồn: 9 giao dịch của tháng, trang Toàn cảnh).\n\nNếu bạn muốn, mình có thể:\n- Xem lại thanh khoản dự phòng và tổng quan tài sản để xem có đủ đệm cho giai đoạn sau sinh không.\n- Xem lại mục tiêu mua bất động sản, vì có thể cần điều chỉnh lịch khi có thêm chi phí.\n- Ghi nhớ mốc tháng 3 năm sau để những lần trò chuyện sau mình nhắc đúng bối cảnh.\n\nBạn muốn bắt đầu từ việc nào?",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-03",
+    "focus": [
+     "flow:2026-03",
+     "flow:2026-03:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257653.0134482,
+    "audit_seq": 770,
+    "session": {
+     "id": "04e074dbe17d4c5d",
+     "title": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.4863298730924726,
+   "first_event": 2.182443394791335,
+   "usage": {
+    "cost": 0.001727,
+    "input": 12502,
+    "output": 953,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01YB2U2GKwyaZRmKsJZn5NNe",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NxM8kFcZY8iosLo8RWykdN",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01YB2U2GKwyaZRmKsJZn5NNe",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 137,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NxM8kFcZY8iosLo8RWykdN",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 183,
+     "focus": [
+      "flow:2026-03",
+      "flow:2026-03:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “tháng 3” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12411,
+     "output_tokens": 866,
+     "requests": 2,
+     "cost_usd": 0.001674,
+     "tools_cost_usd": null
+    },
+    "turn_id": "cf8f75da9057447e952c3d9118d7345e",
+    "conversation_id": "3b9d31be57db4540",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tìm thấy việc nào được ghi cho tháng 3 năm sau.\n\nHiện chỉ có một mục tiêu đang theo dõi: **mua thêm bất động sản bằng vốn vay**, và mục tiêu này đang **chậm tiến độ**. Nguồn là hồ sơ khách hàng, tính trên tài sản hiện có. Hệ thống không có ngày cụ thể cho mục này trong phần tôi xem được, nên tôi không xác nhận được nó có rơi vào tháng 3 hay không.\n\nNếu bạn nhớ một sự kiện cụ thể (ví dụ đáo hạn khoản vay, đóng tiền, hay một dự án), bạn có thể cho tôi biết tên để tôi tìm tiếp. Bạn cũng có thể mở trang Kế hoạch để xem chi tiết tiến độ mục tiêu.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257659.4008405,
+    "audit_seq": 771,
+    "session": {
+     "id": "3b9d31be57db4540",
+     "title": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.360765215009451,
+   "first_event": 2.38833947526291,
+   "usage": {
+    "cost": 0.001674,
+    "input": 12411,
+    "output": 866,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01WtdYgYTr69L3Xv9XKwAcAM",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BurebJNHQhKQWZktAuDVLB",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01WtdYgYTr69L3Xv9XKwAcAM",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 159,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BurebJNHQhKQWZktAuDVLB",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 159,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

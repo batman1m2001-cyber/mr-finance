@@ -1,0 +1,10 @@
+{
+ "note": "Hand verdicts on the final runs where they differ from the machine checks, each with its reason (defects.md). Read by scripts/stress_report.py; the machine verdict is shown beside it.",
+ "conversations": {
+  "nav-01": {"ok": false, "why": "D29 (open): the guide search missed the line-styles passage for this wording; the answer said the guide does not say."},
+  "wi-01": {"ok": true, "why": "G6: −8,9 % is 3,87 ÷ 43,53 from the comparison tool's figures, computed in the text; correct."},
+  "wi-02": {"ok": true, "why": "G2: −1,62 / −0,49 / −0,06 tỷ are the rates scenario's own split (by_class_alone, the D32 fix), read from the tool's data the answer does not carry; recomputed offline, exact."},
+  "cc-02": {"ok": true, "why": "G6: “50 %” is an offered what-if (“thu nhập giảm 50%”), not a figure claimed."},
+  "act-02": {"ok": true, "why": "G8: the first item was forgotten after Xác nhận (read back); the copy also held a second real-estate memory item, written by the first browser pass, and the assistant rightly asked for it separately."}
+ }
+}

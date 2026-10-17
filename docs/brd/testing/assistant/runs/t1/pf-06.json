@@ -1,0 +1,458 @@
+{
+ "id": "pf-06",
+ "category": "personal_finance",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Quỹ dự phòng và nếu mất việc",
+ "why": "Liquidity in months, then an income-loss what-if.",
+ "brd": [
+  "BRIEF-DASH-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Quỹ dự phòng của tôi đủ chưa?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "says": "tháng"
+   }
+  },
+  {
+   "say": "Nếu tôi mất việc thì sống được bao lâu với khoản đó?",
+   "expect": {
+    "says": "tháng"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Quỹ dự phòng của tôi đủ chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Định cư / con đi du học: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12879,
+     "output_tokens": 687,
+     "requests": 2,
+     "cost_usd": 0.001631,
+     "tools_cost_usd": null
+    },
+    "turn_id": "89ae2307187f471aaf63ee68df4670b2",
+    "conversation_id": "8780f6cc0e7c48f6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo hệ thống, quỹ dự phòng của bạn **đủ**. Thanh khoản dự phòng hiện là **4,72 tỷ đồng**, đủ chi khoảng **3 năm**. Số liệu lấy từ trang Tổng quan, ngày 09/10/2026.\n\nCó hai điểm bạn nên biết:\n- Khi thị trường xấu, mức sụt giảm ước tính là 11,8%, vượt ngưỡng 8%. Đây là ước tính, không phải dự báo.\n- Danh mục đang tập trung: Đất nền Long Thành, Đồng Nai chiếm 39,2% tài sản, trong khi ngưỡng là 35%.\n\nHai mục tiêu học phí cho con và định cư/du học đang chậm tiến độ. Nếu bạn muốn, tôi có thể xem chi tiết dòng tiền hàng tháng để kiểm tra lại mức chi tiêu làm căn cứ cho con số 3 năm.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792257156.4546843,
+    "audit_seq": 659,
+    "session": {
+     "id": "8780f6cc0e7c48f6",
+     "title": "Quỹ dự phòng của tôi đủ chưa?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.193143231328577,
+   "first_event": 1.7555871410295367,
+   "usage": {
+    "cost": 0.001631,
+    "input": 12879,
+    "output": 687,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011nva58o5HcGddWRPWG8FqF",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NcAtSeXPmKgS5xyHTFPBRh",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011nva58o5HcGddWRPWG8FqF",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 254,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NcAtSeXPmKgS5xyHTFPBRh",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 254,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Nếu tôi mất việc thì sống được bao lâu với khoản đó?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 120,4 triệu, tiền ra 90,4 triệu, còn lại 30,0 triệu. Khoản chi lớn nhất: Trả nợ vay 38,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 38000000.0,
+         "text": "38,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 34770000.0,
+         "text": "34,8 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 17623000.0,
+         "text": "17,6 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "120,4 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "90,4 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "30,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số tháng dự phòng nếu mất thu nhập và giữ chi tiêu tháng 09/2026 (90,4 triệu): 4720000000/90400000 = 52,21",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 22359,
+     "output_tokens": 989,
+     "requests": 3,
+     "cost_usd": 0.00273,
+     "tools_cost_usd": null
+    },
+    "turn_id": "48304c2adfb54d1ab780aa492a0875f1",
+    "conversation_id": "8780f6cc0e7c48f6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu mất thu nhập và vẫn giữ mức chi tháng 09/2026, khoản dự phòng 4,72 tỷ đồng đủ khoảng **52 tháng**, tức hơn 4 năm.\n\nCông thức: 4.720.000.000 ÷ 90.400.000 = 52,2 tháng.\n\nCon số này khác với \"đủ chi 3 năm\" trên trang Tổng quan. Tôi chưa biết hệ thống tính 3 năm dựa trên giả định nào, nên bạn nên hỏi lại đội ngũ hoặc kiểm tra trên trang Tổng quan.\n\nLưu ý thêm:\n- Mức chi 90,4 triệu là của một tháng, trong đó có 38,0 triệu trả nợ vay. Nếu chi thực tế khác, số tháng sẽ đổi.\n- Tôi chưa biết khoản 4,72 tỷ gồm những gì. Nếu một phần nằm ở tài sản khó rút nhanh, thời gian dùng thực tế sẽ ngắn hơn.\n- Dữ liệu dòng tiền là tháng 09/2026, lấy từ hệ thống.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257164.1806915,
+    "audit_seq": 660,
+    "session": {
+     "id": "8780f6cc0e7c48f6",
+     "title": "Quỹ dự phòng của tôi đủ chưa?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.685950269922614,
+   "first_event": 1.3584251259453595,
+   "usage": {
+    "cost": 0.00273,
+    "input": 22359,
+    "output": 989,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CXDH8KoNR9GZBpVfe1bd1K",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CXDH8KoNR9GZBpVfe1bd1K",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 57,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011c5saZ1ijmC5WqZQZPHu38",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011c5saZ1ijmC5WqZQZPHu38",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

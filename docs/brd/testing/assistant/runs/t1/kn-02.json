@@ -1,0 +1,500 @@
+{
+ "id": "kn-02",
+ "category": "knowledge",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Duration khi lãi suất tăng, và duration của tôi",
+ "why": "Advanced knowledge, then personal data the app may not hold.",
+ "brd": [
+  "OWN-AS-07",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Duration của trái phiếu ảnh hưởng thế nào tới giá khi lãi suất tăng 2%?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Danh mục trái phiếu của tôi có duration bao nhiêu?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Duration của trái phiếu ảnh hưởng thế nào tới giá khi lãi suất tăng 2%?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Ước tính % thay đổi giá trái phiếu duration 3 năm khi lãi suất tăng 2%: -3*0.02*100 = -6",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Ước tính % thay đổi giá trái phiếu duration 7 năm khi lãi suất tăng 2%: -7*0.02*100 = -14",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12573,
+     "output_tokens": 978,
+     "requests": 2,
+     "cost_usd": 0.001746,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3a81000685594e0ca8493760b6ddd666",
+    "conversation_id": "090711a7161a4134",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Duration** đo mức nhạy của giá trái phiếu với lãi suất. Công thức xấp xỉ:\n\n**% thay đổi giá ≈ −Duration × Δ lãi suất**\n\nVới lãi suất tăng 2 điểm phần trăm (0,02):\n\n- **Duration 3 năm:** −3 × 0,02 × 100 = **−6%**\n- **Duration 7 năm:** −7 × 0,02 × 100 = **−14%**\n\nDuration càng dài, giá trái phiếu càng giảm mạnh khi lãi suất tăng. Ngược lại, khi lãi suất giảm, giá tăng tương ứng.\n\nĐây là ước tính xấp xỉ tuyến tính, không phải dự báo. Với biến động lớn, kết quả thực tế có thể khác do độ lồi (convexity) và các yếu tố thị trường khác.\n\nNếu bạn muốn, tôi có thể chạy kịch bản \"lãi suất\" trên danh mục hiện có của bạn để xem tác động cụ thể.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257196.8166502,
+    "audit_seq": 668,
+    "session": {
+     "id": "090711a7161a4134",
+     "title": "Duration của trái phiếu ảnh hưởng thế nào tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.400087567046285,
+   "first_event": 3.51619734428823,
+   "usage": {
+    "cost": 0.001746,
+    "input": 12573,
+    "output": 978,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018uCGwNJoGekSsj1e4rRq4d",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RJ6BYfSDDvs7kASy7bRbjo",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018uCGwNJoGekSsj1e4rRq4d",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RJ6BYfSDDvs7kASy7bRbjo",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Danh mục trái phiếu của tôi có duration bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok"
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok"
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "3 kết quả cho “trái phiếu”: Trái phiếu TCB12401 (Techcombank); Quỹ trái phiếu TCBF; Trái phiếu SMR12501 (BĐS Sao Mai (mock)).",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Trái phiếu TCB12401 (Techcombank)",
+         "sub": "Trái phiếu",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Quỹ trái phiếu TCBF",
+         "sub": "Chứng chỉ quỹ",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Trái phiếu SMR12501 (BĐS Sao Mai (mock))",
+         "sub": "Trái phiếu",
+         "route": "#/client/tai-san"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “duration” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Đồ thị tác động] Tin nào chạm tới tiền của bạn, qua đường nào, tới mục tiêu nào — đọc từ trái sang phải qua bảy cột: Tin, Sự kiện, Kịch bản, Yếu tố, Tài sản, Gia đình, Mục tiêu. Bấm một nút để làm sáng đường đi của nó; bấm lần nữa hoặc “Bỏ chọn” để bỏ. Chọn một sự kiện mở bảng tác động: hướng, kịch bản chính, các nhóm tài sản và mục tiêu trước → sau. Có nút chuyển “Đồ thị / Danh sách” và bộ lọc theo loại. [Kế hoạch] Cố vấn kế hoạch tài sản: các chỉ số tổng (tài sản ròng, lãi / lỗ danh mục, mục tiêu đã đủ tiền, dòng tiền ròng 12 tháng), số cần so với số có cho từng mục tiêu và số tiền cần để dành mỗi tháng. - Mục tiêu cuộc sống: nhóm theo gia đình và con cái, tích lũy, hưu trí và chuyển giao, quỹ dự phòng, quyết định và kịch bản căng thẳng. Chọn một mục để xem trạng thái (cần / có / thiếu), theo dõi so với dự kiến, Việc cần làm xếp theo thứ tự, Chi tiết tính toán (sửa giả định rồi Chạy lại, bảng trước / sau) và phương án nhẹ / mạnh. - Gửi chuyên gia duyệt: gửi một việc hay phương án tới RM; theo dõi ở tran [Chi tiết] Bảng tổng quan đầy đủ: tài sản ròng (tài sản, nợ, ngày số liệu) và tài sản theo nguồn dữ liệu; phân bổ tài sản; lãi / lỗ danh mục (đã thực hiện, chưa thực hiện, lợi nhuận từ đầu năm so với VN-Index); rủi ro (mức sụt giảm chấp nhận so với ước tính khi căng thẳng, cảnh báo tập trung); thanh khoản dự phòng; dòng tiền 6 tháng qua và dự báo 12/24/36 tháng với các khoản chi lớn; các tin chính sách nổi bật. Chưa làm bài kiểm tra rủi ro thì ngưỡng lấy theo hồ sơ. [Thanh khoản dự phòng] Cách tính Thanh khoản dự phòng: Thanh khoản = tiền mặt + tiền gửi + quỹ thị trường tiền tệ và quỹ trái phiếu rút được ngay + trái phiếu chính phủ: tiền có được trong vài ngày.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Đồ thị tác động",
+       "Hướng dẫn sử dụng · Kế hoạch",
+       "Hướng dẫn sử dụng · Chi tiết",
+       "Cách tính · Thanh khoản dự phòng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Đồ thị tác động",
+       "route": "#/client/tin/do-thi"
+      }
+     },
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản Chạy lại khủng hoảng trái phiếu DN 2022: tài sản ròng 43,53 tỷ → 40,11 tỷ (−3,42 tỷ, −7,8%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "Chạy lại khủng hoảng trái phiếu DN 2022",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "43,53 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "40,11 tỷ",
+         "sub": "−3,42 tỷ · −7,8%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "4,72 tỷ",
+         "sub": "41 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Căn hộ Thảo Điền: -720 triệu",
+        "Ảnh hưởng nhiều: Cổ phiếu FPT: -504 triệu",
+        "Ảnh hưởng nhiều: Đất Long Thành (tự khai): -450 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 48692,
+     "output_tokens": 1380,
+     "requests": 6,
+     "cost_usd": 0.005559,
+     "tools_cost_usd": null
+    },
+    "turn_id": "beeea6d9cb0545d68846090a0b57ce37",
+    "conversation_id": "090711a7161a4134",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống hiện **không có chỉ số duration** cho danh mục trái phiếu của bạn, nên tôi không thể cho con số đó.\n\nNhững gì tôi tìm được (số liệu ngày 2026-10-09, trang Tổng quan):\n\n- Trái phiếu chiếm **3%** tổng tài sản 45,97 tỷ, tức khoảng 1,38 tỷ. Đây là phép tính từ tỷ trọng, không phải số ghi nhận trực tiếp.\n- Các khoản trái phiếu đang có: Trái phiếu TCB12401 (Techcombank), Quỹ trái phiếu TCBF, và Trái phiếu SMR12501 (BĐS Sao Mai, dữ liệu mô phỏng).\n- Kịch bản \"khủng hoảng trái phiếu DN 2022\" (mô phỏng, không phải dự báo): tài sản ròng giảm từ 43,53 tỷ xuống 40,11 tỷ (−7,8%), vẫn trong ngưỡng chấp nhận 8%.\n\nĐể có duration cho từng khoản, bạn có thể xem thông tin chi tiết từng trái phiếu ở trang Tài sản, hoặc nhờ RM kiểm tra. Nếu có duration từng khoản, tôi có thể tính mức ảnh hưởng khi lãi suất tăng 2% theo công thức như trước.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Đồ thị tác động",
+      "route": "#/client/tin/do-thi"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn",
+     "Hướng dẫn sử dụng · Đồ thị tác động",
+     "Hướng dẫn sử dụng · Kế hoạch",
+     "Hướng dẫn sử dụng · Chi tiết",
+     "Cách tính · Thanh khoản dự phòng",
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Kịch bản lãi suất tăng",
+     "Kịch bản bất động sản đóng băng",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257211.7304165,
+    "audit_seq": 669,
+    "session": {
+     "id": "090711a7161a4134",
+     "title": "Duration của trái phiếu ảnh hưởng thế nào tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 14.87889591511339,
+   "first_event": 1.6899164081551135,
+   "usage": {
+    "cost": 0.005559,
+    "input": 48692,
+    "output": 1380,
+    "requests": 6
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KU18tzWE7XhuAL3VVRoZzL",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KU18tzWE7XhuAL3VVRoZzL",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 78,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Vg8BkkQgzu2g7muoB2Bj9x",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Vg8BkkQgzu2g7muoB2Bj9x",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 95,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VZc6mx2Wm9SEB7DqwzogKr",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VZc6mx2Wm9SEB7DqwzogKr",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 94,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Wa3Gi4eTjWpvBarNGj53mz",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Wa3Gi4eTjWpvBarNGj53mz",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 84,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01TYTZ8tLEmn4Ar7nMFKwSzy",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:bond_crisis"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01TYTZ8tLEmn4Ar7nMFKwSzy",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 78,
+     "focus": [
+      "scenario:bond_crisis"
+     ],
+     "scenario": {
+      "id": "bond_crisis",
+      "effect": -3416425000.0
+     }
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

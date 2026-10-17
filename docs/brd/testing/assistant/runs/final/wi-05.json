@@ -1,0 +1,376 @@
+{
+ "id": "wi-05",
+ "category": "what_if",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Lạm phát 8%",
+ "why": "No inflation scenario exists: honest, with what can be said.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi sẽ thế nào?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi sẽ thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "3 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 2,10 tỷ (55 tuổi), có 19,18 tỷ (dự kiến có lúc 55 tuổi), dư 17,08 tỷ, dòng tiền dư −3,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 400,0 triệu (dự phòng sẵn), có 10,86 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 10,46 tỷ, dòng tiền dư −3,0 triệu/tháng; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ, cần 3,00 tỷ (trong 12 tháng), có 10,86 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 7,86 tỷ, dòng tiền dư −3,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 2,10 tỷ · có 19,18 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 400,0 triệu · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 29,20 tỷ (60%), Tiền & tiền gửi 8,50 tỷ (18%), Trái phiếu 5,08 tỷ (11%), Vàng 3,00 tỷ (6%), Chứng chỉ quỹ 2,60 tỷ (5%), Bảo hiểm 0,0 triệu (0%). Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm theo mức chi 40,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,64 tỷ; lớn nhất: Nhà phố Quận 3 (đang ở) −1,80 tỷ (sốc 10%); Căn hộ Võ Văn Tần (cho thuê) −1,12 tỷ (sốc 10%); Vàng miếng SJC −300,0 triệu (sốc 10%); Trái phiếu TCB12401 (Techcombank) −161,9 triệu (sốc 8%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "6 yếu tố đang tác động: 5 rủi ro, 1 cơ hội; tổng ước tính −943,6 triệu. Lớn nhất: Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán — Nếu bán Căn hộ Võ Văn Tần (cho thuê): thuế cũ 224 triệu, cách tính mới 1,64 tỷ — tốn thêm 1,42 tỷ. Thời điểm bán trước hay sau khi luật có hiệu lực tạo ra chênh lệch này. Từng yếu tố: Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán (chính sách, đang lấy ý kiến / dự kiến) −708,0 triệu; Chính sách quản lý vàng miếng (chính sách, đã thông qua / đã diễn ra) −162,0 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −69,5 triệu; Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh (chính sách, đã thông qua / đã diễn ra) +14,6 triệu; Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định) (chính sách, dự thảo) −9,7 triệu; Thuế với người sở hữu từ 2 bất động sản trở lên (chính sách, dự thảo) −9,0 triệu.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán",
+         "sub": "−708,0 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "bad"
+        },
+        {
+         "title": "Chính sách quản lý vàng miếng",
+         "sub": "−162,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "warn"
+        },
+        {
+         "title": "Lãi suất điều hành tăng 0,5%",
+         "sub": "−69,5 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh",
+         "sub": "+14,6 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "good"
+        },
+        {
+         "title": "Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định)",
+         "sub": "−9,7 triệu · Dự thảo",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+       "Kịch bản giả định cho demo",
+       "Nghị định sửa đổi Nghị định 24/2012 về quản lý kinh doanh vàng (cần kiểm tra)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Giá trị thực của 19,18 tỷ (mục tiêu nghỉ hưu) sau 10 năm lạm phát 8%/năm, tính theo tiền hôm nay: 19184000000/1.08**10 = 8.885.903.875",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Nhu cầu 2,10 tỷ quy ra tiền 10 năm sau nếu lạm phát 8%/năm: 2100000000*1.08**10 = 4.533.742.494",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 47263,
+     "output_tokens": 2269,
+     "requests": 5,
+     "cost_usd": 0.005861,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b268309350c940318cfa673bf770ae5b",
+    "conversation_id": "148b1cf90b9a4fc6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu lạm phát là 8%/năm, mục tiêu nghỉ hưu sớm vẫn đủ, nhưng sức mua của khoản tiền đó giảm mạnh. Tôi giả định 10 năm nữa (mốc 55 tuổi chưa có trong dữ liệu, bạn cho tôi biết nếu khác).\n\n- **Nhu cầu 2,10 tỷ** (tiền hôm nay) sẽ thành khoảng **4,53 tỷ** sau 10 năm: 2100000000 × 1,08^10.\n- **Dự kiến 19,18 tỷ** chỉ còn sức mua khoảng **8,89 tỷ** theo tiền hôm nay: 19184000000 ÷ 1,08^10.\n\nVẫn đủ, nhưng phần dư 17,08 tỷ sẽ mỏng đi đáng kể. Con số 19,18 tỷ là dự kiến từ mục tiêu, không tính thêm lợi nhuận đầu tư, nên đây là ước tính, không phải dự báo.\n\nNguồn: trang Mục tiêu (dữ liệu ngày 2026-10-09). Nếu bạn muốn, tôi có thể chạy thêm kịch bản lãi suất hoặc thu nhập.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+     "Kịch bản giả định cho demo",
+     "Nghị định sửa đổi Nghị định 24/2012 về quản lý kinh doanh vàng (cần kiểm tra)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263418.612627,
+    "audit_seq": 1445,
+    "session": {
+     "id": "148b1cf90b9a4fc6",
+     "title": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 15.624890685081482,
+   "first_event": 1.9122741599567235,
+   "usage": {
+    "cost": 0.005861,
+    "input": 47263,
+    "output": 2269,
+    "requests": 5
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QoespZvxrnQz6m4LpyTSfM",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HPMTsspYWRs1Wc3WtLZfkb",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QoespZvxrnQz6m4LpyTSfM",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 200,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HPMTsspYWRs1Wc3WtLZfkb",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 200,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01XcJfGdqZoUWt1G5eWY3DLq",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01XcJfGdqZoUWt1G5eWY3DLq",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 127,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PTTqCsKK6urfJ1Cz47TnPR",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PTTqCsKK6urfJ1Cz47TnPR",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01FbyVaqpmvZh3PM8cKgpaQH",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01FbyVaqpmvZh3PM8cKgpaQH",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

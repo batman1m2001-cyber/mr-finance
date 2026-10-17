@@ -1,0 +1,300 @@
+{
+ "id": "pf-06",
+ "category": "personal_finance",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Quỹ dự phòng và nếu mất việc",
+ "why": "Liquidity in months, then an income-loss what-if.",
+ "brd": [
+  "BRIEF-DASH-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Quỹ dự phòng của tôi đủ chưa?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "says": "tháng"
+   }
+  },
+  {
+   "say": "Nếu tôi mất việc thì sống được bao lâu với khoản đó?",
+   "expect": {
+    "says": "tháng"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Quỹ dự phòng của tôi đủ chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số tháng chi được từ thanh khoản dự phòng: 4720000000/115000000 = 41,04",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24956,
+     "output_tokens": 953,
+     "requests": 3,
+     "cost_usd": 0.002972,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c6c4edf6635c4e2bae63447909b0e2c0",
+    "conversation_id": "5d7f5f21d8174a61",
+    "compacted": false,
+    "status": "ok",
+    "text": "Về thanh khoản, quỹ dự phòng của bạn **tương đối đủ**. Theo số liệu ngày 09/10/2026 (trang Tổng quan):\n\n- Thanh khoản dự phòng: **4,72 tỷ**, đủ chi khoảng **41 tháng** (~3,4 năm) theo mức chi 115 triệu/tháng trong hồ sơ. Phép tính: 4.720.000.000 / 115.000.000 = 41,04 tháng.\n\nTuy nhiên, khi thị trường xấu, mức sụt giảm ước tính là **11,8%**, vượt ngưỡng 8%. Phần lớn rủi ro nằm ở bất động sản: đất nền Long Thành chiếm 39,2% tài sản, vượt ngưỡng 35%.\n\nĐây là số ghi nhận từ hệ thống và ước tính theo mô phỏng, không phải dự báo. Nếu muốn, tôi có thể chạy kịch bản bất động sản đóng băng hoặc lãi suất tăng để xem quỹ dự phòng chịu được đến đâu.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263142.08563,
+    "audit_seq": 1383,
+    "session": {
+     "id": "5d7f5f21d8174a61",
+     "title": "Quỹ dự phòng của tôi đủ chưa?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.947275233920664,
+   "first_event": 1.7927559199742973,
+   "usage": {
+    "cost": 0.002972,
+    "input": 24956,
+    "output": 953,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016BAeAjvX1DpTS8e1FGA8Yo",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016BAeAjvX1DpTS8e1FGA8Yo",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 118,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HdaLWuJFVgGm4QiPTsYamR",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HdaLWuJFVgGm4QiPTsYamR",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Nếu tôi mất việc thì sống được bao lâu với khoản đó?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9192,
+     "output_tokens": 706,
+     "requests": 1,
+     "cost_usd": 0.001272,
+     "tools_cost_usd": null
+    },
+    "turn_id": "33b4581e6505499b99a321bd2fab33b0",
+    "conversation_id": "5d7f5f21d8174a61",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu mất việc và chi tiêu giữ như hồ sơ, khoản dự phòng **4,72 tỷ** đủ khoảng **41 tháng (gần 3,5 năm)**.\n\nPhép tính: 4.720.000.000 / 115.000.000 = 41,04 tháng, dùng mức chi 115 triệu/tháng trong hồ sơ, số liệu ngày 09/10/2026 từ trang Tổng quan.\n\nCon số này giả định bạn không có thu nhập nào trong thời gian đó và không cắt giảm chi tiêu. Nếu giảm chi tiêu, thời gian sẽ dài hơn. Ngược lại, nếu có khoản chi phát sinh lớn, thời gian sẽ ngắn hơn. Đây là ước tính theo mức chi trong hồ sơ, không phải dự báo.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263147.5144591,
+    "audit_seq": 1384,
+    "session": {
+     "id": "5d7f5f21d8174a61",
+     "title": "Quỹ dự phòng của tôi đủ chưa?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.38501541595906,
+   "first_event": 4.016695397906005,
+   "usage": {
+    "cost": 0.001272,
+    "input": 9192,
+    "output": 706,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  }
+ ]
+}

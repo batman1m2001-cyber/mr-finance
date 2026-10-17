@@ -1,0 +1,309 @@
+{
+ "id": "wi-04",
+ "category": "what_if",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Nhà đất giảm 20%, rồi 40%",
+ "why": "A property shock, then a size no scenario offers.",
+ "brd": [
+  "BRIEF-SCEN-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra sao?",
+   "expect": {
+    "tools_any": [
+     "kich_ban",
+     "so_sanh_kich_ban"
+    ]
+   }
+  },
+  {
+   "say": "Thế nếu giảm tới 40% thì sao?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: giá nhà đất −20%. Kịch bản của bạn: tài sản ròng 95,30 tỷ → 86,22 tỷ (−9,08 tỷ). Mục tiêu: Học phí cho con (trong nước / du học) đúng tiến độ (giữ nguyên); Mua thêm BĐS bằng vốn vay cần chú ý (giữ nguyên); Chuyển giao tài sản cho con đúng tiến độ (giữ nguyên); Doanh nghiệp cần vốn gấp đúng tiến độ (giữ nguyên); Định cư / con đi du học đúng tiến độ (giữ nguyên); Cưới hỏi / hỗ trợ con mua nhà đúng tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "−9,08 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "class:real_estate"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14986,
+     "output_tokens": 510,
+     "requests": 2,
+     "cost_usd": 0.001754,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e650a71d69564ff39f5c41c841c2619a",
+    "conversation_id": "4b603937d289471b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu giá nhà đất giảm 20%, tài sản ròng của bạn ước giảm khoảng 9,08 tỷ đồng, từ 95,30 tỷ xuống còn khoảng 86,22 tỷ.\n\n- Đây là mô phỏng trên các khoản hiện có, không phải dự báo.\n- Các mục tiêu học phí, chuyển giao tài sản, kinh doanh, định cư và cưới hỏi vẫn đúng tiến độ.\n- Mục tiêu **mua thêm bất động sản bằng vốn vay** chuyển sang \"cần chú ý\".\n\nSố liệu nền lấy từ kịch bản mô phỏng ngày 2026-10-09.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "class:real_estate"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792259552.5858207,
+    "audit_seq": 931,
+    "session": {
+     "id": "4b603937d289471b",
+     "title": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.632638548035175,
+   "first_event": 1.7057932019233704,
+   "usage": {
+    "cost": 0.001754,
+    "input": 14986,
+    "output": 510,
+    "requests": 2
+   },
+   "why": [
+    "called none of ['kich_ban', 'so_sanh_kich_ban']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_015Kp6E1Q3L22RKYPLBrR4iL",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_015Kp6E1Q3L22RKYPLBrR4iL",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 117,
+     "focus": [
+      "scenario:custom",
+      "class:real_estate"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Thế nếu giảm tới 40% thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: giá nhà đất −40%. Kịch bản của bạn: tài sản ròng 95,30 tỷ → 77,14 tỷ (−18,16 tỷ). Mục tiêu: Học phí cho con (trong nước / du học) đúng tiến độ (giữ nguyên); Mua thêm BĐS bằng vốn vay cần chú ý (giữ nguyên); Chuyển giao tài sản cho con đúng tiến độ (giữ nguyên); Doanh nghiệp cần vốn gấp đúng tiến độ (giữ nguyên); Định cư / con đi du học đúng tiến độ (giữ nguyên); Cưới hỏi / hỗ trợ con mua nhà đúng tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "−18,16 tỷ"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom",
+       "class:real_estate"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16960,
+     "output_tokens": 350,
+     "requests": 2,
+     "cost_usd": 0.001871,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7f75553952f4455a993caebe290096a3",
+    "conversation_id": "4b603937d289471b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu giá nhà đất giảm 40%, tài sản ròng ước giảm khoảng 18,16 tỷ đồng, từ 95,30 tỷ xuống còn khoảng 77,14 tỷ.\n\n- Mục tiêu **mua thêm bất động sản bằng vốn vay** vẫn ở mức \"cần chú ý\".\n- Các mục tiêu còn lại (học phí, chuyển giao tài sản, kinh doanh, định cư, cưới hỏi) vẫn đúng tiến độ.\n- Đây là mô phỏng trên các khoản hiện có, không phải dự báo. Số nền lấy từ ngày 2026-10-09.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom",
+     "class:real_estate"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792259556.300784,
+    "audit_seq": 932,
+    "session": {
+     "id": "4b603937d289471b",
+     "title": "Nếu giá nhà đất giảm 20% thì tài sản của tôi ra…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.6812510127201676,
+   "first_event": 1.3963513947091997,
+   "usage": {
+    "cost": 0.001871,
+    "input": 16960,
+    "output": 350,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Wxmsti8Q7h36bhCResAnj2",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Wxmsti8Q7h36bhCResAnj2",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 111,
+     "focus": [
+      "scenario:custom",
+      "class:real_estate"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

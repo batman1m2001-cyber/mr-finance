@@ -1,0 +1,161 @@
+{
+ "id": "oos-05",
+ "category": "out_of_scope",
+ "persona": "founder trẻ (C03)",
+ "client_id": "C03",
+ "title": "Lãi suất tiết kiệm các ngân hàng",
+ "why": "Market data outside the app: web search, sources, a date.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở mấy ngân hàng lớn hiện nay.",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "sourced": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở mấy ngân hàng lớn hiện nay.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, tại quầy kỳ hạn 1 tháng, Vietcombank ghi nhận mức 2,10%/năm, HDBank 3,5%/năm và ACB 4,0%/năm, còn Agribank là 2,6%/năm. Gửi online cùng kỳ hạn cho lãi cao hơn: HDBank áp dụng 4,2%/năm, ACB từ",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://vietnambiz.vn/lai-suat-ngan-hang-hom-nay-1610-agribank-cao-nhat-68nam-hdbank-tiep-tuc-dan-dau-20261016111851564.htm"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0125226
+     },
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, lãi suất tiết kiệm quầy kỳ hạn 1 tháng là Agribank 2,6%/năm, Vietcombank 2,1%/năm và VietinBank 2,1%/năm, còn Techcombank 4,40%. Ở kênh online kỳ hạn 1 tháng, Agribank 4,75%, Techcombank 4,5%/năm, VietinBank 4,8%/năm (theo bảng cập nhật online), còn Vietcombank 2,1%/năm. Riêng VietinBank online có nguồn ghi 2,10, nên số liệu này chưa thống nhất. Kỳ hạn dài hơn (12 tháng trở lên) thì Agribank, Vietcombank và VietinBank cùng ở mức khoảng 5,9–6%/năm tại quầy.\n\nMức độ chắc chắn: trung bình. Các nguồn được cập nhật trong vài ngày gần đây và khớp nhau ở lãi suất quầy, nhưng số liệu online của VietinBank và Vietcombank mâu thuẫn giữa các trang nên bạn nên kiểm tra trực tiếp trên app hoặc website ngân hàng.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://vietnambiz.vn/lai-suat-ngan-hang-hom-nay-1610-agribank-cao-nhat-68nam-hdbank-tiep-tuc-dan-dau-20261016111851564.htm",
+       "https://techcombank.com/thong-tin/blog/lai-suat-tiet-kiem",
+       "https://24hmoney.vn/lai-suat-gui-ngan-hang/agribank",
+       "https://cake.vn/tin-tuc/tai-chinh/lai-suat-gui-tiet-kiem-ngan-hang-nao-cao-nhat"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0234208
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24196,
+     "output_tokens": 729,
+     "requests": 3,
+     "cost_usd": 0.038727,
+     "tools_cost_usd": 0.035943
+    },
+    "turn_id": "e65a73a91a904841a4156f1ced876f2c",
+    "conversation_id": "2e0afa95d5ea43f6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa có bảng lãi suất 12 tháng đáng tin cho từng ngân hàng. Kết quả tìm được chủ yếu là kỳ hạn 1 tháng, và các nguồn mâu thuẫn nhau ở một số mức.\n\nThông tin 12 tháng duy nhất tôi có: tại quầy, Agribank, Vietcombank và VietinBank cùng ở khoảng 5,9–6%/năm. Tôi chưa có số 12 tháng của BIDV, ACB, HDBank hay Techcombank nên không so sánh được đầy đủ.\n\nĐộ chắc chắn: trung bình. Bạn nên xem trực tiếp bảng lãi suất trên app hoặc website của từng ngân hàng trước khi gửi, vì lãi suất thay đổi thường xuyên và kênh online thường khác quầy.",
+    "citations": [],
+    "sources": [
+     "https://vietnambiz.vn/lai-suat-ngan-hang-hom-nay-1610-agribank-cao-nhat-68nam-hdbank-tiep-tuc-dan-dau-20261016111851564.htm",
+     "https://techcombank.com/thong-tin/blog/lai-suat-tiet-kiem",
+     "https://24hmoney.vn/lai-suat-gui-ngan-hang/agribank",
+     "https://cake.vn/tin-tuc/tai-chinh/lai-suat-gui-tiet-kiem-ngan-hang-nao-cao-nhat"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263709.6398976,
+    "audit_seq": 1537,
+    "session": {
+     "id": "2e0afa95d5ea43f6",
+     "title": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 29.352754508145154,
+   "first_event": 1.7340598911978304,
+   "usage": {
+    "cost": 0.07467,
+    "input": 24196,
+    "output": 729,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01DuTraGZ58egz5ioHzKsxNr",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01DuTraGZ58egz5ioHzKsxNr",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 12319,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0166iwzWsJoTaheRgrs2eRAH",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0166iwzWsJoTaheRgrs2eRAH",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 10934,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,207 @@
+{
+ "id": "act-07",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Bật kịch bản trên đồ thị",
+ "why": "No tool turns a scenario on: say so, and still be useful.",
+ "brd": [
+  "OWN-AS-08",
+  "OWN-GW-47"
+ ],
+ "turns": [
+  {
+   "say": "Bật kịch bản lãi suất tăng 2% trên đồ thị giúp tôi.",
+   "expect": {
+    "no_write": true,
+    "says": "không|chưa|bấm|nút|tự"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Bật kịch bản lãi suất tăng 2% trên đồ thị giúp tôi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "kich_ban",
+      "label": "Kịch bản",
+      "status": "ok",
+      "text": "Kịch bản Lãi suất tăng 2%: tài sản ròng 43,53 tỷ → 41,31 tỷ (−2,22 tỷ, −5,1%); so với ngưỡng chấp nhận: 8% — trong ngưỡng. Đây là mô phỏng trên tài sản hiện có, không phải dự báo.",
+      "card": {
+       "kind": "figures",
+       "title": "Lãi suất tăng 2%",
+       "items": [
+        {
+         "label": "Trước",
+         "value": "43,53 tỷ"
+        },
+        {
+         "label": "Sau cú sốc",
+         "value": "41,31 tỷ",
+         "sub": "−2,22 tỷ · −5,1%",
+         "tone": "bad"
+        },
+        {
+         "label": "Thanh khoản sau",
+         "value": "4,72 tỷ",
+         "sub": "41 tháng chi tiêu"
+        }
+       ],
+       "notes": [
+        "Ảnh hưởng nhiều: Căn hộ Thảo Điền: -720 triệu",
+        "Ảnh hưởng nhiều: Đất Long Thành (tự khai): -450 triệu",
+        "Ảnh hưởng nhiều: Đất Long Thành (tự khai): -450 triệu"
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Đồ thị tác động.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/client/tin/do-thi",
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15682,
+     "output_tokens": 958,
+     "requests": 2,
+     "cost_usd": 0.002047,
+     "tools_cost_usd": null
+    },
+    "turn_id": "2c3bd12a564f484590246fc964fcbf29",
+    "conversation_id": "61b79f0c53074ab0",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đã chạy kịch bản lãi suất tăng 2% và mở trang Đồ thị tác động. Tôi chưa xác nhận được công tắc kịch bản đã bật trên đồ thị hay chưa, nên bạn kiểm tra lại trên trang đó giúp tôi.\n\nKết quả mô phỏng (ngày 09/10/2026, lấy từ trang Kế hoạch):\n- Tài sản ròng: 43,53 tỷ → 41,31 tỷ\n- Giảm 2,22 tỷ (−5,1%)\n- Mức này nằm trong ngưỡng chấp nhận 8%\n\nĐây là ước tính trên các khoản hiện có, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Mô phỏng kịch bản trên các khoản hiện có (trang Kế hoạch)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [],
+    "navigate": "#/client/tin/do-thi",
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263531.5678856,
+    "audit_seq": 1483,
+    "session": {
+     "id": "61b79f0c53074ab0",
+     "title": "Bật kịch bản lãi suất tăng 2% trên đồ thị giúp…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.237269517965615,
+   "first_event": 2.9652283992618322,
+   "usage": {
+    "cost": 0.002047,
+    "input": 15682,
+    "output": 958,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QxFooqqrQKCyQhPyVsDpmV",
+     "tool": "kich_ban",
+     "label": "Kịch bản",
+     "nodes": [
+      "SC:rates_up"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01H59yquiWRnxR1WU8t11aBE",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01H59yquiWRnxR1WU8t11aBE",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 24,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QxFooqqrQKCyQhPyVsDpmV",
+     "tool": "kich_ban",
+     "ok": true,
+     "ms": 122,
+     "focus": [
+      "scenario:rates_up"
+     ],
+     "scenario": {
+      "id": "rates_up",
+      "effect": -2219276000.0
+     }
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  }
+ ]
+}

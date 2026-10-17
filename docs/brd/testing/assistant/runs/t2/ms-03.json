@@ -1,0 +1,129 @@
+{
+ "id": "ms-03",
+ "category": "memory_sessions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Lần trước tôi hỏi gì",
+ "why": "Session history: search and read back, nothing invented.",
+ "brd": [
+  "OWN-AS-13",
+  "OWN-SS-03"
+ ],
+ "turns": [
+  {
+   "say": "Lần trước tôi đã hỏi bạn về kịch bản gì?",
+   "expect": {
+    "tools_any": [
+     "tim_lich_su",
+     "doc_lai_phien"
+    ],
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Lần trước tôi đã hỏi bạn về kịch bản gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_lich_su",
+      "label": "Tìm lịch sử",
+      "status": "ok",
+      "text": "8 chỗ trong các cuộc trò chuyện trước: 1) “Lần trước tôi đã hỏi bạn về kịch bản gì?”, bạn: …Lần trước tôi đã hỏi bạn về kịch bản gì?… 2) “Bật kịch bản lãi suất tăng 2% trên đồ thị giúp…”, bạn: …Bật kịch bản lãi suất tăng 2% trên đồ thị giúp tôi.… 3) “Bật kịch bản lãi suất tăng 2% trên đồ thị giúp…”, trợ lý: …Tôi đã chạy kịch bản lãi vay thả nổi tăng 2 điểm % mỗi năm và mở trang Đồ thị tài chính. Tôi chưa xác nhận được công tắc kịch bản đã bật trên đồ thị, nê… 4) “Gửi cho RM phương án giảm tỷ trọng cổ phiếu…”, trợ lý: …ẹ hay mạnh vì bạn không nêu. Hệ thống gửi theo mặc định của kịch bản cổ phiếu. Nếu bạn muốn gửi đúng phương án nhẹ hoặc mạnh, tôi có thể gửi thêm một phương án. Bạn cũng có thể xem trạng thái ở mục Đề…",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14641,
+     "output_tokens": 640,
+     "requests": 2,
+     "cost_usd": 0.001784,
+     "tools_cost_usd": null
+    },
+    "turn_id": "03d13ae8749a422b978b5828bb99d86d",
+    "conversation_id": "7f3b8eafb444447f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo lịch sử trò chuyện, lần trước bạn hỏi về **kịch bản lãi suất tăng 2%**. Tôi đã chạy kịch bản lãi vay thả nổi tăng 2 điểm % mỗi năm và mở trang Đồ thị tài chính. Lúc đó tôi chưa xác nhận được công tắc kịch bản đã bật trên đồ thị.\n\nTrước đó, bạn cũng đã nhờ gửi cho RM phương án giảm tỷ trọng cổ phiếu. Khi đó bạn chưa chọn phương án nhẹ hay mạnh, nên hệ thống gửi theo mặc định của kịch bản cổ phiếu.\n\nBạn muốn tôi chạy lại kịch bản lãi suất hoặc xem tác động của nó lên tài sản hiện tại không?",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259713.969474,
+    "audit_seq": 986,
+    "session": {
+     "id": "7f3b8eafb444447f",
+     "title": "Lần trước tôi đã hỏi bạn về kịch bản gì?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.889483954291791,
+   "first_event": 1.4052146980538964,
+   "usage": {
+    "cost": 0.001784,
+    "input": 14641,
+    "output": 640,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0145SmMhYjkGyV6y2Z1MCac6",
+     "tool": "tim_lich_su",
+     "label": "Tìm lịch sử",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0145SmMhYjkGyV6y2Z1MCac6",
+     "tool": "tim_lich_su",
+     "ok": true,
+     "ms": 57,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,834 @@
+{
+ "tag": "t1",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.506459,
+ "conversations": [
+  {
+   "id": "nav-01",
+   "category": "navigation",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "does not say /tài sản ròng/"
+     ]
+    ],
+    [
+     2,
+     [
+      "does not say /giả định|ước tính/"
+     ]
+    ]
+   ],
+   "cost": 0.004286,
+   "seconds": 12.0,
+   "tokens": 38049
+  },
+  {
+   "id": "nav-02",
+   "category": "navigation",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00475,
+   "seconds": 12.6,
+   "tokens": 41063
+  },
+  {
+   "id": "nav-03",
+   "category": "navigation",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003052,
+   "seconds": 9.1,
+   "tokens": 27118
+  },
+  {
+   "id": "nav-04",
+   "category": "navigation",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003503,
+   "seconds": 9.3,
+   "tokens": 30865
+  },
+  {
+   "id": "nav-05",
+   "category": "navigation",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003634,
+   "seconds": 11.0,
+   "tokens": 31700
+  },
+  {
+   "id": "nav-06",
+   "category": "navigation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001541,
+   "seconds": 4.6,
+   "tokens": 13291
+  },
+  {
+   "id": "pf-01",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003932,
+   "seconds": 9.5,
+   "tokens": 35232
+  },
+  {
+   "id": "pf-02",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.008128,
+   "seconds": 25.8,
+   "tokens": 67317
+  },
+  {
+   "id": "pf-03",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004495,
+   "seconds": 15.5,
+   "tokens": 36890
+  },
+  {
+   "id": "pf-04",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "numbers not from the tools or the person: ['20%', '265 triệu']"
+     ]
+    ]
+   ],
+   "cost": 0.003978,
+   "seconds": 13.3,
+   "tokens": 31188
+  },
+  {
+   "id": "pf-05",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003923,
+   "seconds": 10.5,
+   "tokens": 34761
+  },
+  {
+   "id": "pf-06",
+   "category": "personal_finance",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004361,
+   "seconds": 13.0,
+   "tokens": 36914
+  },
+  {
+   "id": "pf-07",
+   "category": "personal_finance",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00168,
+   "seconds": 5.6,
+   "tokens": 13477
+  },
+  {
+   "id": "kn-01",
+   "category": "knowledge",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004602,
+   "seconds": 20.5,
+   "tokens": 31150
+  },
+  {
+   "id": "kn-02",
+   "category": "knowledge",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.007305,
+   "seconds": 21.4,
+   "tokens": 63623
+  },
+  {
+   "id": "kn-03",
+   "category": "knowledge",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001416,
+   "seconds": 4.0,
+   "tokens": 12711
+  },
+  {
+   "id": "kn-04",
+   "category": "knowledge",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.047293,
+   "seconds": 15.5,
+   "tokens": 13490
+  },
+  {
+   "id": "kn-05",
+   "category": "knowledge",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.050316,
+   "seconds": 23.2,
+   "tokens": 37915
+  },
+  {
+   "id": "kn-06",
+   "category": "knowledge",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003479,
+   "seconds": 11.5,
+   "tokens": 28640
+  },
+  {
+   "id": "nw-01",
+   "category": "news",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005507,
+   "seconds": 17.7,
+   "tokens": 44474
+  },
+  {
+   "id": "nw-02",
+   "category": "news",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "numbers not from the tools or the person: ['−0,07 triệu']"
+     ]
+    ]
+   ],
+   "cost": 0.00187,
+   "seconds": 6.3,
+   "tokens": 14586
+  },
+  {
+   "id": "nw-03",
+   "category": "news",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002811,
+   "seconds": 10.2,
+   "tokens": 22111
+  },
+  {
+   "id": "nw-04",
+   "category": "news",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005673,
+   "seconds": 17.5,
+   "tokens": 47510
+  },
+  {
+   "id": "nw-05",
+   "category": "news",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.048156,
+   "seconds": 15.1,
+   "tokens": 13680
+  },
+  {
+   "id": "gl-01",
+   "category": "goals",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     3,
+     [
+      "does not say /triệu/"
+     ]
+    ]
+   ],
+   "cost": 0.007259,
+   "seconds": 21.7,
+   "tokens": 61947
+  },
+  {
+   "id": "gl-02",
+   "category": "goals",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.008376,
+   "seconds": 31.2,
+   "tokens": 62761
+  },
+  {
+   "id": "gl-03",
+   "category": "goals",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005491,
+   "seconds": 19.6,
+   "tokens": 43994
+  },
+  {
+   "id": "gl-04",
+   "category": "goals",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004172,
+   "seconds": 17.3,
+   "tokens": 30701
+  },
+  {
+   "id": "gl-05",
+   "category": "goals",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003855,
+   "seconds": 14.5,
+   "tokens": 29785
+  },
+  {
+   "id": "wi-01",
+   "category": "what_if",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005773,
+   "seconds": 18.2,
+   "tokens": 48957
+  },
+  {
+   "id": "wi-02",
+   "category": "what_if",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "numbers not from the tools or the person: ['−1,62 tỷ', '−1,97 tỷ', '−0,17 tỷ', '−0,06 tỷ']"
+     ]
+    ]
+   ],
+   "cost": 0.002669,
+   "seconds": 8.7,
+   "tokens": 21793
+  },
+  {
+   "id": "wi-03",
+   "category": "what_if",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002669,
+   "seconds": 9.1,
+   "tokens": 21405
+  },
+  {
+   "id": "wi-04",
+   "category": "what_if",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.007557,
+   "seconds": 27.6,
+   "tokens": 58077
+  },
+  {
+   "id": "wi-05",
+   "category": "what_if",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002762,
+   "seconds": 10.3,
+   "tokens": 21414
+  },
+  {
+   "id": "wi-06",
+   "category": "what_if",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004175,
+   "seconds": 17.5,
+   "tokens": 31117
+  },
+  {
+   "id": "cc-01",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001811,
+   "seconds": 6.8,
+   "tokens": 13894
+  },
+  {
+   "id": "cc-02",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003091,
+   "seconds": 13.9,
+   "tokens": 22150
+  },
+  {
+   "id": "cc-03",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001654,
+   "seconds": 5.5,
+   "tokens": 13628
+  },
+  {
+   "id": "cc-04",
+   "category": "concerns",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "numbers not from the tools or the person: ['23 triệu']"
+     ]
+    ]
+   ],
+   "cost": 0.003979,
+   "seconds": 14.6,
+   "tokens": 31021
+  },
+  {
+   "id": "cc-05",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001791,
+   "seconds": 7.8,
+   "tokens": 13897
+  },
+  {
+   "id": "act-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003389,
+   "seconds": 6.7,
+   "tokens": 31454
+  },
+  {
+   "id": "act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003349,
+   "seconds": 4.4,
+   "tokens": 31880
+  },
+  {
+   "id": "act-03",
+   "category": "actions",
+   "turns": 5,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005536,
+   "seconds": 8.9,
+   "tokens": 52472
+  },
+  {
+   "id": "act-04",
+   "category": "actions",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "does not say /huỷ|không/"
+     ]
+    ]
+   ],
+   "cost": 0.002359,
+   "seconds": 5.5,
+   "tokens": 19355
+  },
+  {
+   "id": "act-05",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003674,
+   "seconds": 7.9,
+   "tokens": 32644
+  },
+  {
+   "id": "act-06",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003697,
+   "seconds": 12.1,
+   "tokens": 30135
+  },
+  {
+   "id": "act-07",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001756,
+   "seconds": 6.9,
+   "tokens": 13545
+  },
+  {
+   "id": "act-08",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000755,
+   "seconds": 2.4,
+   "tokens": 6341
+  },
+  {
+   "id": "act-09",
+   "category": "actions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001293,
+   "seconds": 2.9,
+   "tokens": 12317
+  },
+  {
+   "id": "ms-01",
+   "category": "memory_sessions",
+   "turns": 4,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "numbers not from the tools or the person: ['48%']"
+     ]
+    ]
+   ],
+   "cost": 0.00451,
+   "seconds": 11.7,
+   "tokens": 40526
+  },
+  {
+   "id": "ms-02",
+   "category": "memory_sessions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003401,
+   "seconds": 13.0,
+   "tokens": 26732
+  },
+  {
+   "id": "ms-03",
+   "category": "memory_sessions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001662,
+   "seconds": 5.8,
+   "tokens": 13551
+  },
+  {
+   "id": "ms-04",
+   "category": "memory_sessions",
+   "turns": 12,
+   "ok": false,
+   "failed": [
+    [
+     3,
+     [
+      "numbers not from the tools or the person: ['42%']"
+     ]
+    ],
+    [
+     7,
+     [
+      "numbers not from the tools or the person: ['36']"
+     ]
+    ]
+   ],
+   "cost": 0.018083,
+   "seconds": 39.1,
+   "tokens": 166639
+  },
+  {
+   "id": "ms-05",
+   "category": "memory_sessions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002084,
+   "seconds": 3.8,
+   "tokens": 18859
+  },
+  {
+   "id": "ms-06",
+   "category": "memory_sessions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002821,
+   "seconds": 7.9,
+   "tokens": 25533
+  },
+  {
+   "id": "am-01",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000838,
+   "seconds": 3.5,
+   "tokens": 6486
+  },
+  {
+   "id": "am-02",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001527,
+   "seconds": 4.5,
+   "tokens": 13080
+  },
+  {
+   "id": "am-03",
+   "category": "ambiguous",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003888,
+   "seconds": 15.3,
+   "tokens": 33686
+  },
+  {
+   "id": "am-04",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001982,
+   "seconds": 7.0,
+   "tokens": 14874
+  },
+  {
+   "id": "am-05",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001727,
+   "seconds": 5.7,
+   "tokens": 13870
+  },
+  {
+   "id": "oos-01",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.026107,
+   "seconds": 12.8,
+   "tokens": 13125
+  },
+  {
+   "id": "oos-02",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.025942,
+   "seconds": 13.7,
+   "tokens": 13479
+  },
+  {
+   "id": "oos-03",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000943,
+   "seconds": 4.1,
+   "tokens": 6709
+  },
+  {
+   "id": "oos-04",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000734,
+   "seconds": 3.2,
+   "tokens": 6301
+  },
+  {
+   "id": "oos-05",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.026501,
+   "seconds": 16.6,
+   "tokens": 13843
+  },
+  {
+   "id": "adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000666,
+   "seconds": 1.9,
+   "tokens": 6171
+  },
+  {
+   "id": "adv-02",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000955,
+   "seconds": 5.4,
+   "tokens": 6736
+  },
+  {
+   "id": "adv-03",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001672,
+   "seconds": 6.0,
+   "tokens": 13499
+  },
+  {
+   "id": "adv-04",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000879,
+   "seconds": 3.7,
+   "tokens": 6594
+  },
+  {
+   "id": "adv-05",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000766,
+   "seconds": 2.6,
+   "tokens": 6378
+  },
+  {
+   "id": "adv-06",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000825,
+   "seconds": 2.9,
+   "tokens": 6480
+  },
+  {
+   "id": "adv-07",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "says /43[,.]53 tỷ/",
+      "says /3[,.]53 tỷ/"
+     ]
+    ]
+   ],
+   "cost": 0.001536,
+   "seconds": 4.5,
+   "tokens": 13292
+  },
+  {
+   "id": "adv-08",
+   "category": "adversarial",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001689,
+   "seconds": 6.5,
+   "tokens": 13054
+  },
+  {
+   "id": "adv-09",
+   "category": "adversarial",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002338,
+   "seconds": 5.6,
+   "tokens": 19348
+  }
+ ],
+ "passed": 64,
+ "of": 74,
+ "turns": 138,
+ "turns_failed": 12
+}

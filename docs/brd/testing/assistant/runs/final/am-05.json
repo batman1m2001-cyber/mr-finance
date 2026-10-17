@@ -1,0 +1,253 @@
+{
+ "id": "am-05",
+ "category": "ambiguous",
+ "persona": "founder trẻ, hỏi chung chung (C03)",
+ "client_id": "C03",
+ "title": "“Tình hình của em thế nào?”",
+ "why": "A broad question: a short, grounded overview.",
+ "brd": [
+  "KIT-COPILOT-02"
+ ],
+ "turns": [
+  {
+   "say": "Tình hình của em thế nào?",
+   "expect": {
+    "tools_any": [
+     "tong_quan"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tình hình của em thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước) = tổng tài sản 8,17 tỷ − nợ 628,0 triệu (Vay ký quỹ TCBS 600,0 triệu; Dư nợ thẻ Visa Platinum 28,0 triệu). Phân bổ tài sản: Cổ phiếu 4,38 tỷ (54%), Tài sản số 2,56 tỷ (31%), Chứng chỉ quỹ 930,0 triệu (11%), Tiền & tiền gửi 300,0 triệu (4%). Tập trung vượt ngưỡng: Tổ chức phát hành SSI: 16,2% tài sản (ngưỡng 10%); Tổ chức phát hành Đức Giang: 11,3% tài sản (ngưỡng 10%); Tổ chức phát hành Hòa Phát: 10,1% tài sản (ngưỡng 10%). Thanh khoản dự phòng 300,0 triệu, đủ chi 7 tháng theo mức chi 45,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,25 tỷ; lớn nhất: Bitcoin −1,26 tỷ (sốc 60%); Cổ phiếu SSI −495,0 triệu (sốc 38%); Cổ phiếu DGC −299,0 triệu (sốc 32%); Quỹ cổ phiếu TCEF −279,0 triệu (sốc 30%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "5 điều đáng chú ý. 1) Mức sụt giảm ước tính 43,0% khi thị trường xấu — Vượt ngưỡng chấp nhận 30%. 2) Thị trường cổ phiếu: có thể ảnh hưởng −85,2 triệu trong 3 tháng — Tác động kỳ vọng 1,1% tài sản ròng, trên ngưỡng 0,5%. 3) Bất động sản: có thể ảnh hưởng +42,6 triệu trong 3 tháng — Tác động kỳ vọng 0,6% tài sản ròng, trên ngưỡng 0,5%. Còn 2 mục khác trên Toàn cảnh.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 43,0% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 30%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        },
+        {
+         "title": "Thị trường cổ phiếu: có thể ảnh hưởng −85,2 triệu trong 3 tháng",
+         "sub": "Tác động kỳ vọng 1,1% tài sản ròng, trên ngưỡng 0,5%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:run:AR-0001-v1-2"
+        },
+        {
+         "title": "Bất động sản: có thể ảnh hưởng +42,6 triệu trong 3 tháng",
+         "sub": "Tác động kỳ vọng 0,6% tài sản ròng, trên ngưỡng 0,5%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:run:AR-0002-v1-2"
+        },
+        {
+         "title": "Tài sản ròng +309,0 triệu so với tháng trước",
+         "sub": "Thay đổi 4,3% trong tháng, từ 3% trở lên",
+         "chip": "Thông tin",
+         "tone": "",
+         "focus": "feed:dashboard:net_worth"
+        },
+        {
+         "title": "Chi tiêu sinh hoạt tháng 09/2026: 14,3 triệu, +6,7 triệu so với tháng trước",
+         "sub": "Chi một nhóm tăng từ 30% và 5 triệu trở lên so với tháng trước",
+         "chip": "Thông tin",
+         "tone": "",
+         "focus": "feed:transactions:living:2026-09:2026-09:living"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk",
+       "feed:run:AR-0001-v1-2",
+       "feed:run:AR-0002-v1-2"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16309,
+     "output_tokens": 550,
+     "requests": 2,
+     "cost_usd": 0.001906,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3ab05599833542bb8d1827a4fa7d1ed1",
+    "conversation_id": "ff254f1628a94b8a",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tính đến 9/10/2026, tài sản ròng của bạn là **7,54 tỷ**, tăng 309 triệu (4,3%) so với tháng trước. Tổng tài sản 8,17 tỷ, nợ 628 triệu (vay ký quỹ 600 triệu và thẻ Visa 28 triệu).\n\nĐiểm cần chú ý:\n- **Rủi ro tập trung:** SSI chiếm 16,2% tài sản, Đức Giang 11,3% và Hòa Phát 10,1%. Cả ba đều vượt ngưỡng 10%.\n- **Khi thị trường xấu:** ước tính mất 43% so với ngưỡng chấp nhận 30%, tức là đang vượt ngưỡng. Đây là ước tính từ mô phỏng, không phải dự báo.\n- **Thanh khoản dự phòng:** 300 triệu, đủ chi khoảng 7 tháng.\n\nTôi có thể xem chi tiết các điều đáng chú ý trên trang Toàn cảnh hoặc chạy thêm một kịch bản sốc nếu bạn muốn.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "feed:dashboard:risk",
+     "feed:run:AR-0001-v1-2",
+     "feed:run:AR-0002-v1-2"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792263654.7420623,
+    "audit_seq": 1527,
+    "session": {
+     "id": "ff254f1628a94b8a",
+     "title": "Tình hình của em thế nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.664537931792438,
+   "first_event": 1.5878602480515838,
+   "usage": {
+    "cost": 0.001906,
+    "input": 16309,
+    "output": 550,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KwY3qzHYvxQyCZjkouoSot",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QGBnZHVpTJiHeHbRxYSBku",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KwY3qzHYvxQyCZjkouoSot",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 313,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QGBnZHVpTJiHeHbRxYSBku",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 394,
+     "focus": [
+      "feed:dashboard:risk",
+      "feed:run:AR-0001-v1-2",
+      "feed:run:AR-0002-v1-2"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

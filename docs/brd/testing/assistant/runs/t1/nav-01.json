@@ -1,0 +1,417 @@
+{
+ "id": "nav-01",
+ "category": "navigation",
+ "persona": "người mới, nói chuyện thân mật (C05)",
+ "client_id": "C05",
+ "title": "Người mới hỏi đồ thị nghĩa là gì",
+ "why": "A first-time user reads the graph: the core, the dotted lines, then asks to open a page.",
+ "brd": [
+  "OWN-AS-02",
+  "KIT-COPILOT-02",
+  "OWN-GW-38"
+ ],
+ "turns": [
+  {
+   "say": "Mình mới dùng app này, cái vòng tròn to ở giữa màn hình là gì vậy?",
+   "expect": {
+    "tools_any": [
+     "huong_dan",
+     "tong_quan"
+    ],
+    "says": "tài sản ròng"
+   }
+  },
+  {
+   "say": "Còn mấy đường chấm chấm nối vào nó nghĩa là gì?",
+   "expect": {
+    "says": "giả định|ước tính",
+    "grounded": false
+   }
+  },
+  {
+   "say": "Ok, mở giúp mình chỗ xem dòng tiền đi",
+   "expect": {
+    "tools_any": [
+     "mo_trang"
+    ],
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình mới dùng app này, cái vòng tròn to ở giữa màn hình là gì vậy?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Toàn cảnh] Trang đầu tiên sau khi đăng nhập: trong một màn hình, bạn có bao nhiêu và thay đổi thế nào, tháng trước tiền vào ra bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu. - Bốn thẻ nhịp tài chính: tài sản ròng và các nhóm tài sản làm nó thay đổi nhiều nhất trong tháng; dòng tiền tháng (vào, ra, phần để dành) với sáu tháng gần nhất; thanh khoản dự phòng tính bằng số tháng chi tiêu (vòng tròn, mốc an toàn 6 tháng); mức lỗ khi thị trường căng thẳng so với ngưỡng bạn chấp nhận. - Dòng tiền của bạn: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức…) sang các nhóm chi và ph [Bản đồ tài chính] Bức tranh toàn bộ dưới dạng đồ thị: bạn ở giữa, xung quanh là tài sản, nguồn dữ liệu, mục tiêu, rủi ro, chính sách và tin tức. Bật tắt từng loại bằng các nút phía trên (nguồn dữ liệu và chính sách tắt sẵn). Bấm một nút để xem số liệu và các liên kết của nó; nhóm tài sản mở ra các khoản bằng nhấp đúp hoặc “Mở rộng”. Đường nét đứt là tin “có thể ảnh hưởng”. Mở trang đưa tới trang chi tiết. Trên điện thoại trang mở ở dạng danh sách. [Cách tính] Bấm vào một con số có gạch chân (hoặc nút “Cách tính”) để mở ngăn bên phải: con số là gì, công thức bằng lời, các đầu vào với giá trị của chúng và nơi chúng được tính. Tham số là giả định thì được ghi là giả định. [Một mốc của dải kết quả] Cách tính Một mốc của dải kết quả: Kỳ vọng = trung bình theo xác suất các kịch bản; P5, P10, P50, P90 = các mốc của phân bố kết quả (5%, 10%, 50%, 90% khả năng thấp hơn), tính từ độ biến động và tương quan giữa các yếu tố trong mô hình đã duyệt, cộng theo từng kịch bản.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Toàn cảnh",
+       "Hướng dẫn sử dụng · Bản đồ tài chính",
+       "Hướng dẫn sử dụng · Cách tính",
+       "Cách tính · Một mốc của dải kết quả"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13303,
+     "output_tokens": 590,
+     "requests": 2,
+     "cost_usd": 0.001625,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e9d44af1c55f4372819c6ecaa757f25d",
+    "conversation_id": "dcf36cb2c0e940d0",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo hướng dẫn, có hai vòng tròn bạn có thể đang thấy:\n\n- **Thanh khoản dự phòng (trên trang Toàn cảnh):** vòng tròn thể hiện quỹ dự phòng của bạn đủ chi tiêu bao nhiêu tháng. Mốc an toàn là 6 tháng.\n- **Bản đồ tài chính:** bức tranh toàn bộ tài chính dạng đồ thị, bạn ở giữa, xung quanh là tài sản, mục tiêu, rủi ro, chính sách và tin tức. Bấm một nút để xem số liệu và liên kết của nó.\n\nBạn đang nói tới vòng nào? Nếu bạn muốn, mình có thể mở trang đó cho bạn xem trực tiếp.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Toàn cảnh",
+     "Hướng dẫn sử dụng · Bản đồ tài chính",
+     "Hướng dẫn sử dụng · Cách tính",
+     "Cách tính · Một mốc của dải kết quả"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257024.2008073,
+    "audit_seq": 623,
+    "session": {
+     "id": "dcf36cb2c0e940d0",
+     "title": "Mình mới dùng app này, cái vòng tròn to ở giữa…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.180006498005241,
+   "first_event": 2.322887226007879,
+   "usage": {
+    "cost": 0.001625,
+    "input": 13303,
+    "output": 590,
+    "requests": 2
+   },
+   "why": [
+    "does not say /tài sản ròng/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011xWpBrVhno6gt2R1X98iXd",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011xWpBrVhno6gt2R1X98iXd",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 988,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Còn mấy đường chấm chấm nối vào nó nghĩa là gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok"
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7575,
+     "output_tokens": 305,
+     "requests": 1,
+     "cost_usd": 0.00091,
+     "tools_cost_usd": null
+    },
+    "turn_id": "8ea584983b184eb7beb258f77df3c6da",
+    "conversation_id": "dcf36cb2c0e940d0",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo hướng dẫn, đường nét đứt trên **Bản đồ tài chính** là tin tức \"có thể ảnh hưởng\" tới tài sản của bạn. Nó khác với đường nối thông thường, vốn thể hiện mối liên kết đã được ghi nhận.\n\nNếu muốn biết một tin cụ thể tác động thế nào, bạn bấm vào mục đó trên bản đồ để xem số liệu và các liên kết. Mình cũng có thể mở trang Bản đồ tài chính để bạn xem trực tiếp.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257026.6748328,
+    "audit_seq": 624,
+    "session": {
+     "id": "dcf36cb2c0e940d0",
+     "title": "Mình mới dùng app này, cái vòng tròn to ở giữa…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.4509836551733315,
+   "first_event": 1.5455612218938768,
+   "usage": {
+    "cost": 0.00091,
+    "input": 7575,
+    "output": 305,
+    "requests": 1
+   },
+   "why": [
+    "does not say /giả định|ước tính/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Ok, mở giúp mình chỗ xem dòng tiền đi",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok"
+     },
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Toàn cảnh.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/client/tong-quan/toan-canh",
+      "cost_usd": null
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch).",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15967,
+     "output_tokens": 309,
+     "requests": 2,
+     "cost_usd": 0.001751,
+     "tools_cost_usd": null
+    },
+    "turn_id": "81dae8dd8e4c432d86edcd655f09bfde",
+    "conversation_id": "dcf36cb2c0e940d0",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mình đã mở trang Toàn cảnh. Phần dòng tiền nằm ở thẻ \"Dòng tiền tháng\" và mục \"Dòng tiền của bạn\" (chọn tháng để xem).\n\nSố liệu tháng 09/2026 (ghi nhận từ 9 giao dịch của tháng):\n- Tiền vào: 60,1 triệu\n- Tiền ra: 51,2 triệu\n- Còn lại: 9,0 triệu\n- Khoản chi lớn nhất: trả nợ vay 26,0 triệu (1 giao dịch)\n\nBạn có thể đổi tháng trên trang để xem các tháng khác.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": "#/client/tong-quan/toan-canh",
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792257029.92749,
+    "audit_seq": 625,
+    "session": {
+     "id": "dcf36cb2c0e940d0",
+     "title": "Mình mới dùng app này, cái vòng tròn to ở giữa…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 3.219041295815259,
+   "first_event": 1.3349023079499602,
+   "usage": {
+    "cost": 0.001751,
+    "input": 15967,
+    "output": 309,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016Z7csr837BMHaZFDX8gfiH",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Nwi5ayKwGeUYcRWTm6eUQM",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016Z7csr837BMHaZFDX8gfiH",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 13,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Nwi5ayKwGeUYcRWTm6eUQM",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 61,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

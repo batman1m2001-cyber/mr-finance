@@ -1,0 +1,401 @@
+{
+ "id": "nw-04",
+ "category": "news",
+ "persona": "chủ doanh nghiệp có nhiều bất động sản (C02)",
+ "client_id": "C02",
+ "title": "Chính sách bất động sản, tôi mất bao nhiêu",
+ "why": "Policy cost: an estimate with its basis.",
+ "brd": [
+  "BRIEF-IMPACT-01",
+  "FEAT-25"
+ ],
+ "turns": [
+  {
+   "say": "Mấy chính sách mới về bất động sản thì tôi mất bao nhiêu tiền?",
+   "expect": {
+    "tools_any": [
+     "chu_y",
+     "tac_dong"
+    ]
+   }
+  },
+  {
+   "say": "Cái đó tính dựa trên giả định gì?",
+   "expect": {
+    "grounded": false,
+    "says": "giả định|ước tính|dựa"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Mấy chính sách mới về bất động sản thì tôi mất bao nhiêu tiền?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "18 yếu tố đang tác động: 14 rủi ro, 4 cơ hội; tổng ước tính −392,8 triệu. Lớn nhất: Nâng hạng thị trường chứng khoán — Cơ hội: dòng vốn ngoại vào nhóm vốn hóa lớn (HPG, MBB, TCB, VCB, VHM); 21,7 tỷ đang nắm giữ, ước tính +1,74 tỷ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+1,56 tỷ · Đã thông qua / đã diễn ra",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Sân bay Long Thành đưa giai đoạn 1 vào khai thác",
+         "sub": "+1,35 tỷ · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Tính thuế chuyển nhượng BĐS theo lãi thực tế thay cho 2% giá bán",
+         "sub": "−920,0 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Trung bình",
+         "tone": "warn"
+        },
+        {
+         "title": "Giới hạn sở hữu cổ phần ngân hàng (Luật Các TCTD 2024)",
+         "sub": "−901,3 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "warn"
+        },
+        {
+         "title": "Thuế tối thiểu toàn cầu, thay đổi ưu đãi đầu tư",
+         "sub": "−432,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "4 kết quả cho “bất động sản”: Biệt thự Phú Mỹ Hưng; Đất nền Long Thành; Căn hộ Vinhomes Grand Park; Bất động sản.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Biệt thự Phú Mỹ Hưng",
+         "sub": "Bất động sản",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Đất nền Long Thành",
+         "sub": "Bất động sản",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Căn hộ Vinhomes Grand Park",
+         "sub": "Bất động sản",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Bất động sản",
+         "sub": "Sự kiện tin tức",
+         "route": "#/client/tin/thi-truong"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45,39 tỷ (45%), Cổ phiếu 21,69 tỷ (22%), Cổ phần DN 12,00 tỷ (12%), Tiền & tiền gửi 8,90 tỷ (9%), Vàng 7,50 tỷ (7%), Trái phiếu 4,94 tỷ (5%). Thanh khoản dự phòng 8,90 tỷ, đủ chi 4 năm theo mức chi 180,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 15,16 tỷ; lớn nhất: 30% cổ phần Logistics Phát Đạt −3,00 tỷ (sốc 25%); Biệt thự Phú Mỹ Hưng −2,38 tỷ (sốc 10%); Cổ phiếu TCB −2,29 tỷ (sốc 29%); Đất nền Long Thành −1,80 tỷ (sốc 10%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 31356,
+     "output_tokens": 1178,
+     "requests": 4,
+     "cost_usd": 0.003725,
+     "tools_cost_usd": null
+    },
+    "turn_id": "41ec32450c0f4541be106db87601d6df",
+    "conversation_id": "e06907085f8b413d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tách được riêng phần chính sách bất động sản. Hệ thống chỉ cho thấy tổng 18 yếu tố chính sách và thị trường ảnh hưởng khoảng **−392,8 triệu** (as_of 09/10/2026, trang Tin chính sách). Trong đó chưa có dòng nào ghi rõ là chính sách bất động sản.\n\nDanh mục bất động sản của bạn là **45,39 tỷ** (45% tài sản), gồm biệt thự Phú Mỹ Hưng, đất nền Long Thành và căn hộ Vinhomes Grand Park (trang Tổng quan). Nếu thị trường xấu, hệ thống ước tính riêng khoản này có thể giảm khoảng **2,38 tỷ** (biệt thự Phú Mỹ Hưng, sốc 10%) và **1,80 tỷ** (đất nền Long Thành, sốc 10%). Đây là ước tính kịch bản, không phải dự báo.\n\nNếu bạn muốn, tôi có thể chạy kịch bản \"bất động sản\" để xem mức giảm cụ thể theo mức sốc bạn chọn.",
+    "citations": [
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Dự thảo Luật Thuế TNCN (sửa đổi) — phương án thuế theo thu nhập (cần kiểm tra trạng thái)",
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+     "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792259422.680614,
+    "audit_seq": 902,
+    "session": {
+     "id": "e06907085f8b413d",
+     "title": "Mấy chính sách mới về bất động sản thì tôi mất…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 9.791323313023895,
+   "first_event": 1.505995396990329,
+   "usage": {
+    "cost": 0.003725,
+    "input": 31356,
+    "output": 1178,
+    "requests": 4
+   },
+   "why": [
+    "called none of ['chu_y', 'tac_dong']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MeLqwjzvwLAE6cXkebAd8v",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MeLqwjzvwLAE6cXkebAd8v",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 133,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016taCVXpVU3q8AwqaXUThQd",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016taCVXpVU3q8AwqaXUThQd",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 141,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HzHK9dnHbzmS1P6TSbaGUw",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HzHK9dnHbzmS1P6TSbaGUw",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 122,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Cái đó tính dựa trên giả định gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9194,
+     "output_tokens": 983,
+     "requests": 1,
+     "cost_usd": 0.001411,
+     "tools_cost_usd": null
+    },
+    "turn_id": "82f2cfe585954a2495beb5837dba9e24",
+    "conversation_id": "e06907085f8b413d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Ước tính mất khoảng **2,38 tỷ** (biệt thự Phú Mỹ Hưng) và **1,80 tỷ** (đất nền Long Thành) dựa trên các giả định sau, theo trang Tổng quan (as_of 09/10/2026):\n\n- **Mỗi khoản có mức sốc riêng.** Biệt thự Phú Mỹ Hưng và đất nền Long Thành cùng giảm 10%. Hệ thống không áp một mức chung cho cả danh mục.\n- **Chỉ tính phần giá trị giảm, không tính thời gian.** Đây là mức sụt giảm tức thời, không có lịch trình hay thời điểm phục hồi.\n- **Nợ không đổi.** Khoản vay mua đất Long Thành 5,00 tỷ được giữ nguyên, nên tài sản ròng giảm đúng bằng phần tài sản giảm.\n- **Tổng hợp.** Các khoản được cộng lại thành 15,16 tỷ, tương đương 15,9% tài sản so với ngưỡng an toàn 20%.\n\nTôi chưa có mức sốc cụ thể cho căn hộ Vinhomes Grand Park trong kết quả này. Nếu bạn muốn, tôi có thể chạy kịch bản \"bất động sản\" hoặc đưa ra một mức giảm bạn tự chọn để xem khác biệt.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259428.4398067,
+    "audit_seq": 903,
+    "session": {
+     "id": "e06907085f8b413d",
+     "title": "Mấy chính sách mới về bất động sản thì tôi mất…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.72980948863551,
+   "first_event": 3.6779030920006335,
+   "usage": {
+    "cost": 0.001411,
+    "input": 9194,
+    "output": 983,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

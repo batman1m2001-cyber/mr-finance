@@ -1,0 +1,168 @@
+{
+ "id": "pf-07",
+ "category": "personal_finance",
+ "persona": "chuyên gia, muốn một điểm số (C01)",
+ "client_id": "C01",
+ "title": "Chấm điểm sức khỏe tài chính 1–10",
+ "why": "A score no tool computes: an opinion must be labelled, not presented as data.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Tổng thể sức khỏe tài chính của tôi thế nào? Chấm giúp tôi một điểm từ 1 đến 10.",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "chu_y"
+    ],
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tổng thể sức khỏe tài chính của tôi thế nào? Chấm giúp tôi một điểm từ 1 đến 10.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 70%, Cổ phiếu 11%, Tiền & tiền gửi 8%, Chứng chỉ quỹ 4%, Trái phiếu 3%, Vàng 3%, Bảo hiểm 1%. Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12645,
+     "output_tokens": 832,
+     "requests": 2,
+     "cost_usd": 0.00168,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9b976c81a8f441dbb1799a39d5be9a58",
+    "conversation_id": "daa130f34ce447af",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Điểm sức khỏe tài chính: 6/10** (điểm do tôi chấm dựa trên số liệu dưới đây, không phải chỉ số chính thức).\n\n**Điểm mạnh**\n- Tài sản ròng 43,53 tỷ, tăng 980,5 triệu (2,3%) so với tháng trước.\n- Nợ thấp: 2,44 tỷ trên tổng tài sản 45,97 tỷ, khoảng 5%. Gồm vay mua nhà Thảo Điền 2,40 tỷ và dư nợ thẻ 45 triệu.\n- Quỹ dự phòng 4,72 tỷ, đủ chi khoảng 3 năm.\n\n**Điểm yếu**\n- Tập trung quá nhiều vào bất động sản: chiếm 70% tổng tài sản.\n- Riêng đất nền Long Thành, Đồng Nai chiếm 39,2%, vượt ngưỡng 35%.\n- Khi thị trường xấu, mức sụt giảm ước tính là 11,8%, vượt ngưỡng 8%. Đây là kết quả mô phỏng, không phải dự báo.\n\nNếu cải thiện một điểm, nên giảm tỷ trọng đất nền Đồng Nai để đưa tập trung về dưới 35% và giảm mức sụt giảm khi thị trường xấu.\n\n*Nguồn: trang Tổng quan, số liệu ghi nhận ngày 09/10/2026, tổng hợp 21 khoản từ 7 nguồn.*",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792257169.7814891,
+    "audit_seq": 662,
+    "session": {
+     "id": "daa130f34ce447af",
+     "title": "Tổng thể sức khỏe tài chính của tôi thế nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.516356097068638,
+   "first_event": 1.7281971559859812,
+   "usage": {
+    "cost": 0.00168,
+    "input": 12645,
+    "output": 832,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PbaZ4aas5j1YV8VDrZfQdV",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PbaZ4aas5j1YV8VDrZfQdV",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 79,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

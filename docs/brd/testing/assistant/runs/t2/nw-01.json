@@ -1,0 +1,392 @@
+{
+ "id": "nw-01",
+ "category": "news",
+ "persona": "chuyên gia, hoài nghi (C01)",
+ "client_id": "C01",
+ "title": "Tin nào ảnh hưởng nhất, chắc hay ước, nguồn đâu",
+ "why": "The biggest impact, then fact against estimate, then the source.",
+ "brd": [
+  "BR-08",
+  "BRD-RULE-CONTENT-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "chu_y"
+    ],
+    "sourced": true
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "expect": {
+    "says": "ước tính"
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "dieu_tra",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "text": "2 sự kiện đang có hiệu lực; tác động kỳ vọng 3 tháng cộng lại +0,2 triệu. Lớn nhất: Bất động sản (+98,6 triệu). Đây là ước tính theo kịch bản CIO duyệt, không phải khuyến nghị.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bất động sản",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "+98,6 triệu",
+         "tone": "good",
+         "focus": "event:EV-2026-0002"
+        },
+        {
+         "title": "Thị trường cổ phiếu",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "−98,4 triệu",
+         "tone": "bad",
+         "focus": "event:EV-2026-0001"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "2 lần áp dụng CIO duyệt",
+       "CafeF",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "16 yếu tố đang tác động: 12 rủi ro, 4 cơ hội; tổng ước tính +2,15 tỷ. Lớn nhất: Sân bay Long Thành đưa giai đoạn 1 vào khai thác — Cơ hội: BĐS gần dự án (Đất Long Thành (tự khai), Đất Long Thành (tự khai)) ước tính +2,7 tỷ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Sân bay Long Thành đưa giai đoạn 1 vào khai thác",
+         "sub": "+1,35 tỷ · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Metro số 1 Bến Thành – Suối Tiên vận hành",
+         "sub": "+777,6 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+354,9 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Bảng giá đất điều chỉnh hằng năm (Luật Đất đai 2024)",
+         "sub": "−97,2 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Chính sách quản lý vàng miếng",
+         "sub": "−81,0 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+       "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14787,
+     "output_tokens": 846,
+     "requests": 2,
+     "cost_usd": 0.001902,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1005ea2517fd42a999ec86341aaa3f41",
+    "conversation_id": "0d9bcfea6e784c34",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo dữ liệu ngày 09/10/2026, có hai nhóm tin ảnh hưởng lớn tới tài sản của bạn:\n\n- **Tin đã được CIO duyệt (2 sự kiện):** tác động kỳ vọng trong 3 tháng cộng lại khoảng +0,2 triệu. Phần lớn nằm ở bất động sản, khoảng +98,6 triệu.\n- **Yếu tố thị trường và chính sách (16 yếu tố, 12 rủi ro và 4 cơ hội):** tổng ước tính +2,15 tỷ. Lớn nhất là việc sân bay Long Thành đưa giai đoạn 1 vào khai thác, tạo cơ hội cho đất gần dự án, ước tính +2,7 tỷ. Nguồn này cần kiểm tra lại tiến độ khai thác.\n\nHai con số trên đo khác nhau nên không cộng trực tiếp được. Đây đều là ước tính theo kịch bản, không phải dự báo hay khuyến nghị đầu tư. Nếu muốn, tôi có thể mở trang chi tiết tin hoặc xem đường đi của từng tin.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "2 lần áp dụng CIO duyệt",
+     "CafeF",
+     "Vietstock",
+     "VnEconomy",
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch khai thác giai đoạn 1 năm 2026 (cần kiểm tra tiến độ)",
+     "Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "event:EV-2026-0002"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259388.9795046,
+    "audit_seq": 894,
+    "session": {
+     "id": "0d9bcfea6e784c34",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.938756298739463,
+   "first_event": 1.5725918118841946,
+   "usage": {
+    "cost": 0.001902,
+    "input": 14787,
+    "output": 846,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011JjNofHF6DprmV27TMhiiG",
+     "tool": "tac_dong",
+     "label": "Tác động tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VsnLsZDrBxk34x8zxJGLPE",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011JjNofHF6DprmV27TMhiiG",
+     "tool": "tac_dong",
+     "ok": true,
+     "ms": 45,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VsnLsZDrBxk34x8zxJGLPE",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 161,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8183,
+     "output_tokens": 453,
+     "requests": 1,
+     "cost_usd": 0.001045,
+     "tools_cost_usd": null
+    },
+    "turn_id": "69d7798c5dee4e6db56ed040db72cc4d",
+    "conversation_id": "0d9bcfea6e784c34",
+    "compacted": false,
+    "status": "ok",
+    "text": "Các con số đó là **ước tính**, không phải con số chắc chắn.\n\n- **Tác động của tin đã duyệt (+0,2 triệu, +98,6 triệu cho bất động sản):** là ước tính theo kịch bản CIO đã duyệt, không phải dự báo hay khuyến nghị đầu tư.\n- **Tổng ước tính +2,15 tỷ từ 16 yếu tố:** cũng là ước tính. Một số nguồn, như kế hoạch khai thác sân bay Long Thành và thời điểm FTSE nâng hạng, được hệ thống ghi chú là cần kiểm tra lại.\n\nĐiều hệ thống ghi nhận chắc hơn là danh sách sự kiện và nguồn tin, kèm ngày 09/10/2026. Tôi có thể mở trang chi tiết tin để bạn xem từng nguồn và cách tính.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259392.0899234,
+    "audit_seq": 895,
+    "session": {
+     "id": "0d9bcfea6e784c34",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.073368475306779,
+   "first_event": 1.8010165393352509,
+   "usage": {
+    "cost": 0.001045,
+    "input": 8183,
+    "output": 453,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8515,
+     "output_tokens": 615,
+     "requests": 1,
+     "cost_usd": 0.001159,
+     "tools_cost_usd": null
+    },
+    "turn_id": "232573c9d8024913ba23da11f7dddf95",
+    "conversation_id": "0d9bcfea6e784c34",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống ghi nhận các nguồn sau, ngày 09/10/2026:\n\n- **Tin đã CIO duyệt (2 lần áp dụng):** CafeF, Vietstock, VnEconomy.\n- **Yếu tố thị trường và chính sách:**\n  - Nâng hạng thị trường của FTSE Russell, hiệu lực 09/2026. Hệ thống ghi chú cần kiểm tra lại.\n  - Kế hoạch khai thác giai đoạn 1 năm 2026 của sân bay Long Thành. Cũng cần kiểm tra tiến độ.\n  - Tuyến Metro số 1 TP.HCM đưa vào khai thác cuối 2024.\n\nKết quả hiện tại chỉ liệt kê nguồn ở mức chung, chưa cho biết bài báo cụ thể nào tạo ra từng con số. Nếu bạn muốn, tôi có thể điều tra đường đi của từng tin để xem nó nối tới kịch bản, tài sản và mục tiêu nào.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259395.7655272,
+    "audit_seq": 896,
+    "session": {
+     "id": "0d9bcfea6e784c34",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 3.6377957239747047,
+   "first_event": 2.1804829547181726,
+   "usage": {
+    "cost": 0.001159,
+    "input": 8515,
+    "output": 615,
+    "requests": 1
+   },
+   "why": [
+    "called none of ['tac_dong', 'dieu_tra', 'tim_kiem']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

@@ -40,6 +40,9 @@ def _review(item_id: str) -> Dict[str, Any]:
 # -- reads -------------------------------------------------------------------------------------
 
 
+KIND = {"policy": "chính sách", "macro": "vĩ mô", "infrastructure": "dự án hạ tầng"}
+
+
 async def drivers(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """What is moving the client's wealth: each policy, macro move and project, in VND (the policy-cost page)."""
     from impact.graph import alerts_flow
@@ -52,6 +55,14 @@ async def drivers(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     text = (
         f"{len(found)} yếu tố đang tác động: {r['risks']} rủi ro, {r['opportunities']} cơ hội; tổng ước tính "
         f"{_vnd(r['total_impact'], True)}. Lớn nhất: {top['title']} — {top['message']}"
+        # every factor, as the page lists them: “what do the property rules cost me?” needs them all (stress D27)
+        + " Từng yếu tố: "
+        + "; ".join(
+            f"{a['title']} ({KIND.get(a['kind'], 'yếu tố khác')}, {a['status_label'].lower()}) "
+            f"{_vnd(a['impact'], True)}"
+            for a in found
+        )
+        + "."
     )
     return {
         "text": text,
@@ -465,7 +476,8 @@ CATALOGUE: Dict[str, Tool] = {
         Tool("lien_he", "các lần liên hệ gần nhất với các gia đình", ("rm",), contacts, page="hom-nay"),
         Tool(
             "gui_de_xuat",
-            "gửi một phương án của kịch bản sốc cho RM duyệt",
+            "gửi một phương án của kịch bản sốc cho RM duyệt (option light là “phương án nhẹ”, heavy là “phương án "
+            "mạnh”: nói với người dùng bằng tên tiếng Việt)",
             ("client", "rm"),
             propose,
             write=True,

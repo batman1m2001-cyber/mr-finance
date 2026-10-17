@@ -3,10 +3,32 @@
 Các trang của khách hàng (`#/client/…`). RM cũng thấy phần lớn các trang này trong mục “Khách hàng”, cho gia đình
 đang chọn.
 
+## Đồ thị tài chính (màn hình chính) — #/client/xem/tong-quan
+
+Màn hình chính của khách hàng là một đồ thị luôn hiện. **Vòng tròn lớn ở giữa là bạn**: con số trong vòng là tài sản
+ròng (tổng tài sản trừ nợ). Ở chế độ **Gia đình** vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một
+khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền
+vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách.
+
+- **Góc nhìn** (thanh công cụ): Tổng quan, Tài sản (`#/client/xem/tai-san`), Dòng tiền (`…/dong-tien`), Mục tiêu &
+  kịch bản (`…/muc-tieu`), Tin & sự kiện (`…/tin`), Rủi ro (`…/rui-ro`). Mỗi góc nhìn làm nổi các loại liên quan; đồ
+  thị không đổi chỗ.
+- **Đường nối**: nét liền là tiền và các khoản thực tế đã ghi nhận (càng dày càng nhiều tiền); **nét đứt là ước
+  tính** (tin, chính sách, rủi ro: “có thể ảnh hưởng”); **chấm chấm là giả định** (kịch bản, nhãn “giả định”, “nếu
+  xảy ra”). Ước tính và giả định không bao giờ được cộng vào tài sản ròng. Chú thích ở góc đồ thị nhắc lại ba loại.
+- **Bấm một nút hoặc một đường** để xem ở ô Thông tin: số tiền, mỗi tháng, mức chắc chắn, từ bản ghi nào. Trong góc
+  nhìn Tài sản, chọn một lớp tài sản để mở các khoản của nó.
+- **Kịch bản**: bật ở góc nhìn Mục tiêu & kịch bản. Kịch bản đang bật có một đường giả định về phía bạn; chọn nó để
+  thấy nó chạm tới lớp tài sản và mục tiêu nào. Bật kịch bản không đổi số liệu đã lưu.
+- **Trợ lý** (thẻ Trợ lý cạnh ô Thông tin) biết bạn đang ở góc nhìn nào và đang chọn gì: hỏi “mục này là gì?” là hỏi
+  về mục đang chọn. Các mục trợ lý đang đọc sáng lên trên đồ thị.
+- Các trang chi tiết (Toàn cảnh, Tài sản, Kế hoạch, …) mở thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như
+  cũ.
+
 ## Toàn cảnh — #/client/tong-quan/toan-canh
 
-Trang đầu tiên sau khi đăng nhập: trong một màn hình, bạn có bao nhiêu và thay đổi thế nào, tháng trước tiền vào ra
-bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu.
+Mở từ góc nhìn Tổng quan của đồ thị (tấm phủ “Toàn cảnh”): trong một màn hình, bạn có bao nhiêu và thay đổi thế nào,
+tháng trước tiền vào ra bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu.
 
 - **Bốn thẻ nhịp tài chính**: tài sản ròng và các nhóm tài sản làm nó thay đổi nhiều nhất trong tháng; dòng tiền tháng
   (vào, ra, phần để dành) với sáu tháng gần nhất; thanh khoản dự phòng tính bằng số tháng chi tiêu (vòng tròn, mốc an

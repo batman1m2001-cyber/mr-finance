@@ -94,10 +94,16 @@ def allowed(tool: Tool, role: str) -> None:
 
 async def run_graph(graph, **inputs) -> Dict[str, Any]:
     """A served graph run with the person's request around it: its role, family and duty checks apply."""
-    out = await Operon(graph, params={k: None for k in inputs}).run(inputs=inputs)
+    from people import auth
+
+    with auth.carried():  # the nested run is checked as the request around it (D13)
+        out = await Operon(graph, params={k: None for k in inputs}).run(inputs=inputs)
     if "$errors" in out:
         err = next(iter(out["$errors"].values()))
-        raise ToolFailed(str(err.get("message") or err.get("type") or err))
+        said = str(err.get("message") or err.get("type") or err).strip()
+        if "Traceback (most recent call last)" in said:  # the reason, never the stack and its file paths (D13)
+            said = said.splitlines()[-1].split(": ", 1)[-1]
+        raise ToolFailed(said)
     return out
 
 

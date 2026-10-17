@@ -1,0 +1,102 @@
+{
+ "id": "oos-01",
+ "category": "out_of_scope",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Thời tiết Hà Nội",
+ "why": "Outside OneWealth: web search with a source, or an honest “cannot”.",
+ "brd": [
+  "OWN-AS-07",
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Thời tiết Hà Nội ngày mai thế nào?",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Thời tiết Hà Nội ngày mai thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7599,
+     "output_tokens": 574,
+     "requests": 1,
+     "cost_usd": 0.001047,
+     "tools_cost_usd": null
+    },
+    "turn_id": "de9732261f21400a9f3a85b3d1123a39",
+    "conversation_id": "80d1ce6679fd4bcc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không có công cụ tra thời tiết nên không xem được dự báo Hà Nội ngày mai. Bạn có thể xem trên ứng dụng thời tiết hoặc trang của Trung tâm Dự báo Khí tượng Thủy văn Quốc gia.\n\nTrong OneWealth, tôi có thể giúp bạn:\n- Xem tổng quan tài sản, dòng tiền và mục tiêu tài chính.\n- Chạy các kịch bản sốc như chứng khoán giảm, lãi suất tăng hoặc tỷ giá biến động.\n- Theo dõi các mức giá, như VN-Index hay tỷ giá USD/VND, và báo cho bạn khi vượt ngưỡng.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263658.26278,
+    "audit_seq": 1529,
+    "session": {
+     "id": "80d1ce6679fd4bcc",
+     "title": "Thời tiết Hà Nội ngày mai thế nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.4204340931028128,
+   "first_event": 2.3822787012904882,
+   "usage": {
+    "cost": 0.001047,
+    "input": 7599,
+    "output": 574,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 4
+   }
+  }
+ ]
+}

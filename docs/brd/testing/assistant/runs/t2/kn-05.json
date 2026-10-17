@@ -1,0 +1,237 @@
+{
+ "id": "kn-05",
+ "category": "knowledge",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Vàng có phải nơi trú ẩn an toàn",
+ "why": "General knowledge, then her own gold if any.",
+ "brd": [
+  "OWN-AS-07",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Vàng có phải là kênh trú ẩn an toàn không cháu?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Thế tôi đang có bao nhiêu vàng?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Vàng có phải là kênh trú ẩn an toàn không cháu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7035,
+     "output_tokens": 953,
+     "requests": 1,
+     "cost_usd": 0.00118,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5cf2668fa33942379bbc92d380c7cc26",
+    "conversation_id": "0fa0df8d683148ad",
+    "compacted": false,
+    "status": "ok",
+    "text": "Vàng thường được xem là kênh trú ẩn khi thị trường hoảng loạn, vì nó giữ giá tương đối tốt trong một số cuộc khủng hoảng lớn. Nhưng không phải lúc nào cũng vậy, và nó không đảm bảo an toàn:\n\n- **Không ổn định trong ngắn hạn:** giá vàng có thể giảm mạnh trong nhiều tháng, nhất là khi lãi suất thực tăng hoặc đồng USD mạnh lên.\n- **Không sinh thu nhập:** vàng không trả lãi hay cổ tức như trái phiếu hay cổ phiếu.\n- **Phụ thuộc bối cảnh:** mối tương quan giữa vàng và thị trường thay đổi theo từng giai đoạn.\n\nVì vậy, vàng thường được dùng như một phần đa dạng hóa trong danh mục, không phải nơi trú ẩn tuyệt đối. Tỷ trọng phù hợp phụ thuộc vào mục tiêu và khả năng chịu rủi ro của bác.\n\nNếu bác muốn, tôi có thể chạy thử kịch bản giá vàng giảm để xem ảnh hưởng lên tài sản hiện tại của bác.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259370.9892237,
+    "audit_seq": 888,
+    "session": {
+     "id": "0fa0df8d683148ad",
+     "title": "Vàng có phải là kênh trú ẩn an toàn không cháu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.948962577152997,
+   "first_event": 3.79420043900609,
+   "usage": {
+    "cost": 0.00118,
+    "input": 7035,
+    "output": 953,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Thế tôi đang có bao nhiêu vàng?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 29,20 tỷ (60%), Tiền & tiền gửi 8,50 tỷ (18%), Trái phiếu 5,08 tỷ (11%), Vàng 3,00 tỷ (6%), Chứng chỉ quỹ 2,60 tỷ (5%), Bảo hiểm 0,0 triệu (0%). Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm theo mức chi 40,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,64 tỷ; lớn nhất: Nhà phố Quận 3 (đang ở) −1,80 tỷ (sốc 10%); Căn hộ Võ Văn Tần (cho thuê) −1,12 tỷ (sốc 10%); Vàng miếng SJC −300,0 triệu (sốc 10%); Trái phiếu TCB12401 (Techcombank) −161,9 triệu (sốc 8%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15896,
+     "output_tokens": 348,
+     "requests": 2,
+     "cost_usd": 0.001764,
+     "tools_cost_usd": null
+    },
+    "turn_id": "8a24b411fae44e5d9929ad80c46c51a9",
+    "conversation_id": "0fa0df8d683148ad",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo tổng quan ngày 09/10/2026, bác đang có **3,00 tỷ đồng vàng**, chiếm khoảng 6% tài sản ròng 48,38 tỷ. Khoản này gồm vàng miếng SJC, theo số bác tự khai trong hệ thống.\n\nNếu giá vàng giảm 10%, khoản này mất khoảng 300 triệu đồng. Đây là ước tính theo mức sốc giả định, không phải dự báo.\n\nBác có muốn tôi chạy kịch bản giá vàng giảm để xem ảnh hưởng lên toàn bộ danh mục không?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792259374.8869007,
+    "audit_seq": 889,
+    "session": {
+     "id": "0fa0df8d683148ad",
+     "title": "Vàng có phải là kênh trú ẩn an toàn không cháu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.8586916578933597,
+   "first_event": 1.6821445268578827,
+   "usage": {
+    "cost": 0.001764,
+    "input": 15896,
+    "output": 348,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PDUfxiF11WtWiRddK3tXoL",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PDUfxiF11WtWiRddK3tXoL",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 118,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,127 @@
+{
+ "id": "oos-05",
+ "category": "out_of_scope",
+ "persona": "founder trẻ (C03)",
+ "client_id": "C03",
+ "title": "Lãi suất tiết kiệm các ngân hàng",
+ "why": "Market data outside the app: web search, sources, a date.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở mấy ngân hàng lớn hiện nay.",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "sourced": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở mấy ngân hàng lớn hiện nay.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, nhóm Big 4 (Vietcombank, BIDV, VietinBank) niêm yết khoảng 5,9%/năm cho kỳ hạn 12 tháng, còn kỳ hạn 6-9 tháng ở khoảng 3,5%/năm Lãi suất tiết kiệm đầu tháng 10/2026: nhóm Big4 niêm yết 5,9%/năm kỳ hạn 12 tháng, chứng chỉ tiền gửi tới 7,5%.. Ở nhóm ngân hàng tư nhân lớn, VPBank áp dụng 7,1%/năm cho kỳ hạn 12 và 18 tháng, còn MB ở mức 6,35%/năm Tại nhóm ngân hàng tư nhân lớn, VPBank áp dụng mức 7,1%/năm cho cả kỳ hạn 12 và 18 tháng. MB niêm yết 6,35%/năm ở cả hai kỳ hạn.. Mức cao nhất tại quầy được các nguồn ghi khác nhau: một nguồn nêu Sacombank 7,5%/năm, nguồn khác nêu Bắc Á 7,1%/năm Lãi suất tiết kiệm hấp dẫn nhất tại quầy lên tới 7,1%/năm ở Bắc Á (BVBank).. Riêng BIDV, một nguồn ghi 5,9% kỳ hạn 12 tháng nhưng nguồn khác ghi 6,8% từ kỳ hạn 12 tháng, nên bạn nên kiểm tra lại trên website hoặc tại quầy trước khi gửi.\n\nMức độ chắc chắn: trung bình — các nguồn đăng trong khoảng 3 đến 15 ngày trước và số liệ",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://bankerpro.com.vn/tin-tuc/lai-suat-tiet-kiem-dau-thang-10-2026",
+       "https://cpchauxuannguyen.home.blog/2026/10/14/gui-tien-ngan-hang-nao-lai-cao-nhat-thang-10/",
+       "https://ngoisao.vn/theo-dong-su-kien/kien-thuc/gui-ngan-hang-nao-lai-cao-nhat-thang-10-2026-d493881.html"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0124073
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13086,
+     "output_tokens": 757,
+     "requests": 2,
+     "cost_usd": 0.014094,
+     "tools_cost_usd": 0.012407
+    },
+    "turn_id": "a29fbb929c724d81b21e41d4dc3fe215",
+    "conversation_id": "566961ba06d244e2",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo tìm kiếm trên web, lãi suất tiết kiệm kỳ hạn 12 tháng ở các ngân hàng lớn đầu tháng 10/2026 khoảng như sau. Đây là số tổng hợp từ báo và blog, không phải số trực tiếp từ ngân hàng.\n\n| Ngân hàng | Lãi suất 12 tháng (%/năm) | Ghi chú |\n|---|---|---|\n| Vietcombank, VietinBank | khoảng 5,9 | Nhóm Big 4 |\n| BIDV | 5,9 hoặc 6,8 | Hai nguồn ghi khác nhau |\n| MB | 6,35 | Cả kỳ hạn 12 và 18 tháng |\n| VPBank | 7,1 | Cả kỳ hạn 12 và 18 tháng |\n| Bắc Á (BVBank) | 7,1 | Một nguồn ghi mức cao nhất tại quầy |\n| Sacombank | 7,5 | Chỉ một nguồn ghi, nguồn khác không nêu |\n\nLưu ý:\n- Số liệu có thể đã cũ hoặc không đồng nhất giữa các nguồn, mức chắc chắn trung bình. Trước khi gửi, bạn nên kiểm tra trên website hoặc tại quầy.\n- Lãi suất có thể khác theo số tiền gửi, hình thức gửi (online hay tại quầy) và chương trình khuyến mãi.\n\nTôi không có dữ liệu tiết kiệm của riêng bạn trong OneWealth, nên không so sánh được với khoản đang có của bạn.",
+    "citations": [],
+    "sources": [
+     "https://bankerpro.com.vn/tin-tuc/lai-suat-tiet-kiem-dau-thang-10-2026",
+     "https://cpchauxuannguyen.home.blog/2026/10/14/gui-tien-ngan-hang-nao-lai-cao-nhat-thang-10/",
+     "https://ngoisao.vn/theo-dong-su-kien/kien-thuc/gui-ngan-hang-nao-lai-cao-nhat-thang-10-2026-d493881.html"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257802.4590151,
+    "audit_seq": 813,
+    "session": {
+     "id": "566961ba06d244e2",
+     "title": "So sánh giúp em lãi suất tiết kiệm 12 tháng ở…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 16.52664558403194,
+   "first_event": 1.5037026437930763,
+   "usage": {
+    "cost": 0.026501,
+    "input": 13086,
+    "output": 757,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018uX18gRLZzK6FLHb4sXCfS",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018uX18gRLZzK6FLHb4sXCfS",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 10083,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

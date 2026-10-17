@@ -1,0 +1,139 @@
+{
+ "id": "oos-02",
+ "category": "out_of_scope",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Tỷ giá USD/VND hôm nay",
+ "why": "A live figure: a source and its time, or honesty.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "sourced": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, Ngân hàng Nhà nước đặt tỷ giá trung tâm sáng 17/10/2026 ở mức 25.637 đồng cho mỗi USD. Tại Vietcombank, giá mua vào và bán ra quanh 25.670 - 26.080 VND/USD. Trên thị trường tự do, USD giao dịch quanh 25.910 - 25.960 VND/USD. Các ngân hàng niêm yết không cùng mốc và thời điểm cập nhật khác nhau, nên hãy kiểm tra lại tại ngân hàng trước khi giao dịch.\nMức độ chắc chắn: trung bình, vì nhiều nguồn cùng cập nhật ngày 17/10/2026 và số Vietcombank khớp nhau, nhưng con số giữa các trang chưa đồng nhất và tôi không đối chiếu trực tiếp với ngân hàng.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://doanhnghiephoinhap.vn/ty-gia-usd-hom-nay-1710-2026-dong-usd-tiep-tuc-suy-yeu-151820.html",
+       "https://thoibaotaichinhvietnam.vn/ty-gia-usd-hom-nay-17-10-usd-tu-do-giam-sau-dxy-mat-moc-102-diem-truoc-them-cuoc-hop-fed-205521.html"
+      ],
+      "navigate": null,
+      "cost_usd": 0.012173
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12858,
+     "output_tokens": 621,
+     "requests": 2,
+     "cost_usd": 0.013769,
+     "tools_cost_usd": 0.012173
+    },
+    "turn_id": "cae9c1f0616b422297a4337ad6fe3529",
+    "conversation_id": "4743a8db2a03473b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo tìm kiếm trên web, tỷ giá USD/VND ngày 17/10/2026 như sau. Đây không phải số liệu từ OneWealth.\n\n- **Tỷ giá trung tâm (NHNN):** khoảng 25.637 VND/USD.\n- **Vietcombank:** mua vào và bán ra khoảng 25.670 – 26.080 VND/USD.\n- **Thị trường tự do:** khoảng 25.910 – 25.960 VND/USD.\n\nCác nguồn không cập nhật cùng thời điểm và con số chưa đồng nhất, nên mức chắc chắn là trung bình. Trước khi giao dịch, bạn nên kiểm tra lại tại ngân hàng.",
+    "citations": [],
+    "sources": [
+     "https://doanhnghiephoinhap.vn/ty-gia-usd-hom-nay-1710-2026-dong-usd-tiep-tuc-suy-yeu-151820.html",
+     "https://thoibaotaichinhvietnam.vn/ty-gia-usd-hom-nay-17-10-usd-tu-do-giam-sau-dxy-mat-moc-102-diem-truoc-them-cuoc-hop-fed-205521.html"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257778.53408,
+    "audit_seq": 807,
+    "session": {
+     "id": "4743a8db2a03473b",
+     "title": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 13.647126485127956,
+   "first_event": 2.455449811182916,
+   "usage": {
+    "cost": 0.025942,
+    "input": 12858,
+    "output": 621,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01UKfddpWGY7k1UGCWyx31cY",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01UKfddpWGY7k1UGCWyx31cY",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 8661,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

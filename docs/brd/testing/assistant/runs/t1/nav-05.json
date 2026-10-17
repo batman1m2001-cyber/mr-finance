@@ -1,0 +1,263 @@
+{
+ "id": "nav-05",
+ "category": "navigation",
+ "persona": "chủ doanh nghiệp, bận (C02)",
+ "client_id": "C02",
+ "title": "Tải sao kê lên thế nào",
+ "why": "How to add a statement, and whether a PDF works.",
+ "brd": [
+  "OWN-AS-02",
+  "BRIEF-DATA-01"
+ ],
+ "turns": [
+  {
+   "say": "Làm sao để tải sao kê ngân hàng lên app?",
+   "expect": {
+    "tools_any": [
+     "huong_dan",
+     "mo_trang"
+    ],
+    "says": "tài sản|tải"
+   }
+  },
+  {
+   "say": "File PDF chụp bằng điện thoại thì có được không?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Làm sao để tải sao kê ngân hàng lên app?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Tài sản] Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: Đã xác thực (từ ngân hàng), Từ sao kê, Bạn tự khai; ngày và giá mua, giá vốn, giá trị hiện tại, lãi / lỗ; cuối bảng là tổng tài sản, nợ và tài sản ròng. - Tải sao kê: chọn tệp PDF, Excel hoặc CSV của công ty chứng khoán hay ngân hàng khác (hoặc dùng sao kê mẫu); các khoản đọc được hiện với nhãn “Từ sao kê”. - Bổ sung tài sản: gõ một câu như “Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ”; ứng dụng trả lời đã ghi gì và bảng có thêm dòng. [Đăng nhập] Nhập e-mail hoặc mã khách hàng và mật khẩu rồi bấm Đăng nhập. Sai tên hoặc mật khẩu thì ứng dụng chỉ báo “Sai tên đăng nhập hoặc mật khẩu”, không nói sai phần nào. Chưa đăng nhập thì không thấy gì của ứng dụng: không menu, không chọn gia đình, không trợ lý. Trên bản demo công khai có mục Tài khoản demo: danh sách tài khoản theo vai trò (khách hàng, RM, CIO, Tuân thủ, Quản trị, Chuyên gia), bấm một lần là vào. Sau khi đăng nhập, góc trên hiện tên, chức danh và nút Đăng xuất; menu chỉ có các trang của vai trò mình, mở địa chỉ trang của vai trò khác sẽ quay về trang của mình. [Trợ lý OneWealth (Copilot)] Bấm ✦ để mở khung trợ lý. Hỏi bằng tiếng Việt về số liệu của mình, về trang đang xem hay cách làm một việc trong ứng dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu bạn đang ở trang nào, vai trò nào, khách hàng nào. - Trợ lý chỉ đọc những gì bạn được phép xem, qua đúng các công cụ của các trang. Câu trả lời có nguồn (“Nguồn: …”), thời điểm số liệu và nút Mở … → để mở trang chứa số đó; số đọc được trên trang hiện tại sẽ được đánh dấu. - Việc làm thay đổi dữ liệu (lưu mục tiêu, gửi đề xuất, ghi nhớ…) luôn hiện Xác nhận / Huỷ trước; không xác nhận thì không có gì được ghi. Sau khi làm, t [Tổng đọc được từ sao kê] Cách tính Tổng đọc được từ sao kê: Tổng = cộng giá trị hôm nay các khoản đọc được từ tệp sao kê (giá theo dữ liệu thị trường ngày định giá khi sao kê có mã, số dư khi là tiền gửi).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Tài sản",
+       "Hướng dẫn sử dụng · Đăng nhập",
+       "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+       "Cách tính · Tổng đọc được từ sao kê"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tài sản",
+       "route": "#/client/tai-san"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13492,
+     "output_tokens": 442,
+     "requests": 2,
+     "cost_usd": 0.00157,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fd64a4a8c79d474baf9ead68ebb410d7",
+    "conversation_id": "1340cad2e04c4a2d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn làm theo các bước sau:\n\n1. Mở trang **Tài sản** (menu bên trái).\n2. Chọn **Tải sao kê**, rồi chọn tệp **PDF, Excel hoặc CSV** từ công ty chứng khoán hoặc ngân hàng của bạn. Bạn cũng có thể dùng sao kê mẫu nếu muốn thử.\n3. Sau khi tải, các khoản đọc được sẽ hiện với nhãn **\"Từ sao kê\"**. Với cổ phiếu hoặc quỹ có mã, giá trị được tính theo giá thị trường ngày định giá. Với tiền gửi, giá trị là số dư.\n\nNếu bạn muốn thêm tài sản mà không có sao kê, bạn có thể gõ một câu mô tả trong ô trợ lý (✦), ví dụ \"Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ\".",
+    "citations": [
+     {
+      "label": "Tài sản",
+      "route": "#/client/tai-san"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Tài sản",
+     "Hướng dẫn sử dụng · Đăng nhập",
+     "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+     "Cách tính · Tổng đọc được từ sao kê"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257066.062845,
+    "audit_seq": 637,
+    "session": {
+     "id": "1340cad2e04c4a2d",
+     "title": "Làm sao để tải sao kê ngân hàng lên app?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.9478070880286396,
+   "first_event": 1.5319693800993264,
+   "usage": {
+    "cost": 0.00157,
+    "input": 13492,
+    "output": 442,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MK2Xg4pdiDr3umfNV1aVeA",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MK2Xg4pdiDr3umfNV1aVeA",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 79,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "File PDF chụp bằng điện thoại thì có được không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok"
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Tài sản] Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: Đã xác thực (từ ngân hàng), Từ sao kê, Bạn tự khai; ngày và giá mua, giá vốn, giá trị hiện tại, lãi / lỗ; cuối bảng là tổng tài sản, nợ và tài sản ròng. - Tải sao kê: chọn tệp PDF, Excel hoặc CSV của công ty chứng khoán hay ngân hàng khác (hoặc dùng sao kê mẫu); các khoản đọc được hiện với nhãn “Từ sao kê”. - Bổ sung tài sản: gõ một câu như “Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ”; ứng dụng trả lời đã ghi gì và bảng có thêm dòng. [Bản đồ tài chính] Bức tranh toàn bộ dưới dạng đồ thị: bạn ở giữa, xung quanh là tài sản, nguồn dữ liệu, mục tiêu, rủi ro, chính sách và tin tức. Bật tắt từng loại bằng các nút phía trên (nguồn dữ liệu và chính sách tắt sẵn). Bấm một nút để xem số liệu và các liên kết của nó; nhóm tài sản mở ra các khoản bằng nhấp đúp hoặc “Mở rộng”. Đường nét đứt là tin “có thể ảnh hưởng”. Mở trang đưa tới trang chi tiết. Trên điện thoại trang mở ở dạng danh sách. [Trợ lý OneWealth (Copilot)] Bấm ✦ để mở khung trợ lý. Hỏi bằng tiếng Việt về số liệu của mình, về trang đang xem hay cách làm một việc trong ứng dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu bạn đang ở trang nào, vai trò nào, khách hàng nào. - Trợ lý chỉ đọc những gì bạn được phép xem, qua đúng các công cụ của các trang. Câu trả lời có nguồn (“Nguồn: …”), thời điểm số liệu và nút Mở … → để mở trang chứa số đó; số đọc được trên trang hiện tại sẽ được đánh dấu. - Việc làm thay đổi dữ liệu (lưu mục tiêu, gửi đề xuất, ghi nhớ…) luôn hiện Xác nhận / Huỷ trước; không xác nhận thì không có gì được ghi. Sau khi làm, t [Tổng đọc được từ sao kê] Cách tính Tổng đọc được từ sao kê: Tổng = cộng giá trị hôm nay các khoản đọc được từ tệp sao kê (giá theo dữ liệu thị trường ngày định giá khi sao kê có mã, số dư khi là tiền gửi).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Tài sản",
+       "Hướng dẫn sử dụng · Bản đồ tài chính",
+       "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+       "Cách tính · Tổng đọc được từ sao kê"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tài sản",
+       "route": "#/client/tai-san"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17047,
+     "output_tokens": 719,
+     "requests": 2,
+     "cost_usd": 0.002064,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0bae62858aeb4157b92cc0fb13319313",
+    "conversation_id": "1340cad2e04c4a2d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hướng dẫn của OneWealth chỉ nói ứng dụng nhận tệp **PDF, Excel hoặc CSV**. Hướng dẫn không nói rõ PDF chụp bằng điện thoại (ảnh scan) có đọc được hay không, nên mình chưa thể xác nhận.\n\nBạn nên thử như sau:\n\n- **Tốt nhất:** tải sao kê dạng PDF hoặc Excel gốc từ app hoặc website của ngân hàng hay công ty chứng khoán. Tệp này thường đọc được tốt hơn ảnh chụp.\n- **Nếu chỉ có ảnh chụp:** thử tải lên trên trang **Tài sản**. Nếu các khoản hiện với nhãn \"Từ sao kê\", tệp đã được đọc. Nếu không có khoản nào hiện ra, ảnh có thể chưa đọc được.\n- **Phương án thay thế:** gõ trực tiếp vào ô trợ lý (✦) để thêm từng khoản, ví dụ \"Tôi có tiền gửi 500 triệu ở ngân hàng X\". Các khoản này sẽ được ghi là \"Bạn tự khai\", không phải \"Từ sao kê\".",
+    "citations": [
+     {
+      "label": "Tài sản",
+      "route": "#/client/tai-san"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Tài sản",
+     "Hướng dẫn sử dụng · Bản đồ tài chính",
+     "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+     "Cách tính · Tổng đọc được từ sao kê"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257071.9790483,
+    "audit_seq": 638,
+    "session": {
+     "id": "1340cad2e04c4a2d",
+     "title": "Làm sao để tải sao kê ngân hàng lên app?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.889657292049378,
+   "first_event": 1.9413142479024827,
+   "usage": {
+    "cost": 0.002064,
+    "input": 17047,
+    "output": 719,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_017w5f4osfmHgGkdB1rvnFoL",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_017w5f4osfmHgGkdB1rvnFoL",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 83,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

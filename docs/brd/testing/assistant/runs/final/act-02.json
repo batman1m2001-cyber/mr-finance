@@ -1,0 +1,292 @@
+{
+ "id": "act-02",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Quên điều đã nhớ",
+ "why": "Forget: confirmation, and the item really gone.",
+ "brd": [
+  "OWN-AS-14",
+  "OWN-AS-15",
+  "OWN-AS-06",
+  "KIT-COPILOT-06"
+ ],
+ "turns": [
+  {
+   "say": "Hãy quên điều bạn nhớ về chuyện bất động sản của tôi.",
+   "expect": {
+    "status": "pending",
+    "pending": "quen",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "status": "ok",
+    "grounded": false
+   },
+   "state": {
+    "memory_lacks": "bất động sản"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Hãy quên điều bạn nhớ về chuyện bất động sản của tôi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "nho_lai",
+      "label": "Bộ nhớ",
+      "status": "ok",
+      "text": "Điều bạn đã nhờ ghi nhớ: (Sở thích) Không muốn đầu tư thêm vào bất động sản nữa. (Sở thích) Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15603,
+     "output_tokens": 489,
+     "requests": 2,
+     "cost_usd": 0.001805,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b81f8c1a96d94015accb8c1aa397e82e",
+    "conversation_id": "71f651356352406d",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "6d15ef0709c9c4be0d748411310d1d8d",
+      "tool": "quen",
+      "summary": "Quên “Không muốn đầu tư thêm vào bất động sản nữa”?"
+     }
+    ],
+    "text": "Quên “Không muốn đầu tư thêm vào bất động sản nữa”?",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263490.8346522,
+    "audit_seq": 1465,
+    "session": {
+     "id": "71f651356352406d",
+     "title": "Hãy quên điều bạn nhớ về chuyện bất động sản…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.3481492209248245,
+   "first_event": 3.1091309199109674,
+   "usage": {
+    "cost": 0.001805,
+    "input": 15603,
+    "output": 489,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GJaL7dG9bufvtesVSZmkeQ",
+     "tool": "nho_lai",
+     "label": "Bộ nhớ",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GJaL7dG9bufvtesVSZmkeQ",
+     "tool": "nho_lai",
+     "ok": true,
+     "ms": 4,
+     "focus": []
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01KoUnmmigcjhkLkcKTzYCBr",
+     "tool": "quen",
+     "label": "Quên"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "16121da710c24d89857233bb31b3fc2d",
+      "kind": "preference",
+      "text": "Không muốn đầu tư thêm vào bất động sản nữa",
+      "source": {
+       "conversation": "d17e9b009ebd46c9"
+      },
+      "confidence": 1.0,
+      "created": 1792263480.8119326,
+      "updated": 1792263480.8119326,
+      "expires": null,
+      "kind_label": "Sở thích"
+     },
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15603,
+     "output_tokens": 489,
+     "requests": 2,
+     "cost_usd": 0.001805,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b81f8c1a96d94015accb8c1aa397e82e",
+    "conversation_id": "71f651356352406d",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "7a8e1d3d49495fcae44c2c3e48d8b531",
+      "tool": "quen",
+      "summary": "Quên “Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản”?"
+     }
+    ],
+    "text": "Quên “Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản”?",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263491.2257535,
+    "audit_seq": 1466,
+    "session": {
+     "id": "71f651356352406d",
+     "title": "Hãy quên điều bạn nhớ về chuyện bất động sản…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 0.3552739731967449,
+   "first_event": 0.04565791040658951,
+   "usage": {
+    "cost": 0.001805,
+    "input": 15603,
+    "output": 489,
+    "requests": 2
+   },
+   "why": [
+    "status pending (want ok)",
+    "memory still has /bất động sản/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KoUnmmigcjhkLkcKTzYCBr",
+     "tool": "quen",
+     "label": "Quên",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KoUnmmigcjhkLkcKTzYCBr",
+     "tool": "quen",
+     "ok": true,
+     "ms": 249,
+     "focus": []
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01BcLmAd8dhWoWVkay6UAiV8",
+     "tool": "quen",
+     "label": "Quên"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  }
+ ]
+}

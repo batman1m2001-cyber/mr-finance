@@ -1,0 +1,139 @@
+{
+ "id": "kn-04",
+ "category": "knowledge",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Thuế khi bán cổ phiếu",
+ "why": "A legal fact (0,1 % of the sale value) with care about tax advice.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Bán cổ phiếu ở Việt Nam thì bị đánh thuế bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "says": "0[,.]1"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Bán cổ phiếu ở Việt Nam thì bị đánh thuế bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, cá nhân bán chứng khoán niêm yết tại Việt Nam hiện nộp thuế TNCN ở mức 0,1% trên giá chuyển nhượng của từng lần, theo khoản 1 điều 54 Nghị định 253/2026/NĐ-CP. Thuế được tính trên tổng giá bán, không trừ giá mua, nên không phải chênh lệch của giá bán so với giá mua. Với chứng khoán phái sinh, từ 01/7/2026 thuế TNCN là 0,1% mỗi lần chuyển nhượng theo Thông tư 87/2026/TT-BTC. Mức 20% chỉ áp dụng cho chuyển nhượng vốn như cổ phần chưa niêm yết, vốn góp TNHH, theo một nguồn blog.\n\nMức độ chắc chắn: cao. Các nguồn đều thống nhất mức 0,1%, và có nguồn cập nhật theo văn bản hiệu lực từ 01/7/2026, nhưng phần 20% chỉ dựa trên một nguồn blog nên cần đối chiếu văn bản gốc.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://www.meinvoice.vn/tin-tuc/43741/cach-tinh-thue-tncn-tu-chuyen-nhuong-co-phan-von-gop/",
+       "https://web.ts24.com.vn/blog/tin-tuc-3/cach-tinh-thue-thu-nhap-ca-nhan-khi-chuyen-nhuong-co-phan-14711",
+       "https://luatvietnam.vn/tin-van-ban-moi/tu-01-7-2026-thue-tncn-voi-chuyen-nhuong-chung-khoan-phai-sinh-la-01-moi-lan-chuyen-nhuong-186-110281-article.html"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0117339
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16048,
+     "output_tokens": 791,
+     "requests": 2,
+     "cost_usd": 0.013734,
+     "tools_cost_usd": 0.011734
+    },
+    "turn_id": "027376ec0cb342ce9a3916371607ef20",
+    "conversation_id": "f9cb1d0941fc4cbb",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo nguồn tôi tìm được, cá nhân bán cổ phiếu niêm yết ở Việt Nam nộp thuế TNCN **0,1% trên tổng giá bán** của mỗi lần chuyển nhượng. Thuế không tính trên phần lãi, nên bán lỗ vẫn phải nộp.\n\nMức mới nhất là 0,1%, do nhiều nguồn thống nhất và có nguồn nêu hiệu lực từ 01/7/2026. Tuy nhiên, tôi chưa kiểm chứng được văn bản gốc, nên bạn nên đối chiếu với cơ quan thuế hoặc công ty chứng khoán trước khi giao dịch.",
+    "citations": [],
+    "sources": [
+     "https://www.meinvoice.vn/tin-tuc/43741/cach-tinh-thue-tncn-tu-chuyen-nhuong-co-phan-von-gop/",
+     "https://web.ts24.com.vn/blog/tin-tuc-3/cach-tinh-thue-thu-nhap-ca-nhan-khi-chuyen-nhuong-co-phan-14711",
+     "https://luatvietnam.vn/tin-van-ban-moi/tu-01-7-2026-thue-tncn-voi-chuyen-nhuong-chung-khoan-phai-sinh-la-01-moi-lan-chuyen-nhuong-186-110281-article.html"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792263199.5472243,
+    "audit_seq": 1397,
+    "session": {
+     "id": "f9cb1d0941fc4cbb",
+     "title": "Bán cổ phiếu ở Việt Nam thì bị đánh thuế bao…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 13.25521756708622,
+   "first_event": 3.419794457964599,
+   "usage": {
+    "cost": 0.025467999999999998,
+    "input": 16048,
+    "output": 791,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LAcJJLm17QvfbUSb94pgzm",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LAcJJLm17QvfbUSb94pgzm",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 7418,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792261319.1340644,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -137,12 +137,40 @@ def _ids(ctx: Ctx, args: Dict[str, Any]) -> List[str]:
 
 async def compare(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """Each scenario alone, then all together: the difference is the compounding and the costs counted once."""
-    from scenarios.graph import combine_flow
-
     ids = _ids(ctx, args)
     if not ids:
         raise ToolFailed("Chưa có kịch bản nào: bật kịch bản trên đồ thị, hoặc nêu tên kịch bản cần so sánh")
-    params = ctx.graph.get("params") or {}
+    return await _compare(ctx, ids, ctx.graph.get("params") or {})
+
+
+ASSUMED = {"nha_dat": ("real_estate", "giá nhà đất"), "co_phieu": ("stock", "giá cổ phiếu và quỹ cổ phiếu"),
+           "vang": ("gold", "giá vàng"), "lai_suat": ("rate", "lãi vay thả nổi"),
+           "thu_nhap": ("income", "thu nhập hằng tháng")}  # fmt: skip
+
+
+async def assume(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """The person's own what-if, said in words (“nhà đất giảm 20%”), on the engine their graph uses (D12): the
+    custom scenario with the sizes asked, within its bounds, together with any named scenario."""
+    prm = {key: float(args.get(arg) or 0) / 100 for arg, (key, _) in ASSUMED.items()}
+    if not any(prm.values()):
+        raise ToolFailed("Cần ít nhất một giả định: nhà đất, cổ phiếu, vàng, lãi suất hoặc thu nhập thay đổi bao nhiêu")
+    try:
+        _sim.custom_params(prm)
+    except ValueError:
+        raise ToolFailed(
+            "Ngoài giới hạn: nhà đất, cổ phiếu, vàng, thu nhập trong khoảng −50% đến +50%; lãi suất tăng 0 đến 5 điểm %"
+        ) from None
+    also = [STRESS[w] for w in (args.get("cung_luc") or []) if w in STRESS]
+    out = await _compare(ctx, ["custom", *dict.fromkeys(also)], {"custom": prm})
+    said = [f"{name} {'+' if prm[key] > 0 else '−'}{abs(prm[key]) * 100:g}{' điểm %/năm' if key == 'rate' else '%'}"
+            for arg, (key, name) in ASSUMED.items() if prm[key]]  # fmt: skip
+    out["text"] = f"Giả định của bạn: {', '.join(said)}. " + out["text"]
+    out["data"]["assumed"] = prm
+    return out
+
+
+async def _compare(ctx: Ctx, ids: List[str], params: Dict[str, Any]) -> Dict[str, Any]:
+    from scenarios.graph import combine_flow
 
     async def run(which: List[str]) -> Dict[str, Any]:
         return (
@@ -157,7 +185,8 @@ async def compare(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         )["result"]
 
     together = await run(ids)
-    alone = {sid: (await run([sid]))["change"] for sid in ids} if len(ids) > 1 else {ids[0]: together["change"]}
+    each = {sid: await run([sid]) for sid in ids} if len(ids) > 1 else {ids[0]: together}
+    alone = {sid: r["change"] for sid, r in each.items()}
     title = {s["id"]: s["title"] for s in together["scenarios"]}
     b, a = together["before"]["net_worth"], together["after"]["net_worth"]
     text = (
@@ -194,7 +223,10 @@ async def compare(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
             "together": together["change"],
             "before": b,
             "after": a,
-            "by_class": together["by_class"],
+            # each scenario's own split and the combination's, named apart: the combination's stock loss once read as
+            # one scenario's (stress test D32: “VN-Index −30 %: −1,82 tỷ, mostly stocks, 1,97 tỷ”)
+            "by_class_alone": {sid: r["by_class"] for sid, r in each.items()},
+            "by_class_together": together["by_class"],
             "goals": {g["id"]: [g["before"]["status"], g["after"]["status"]] for g in goals},
         },
         "focus": [f"scenario:{s}" for s in ids]
@@ -236,6 +268,26 @@ CATALOGUE: Dict[str, Tool] = {
             },
             page="ke-hoach",
             follow=["Mục tiêu của tôi thế nào?", "Kịch bản lãi suất tăng"],
+        ),
+        Tool(
+            "gia_dinh",
+            "chạy một giả định do người dùng nêu bằng lời trên tài sản hiện có (vd nhà đất giảm một phần năm, cổ phiếu "
+            "giảm vài chục phần trăm, lãi suất tăng vài điểm, thu nhập giảm một nửa), có thể cùng lúc với kịch bản có "
+            "sẵn; chỉ dùng khi mức sốc khác các kịch bản có sẵn của kich_ban (mức trùng thì dùng kich_ban). Ở đây mỗi "
+            "lớp giảm đúng mức nêu, và lãi suất chỉ tính thêm tiền lãi vay thả nổi, không định giá lại tài sản: nói rõ "
+            "điều này trong câu trả lời",
+            ("client", "rm"),
+            assume,
+            params={
+                "nha_dat": Param(float, "giá nhà đất thay đổi, % (−50 đến 50), vd −20", 0.0),
+                "co_phieu": Param(float, "giá cổ phiếu và quỹ cổ phiếu thay đổi, % (−50 đến 50)", 0.0),
+                "vang": Param(float, "giá vàng thay đổi, % (−50 đến 50)", 0.0),
+                "lai_suat": Param(float, "lãi vay thả nổi tăng thêm, điểm % mỗi năm (0 đến 5)", 0.0),
+                "thu_nhap": Param(float, "thu nhập hằng tháng thay đổi, % (−50 đến 50)", 0.0),
+                "cung_luc": Param(List[Literal[tuple(STRESS)]], "kịch bản có sẵn chạy cùng lúc (nếu có)", []),
+            },
+            page="ke-hoach",
+            follow=["So sánh các kịch bản đang bật", "Mục tiêu của tôi thế nào?"],
         ),
     ]
 }

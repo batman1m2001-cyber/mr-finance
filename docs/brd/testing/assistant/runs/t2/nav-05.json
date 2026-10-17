@@ -1,0 +1,286 @@
+{
+ "id": "nav-05",
+ "category": "navigation",
+ "persona": "chủ doanh nghiệp, bận (C02)",
+ "client_id": "C02",
+ "title": "Tải sao kê lên thế nào",
+ "why": "How to add a statement, and whether a PDF works.",
+ "brd": [
+  "OWN-AS-02",
+  "BRIEF-DATA-01"
+ ],
+ "turns": [
+  {
+   "say": "Làm sao để tải sao kê ngân hàng lên app?",
+   "expect": {
+    "tools_any": [
+     "huong_dan",
+     "mo_trang"
+    ],
+    "says": "tài sản|tải"
+   }
+  },
+  {
+   "say": "File PDF chụp bằng điện thoại thì có được không?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Làm sao để tải sao kê ngân hàng lên app?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Tài sản] Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: Đã xác thực (từ ngân hàng), Từ sao kê, Bạn tự khai; ngày và giá mua, giá vốn, giá trị hiện tại, lãi / lỗ; cuối bảng là tổng tài sản, nợ và tài sản ròng. - Tải sao kê: chọn tệp PDF, Excel hoặc CSV của công ty chứng khoán hay ngân hàng khác (hoặc dùng sao kê mẫu); các khoản đọc được hiện với nhãn “Từ sao kê”. - Bổ sung tài sản: gõ một câu như “Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ”; ứng dụng trả lời đã ghi gì và bảng có thêm dòng. [Đăng nhập] Nhập e-mail hoặc mã khách hàng và mật khẩu rồi bấm Đăng nhập. Sai tên hoặc mật khẩu thì ứng dụng chỉ báo “Sai tên đăng nhập hoặc mật khẩu”, không nói sai phần nào. Chưa đăng nhập thì không thấy gì của ứng dụng: không menu, không chọn gia đình, không trợ lý. Trên bản demo công khai có mục Tài khoản demo: danh sách tài khoản theo vai trò (khách hàng, RM, CIO, Tuân thủ, Quản trị, Chuyên gia), bấm một lần là vào. Sau khi đăng nhập, góc trên hiện tên, chức danh và nút Đăng xuất; menu chỉ có các trang của vai trò mình, mở địa chỉ trang của vai trò khác sẽ quay về trang của mình. [Đồ thị tài chính (màn hình chính)] Trợ lý (thẻ Trợ lý cạnh ô Thông tin) biết bạn đang ở góc nhìn nào và đang chọn gì: hỏi “mục này là gì?” là hỏi về mục đang chọn. Các mục trợ lý đang đọc sáng lên trên đồ thị. - Các trang chi tiết (Toàn cảnh, Tài sản, Kế hoạch, …) mở thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như cũ. [Tổng đọc được từ sao kê] Cách tính Tổng đọc được từ sao kê: Tổng = cộng giá trị hôm nay các khoản đọc được từ tệp sao kê (giá theo dữ liệu thị trường ngày định giá khi sao kê có mã, số dư khi là tiền gửi).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Tài sản",
+       "Hướng dẫn sử dụng · Đăng nhập",
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Cách tính · Tổng đọc được từ sao kê"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tài sản",
+       "route": "#/client/tai-san"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15546,
+     "output_tokens": 269,
+     "requests": 2,
+     "cost_usd": 0.001689,
+     "tools_cost_usd": null
+    },
+    "turn_id": "21d8e758533e4c6b899fb5a552bc06c2",
+    "conversation_id": "7ab7241827d04256",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn tải sao kê ở trang **Tài sản**:\n\n1. Mở trang Tài sản (menu hoặc nút bên dưới).\n2. Chọn tệp PDF, Excel hoặc CSV của công ty chứng khoán hoặc ngân hàng.\n3. Các khoản đọc được sẽ hiện với nhãn “Từ sao kê”.\n\nBạn có muốn tôi mở trang Tài sản cho bạn không?",
+    "citations": [
+     {
+      "label": "Tài sản",
+      "route": "#/client/tai-san"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Tài sản",
+     "Hướng dẫn sử dụng · Đăng nhập",
+     "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+     "Cách tính · Tổng đọc được từ sao kê"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259227.2661202,
+    "audit_seq": 850,
+    "session": {
+     "id": "7ab7241827d04256",
+     "title": "Làm sao để tải sao kê ngân hàng lên app?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.51462913909927,
+   "first_event": 1.3814178430475295,
+   "usage": {
+    "cost": 0.001689,
+    "input": 15546,
+    "output": 269,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CXx6LCpx3T5ojEWngYwsq7",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CXx6LCpx3T5ojEWngYwsq7",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 80,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "File PDF chụp bằng điện thoại thì có được không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Tài sản] Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: Đã xác thực (từ ngân hàng), Từ sao kê, Bạn tự khai; ngày và giá mua, giá vốn, giá trị hiện tại, lãi / lỗ; cuối bảng là tổng tài sản, nợ và tài sản ròng. - Tải sao kê: chọn tệp PDF, Excel hoặc CSV của công ty chứng khoán hay ngân hàng khác (hoặc dùng sao kê mẫu); các khoản đọc được hiện với nhãn “Từ sao kê”. - Bổ sung tài sản: gõ một câu như “Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ”; ứng dụng trả lời đã ghi gì và bảng có thêm dòng. [Bản đồ tài chính] Bức tranh toàn bộ dưới dạng đồ thị: bạn ở giữa, xung quanh là tài sản, nguồn dữ liệu, mục tiêu, rủi ro, chính sách và tin tức. Bật tắt từng loại bằng các nút phía trên (nguồn dữ liệu và chính sách tắt sẵn). Bấm một nút để xem số liệu và các liên kết của nó; nhóm tài sản mở ra các khoản bằng nhấp đúp hoặc “Mở rộng”. Đường nét đứt là tin “có thể ảnh hưởng”. Mở trang đưa tới trang chi tiết. Trên điện thoại trang mở ở dạng danh sách. [Trợ lý OneWealth (Copilot)] Bấm ✦ để mở khung trợ lý. Hỏi bằng tiếng Việt về số liệu của mình, về trang đang xem hay cách làm một việc trong ứng dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu bạn đang ở trang nào, vai trò nào, khách hàng nào. - Trợ lý chỉ đọc những gì bạn được phép xem, qua đúng các công cụ của các trang. Câu trả lời có nguồn (“Nguồn: …”), thời điểm số liệu và nút Mở … → để mở trang chứa số đó; số đọc được trên trang hiện tại sẽ được đánh dấu. - Việc làm thay đổi dữ liệu (lưu mục tiêu, gửi đề xuất, ghi nhớ…) luôn hiện Xác nhận / Huỷ trước; không xác nhận thì không có gì được ghi. Sau khi làm, t [Tổng đọc được từ sao kê] Cách tính Tổng đọc được từ sao kê: Tổng = cộng giá trị hôm nay các khoản đọc được từ tệp sao kê (giá theo dữ liệu thị trường ngày định giá khi sao kê có mã, số dư khi là tiền gửi).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Tài sản",
+       "Hướng dẫn sử dụng · Bản đồ tài chính",
+       "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+       "Cách tính · Tổng đọc được từ sao kê"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tài sản",
+       "route": "#/client/tai-san"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18611,
+     "output_tokens": 543,
+     "requests": 2,
+     "cost_usd": 0.002133,
+     "tools_cost_usd": null
+    },
+    "turn_id": "6641a1fca3f04feca724ab8f77cd8adf",
+    "conversation_id": "7ab7241827d04256",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hướng dẫn của ứng dụng chỉ nói là nhận tệp **PDF, Excel hoặc CSV**. Nó không nói rõ PDF chụp bằng điện thoại (ảnh quét) có đọc được hay không, nên tôi chưa thể khẳng định.\n\nBạn có thể thử tải lên. Nếu các khoản không hiện với nhãn “Từ sao kê”, thì tệp đó chưa được đọc. Khi đó, bạn nên tải sao kê dạng PDF xuất từ ứng dụng hoặc website ngân hàng, hoặc file Excel/CSV nếu có.",
+    "citations": [
+     {
+      "label": "Tài sản",
+      "route": "#/client/tai-san"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Tài sản",
+     "Hướng dẫn sử dụng · Bản đồ tài chính",
+     "Hướng dẫn sử dụng · Trợ lý OneWealth (Copilot)",
+     "Cách tính · Tổng đọc được từ sao kê"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259232.2780998,
+    "audit_seq": 851,
+    "session": {
+     "id": "7ab7241827d04256",
+     "title": "Làm sao để tải sao kê ngân hàng lên app?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 4.963162043131888,
+   "first_event": 2.1049903803505003,
+   "usage": {
+    "cost": 0.002133,
+    "input": 18611,
+    "output": 543,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HDZPMbizC3ihb43pddw6Ah",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HDZPMbizC3ihb43pddw6Ah",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 220,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

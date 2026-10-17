@@ -1,0 +1,116 @@
+{
+ "id": "kn-04",
+ "category": "knowledge",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Thuế khi bán cổ phiếu",
+ "why": "A legal fact (0,1 % of the sale value) with care about tax advice.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Bán cổ phiếu ở Việt Nam thì bị đánh thuế bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "says": "0[,.]1"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Bán cổ phiếu ở Việt Nam thì bị đánh thuế bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, cá nhân bán cổ phiếu niêm yết hiện chịu thuế TNCN ở mức 0,1% trên giá trị chuyển nhượng của từng lần bán, không phụ thuộc việc giao dịch lãi hay lỗ. Một nguồn cho biết mức này đã được áp dụng từ 1/7/2026 theo Luật Thuế thu nhập cá nhân 2025, nên không tính theo lợi nhuận. Riêng vốn góp hoặc cổ phần của công ty chưa niêm yết thuộc diện khác, với thuế suất 20% trên thu nhập tính thuế. Mức thuế 0,1% vẫn được nhắc trong nhiều bài viết dựa trên các thông tư cũ như 111/2013 và 92/2015, và một số bài viết chưa nêu rõ cập nhật theo luật mới.\n\nMức độ chắc chắn: trung bình. Các nguồn thống nhất về mức 0,1% cho cổ phiếu niêm yết và thường là văn bản mới (Thông tư 87/2026, Nghị định 253/2026), nhưng nhiều bài tổng hợp vẫn dẫn quy định cũ và tôi chưa đối chiếu trực tiếp văn bản gốc.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [],
+      "navigate": null,
+      "cost_usd": 0.022822
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12739,
+     "output_tokens": 751,
+     "requests": 2,
+     "cost_usd": 0.024471,
+     "tools_cost_usd": 0.022822
+    },
+    "turn_id": "c66bee478ba74873af2dea3fccf7de77",
+    "conversation_id": "18750a3e65ab4b27",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo kết quả tìm trên web, cá nhân bán cổ phiếu niêm yết ở Việt Nam hiện chịu **thuế 0,1% trên giá trị chuyển nhượng** của mỗi lần bán. Thuế tính trên giá bán, không phụ thuộc việc lãi hay lỗ.\n\n- Một nguồn cho biết mức này áp dụng từ 1/7/2026 theo Luật Thuế thu nhập cá nhân 2025.\n- Nhiều bài viết vẫn nêu mức 0,1% theo các thông tư cũ, nên có thể lẫn thông tin.\n- Với cổ phần công ty chưa niêm yết, thuế là 20% trên thu nhập tính thuế, theo nguồn này.\n\nMức chắc chắn ở mức trung bình. Tôi chưa đối chiếu được trực tiếp văn bản pháp luật gốc. Trước khi bán, bạn nên kiểm tra lại với công ty chứng khoán hoặc cơ quan thuế, hoặc đọc văn bản chính thức hiện hành.\n\nThông tin này chỉ là tham khảo về thuế, không phải khuyến nghị đầu tư.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257231.2174242,
+    "audit_seq": 673,
+    "session": {
+     "id": "18750a3e65ab4b27",
+     "title": "Bán cổ phiếu ở Việt Nam thì bị đánh thuế bao…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 15.408161466009915,
+   "first_event": 1.9794197967275977,
+   "usage": {
+    "cost": 0.047293,
+    "input": 12739,
+    "output": 751,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01UtkabRDuwbmM9yKN8vc2zw",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01UtkabRDuwbmM9yKN8vc2zw",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 10121,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

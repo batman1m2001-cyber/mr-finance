@@ -1,0 +1,270 @@
+{
+ "id": "gl-03",
+ "category": "goals",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Quỹ khẩn cấp bao nhiêu tháng, mình đủ chưa",
+ "why": "A rule of thumb, then her own months.",
+ "brd": [
+  "BRIEF-DASH-05",
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Mình đã đủ chưa?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "says": "tháng"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7041,
+     "output_tokens": 488,
+     "requests": 1,
+     "cost_usd": 0.000948,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b678c1dbb9c44c23824cadb72f9cf1c5",
+    "conversation_id": "b32fbf6c2b5c40a6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Thông thường, quỹ khẩn cấp nên đủ **3 đến 6 tháng chi tiêu** cần thiết. Mức phù hợp phụ thuộc vào vài yếu tố:\n\n- **Nên giữ gần 6 tháng hoặc hơn** nếu thu nhập không ổn định, làm nghề tự do, hoặc là nguồn thu nhập chính của gia đình.\n- **3 tháng là đủ** nếu công việc ổn định, có nhiều người cùng đóng góp thu nhập, hoặc có thêm nguồn dự phòng khác.\n\nQuỹ này nên để ở nơi an toàn và dễ rút, như tiền gửi không kỳ hạn hoặc tiết kiệm linh hoạt, không nên đầu tư vào tài sản dao động mạnh.\n\nNếu bạn muốn, tôi có thể xem thanh khoản dự phòng hiện tại của bạn trong OneWealth và so với mốc này.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259482.8395383,
+    "audit_seq": 915,
+    "session": {
+     "id": "b32fbf6c2b5c40a6",
+     "title": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.228795873001218,
+   "first_event": 1.7088579242117703,
+   "usage": {
+    "cost": 0.000948,
+    "input": 7041,
+    "output": 488,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Mình đã đủ chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số tháng chi tiêu được bảo đảm bởi thanh khoản dự phòng: 980000000/30000000 = 32,67",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 24131,
+     "output_tokens": 905,
+     "requests": 3,
+     "cost_usd": 0.002866,
+     "tools_cost_usd": null
+    },
+    "turn_id": "bdcfa5190bd942199268c7b8493b9354",
+    "conversation_id": "b32fbf6c2b5c40a6",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Có, quỹ khẩn cấp của bạn đã vượt xa mức khuyến nghị.**\n\n- Thanh khoản dự phòng: **980 triệu đồng** (tiền và tiền gửi)\n- Chi tiêu theo hồ sơ: **30 triệu đồng/tháng**\n- Số tháng được bảo đảm: 980 ÷ 30 = **khoảng 32,7 tháng** (~2,7 năm). Hệ thống ghi \"đủ chi 3 năm\", làm tròn từ con số này.\n- Mức khuyến nghị: **3 đến 6 tháng**\n\nSố liệu ghi nhận ngày 09/10/2026, lấy từ trang Tổng quan. Đây là số đã ghi nhận, không phải dự báo.\n\nĐiều đáng chú ý là phần lớn tài sản của bạn nằm trong bất động sản, nên thanh khoản chỉ chiếm 17% tổng tài sản. Nếu bạn muốn, tôi có thể xem thêm phần này.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259490.2187376,
+    "audit_seq": 916,
+    "session": {
+     "id": "b32fbf6c2b5c40a6",
+     "title": "Quỹ khẩn cấp nên có bao nhiêu tháng chi tiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.344952384009957,
+   "first_event": 1.6349873021245003,
+   "usage": {
+    "cost": 0.002866,
+    "input": 24131,
+    "output": 905,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0117Nz5SWHXDkoBfHRF2mWHC",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0117Nz5SWHXDkoBfHRF2mWHC",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 125,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01DPeuaWtUcokGcAUe4LAjc1",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01DPeuaWtUcokGcAUe4LAjc1",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

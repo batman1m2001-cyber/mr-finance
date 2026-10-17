@@ -1,0 +1,361 @@
+{
+ "id": "kn-01",
+ "category": "knowledge",
+ "persona": "người mới (C05)",
+ "client_id": "C05",
+ "title": "Trái phiếu, chứng chỉ quỹ, và nên chọn gì",
+ "why": "Basic knowledge, then a personal question that must not become overconfident advice.",
+ "brd": [
+  "OWN-AS-07",
+  "BRD-RULE-CONTENT-01"
+ ],
+ "turns": [
+  {
+   "say": "Trái phiếu là gì vậy? Có an toàn hơn gửi tiết kiệm không?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Thế còn chứng chỉ quỹ thì khác gì?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Với tình hình của mình thì nên chọn cái nào?",
+   "expect": {
+    "grounded": false,
+    "not_says": [
+     "chắc chắn",
+     "nên mua ngay"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Trái phiếu là gì vậy? Có an toàn hơn gửi tiết kiệm không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6042,
+     "output_tokens": 1200,
+     "requests": 1,
+     "cost_usd": 0.001204,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0fa610dcc1ff4f4d829bbb3f5b0cda36",
+    "conversation_id": "6fef97c2f5d04c85",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Trái phiếu** là giấy nợ. Bạn cho tổ chức phát hành (Chính phủ, doanh nghiệp hoặc ngân hàng) vay tiền. Đổi lại, họ trả lãi định kỳ (thường gọi là coupon) và hoàn lại vốn gốc khi đến hạn.\n\n**So với gửi tiết kiệm:**\n\n- **Tiết kiệm ngân hàng** thường an toàn về vốn hơn. Tiền gửi được bảo hiểm đến một hạn mức nhất định, lãi suất và thời hạn rõ ràng, rút trước hạn dễ hơn.\n- **Trái phiếu** không phải lúc nào cũng an toàn hơn:\n  - **Rủi ro tín dụng:** doanh nghiệp phát hành có thể không trả được lãi hoặc gốc. Trái phiếu Chính phủ thường an toàn hơn nhiều so với trái phiếu doanh nghiệp.\n  - **Rủi ro lãi suất:** khi lãi suất thị trường tăng, giá trái phiếu",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257176.1171129,
+    "audit_seq": 664,
+    "session": {
+     "id": "6fef97c2f5d04c85",
+     "title": "Trái phiếu là gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.240091229788959,
+   "first_event": 4.7173831961117685,
+   "usage": {
+    "cost": 0.001204,
+    "input": 6042,
+    "output": 1200,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Thế còn chứng chỉ quỹ thì khác gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6453,
+     "output_tokens": 1200,
+     "requests": 1,
+     "cost_usd": 0.001245,
+     "tools_cost_usd": null
+    },
+    "turn_id": "dd01b771c5c04c6194ea9c58c9b598ef",
+    "conversation_id": "6fef97c2f5d04c85",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Chứng chỉ quỹ** là giấy xác nhận bạn sở hữu một phần của quỹ đầu tư. Nhiều người góp tiền vào chung, và công ty quản lý quỹ đầu tư tiền đó vào cổ phiếu, trái phiếu, tiền gửi... theo mục tiêu của quỹ.\n\n**Khác trái phiếu ở chỗ:**\n\n- **Không có lãi cố định và không có ngày hoàn vốn.** Giá trị chứng chỉ quỹ thay đổi theo giá trị tài sản ròng của quỹ, nên có thể lãi hoặc lỗ tùy thời điểm.\n- **Rủi ro phụ thuộc vào danh mục.** Quỹ trái phiếu hoặc quỹ tiền thường ít biến động hơn. Quỹ cổ phiếu biến động mạnh hơn.\n- **Được quản lý chuyên nghiệp nhưng có phí.** Thường có phí quản lý và có thể có phí mua hoặc bán.\n- **Không phải tiền gửi nên không có bảo hiểm tiền gửi.**\n\n**Ví dụ so sánh nhanh:** tiết kiệm có lãi cố định và vốn gần như được bảo toàn. Trái phiếu có lãi định kỳ, nhưng giá có thể giảm nếu lãi suất thị trường tăng, và có rủi ro doanh nghiệp không trả nợ. Quỹ chứng chỉ thì phụ thuộc vào danh mục bên trong, nên rủi ro và lợi nhuận có thể rất khác nhau tùy quỹ.\n\nNếu bạn cho tôi biết mục tiêu và thời hạn đầu tư, tôi có thể giúp xem",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257182.3979805,
+    "audit_seq": 665,
+    "session": {
+     "id": "6fef97c2f5d04c85",
+     "title": "Trái phiếu là gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 6.252382718026638,
+   "first_event": 3.596835429314524,
+   "usage": {
+    "cost": 0.001245,
+    "input": 6453,
+    "output": 1200,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Với tình hình của mình thì nên chọn cái nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 69%, Tiền & tiền gửi 17%, Cổ phiếu 8%, Chứng chỉ quỹ 5%. Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14937,
+     "output_tokens": 1318,
+     "requests": 2,
+     "cost_usd": 0.002153,
+     "tools_cost_usd": null
+    },
+    "turn_id": "54cdac55b9e54f588161d84649c39ada",
+    "conversation_id": "6fef97c2f5d04c85",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không thể chọn thay bạn, nhưng dữ liệu hiện tại cho thấy danh mục đang thiếu đa dạng hóa, nên cân nhắc thêm các kênh ít biến động vẫn có ý nghĩa.\n\n**Tình hình hiện tại (số ghi nhận ngày 09/10/2026, trang Tổng quan):**\n- **Tài sản ròng:** 3,53 tỷ. Tổng tài sản 5,64 tỷ, nợ 2,11 tỷ (chủ yếu là khoản vay mua căn hộ Vinhomes Grand Park 2,10 tỷ).\n- **Phân bổ:** Bất động sản 69%, tiền và tiền gửi 17%, cổ phiếu 8%, chứng chỉ quỹ 5%.\n- **Tập trung:** 69,2% tài sản nằm ở một khu vực (Vinhomes Grand Park, TP. Thủ Đức), vượt ngưỡng 35%.\n- **Rủi ro:** khi thị trường xấu, mức sụt giảm ước tính là 16,8%, vượt ngưỡng 15%. Đây là ước tính từ mô phỏng, không phải dự báo.\n- **Thanh khoản dự phòng:** 980 triệu, đủ chi khoảng 3 năm.\n- **Mục tiêu:** mua thêm bất động sản bằng vốn vay đang chậm tiến độ.\n\n**Nhận xét:**\n- Phần lớn tài sản đã gắn với một loại tài sản và một khu vực, nên thêm khoản vay hoặc mua thêm bất động sản sẽ làm rủi ro tập trung tăng.\n- Trái phiếu Chính phủ, quỹ trái phiếu hoặc quỹ tiền có thể giúp giảm biến động của phần tài sản tài chính. Quỹ cổ phiếu thì tăng biến động. Lựa chọn cụ thể nên dựa trên thời hạn bạn cần tiền, mức chịu lỗ và dòng tiền trả nợ hằng tháng.\n\nĐể xem kỹ hơn, bạn có thể cho tôi biết:\n1. Bạn định dùng số tiền này trong bao lâu?\n2. Bạn chấp nhận lỗ tối đa bao nhiêu phần trăm trong một năm xấu?\n3. Khoản trả góp hằng tháng cho căn hộ có áp lực lên bạn không?\n\nTôi cũng có thể mở trang Kế hoạch hoặc chạy kịch bản \"trái phiếu\" để xem tác động lên danh mục hiện tại.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792257190.3237596,
+    "audit_seq": 666,
+    "session": {
+     "id": "6fef97c2f5d04c85",
+     "title": "Trái phiếu là gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 7.895469630137086,
+   "first_event": 1.5626152562908828,
+   "usage": {
+    "cost": 0.002153,
+    "input": 14937,
+    "output": 1318,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018QzbRabhfaBrSQk7GRAGBY",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01AT3wJCki19vkRLtPmpCLsF",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018QzbRabhfaBrSQk7GRAGBY",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 146,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01AT3wJCki19vkRLtPmpCLsF",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 145,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

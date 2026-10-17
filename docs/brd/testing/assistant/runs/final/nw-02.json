@@ -1,0 +1,279 @@
+{
+ "id": "nw-02",
+ "category": "news",
+ "persona": "đang chọn một tin trên đồ thị (C01)",
+ "client_id": "C01",
+ "title": "“Vì sao tin này ảnh hưởng tới tôi?”",
+ "why": "A picked event: the answer must investigate that event.",
+ "brd": [
+  "OWN-GW-47",
+  "OWN-GW-42",
+  "FEAT-09"
+ ],
+ "turns": [
+  {
+   "say": "Vì sao tin này ảnh hưởng tới tôi?",
+   "expect": {
+    "tools_any": [
+     "dieu_tra",
+     "lien_ket",
+     "tac_dong"
+    ],
+    "says": "cổ phiếu"
+   },
+   "graph": {
+    "lens": "tin",
+    "selected": {
+     "id": "EV:EV-2026-0001",
+     "kind": "event",
+     "label": "Thị trường cổ phiếu"
+    }
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Vì sao tin này ảnh hưởng tới tôi?",
+   "graph": {
+    "lens": "tin",
+    "selected": {
+     "id": "EV:EV-2026-0001",
+     "kind": "event",
+     "label": "Thị trường cổ phiếu"
+    }
+   },
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "lien_ket",
+      "label": "Liên kết",
+      "status": "ok",
+      "text": "Thị trường cổ phiếu có 6 liên kết: Cổ phiếu — có thể ảnh hưởng −89,7 triệu (~29,9 triệu/tháng) (ước tính); Chứng chỉ quỹ — có thể ảnh hưởng −9,8 triệu (~3,3 triệu/tháng) (ước tính); Vàng — có thể ảnh hưởng +6,4 triệu (~2,1 triệu/tháng) (ước tính); Bất động sản — có thể ảnh hưởng −3,4 triệu (~1,1 triệu/tháng) (ước tính); Trái phiếu — có thể ảnh hưởng −1,6 triệu (~0,5 triệu/tháng) (ước tính). Thực tế là số đã ghi nhận; ước tính và giả định không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Cổ phiếu",
+         "sub": "có thể ảnh hưởng · ước tính · 1 bản ghi",
+         "chip": "−89,7 triệu (~29,9 triệu/tháng)"
+        },
+        {
+         "title": "Chứng chỉ quỹ",
+         "sub": "có thể ảnh hưởng · ước tính · 1 bản ghi",
+         "chip": "−9,8 triệu (~3,3 triệu/tháng)"
+        },
+        {
+         "title": "Vàng",
+         "sub": "có thể ảnh hưởng · ước tính · 1 bản ghi",
+         "chip": "+6,4 triệu (~2,1 triệu/tháng)"
+        },
+        {
+         "title": "Bất động sản",
+         "sub": "có thể ảnh hưởng · ước tính · 1 bản ghi",
+         "chip": "−3,4 triệu (~1,1 triệu/tháng)"
+        },
+        {
+         "title": "Trái phiếu",
+         "sub": "có thể ảnh hưởng · ước tính · 1 bản ghi",
+         "chip": "−1,6 triệu (~0,5 triệu/tháng)"
+        },
+        {
+         "title": "Khoản vay",
+         "sub": "có thể ảnh hưởng · ước tính · 1 bản ghi",
+         "chip": "−0,2 triệu (~0,1 triệu/tháng)"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0001",
+       "class:stock",
+       "class:fund",
+       "class:gold",
+       "class:real_estate",
+       "class:bond",
+       "class:loan"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Đồ thị tài chính: các liên kết và bản ghi của chúng"
+      ],
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "text": "2 sự kiện đang có hiệu lực; tác động kỳ vọng 3 tháng cộng lại +0,2 triệu. Lớn nhất: Bất động sản (+98,6 triệu). Đây là ước tính theo kịch bản CIO duyệt, không phải khuyến nghị.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bất động sản",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "+98,6 triệu",
+         "tone": "good",
+         "focus": "event:EV-2026-0002"
+        },
+        {
+         "title": "Thị trường cổ phiếu",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "−98,4 triệu",
+         "tone": "bad",
+         "focus": "event:EV-2026-0001"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "2 lần áp dụng CIO duyệt",
+       "CafeF",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16666,
+     "output_tokens": 752,
+     "requests": 2,
+     "cost_usd": 0.002043,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fd52942650134ec8a29c61c1539573ec",
+    "conversation_id": "c09aa74672e447b3",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tin \"Thị trường cổ phiếu\" được nối với các khoản đang nắm giữ của bạn. Theo đồ thị ngày 09/10/2026, đây là các ước tính:\n\n- **Cổ phiếu:** khoảng −89,7 triệu (~29,9 triệu/tháng). Đây là mức ảnh hưởng lớn nhất.\n- **Chứng chỉ quỹ:** khoảng −9,8 triệu.\n- **Vàng:** khoảng +6,4 triệu.\n- **Bất động sản:** khoảng −3,4 triệu.\n- **Trái phiếu:** khoảng −1,6 triệu.\n\nTổng hợp từ trang Tác động, hai sự kiện đã được CIO duyệt đang có hiệu lực. Kỳ vọng 3 tháng cộng lại khoảng +0,2 triệu, nhưng riêng bất động sản lại +98,6 triệu. Đây là ước tính, không phải khuyến nghị, và không cộng vào tài sản ròng thực tế.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     }
+    ],
+    "sources": [
+     "Đồ thị tài chính: các liên kết và bản ghi của chúng",
+     "2 lần áp dụng CIO duyệt",
+     "CafeF",
+     "Vietstock",
+     "VnEconomy"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "event:EV-2026-0002"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh",
+     "Mở đồ thị tác động"
+    ],
+    "answered_at": 1792263246.5748756,
+    "audit_seq": 1409,
+    "session": {
+     "id": "c09aa74672e447b3",
+     "title": "Vì sao tin này ảnh hưởng tới tôi?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.406774823088199,
+   "first_event": 1.6280198190361261,
+   "usage": {
+    "cost": 0.002043,
+    "input": 16666,
+    "output": 752,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0114osTCpFNjzmHmBb5KxBFC",
+     "tool": "lien_ket",
+     "label": "Liên kết",
+     "nodes": [
+      "EV:EV-2026-0001"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011oLMCBpVzeA9ckoGSzNv2Z",
+     "tool": "tac_dong",
+     "label": "Tác động tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011oLMCBpVzeA9ckoGSzNv2Z",
+     "tool": "tac_dong",
+     "ok": true,
+     "ms": 82,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0114osTCpFNjzmHmBb5KxBFC",
+     "tool": "lien_ket",
+     "ok": true,
+     "ms": 313,
+     "focus": [
+      "event:EV-2026-0001",
+      "class:stock",
+      "class:fund",
+      "class:gold",
+      "class:real_estate",
+      "class:bond",
+      "class:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "abd35d4b9da5497e8f3e946bf5ec1db2",
+      "kind": "preference",
+      "text": "Ưu tiên quỹ học phí cho con hơn mua thêm bất động sản",
+      "source": {
+       "conversation": "a73df2f81a9f4936"
+      },
+      "confidence": 1.0,
+      "created": 1792262550.224064,
+      "updated": 1792262550.224064,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 3
+   }
+  }
+ ]
+}

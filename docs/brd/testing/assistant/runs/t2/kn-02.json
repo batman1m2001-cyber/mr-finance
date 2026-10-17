@@ -1,0 +1,315 @@
+{
+ "id": "kn-02",
+ "category": "knowledge",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Duration khi lãi suất tăng, và duration của tôi",
+ "why": "Advanced knowledge, then personal data the app may not hold.",
+ "brd": [
+  "OWN-AS-07",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Duration của trái phiếu ảnh hưởng thế nào tới giá khi lãi suất tăng 2%?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Danh mục trái phiếu của tôi có duration bao nhiêu?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Duration của trái phiếu ảnh hưởng thế nào tới giá khi lãi suất tăng 2%?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "Ước tính thay đổi giá trái phiếu duration 5 năm khi lãi suất tăng 2 điểm %: -5*2/100 = -0,1",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14316,
+     "output_tokens": 974,
+     "requests": 2,
+     "cost_usd": 0.001919,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1a2af9a830924599978fe27f3904ba31",
+    "conversation_id": "ef59347d6a724001",
+    "compacted": false,
+    "status": "ok",
+    "text": "Duration đo độ nhạy của giá trái phiếu với lãi suất. Công thức xấp xỉ là:\n\n**Thay đổi giá ≈ −Duration × Thay đổi lãi suất**\n\nVí dụ minh họa với trái phiếu có duration 5 năm, lãi suất tăng 2 điểm %:\n−5 × 0,02 = −0,10, tức giá giảm khoảng **10%**.\n\nQuy luật: duration càng dài, giá càng giảm mạnh khi lãi suất tăng, và ngược lại. Trái phiếu duration 2 năm chỉ giảm khoảng 4% trong cùng tình huống.\n\nĐây là ước tính tuyến tính, không phải dự báo. Với mức tăng lớn, mức giảm thực tế có thể khác đôi chút.\n\nNếu bạn cho tôi biết duration của các trái phiếu trong danh mục, tôi có thể tính cụ thể hơn. Ngoài ra, tôi cũng có thể chạy kịch bản lãi suất tăng trên tài sản hiện có của bạn.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259335.992494,
+    "audit_seq": 881,
+    "session": {
+     "id": "ef59347d6a724001",
+     "title": "Duration của trái phiếu ảnh hưởng thế nào tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.589820818975568,
+   "first_event": 3.083739079069346,
+   "usage": {
+    "cost": 0.001919,
+    "input": 14316,
+    "output": 974,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GrXeBDRBgoZxHCRFWxmgTy",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GrXeBDRBgoZxHCRFWxmgTy",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Danh mục trái phiếu của tôi có duration bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "3 kết quả cho “trái phiếu”: Trái phiếu TCB12401 (Techcombank); Quỹ trái phiếu TCBF; Trái phiếu SMR12501 (BĐS Sao Mai (mock)).",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Trái phiếu TCB12401 (Techcombank)",
+         "sub": "Trái phiếu",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Quỹ trái phiếu TCBF",
+         "sub": "Chứng chỉ quỹ",
+         "route": "#/client/tai-san"
+        },
+        {
+         "title": "Trái phiếu SMR12501 (BĐS Sao Mai (mock))",
+         "sub": "Trái phiếu",
+         "route": "#/client/tai-san"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 25313,
+     "output_tokens": 761,
+     "requests": 3,
+     "cost_usd": 0.002912,
+     "tools_cost_usd": null
+    },
+    "turn_id": "54396bfe00314741887f7c76c8c94212",
+    "conversation_id": "ef59347d6a724001",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện tôi chưa thấy số duration của các trái phiếu trong danh mục. Tôi tìm được 3 khoản liên quan:\n\n- Trái phiếu TCB12401 (Techcombank)\n- Quỹ trái phiếu TCBF\n- Trái phiếu SMR12501 (BĐS Sao Mai, mock)\n\nTổng trái phiếu trực tiếp là 1,50 tỷ, khoảng 3% tài sản, theo số ghi nhận ngày 09/10/2026.\n\nBạn có thể mở trang **Tài sản** để xem chi tiết từng khoản. Nếu bạn cho tôi kỳ hạn còn lại hoặc duration của từng khoản, tôi sẽ tính mức giảm giá khi lãi suất tăng 2 điểm %. Tôi cũng có thể chạy kịch bản lãi suất tăng trên danh mục hiện tại; kết quả đó chỉ là ước tính.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259343.1791403,
+    "audit_seq": 882,
+    "session": {
+     "id": "ef59347d6a724001",
+     "title": "Duration của trái phiếu ảnh hưởng thế nào tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 7.146113842725754,
+   "first_event": 1.5813914639875293,
+   "usage": {
+    "cost": 0.002912,
+    "input": 25313,
+    "output": 761,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01WrnRFojrwaDRYz8UDZqmJ1",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01WrnRFojrwaDRYz8UDZqmJ1",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 225,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KDkiXsunhqrZqmHcZZemLc",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KDkiXsunhqrZqmHcZZemLc",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 132,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

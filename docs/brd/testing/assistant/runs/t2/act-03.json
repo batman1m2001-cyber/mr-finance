@@ -1,0 +1,604 @@
+{
+ "id": "act-03",
+ "category": "actions",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Theo dõi VN-Index, xem, rồi huỷ",
+ "why": "A follow-up created, listed, cancelled; each checked in the state.",
+ "brd": [
+  "OWN-AS-18",
+  "OWN-AS-06",
+  "KIT-COPILOT-06"
+ ],
+ "turns": [
+  {
+   "say": "Nhắc mình khi VN-Index xuống dưới 1.200 điểm nhé.",
+   "expect": {
+    "status": "pending",
+    "pending": "theo_doi",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "status": "ok",
+    "grounded": false
+   },
+   "state": {
+    "follow_ups": 1
+   }
+  },
+  {
+   "say": "Mình đang theo dõi những gì?",
+   "expect": {
+    "tools_any": [
+     "theo_doi_cua_toi"
+    ],
+    "says": "1[.,]?200",
+    "grounded": false
+   }
+  },
+  {
+   "say": "Huỷ cái đó đi.",
+   "expect": {
+    "status": "pending",
+    "pending": "huy_theo_doi",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "status": "ok",
+    "grounded": false
+   },
+   "state": {
+    "follow_ups": 0
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nhắc mình khi VN-Index xuống dưới 1.200 điểm nhé.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7041,
+     "output_tokens": 159,
+     "requests": 1,
+     "cost_usd": 0.000784,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a20053c610134b1f925637c7fc9efcc9",
+    "conversation_id": "19a67294b16042ff",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "91ebc5d5324d67bf753aa962d870f813",
+      "tool": "theo_doi",
+      "summary": "Báo cho bạn một lần khi VN-Index dưới 1.200 điểm (theo dõi 30 ngày)?"
+     }
+    ],
+    "text": "Báo cho bạn một lần khi VN-Index dưới 1.200 điểm (theo dõi 30 ngày)?",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259641.5463452,
+    "audit_seq": 957,
+    "session": {
+     "id": "19a67294b16042ff",
+     "title": "Nhắc mình khi VN-Index xuống dưới 1.200 điểm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.654782630968839,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000784,
+    "input": 7041,
+    "output": 159,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01RJ3vKXsoMfArd6xCnzhDz3",
+     "tool": "theo_doi",
+     "label": "Đặt theo dõi"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "theo_doi",
+      "label": "Đặt theo dõi",
+      "status": "ok",
+      "text": "Đã đặt theo dõi: VN-Index dưới 1.200 điểm. Khi điều kiện xảy ra, chuông thông báo sẽ báo một lần; bạn xem hoặc huỷ ở trang Bộ nhớ.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14351,
+     "output_tokens": 354,
+     "requests": 2,
+     "cost_usd": 0.001612,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a20053c610134b1f925637c7fc9efcc9",
+    "conversation_id": "19a67294b16042ff",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã đặt theo dõi: tôi sẽ nhắc bạn một lần khi VN-Index xuống dưới 1.200 điểm, trong vòng 30 ngày. Khi điều kiện xảy ra, chuông thông báo sẽ báo. Bạn có thể xem hoặc huỷ ở trang Bộ nhớ.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259643.7981822,
+    "audit_seq": 958,
+    "session": {
+     "id": "19a67294b16042ff",
+     "title": "Nhắc mình khi VN-Index xuống dưới 1.200 điểm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.211516591720283,
+   "first_event": 0.061930909752845764,
+   "usage": {
+    "cost": 0.001612,
+    "input": 14351,
+    "output": 354,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RJ3vKXsoMfArd6xCnzhDz3",
+     "tool": "theo_doi",
+     "label": "Đặt theo dõi",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RJ3vKXsoMfArd6xCnzhDz3",
+     "tool": "theo_doi",
+     "ok": true,
+     "ms": 13,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [
+     {
+      "id": "b915e659b0a9",
+      "owner": "C05",
+      "role": "client",
+      "client_id": "C05",
+      "kind": "market",
+      "series": "VNINDEX",
+      "op": "below",
+      "level": 1200.0,
+      "topic": null,
+      "created": 1792259641.6611123,
+      "expires": 1794851641.6611123,
+      "status": "open",
+      "fired_at": null,
+      "fired": null,
+      "seen": null,
+      "conversation_id": "19a67294b16042ff",
+      "text": "VN-Index dưới 1.200 điểm",
+      "fired_text": ""
+     }
+    ],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Mình đang theo dõi những gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "theo_doi_cua_toi",
+      "label": "Việc theo dõi của bạn",
+      "status": "ok",
+      "text": "Việc theo dõi của bạn: (đang theo dõi) VN-Index dưới 1.200 điểm.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15076,
+     "output_tokens": 118,
+     "requests": 2,
+     "cost_usd": 0.001567,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5b3d493e9f8f4ec0be65b4ab7a16fc3e",
+    "conversation_id": "19a67294b16042ff",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện bạn đang theo dõi một việc: VN-Index xuống dưới 1.200 điểm (đang theo dõi, chưa báo). Bạn có thể xem hoặc huỷ ở trang Bộ nhớ.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259646.5381763,
+    "audit_seq": 959,
+    "session": {
+     "id": "19a67294b16042ff",
+     "title": "Nhắc mình khi VN-Index xuống dưới 1.200 điểm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 2.7043233243748546,
+   "first_event": 1.2834957791492343,
+   "usage": {
+    "cost": 0.001567,
+    "input": 15076,
+    "output": 118,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01L2Ti52SZbJUQrnYstnrMfy",
+     "tool": "theo_doi_cua_toi",
+     "label": "Việc theo dõi của bạn",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01L2Ti52SZbJUQrnYstnrMfy",
+     "tool": "theo_doi_cua_toi",
+     "ok": true,
+     "ms": 3,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [
+     {
+      "id": "b915e659b0a9",
+      "owner": "C05",
+      "role": "client",
+      "client_id": "C05",
+      "kind": "market",
+      "series": "VNINDEX",
+      "op": "below",
+      "level": 1200.0,
+      "topic": null,
+      "created": 1792259641.6611123,
+      "expires": 1794851641.6611123,
+      "status": "open",
+      "fired_at": null,
+      "fired": null,
+      "seen": null,
+      "conversation_id": "19a67294b16042ff",
+      "text": "VN-Index dưới 1.200 điểm",
+      "fired_text": ""
+     }
+    ],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Huỷ cái đó đi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "theo_doi_cua_toi",
+      "label": "Việc theo dõi của bạn",
+      "status": "ok",
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7725,
+     "output_tokens": 64,
+     "requests": 1,
+     "cost_usd": 0.000804,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ceaeb963cbbb4566b08cbfe1be8cc9f9",
+    "conversation_id": "19a67294b16042ff",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "fd1ab7c60bf974f5901631588a44cb78",
+      "tool": "huy_theo_doi",
+      "summary": "Huỷ theo dõi “VN-Index dưới 1.200 điểm”?"
+     }
+    ],
+    "text": "Huỷ theo dõi “VN-Index dưới 1.200 điểm”?",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259648.0019395,
+    "audit_seq": 960,
+    "session": {
+     "id": "19a67294b16042ff",
+     "title": "Nhắc mình khi VN-Index xuống dưới 1.200 điểm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 4
+    },
+    "describe": true
+   },
+   "seconds": 1.4239173759706318,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000804,
+    "input": 7725,
+    "output": 64,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_012nMDrJwLpNJXvwLmAtSfFp",
+     "tool": "huy_theo_doi",
+     "label": "Huỷ theo dõi"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [
+     {
+      "id": "b915e659b0a9",
+      "owner": "C05",
+      "role": "client",
+      "client_id": "C05",
+      "kind": "market",
+      "series": "VNINDEX",
+      "op": "below",
+      "level": 1200.0,
+      "topic": null,
+      "created": 1792259641.6611123,
+      "expires": 1794851641.6611123,
+      "status": "open",
+      "fired_at": null,
+      "fired": null,
+      "seen": null,
+      "conversation_id": "19a67294b16042ff",
+      "text": "VN-Index dưới 1.200 điểm",
+      "fired_text": ""
+     }
+    ],
+    "reviews_new": 0
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huy_theo_doi",
+      "label": "Huỷ theo dõi",
+      "status": "ok",
+      "text": "Đã huỷ việc theo dõi.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15621,
+     "output_tokens": 118,
+     "requests": 2,
+     "cost_usd": 0.001621,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ceaeb963cbbb4566b08cbfe1be8cc9f9",
+    "conversation_id": "19a67294b16042ff",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã huỷ việc theo dõi VN-Index dưới 1.200 điểm. Bạn không còn việc theo dõi nào đang mở.",
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259649.3499572,
+    "audit_seq": 961,
+    "session": {
+     "id": "19a67294b16042ff",
+     "title": "Nhắc mình khi VN-Index xuống dưới 1.200 điểm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 5
+    },
+    "describe": false
+   },
+   "seconds": 1.3132705767638981,
+   "first_event": 0.053246951662003994,
+   "usage": {
+    "cost": 0.001621,
+    "input": 15621,
+    "output": 118,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012nMDrJwLpNJXvwLmAtSfFp",
+     "tool": "huy_theo_doi",
+     "label": "Huỷ theo dõi",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012nMDrJwLpNJXvwLmAtSfFp",
+     "tool": "huy_theo_doi",
+     "ok": true,
+     "ms": 10,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

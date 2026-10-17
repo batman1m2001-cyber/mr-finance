@@ -1,0 +1,280 @@
+{
+ "id": "wi-05",
+ "category": "what_if",
+ "persona": "nghỉ hưu (C04)",
+ "client_id": "C04",
+ "title": "Lạm phát 8%",
+ "why": "No inflation scenario exists: honest, with what can be said.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi sẽ thế nào?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi sẽ thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "3 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ; Chi phí y tế lớn: đúng tiến độ; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 2,10 tỷ · có 19,18 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 400,0 triệu · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 10,86 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 60%, Tiền & tiền gửi 18%, Trái phiếu 11%, Vàng 6%, Chứng chỉ quỹ 5%, Bảo hiểm 0%. Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng.",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "2 kết quả cho “nghỉ hưu”: Nghỉ hưu sớm năm 55 tuổi; Chuyển giao tài sản cho con.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "Nghỉ hưu & chuyển giao",
+         "route": "#/client/muc-tieu/ke-hoach"
+        },
+        {
+         "title": "Chuyển giao tài sản cho con",
+         "sub": "Nghỉ hưu & chuyển giao",
+         "route": "#/client/muc-tieu/ke-hoach"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 19863,
+     "output_tokens": 1551,
+     "requests": 3,
+     "cost_usd": 0.002762,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fe3c16b4abe64f2f819ed9759205abd2",
+    "conversation_id": "eb63e198881b4a4d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa tính được chính xác tác động này vì hệ thống không có kịch bản lạm phát, và tôi chưa có số tiền hưu cụ thể hay số năm còn lại đến 55 tuổi.\n\n**Những gì tôi xác nhận được** (trang Toàn cảnh, ngày 09/10/2026):\n- Tài sản ròng: 48,38 tỷ đồng, không có nợ.\n- Tiền & tiền gửi chiếm 18% (khoảng 14,16 tỷ đồng dự phòng, theo hệ thống đủ chi 30 năm).\n- Bất động sản chiếm 60%, và khu vực BĐS Võ Văn Tần (Quận 3) chiếm 60,4% tài sản, vượt ngưỡng 35%.\n- Mục tiêu \"Nghỉ hưu sớm năm 55 tuổi\" đang đúng tiến độ theo hồ sơ hiện tại. Hệ thống chưa cho thấy trường hợp lạm phát 8%.\n\n**Ý nghĩa thực tế:** Với lạm phát 8%/năm, sức mua của tiền mặt và tiền gửi giảm nhanh. Nếu lãi suất tiền gửi thấp hơn lạm phát, phần tiền đó mất giá theo thời gian. Bất động sản chiếm phần lớn tài sản và có thể không tăng kịp lạm phát, nên mục tiêu nghỉ hưu sớm nên được kiểm tra lại với giả định lạm phát cao hơn. Đây là ước tính minh họa, không phải dự báo.\n\n**Để tính cụ thể**, bạn có thể:\n- Cho tôi biết số tiền bạn muốn có khi nghỉ hưu và số năm còn lại đến 55 tuổi. Tôi sẽ tính sức mua theo lạm phát 8% bằng công cụ tính.\n- Hoặc mở trang Mục tiêu (#/client/muc-tieu/ke-hoach) để xem chi tiết tiến độ của mục tiêu nghỉ hưu.\n\nBạn cho tôi số tuổi hiện tại và số tiền dự kiến cần có khi nghỉ hưu nhé?",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Tổng hợp 11 khoản từ 5 nguồn"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792257510.9675963,
+    "audit_seq": 721,
+    "session": {
+     "id": "eb63e198881b4a4d",
+     "title": "Nếu lạm phát tăng lên 8% thì tiền hưu của tôi…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 10.257466560229659,
+   "first_event": 1.8236615513451397,
+   "usage": {
+    "cost": 0.002762,
+    "input": 19863,
+    "output": 1551,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01DhyghbcwJwNsSBB1K1fU5p",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016Sto6WjZ6JFkdRvKEHfEUT",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01DhyghbcwJwNsSBB1K1fU5p",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 135,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016Sto6WjZ6JFkdRvKEHfEUT",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 135,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01A18oeAKVSqjbaa3hMwNgvQ",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01A18oeAKVSqjbaa3hMwNgvQ",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 87,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

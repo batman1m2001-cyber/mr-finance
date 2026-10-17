@@ -1,0 +1,337 @@
+{
+ "id": "gl-05",
+ "category": "goals",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Tự do tài chính là gì, tôi đạt chưa",
+ "why": "A concept applied to his data.",
+ "brd": [
+  "OWN-AS-07",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tự do tài chính nghĩa là gì, và tôi đã đạt được chưa?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tự do tài chính nghĩa là gì, và tôi đã đạt được chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "6 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): đúng tiến độ, cần 5,04 tỷ (2029), có 5,04 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dòng tiền dư 82,0 triệu/tháng; Mua thêm BĐS bằng vốn vay: cần chú ý, cần 1,72 tỷ (trong 24 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 6,10 tỷ, dòng tiền dư 82,0 triệu/tháng; Chuyển giao tài sản cho con: đúng tiến độ, cần 1,97 tỷ (trong 12 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 5,85 tỷ, dòng tiền dư 82,0 triệu/tháng; Doanh nghiệp cần vốn gấp: đúng tiến độ, cần 5,00 tỷ (trong 2 – 4 tuần), có 5,00 tỷ (huy động được), dòng tiền dư 82,0 triệu/tháng; Định cư / con đi du học: đúng tiến độ, cần 5,53 tỷ (trong 12 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 2,29 tỷ, dòng tiền dư 82,0 triệu/tháng; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ, cần 3,00 tỷ (trong 12 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 4,82 tỷ, dòng tiền dư 82,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 5,04 tỷ · có 5,04 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 7,82 tỷ",
+         "chip": "cần chú ý",
+         "tone": "warn",
+         "progress": 1.0,
+         "focus": "goal:leverage_buy"
+        },
+        {
+         "title": "Chuyển giao tài sản cho con",
+         "sub": "cần 1,97 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:pass_on"
+        },
+        {
+         "title": "Doanh nghiệp cần vốn gấp",
+         "sub": "cần 5,00 tỷ · có 5,00 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:business_cash"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:emigrate"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45,39 tỷ (45%), Cổ phiếu 21,69 tỷ (22%), Cổ phần DN 12,00 tỷ (12%), Tiền & tiền gửi 8,90 tỷ (9%), Vàng 7,50 tỷ (7%), Trái phiếu 4,94 tỷ (5%). Thanh khoản dự phòng 8,90 tỷ, đủ chi 4 năm theo mức chi 180,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 15,16 tỷ; lớn nhất: 30% cổ phần Logistics Phát Đạt −3,00 tỷ (sốc 25%); Biệt thự Phú Mỹ Hưng −2,38 tỷ (sốc 10%); Cổ phiếu TCB −2,29 tỷ (sốc 29%); Đất nền Long Thành −1,80 tỷ (sốc 10%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số năm chi tiêu được bằng tài sản đầu tư ròng (không tính bất động sản), theo mức chi 180 triệu/tháng: (100.42-45.39-5.12)/(0.18*12) = 23,11",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "mức tài sản đầu tư cần có để chi 180 triệu/tháng theo quy tắc rút 4% mỗi năm: (100.42-45.39-5.12)/(0.18*12)*0+ (0.18*12)/0.04 = 54",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 35788,
+     "output_tokens": 2564,
+     "requests": 4,
+     "cost_usd": 0.004861,
+     "tools_cost_usd": null
+    },
+    "turn_id": "97790d3e113d4fb59986efe8c5c450e2",
+    "conversation_id": "00adecad30ff427b",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Tự do tài chính** thường được hiểu là tài sản đầu tư đủ lớn để chi tiêu mà không cần làm việc để kiếm thêm. Hệ thống không có định nghĩa chính thức, nên tôi dùng một cách tính đơn giản để ước lượng.\n\n**Cách tính (số liệu ngày 2026-10-09, từ trang Tổng quan):**\n- Tài sản đầu tư ròng = tổng tài sản 100,42 tỷ − bất động sản 45,39 tỷ − nợ 5,12 tỷ = **49,91 tỷ**\n- Chi tiêu hằng năm = 180 triệu × 12 = **2,16 tỷ**\n- Quy tắc rút 4% mỗi năm (quy tắc tham khảo phổ biến, không phải số liệu của hệ thống): 2,16 ÷ 0,04 = **54 tỷ** cần có\n\n**Kết luận:** Bạn chưa đạt, còn thiếu khoảng **4,09 tỷ** (đạt khoảng 92%). Tài sản đầu tư hiện đủ chi khoảng 23 năm nếu không có thu nhập mới. Lưu ý, con số 49,91 tỷ có tính cổ phần doanh nghiệp 12 tỷ, khoản này khó bán nhanh hơn cổ phiếu.\n\nNgoài ra, mục tiêu \"Định bán công ty vào năm 2027\" trong bộ nhớ của bạn cũng ảnh hưởng đến kế hoạch này, nếu bạn muốn tôi xem thêm.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792259517.0657933,
+    "audit_seq": 920,
+    "session": {
+     "id": "00adecad30ff427b",
+     "title": "Tự do tài chính nghĩa là gì, và tôi đã đạt được…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 16.277142046019435,
+   "first_event": 1.6086637112312019,
+   "usage": {
+    "cost": 0.004861,
+    "input": 35788,
+    "output": 2564,
+    "requests": 4
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014ZrwGqA7nRqWiwFcgXsZ9p",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CctjiSmqne5Gtj5rWB8Qhk",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014ZrwGqA7nRqWiwFcgXsZ9p",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 224,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CctjiSmqne5Gtj5rWB8Qhk",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 224,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Xh1BEY9c5Nj6UwBs4ww3Uw",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Xh1BEY9c5Nj6UwBs4ww3Uw",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01XFKwoYGtF41DMavFuD2L5v",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01XFKwoYGtF41DMavFuD2L5v",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "c2b2b5040b5a4d60abc39068043f3f03",
+      "kind": "goal",
+      "text": "Định bán công ty vào năm 2027",
+      "source": {
+       "conversation": "a164c40d6cbf4a45"
+      },
+      "confidence": 1.0,
+      "created": 1792257706.7467096,
+      "updated": 1792257706.7467096,
+      "expires": null,
+      "kind_label": "Mục tiêu"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0
+   }
+  }
+ ]
+}

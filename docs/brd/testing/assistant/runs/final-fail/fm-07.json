@@ -1,0 +1,180 @@
+{
+ "id": "fm-07",
+ "category": "failure_modes",
+ "persona": "RM của gia đình C01 (rm01)",
+ "client_id": "C01",
+ "title": "Mô hình không trả lời: RM duyệt một đề xuất",
+ "why": "The provider is down: the RM's approval still waits for the RM's own confirmation, then lands (read back from the queue).",
+ "brd": [
+  "BRD-NFR-03",
+  "OWN-AS-06",
+  "FR-603"
+ ],
+ "turns": [
+  {
+   "say": "Duyệt đề xuất này",
+   "expect": {
+    "mode": "fallback",
+    "status": "pending",
+    "pending": "duyet_de_xuat",
+    "grounded": false
+   },
+   "state": {
+    "reviews_pending": 1
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "mode": "fallback",
+    "grounded": false
+   },
+   "state": {
+    "reviews_pending": 0
+   }
+  }
+ ],
+ "server": "fail",
+ "role": "rm",
+ "setup": {
+  "pending_review": "C01"
+ },
+ "as": "rm01",
+ "run": [
+  {
+   "say": "Duyệt đề xuất này",
+   "graph": null,
+   "answer": {
+    "status": "pending",
+    "mode": "fallback",
+    "why": "mô hình lỗi (ModelError)",
+    "seen": "Duyệt đề xuất này",
+    "text": "Duyệt đề xuất “Học phí cho con (trong nước / du học) — Tích lũy đều”? Cần bạn xác nhận.",
+    "confirm": {
+     "tool": "duyet_de_xuat",
+     "args": {
+      "item_id": "R-st263015",
+      "decision": "approved"
+     }
+    },
+    "steps": [],
+    "suggest": [
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất",
+     "Kịch bản lãi suất tăng",
+     "Duyệt đề xuất đang chờ"
+    ],
+    "conversation_id": "efbd48c3d95949d3",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "answered_at": 1792263016.6369565,
+    "audit_seq": 674,
+    "session": {
+     "id": "efbd48c3d95949d3",
+     "title": "Duyệt đề xuất này",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.3770822007209063,
+   "first_event": 1.3748734588734806,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "fallback",
+     "tool": "duyet_de_xuat",
+     "label": "Duyệt đề xuất",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "fallback",
+     "tool": "duyet_de_xuat",
+     "ok": false,
+     "ms": 2,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 1
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "status": "ok",
+    "mode": "fallback",
+    "text": "Đã ghi: duyệt, chờ chuyên gia có chứng chỉ duyệt tiếp “Học phí cho con (trong nước / du học) — Tích lũy đều”.",
+    "steps": [
+     {
+      "status": "ok",
+      "text": "Đã ghi: duyệt, chờ chuyên gia có chứng chỉ duyệt tiếp “Học phí cho con (trong nước / du học) — Tích lũy đều”.",
+      "tool": "duyet_de_xuat",
+      "navigate": null,
+      "evidence": {
+       "label": "Duyệt đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      },
+      "focus": [],
+      "suggest": [
+       "Hôm nay cần gọi ai?",
+       "Có gì cần chú ý với khách này?",
+       "Điều tra tin lớn nhất",
+       "Kịch bản lãi suất tăng",
+       "Duyệt đề xuất đang chờ"
+      ],
+      "as_of": null,
+      "sources": [],
+      "card": null,
+      "seen": "",
+      "router": {
+       "kind": "confirm"
+      },
+      "answered_at": 1792263016.756744,
+      "audit_seq": 676,
+      "note": "Câu trả lời viết từ kết quả công cụ theo mẫu cố định; mô hình chỉ chọn công cụ."
+     }
+    ]
+   },
+   "seconds": 0.0707196556031704,
+   "first_event": null,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [],
+   "events": [],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}
