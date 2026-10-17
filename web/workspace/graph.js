@@ -340,6 +340,34 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // ── edges (OWN-GW-16, 18): silk — a hairline whose width follows the value (Studio's data-flow wires); solid for
   // what is recorded, dashed for an estimate, dotted for a hypothesis; a knob where real money arrives (Studio's
   // bouton). A path the assistant reads glows (`hot`), or turns red if the read failed (`bad`).
+  // Money in motion (Studio's data-flow spark, canvas.js dfComet): on every real money edge a crackle of dashes with a
+  // bright head slides from where the money comes from to where it goes — income into “My Wealth” (green), spending
+  // and debt out of it (orange) — all the time, as Studio's wires do. Bigger flows carry more sparks. A scenario's
+  // edge never runs: nothing moved. Reduced motion stills them (tokens.css).
+  const SPARK = [1, 2.5, 1.5, 2, 5];  // back to front: crackle, crackle, head (dash, gap)… — short, a bead of light
+  const SPARK_LEN = SPARK.reduce((p, q) => p + q, 0);
+  const MONEY_SPEED = 210;  // px per second: steady, readable; Studio's data runs at 560
+  const SPARK_EVERY = 95;  // px between sparks on one edge: the stream reads as continuous
+  function sparks(d, key, tone, share) {
+    const probe = mk("path", {d}, edgeLayer);
+    let total = 0;
+    try { total = probe.getTotalLength(); } catch (_) { total = 0; }
+    probe.remove();
+    const n = Math.max(2, Math.round(total / SPARK_EVERY * (0.7 + 0.6 * Math.sqrt(share))));  // more for a bigger flow
+    for (let i = 0; i < n; i++) {
+      const q = mk("path", {d, class: "wspark", "data-e": key}, edgeLayer);
+      let len = 0;
+      try { len = q.getTotalLength(); } catch (_) { len = 0; }
+      if (len < 30) { q.remove(); return; }
+      const dur = Math.max(1.2, len / MONEY_SPEED);
+      q.style.strokeDasharray = `${SPARK.join(" ")} ${len + 40}`;
+      q.style.setProperty("--a", SPARK_LEN);
+      q.style.setProperty("--b", -len);
+      q.style.setProperty("--tone", tone);
+      q.style.animationDuration = `${dur.toFixed(2)}s, .16s`;
+      q.style.animationDelay = `${(-dur * i / n).toFixed(2)}s, ${(-Math.random() * .16).toFixed(2)}s`;
+    }
+  }
   const pathState = new Map();  // non-centre node id → "hot" | "bad": its edges wear it
   let drawn = "";  // the edges on screen and the layout they were drawn for: an event that changes neither only restyles
   function drawEdges(lit) {
@@ -351,6 +379,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         const state = spoke(e) ? pathState.get(f0 === "ME" ? t0 : f0) || "" : hotEdges.get(p.dataset.e) || "";
         for (const [c, v] of [["on", on && !!lit], ["faint", !on], ["hot", state === "hot"], ["bad", state === "bad"]]) p.classList.toggle(c, v);
       }
+      for (const q of edgeLayer.querySelectorAll(".wspark")) {
+        const [f0, t0] = q.dataset.e.split(">");
+        q.classList.toggle("faint", !!lit && !(lit.has(f0) && lit.has(t0) && (f0 === st.sel || t0 === st.sel)));
+      }
       return;
     }
     drawn = sig;
@@ -361,7 +393,8 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       if (!a || !b) continue;
       const on = !lit || (lit.has(e.from) && lit.has(e.to) && (e.from === st.sel || e.to === st.sel));
       const cert = certaintyOf(e, byId);
-      const tone = (LOOK[(byId[e.to].kind === "family" ? byId[e.from] : byId[e.to]).kind] || LOOK.class)[0];
+      const far = byId[e.to].kind === "family" ? byId[e.from] : byId[e.to];
+      const tone = far.kind === "flow" && far.side === "out" ? "var(--out)" : (LOOK[far.kind] || LOOK.class)[0];
       const state = spoke(e) ? pathState.get(e.from === "ME" ? e.to : e.from) || "" : hotEdges.get(`${e.from}>${e.to}`) || "";
       const money = cert === "actual" && (byId[e.from].kind === "flow" || byId[e.to].kind === "flow");
       const d = curve(a, b, e);
@@ -371,10 +404,18 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       if (money) {  // the receiving end: where the money lands (into “My Wealth”, or out to spending)
         const [x, y] = d.split(" ").pop().split(",").map(Number);
         mk("circle", {cx: x, cy: y, r: 3, class: "wknob"}, edgeLayer).style.setProperty("--tone", tone);
+        sparks(d, `${e.from}>${e.to}`, tone, e.value == null ? 0.3 : Math.abs(e.value) / maxV);
+        if (!on) for (const q of edgeLayer.querySelectorAll(`.wspark[data-e="${e.from}>${e.to}"]`)) q.classList.add("faint");
+      }
+      if (e.repaid && cert === "actual") {  // a debt paid down this month: money runs from “My Wealth” out to it
+        const [, p0, q, p1] = d.match(/^M(\S+) Q(\S+) (\S+)$/);  // the same wire, walked the other way
+        sparks(`M${p1} Q${q} ${p0}`, `${e.from}>${e.to}`, "var(--out)", Math.min(1, Math.abs(e.repaid) / maxV));
+        if (!on) for (const q of edgeLayer.querySelectorAll(`.wspark[data-e="${e.from}>${e.to}"]`)) q.classList.add("faint");
       }
       const word = {actual: "thực tế", estimate: "ước tính", hypothetical: "giả định"}[cert];
       const sum = e.derived ? ` · tổng hợp từ ${e.derived} liên kết` : "";
-      hover(p, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
+      const paid = e.repaid ? `<br>trả trong tháng: ${vnd(e.repaid)}` : "";
+      hover(p, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${paid}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
     }
   }
 

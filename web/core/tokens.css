@@ -994,6 +994,14 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .wedge.hot { stroke: var(--pulse); stroke-opacity: .95; filter: drop-shadow(0 0 3px var(--pulse)); }
 .wedge.bad { stroke: var(--critical); stroke-opacity: .9; }
 .wknob { fill: var(--tone); stroke: var(--plane); stroke-width: 1.5; }
+/* money in motion (Studio's dfflow spark): crackle dashes into a bright head, sliding the way the money goes, flickering;
+   the one keyframe here that is not transform or opacity — owner's order (2026-10-17), a few thin paths, measured */
+.wspark { fill: none; stroke: var(--tone); stroke-width: 2.6; stroke-linecap: round; pointer-events: none;
+  filter: drop-shadow(0 0 3px var(--tone)) drop-shadow(0 0 6px var(--tone)); animation-name: ws-money, ws-flicker; animation-timing-function: linear, steps(2, jump-none);
+  animation-iteration-count: infinite, infinite; }
+.wspark.faint, .ws-svg.focusing .wspark { opacity: .12; }
+@keyframes ws-money { from { stroke-dashoffset: var(--a); } to { stroke-dashoffset: var(--b); } }
+@keyframes ws-flicker { from { opacity: 1; } to { opacity: .6; } }
 .wcomet { pointer-events: none; }
 .wcomet .whead { fill: color-mix(in srgb, #fff 55%, var(--pulse)); filter: drop-shadow(0 0 4px var(--pulse)) drop-shadow(0 0 1.5px var(--pulse)); }
 .wcomet .wtrail { fill: var(--pulse); }
@@ -1094,6 +1102,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-fold { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .wspark { display: none; }
   .wnode, .wedge, .ws-edges, .ws-tool::after, .scard, .ws-fold .ic, .ws-svg :is(.k-holding, .quiet) :is(.wlbl, .wfig) { transition: none !important; }
   .ws-sheet, .wnode .wring, .wnode .wburst, .ws-tool.ping { animation: none !important; }
   .ws-tool.ping { box-shadow: 0 0 0 2px var(--accent); }

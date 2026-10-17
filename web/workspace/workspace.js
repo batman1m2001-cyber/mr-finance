@@ -6,7 +6,7 @@
 import {$, esc, followedIds, post} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261017w3";
+import {createGraph} from "./graph.js?v=20261017m3";
 import {render as inspect} from "./inspector.js?v=20261017w1";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w3";
 import {mount as mountStrip} from "./strip.js?v=20261017w1";

@@ -319,6 +319,14 @@ def build(
             )
             a, b = (fid, me) if side == "in" else (me, fid)
             edge(a, b, ("txn", m), verb, flows[total])
+            if side == "out":  # the month's repayments run along the debt they pay down (the graph's money sparks)
+                for it in items:
+                    e = edges.get((f"CL:{it['category']}", me)) if it["category"] in ("loan", "card") else None
+                    if e is not None and it["amount"]:
+                        e["repaid"] = (e.get("repaid") or 0) + it["amount"]
+                        e["repaid_month"] = m
+                        if {"type": "txn", "id": m} not in e["sources"]:
+                            e["sources"].append({"type": "txn", "id": m})
 
     # the liquidity reserve: always shown (a risk node joins it only when the reserve is short)
     lid = node(

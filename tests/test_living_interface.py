@@ -53,7 +53,12 @@ def test_only_transform_and_opacity_animate():
     assert {n for n, _ in frames} >= {"mf-breathe", "mf-rise", "mf-dot", "mf-mark", "mf-lit", "mf-halo"}
     for name, body in frames:
         props = set(re.findall(r"([a-z-]+)\s*:", re.sub(r"[\d.%,\s]+\{", "{", body)))
-        assert props <= {"transform", "opacity", "background-position"}, (name, props)  # shimmer predates B-01
+        # shimmer predates B-01; the graph's money spark slides a dash along its wire, as Studio's data flow does
+        # (owner, 2026-10-17: a few thin paths, idle frames measured equal with and without it)
+        allowed = {"transform", "opacity", "background-position"}
+        if name == "ws-money":
+            allowed = allowed | {"stroke-dashoffset"}
+        assert props <= allowed, (name, props)
     for decl in re.findall(r"transition:\s*([^;]+);", CSS.split("Living Interface (backlog B-01)")[1]):
         for part in decl.split(","):
             assert part.split()[0] in ("transform", "opacity", "none"), decl

@@ -62,8 +62,13 @@ def test_every_edge_comes_from_a_record_it_names():
                     v for c, v in runs[s["id"]]["by_class"].items() if (c if c != "cash" else "deposit") == cls
                 )
                 assert e["label"] == "có thể ảnh hưởng"
-            elif s["type"] == "txn":  # the month's money in or out (FEAT-40)
-                assert "FL:in" in (e["from"], e["to"]) or "FL:out" in (e["from"], e["to"]), e
+            elif s["type"] == "txn":  # the month's money in or out (FEAT-40); a debt it repaid carries the amount
+                if e["from"] in ("CL:loan", "CL:card"):
+                    out = next(n for n in o["nodes"] if n["id"] == "FL:out")
+                    cat = e["from"][3:]
+                    assert e["repaid"] == sum(i["value"] for i in out["items"] if i["category"] == cat) > 0, e
+                else:
+                    assert "FL:in" in (e["from"], e["to"]) or "FL:out" in (e["from"], e["to"]), e
             elif s["type"] == "scenario":
                 assert e["to"] == f"SC:{s['id']}" and e["value"] is None, e
             else:

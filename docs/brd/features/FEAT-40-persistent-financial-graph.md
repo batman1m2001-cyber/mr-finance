@@ -136,6 +136,13 @@ short trail of dots moved along the curve by transform, with an opacity flicker.
   - no pulses or flicker under reduced motion, where lit paths and rings stay still;
   - measured on a graph three times the demo client's size.
 
+**Money in motion** (owner, 2026-10-17). Every real money edge always carries Studio's spark (canvas.js `dfComet`):
+short beads of light with a crackle trail, sliding at 210 px/s the way the money goes. Income runs into “My Wealth”
+(blue), spending runs out (orange), and this month's repayments run out along the debt they pay down (`repaid` on
+the loan and card edges, from the month's spending categories). Bigger flows carry more beads. An estimate or a
+scenario never runs. Reduced motion hides them. This is the one keyframe that is not transform or opacity
+(`stroke-dashoffset`): idle frames were measured equal with and without it (16.7 ms mean, p95 16.8 vs 16.7 ms).
+
 ## Capability map — every Customer capability and where it goes (OWN-GW-11)
 
 | Today (screen · route) | Capability | Requirements | In the workspace | Interaction model |

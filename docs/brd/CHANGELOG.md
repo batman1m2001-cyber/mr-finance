@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — Money in motion on the graph (owner's correction to G9). Studio's spark now runs all the time on
+  every real money edge: income into “My Wealth”, spending and this month's loan and card repayments out. Not on
+  estimates or scenarios; hidden under reduced motion; idle frame cost measured as none. Documents: FEAT-40, OWN-GW-16
+  evidence.
+
 - 2026-10-17 — Assistant sessions (experiment, SESSIONS_PLAN S0–S5, OWN-SS-01…08).
   - Sessions renamed, archived and restored. Titles and goals are written by the model after the answer, never over
     the person's name.
