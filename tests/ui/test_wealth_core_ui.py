@@ -10,13 +10,13 @@ import pytest
 # the next arrival (spark head at the path's end) and departure (head at its start) of each money edge's sparks, the
 # next peak of each port, and each edge's period — from the running animations (seconds)
 CLOCKS = r"""() => {
-  const SL = 12;  // the spark's dash pattern, end to end (graph.js SPARK)
   const ws = (el, name) => el.getAnimations().find(a => a.animationName === name);
   const out = {};
   for (const q of document.querySelectorAll('.ws-edges .wspark')) {
     const a = ws(q, 'ws-money'); if (!a) continue;
     const t = a.effect.getComputedTiming(), dur = t.duration / 1000, loc = t.progress * dur, len = q.getTotalLength();
       // progress counts the delay
+    const SL = +q.style.getPropertyValue('--a');  // its dash pattern, end to end: it scales with the amount (F7)
     const v = (len + SL) / dur, f = v * loc;
     const arr = f <= len ? (len - f) / v : dur - (f - len) / v, dep = dur - loc;
     const k = q.dataset.e, e = out[k] ||= {arr: [], dep: [], dur};

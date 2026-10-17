@@ -6,7 +6,7 @@
 import {$, esc, followedIds, post} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261017c2";
+import {createGraph} from "./graph.js?v=20261017u2";
 import {render as inspect} from "./inspector.js?v=20261017w1";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w3";
 import {mount as mountStrip} from "./strip.js?v=20261017w1";
@@ -224,6 +224,7 @@ export function mount(main, {client, scope, go, page}) {
       const el = $("#ws-sheet", root);
       el.hidden = !sheet;
       root.classList.toggle("sheeted", !!sheet);
+      graph.sleep("sheet", !!sheet);  // a sheet over the graph: its motion stops (F8)
       if (!sheet) return null;
       $("#ws-sheet-t", root).textContent = SHEETS[sheet].label;
       const s = SHEETS[sheet];

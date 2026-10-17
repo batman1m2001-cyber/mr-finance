@@ -269,13 +269,13 @@ def test_the_dataflow_follows_the_stream_and_only_the_stream(open_page):
 
 def test_money_runs_the_way_it_goes_and_only_where_it_really_moved(open_page):
     """The money sparks (Studio's data-flow spark): always running on the real money edges — income into “My Wealth”,
-    spending and this month's repayments out of it — moving forward along their way, never on an estimate or a
-    scenario, and gone under reduced motion. Debts folded into their group repay on the group's edge."""
+    spending and this month's repayments out of it — moving forward along their way, and gone under reduced motion.
+    Debts folded into their group repay on the group's edge. An estimate moves in its own look (test_graph_flows_ui)."""
     p = open_page()
-    p.go("#/client/tong-quan/toan-canh")
+    p.go("#/client/xem/tong-quan")  # a sheet over the graph pauses it (F8)
     p.page.wait_for_selector(".wspark")
     got = p.page.evaluate("""() => {
-      const sp = [...document.querySelectorAll('.wspark')];
+      const sp = [...document.querySelectorAll('.wspark.c-actual')];
       const wire = (k) => document.querySelector(`.wedge[data-e="${k}"]`);
       const start = (d) => d.match(/^M(\\S+)/)[1], end = (d) => d.match(/(\\S+)$/)[1];
       return {keys: [...new Set(sp.map(q => q.dataset.e))].sort(),
@@ -291,7 +291,7 @@ def test_money_runs_the_way_it_goes_and_only_where_it_really_moved(open_page):
     assert got["keys"] == sorted(repay + ["FL:in>ME", "ME>FL:out"]), got["keys"]
     assert got["actual"] and got["forward"] and got["outward"]
     p.page.wait_for_timeout(300)
-    b = p.page.evaluate("getComputedStyle(document.querySelector('.wspark')).strokeDashoffset")
+    b = p.page.evaluate("getComputedStyle(document.querySelector('.wspark.c-actual')).strokeDashoffset")
     assert float(b.rstrip("px")) != float(got["a"].rstrip("px"))  # it moves
     assert not p.problems()
     q = open_page(reduced=True)

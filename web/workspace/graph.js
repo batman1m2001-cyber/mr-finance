@@ -70,7 +70,11 @@ export function spokesFor(g) {
   const touches = new Set(g.edges.filter(e => e.from === "ME" || e.to === "ME").flatMap(e => [e.from, e.to]));
   return g.nodes.filter(n => SUMS[n.kind] && !touches.has(n.id)).map(n => {
     const mine = g.edges.filter(e => e.from === n.id || e.to === n.id);
-    return {from: n.id, to: "ME", label: SUMS[n.kind], value: n.value, derived: mine.length,
+    // a news item's or policy item's total reaches “My Wealth” the way it goes (F2): news over its own horizon (3 months),
+    // a policy item as a one-off (no monthly rate); a risk is a relation
+    const flow = ["event", "alert"].includes(n.kind) && n.value ? {dir: n.value > 0 ? "fwd" : "back",
+      ...(n.kind === "event" ? {monthly: Math.abs(n.value) / 3, horizon: n.horizon || "3m"} : {})} : {};
+    return {from: n.id, to: "ME", label: SUMS[n.kind], value: n.value, derived: mine.length, ...flow,
       sources: mine.flatMap(e => e.sources || []).filter((x, i, a) => a.findIndex(y => y.type === x.type && y.id === x.id) === i)};
   });
 }
@@ -597,6 +601,13 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   }
 
   // group nodes and their spokes (one per group: the sum of what it folds, with all their records)
+  function flowOf(es) {  // members' money as one edge: when the members that move money all go the same way (the rest add none)
+    const moving = es.filter(e => e.dir && e.value != null);
+    if (!moving.length) return {};
+    const into = es[0].to === "ME", same = (e) => (e.to === "ME") === into;
+    if (!es.every(same) || new Set(moving.map(e => e.dir)).size !== 1) return {};
+    return {dir: moving[0].dir, monthly: moving.every(e => e.monthly != null) ? moving.reduce((t, e) => t + e.monthly, 0) : undefined};
+  }
   function applyGroups(list, f) {
     for (const gn of groupNodes) if (!list.some(x => x.id === gn.id)) delete byId[gn.id];
     groupNodes = list; fold = f; groupIds = new Set(list.map(x => x.id));
@@ -609,6 +620,8 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         value: vals.length ? vals.reduce((t, e) => t + e.value, 0) : null, certainty: es.length ? certaintyOf(es[0], byId) : undefined,
         // folded debts still repay: their month's repayments run on the group's edge (money stays in motion, OWN-GW-16)
         repaid: es.reduce((t, e) => t + (e.repaid && certaintyOf(e, byId) === "actual" ? e.repaid : 0), 0) || undefined,
+        // folded money edges keep moving: their monthly rates add up when they all go the same way (F2)
+        ...(flowOf(es)),
         sources: es.flatMap(e => e.sources || []).filter((y, i, a) => a.findIndex(z => z.type === y.type && z.id === y.id) === i)};
     });
   }
@@ -622,6 +635,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
 
   // the canvas size, kept by a ResizeObserver: reading it on every draw forced a layout per lens change
   let size = null;
+  // off screen (scrolled away on a phone, behind a sheet) nothing of the graph runs (F8); a hidden tab is html[data-hidden]
+  const sleepers = new Set();
+  const sleep = (why, on) => { if (on) sleepers.add(why); else sleepers.delete(why); svg.classList.toggle("asleep", sleepers.size > 0); };
+  if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => sleep("off", !e.isIntersecting)).observe(host);
   new ResizeObserver(([e]) => { const r = e.contentRect; if (!r.width) return; /* hidden (a phone's sheet): keep the last size */ if (!size || r.width !== size.width || r.height !== size.height) { size = {width: r.width, height: r.height}; if (g && lens) draw(); } }).observe(host);
   function draw({moved = false} = {}) {
     if (!g) return;
@@ -772,13 +789,19 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // ── edges (OWN-GW-16, 18): silk — a hairline whose width follows the value (Studio's data-flow wires); solid for
   // what is recorded, dashed for an estimate, dotted for a hypothesis; a knob where real money arrives (Studio's
   // bouton). A path the assistant reads glows (`hot`), or turns red if the read failed (`bad`).
-  // Money in motion (Studio's data-flow spark, canvas.js dfComet): on every real money edge a crackle of dashes with a
-  // bright head slides from where the money comes from to where it goes — income into “My Wealth” (green), spending
-  // and debt out of it (orange) — all the time, as Studio's wires do. Bigger flows carry more sparks. A scenario's
-  // edge never runs: nothing moved. Reduced motion stills them (tokens.css).
+  // Money in motion (Studio's data-flow spark, canvas.js dfComet; OWN-GW-41, UNIFIED_FLOWS_PLAN F7): every edge that
+  // carries money (`dir` and an amount, from the server) runs sparks the way the money goes — income into “My Wealth”,
+  // spending, repayments and goal savings out of it, a news or policy change into a class or out of it — and nothing
+  // else does: a relation implies no transfer. How much a month sets how it moves: intensity i = √(monthly ÷ the
+  // month's larger flow), 0.12…1 — sparks per beat 1…3, trail 6…20 px, speed 140…280 px/s, opacity .4….95. A one-off
+  // (a policy item, a scenario) has no monthly rate: its i is relative to the largest of its kind, at most .5. Actual
+  // sparks are bright beads; an estimate's are dashed and unlit; a hypothesis's are dots, only while it is active. At
+  // most 48 spark paths: the weakest edges thin out first. Reduced motion stills them (tokens.css).
   const SPARK = [1, 2.5, 1.5, 2, 5];  // back to front: crackle, crackle, head (dash, gap)… — short, a bead of light
   const SPARK_LEN = SPARK.reduce((p, q) => p + q, 0);
-  const MONEY_SPEED = 210;  // px per second: steady, readable; Studio's data runs at 560
+  const DASHED = [2.2, 2.4, 2.2, 2.4, 2.8];  // an estimate: even dashes, no head
+  const DOTS = [0.01, 3.6, 0.01, 3.6, 0.01];  // a hypothesis: round dots
+  const BUDGET = 48;  // spark paths on screen, at most
   // The core's heartbeat (OWN-GW-22, plan §3.3): every money edge keeps one beat (or a half or third of it), so its
   // sparks reach “My Wealth” on the beat; where an edge meets the rim a port lights as a spark arrives or leaves, and
   // the main income's arrival sends a band of light across the core toward the money going out, whose sparks leave
@@ -786,25 +809,46 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const BEAT = 0.9;  // seconds
   const ACROSS = 0.36;  // the band's crossing: the out-flows leave this long after the income lands
   const mod = (x, m) => ((x % m) + m) % m;
-  function sparks(d, key, tone, share, offset = 0) {
-    const probe = mk("path", {d}, edgeLayer);
-    let len = 0;
-    try { len = probe.getTotalLength(); } catch (_) { len = 0; }
-    probe.remove();
+  // the same wire walked the other way (M … Q|C|L …, as route() draws them)
+  function reverseD(d) {
+    const m = d.match(/^M(\S+) ([QCL])(.*)$/);
+    if (!m) return d;
+    const pts = [m[1], ...m[3].trim().split(/\s+/)];
+    return `M${pts[pts.length - 1]} ${m[2]}${pts.slice(0, -1).reverse().join(" ")}`;
+  }
+  const pathLen = (d) => { const q = mk("path", {d}, edgeLayer); let l = 0; try { l = q.getTotalLength(); } catch (_) { l = 0; } q.remove(); return l; };
+  // a spark plan for one edge: how many beads a beat, how fast, how long a trail, how bright
+  function plan(d, i, cert, m) {
+    const len = pathLen(d);
     if (len < 30) return null;
-    const k = 1 + Math.round(2 * Math.sqrt(Math.min(1, share))), per = BEAT / k;  // a bigger flow: more sparks a beat
-    const n = Math.max(1, Math.round(len / MONEY_SPEED / per)), dur = n * per;
-    for (let i = 0; i < n; i++) {
-      const q = mk("path", {d, class: "wspark", "data-e": key}, edgeLayer);
-      q.style.strokeDasharray = `${SPARK.join(" ")} ${len + 40}`;
-      q.style.setProperty("--a", SPARK_LEN);
-      q.style.setProperty("--b", -len);
+    const k = 1 + Math.round(2 * i), speed = 140 + 140 * i;
+    const base = cert === "hypothetical" ? DOTS : cert === "estimate" ? DASHED : SPARK;
+    const scale = (6 + 14 * i) / SPARK_LEN, pattern = cert === "hypothetical" ? base : base.map(x => +(x * scale).toFixed(2));
+    return {d, len, i, cert, k, speed, pattern, m, sl: pattern.reduce((p, q) => p + q, 0),
+      opacity: (0.4 + 0.55 * i) * (cert === "estimate" ? 0.75 : cert === "hypothetical" ? 0.8 : 1)};
+  }
+  const lanes = (pl) => Math.max(1, Math.round(pl.len / pl.speed / (BEAT / pl.k)));
+  function sparks(pl, key, tone, offset = 0) {
+    const per = BEAT / pl.k, n = lanes(pl), dur = n * per;
+    for (let j = 0; j < n; j++) {
+      const q = mk("path", {d: pl.d, class: `wspark c-${pl.cert}`, "data-e": key, "data-m": Math.round(pl.m)}, edgeLayer);
+      q.style.strokeDasharray = `${pl.pattern.join(" ")} ${pl.len + 40}`;
+      q.style.setProperty("--a", pl.sl);
+      q.style.setProperty("--b", -pl.len);
       q.style.setProperty("--tone", tone);
+      q.style.setProperty("--so", pl.opacity.toFixed(2));
       q.style.animationDuration = `${dur.toFixed(3)}s, .16s`;
-      q.style.animationDelay = `${(mod(offset - dur * i / n, dur) - dur).toFixed(3)}s, ${(-Math.random() * .16).toFixed(2)}s`;
+      q.style.animationDelay = `${(mod(offset - dur * j / n, dur) - dur).toFixed(3)}s, ${(-Math.random() * .16).toFixed(2)}s`;
     }
-    // when a spark's head reaches the end (it moves len + SPARK_LEN in dur), and when one leaves the start
-    return {per, arr: mod(dur * len / (len + SPARK_LEN) + offset, per), dep: mod(offset, per)};
+    // when a spark's head reaches the end (it moves len + its pattern in dur), and when one leaves the start
+    return {per, arr: mod(dur * pl.len / (pl.len + pl.sl) + offset, per), dep: mod(offset, per)};
+  }
+  // the budget: the weakest edges go to one bead a beat, then (estimates and hypotheses only) to none
+  function budget(queue) {
+    const total = () => queue.reduce((t, q) => t + (q.pl ? lanes(q.pl) : 0), 0);
+    const weakest = [...queue].filter(q => q.pl).sort((x, y) => x.pl.i - y.pl.i);
+    for (const q of weakest) { if (total() <= BUDGET) break; q.pl.k = 1; }
+    for (const q of weakest) { if (total() <= BUDGET) break; if (q.pl.cert !== "actual") q.pl = null; }
   }
   // a port: a short arc of the rim at the edge's angle, lit on the beat of its sparks
   function port(host, angle, tone, per, at, key) {
@@ -845,6 +889,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     let beat = null;  // the main income's arrival: the core's beat
     const C = pos.ME;
     const rimAngle = (id) => Math.atan2(pos[id].y - C.y, pos[id].x - C.x);
+    // intensity from the monthly rate against the month's larger flow; a one-off relative to its kind, capped at .5
+    const R = Math.max(1, ...["FL:in", "FL:out"].map(id => (byId[id] ? Math.abs(byId[id].value || 0) : 0)));
+    const oneOff = {};
+    const moves = (e, cert) => !!e.dir && e.value != null && (cert !== "hypothetical" || !!e.active);
+    for (const e of es) { const c = certaintyOf(e, byId); if (moves(e, c) && e.monthly == null) oneOff[c] = Math.max(oneOff[c] || 1, Math.abs(e.value)); }
+    const intensity = (e, cert) => e.monthly != null ? Math.min(1, Math.max(0.12, Math.sqrt(Math.abs(e.monthly) / R)))
+      : Math.min(0.5, Math.max(0.12, Math.sqrt(Math.abs(e.value) / oneOff[cert])));
+    const queue = [];  // the sparks to draw, planned first so the budget can thin them
     for (const e of es) {
       const a = pos[e.from], b = pos[e.to];
       if (!a || !b) continue;
@@ -853,30 +905,40 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const far = byId[e.to].kind === "family" ? byId[e.from] : byId[e.to];
       const tone = far.kind === "flow" && far.side === "out" ? "var(--out)" : (LOOK[far.kind === "group" ? far.of : far.kind] || LOOK.class)[0];
       const state = spoke(e) ? pathState.get(e.from === "ME" ? e.to : e.from) || "" : hotEdges.get(`${e.from}>${e.to}`) || "";
-      const money = cert === "actual" && (byId[e.from].kind === "flow" || byId[e.to].kind === "flow");
+      const money = cert === "actual" && !!e.dir;
       const d = route(e).d;
       const p = mk("path", {d, class: `wedge c-${cert}${money ? " money" : ""}${on && lit ? " on" : ""}${on ? "" : " faint"}${state ? " " + state : ""}${e.derived ? " sum" : ""}`,
         "data-e": `${e.from}>${e.to}`, "stroke-width": (e.value == null ? 1 : 0.9 + 1.5 * Math.sqrt(Math.abs(e.value) / maxV)).toFixed(2)}, edgeLayer);
       p.style.setProperty("--tone", tone);
       const key = `${e.from}>${e.to}`;
-      if (money) {  // the receiving end: where the money lands (into “My Wealth”, or out to spending)
-        const [x, y] = d.split(" ").pop().split(",").map(Number);
-        mk("circle", {cx: x, cy: y, r: 3, class: "wknob"}, edgeLayer).style.setProperty("--tone", tone);
-        const into = e.to === "ME", t = sparks(d, key, tone, e.value == null ? 0.3 : Math.abs(e.value) / maxV, into ? 0 : (beat ? beat.at + ACROSS : 0));
-        if (t && into && !beat) beat = {at: t.arr, angle: rimAngle(e.from)};
-        if (t && ports && (into || e.from === "ME")) port(ports, rimAngle(into ? e.from : e.to), tone, t.per, into ? t.arr : t.dep, key);
+      if (moves(e, cert)) {
+        const way = e.dir === "back" ? reverseD(d) : d;  // the way the money goes
+        if (money) {  // the receiving end: where the money lands (into “My Wealth”, or out to spending)
+          const [x, y] = way.split(" ").pop().split(",").map(Number);
+          mk("circle", {cx: x, cy: y, r: 3, class: "wknob"}, edgeLayer).style.setProperty("--tone", tone);
+        }
+        const outTone = cert !== "actual" && e.value < 0 ? "var(--out)" : tone;  // an estimated or supposed loss: money leaving
+        queue.push({e, key, on, tone: outTone, pl: plan(way, intensity(e, cert), cert, Math.abs(e.monthly ?? e.value)), money, into: e.to === "ME" && e.dir !== "back", from: e.from === "ME" && e.dir !== "back"});
       }
       if (e.repaid && cert === "actual") {  // a debt paid down this month: money runs from “My Wealth” out to it, on the beat
-        const [, p0, q, p1] = d.match(/^M(\S+) Q(\S+) (\S+)$/);  // the same wire, walked the other way
-        const t = sparks(`M${p1} Q${q} ${p0}`, key, "var(--out)", Math.min(1, Math.abs(e.repaid) / maxV), beat ? beat.at + ACROSS : 0);
-        if (t && ports) port(ports, rimAngle(e.from), "var(--out)", t.per, t.dep, key);
+        const i = Math.min(1, Math.max(0.12, Math.sqrt(Math.abs(e.repaid) / R)));
+        queue.push({e, key, on, tone: "var(--out)", pl: plan(reverseD(d), i, "actual", Math.abs(e.repaid)), money: true, repaid: true});
       }
-      if (!on) for (const q of edgeLayer.querySelectorAll(`.wspark[data-e="${key}"]`)) q.classList.add("faint");
-      if (!on && ports) for (const q of ports.querySelectorAll(`.wport[data-e="${key}"]`)) q.classList.add("faint");
       const word = {actual: "thực tế", estimate: "ước tính", hypothetical: "giả định"}[cert];
       const sum = e.derived ? ` · tổng hợp từ ${e.derived} liên kết` : "";
       const paid = e.repaid ? `<br>trả trong tháng: ${vnd(e.repaid)}` : "";
-      hover(p, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${paid}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
+      const rate = e.monthly != null && e.monthly !== Math.abs(e.value) ? ` · ~${vnd(e.monthly)}/tháng` : "";
+      hover(p, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${rate}${paid}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
+    }
+    budget(queue);
+    for (const q of queue) {  // in order: the main income first, so the beat is set before the out-flows take it
+      if (!q.pl) continue;
+      const t = sparks(q.pl, q.key, q.tone, q.into || !q.money ? 0 : (beat ? beat.at + ACROSS : 0));
+      if (q.money && q.into && !beat) beat = {at: t.arr, angle: rimAngle(q.e.from)};
+      if (q.money && ports && (q.into || q.from)) port(ports, rimAngle(q.into ? q.e.from : q.e.to), q.tone, t.per, q.into ? t.arr : t.dep, q.key);
+      if (q.repaid && ports) port(ports, rimAngle(q.e.from), "var(--out)", t.per, t.dep, q.key);
+      if (!q.on) for (const x of edgeLayer.querySelectorAll(`.wspark[data-e="${q.key}"]`)) x.classList.add("faint");
+      if (!q.on && ports) for (const x of ports.querySelectorAll(`.wport[data-e="${q.key}"]`)) x.classList.add("faint");
     }
     if (beat && bandHost) {  // light crossing the core from where the income lands, once a beat
       const turn = mk("g", {transform: `rotate(${(beat.angle * 180 / Math.PI).toFixed(1)})`}, bandHost);
@@ -1135,6 +1197,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   return {
     svg,
     activity,
+    sleep,
     /* new data for a client and scope: their own kept state; the same SVG */
     load(overview, key) {
       g = overview; byId = Object.fromEntries(g.nodes.map(n => [n.id, n]));

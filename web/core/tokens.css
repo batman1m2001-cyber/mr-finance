@@ -1052,6 +1052,11 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   filter: drop-shadow(0 0 3px var(--tone)) drop-shadow(0 0 6px var(--tone)); animation-name: ws-money, ws-flicker; animation-timing-function: linear, steps(2, jump-none);
   animation-iteration-count: infinite, infinite; }
 .wspark.faint, .ws-svg.focusing .wspark { opacity: .12; }
+.wspark { stroke-opacity: var(--so, 1); }
+.wspark.c-estimate { filter: none; stroke-width: 2.2; }  /* an estimate: dashed, unlit */
+.wspark.c-hypothetical { filter: none; stroke-width: 3.2; }  /* a hypothesis: round dots */
+/* off screen, under a sheet or in a hidden tab, nothing on the graph runs (F8) */
+.ws-svg.asleep, .ws-svg.asleep * { animation-play-state: paused !important; }
 @keyframes ws-money { from { stroke-dashoffset: var(--a); } to { stroke-dashoffset: var(--b); } }
 @keyframes ws-flicker { from { opacity: 1; } to { opacity: .6; } }
 .wcomet { pointer-events: none; }
