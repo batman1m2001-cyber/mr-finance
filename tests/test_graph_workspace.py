@@ -96,6 +96,6 @@ def test_the_shell_mounts_the_workspace_for_the_customer_only():
     shell = (WEB / "shell.js").read_text(encoding="utf-8")
     assert 'if (rt.role === "client")' in shell and "leaveWorkspace()" in shell
     copilot = (WEB / "copilot.js").read_text(encoding="utf-8")
-    assert "dock(host)" in copilot and "undock()" in copilot
+    assert "dock(host, hooks)" in copilot and "undock()" in copilot and "/api/assistant/stream" in copilot
     # the scenario's effect is hypothetical: the inspector says it never adds to net worth (OWN-GW-12)
     assert "không cộng vào tài sản ròng" in (WS / "inspector.js").read_text(encoding="utf-8")

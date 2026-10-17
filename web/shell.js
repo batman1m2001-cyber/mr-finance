@@ -159,7 +159,7 @@ async function workspace() {
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
     document.body.classList.add("ws-on");
-    copilot.dock(ws.dock);
+    copilot.dock(ws.dock, {onEvent: ws.live});  // the turn's events draw on the graph (FEAT-40)
   }
   return ws;
 }

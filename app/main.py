@@ -70,6 +70,7 @@ from assistant.graph import (
     assistant_flow,
     assistant_memory_flow,
     assistant_retention_flow,
+    assistant_stream_flow,
 )
 from contacts.graph import contact_flow
 from control import barrier
@@ -195,6 +196,13 @@ APP = Application(
             description="POST {message | turn_id + approvals, role, client_id, scope, route, goals, conversation_id}: "
             "the assistant (A2) — the role's tools in several steps, writes confirmed and verified, kept in a "
             "conversation (A3); the Copilot's path when no model answers.",
+        ),
+        Service(
+            "assistant_stream",
+            http("POST", "/api/assistant/stream", port=PORT),
+            graph=assistant_stream_flow,
+            description="POST the same body as /api/assistant, Accept: text/event-stream: the turn as it happens — "
+            "step (a tool starting and ending, with the graph nodes it reads), text, wait, then the answer (FEAT-40).",
         ),
         Service(
             "assistant_conversations",

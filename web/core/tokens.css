@@ -948,6 +948,10 @@ body.ws-on .foot { margin-top: 0; }
 .wedge.faint { opacity: .12; }
 .wspark { fill: var(--accent); }
 .wspark.bad { fill: var(--critical); }
+.ws-tool.ping { animation: ws-ping .9s var(--ease-out) 2; }
+.cp-live-text { margin-top: 6px; }
+.cp-steps .chip.cp-live-run { border-color: var(--accent); }
+@keyframes ws-ping { 0%, 100% { transform: none; } 40% { transform: scale(1.14); } }
 @keyframes ws-pulse { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.5); } }
 /* the strip */
 .ws-strip { border-top: 1px solid var(--hair); background: var(--surface); padding: 8px 16px 12px; min-width: 0; }
@@ -1023,7 +1027,8 @@ body.ws-on .foot { margin-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wnode, .wedge, .ws-edges, .ws-tool::after, .scard, .ws-fold .ic, .ws-svg .k-holding .wlbl, .ws-svg .k-holding .wfig { transition: none !important; }
-  .ws-sheet, .wnode .wring { animation: none !important; }
+  .ws-sheet, .wnode .wring, .ws-tool.ping { animation: none !important; }
+  .ws-tool.ping { box-shadow: 0 0 0 2px var(--accent); }
   .wnode.act .wring { opacity: 1; stroke-dasharray: 3 3; }
   .wspark { display: none; }
 }

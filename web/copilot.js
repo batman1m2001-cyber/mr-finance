@@ -14,8 +14,11 @@
    was read from (its `focus` keys) on this page, or on the evidence page once it opens.
 
    Docked (FEAT-40, OWN-GW-03): in the Customer's workspace the panel lives in the dock's Trợ lý tab, always open,
-   no floating button; dock(host) moves it there and undock() gives it back to the page corner. */
-import {$, esc, followedIds, post} from "./core/core.js";
+   no floating button; dock(host, {onEvent}) moves it there and undock() gives it back to the page corner. Docked, a
+   question goes to POST /api/assistant/stream: each real event of the turn (a tool starting and ending, the model's
+   words, a write waiting) shows in the panel as it happens and goes to onEvent, which the graph draws (OWN-GW-06…10);
+   a stream that breaks is said, never papered over. */
+import {$, esc, followedIds, post, stream} from "./core/core.js";
 import {icon} from "./core/icons.js?v=20261016r1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
@@ -128,7 +131,7 @@ export function mount() {
   dropOld();
   let msgs = [], role = null, busy = false, shown = 0, settle = null, later = null;
   let cid = null, resumed = false, listing = null;  // the conversation on screen; the history list when it shows
-  let docked = false;
+  let docked = false, live = null, run = null;  // run: the turn in flight, as its events tell it
   const covers = () => !docked && !panel.hidden && matchMedia("(max-width: 560px)").matches;  // phone: the panel hides the page
 
   // one state for the button and the panel, set only by what the request did
@@ -182,7 +185,7 @@ export function mount() {
     shown = msgs.length;
     box.setAttribute("aria-busy", String(busy));
     box.dataset.conversation = cid || "";
-    if (busy) box.insertAdjacentHTML("beforeend", `<div class="cp-bot cp-in cp-think" data-busy><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Đang xử lý…</div>`);
+    if (busy) box.insertAdjacentHTML("beforeend", `<div class="cp-bot cp-in cp-think" data-busy>${liveHtml()}</div>`);
     box.scrollTop = box.scrollHeight;
     for (const li of box.querySelectorAll("[data-mark]")) li.onclick = () => { if (present([li.dataset.mark])) focus([li.dataset.mark]); };
     for (const b of box.querySelectorAll("[data-here]")) b.onclick = () => { show(msgs[b.dataset.here]); if (covers()) close(); };
@@ -190,6 +193,40 @@ export function mount() {
     for (const b of box.querySelectorAll("[data-ok]")) b.onclick = () => confirmIt(Number(b.dataset.ok));
     for (const b of box.querySelectorAll("[data-no]")) b.onclick = () => declineIt(Number(b.dataset.no));
   };
+  // the turn in flight: each step as its events say (working, done, failed), the model's words so far
+  const STEP_ST = {run: ["", "đang chạy"], ok: ["", "xong"], bad: ["bad", "không thực hiện được"]};
+  const liveHtml = () => {
+    const dots = `<span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span>`;
+    if (!run || (!run.steps.length && !run.text && !run.waiting)) return `${dots} Đang xử lý…`;
+    const steps = run.steps.map(x => `<span class="chip cp-live-${x.st} ${STEP_ST[x.st][0]}">${esc(x.label)} <span class="sr-only">${STEP_ST[x.st][1]}</span>${x.st === "run" ? dots : x.st === "ok" ? "✓" : "✕"}</span>`).join(" ");
+    return `${steps ? `<div class="cp-steps small">${steps}</div>` : ""}${run.text ? `<div class="cp-live-text">${prose(run.text)}</div>` : ""}${run.waiting ? `<div class="small muted">Chờ bạn xác nhận…</div>` : ""}`;
+  };
+  const drawLive = () => { const el = $("#cp-msgs [data-busy]", panel); if (el) el.innerHTML = liveHtml(); $("#cp-msgs", panel).scrollTop = 1e9; };
+  // docked: the turn as it happens; returns the assistant's answer, or a failure that says what broke
+  const streamed = async (body) => {
+    run = {steps: [], text: "", waiting: false};
+    let answer = null, broke = null;
+    const tell = (e) => { try { live && live.onEvent && live.onEvent(e); } catch (err) { console.error(err); } };
+    tell({type: "reset"});
+    try {
+      await stream("/api/assistant/stream", body, (e) => {
+        if (e.type === "step" && e.phase === "start") run.steps.push({id: e.call_id, label: e.label || e.tool, st: "run"});
+        else if (e.type === "step" && e.phase === "end") { const x = run.steps.find(s => s.id === e.call_id && s.st === "run"); if (x) x.st = e.ok ? "ok" : "bad"; }
+        else if (e.type === "text") run.text += e.text;
+        else if (e.type === "wait") run.waiting = true;
+        else if (e.type === "answer") answer = e.assistant;
+        else if (e.type === "error") broke = e.text;
+        tell(e);
+        if (e.type !== "answer") drawLive();
+      });
+    } catch (err) { broke = `Mất kết nối với trợ lý giữa chừng (${err.message}); hãy kiểm tra trên trang trước khi hỏi lại.`; }
+    if (!answer && !broke) broke = "Trợ lý dừng giữa chừng, không có câu trả lời; hãy hỏi lại.";
+    if (!answer) tell({type: "fail"});
+    run = null;
+    if (!answer) throw new Error(broke);
+    return answer;
+  };
+
   // the Copilot's answer (the fallback's confirm runs there) and the assistant's, as one message
   const fromCopilot = (a) => ({text: a.text, status: a.status, confirm: a.confirm, citations: a.evidence ? [a.evidence] : [], seen: a.seen,
     focus: a.focus || [], cards: a.card ? [a.card] : [], as_of: a.as_of, sources: a.sources, at: a.answered_at, mode: "fallback",
@@ -210,11 +247,12 @@ export function mount() {
     try {
       if (body.confirm) m = fromCopilot((await post("/api/copilot", {...context(), question: "", confirm: body.confirm})).copilot);
       else {
-        const a = (await post("/api/assistant", {...context(), conversation_id: body.approvals ? null : cid, ...body})).assistant;
+        const req = {...context(), conversation_id: body.approvals ? null : cid, ...body};
+        const a = docked && live ? await streamed(req) : (await post("/api/assistant", req)).assistant;
         if (a.conversation_id) cid = a.conversation_id;
         m = fromAssistant(a);
       }
-    } catch (e) { m = {status: "failed", text: `Không gọi được trợ lý: ${e.message}`}; }
+    } catch (e) { m = {status: "failed", text: docked && live ? e.message : `Không gọi được trợ lý: ${e.message}`}; }
     busy = false;
     mode(m);
     msgs.push(m);
@@ -317,9 +355,9 @@ export function mount() {
   window.addEventListener("hashchange", () => { if (!panel.hidden) setTimeout(drawCtx); });  // after the route names its view
 
   return {
-    dock(host) {
+    dock(host, hooks) {
       if (docked) return;
-      docked = true;
+      docked = true; live = hooks || null;
       panel.classList.add("cp-docked"); panel.setAttribute("role", "region");
       host.appendChild(panel);
       btn.hidden = true;
@@ -327,7 +365,7 @@ export function mount() {
     },
     undock() {
       if (!docked) return;
-      docked = false;
+      docked = false; live = null;
       panel.classList.remove("cp-docked"); panel.setAttribute("role", "dialog");
       document.body.appendChild(panel);
       panel.hidden = true; btn.hidden = false; btn.setAttribute("aria-expanded", "false");

@@ -48,6 +48,8 @@ sinks = []
 # audit log keeps each turn without its text (`assistant.turn`), and the Agent page's map reads that, not traces.
 [tracing.services.assistant]
 sinks = []
+[tracing.services.assistant_stream]
+sinks = []
 [tracing.services.copilot]
 sinks = []
 [tracing.services.assistant_conversations]

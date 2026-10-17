@@ -1,11 +1,22 @@
 """assistant_flow: a message (or the person's answers to the writes it waits on) → one assistant turn → the answer
 (POST /api/assistant, A2), kept in its conversation (A3). assistant_conversations_flow: the person's conversations —
 list, open, delete (POST /api/assistant/conversations). The Copilot's ``copilot_flow`` stays as the fallback path
-and its own endpoint."""
+and its own endpoint. assistant_stream_flow: the same turn said as it happens (POST /api/assistant/stream with
+``Accept: text/event-stream``, FEAT-40): one numbered server-sent event per step, text, wait and the answer."""
 
 from operonx import END, START, graph
+from operonx.app.serve import egress, ingress
 
-from assistant.ops import answer, check_request, consolidate_due, conversations, memory_page, retention_sweep, turn
+from assistant.ops import (
+    answer,
+    check_request,
+    consolidate_due,
+    conversations,
+    memory_page,
+    retention_sweep,
+    stream_turn,
+    turn,
+)
 
 
 @graph
@@ -35,6 +46,15 @@ def assistant_flow(
     done = turn(request=ask["request"])
     out = answer(request=ask["request"], result=done["result"])
     START >> ask >> done >> out >> END
+
+
+@graph
+def assistant_stream_flow():
+    """The body is the one request (as POST /api/assistant takes it); every event of the turn goes back at once."""
+    src = ingress()
+    ev = stream_turn(item=src["item"])
+    out = egress(item=ev["event"])
+    START >> src >> ev >> out >> END
 
 
 @graph

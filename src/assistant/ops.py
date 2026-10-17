@@ -11,7 +11,7 @@ from operonx import op
 from operonx.core.loggings import LOGGER
 
 from assistant import conversations as conv
-from assistant import knowledge, memory, registry
+from assistant import knowledge, memory, registry, stream
 from assistant import turn as turns
 from assistant.base import Ctx
 from control import audit, db, roles
@@ -41,6 +41,11 @@ def check_request(
 ) -> dict:
     """Who asks (a customer always as client), what (≤ 2,000 characters), in which conversation (none: a new one),
     or which parked writes they answer."""
+    return {"request": request_of(message, role, client_id, scope, route, goals, turn_id, approvals, conversation_id)}
+
+
+def request_of(message=None, role=None, client_id=None, scope=None, route=None, goals=None, turn_id=None,
+               approvals=None, conversation_id=None) -> dict:  # fmt: skip
     message = str(message or "").strip()
     if len(message) > 2000:
         raise ValueError("Câu hỏi dài quá 2.000 ký tự")
@@ -52,15 +57,13 @@ def check_request(
     if not message and not answers:
         raise ValueError("Hãy nhập câu hỏi")
     return {
-        "request": {
-            **who(role, client_id, scope),
-            "message": message,
-            "route": str(route or ""),
-            "followed": None if goals is None else [str(g) for g in goals][:50],
-            "turn_id": str(turn_id or "") or None,
-            "approvals": answers,
-            "conversation_id": str(conversation_id or "") or None,
-        }
+        **who(role, client_id, scope),
+        "message": message,
+        "route": str(route or ""),
+        "followed": None if goals is None else [str(g) for g in goals][:50],
+        "turn_id": str(turn_id or "") or None,
+        "approvals": answers,
+        "conversation_id": str(conversation_id or "") or None,
     }
 
 
@@ -84,22 +87,45 @@ def context(r: Dict[str, Any]) -> Ctx:
     )
 
 
-async def fallback(r: Dict[str, Any], why: str) -> Dict[str, Any]:
-    """The Copilot's path: the keyword router picks one tool, our code runs it; a write waits as there."""
+async def fallback_events(r: Dict[str, Any], why: str):
+    """The Copilot's path: the keyword router picks one tool, our code runs it; a write waits as there. Yields the
+    call's start and end (the workspace draws them), then ``{"type": "result", ...}``."""
     if r["approvals"]:
-        return {"status": "failed", "mode": "fallback", "why": why, "steps": [],
-                "text": "Không còn việc nào chờ xác nhận: trợ lý đang chạy chế độ dự phòng, hãy hỏi lại."}  # fmt: skip
+        yield {"type": "result", "result": {"status": "failed", "mode": "fallback", "why": why, "steps": [],
+               "text": "Không còn việc nào chờ xác nhận: trợ lý đang chạy chế độ dự phòng, hãy hỏi lại."}}  # fmt: skip
+        return
     seen = scrub(r["message"])
     got = router.keyword(seen, r["route"])
+    known = got["tool"] in registry.REGISTRY
+    if known:
+        label, nodes = registry.LABELS.get(got["tool"], got["tool"]), stream.nodes_for(got["tool"], got["args"])
+        yield {
+            "type": "step",
+            "phase": "start",
+            "call_id": "fallback",
+            "tool": got["tool"],
+            "label": label,
+            "nodes": nodes,
+        }
+    t0 = time.monotonic()
     step = await run_tool(
         got["tool"], got["args"], False, r["role"], r["client_id"], r["scope"], r["message"], r["followed"]
     )
+    if known:
+        yield stream.step_end(got["tool"], "fallback", step["status"] == "ok", (time.monotonic() - t0) * 1000, step)
     out = {"status": step["status"], "mode": "fallback", "why": why, "seen": seen, "text": step["text"]}
     if step["status"] == "pending":  # the Copilot's own confirm (POST /api/copilot) runs it
         out["confirm"] = step["confirm"]
     out["steps"] = [] if step["status"] in ("pending", "unknown") else [step]
     out["suggest"] = step.get("suggest")
-    return out
+    yield {"type": "result", "result": out}
+
+
+async def fallback(r: Dict[str, Any], why: str) -> Dict[str, Any]:
+    async for e in fallback_events(r, why):
+        if e["type"] == "result":
+            return e["result"]
+    raise RuntimeError("the fallback ended without a result")
 
 
 def conversation(r: Dict[str, Any], ctx: Ctx) -> str:
@@ -109,44 +135,70 @@ def conversation(r: Dict[str, Any], ctx: Ctx) -> str:
     return conv.start(ctx, r["message"])
 
 
-@op
-async def turn(request: dict) -> dict:
+async def turn_events(r: Dict[str, Any]):
     """One turn: the agent when a model is configured; else, or when the model fails before any tool ran, the
     fallback. A parked write is answered only by the person who asked, within ten minutes. Every turn belongs to a
-    conversation (A3): the one asked in, the one the parked write came from, or a new one."""
-    r = request
+    conversation (A3): the one asked in, the one the parked write came from, or a new one.
+
+    Yields the turn's events as they happen (FEAT-40: ``step``, ``text``, ``wait``), then ``{"type": "result"}``."""
     ctx = context(r)
+
+    def done(result: Dict[str, Any]) -> Dict[str, Any]:
+        return {"type": "result", "result": result}
+
+    async def fall(why: str, cid: Optional[str]):
+        async for e in fallback_events(r, why):
+            yield done({**e["result"], "conversation_id": cid}) if e["type"] == "result" else e
+
     try:
         cid = None if r["approvals"] else conversation(r, ctx)
     except ValueError as exc:  # someone else's conversation, or one deleted
-        return {"result": {"status": "failed", "mode": "model", "steps": [], "text": str(exc)}}
+        yield done({"status": "failed", "mode": "model", "steps": [], "text": str(exc)})
+        return
     if not turns.live():
-        return {"result": {**await fallback(r, "chưa cấu hình mô hình cho trợ lý"), "conversation_id": cid}}
+        async for e in fall("chưa cấu hình mô hình cho trợ lý", cid):
+            yield e
+        return
+    redo = None
     try:
-        if r["approvals"]:
-            return {"result": await turns.resume(ctx, r["turn_id"], r["approvals"])}
-        got = await turns.run(ctx, r["message"], cid)
-        if got.get("model_error") and not ctx.trail:  # the model failed before any tool ran: NFR-03
-            LOGGER.warning("assistant: the model failed (%s)", got["model_error"])
-            why = f"mô hình lỗi ({got['model_error'].split(':')[0]})"
-            return {"result": {**await fallback(r, why), "conversation_id": cid}}
-        return {"result": got}
+        events = (
+            turns.resume_events(ctx, r["turn_id"], r["approvals"])
+            if r["approvals"]
+            else turns.run_events(ctx, r["message"], cid)
+        )
+        async for ev in events:
+            if isinstance(ev, dict):
+                got = ev["reply"]
+                if not r["approvals"] and got.get("model_error") and not ctx.trail:  # failed before any tool: NFR-03
+                    LOGGER.warning("assistant: the model failed (%s)", got["model_error"])
+                    redo = f"mô hình lỗi ({got['model_error'].split(':')[0]})"
+                else:
+                    yield done(got)
+            elif (e := stream.translate(ev, ctx)) is not None:
+                yield e
     except ValueError as exc:  # nothing waiting for this person, or too late
-        return {"result": {"status": "failed", "mode": "model", "steps": [], "text": str(exc), "conversation_id": cid}}
+        yield done({"status": "failed", "mode": "model", "steps": [], "text": str(exc), "conversation_id": cid})
+        return
     except Exception as exc:  # noqa: BLE001 - the model failed: NFR-03, the product keeps answering
         LOGGER.warning("assistant: the model failed (%s: %s)", type(exc).__name__, exc)
         if ctx.trail or r["approvals"]:
-            return {
-                "result": {
-                    "status": "failed",
-                    "mode": "model",
-                    "steps": [],
-                    "text": f"Trợ lý gặp lỗi giữa chừng ({type(exc).__name__}); "
-                    "hãy kiểm tra trên trang trước khi làm lại.",
-                    "conversation_id": cid,
-                }
-            }
-        return {"result": {**await fallback(r, f"mô hình lỗi ({type(exc).__name__})"), "conversation_id": cid}}
+            text = f"Trợ lý gặp lỗi giữa chừng ({type(exc).__name__}); hãy kiểm tra trên trang trước khi làm lại."
+            yield done({"status": "failed", "mode": "model", "steps": [], "conversation_id": cid, "text": text})
+            return
+        redo = f"mô hình lỗi ({type(exc).__name__})"
+    if redo:
+        async for e in fall(redo, cid):
+            yield e
+
+
+@op
+async def turn(request: dict) -> dict:
+    """One turn (``turn_events``), its answer only."""
+    result = None
+    async for e in turn_events(request):
+        if e["type"] == "result":
+            result = e["result"]
+    return {"result": result}
 
 
 def _latest(dates: List[str]) -> str | None:
@@ -157,7 +209,10 @@ def _latest(dates: List[str]) -> str | None:
 def answer(request: dict, result: dict) -> dict:
     """The answer with what it rests on (each step's page, sources and date), stamped and audited: who, the mode,
     the tools and their statuses, the model and its usage — not the conversation's text."""
-    r = request
+    return {"assistant": finish(request, result)}
+
+
+def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     steps = result.get("steps") or []
     seen_pages = set()
     citations = []
@@ -202,7 +257,34 @@ def answer(request: dict, result: dict) -> dict:
     }
     if out.get("conversation_id"):  # the turn as the panel shows it, to draw again on any device (A3)
         conv.record(out["conversation_id"], r["message"] or None, out)
-    return {"assistant": out}
+    return out
+
+
+FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id")
+
+
+@op
+async def stream_turn(item: dict = None):
+    """POST /api/assistant/stream (FEAT-40): the same turn as POST /api/assistant, said as it happens — one event per
+    yield: ``step`` (a tool starting, with the graph nodes it reads; ending, with what its result names), ``text``
+    (the model's words, model mode only), ``wait`` (a write for the person to confirm), then ``answer`` (the same
+    answer as the JSON door, audited and kept) or ``error``."""
+    try:
+        body = item if isinstance(item, dict) else {}
+        r = request_of(**{k: body.get(k) for k in FIELDS})
+    except Exception as exc:  # noqa: BLE001 - a bad request: said on the stream, nothing runs
+        yield {"event": {"type": "error", "text": str(exc)}}
+        return
+    yield {"event": {"type": "start"}}
+    try:
+        async for e in turn_events(r):
+            if e["type"] == "result":
+                yield {"event": {"type": "answer", "assistant": finish(r, e["result"])}}
+            else:
+                yield {"event": e}
+    except Exception as exc:  # noqa: BLE001 - said on the stream; the JSON door's caller would have got a 500
+        LOGGER.warning("assistant stream: %s: %s", type(exc).__name__, exc)
+        yield {"event": {"type": "error", "text": f"Trợ lý gặp lỗi ({type(exc).__name__})"}}
 
 
 # -- the conversations (A3): list, open, delete ------------------------------------------------------------------

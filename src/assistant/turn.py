@@ -30,6 +30,7 @@ from operonx_agents import (
     Runner,
     UsageLimits,
 )
+from operonx_agents.run.events import RunFinished
 
 from assistant import conversations as conv
 from assistant import memory, registry
@@ -163,23 +164,40 @@ async def remembered(ctx: Ctx) -> None:
         ctx.remembered = [f"({i['kind_label']}) {i['text']}" for i in await memory.items(ctx)][: memory.IN_PROMPT]
 
 
-async def run(ctx: Ctx, message: str, cid: str) -> Dict[str, Any]:
-    """A fresh turn of conversation ``cid``. The message is scrubbed when the model may not read client data."""
+async def _drive(events, ctx: Ctx, cid: str):
+    """The run's events as they happen (FEAT-40: the workspace draws them), then ``{"reply": ...}``. The whole run is
+    bounded by the agent's wall clock, as before."""
+    res = None
+    s = session(cid, ctx)
+    try:
+        async with asyncio.timeout(LIMITS.wall_s + 5):
+            async for ev in events(s):
+                if isinstance(ev, RunFinished):
+                    res = ev.result
+                else:
+                    yield ev
+    finally:
+        s.close()
+    yield {"reply": res}
+
+
+async def run_events(ctx: Ctx, message: str, cid: str):
+    """A fresh turn of conversation ``cid``, yielding the agent's events, then ``{"reply": answer}``. The message is
+    scrubbed when the model may not read client data."""
     said = message if ctx.reads else scrub(message)
     ctx.conversation = cid
     await remembered(ctx)
-    s = session(cid, ctx)
-    try:
-        res = await asyncio.wait_for(
-            Runner.run(agent(ctx.role), said, deps=ctx, store=conv.RUNS, session=s), LIMITS.wall_s + 5
-        )
-    finally:
-        s.close()
-    return await reply(res, ctx, said, fresh=True, cid=cid)
+    async for ev in _drive(
+        lambda s: Runner.stream(agent(ctx.role), said, deps=ctx, store=conv.RUNS, session=s), ctx, cid
+    ):
+        if isinstance(ev, dict):
+            ev = {"reply": await reply(ev["reply"], ctx, said, fresh=True, cid=cid)}
+        yield ev
 
 
-async def resume(ctx: Ctx, run_id: str, approvals: Dict[str, str]) -> Dict[str, Any]:
-    """The person's answers to a parked run's writes: approve runs (and verifies) each, deny runs nothing."""
+async def resume_events(ctx: Ctx, run_id: str, approvals: Dict[str, str]):
+    """The person's answers to a parked run's writes (approve runs and verifies each, deny runs nothing), yielding the
+    run's events, then ``{"reply": answer}``."""
     row = parked(run_id, ctx)
     ctx.asked.update(json.loads(row["calls"]))
     said = {str(k): Approve() if v == "approve" else Deny("Người dùng không xác nhận") for k, v in approvals.items()}
@@ -187,15 +205,34 @@ async def resume(ctx: Ctx, run_id: str, approvals: Dict[str, str]) -> Dict[str, 
     cid = row["conversation_id"]
     ctx.conversation = cid
     await remembered(ctx)
-    s = session(cid, ctx)
-    try:
-        res = await asyncio.wait_for(
-            Runner.resume(agent(ctx.role), run_id, store=conv.RUNS, approvals=said, deps=ctx, session=s),
-            LIMITS.wall_s + 5,
-        )
-    finally:
-        s.close()
-    return await reply(res, ctx, None, fresh=False, cid=cid)
+
+    def events(s):
+        return Runner.resume_stream(agent(ctx.role), run_id, store=conv.RUNS, approvals=said, deps=ctx, session=s)
+
+    async for ev in _drive(events, ctx, cid):
+        if isinstance(ev, dict):
+            ev = {"reply": await reply(ev["reply"], ctx, None, fresh=False, cid=cid)}
+        yield ev
+
+
+async def _last(events) -> Dict[str, Any]:
+    out = None
+    async for ev in events:  # to the end, so the run's session closes here, not at garbage collection
+        if isinstance(ev, dict):
+            out = ev["reply"]
+    if out is None:
+        raise RuntimeError("the run ended without a reply")
+    return out
+
+
+async def run(ctx: Ctx, message: str, cid: str) -> Dict[str, Any]:
+    """A fresh turn of conversation ``cid``: its answer (the events are not kept)."""
+    return await _last(run_events(ctx, message, cid))
+
+
+async def resume(ctx: Ctx, run_id: str, approvals: Dict[str, str]) -> Dict[str, Any]:
+    """The person's answers to a parked run's writes: its answer."""
+    return await _last(resume_events(ctx, run_id, approvals))
 
 
 def steps_of(res, ctx: Ctx, fresh: bool) -> List[Dict[str, Any]]:

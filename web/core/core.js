@@ -73,6 +73,35 @@ async function fetchPost(path, body) {
   return out;
 }
 
+/* A POST answered as server-sent events (FEAT-40, POST /api/assistant/stream): each event to onEvent, in order, as it
+   arrives; resolves when the stream ends, rejects when it breaks or is refused. It may have changed something (a
+   confirmed write): nothing kept is sure any more. */
+export async function stream(path, body, onEvent) {
+  try {
+    const r = await fetch(path, {method: "POST", headers: {"content-type": "application/json", accept: "text/event-stream"}, body: JSON.stringify(body || {})});
+    if (!r.ok || !r.body || !(r.headers.get("content-type") || "").startsWith("text/event-stream")) {
+      throw new Error(errorText(await r.json().catch(() => ({}))) || `${path}: ${r.status}`);
+    }
+    const reader = r.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buf = "";
+    for (;;) {
+      const {value, done} = await reader.read();
+      if (done) break;
+      buf = (buf + value).replace(/\r\n/g, "\n");
+      for (let i = buf.indexOf("\n\n"); i >= 0; i = buf.indexOf("\n\n")) {
+        const data = buf.slice(0, i).split("\n").filter(l => l.startsWith("data:")).map(l => l.slice(5).replace(/^ /, "")).join("\n");
+        buf = buf.slice(i + 2);
+        if (!data) continue;
+        let item;
+        try { item = JSON.parse(data); } catch (_) { continue; }
+        onEvent(item && item.event && item.event.type ? item.event : item);
+      }
+    }
+  } finally {
+    forget();
+  }
+}
+
 export function get(path) {
   return keptOr(`GET ${path}`, () => fetchGet(path));
 }

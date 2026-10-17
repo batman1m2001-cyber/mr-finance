@@ -5,6 +5,7 @@
    graph on navigation. */
 import {$, esc, followedIds, post} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
+import {reduced} from "../motion.js?v=20261016r1";
 import {createGraph} from "./graph.js?v=20261017w1";
 import {render as inspect} from "./inspector.js?v=20261017w1";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w1";
@@ -161,8 +162,44 @@ export function mount(main, {client, scope, go, page}) {
   fit_();
   try { tab(sessionStorage.getItem("mf.ws.tab") || "a"); } catch (_) { tab("a"); }
 
+  // ── the assistant's turn, as it happens (OWN-GW-06…10): each call answers one real event of the stream ──────────
+  let lit = [];  // what the turn's steps named: kept marked when the answer completes
+  const pinged = new Set();
+  const ping = (ids) => {  // the step reads nodes this lens hides: the lens that shows them says so, once per turn
+    const kinds = new Set(ids.map(id => (graph.node(id) || {}).kind).filter(Boolean));
+    const where = Object.values(LENS).find(l => l.id !== lens.id && [...kinds].some(k => l.kinds.includes(k)));
+    const tool = where && root.querySelector(`.ws-tool[data-tool="${where.id}"]`);
+    if (!tool || pinged.has(where.id)) return;
+    pinged.add(where.id);
+    tool.classList.remove("ping"); void tool.offsetWidth; tool.classList.add("ping");
+    if (reduced()) setTimeout(() => tool.classList.remove("ping"), 2000);  // no animation: an outline, for a moment
+    else tool.addEventListener("animationend", () => tool.classList.remove("ping"), {once: true});
+  };
+  const live = (e) => {
+    const a = graph.activity;
+    if (e.type === "reset") { a.reset(); lit = []; pinged.clear(); return; }
+    if (e.type === "step" && e.phase === "start") {
+      const ids = a.ids(e.nodes);
+      a.run(e.call_id, ids);
+      if (ids.length && !ids.some(id => graph.visible(id))) ping(ids);
+    } else if (e.type === "step" && e.phase === "end") {
+      if (e.scenario) {  // a stress test's result goes on its node: hypothetical, beside the net worth, never in it
+        const n = graph.node(`SC:${e.scenario.id}`);
+        if (n) { n.value = e.scenario.effect; graph.redraw(); }
+      }
+      a.end(e.call_id, e.ok, e.focus);
+      if (e.ok) lit.push(...(e.focus || []));
+    } else if (e.type === "answer") {
+      const ans = e.assistant || {};
+      if (ans.status === "failed" || ans.status === "forbidden") a.fail();
+      else a.keep([...lit, ...(ans.focus || [])]);
+      if (graph.selected()) drawInspector();
+    } else if (e.type === "error" || e.type === "fail") a.fail();
+  };
+
   return {
     graph,
+    live,
     dock: $("#ws-pane-a", root),
     tab,
     /* a route's parts after the role → the lens and the sheet; returns the sheet to draw (or null) */
