@@ -54,7 +54,10 @@ its outputs (`{"dashboard": ...}`, `{"read": ...}`, ...). Every service and job 
 declared here; operonx.toml only points at `APP`.
 """
 
-from operonx.app import Application, Eval, Service, asgi, env, http, schedule
+import os
+
+from operonx.app import Application, Eval, Service, asgi, env, http
+from operonx.app import schedule as _schedule
 from operonx.app.evals import Gate
 from operonx.app.jobs import Job
 
@@ -111,6 +114,12 @@ from zone.graph import zone_sync_flow
 barrier.install()  # every llm: call of this process passes the client-data barrier (BRD-NFR-08)
 
 PORT = env("PORT", 8030)
+
+
+def schedule(**kw):
+    """A job's clock — none with MF_JOBS=off (a second copy of the app, e.g. an experiment, runs no job on its
+    own: no fetch and no model call twice; each still runs with `operonx run <job>`)."""
+    return None if os.environ.get("MF_JOBS", "").lower() == "off" else _schedule(**kw)
 
 APP = Application(
     "mr-finance",
