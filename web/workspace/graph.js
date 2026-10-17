@@ -22,6 +22,7 @@ export const LOOK = {  // colour, icon; the colour follows the kind, status colo
 const SECTOR = {flow_out: [0, 0, 0.9], risk: [26, 48, 0.74], goal: [62, 118, 0.96], liquidity: [140, 140, 0.72],
   scenario: [165, 225, 1], flow_in: [166, 166, 0.9], event: [188, 208, 0.96], alert: [134, 178, 0.98],
   class: [222, 328, 0.8], source: [236, 304, 1.12]};
+const NARROW = {class: [198, 342, 0.86], source: [38, 142, 0.98]};  // a phone's tall canvas: the arcs open wider
 const LAYOUT_BY_LENS = {"tai-san": {source: [64, 116, 0.96], class: [188, 352, 0.62]}, "rui-ro": {class: [200, 340, 0.74]},
   "muc-tieu": {goal: [28, 152, 0.95], scenario: [212, 328, 0.95]}, "dong-tien": {class: [215, 325, 0.72]}};
 const WORDING = "có thể ảnh hưởng";  // a news event's edge: a potential impact under the CIO's scenarios, never a cause
@@ -91,10 +92,11 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const other = (e, id) => byId[e.from === id ? e.to : e.from];
 
   function layout() {
-    const cx = W / 2, cy = H / 2, rx = W / 2 - Math.min(170, W * (narrow ? 0.3 : 0.24)), ry = H / 2 - 70;
+    const cx = W / 2, cy = H / 2, rx = W / 2 - Math.min(170, W * (narrow ? (lens.openAll ? 0.22 : 0.3) : 0.24)), ry = H / 2 - 70;
     const out = {ME: {x: cx, y: cy, a: 0}};
     const at = (deg, r) => ({x: cx + Math.cos(deg * Math.PI / 180) * rx * r, y: cy + Math.sin(deg * Math.PI / 180) * ry * r, a: deg});
     const sectors = {...SECTOR, ...(LAYOUT_BY_LENS[lens.id] || {})};
+    if (narrow && lens.openAll && st.open.size <= 1) Object.assign(sectors, NARROW);  // a phone: wider sweeps
     const place = (list, [a0, a1, r], stagger) => list.forEach((n, i) => {
       const rr = stagger && i % 2 ? r - 0.14 : r;
       out[n.id] = {...at(list.length === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * i / (list.length - 1), rr), inner: rr < r};
@@ -106,7 +108,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     place(g.nodes.filter(n => n.kind === "flow" && n.side === "in" && visible(n)), sectors.flow_in);
     place(g.nodes.filter(n => n.kind === "flow" && n.side === "out" && visible(n)), sectors.flow_out);
     const open = [...st.open].filter(opened).filter(cid => out[cid]).sort((a, b) => out[a].a - out[b].a);
-    if (lens.openAll) {  // every class open: the classes step inward, all holdings share the arc in class order
+    if (lens.openAll && open.length > 1) {  // classes open together: they step inward, all holdings share the arc
       const kids = open.flatMap(cid => g.nodes.filter(n => n.parent === cid && visible(n)));
       for (const cid of open) Object.assign(out[cid], at(out[cid].a, 0.5));
       const [a0, a1] = sectors.class;
@@ -183,15 +185,19 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     if (f) { f.setAttribute("x", lx); f.setAttribute("y", ly + 15); f.setAttribute("text-anchor", anchor); f.textContent = figureOf(n); }
   }
 
+  // the canvas size, kept by a ResizeObserver: reading it on every draw forced a layout per lens change
+  let size = null;
+  new ResizeObserver(([e]) => { const r = e.contentRect; if (!size || r.width !== size.width || r.height !== size.height) { size = {width: r.width, height: r.height}; if (g && lens) draw(); } }).observe(host);
   function draw({moved = false} = {}) {
     if (!g) return;
-    const box = host.getBoundingClientRect();
+    const box = size || host.getBoundingClientRect();
     // a phone's canvas is narrow and tall: the layout gets room in the height, the labels grow (CSS) to stay readable
     narrow = box.width > 0 && box.width < 600;
     W = Math.max(narrow ? 520 : 720, Math.round(box.width || 1000)); H = Math.max(narrow ? 640 : 520, Math.round(box.height || 640));
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     pos = layout();
     const lit = st.sel ? new Set([st.sel, ...links(st.sel).map(e => other(e, st.sel).id)]) : null;
+    const back = [];  // nodes coming back into the lens: placed first, then one layout, then faded in together
     for (const n of g.nodes) {
       const el = nodeEl(n), q = pos[n.id], on = visible(n) && q;
       el.setAttribute("aria-hidden", String(!on));
@@ -200,15 +206,16 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         if (!el.classList.contains("off")) { el.classList.add("off"); setTimeout(() => { if (el.classList.contains("off")) el.classList.add("gone"); }, reduced() ? 0 : 400); }
         continue;
       }
-      const back = el.classList.contains("gone");
-      el.classList.remove("gone");
+      if (el.classList.contains("gone")) { el.classList.remove("gone"); back.push(el); }
       el.style.transform = `translate(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px)`;
-      if (back) el.getBoundingClientRect();  // placed before it fades in, so it does not fly from the corner
-      el.classList.remove("off");
+      if (!back.includes(el)) el.classList.remove("off");
       el.classList.toggle("dim", !!lit && !lit.has(n.id));
       el.classList.toggle("sel", st.sel === n.id);
       el.setAttribute("aria-pressed", String(st.sel === n.id));
       placeLabel(el, n, q);
+    }
+    if (back.length) {  // styled once in place, still faded, then faded in: no forced layout (one cost ~60 ms)
+      requestAnimationFrame(() => requestAnimationFrame(() => { for (const el of back) if (!el.classList.contains("gone")) el.classList.remove("off"); }));
     }
     for (const [id, el] of els) if (!byId[id]) { el.remove(); els.delete(id); }
     // the edges follow the nodes: faded while they move, drawn again where they arrive
@@ -389,7 +396,8 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const first = !lens;
       lens = next;
       if (!g) return;
-      if (next.openAll) for (const n of g.nodes) if (n.kind === "class" && g.nodes.some(x => x.parent === n.id)) st.open.add(n.id);
+      // every class open where there is room; a phone opens one at a time (the inspector's “Mở rộng”)
+      if (next.openAll && !narrow) for (const n of g.nodes) if (n.kind === "class" && g.nodes.some(x => x.parent === n.id)) st.open.add(n.id);
       if (st.sel && !visible(byId[st.sel])) { st.sel = null; if (onSelect) onSelect(null); }
       draw({moved: !first});
     },

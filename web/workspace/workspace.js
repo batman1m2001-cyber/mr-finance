@@ -16,7 +16,8 @@ export function mount(main, {client, scope, go, page}) {
   root.className = "ws";
   root.innerHTML = `
     <nav class="ws-bar" aria-label="Các góc nhìn">${TOOLBAR.map(t => `<a class="ws-tool" href="${t.href}" data-tool="${t.id}" aria-label="${esc(t.label)}" data-tip="${esc(t.tip)}">
-      ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.label)}</span></a>`).join("")}</nav>
+      ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.label)}</span></a>`).join("")}
+      <button type="button" class="ws-tool ws-ask" aria-label="Hỏi trợ lý">${icon("sparkles", {size: 20})}<span class="ws-tool-l">Trợ lý</span></button></nav>
     <section class="ws-center" aria-label="Đồ thị tài chính">
       <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Tổng quan tài chính</h1>
         <p class="ws-sub small muted" id="ws-sub"></p></div>
@@ -62,6 +63,12 @@ export function mount(main, {client, scope, go, page}) {
     try { sessionStorage.setItem("mf.ws.tab", which); } catch (_) { /* private mode */ }
   };
   $("#ws-tab-a", root).onclick = () => tab("a");
+  $(".ws-ask", root).onclick = () => {  // a phone: the dock is below the graph — go to it, ready to type
+    tab("a");
+    $(".ws-dock", root).scrollIntoView({behavior: reduced() ? "auto" : "smooth", block: "start"});
+    const q = document.querySelector("#cp-q");
+    if (q) q.focus({preventScroll: true});
+  };
   $("#ws-tab-i", root).onclick = () => tab("i");
   $("#ws-fold", root).onclick = () => {
     const folded = root.classList.toggle("folded");
@@ -158,8 +165,9 @@ export function mount(main, {client, scope, go, page}) {
   const fit_ = () => {
     root.style.setProperty("--ws-top", `${Math.round(($(".shell-top") || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom)}px`);
   };
-  window.addEventListener("resize", () => { fit_(); graph.redraw(); });
+  window.addEventListener("resize", fit_);  // the graph redraws from its own ResizeObserver
   fit_();
+  setTimeout(fit_, 600);  // once the header has its names (whoami, scope) and its final height
   try { tab(sessionStorage.getItem("mf.ws.tab") || "a"); } catch (_) { tab("a"); }
 
   // ── the assistant's turn, as it happens (OWN-GW-06…10): each call answers one real event of the stream ──────────
@@ -205,7 +213,6 @@ export function mount(main, {client, scope, go, page}) {
     /* a route's parts after the role → the lens and the sheet; returns the sheet to draw (or null) */
     async route(parts) {
       const r = resolve(parts);
-      fit_();
       await load();
       sheet = r.sheet;
       if (r.lens) setLens(r.lens);
