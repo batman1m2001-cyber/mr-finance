@@ -14,7 +14,7 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261017w1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261017r2";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261017w1";
+import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261017w3";
 
 const ROLES = {
   client: {
@@ -154,7 +154,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261017w2");
+  wsLoad ||= import("./workspace/workspace.js?v=20261017w3");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});

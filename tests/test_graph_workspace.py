@@ -80,15 +80,15 @@ def test_the_workspace_is_served_and_follows_the_motion_rules():
         assert client.get(f"/workspace/{name}.js").status_code == 200, name
     js = "".join(p.read_text(encoding="utf-8") for p in WS.glob("*.js"))
     assert "setInterval" not in js  # nothing loops: activity comes from events (OWN-GW-08)
-    assert ".animate(" not in js.replace(
-        "track(dot.animate(", ""
-    )  # every Web Animation is tracked (paused when hidden)
+    assert js.count(".animate(") == len(
+        re.findall(r"track\(\w+\.animate\(", js)
+    )  # every Web Animation tracked (paused when hidden)
     css = (WEB / "core" / "tokens.css").read_text(encoding="utf-8").split("The Customer's workspace (FEAT-40")[1]
     for decl in re.findall(r"transition:\s*([^;]+);", css):
         for part in decl.split(","):
             assert part.split()[0] in ("transform", "opacity", "none"), decl
     reduced = css.split("@media (prefers-reduced-motion: reduce) {")[1].split("\n}\n")[0]
-    for cls in (".wnode", ".wedge", ".wspark", ".ws-sheet", ".wring"):
+    for cls in (".wnode", ".wedge", ".wcomet", ".ws-sheet", ".wring", ".wburst"):
         assert cls in reduced, cls
 
 

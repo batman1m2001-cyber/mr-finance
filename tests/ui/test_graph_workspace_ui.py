@@ -16,6 +16,26 @@ STUB_BREAK = """(() => { const real = window.fetch;
   }; })();"""
 
 
+# overlapping node discs, and overlapping labels of two different nodes (shown ones only)
+CLEAR = """() => {
+  const discs = [...document.querySelectorAll('.wnode:not(.off):not(.gone) .wcore')]
+    .map(c => c.getBoundingClientRect());
+  let d = 0;
+  for (let i = 0; i < discs.length; i++) for (let j = i + 1; j < discs.length; j++) {
+    const a = discs[i], b = discs[j], ra = a.width / 2, rb = b.width / 2;
+    if (Math.hypot(a.left + ra - b.left - rb, a.top + ra - b.top - rb) < ra + rb - 1) d++; }
+  const t = [...document.querySelectorAll('.wnode:not(.off):not(.gone) :is(.wlbl, .wfig)')]
+    .filter(x => x.textContent && getComputedStyle(x).opacity > 0.5)
+    .map(x => [x.closest('.wnode').dataset.n, x.getBoundingClientRect()]);
+  let o = 0;
+  for (let i = 0; i < t.length; i++) for (let j = i + 1; j < t.length; j++) {
+    const [na, a] = t[i], [nb, b] = t[j];
+    const x = a.left < b.right - 1 && b.left < a.right - 1, y = a.top < b.bottom - 1 && b.top < a.bottom - 1;
+    if (na !== nb && x && y) o++; }
+  return [d, o];
+}"""
+
+
 def mark(p):
     p.page.evaluate("document.querySelector('.ws-svg').dataset.kept = 'same'")
 
@@ -35,11 +55,22 @@ def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
         p.go(f"#/client/xem/{lens}")
         shown[lens] = p.page.locator(".wnode:not(.off)").count()
         assert p.page.get_attribute(f'[data-tool="{lens}"]', "aria-current") is not None
-    assert same(p) and shown["tai-san"] > shown["tong-quan"] > shown["muc-tieu"]
+    assert same(p) and shown["tong-quan"] > shown["muc-tieu"]
+    # OWN-GW-15: by default only the spokes of “My Wealth”; no node on another, no label on another
+    ends = p.page.eval_on_selector_all(".ws-edges .wedge", "es => es.map(e => e.dataset.e.split('>'))")
+    assert ends and all("ME" in e for e in ends)
+    assert p.page.evaluate(CLEAR) == [0, 0]
     assert (
         p.page.locator(".wnode.k-flow:not(.off)").count() == 2
         and p.page.locator(".wnode.k-liquidity:not(.off)").count() == 1
     )
+    p.go("#/client/xem/tai-san")  # holdings on demand: a class picked opens to them, the rest steps back
+    assert p.page.locator(".wnode.k-holding:not(.off)").count() == 0
+    p.page.click('.wnode[data-n="CL:stock"] .wcore')
+    p.page.wait_for_function("document.querySelectorAll('.wnode.k-holding:not(.off)').length > 0")
+    p.page.wait_for_timeout(600)  # the nodes' move (transform transition) has ended
+    assert p.page.locator(".wnode.dim").count() > 0 and p.page.evaluate(CLEAR) == [0, 0]
+    p.page.click('.wnode[data-n="CL:stock"] .wcore')
     p.go("#/client/tai-san")  # an old address: its page as a sheet over the Tài sản lens
     assert p.page.is_visible("#ws-sheet") and p.page.inner_text("#ws-sheet-t") == "Tài sản"
     assert p.page.locator("#ws-sheet #page .holdings, #ws-sheet #page table, #ws-sheet #page .card").count() > 0
@@ -106,7 +137,7 @@ def test_a_broken_stream_is_said_and_marked_failed(open_page):
     p.page.wait_for_selector(".cp-err")
     assert "Mất kết nối" in p.page.locator(".cp-err").last.inner_text()
     assert p.page.locator(".wnode.bad").count() == 2 and p.page.locator(".wnode.act").count() == 0
-    assert p.page.locator(".wspark").count() == 0  # reduced motion: no particles
+    assert p.page.locator(".wcomet").count() == 0  # reduced motion: no pulses
 
 
 def test_keyboard_and_phone(open_page):
@@ -122,8 +153,9 @@ def test_keyboard_and_phone(open_page):
     phone = open_page("phone")
     phone.go("#/client")
     phone.page.wait_for_selector(".wnode.k-family")
-    for lens in ("tai-san", "muc-tieu", "tong-quan"):
+    for lens in ("tai-san", "muc-tieu", "tin", "tong-quan"):
         phone.go(f"#/client/xem/{lens}")
+        assert phone.page.evaluate(CLEAR) == [0, 0], lens
     phone.page.click(".ws-ask")
     phone.page.wait_for_function("document.activeElement && document.activeElement.id === 'cp-q'")
     phone.go("#/client/tai-san")  # a sheet on a phone takes the graph's place; the dock below stays reachable
@@ -132,3 +164,104 @@ def test_keyboard_and_phone(open_page):
                          return document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.id; }"""
     assert phone.page.evaluate(on_top) == "cp-q"
     assert not phone.problems()  # no sideways scroll, no error
+
+
+TIMED = """(() => { const real = window.fetch;
+  window.fetch = (url, opts) => {
+    if (!String(url).includes('/api/assistant/stream')) return real(url, opts);
+    const enc = new TextEncoder(), ev = window.__script || [];
+    const body = new ReadableStream({start(c) { let n = 0;
+      for (const [t, e] of ev) setTimeout(() => {
+        c.enqueue(enc.encode(`id: ${++n}\\ndata: ${JSON.stringify(e)}\\n\\n`));
+        if (e.type === 'answer') c.close(); }, t); }});
+    return Promise.resolve(new Response(body, {status: 200, headers: {'content-type': 'text/event-stream'}}));
+  }; })();"""
+SCRIPT = [
+    [0, {"type": "start"}],
+    [
+        50,
+        {
+            "type": "step",
+            "phase": "start",
+            "call_id": "c1",
+            "tool": "kich_ban",
+            "label": "Kịch bản",
+            "nodes": ["SC:vni_30"],
+        },
+    ],
+    [
+        50,
+        {"type": "step", "phase": "start", "call_id": "c2", "tool": "muc_tieu", "label": "Mục tiêu", "nodes": ["goal"]},
+    ],
+    [1200, {"type": "step", "phase": "end", "call_id": "c2", "tool": "muc_tieu", "ok": False, "ms": 1100, "focus": []}],
+    [
+        2400,
+        {
+            "type": "step",
+            "phase": "end",
+            "call_id": "c1",
+            "tool": "kich_ban",
+            "ok": True,
+            "ms": 2300,
+            "focus": ["scenario:vni_30"],
+            "scenario": {"id": "vni_30", "effect": -1820000000},
+        },
+    ],
+    [2500, {"type": "text", "text": "Nếu VN-Index giảm 30%… "}],
+    [
+        4200,
+        {
+            "type": "answer",
+            "assistant": {
+                "status": "ok",
+                "mode": "model",
+                "text": "Mô phỏng xong.",
+                "focus": ["scenario:vni_30"],
+                "steps": [],
+            },
+        },
+    ],
+]
+STATE = """() => ({hot: document.querySelectorAll('.wedge.hot').length,
+  bad: document.querySelectorAll('.wedge.bad').length,
+  comets: document.querySelectorAll('.wcomet').length, hollow: document.querySelectorAll('.wcomet.hollow').length,
+  focusing: document.querySelector('.ws-svg').classList.contains('focusing'),
+  writing: !!document.querySelector('.wnode.writing'), kept: document.querySelectorAll('.wnode.kept').length})"""
+
+
+def test_the_dataflow_follows_the_stream_and_only_the_stream(open_page):
+    """OWN-GW-16…18: nothing glows or runs before an event; a running tool's paths glow and the rest steps back; a
+    failed read turns red and sends nothing; a scenario's read runs home hollow; the answer's paths stay until a
+    background click (a scripted stream through the real panel)."""
+    import json
+
+    p = open_page()
+    p.ctx.add_init_script(TIMED)
+    p.ctx.add_init_script(f"window.__script = {json.dumps(SCRIPT)};")
+    p.page.reload()
+    p.go("#/client/xem/muc-tieu")
+    p.page.wait_for_selector('.wnode[data-n="SC:vni_30"]')
+    assert p.page.evaluate(STATE)["hot"] == 0 and p.page.evaluate(STATE)["comets"] == 0  # at rest: nothing moves
+    p.page.fill("#cp-q", "Nếu VN-Index giảm mạnh thì sao?")
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_function(
+        "document.querySelectorAll('.wedge.hot').length >= 5"
+    )  # the scenario's and the goals' spokes
+    assert p.page.evaluate(STATE)["focusing"] and p.page.evaluate(STATE)["comets"] == 0  # running: no pulse yet
+    p.page.wait_for_function("document.querySelectorAll('.wedge.bad').length === 4")  # the goals' read failed
+    assert p.page.evaluate(STATE)["comets"] == 0  # a failure sends nothing home
+    p.page.wait_for_function(
+        "document.querySelectorAll('.wcomet.hollow').length > 0", timeout=4000
+    )  # a hypothesis, hollow
+    p.page.wait_for_function("!!document.querySelector('.wnode.k-family.writing')")
+    p.page.wait_for_function("document.querySelectorAll('.wnode.kept').length > 0", timeout=6000)
+    st = p.page.evaluate(STATE)
+    assert st["hot"] >= 1 and st["bad"] == 4 and st["focusing"] and not st["writing"]
+    p.page.mouse.click(
+        *p.page.evaluate(
+            "(() => { const r = document.querySelector('.ws-svg').getBoundingClientRect();"
+            " return [r.left + 12, r.bottom - 12]; })()"
+        )
+    )
+    p.page.wait_for_function("!document.querySelector('.ws-svg').classList.contains('focusing')")
+    assert p.page.evaluate(STATE)["hot"] == 0 and not p.problems()

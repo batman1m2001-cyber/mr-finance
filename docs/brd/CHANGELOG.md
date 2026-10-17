@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The graph refined: hierarchy and Studio-style dataflow (experiment, G8–G10, OWN-GW-15…19).
+  - Spokes by default, relations on demand, holdings on pick, labels and nodes that never overlap (crossings 104 → 0
+    on Tổng quan); the centre's text fits its disc.
+  - Silk edges; pulses home from what the assistant read, through the classes a news item moves; failure in red with
+    no pulse; hollow for scenarios; a pulse never in a money colour, and the legend says it is a read.
+  - Performance on a 3× graph; two profiling fixes (the live bubble, edge restyling). Screenshots SCR-CL-12 replaced
+    (same names) and two added. Documents: FEAT-40, matrix OWN-GW-15…19, graph_workspace_report.md, the plan.
+
 - 2026-10-17 — The persistent financial graph, built and verified (experiment, G1–G7).
   - The Customer's app is one page: lenses on a persistent graph (cash flow, reserve and stress scenarios as nodes,
     certainty on every edge), the old pages as sheets at their old addresses, the dock (Trợ lý, Thông tin), the

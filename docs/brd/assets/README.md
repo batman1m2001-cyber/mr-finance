@@ -139,6 +139,8 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-12_phone-dark.jpg` | SCR-CL-12 Không gian làm việc, Tổng quan lens | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
 | `SCR-CL-12-dock_phone-dark.jpg` | SCR-CL-12, the dock (Trợ lý) below the graph | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
 | `SCR-CL-12-sheet_phone-dark.jpg` | SCR-CL-12, an old address as a sheet in the graph's place | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
+| `SCR-CL-12-dataflow_desktop-dark.jpg` | SCR-CL-12, a stream in flight: lit paths, pulses home, news through its classes (OWN-GW-16…18) | current (experiment `exp/graph-workspace`) | desktop graph area 992×580, dark | 2026-10-17, experiment server :8040, scripted stream, seeded demo data (client C01) |
+| `SCR-CL-12-failed_desktop-dark.jpg` | SCR-CL-12, Mục tiêu lens: a failed read in red, a scenario's hollow pulse | current (experiment `exp/graph-workspace`) | desktop graph area 992×580, dark | 2026-10-17, experiment server :8040, scripted stream, seeded demo data (client C01) |
 
 ## proposed_ui/ — the redesign kit (SRC-03)
 

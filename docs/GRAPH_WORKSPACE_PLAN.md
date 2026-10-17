@@ -7,7 +7,7 @@ Behaviour and the capability map: [FEAT-40](brd/features/FEAT-40-persistent-fina
 [ADR-0035](brd/decisions/ADR-0035-the-customer-workspace-is-one-persistent-graph.md). Streaming door:
 [assistant.md §9b](brd/architecture/assistant.md).
 
-**Status (2026-10-17): G0–G7 done** — results, gaps and performance in [graph_workspace_report.md](brd/testing/graph_workspace_report.md).
+**Status (2026-10-17): G0–G10 done** (G8–G10: the refinement) — results, gaps and performance in [graph_workspace_report.md](brd/testing/graph_workspace_report.md).
 
 **An experiment (OWN-GW-14):** branch `exp/graph-workspace`, worktree `~/mr-finance-graph`, its own server and
 public link. `main`, `~/mr-finance` and https://oneweath.ngrok.app are not touched.

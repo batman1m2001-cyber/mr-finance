@@ -201,7 +201,11 @@ export function mount() {
     const steps = run.steps.map(x => `<span class="chip cp-live-${x.st} ${STEP_ST[x.st][0]}">${esc(x.label)} <span class="sr-only">${STEP_ST[x.st][1]}</span>${x.st === "run" ? dots : x.st === "ok" ? "✓" : "✕"}</span>`).join(" ");
     return `${steps ? `<div class="cp-steps small">${steps}</div>` : ""}${run.text ? `<div class="cp-live-text">${prose(run.text)}</div>` : ""}${run.waiting ? `<div class="small muted">Chờ bạn xác nhận…</div>` : ""}`;
   };
-  const drawLive = () => { const el = $("#cp-msgs [data-busy]", panel); if (el) el.innerHTML = liveHtml(); $("#cp-msgs", panel).scrollTop = 1e9; };
+  // at most one redraw every 60 ms: each one lays the list out again (a burst of 37 events cost 1.2 s, one per event);
+  // the graph still hears every event as it comes (tell)
+  let liveTimer = 0;
+  const drawLiveNow = () => { liveTimer = 0; const el = $("#cp-msgs [data-busy]", panel); if (el) el.innerHTML = liveHtml(); $("#cp-msgs", panel).scrollTop = 1e9; };
+  const drawLive = () => { if (!liveTimer) liveTimer = setTimeout(drawLiveNow, 60); };
   // docked: the turn as it happens; returns the assistant's answer, or a failure that says what broke
   const streamed = async (body) => {
     run = {steps: [], text: "", waiting: false};

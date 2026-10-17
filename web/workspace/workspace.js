@@ -6,9 +6,9 @@
 import {$, esc, followedIds, post} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261017w2";
+import {createGraph} from "./graph.js?v=20261017w3";
 import {render as inspect} from "./inspector.js?v=20261017w1";
-import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w1";
+import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261017w3";
 import {mount as mountStrip} from "./strip.js?v=20261017w1";
 
 export function mount(main, {client, scope, go, page}) {
@@ -21,7 +21,7 @@ export function mount(main, {client, scope, go, page}) {
     <section class="ws-center" aria-label="Đồ thị tài chính">
       <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Tổng quan tài chính</h1>
         <p class="ws-sub small muted" id="ws-sub"></p></div>
-        <div class="ws-legend small" aria-label="Chú giải"><span class="lg c-actual">Thực tế</span><span class="lg c-estimate">Ước tính · tác động</span><span class="lg c-hypothetical">Giả định</span></div>
+        <div class="ws-legend small" aria-label="Chú giải"><span class="lg c-actual">Thực tế</span><span class="lg c-estimate">Ước tính · tác động</span><span class="lg c-hypothetical">Giả định</span><span class="lg c-pulse" title="Xung sáng chạy khi trợ lý đọc dữ liệu theo đường đó; không phải một giao dịch">Xung sáng: trợ lý đọc dữ liệu, không phải giao dịch</span></div>
       </div>
       <div class="ws-canvas" id="ws-canvas"></div>
       <div class="ws-list" id="ws-list" hidden></div>
@@ -202,7 +202,8 @@ export function mount(main, {client, scope, go, page}) {
       if (ans.status === "failed" || ans.status === "forbidden") a.fail();
       else a.keep([...lit, ...(ans.focus || [])]);
       if (graph.selected()) drawInspector();
-    } else if (e.type === "error" || e.type === "fail") a.fail();
+    } else if (e.type === "text") a.writing();
+    else if (e.type === "error" || e.type === "fail") a.fail();
   };
 
   return {

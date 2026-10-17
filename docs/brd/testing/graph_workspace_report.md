@@ -74,6 +74,78 @@ Desktop and phone, dark theme, demo client C01:
 - [Phone, Tổng quan lens](../assets/current_ui/SCR-CL-12_phone-dark.jpg)
 - [Phone, the dock](../assets/current_ui/SCR-CL-12-dock_phone-dark.jpg)
 - [Phone, an old address as a sheet](../assets/current_ui/SCR-CL-12-sheet_phone-dark.jpg)
+- [A stream in flight: lit paths and pulses](../assets/current_ui/SCR-CL-12-dataflow_desktop-dark.jpg)
+- [A failed read in red, a scenario's hollow pulse](../assets/current_ui/SCR-CL-12-failed_desktop-dark.jpg)
+
+## Refinement: hierarchy and dataflow (G8–G10, OWN-GW-15…19)
+
+The owner asked for a cleaner graph with Studio-style data flow
+([request](../sources/owner_requests/2026-10-17_graph_dataflow_refinement.md)). The patterns were studied from
+OperonX Studio's data-flow view and adapted to FEAT-33's motion rule (transform and opacity only); see FEAT-40
+“Hierarchy and dataflow”.
+
+**Clutter, before and after** (measured in the browser on every lens; desktop 1440×900 / phone 390×844):
+
+| Lens | Edges | Crossings | Labels overlapping | Nodes overlapping |
+|---|---|---|---|---|
+| Tổng quan | 31 → 20 | 104 → 0 | 3 → 0 (phone 17 → 0) | → 0 |
+| Tài sản | 51 → 9 (holdings on pick) | 163 → 0 | 4 → 0 (phone 5 → 0) | → 0 |
+| Tin & sự kiện | 27 → 17 | 127 → 0 | 5 → 0 (phone 18 → 0) | 6 → 0 |
+| Rủi ro | 13 → 12 | 8 → 0 | 1 → 0 (phone 7 → 0) | → 0 |
+| Dòng tiền, Mục tiêu | 12, 9 (unchanged) | 0 | 3 → 0, 0 | → 0 |
+
+How the clutter was removed:
+- Only the spokes of “My Wealth” are drawn by default. A news, policy or risk item has one derived spoke carrying
+  its own total, “tổng hợp từ n liên kết”, instead of its fan of class edges.
+- Relations show only for the node that is picked or pointed at, or for the exact path a pulse takes.
+- Holdings open when their class is picked.
+- Crowded arcs use two rings, and a short relaxation pass separates nodes.
+- Each label takes its first free place. With no free place, its figure line is dropped; then the label shows only
+  on demand.
+- The centre's text now fits in its disc: four short lines on a 62 px disc. The old 128 px line crossed the border.
+
+**Dataflow** (OWN-GW-16…18):
+- The edges are silk hairlines.
+- A path being read glows in the pulse colour (teal: never the blue or orange of money). A path whose read failed
+  turns red.
+- When results arrive, comets run home to “My Wealth”: a bright head with a three-dot trail and a flicker, at
+  520 px/s. “My Wealth” bursts as each one arrives.
+- News goes through the two classes it moves most.
+- A scenario's pulse is hollow.
+- A failed tool sends no pulse.
+- The centre shows a writing state while text streams.
+- After the answer, its paths stay lit and the rest stays dimmed until a background click or the next question.
+- The legend says “Xung sáng: trợ lý đọc dữ liệu, không phải giao dịch”.
+- Verified by `tests/ui/test_graph_workspace_ui.py::test_the_dataflow_follows_the_stream_and_only_the_stream`:
+  - at rest, nothing glows and no comet exists;
+  - while tools run, their paths glow and no comet runs yet;
+  - the failed read gives exactly 4 red paths and 0 comets;
+  - the scenario's read sends a hollow comet;
+  - the writing state shows, then the kept marks;
+  - a background click clears everything.
+- Under reduced motion there are 0 comets and 0 bursts at every sampled moment, with the same lit and red states.
+
+**Performance** (OWN-GW-19; headless Chromium with software rendering, no GPU):
+
+| | Real graph (60 nodes) | 3× graph (168 nodes) |
+|---|---|---|
+| Lens switch: mean / worst frame | 17–18.5 ms / 33–67 ms | 18–21 ms / 83–183 ms (one native style and layout task of 76–147 ms; JS ≈ 12 ms) |
+| Burst of 8 tools ending together: mean / p95 frame | 18.2 ms / 33 ms | 22 ms / 50 ms |
+| Comets at once | ≤ 8 (the cap) | ≤ 8 |
+| SVG elements | 612 | 1,682 |
+
+Two fixes came from profiling:
+- **The chat bubble:** the live bubble redrew and laid out the whole message list on every stream event, taking
+  1.2 s of JS in a 37-event burst. It now redraws at most every 60 ms.
+- **The edges:** they were rebuilt on every event. Now they are only restyled when the visible set is unchanged.
+
+The SVG drop-shadows were suspected and ruled out: with every filter turned off the numbers were unchanged.
+
+**Gaps left:**
+- On the 3× graph, a lens switch still costs one native style and layout task of about 100–150 ms in software
+  rendering.
+- On a phone, a few labels in a crowded arc show only on demand.
+- Comets are skipped while the tab is hidden; they don't queue.
 
 ## Found and fixed while verifying
 
@@ -86,9 +158,6 @@ Desktop and phone, dark theme, demo client C01:
 
 ## Gaps
 
-- **Dense labels.** On a phone, the top arc of asset classes in the Tổng quan lens is crowded. On desktop, a few
-  labels touch (Vàng, Trái phiếu and Chứng chỉ quỹ; Bảo hiểm and Khoản vay). Zooming in or opening the Tài sản
-  lens spreads them out. A collision pass for labels is not built.
 - **Sheets use viewport media queries.** Some page tables in a sheet clip at around 990 px wide, because the pages
   were laid out for the whole window.
 - **No resume after a dropped stream.** The door numbers its events and can resume (`after_seq`), but the panel
