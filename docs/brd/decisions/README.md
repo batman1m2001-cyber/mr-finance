@@ -40,3 +40,4 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0032](ADR-0032-one-tool-registry.md) | One tool registry: roles, writes confirmed and verified, timeouts, costs | accepted | 2026-10-16 |
 | [ADR-0033](ADR-0033-the-ecosystem-map-on-the-agent-page.md) | The Agent Ecosystem Map lives on the Agent page, drawn from real records | accepted | 2026-10-16 |
 | [ADR-0034](ADR-0034-readiness-by-an-eval-gate-on-real-models.md) | Readiness is an eval gate on real models, with measured costs | accepted | 2026-10-16 |
+| [ADR-0035](ADR-0035-the-customer-workspace-is-one-persistent-graph.md) | The Customer's workspace is one persistent graph; pages become lenses and sheets | accepted (experiment) | 2026-10-17 |

@@ -65,6 +65,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-37](FEAT-37-conversations-and-memory.md) | Conversations and memory (short-term, long-term, archive; Bộ nhớ page) | OWN-AS-10…16 | A3–A4 — planned |
 | [FEAT-38](FEAT-38-knowledge-and-web-search.md) | Knowledge base and web search | OWN-AS-02, 07, 16, 17 | A5 — planned |
 | [FEAT-39](FEAT-39-assistant-background-agents.md) | The assistant's background agents: memory consolidator, follow-ups | OWN-AS-12, 18, 19 | A6 — planned |
+| [FEAT-40](FEAT-40-persistent-financial-graph.md) | Persistent financial graph: the Customer's workspace, lenses and sheets, the assistant animating it from real events | OWN-GW-01…14 | experiment G0–G7 — planned |
 
 ## How features depend on each other
 

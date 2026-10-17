@@ -350,6 +350,16 @@ behind interfaces; `RedisSession` exists); a new database for the demo is not ju
 
 OneWealth keeps only its rules: which tools, which roles, the barrier, what a memory item may hold, retention values.
 
+## 9b. Streaming to the graph workspace *(target, FEAT-40, ADR-0035)*
+
+`POST /api/assistant/stream` takes the body of `POST /api/assistant` and answers with server-sent events while the
+turn runs. It is a served graph with doors — `ingress` (the body) → `stream_turn`, a generator op over operonx-agents'
+`Runner.stream` / the resume path → `egress` per event — so operonx numbers the events and a reader that dropped can
+resume (`?run_id=&after_seq=`). Events: `step` (running · ok · failed, with the tool's graph `nodes` and, when it
+ends, its `focus` keys), `text` (model mode only), `wait`, `answer` (the JSON door's object, kept in the
+conversation and audited the same way) and `error`. The barrier is unchanged: in template mode no model text is
+streamed. The service has `sinks = []` like `assistant` (its items are the person's words). The JSON door stays.
+
 ## 10. Migration *(target)*
 
 1. A1: the registry beside the Copilot; `copilot_flow` reads its tools from it (no behaviour change; its tests pass).

@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 39 | 35 | 3 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 53 | 35 | 3 | 0 | 14 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -292,6 +292,20 @@ are the documentation rules this repository itself follows.) Counts are recomput
 | OWN-AS-23 | — | implemented_verified | A8: `scripts/eval_assistant.py` over `data/assistant_eval.json`, 32 cases in 10 kinds (multi-step, writes, refusals, security, answers, knowledge, web, memory, failures, a long conversation) plus 8 turns at once, on anthropic/claude-haiku-5.5 — run 2: 31/32 (docs/brd/testing/assistant_eval.md); the grader held by `tests/test_eval_checker.py::test_a_refusal_in_its_own_words_is_a_refusal`, `tests/test_eval_checker.py::test_a_later_turn_may_repeat_the_numbers_an_earlier_turn_read`, `tests/test_eval_checker.py::test_a_number_worked_out_from_the_tools_is_not_grounded` |
 | OWN-AS-24 | — | implemented_verified | A8: the gate in `data/assistant_eval.json` (pass rate, security, leaks, citations, p95, cost per turn, concurrent errors), passed in run 2; the readiness report with gaps, risks, costs and the on-premise model not yet evaluated — docs/brd/testing/assistant_readiness.md (ADR-0034); cost per turn from the provider's count — `tests/test_assistant.py::test_a_turn_costs_what_the_provider_charged_its_model_and_its_tools` |
 | OWN-AS-25 | — | implemented_verified | A0–A8: built on the Copilot, the CIO agents and OperonX (upstream §9 of assistant.md, Operonx #186–#200), `POST /api/copilot` kept as the fallback; documents per phase (assistant.md, ADR-0026…0034, FEAT-37…39, assistant_eval.md, assistant_readiness.md); every earlier test kept passing — `tests/test_assistant.py::test_the_endpoint`, `tests/test_copilot.py::test_the_live_router_receives_only_the_scrubbed_question` |
+| OWN-GW-01 | FEAT-40 | planned | G1/G3: `web/workspace/` graph centre over `POST /api/overview` + cash-flow, liquidity and scenario kinds (FEAT-40) |
+| OWN-GW-02 | FEAT-40 | planned | G1: the toolbar of lenses (FEAT-40, SCR-CL-12) |
+| OWN-GW-03 | FEAT-40 | planned | G1/G4: right dock — Assistant and Thông tin tabs (Studio pattern) |
+| OWN-GW-04 | FEAT-40 | planned | G2: the collapsible strip from the Toàn cảnh cards |
+| OWN-GW-05 | FEAT-40 | planned | G1/G2: lenses change the graph's view state only; dedicated views as sheets over the mounted graph |
+| OWN-GW-06 | FEAT-40 | planned | G4/G5: `POST /api/assistant/stream` tool events → node activity |
+| OWN-GW-07 | FEAT-40 | planned | G5: text deltas and finished steps → progressive highlights |
+| OWN-GW-08 | FEAT-40 | planned | G5: an answer's focus keys and citations → graph elements |
+| OWN-GW-09 | FEAT-40 | planned | G5: done marks kept until the next question; failed steps and failed turns shown as failed |
+| OWN-GW-10 | FEAT-40 | planned | G5/G6: every animation keyed to a stream event; transform/opacity only; reduced motion |
+| OWN-GW-11 | FEAT-40 | planned | G0/G7: the capability map in SCR-CL-12 and FEAT-40; every old Customer route still reachable |
+| OWN-GW-12 | FEAT-40 | planned | G3: certainty on every node and edge (actual · estimate · hypothetical); scenarios never in net worth |
+| OWN-GW-13 | FEAT-40 | planned | G7: tests and the report |
+| OWN-GW-14 | FEAT-40 | planned | G0: branch `exp/graph-workspace`, worktree, its own port and tunnel |
 | OWN-MOTION-01 | FEAT-33 | implemented_unverified | A slow ripple from the panel's status dot while the panel is open and idle; nothing when closed (display:none), paused when the tab is hidden, none under reduced motion. Browser run and screenshots (2026-10-16); cost measured: +9 ms main thread per 5 s, no layout |
 | OWN-MOTION-02 | FEAT-33 | implemented_verified | `tests/ui/test_copilot_ui.py::test_busy_lasts_exactly_as_long_as_the_request` — busy (✦ breathes, three dots, `aria-busy`) from the request sent until its answer, held answer included; no step-by-step progress because the server does not report steps |
 | OWN-MOTION-03 | FEAT-33 | implemented_verified | `tests/test_living_interface.py::test_an_answer_names_the_elements_it_was_read_from`, `tests/test_living_interface.py::test_an_impact_answer_points_at_the_largest_event_and_the_feed_at_its_items`, `tests/test_living_interface.py::test_failures_mark_nothing`, `tests/test_living_interface.py::test_every_focus_key_has_a_page_that_renders_it` — the answer's `focus` keys come from the tool's result; KPIs, flow panel/rows/bands, feed items, events, families and the graph path are marked (browser run). Goals on Kế hoạch are not marked |

@@ -7,6 +7,32 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## GW — Persistent financial graph (2026-10-17, experiment)
+
+Source: [`2026-10-17_persistent_financial_graph.md`](../sources/owner_requests/2026-10-17_persistent_financial_graph.md)
+(concept image [GW-01](../assets/proposed_ui/GW-01_concept_persistent-graph_illustrative.png), illustrative); plan
+[`docs/GRAPH_WORKSPACE_PLAN.md`](../../GRAPH_WORKSPACE_PLAN.md); feature
+[FEAT-40](../features/FEAT-40-persistent-financial-graph.md); screen
+[SCR-CL-12](../ux/screens/client.md#scr-cl-12--không-gian-tài-chính-graph-workspace); decision ADR-0035. Built on
+branch `exp/graph-workspace` and served on its own public link; the live demo is unchanged (OWN-GW-14).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-GW-01 | The Customer role's primary workspace is a persistent financial graph: “My Wealth” in the centre, connected to assets, income, expenses, liquidity, goals, news, risks and hypothetical scenarios; large, interactive, scrollable | §1 “Center” | documented |
+| OWN-GW-02 | A compact vertical icon toolbar with tooltips on the left replaces the horizontal feature navigation (Customer role) | §1 “Left” | documented |
+| OWN-GW-03 | On the right, the Assistant and a contextual Information/Inspector panel, in the OperonX Studio interaction pattern (tabs; the inspector follows the selection) | §1 “Right” | documented |
+| OWN-GW-04 | At the bottom, a collapsible dashboard strip with the essential metrics and compact charts of the existing overview | §1 “Bottom” | documented |
+| OWN-GW-05 | Switching menus changes the graph's focus, filters, visible branches and level of detail — it never replaces the page or resets the graph; a dedicated view opens only where a feature needs a different interaction model (Experts/contact may stay a separate view) | §1 last paragraph; §3 | documented |
+| OWN-GW-06 | While the assistant thinks or executes tools, subtle activity shows along the nodes and edges those tools concern | §2 bullet 1 | documented |
+| OWN-GW-07 | As the answer streams, the corresponding assets, relationships and financial flows are highlighted progressively | §2 bullet 2 | documented |
+| OWN-GW-08 | When the assistant refers to a news event, risk, asset or scenario, the explanation is connected to those graph elements | §2 bullet 3 | documented |
+| OWN-GW-09 | When a response completes, the relevant nodes and relationships stay clearly marked; a failure shows truthful failure feedback | §2 bullet 4 | documented |
+| OWN-GW-10 | Animations follow real streaming events, tool execution and application state only — no fabricated progress, no unrelated animation; motion is light, non-disruptive, and honours reduced-motion preferences | §2 last paragraph; §4 | documented |
+| OWN-GW-11 | No existing requirement is removed, silently simplified or broken: every existing Customer feature is mapped to its new entry point and interaction model, with traceability from requirement to interaction, code and test | §3 | documented |
+| OWN-GW-12 | Actual financial data and cash flows are visibly distinct from market estimates, forecasts and unverified items; hypothetical scenarios never change actual portfolio values | §3 last paragraph | documented |
+| OWN-GW-13 | Built incrementally on what exists (the overview graph, the assistant, the page modules, OperonX), with no unnecessary dependency or rewrite; tested for navigation persistence, selection and inspection, assistant-to-graph interaction, streaming and animation sync, BRD coverage, performance, responsive layout, accessibility and reduced motion; actual results, gaps and performance reported | §4 | documented |
+| OWN-GW-14 | An experiment: its own branch and its own public link; the live demo and `main` are not changed by it | instruction with the request | documented |
+
 ## AS — Assistant, memory and agent ecosystem (2026-10-16, backlog B-08)
 
 Source: [`2026-10-16_assistant_memory_agents.md`](../sources/owner_requests/2026-10-16_assistant_memory_agents.md);

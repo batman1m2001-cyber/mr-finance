@@ -340,3 +340,35 @@ the list.
 
 **Tests.** `tests/test_overview.py`; `tests/ui/test_pages.py::test_the_overview_graph_selects_expands_and_opens_pages`,
 `tests/ui/test_pages.py::test_the_overview_graph_is_a_list_on_a_phone`.
+
+---
+
+## SCR-CL-12 — Không gian tài chính (graph workspace)
+
+| | |
+|---|---|
+| Route | `#/client/<lens>[/<sheet>[/<param>]]` — lenses `tong-quan`, `tai-san`, `dong-tien`, `muc-tieu`, `tin`, `rui-ro`, `chuyen-gia`, `bo-nho`; every older Customer address resolves (FEAT-40) |
+| Generation | proposed (experiment, branch `exp/graph-workspace`) |
+| Feature | [FEAT-40](../../features/FEAT-40-persistent-financial-graph.md); reuses FEAT-30 (graph), FEAT-32 (assistant), FEAT-33 (marks) and every Customer page as a sheet |
+| Requirements | OWN-GW-01…14; every requirement of SCR-CL-01…11 through the capability map in FEAT-40 |
+| Data | `POST /api/overview` (+ `flow`, `liquidity`, `scenario`, `certainty`), `POST /api/dashboard` + `POST /api/flows` (strip), `GET /api/scenarios` + `POST /api/scenario` (scenarios, on request), `POST /api/assistant/stream` |
+| Concept | [GW-01](../../assets/proposed_ui/GW-01_concept_persistent-graph_illustrative.png) (illustrative) |
+
+**Journey.** The client signs in to their whole financial world: “My Wealth” in the centre with what feeds, drains,
+funds, threatens and may move it. They switch lenses to explore one part, open a sheet when a task needs a form or a
+table, and ask the assistant, watching the graph follow what it reads.
+
+**Layout.** Top bar (brand, search, scope, bell, theme, account). Left: the toolbar of lenses (icons, tooltips, the
+current one marked). Centre: the graph (pan, zoom, “Vừa khung”, the certainty legend, “Đồ thị / Danh sách”). Right:
+the dock, tabs **Trợ lý** and **Thông tin**, collapsible to a rail. Bottom: the strip of overview cards, “Thu gọn”.
+A sheet slides over the centre with its title, “Đóng”, and the page module inside.
+
+**Interaction.** Lens → view state (no reload); node → inspector; class → holdings; sheet → over the graph, closed
+back to the same state; asking → the graph follows the stream (FEAT-40). Keyboard: the toolbar is a list of buttons
+(arrows, Enter), nodes are buttons, `Escape` closes a sheet, `/` focuses the search.
+
+**Responsive / a11y.** Phone: the toolbar becomes a bottom bar, the list view is the default, the dock and sheets
+are full-screen with a close button, the strip folds by default. Every animation has a still equivalent under
+reduced motion. Colour is never the only carrier of certainty (line style and a word).
+
+**Tests.** Planned in FEAT-40 “Acceptance”.

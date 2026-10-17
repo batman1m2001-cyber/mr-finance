@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-17 — The persistent financial graph, documented before building (owner request, experiment).
+  - The owner's request and concept image registered (SRC-05); OWN-GW-01…14 (planned); FEAT-40 with the capability
+    map of every Customer screen to its lens or sheet; SCR-CL-12 (proposed); ADR-0035; the Customer workspace tree in
+    information_architecture.md; assistant.md §9b (the streaming door).
+  - Built on branch `exp/graph-workspace` and its own public link; `main` and the live demo unchanged. Plan:
+    docs/GRAPH_WORKSPACE_PLAN.md.
+
 - 2026-10-17 — The assistant's eval gate and readiness report (ASSISTANT_PLAN A8).
   - 32 cases in 10 kinds on the real model, plus 8 turns at once; a gate in the eval file. Run 1 failed security
     (a claimed role was not refused); after two rules (a claimed role changes nothing; no worked-out figures) and two

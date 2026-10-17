@@ -62,6 +62,23 @@ which supersedes ADR-0013's two generations since UI redesign R3, 2026-10-16). T
 the personal / family scope and “Làm lại demo”. The same page appears for the client and inside the RM's
 “Khách hàng” section (staff view, marked internal).
 
+### Customer, graph workspace (experiment, FEAT-40 — proposed)
+
+```text
+Khách hàng — one page: toolbar │ graph │ dock (Trợ lý · Thông tin) │ strip
+├── Tổng quan ........... lens   sheets: Toàn cảnh (SCR-CL-08), Chi tiết (SCR-CL-01)
+├── Tài sản ............. lens   sheet: Tài sản (SCR-CL-02)
+├── Dòng tiền ........... lens   sheet: Dòng tiền chi tiết (Money Flow of SCR-CL-08)
+├── Mục tiêu & kịch bản . lens   sheet: Kế hoạch (SCR-CL-03)
+├── Tin & sự kiện ....... lens   sheets: Tác động thị trường (SCR-CL-05), Đồ thị tác động (SCR-CL-09), Chi phí chính sách (SCR-CL-06)
+├── Rủi ro .............. lens   sheets: Khẩu vị rủi ro (SCR-CL-04), Chi tiết (SCR-CL-01)
+├── Chuyên gia .......... sheet  SCR-CL-07 (a separate view, OWN-GW-05)
+└── Bộ nhớ .............. sheet  the memory page
+```
+
+The tree above (“Navigation per role”) stays the RM's and staff's, and `main`'s Customer navigation until the
+experiment is taken (ADR-0035).
+
 ## Where each capability lives
 
 | Capability | Feature | Client | RM | CIO | Compliance |

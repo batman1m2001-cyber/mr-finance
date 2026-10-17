@@ -140,6 +140,7 @@ page error, console error or horizontal scroll in any capture.
 | File | What | State | Notes |
 |---|---|---|---|
 | `KIT-01_concept-board_illustrative.png` | The kit's concept board: Pulse, Money Flow, graph, news impact, Copilot, coverage and plan panels | proposed — **illustrative only** | Its figures are invented (e.g. “90 yêu cầu / 84 đã triển khai”, “Thu nhập 180,2 tr”); not a specification. SHA-256 `e2aff7ef…2a77` |
+| `GW-01_concept_persistent-graph_illustrative.png` | The owner's concept for the persistent financial graph (2026-10-17): left toolbar, radial graph around “Tổng tài sản”, Assistant + Thông tin dock, bottom strip, the assistant interaction flow | proposed — **illustrative only** | Its figures are invented (e.g. “43,5 tỷ”, “Cổ phiếu 9,4 tỷ”); layout and interaction inspiration, not a specification (OWN-GW, FEAT-40). SHA-256 `1f206ade…a4a8` |
 | `KIT-02_current-overview_reference.png` | The kit's screenshot of the overview before the redesign kit | original (of the kit) | Shows the same page as SCR-CL-01. SHA-256 `f8a907df…4029` |
 
 ## approved_ui/
