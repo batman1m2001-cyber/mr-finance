@@ -138,3 +138,25 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-23 — No separate AI zone
 - **Fact:** §7.1 requires a separate zone, its own DB, a write-only signed inbox. The product runs in one process. [ADR-0009](../decisions/ADR-0009-ai-barrier-by-graph-inputs-in-one-process.md): the barrier is enforced by the agent graphs' inputs and tested; the signed inbox (and FR-307's inbox mode) is planned.
+
+### Q-24 — Which roles the multi-role request covers
+- **Fact:** the owner's request (2026-10-18, OWN-MR) names CIO, RM, Admin and Expert. The product has no role called
+  Expert; it has `specialist` ("Chuyên gia", BRD-RULE-ROLE-05: approves action recommendations for assigned families).
+  It also has Compliance (BRD-RULE-ROLE-03), which the request does not name, while its completion criterion says
+  "every role has a coherent, role-appropriate UX".
+- **Interpretation (ours):** Expert = `specialist`; Compliance gets a desk too, last (plan M5). Owner: product.
+
+### Q-25 — Admin's "user and role management"
+- **Fact:** the request lists "user and role management" for Admin. BRD-RULE-ROLE-04 gives Admin news sources, data
+  loading, operations, configuration and system status. The product shows Admin every staff account and role and the
+  RM assignment (a configuration Admin owns, two-person); it deliberately has no form to create users or set
+  passwords on the public demo (a visitor could lock others out; SCR-ADM-01, `scripts/set_password.py`).
+- **Interpretation (ours):** the Admin desk shows people and roles and opens the assignment; no account or password
+  form is added (it would be a new capability and a demo risk). Owner: product.
+
+### Q-26 — How much of a family a specialist sees
+- **Fact:** BRD-RULE-ROLE-05 says the specialist approves recommendations for assigned families; it says nothing on what
+  they read. `people.auth.may_see` already lets a specialist read the families assigned to them (their reads are the
+  family-scoped ones; `/api/trace/` and the staff-only reads stay closed to them).
+- **Interpretation (ours):** the Expert desk shows, beside a recommendation, what the specialist may already read of
+  that family (net worth, allocation, risk profile, goals), through the existing reads; nothing more. Owner: Compliance.

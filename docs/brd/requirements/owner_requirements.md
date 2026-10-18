@@ -7,6 +7,29 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## MR — A desk for every staff role (2026-10-18, experiment)
+
+Source: [`2026-10-18_multi_role_ux.md`](../sources/owner_requests/2026-10-18_multi_role_ux.md); plan
+[`docs/MULTI_ROLE_UX_PLAN.md`](../../MULTI_ROLE_UX_PLAN.md); decision
+[ADR-0036](../decisions/ADR-0036-every-staff-role-works-at-its-own-desk.md); built on branch `exp/graph-workspace`.
+The request names CIO, RM, Admin and Expert; "Expert" is the `specialist` role and Compliance is added under "every
+role" ([Q-24](open_questions.md#q-24--which-roles-the-multi-role-request-covers)).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-MR-01 | Every staff role works in a purpose-built experience in the Customer workspace's frame (a rail, a centre, the dock with the assistant and an inspector, pages as sheets), its centre designed for the role's responsibilities rather than a copy of the Customer's graph | intro; §2 "not a template to copy blindly"; §4 "do not force every role into the same graph" | documented |
+| OWN-MR-02 | CIO: market intelligence, portfolio-wide insight, risk exposure, scenario analysis, significant events and decision support, from existing features | §2 CIO | documented |
+| OWN-MR-03 | RM: customer relationships, assigned portfolios, financial profiles, relevant news, customer needs and follow-up actions, from existing features | §2 RM | documented |
+| OWN-MR-04 | Admin: users and roles, configuration, integrations, operational health and auditability, from existing features | §2 Admin | needs_clarification ([Q-25](open_questions.md#q-25--admins-user-and-role-management)) |
+| OWN-MR-05 | Expert: specialist analysis, financial interpretation, relevant evidence and the expert workflow, from existing features | §2 Expert | documented |
+| OWN-MR-06 | Every original feature, rule, workflow and integration stays available to its authorised users; nothing is silently deleted, replaced or stubbed | §3; §5 | documented |
+| OWN-MR-07 | Access stays enforced by the existing authorisation model; tests verify role isolation | §3; §5 | documented |
+| OWN-MR-08 | Traceability from every original requirement to its redesigned interface; the BRD documents the role-specific UX, navigation, workflows, visuals and feature-to-UI mapping, accumulated, not replaced | §1; §3; §5 | documented |
+| OWN-MR-09 | The AI agents beneath each role keep working under the new design | owner's added sentence | documented |
+| OWN-MR-10 | Each role has its own assistant | owner's added sentence | documented |
+| OWN-MR-11 | The Customer experience keeps working throughout | §4 | documented |
+| OWN-MR-12 | Built role by role, CIO first; each role documented, built, tested and compared against the BRD before the next; a report of work, tests, gaps and the next role | §4; §5 | documented |
+
 ## GW — Persistent financial graph (2026-10-17, experiment)
 
 Source: [`2026-10-17_persistent_financial_graph.md`](../sources/owner_requests/2026-10-17_persistent_financial_graph.md)

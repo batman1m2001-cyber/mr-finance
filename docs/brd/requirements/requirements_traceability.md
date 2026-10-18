@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 97 | 92 | 3 | 1 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 109 | 92 | 3 | 1 | 12 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -267,6 +267,18 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
+| OWN-MR-01 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M0–M5 |
+| OWN-MR-02 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M1 |
+| OWN-MR-03 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M2 |
+| OWN-MR-04 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M3 |
+| OWN-MR-05 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M4 |
+| OWN-MR-06 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M1–M5 |
+| OWN-MR-07 | FEAT-12, FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M0–M5 |
+| OWN-MR-08 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M6 |
+| OWN-MR-09 | FEAT-04, FEAT-16, FEAT-17, FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M1–M5 |
+| OWN-MR-10 | FEAT-32, FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M0–M5 |
+| OWN-MR-11 | FEAT-40 | planned | docs/MULTI_ROLE_UX_PLAN.md M0–M6 |
+| OWN-MR-12 | FEAT-41 | planned | docs/MULTI_ROLE_UX_PLAN.md M6 |
 | OWN-AS-01 | FEAT-32 | implemented_verified | A2: the panel calls `POST /api/assistant` on every page and role — `tests/ui/test_copilot_ui.py::test_the_assistant_asks_before_a_write_and_shows_its_steps`, `tests/test_assistant.py::test_the_endpoint` |
 | OWN-AS-02 | FEAT-38 | implemented_verified | A5: `huong_dan` over `product` (the guide per role and page, the “Cách tính” formulas, the glossary), the page to open as the step's link; 24/24 product questions find their page in the first three, 20/24 first; 10/10 formula and term questions — `tests/test_assistant_knowledge.py::test_the_guide_answers_from_the_role_pages_with_the_page_to_open`, `::test_the_guide_finds_the_page_for_the_product_questions`, `::test_the_formula_or_term_asked_about_is_the_one_added` |
 | OWN-AS-03 | FEAT-32 | implemented_verified | A1: every tool runs the page's own graph or read as the person — `tests/test_assistant_tools.py::test_a_read_answers_or_says_why_not`, `::test_a_write_asks_first_changes_nothing_then_is_read_back`; stress test D13 (2026-10-18): the person is carried into each tool's nested run and the request's family checked, so a tool never reads a family the person may not see — `tests/test_assistant_stress.py::test_d13_a_customer_naming_another_family_gets_nothing_of_it`, `::test_d13_staff_naming_a_family_not_theirs_are_refused`, `::test_d13_a_tool_reading_another_family_inside_a_turn_is_refused` |

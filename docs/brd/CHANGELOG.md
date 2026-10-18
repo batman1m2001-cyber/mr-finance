@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Multi-role UX: plan and audit (owner request OWN-MR-01…12, experiment). Every staff role gets its own
+  desk in the Customer workspace's frame, its pages kept as sheets at their addresses, and its own docked assistant.
+  — docs/MULTI_ROLE_UX_PLAN.md, sources/owner_requests/2026-10-18_multi_role_ux.md, owner_requirements.md (MR),
+  open_questions.md (Q-24…26), FEAT-41, ADR-0036 (supersedes ADR-0035 §1 for staff), ux/role_desks.md, screen
+  inventory (SCR-CIO-15, SCR-RM-07, SCR-ADM-02, SCR-SP-01/02, SCR-CMP-06 proposed), matrix rows (planned)
 - 2026-10-18 — "Dòng tiền tháng 9?" reads September 2026 (experiment). The model was not told the year: it asked for
   2025-09, outside the data (2025-10…2026-09), and the step failed. The prompt now carries today's date, and the cash
   -flow tool asks for the month alone unless a year is said (the latest such month with data). Real model: "tháng 9",
