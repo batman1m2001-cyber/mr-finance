@@ -34,7 +34,7 @@ export const DESKS = {
       {id: "noi-dung", label: "Nội dung", icon: "file", tip: "Nội dung: nghiên cứu, bản tin, chính sách", nav: ["nghien-cuu", "ban-tin", "chinh-sach"]},
       {id: "do-luong", label: "Đo lường", icon: "activity", tip: "Đo lường: báo cáo hằng tháng", nav: ["do-luong"]},
       {id: "nhat-ky", label: "Nhật ký", icon: "history", tip: "Nhật ký kiểm toán: chuỗi băm, xuất", nav: ["nhat-ky"]},
-      {id: "ai", label: "AI và cấu hình", icon: "bot", tip: "Agent và cấu hình theo phiên bản", nav: ["agent", "cau-hinh"]},
+      {id: "ai", label: "AI & cấu hình", icon: "bot", tip: "Agent và cấu hình theo phiên bản", nav: ["agent", "cau-hinh"]},
       {id: "bo-nho", label: "Bộ nhớ", icon: "archive", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
     ],
   },

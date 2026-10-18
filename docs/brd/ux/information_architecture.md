@@ -79,6 +79,26 @@ Khách hàng — one page: toolbar │ graph │ dock (Trợ lý · Thông tin) 
 The tree above (“Navigation per role”) stays the RM's and staff's, and `main`'s Customer navigation until the
 experiment is taken (ADR-0035).
 
+### Staff desks (experiment, FEAT-41 — built 2026-10-18)
+
+Each staff role opens on its desk at `#/<role>`: the rail of its groups, its own centre, the dock (Trợ lý · Thông
+tin). Every page of the menu above opens as a sheet over the desk at its unchanged address, with its group's tabs.
+
+```text
+CIO · Bàn quyết định (SCR-CIO-15)       rail: Bàn quyết định · Tin & sự kiện · Tác động · Nội dung · Mô hình ·
+                                              AI & cấu hình · Bộ nhớ
+RM · Sổ khách hàng (SCR-RM-07)          rail: Sổ khách hàng · Hôm nay (now #/rm/hom-nay) · Khách hàng · Hiệu quả tư vấn
+                                              · Bộ nhớ
+Quản trị · Vận hành (SCR-ADM-02)        rail: Vận hành · Hệ thống · Dữ liệu thị trường · Cấu hình · Agent · Nhật ký ·
+                                              Bộ nhớ
+Chuyên gia · Bàn chuyên gia (SCR-SP-02) rail: Bàn chuyên gia · Duyệt khuyến nghị · Bộ nhớ
+Tuân thủ · Bàn kiểm soát (SCR-CMP-06)   rail: Bàn kiểm soát · Tin bị giữ · Nội dung (Nghiên cứu, Bản tin, Chính sách)
+                                              · Đo lường · Nhật ký · AI & cấu hình (Agent, Cấu hình) · Bộ nhớ
+```
+
+`#/rm` used to open Hôm nay; it now opens the book, and Hôm nay is `#/rm/hom-nay` (its rail group). The page-by-page
+map of every role, with each page's requirements, is [role_desks.md](role_desks.md).
+
 ## Where each capability lives
 
 | Capability | Feature | Client | RM | CIO | Compliance |

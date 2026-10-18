@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Multi-role UX M6 close-out: staff desks in the IA (`#/rm` is the book; Hôm nay at `#/rm/hom-nay`),
+  journey J7, the regression record, seven real-model turns (US$0.0103), the final report; OWN-MR-08, 09, 11, 12
+  verified (OWN-MR-04 stays partly met, Q-25). — information_architecture.md, user_journeys.md,
+  testing/regression_coverage.md, matrix, features/README.md, docs/MULTI_ROLE_UX_REPORT.md
 - 2026-10-18 — Fix (found by a real-model turn in M6 prep): the RM assistant's `so_khach_hang` was refused inside a
   signed-in served turn (the book read mapped every client's family through the checked read); now through the people
   table, never shown. Every desk tool is now tested signed in inside a served turn. — FEAT-41 §Acceptance, matrix

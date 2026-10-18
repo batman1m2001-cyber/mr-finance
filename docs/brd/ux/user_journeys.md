@@ -39,7 +39,7 @@ thu hồi”).
 
 | # | Does | Screen | Feature |
 |---|---|---|---|
-| 1 | Opens “Hôm nay”: families whose 3-month P10 ≤ −5 % of net worth, worst first | SCR-RM-01 | FEAT-13 |
+| 1 | Opens “Hôm nay” (from the book, SCR-RM-07, since FEAT-41: a family at the threshold sits on its inner ring): families whose 3-month P10 ≤ −5 % of net worth, worst first | SCR-RM-01 | FEAT-13 |
 | 2 | Opens a family: the hero number, the band, contributions, events | SCR-RM-02 | FEAT-13 |
 | 3 | “Cách tính” on an event: holdings → scenarios → approval → news → snapshot | SCR-RM-03 | FEAT-09 |
 | 4 | Calls the client (outside the product) | — | — |
@@ -76,3 +76,15 @@ thu hồi”).
 | 6 The RM approves | “RM duyệt” | RM → Khách hàng → **Duyệt đề xuất** (SCR-RM-06); the client follows it on Chuyên gia (SCR-CL-07) |
 
 The demo's HTTP path is tested end to end (`tests/test_demo.py::test_the_five_minute_demo`); its click path is not.
+
+## J7 — Each staff role starts at its desk (FEAT-41, experiment)
+
+| # | Does | Screen | Feature |
+|---|---|---|---|
+| 1 | The CIO opens `#/cio`: what waits for the CIO, the flow from news to families; a stage opens its page as a sheet | SCR-CIO-15 | FEAT-41 |
+| 2 | The RM opens `#/rm`: the families around the RM by how soon they need the RM; a family's page opens with the client picker set | SCR-RM-07 | FEAT-41 |
+| 3 | Admin opens `#/admin`: the system as a map, each node coloured by its last record; a node opens its page | SCR-ADM-02 | FEAT-41 |
+| 4 | The Expert opens `#/specialist`: the oldest recommendation beside its family's picture; approves or rejects there | SCR-SP-02 | FEAT-41, 27 |
+| 5 | Compliance opens `#/compliance`: every control's waiting count; a lane opens what waits on its page | SCR-CMP-06 | FEAT-41 |
+| 6 | Any of them asks the docked assistant about the desk; its steps light what it reads | the desk | FEAT-41, 32 |
+

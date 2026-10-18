@@ -75,8 +75,8 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-AD
 | Chính sách `chinh-sach[/PD-…]` | SCR-CMP-05 | FEAT-16 | BRD-FR-306 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
 | Đo lường `do-luong` | SCR-CIO-13 | FEAT-18 | BRD-RULE-MEAS-03, 05 | Đo lường | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
 | Nhật ký `nhat-ky` | SCR-CMP-03 | FEAT-11 | BRD-BR-12, FR-702 | Nhật ký | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | AI và cấu hình | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701 | AI và cấu hình | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
+| Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | AI & cấu hình | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
+| Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701 | AI & cấu hình | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
 | Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
 
 ## Every role: shared pieces

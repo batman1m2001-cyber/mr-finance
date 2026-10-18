@@ -137,7 +137,7 @@ reads use, with the same family filter.
 | M3 | Admin desk + tools | same — **done 2026-10-18** |
 | M4 | Expert desk + tools | same — **done 2026-10-18** |
 | M5 | Compliance desk + tools | same — **done 2026-10-18** |
-| M6 | BRD close-out: IA, inventory, journeys, matrix rows, regression record; a few real-model turns per role (cost counted) | full suite + every UI test; `check_brd_docs.py` |
+| M6 | BRD close-out: IA, inventory, journeys, matrix rows, regression record; a few real-model turns per role (cost counted) | full suite + every UI test; `check_brd_docs.py` — **done 2026-10-18** ([report](MULTI_ROLE_UX_REPORT.md)) |
 
 **Tests every phase adds:** (1) *preservation* — every old route of the role opens its page as a sheet, with no
 error; (2) *isolation* — `/api/desk` gives each role only its own desk, a client gets none, another role's desk

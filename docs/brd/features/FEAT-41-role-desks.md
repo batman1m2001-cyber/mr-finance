@@ -126,7 +126,7 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
 
 ### Compliance — Bàn kiểm soát (SCR-CMP-06, built in M5, 2026-10-18)
 
-- **Rail:** Bàn kiểm soát · Tin bị giữ · Nội dung (Nghiên cứu, Bản tin, Chính sách) · Đo lường · Nhật ký · AI và cấu
+- **Rail:** Bàn kiểm soát · Tin bị giữ · Nội dung (Nghiên cứu, Bản tin, Chính sách) · Đo lường · Nhật ký · AI & cấu
   hình (Agent, Cấu hình) · Bộ nhớ at the foot. All nine pages at their addresses.
 - **The controls:** one lane per control, its steps left to right, the first what waits — Tin bị giữ (held →
   let through, BRD-BR-04), Nghiên cứu (waiting → released / rejected, BR-03), Bản tin (waiting → approved / returned,

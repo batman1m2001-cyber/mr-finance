@@ -14,6 +14,10 @@ uv run operonx run statement_reading  # the statement-reading eval (needs MF_AI=
 
 | Date | Commit | Command | Result |
 |---|---|---|---|
+| 2026-10-18 | multi-role M6 (`ux/multi-role`) | `pytest -q tests --ignore=tests/ui`; `pytest -q tests/ui` | **878 passed, 1 skipped** in 644 s; **111 passed** in 889 s — the close-out run; plus seven real-model assistant turns, one per desk tool family, US$0.0103 (see docs/MULTI_ROLE_UX_REPORT.md) |
+| 2026-10-18 | multi-role M5 (9dbcdc5) | same | **867 passed, 1 skipped** in 620 s; **111 passed** in 889 s (+ Compliance: 3 API, 3 browser; every desk tool signed in inside a served turn, 11) |
+| 2026-10-18 | multi-role M4 (2bfb7ac) | same | **855 passed, 1 skipped** in 612 s; **107 passed, 1 failed** in 894 s — `test_pages.py::test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it` clicked the desk's decision bar under the sheet; fixed (the desk inert under a sheet, the test scoped to the page) and rerun: 23 passed |
+| 2026-10-18 | multi-role M3 (3277f33) | same | **835 passed, 1 skipped**; **104 passed** |
 | 2026-10-16 | BRD completion F10 | `uv run pytest -q tests` | **390 passed** in 543 s (unit, flow and browser tests; F10 adds `test_schedules.py` 2, `test_deadlines.py` 4, `tests/ui/test_brd_pages.py` 2, 5 in `test_apply.py`); checker 0 errors; `scripts/scale_test.py --families 6500`: 167.3 s, family reads ≤ 0.29 s |
 | 2026-10-16 | UI redesign R0 (browser tests) | `uv run pytest -q -m "not ui"`; `uv run pytest -q -m ui` | **215 passed** in 80 s; **6 passed** in 46 s (tests/ui: every route × desktop/phone, Copilot marks, states, phone, reduced motion). Control: a page made to throw fails the route test (`#/cio/agent: console Error`) |
 | 2026-10-16 | kit K2–K5 (PR #19–#22) | `uv run pytest -q` | **195 passed** in 65 s (+ `test_flows.py` 4, `test_graph.py` 3, `test_feed.py` 5, `test_copilot.py` 7, DEF-05 1); checker 0 errors |
