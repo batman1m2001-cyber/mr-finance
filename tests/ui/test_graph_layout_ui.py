@@ -193,6 +193,25 @@ def test_a_dense_graph_folds_instead_of_squeezing(open_page, size):
     assert not p.problems()
 
 
+
+GROUPS = "() => [...document.querySelectorAll('.wnode.k-group:not(.off):not(.gone)')].map(n => n.dataset.n).sort()"
+
+
+def test_a_large_screen_folds_as_the_reference_does(open_page):
+    """Owner, 2026-10-18: “4 mục tiêu khác” folded at 1440×900 and showed flat on a larger screen. The fold is decided
+    on a canvas no larger than the 1440×900 one, so a larger screen folds the same groups, drawn bigger and clear."""
+    seen = {}
+    for size in ("desktop", "large"):
+        p = open_page(size)
+        p.go("#/client")
+        p.page.wait_for_selector(".wnode.k-family")
+        lens(p, "tong-quan")
+        seen[size] = p.page.evaluate(GROUPS)
+        assert not clear(p.page.evaluate(AUDIT)), size
+        assert not p.problems()
+    assert "GR:goal" in seen["desktop"], seen
+    assert seen["large"] == seen["desktop"], seen
+
 ANSWER = """(() => { const real = window.fetch;
   window.fetch = (url, opts) => {
     if (!String(url).includes('/api/assistant/stream')) return real(url, opts);

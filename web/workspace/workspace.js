@@ -6,7 +6,7 @@
 import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261018p3";
+import {createGraph} from "./graph.js?v=20261018q1";
 import {dockFrame} from "./dock.js?v=20261018m0";
 import {render as inspect} from "./inspector.js?v=20261018p3";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261018p3";

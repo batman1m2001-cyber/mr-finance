@@ -2,6 +2,8 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — The workspace fold is the same on every screen from 1440×900 up (owner: “4 mục tiêu khác” showed flat on a large screen): the fold is decided on the 1440×900 canvas's area, then drawn at the real size. — requirements_traceability.md OWN-GW-30, docs/OWNER_BACKLOG_1018_PLAN.md
+
 - 2026-10-18 — Staff assistant stress test (owner request): each staff role's assistant tested as its users would use it — 54 conversations on the real model, a browser pass on every desk, the fallback per role; 14 S2 defects fixed (role duties in the prompt and the guide, the RM's book, agent_nen, every staff page openable, no pretended page-only decisions…), no S1; US$0.4858 of US$3. — testing/assistant/staff/*, requirements_traceability.md OWN-MR-10, docs/STAFF_STRESS_PLAN.md, docs/huong-dan/*
 
 - 2026-10-18 — The floating Copilot button is gone (owner): the assistant is docked in every role's Trợ lý tab, its

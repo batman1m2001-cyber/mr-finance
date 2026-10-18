@@ -24,7 +24,7 @@ sync_api = pytest.importorskip("playwright.sync_api", reason="pip install -e '.[
 uvicorn = pytest.importorskip("uvicorn")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # the seeding helpers of tests/test_apply.py
 
-SIZES = {"desktop": (1440, 900), "phone": (390, 844)}
+SIZES = {"desktop": (1440, 900), "phone": (390, 844), "large": (2560, 1440)}
 _FUNCTION = re.compile(r"^\s*(?:async\s+)?(?:function\b|\([^)]*\)\s*=>|\w+\s*=>)")
 
 

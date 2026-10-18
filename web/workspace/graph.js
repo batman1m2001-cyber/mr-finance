@@ -255,7 +255,18 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         keys: [...new Set(members.flatMap(keysOf))], value: SUMMABLE.has(key) ? sum : null};
   }
 
+  // the fold is decided on a canvas no larger than the reference (owner, 2026-10-18): a larger screen draws the
+  // reference's fold bigger instead of unfolding every group, so “+4 mục tiêu khác” reads the same on a laptop and a
+  // wall screen; a smaller canvas folds more, as before. REF_AREA: the canvas a 1440×900 window gives (992×563)
+  const REF_AREA = 992 * 563;
   function layout() {
+    if (narrow || W * H <= REF_AREA) return foldAndPlace();
+    const w0 = W, h0 = H, s = Math.sqrt(REF_AREA / (W * H));
+    let ref;
+    try { W = Math.round(W * s); H = Math.round(H * s); ref = foldAndPlace(); } finally { W = w0; H = h0; }
+    return foldAndPlace(ref.folded);
+  }
+  function foldAndPlace(seed = null) {
     const cx = W / 2, cy = H / 2, M = narrow ? 8 : 12;
     sizes = fontSizes();
     const out = {ME: {x: cx, y: cy, a: 0}};
@@ -271,7 +282,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     // opened last folds its smallest (it opens partly: the rest stay behind “+n khác”), never the selection or an open class
     const keepOut = (n, level) => st.sel === n.id || opened(n.id) || !!n.active  // an active scenario stays in sight
       || (isOpen(groupOf(n)) && (level === 0 || (level === 1 && groupOf(n) === st.lastGroup)));
-    const folded = new Map();  // group key → members folded (the smallest first)
+    const folded = new Map(seed || []);  // group key → members folded (the smallest first)
     let warm = null;  // each try starts from the last one's ring and angles: folding one item changes little
     let unpin = false;  // the flows leave their sides only when their half cannot hold what the person opened
     for (let tries = 0; tries < 400; tries++) {
@@ -312,6 +323,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     Object.assign(out, res.pos || {});
     out.ring = res.rx ? {rx: res.rx, ry: res.ry} : null;
     out.groups = made;
+    out.folded = folded;  // the reference's fold, for the larger canvas
     out.fold = new Map();
     for (const [key, list] of folded) for (const n of list) out.fold.set(n.id, `GR:${key}`);
     return out;
