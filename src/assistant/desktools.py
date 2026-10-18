@@ -132,6 +132,39 @@ async def accuracy(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+# -- RM ----------------------------------------------------------------------------------------------------------
+
+
+async def book(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Sổ khách hàng: the RM's families by how soon they need the RM, with why; proposals, goal tasks, contacts."""
+    d = _desk(ctx, "rm")
+    fams = d["families"]
+    if not fams:
+        raise ToolFailed("Bạn chưa được giao gia đình nào")
+    soon = [f for f in fams if f["level"] >= 2]
+    why = lambda f: ", ".join(w["text"] for w in f["why"])  # noqa: E731
+    each = "; ".join(f"{f['name']} — {f['level_label'].lower()}: {why(f)}" for f in soon[:6])
+    last = d["contacts"][0] if d["contacts"] else None
+    name = {f["id"]: f["name"] for f in fams}
+    text = (
+        f"Sổ của bạn có {len(fams)} gia đình. "
+        + (f"{len(soon)} cần bạn sớm: {each}. " if soon else "Không gia đình nào cần gọi ngay hay chờ bạn duyệt. ")
+        + f"{len(d['proposals'])} đề xuất chờ duyệt, {len(d['tasks'])} việc theo mục tiêu. "
+        + (
+            f"Liên hệ gần nhất: {name.get(last['family_id'], last['family_id'])} qua {last['channel_label'].lower()}."
+            if last
+            else "Chưa ghi liên hệ nào."
+        )
+        + (f" {len(d['control'])} gia đình trong nhóm đối chứng: không có tín hiệu cho họ." if d["control"] else "")
+    )
+    return {
+        "text": text,
+        "data": {"families": len(fams), "soon": len(soon), "proposals": len(d["proposals"]), "tasks": len(d["tasks"])},
+        "focus": ["book"] + [f"family:{f['id']}" for f in soon],
+        "sources": ["Sổ khách hàng", "Hôm nay", "Duyệt đề xuất"],
+    }
+
+
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
     for t in (
@@ -169,6 +202,15 @@ CATALOGUE: Dict[str, Tool] = {
             accuracy,
             page="do-chinh-xac",
             timeout=60.0,
+        ),
+        Tool(
+            "so_khach_hang",
+            "sổ khách hàng của RM: các gia đình được giao, ai cần gọi ngay và vì sao (ngưỡng xem trước, việc theo mục "
+            "tiêu), đề xuất chờ duyệt, liên hệ gần đây",
+            ("rm",),
+            book,
+            page="ban-lam-viec",
+            follow=["Hôm nay cần gọi ai?", "Có gì cần chú ý với khách này?"],
         ),
     )
 }

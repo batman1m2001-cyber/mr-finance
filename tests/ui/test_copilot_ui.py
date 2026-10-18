@@ -31,13 +31,14 @@ def test_an_answer_marks_what_it_read_and_the_states_follow(open_page):
     assert not p.problems() and not c.problems()
 
 
-def test_the_phone_waits_for_the_panel_to_close(open_page):
+def test_on_a_phone_the_docked_answer_marks_the_page_at_once(open_page):
+    # the RM's assistant is docked on the desk (FEAT-41): below the page on a phone, never over it, so there is no
+    # panel to close before the marks show (the floating panel's wait is for roles without a desk)
     p = open_page("phone")
     p.go("#/rm/khach-hang/toan-canh")
     ask(p, "Tài sản của khách này thế nào?")
-    assert p.page.locator(".mf-focus").count() == 0
-    p.page.click("#cp-close")
     assert p.page.locator(".mf-focus").count() == 3
+    assert p.page.locator("#cp-close:visible").count() == 0
 
 
 def test_reduced_motion_runs_no_animation(open_page):
@@ -51,22 +52,20 @@ def test_reduced_motion_runs_no_animation(open_page):
 def test_busy_lasts_exactly_as_long_as_the_request(open_page):
     p = open_page()
     p.go("#/rm/khach-hang/toan-canh")
-    p.page.evaluate(
+    p.page.evaluate(  # the docked panel's request is the stream (FEAT-41): hold it until the test lets it go
         """() => { const f0 = window.fetch; window.__hold = null;
-             window.fetch = (u, o) => String(u).endsWith('/api/assistant')
+             window.fetch = (u, o) => String(u).includes('/api/assistant/stream')
                ? new Promise(r => { window.__hold = () => r(f0(u, o)); }) : f0(u, o); }"""
     )
-    p.page.click(".cp-fab")
     p.page.fill("#cp-q", "Tài sản của khách này thế nào?")
     p.page.press("#cp-q", "Enter")
     p.page.wait_for_function("!!window.__hold")
-    assert p.page.get_attribute(".cp-fab", "data-state") == "busy"
     assert p.page.get_attribute("#cp-msgs", "aria-busy") == "true" and p.page.locator(".cp-dots").count() == 1
     p.page.wait_for_timeout(1000)
-    assert p.page.get_attribute(".cp-fab", "data-state") == "busy"  # nothing finishes until the answer does
+    assert p.page.get_attribute("#cp-msgs", "aria-busy") == "true"  # nothing finishes until the answer does
     p.page.evaluate("window.__hold()")
-    p.page.wait_for_function("document.querySelector('.cp-fab').dataset.state === 'ok'")
-    assert p.page.locator(".cp-dots").count() == 0 and p.page.get_attribute("#cp-msgs", "aria-busy") == "false"
+    p.page.wait_for_function("document.querySelector('#cp-msgs').getAttribute('aria-busy') === 'false'")
+    assert p.page.locator(".cp-dots").count() == 0
 
 
 def test_answers_show_their_card_their_time_and_sources_and_offer_next_steps(open_page):

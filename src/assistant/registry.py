@@ -67,6 +67,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "phoi_nhiem": "Phơi nhiễm",
     "lan_ap_dung": "Lần áp dụng",
     "do_chinh_xac": "Độ chính xác",
+    "so_khach_hang": "Sổ khách hàng",
 }
 DEMO_USER = {**tools.USER, "admin": "admin", "specialist": "sp_global"}  # who acts when sign-in is off
 

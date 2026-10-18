@@ -95,7 +95,7 @@ def test_a_row_of_all_clients_opens_that_client(open_page):
     p.go("#/rm/hieu-qua")
     row = p.page.locator("tr.rowlink").nth(2)
     cid, name = row.get_attribute("data-client"), row.locator("b").inner_text()
-    row.click()
+    row.locator("b").click()  # the name: a figure in the row is its own “Cách tính” button, which does not navigate
     p.page.wait_for_function("location.hash === '#/rm/khach-hang/hieu-qua'")
     p.page.wait_for_function("(c) => document.querySelector('#client').value === c", arg=cid)
     p.page.wait_for_function("(n) => document.querySelector('.lede')?.textContent.includes(n)", arg=name)

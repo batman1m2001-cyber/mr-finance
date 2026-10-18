@@ -74,6 +74,15 @@ def test_every_page_of_the_menu_is_in_exactly_one_rail_group(role):
     assert [g["id"] for g in groups if g.get("desk")] == ["ban"] and menu(role)[0] == "ban"
 
 
+def test_the_rm_keeps_every_page_it_had():
+    # the RM's menu before the desk, page for page; the ten client pages stay under Khách hàng
+    assert menu("rm") == ["ban", "hom-nay", "khach-hang", "hieu-qua", "bo-nho"]
+    shell = (WEB / "shell.js").read_text(encoding="utf-8")
+    block = shell.split('{id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [', 1)[1].split("]}", 1)[0]
+    pages = ["tac-dong", "do-thi", "toan-canh", "ban-do", "tong-quan", "tai-san", "ke-hoach", "chinh-sach", "hieu-qua"]
+    assert re.findall(r'id: "([a-z-]+)"', block) == pages + ["duyet"]
+
+
 def test_the_cio_keeps_every_page_it_had():
     # the CIO's menu before the desk (6e735dd), page for page: the desk is added, nothing removed (OWN-MR-02)
     before = ["hop-tin", "nhan-dinh", "phoi-nhiem", "ap-dung", "do-thi", "nghien-cuu", "ban-tin", "chinh-sach"]
@@ -107,6 +116,9 @@ def test_with_sign_in_the_session_says_whose_desk_and_the_query_cannot_change_it
     assert client.get("/api/desk", headers=as_("C01")).status_code == 403  # a client has no desk
     got = client.get("/api/desk?role=rm", headers=as_("cio"))
     assert got.status_code == 200 and got.json()["role"] == "cio"
+    rm = client.get("/api/desk?role=cio", headers=as_("rm01")).json()
+    assert rm["role"] == "rm" and sorted(f["id"] for f in rm["families"]) == ["C01", "C04", "C05"]
+    assert [f["id"] for f in client.get("/api/desk", headers=as_("rm03")).json()["families"]] == ["C03"]
     for who in ("rm01", "compliance", "admin", "sp_global"):  # no desk yet, or their own: never the CIO's
         r = client.get("/api/desk?role=cio", headers=as_(who))
         assert r.status_code == 403 or r.json()["role"] != "cio", who
@@ -147,6 +159,41 @@ def test_an_empty_desk_is_still_a_desk():
     assert [s["id"] for s in d["pipeline"]] == ["news", "events", "views", "runs", "families", "rm"]
 
 
+def test_the_rm_desk_is_hom_nay_the_queue_and_the_contacts_of_the_rms_own_families():
+    from wealth import store as reviews
+
+    _, run = approved(*MARKET)
+    flagged = {x["family_id"] for x in run["ranking"] if x["pre_review"]}
+    waiting = reviews.propose("C01", "plan", "Kế hoạch học phí", {})
+    reviews.propose("C03", "plan", "Không phải của rm01", {})
+    note = reviews.propose("C01", "rm_note", "Ghi chú của RM", {})  # the RM's own note: not theirs to approve
+    for who in ("rm01", "rm03"):
+        book = sorted(desk_reads._book({"id": who, "role": "rm"}))
+        d = desk_reads.desk("rm", {"id": who, "role": "rm", "families": book})
+        today = apply_reads.rm_today(book)
+        assert sorted(f["id"] for f in d["families"]) == book
+        assert {c["family_id"] for c in d["calls"]} == {c["family_id"] for c in today["cases"]} == flagged & set(book)
+        assert [c["p10_3m_pct"] for c in d["calls"]] == sorted(c["p10_3m_pct"] for c in d["calls"])  # worst first
+        for f in d["families"]:
+            assert f["level"] == max([w["level"] for w in f["why"]], default=0)
+            assert (f["level"] == 3) == (f["id"] in flagged)  # no goal task here: only the threshold calls now
+            row = next(x for x in run["ranking"] if x["family_id"] == f["id"])
+            assert f["net_worth"] == row["net_worth"] and f["net_worth_run"] == run["id"]
+        ids = {x["id"] for x in d["proposals"]}
+        assert (waiting in ids) == (who == "rm01") and note not in ids
+        assert all(x["family_id"] in book for x in d["proposals"])
+    d = desk_reads.desk("rm", {"id": "rm01", "role": "rm", "families": ["C01", "C04", "C05"]})
+    c01 = next(f for f in d["families"] if f["id"] == "C01")
+    assert c01["proposals"] == 1 and c01["level"] >= 2 and "1 đề xuất chờ bạn duyệt" in [w["text"] for w in c01["why"]]
+
+
+def test_without_sign_in_the_rm_desk_is_every_family_as_hom_nay_is():
+    d = desk_reads.desk("rm", None)
+    from wealth import fixtures
+
+    assert [f["id"] for f in sorted(d["families"], key=lambda f: f["id"])] == fixtures.client_ids()
+
+
 # -- the role's assistant reads the desk ---------------------------------------------------------------------------
 
 
@@ -160,14 +207,31 @@ def test_the_cio_assistant_says_the_desks_numbers():
     assert exp["data"]["expected_3m"] == run["totals"]["expected_3m"] and run["id"] in exp["text"]
 
 
-@pytest.mark.parametrize("name", ["ban_quyet_dinh", "phoi_nhiem", "lan_ap_dung", "do_chinh_xac"])
+DESK_TOOLS = {"ban_quyet_dinh": "cio", "phoi_nhiem": "cio", "lan_ap_dung": "cio", "do_chinh_xac": "cio",
+              "so_khach_hang": "rm"}  # fmt: skip
+
+
+@pytest.mark.parametrize("name", sorted(DESK_TOOLS))
 def test_a_desk_tool_is_its_roles_alone_and_opens_its_desk(name):
     from assistant.stream import NODES
     from assistant.tools import PAGES
 
-    t = registry.REGISTRY[name]
-    assert t.roles == ("cio",) and not t.write
-    assert PAGES[t.page][1]["cio"].startswith("#/cio") and NODES[name]
+    t, role = registry.REGISTRY[name], DESK_TOOLS[name]
+    assert t.roles == (role,) and not t.write
+    assert PAGES[t.page][1][role].startswith(f"#/{role}") and NODES[name]
+
+
+def test_the_rm_assistant_says_the_books_numbers():
+    from wealth import store as reviews
+
+    approved(*MARKET)
+    reviews.propose("C01", "plan", "Kế hoạch học phí", {})
+    d = desk_reads.desk("rm", {"id": "rm01", "role": "rm"})
+    said = asyncio.run(execute(registry.REGISTRY["so_khach_hang"], ctx("rm"), {}))
+    soon = [f for f in d["families"] if f["level"] >= 2]
+    assert said["data"] == {"families": len(d["families"]), "soon": len(soon), "proposals": len(d["proposals"]),
+                            "tasks": len(d["tasks"])}  # fmt: skip
+    assert {f"family:{f['id']}" for f in soon} <= set(said["focus"]) and "C03" not in said["text"]
 
 
 def test_the_agents_beneath_the_desk_are_untouched():

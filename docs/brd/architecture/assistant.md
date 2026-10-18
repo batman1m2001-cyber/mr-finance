@@ -115,7 +115,8 @@ not sentences). Each needs the person to read evidence there; the assistant open
 Role desks (FEAT-41, OWN-MR-10; `src/assistant/desktools.py`, M1 2026-10-18): each staff role's own reads over
 the composition its desk draws (`src/desk/reads.py`), so the assistant says the screen's numbers — CIO:
 `ban_quyet_dinh` (what waits, the flow), `phoi_nhiem` (the newest effective run by factor, worst families),
-`lan_ap_dung` (runs by status), `do_chinh_xac` (history coverage, VN-Index direction, forecasts waiting). They are in
+`lan_ap_dung` (runs by status), `do_chinh_xac` (history coverage, VN-Index direction, forecasts waiting); RM (M2):
+`so_khach_hang` (who in the RM's book needs them soon and why, proposals, goal tasks, the last contact). They are in
 the map's `tools_app` family; `stream.NODES` maps each to the desk's `data-node` it lights.
 
 To come: `help` (product KB) and `materials` (user KB) in A5; memory tools in A4; `web_search` in A5;

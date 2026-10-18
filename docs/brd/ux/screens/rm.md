@@ -133,3 +133,26 @@ The options the picked client sent from Kế hoạch: actions, summary numbers, 
 decided items below with their badge and note. Only an RM may decide (server check). Added 2026-10-15 (DEF-02).
 
 **Tests.** `tests/ui/test_pages.py::test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it`.
+
+## SCR-RM-07 — Sổ khách hàng (RM desk)
+
+| | |
+|---|---|
+| Route | `#/rm`, `#/rm/ban`; every other RM address opens its page as a sheet over the book |
+| Feature | [FEAT-41](../../features/FEAT-41-role-desks.md) (and the pages it gathers: FEAT-13, 27, 28) |
+| Requirements | OWN-MR-01, OWN-MR-03, OWN-MR-06, OWN-MR-07, OWN-MR-10; BRD-RULE-ROLE-02, BRD-RULE-MEAS-06 |
+| Data | `GET /api/desk` (role and families from the session) |
+| Screenshots | [a family picked, desktop](../../assets/current_ui/SCR-RM-07_desktop-light.jpg) · [a calm book, dark](../../assets/current_ui/SCR-RM-07-calm_desktop-dark.jpg) · [phone, dark](../../assets/current_ui/SCR-RM-07_phone-dark.jpg) |
+
+**Centre.** Header “RM · Sổ khách hàng” with “<n> gia đình · <k> cần gọi ngay · <p> đề xuất chờ duyệt · <t> việc theo
+mục tiêu”. The map: “Bạn” in the middle, dashed rings, a line to each family coloured by its level, the dot sized by
+net worth, a red/amber/violet count of reasons, the name on the side away from the centre; a key under it (rings,
+size, control group). A dot is a button (Enter or Space picks it). Below: **Cần gọi trước**, **Đề xuất chờ duyệt**,
+**Việc theo mục tiêu**, **Liên hệ gần đây**, each with an empty state that says when it fills.
+
+**Thông tin (a family picked).** Name; segment · age · occupation · city; the level badge and its reasons; net
+worth with its run, proposals waiting, last contact; **Tin tác động** (event, run, expected 3-month change); the
+family's pages as buttons (the client picker set first).
+
+**A page as a sheet.** As SCR-CIO-15; Khách hàng shows its ten pages as tabs and the header's client picker.
+

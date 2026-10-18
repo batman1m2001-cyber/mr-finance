@@ -9,9 +9,9 @@ import {$, esc, get} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {dockFrame} from "../workspace/dock.js?v=20261018m0";
-import {DESKS} from "./roles.js?v=20261018m1";
+import {DESKS} from "./roles.js?v=20261018m3";
 
-export function mount(main, {role, nav, go}) {
+export function mount(main, {role, nav, go, client = () => null, setClient = () => {}}) {
   const cfg = DESKS[role];
   const label = (id) => { const n = nav.find(x => x.id === id); return n ? n.label : id; };
   const pagesOf = (g) => g.nav.flatMap(id => {  // a group's pages, in menu order: a menu item with a sub-menu is its pages
@@ -75,7 +75,9 @@ export function mount(main, {role, nav, go}) {
   let view = null, data = null, loading = null, sheet = null;
   const info = $("#ws-pane-i", root);
   const api = {
-    role, go, tab,
+    role, go, tab, client,
+    /* open a page for a family: the client picker set first, as the header's picker would */
+    open(family, href) { setClient(family); go(href); },
     /* the inspector: the module draws a pick into Thông tin and shows it */
     inspect(html, bind) { info.innerHTML = html; if (bind) bind(info); tab("i"); },
     reload: () => load(true),
@@ -83,7 +85,7 @@ export function mount(main, {role, nav, go}) {
   async function load(again) {
     if (loading && !again) return loading;
     loading = (async () => {
-      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261018m2`), get("/api/desk")]);
+      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261018m4`), get("/api/desk")]);
       data = got;
       view = mod;
       mod.render($("#dk-body", root), data, api);

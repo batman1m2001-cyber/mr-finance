@@ -33,19 +33,19 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-AD
 
 | Page (address) | Screen | Features | Key requirements | Rail group | State |
 |---|---|---|---|---|---|
-| Hôm nay `hom-nay` | SCR-RM-01 | FEAT-13, 10 | BRD-BR-09, FR-503, FR-603 | Hôm nay | planned |
-| Khách hàng → Tác động tin `khach-hang/tac-dong` | SCR-RM-02 (+ SCR-RM-03) | FEAT-13, 09, 10 | BRD-BR-12, FR-404, 406, 601 | Khách hàng | planned |
-| Khách hàng → Đồ thị tác động `khach-hang/do-thi` | SCR-CL-09 | FEAT-30 | KIT-UX-04 | Khách hàng | planned |
-| Khách hàng → Toàn cảnh `khach-hang/toan-canh` | SCR-CL-08 | FEAT-29, 31 | KIT-UX-01…05 | Khách hàng | planned |
-| Khách hàng → Bản đồ tài chính `khach-hang/ban-do` | SCR-CL-11 | FEAT-30 | OWN-UI-04 | Khách hàng | planned |
-| Khách hàng → Chi tiết `khach-hang/tong-quan` | SCR-CL-01 | FEAT-21 | BRIEF-DASH-* | Khách hàng | planned |
-| Khách hàng → Tài sản `khach-hang/tai-san` | SCR-CL-02 | FEAT-20, 22, 23 | BRIEF-DATA-* | Khách hàng | planned |
-| Khách hàng → Kế hoạch `khach-hang/ke-hoach` | SCR-CL-03 | FEAT-26, 27 | BRIEF-SCEN-* | Khách hàng | planned |
-| Khách hàng → Chi phí chính sách `khach-hang/chinh-sach` | SCR-CL-06 | FEAT-25 | BRIEF-IMPACT-* | Khách hàng | planned |
-| Khách hàng → Hiệu quả tư vấn `khach-hang/hieu-qua` | SCR-RM-04 | FEAT-28 | Q-19 | Khách hàng | planned |
-| Khách hàng → Duyệt đề xuất `khach-hang/duyet` | SCR-RM-06 | FEAT-27 | BRIEF-FLOW-02 | Khách hàng | planned |
-| Hiệu quả tư vấn (all) `hieu-qua` | SCR-RM-05 | FEAT-28 | Q-19 | Hiệu quả tư vấn | planned |
-| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | planned |
+| Hôm nay `hom-nay` | SCR-RM-01 | FEAT-13, 10 | BRD-BR-09, FR-503, FR-603 | Hôm nay | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Tác động tin `khach-hang/tac-dong` | SCR-RM-02 (+ SCR-RM-03) | FEAT-13, 09, 10 | BRD-BR-12, FR-404, 406, 601 | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Đồ thị tác động `khach-hang/do-thi` | SCR-CL-09 | FEAT-30 | KIT-UX-04 | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Toàn cảnh `khach-hang/toan-canh` | SCR-CL-08 | FEAT-29, 31 | KIT-UX-01…05 | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Bản đồ tài chính `khach-hang/ban-do` | SCR-CL-11 | FEAT-30 | OWN-UI-04 | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Chi tiết `khach-hang/tong-quan` | SCR-CL-01 | FEAT-21 | BRIEF-DASH-* | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Tài sản `khach-hang/tai-san` | SCR-CL-02 | FEAT-20, 22, 23 | BRIEF-DATA-* | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Kế hoạch `khach-hang/ke-hoach` | SCR-CL-03 | FEAT-26, 27 | BRIEF-SCEN-* | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Chi phí chính sách `khach-hang/chinh-sach` | SCR-CL-06 | FEAT-25 | BRIEF-IMPACT-* | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Hiệu quả tư vấn `khach-hang/hieu-qua` | SCR-RM-04 | FEAT-28 | Q-19 | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Khách hàng → Duyệt đề xuất `khach-hang/duyet` | SCR-RM-06 | FEAT-27 | BRIEF-FLOW-02 | Khách hàng | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Hiệu quả tư vấn (all) `hieu-qua` | SCR-RM-05 | FEAT-28 | Q-19 | Hiệu quả tư vấn | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
+| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_the_rm_works_at_its_book_and_every_page_is_a_sheet` |
 
 ## Admin (`#/admin/…`) — desk "Vận hành" (SCR-ADM-02)
 

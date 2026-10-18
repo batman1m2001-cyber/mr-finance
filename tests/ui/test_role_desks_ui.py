@@ -139,3 +139,72 @@ def test_the_desk_on_a_phone_and_dark_and_the_customer_untouched(open_page):
     p.page.wait_for_selector(".wnode.k-family")
     assert p.page.locator(".desk").count() == 0 and p.page.locator(".ws").count() == 1
     assert p.page.is_hidden("#nav") and not p.problems()
+
+
+# -- RM · Sổ khách hàng (M2) ---------------------------------------------------------------------------------------
+
+
+def test_the_rm_works_at_its_book_and_every_page_is_a_sheet(open_page):
+    in_thread(approved, *MARKET)
+    p = open_page()
+    p.go("#/rm")
+    p.page.wait_for_selector(".desk-rm .rk-fam")
+    assert p.page.is_hidden("#nav") and p.page.locator("#ws-pane-a #cp-q").count() == 1
+    fams = p.page.eval_on_selector_all(".rk-fam", "gs => gs.map(g => g.dataset.fam).sort()")
+    assert fams == ["C01", "C04", "C05"]  # rm01's own families, nobody else's
+
+    # a family picked: its card in Thông tin; a page opened from it sets the client picker first
+    p.page.click('.rk-fam[data-fam="C04"]')
+    p.page.wait_for_selector("#ws-pane-i:not([hidden]) [data-go]")
+    assert "Đỗ Thị Hạnh" in p.page.inner_text("#ws-pane-i")
+    p.page.click('#ws-pane-i [data-go="#/rm/khach-hang/tac-dong"]')
+    p.page.wait_for_function("location.hash.endsWith('/tac-dong') && !document.querySelector('#ws-sheet').hidden")
+    p.page.wait_for_function("document.querySelector('#client').value === 'C04'")
+
+    seen = routes("rm")
+    assert len(seen) == 13
+    for r in seen:
+        p.go(r)
+        assert p.page.is_visible("#ws-sheet"), r
+        assert p.page.locator(".ws-tool[aria-current]").count() == 1, r
+        assert not p.problems(), (r, p.problems())
+    p.go("#/rm/khach-hang/ke-hoach")
+    assert p.page.locator("#dk-tabs a").count() == 10 and not p.page.is_hidden("#client-pick")
+    p.go("#/rm")
+    assert p.page.is_hidden("#ws-sheet") and not p.problems()
+
+
+def test_the_rm_assistant_lights_the_book(open_page):
+    script = [[0, {"type": "start"}],
+              [50, {**STEP, "tool": "so_khach_hang", "phase": "start", "nodes": ["book", "calls"]}],
+              [700, {**STEP, "tool": "so_khach_hang", "phase": "end", "ok": True, "ms": 600}],
+              [1200, {"type": "answer", "assistant": {"status": "ok", "mode": "model", "text": "Không ai cần gọi ngay.",
+                                                      "steps": []}}]]  # fmt: skip
+    p = open_page()
+    p.ctx.add_init_script(TIMED)
+    p.ctx.add_init_script(f"window.__script = {json.dumps(script)};")
+    p.go("#/rm")
+    p.page.wait_for_selector(".desk-rm .rk-fam")
+    assert "Sổ khách hàng có gì cần làm?" in p.page.inner_text("#ws-pane-a")  # the RM's own suggestions
+    p.page.fill("#cp-q", "Sổ khách hàng có gì cần làm?")
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_selector('[data-node="book"].act', timeout=4000)
+    p.page.wait_for_selector('[data-node="calls"].lit', timeout=6000)
+    assert p.page.evaluate("window.__body.role") == "rm" and not p.problems()
+
+
+def test_no_other_role_reaches_the_rm_book_and_the_rm_on_a_phone(open_page):
+    p = open_page()
+    for role in ("cio", "compliance", "admin", "specialist"):
+        p.as_role(role)
+        p.page.evaluate("location.hash = '#/rm'")
+        p.page.wait_for_timeout(400)
+        assert p.page.locator(".desk-rm").count() == 0, role
+    p.errors.clear()
+    for theme in ("dark", "light"):
+        q = open_page(size="phone", theme=theme)
+        q.go("#/rm")
+        q.page.wait_for_selector(".desk-rm .rk-fam")
+        assert not q.problems(), (theme, q.problems())
+        q.go("#/rm/khach-hang/tac-dong")
+        assert q.page.is_visible("#ws-sheet") and not q.problems(), (theme, q.problems())

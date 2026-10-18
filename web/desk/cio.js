@@ -10,6 +10,8 @@ import {EVENT_TYPE, ago, esc, n as how, pct, signClass, viewBadge, vnd} from "..
 import {icon} from "../core/icons.js?v=20261016r1";
 
 const STAGE_ICON = {news: "inbox", events: "news", views: "sparkles", runs: "zap", families: "users", rm: "user"};
+const STAGE_PAGE = {news: "Hộp tin", events: "Sự kiện & nhận định", views: "Sự kiện & nhận định", runs: "Lần áp dụng",
+  families: "Phơi nhiễm", rm: "Đồ thị lần áp dụng"};  // the page a stage's button opens
 const KIND = {view: ["sparkles", "Nhận định"], run: ["zap", "Lần áp dụng"], config: ["sliders", "Cấu hình"],
   letter: ["mail", "Bản tin"], event: ["news", "Sự kiện"]};
 const MODE = {live: ["good", "Trực tiếp"], mock: ["warn", "Mô phỏng"], rules: ["", "Luật"]};
@@ -95,6 +97,6 @@ export function render(box, d, api) {
     api.inspect(`<h3>${esc(s.label)} <span class="small muted">${s.count} ${esc(s.unit)}</span></h3>
       ${s.note ? `<p class="small">${esc(s.note)}</p>` : ""}
       <div class="dk-list">${list.map(item).join("") || `<p class="small muted">Không có mục nào.</p>`}</div>
-      <p class="mt"><a class="btn" href="${esc(s.route)}">Mở trang ${esc(s.label)}</a></p>`);
+      <p class="mt"><a class="btn" href="${esc(s.route)}">Mở ${esc(STAGE_PAGE[s.id] || s.label)}</a></p>`);
   }
 }

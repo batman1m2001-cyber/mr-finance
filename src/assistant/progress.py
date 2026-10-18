@@ -57,6 +57,7 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "phoi_nhiem": ("Đang xem phơi nhiễm của mọi gia đình", "Đã xem phơi nhiễm của mọi gia đình"),
     "lan_ap_dung": ("Đang xem các lần áp dụng", "Đã xem các lần áp dụng"),
     "do_chinh_xac": ("Đang xem độ chính xác của mô hình", "Đã xem độ chính xác của mô hình"),
+    "so_khach_hang": ("Đang xem sổ khách hàng của bạn", "Đã xem sổ khách hàng của bạn"),
 }
 MONTH = re.compile(r"(?:(\d{4})-)?(0?[1-9]|1[0-2])")  # “2026-09”, or the month alone (“09”: the latest with data)
 

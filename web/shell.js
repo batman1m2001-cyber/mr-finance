@@ -13,11 +13,11 @@
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261018p3";
+import {mount as mountCopilot} from "./copilot.js?v=20261018m3";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261017r2";
 import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261018p3";
-import {DESKS} from "./desk/roles.js?v=20261018m1";
+import {DESKS} from "./desk/roles.js?v=20261018m3";
 
 const ROLES = {
   client: {
@@ -38,6 +38,7 @@ const ROLES = {
   rm: {
     label: "RM", user: "rm01",
     nav: [
+      {id: "ban", label: "Sổ khách hàng", desk: true},  // FEAT-41: the RM's desk (SCR-RM-07)
       {id: "hom-nay", label: "Hôm nay", page: "today"},
       {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
         {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
@@ -158,7 +159,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261018p3");
+  wsLoad ||= import("./workspace/workspace.js?v=20261018m3");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -179,10 +180,10 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261018m2");
+  dkLoad ||= import("./desk/desk.js?v=20261018m4");
   const mod = await dkLoad;
   if (!dk) {
-    dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go});
+    dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient});
     dkRole = role;
     document.body.classList.add("ws-on");
     copilot.dock(dk.dock, {onEvent: dk.live});  // the role's own assistant, docked; its steps light the desk

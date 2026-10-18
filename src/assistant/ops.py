@@ -28,6 +28,7 @@ START = {
         "Độ chính xác của mô hình?",
         "Hộp tin có bao nhiêu tin?",
     ],
+    "rm": ["Sổ khách hàng có gì cần làm?", *HELP["rm"][:3]],
     "specialist": ["Khuyến nghị nào đang chờ tôi duyệt?", "Tìm khách hàng"],
     "admin": ["Có cảnh báo hệ thống nào?", "Mở trang Hệ thống"],
 }

@@ -60,6 +60,28 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
   `su_kien`, `danh_dau_khan`, …). A step lights the stage or panel it reads (`data-node`).
 - **Unchanged:** every page, write and permission; the Customer's workspace (FEAT-40).
 
+### RM — Sổ khách hàng (SCR-RM-07, built in M2, 2026-10-18)
+
+- **Rail:** Sổ khách hàng · Hôm nay · Khách hàng (the ten pages of the picked client as tabs: Tác động tin, Đồ thị tác
+  động, Toàn cảnh, Bản đồ tài chính, Chi tiết, Tài sản, Kế hoạch, Chi phí chính sách, Hiệu quả tư vấn, Duyệt đề xuất) ·
+  Hiệu quả tư vấn · Bộ nhớ at the foot. `#/rm` is now the book; Hôm nay is one click away at its address.
+- **The book** (a relationship map): the RM in the middle, each assigned family a dot — on the inner ring when it needs
+  the RM now (at the pre-review threshold of an effective run, or a goal task “liên hệ ngay”), the middle ring for a
+  proposal waiting for the RM or a goal to confirm, the outer ring for a reminder, the edge when nothing waits; sized
+  by net worth at the newest effective run (equal when none); a count of reasons on the dot. Only the families the
+  RM may see (BRD-RULE-ROLE-02); control-group families carry no signal (BRD-RULE-MEAS-06), as on Hôm nay.
+- **A family picked** → Thông tin: segment, age, occupation, city; its level and each reason; net worth (with the run
+  it is from), proposals waiting, last contact; the news that moved it (each effective run's event with its expected
+  3-month change); its pages as buttons — Tác động tin, Toàn cảnh, Chi tiết, Tài sản, Kế hoạch, Duyệt đề xuất, Ghi
+  liên hệ — each setting the client picker first, then opening the page as a sheet.
+- **Panels:** Cần gọi trước (Hôm nay's list, one row per family, worst P10 first), Đề xuất chờ duyệt (pending, not the
+  RM's own notes; opens Duyệt đề xuất for that family), Việc theo mục tiêu, Liên hệ gần đây (“từ tín hiệu” when the
+  contact cites a signal, KPI-06). Recording a contact stays on Hôm nay.
+- **Assistant:** the RM's own intro, suggestions and box hint; `so_khach_hang` reads the book (who needs the RM soon and
+  why, proposals, goal tasks, the last contact); its 32 tools unchanged. Steps light the map (`book`), the call list
+  (`hom_nay`), proposals (`de_xuat`) and contacts (`lien_he`, `ghi_lien_he`).
+- **Unchanged:** every RM page and write (decide a proposal, record a contact, recommend to a specialist).
+
 ## API and data
 
 `GET /api/desk` → `{role, as_of, …the role's sections}`; see [api_reference.md](../architecture/api_reference.md).
@@ -76,7 +98,10 @@ Listed per phase in the plan §4 and in the traceability rows OWN-MR-01…12. CI
 runs, inbox and RM reads, the assistant's numbers equal to the desk's, the agent map counts the new tools) and
 `tests/ui/test_role_desks_ui.py` (every old CIO address opens as a sheet with no error, group tabs, a stage pick, the
 queue opens a view with its approval, the docked assistant lights the desk, no other role reaches it, phone and
-dark, the Customer's workspace after it).
+dark, the Customer's workspace after it). RM (M2): the same files — the menu and the ten client pages kept, each
+RM's book is their families alone (rm01 C01/C04/C05, rm03 C03), the call list is Hôm nay's, proposals the queue's
+(not the RM's own notes), net worth the run's, the assistant's numbers the book's; every old RM address as a sheet,
+a family's page opened from the book sets the client picker, the assistant lights the book, phone and dark.
 
 ## Limitations
 

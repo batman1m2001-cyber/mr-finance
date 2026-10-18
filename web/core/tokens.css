@@ -238,14 +238,14 @@ main#main { max-width: 1320px; padding: 20px 24px 40px; }
 :is(#page, .drawer) .stat .k { font-size: 12px; color: var(--muted); }
 :is(#page, .drawer) .stat .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
 :is(#page, .drawer) .stats { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-:is(#page, .drawer) .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 650; padding: 2px 9px;
+:is(#page, .drawer, .dk-center, .desk .ws-ins) .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 650; padding: 2px 9px;
   border-radius: 999px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--hair); white-space: nowrap; }
-:is(#page, .drawer) .badge.ai { background: var(--ai-soft); color: var(--ai); border-color: transparent; }
-:is(#page, .drawer) .badge.human { background: var(--human-soft); color: var(--human); border-color: transparent; }
-:is(#page, .drawer) .badge.good { background: var(--good-soft); color: var(--good); border-color: transparent; }
-:is(#page, .drawer) .badge.warn { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
-:is(#page, .drawer) .badge.bad { background: var(--critical-soft); color: var(--critical); border-color: transparent; }
-:is(#page, .drawer) .badge.assumed { border-style: dashed; }
+:is(#page, .drawer, .dk-center, .desk .ws-ins) .badge.ai { background: var(--ai-soft); color: var(--ai); border-color: transparent; }
+:is(#page, .drawer, .dk-center, .desk .ws-ins) .badge.human { background: var(--human-soft); color: var(--human); border-color: transparent; }
+:is(#page, .drawer, .dk-center, .desk .ws-ins) .badge.good { background: var(--good-soft); color: var(--good); border-color: transparent; }
+:is(#page, .drawer, .dk-center, .desk .ws-ins) .badge.warn { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
+:is(#page, .drawer, .dk-center, .desk .ws-ins) .badge.bad { background: var(--critical-soft); color: var(--critical); border-color: transparent; }
+:is(#page, .drawer, .dk-center, .desk .ws-ins) .badge.assumed { border-style: dashed; }
 :is(#page, .drawer) .chip { display: inline-flex; gap: 6px; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 12.5px;
   background: var(--surface-2); border: 1px solid var(--hair); }
 .up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--flat); }
@@ -1279,7 +1279,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
    The rail, dock and sheets are the classes above; the centre scrolls; a stage or panel the assistant reads glows. */
 .desk .ws-tool:nth-child(7) { margin-top: 0; }
 .desk .ws-tool.ws-foot { margin-top: auto; }
-.dk-center { grid-template-rows: minmax(0, 1fr); }
+.dk-center { grid-template-rows: minmax(0, 1fr); grid-template-columns: minmax(0, 1fr); }  /* a long row of tabs scrolls, never widens the sheet */
 .dk-body { min-height: 0; overflow: auto; padding: 14px 20px 28px; }
 .dk-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
 .dk-flow { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
@@ -1328,6 +1328,29 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .dk-tabs a { padding: 5px 10px; border-radius: 8px; text-decoration: none; color: var(--ink-2); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .dk-tabs a[aria-current] { background: var(--accent-soft); color: var(--accent); }
 .desk .ws-sheet-h .iconbtn { flex: none; }
+button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
+/* the RM's book (SCR-RM-07): rings by how soon, dots by net worth */
+.rk-map { padding: 10px 12px 12px; }
+.rk-map svg { display: block; width: 100%; height: auto; max-height: 380px; }
+.rk-ring { fill: none; stroke: var(--hair); stroke-dasharray: 3 5; }
+.rk-edge { stroke: var(--axis); stroke-width: 1.2; }
+.rk-edge.l3 { stroke: var(--critical); stroke-width: 2.2; } .rk-edge.l2 { stroke: var(--warning); stroke-width: 1.8; }
+.rk-edge.l1 { stroke: var(--human); } .rk-edge.l0 { stroke-dasharray: 2 4; }
+.rk-me circle { fill: var(--accent); } .rk-me text { fill: #fff; font-size: 13px; font-weight: 700; text-anchor: middle; }
+.rk-fam { cursor: pointer; outline: none; }
+.rk-dot { fill: var(--surface); stroke: var(--axis); stroke-width: 2.5; }
+.rk-fam.l3 .rk-dot { fill: var(--critical-soft); stroke: var(--critical); } .rk-fam.l2 .rk-dot { fill: var(--warning-soft); stroke: var(--warning); }
+.rk-fam.l1 .rk-dot { fill: var(--human-soft); stroke: var(--human); }
+.rk-halo { fill: none; stroke: var(--accent); stroke-width: 3; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.rk-fam:hover .rk-halo { opacity: .45; } .rk-fam.sel .rk-halo, .rk-fam:focus-visible .rk-halo { opacity: 1; }
+.dk-center .rk-fam[data-node].act .rk-halo { opacity: 1; stroke: var(--pulse); } .dk-center .rk-fam[data-node].lit .rk-halo { opacity: 1; }
+.dk-center .rk-fam[data-node]::after { display: none; }
+.rk-n circle { fill: var(--critical); } .rk-fam.l2 .rk-n circle { fill: var(--warning); } .rk-fam.l1 .rk-n circle { fill: var(--human); }
+.rk-n text { fill: #fff; font-size: 11px; font-weight: 750; text-anchor: middle; }
+.rk-l { fill: var(--ink); font-size: 15px; font-weight: 600; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
+.rk-key { margin: 4px 4px 0; line-height: 1.8; }
+.rk-acts { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { .rk-halo { transition: none; } }
 @media (max-width: 1280px) {
   .dk-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .dk-flow li:nth-child(4)::before, .dk-flow li:nth-child(4)::after { display: none; }
@@ -1341,4 +1364,5 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws.sheeted .dk-body { display: none; }
   .desk .ws-sheet-h { flex-wrap: wrap; padding: 8px 14px; }
   .dk-tabs { order: 5; flex-basis: 100%; }
+  .rk-l { font-size: 15px; } .rk-me text { font-size: 14px; } .rk-n text { font-size: 12px; }
 }

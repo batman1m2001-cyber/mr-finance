@@ -13,7 +13,7 @@ from apply import reads as apply_reads
 from apply import run as apply_run
 from control import roles
 
-ROUTE = {"cio": "#/cio"}  # each role's desk address; a page's address is its menu id under it
+ROUTE = {"cio": "#/cio", "rm": "#/rm"}  # each role's desk address; a page's address is its menu id under it
 
 
 def _late(job: Dict[str, Any]) -> bool:
@@ -179,7 +179,135 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     }  # fmt: skip
 
 
-BUILD = {"cio": cio}
+URGENCY = {3: "Cần gọi ngay", 2: "Cần xử lý", 1: "Nhắc", 0: "Ổn"}
+TASK_URGENCY = {"contact_now": 3, "confirm_goal": 2, "remind": 1}
+
+
+def _book(viewer: Optional[Dict[str, Any]]) -> List[str]:
+    """The RM's families, as Hôm nay reads them: the viewer's assigned families (sign-in on), the account's when
+    the assistant asks for it, every family with sign-in off; never one the request may not see."""
+    from people import auth
+    from people import store as people
+    from wealth import fixtures
+
+    v = viewer or {}
+    if v.get("families") is not None:
+        fams = list(v["families"])
+    elif v.get("id") and v.get("role") == "rm":
+        fams = people.families_of(v["id"])
+    else:
+        fams = fixtures.client_ids()
+    return auth.visible(sorted(fams))
+
+
+def rm(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Sổ khách hàng (SCR-RM-07): the RM's families around the RM, nearer when they need the RM sooner — a family at
+    the pre-review threshold of an effective run or a goal task to contact now, a proposal waiting for the RM or a
+    goal to confirm, a reminder — with what Hôm nay, the approval queue and the contact log say of each."""
+    from wealth import fixtures
+    from wealth import store as reviews
+
+    book = _book(viewer)
+    today = apply_reads.rm_today(book)
+    mine = set(book)
+    heads = {c: fixtures.client(c).get("member_of") or c for c in fixtures.client_ids(members=True)}
+    waiting = [
+        r
+        for r in reviews.reviews(status="pending")
+        if r["kind"] != "rm_note" and heads.get(r["client_id"], r["client_id"]) in mine
+    ]  # what the RM decides on Duyệt đề xuất (pending, not the RM's own notes)
+
+    # one row per family on the call list, worst first (as Hôm nay groups it)
+    calls: Dict[str, Dict[str, Any]] = {}
+    for c in today["cases"]:
+        f = calls.setdefault(c["family_id"], {"family_id": c["family_id"], "name": c["name"], "worst": c,
+                                              "expected_3m": 0, "events": []})  # fmt: skip
+        f["expected_3m"] += c["expected_3m"]
+        f["events"].append(c["event"]["title"])
+        if c["p10_3m_pct"] < f["worst"]["p10_3m_pct"]:
+            f["worst"] = c
+    call_list = sorted(calls.values(), key=lambda f: f["worst"]["p10_3m_pct"])
+
+    effective = apply_run.runs(statuses=("EFFECTIVE",))  # what an RM reads: post-checked runs only
+    families = []
+    for fid in book:
+        rec = fixtures.summary(fid)
+        rows = [(r, x) for r in effective for x in r.get("ranking") or [] if x["family_id"] == fid]
+        tasks = [t for t in today["goal_tasks"] if t["family_id"] == fid]
+        props = [r for r in waiting if heads.get(r["client_id"], r["client_id"]) == fid]
+        contact = next((c for c in today["contacts"] if c["family_id"] == fid), None)
+        why = []
+        if fid in calls:
+            w = calls[fid]["worst"]
+            p10 = f"{abs(w['p10_3m_pct']) * 100:.1f}".replace(".", ",")
+            why.append({"level": 3, "text": f"P10 3 tháng −{p10}% tài sản ròng"})
+        why += [{"level": TASK_URGENCY[t["level"]], "text": f"{t['level_label']}: {t['goal']}"} for t in tasks]
+        if props:
+            why.append({"level": 2, "text": f"{len(props)} đề xuất chờ bạn duyệt"})
+        level = max((w["level"] for w in why), default=0)
+        families.append({
+            "id": fid, "name": rec["name"], "segment": rec.get("segment"), "age": rec.get("age"),
+            "occupation": rec.get("occupation"), "city": rec.get("city"),
+            "net_worth": rows[0][1]["net_worth"] if rows else None, "net_worth_run": rows[0][0]["id"] if rows else None,
+            "level": level, "level_label": URGENCY[level], "why": sorted(why, key=lambda w: -w["level"]),
+            "impacts": [{"run_id": r["id"], "event": _event_title(r["event_id"]), "expected_3m": x["expected_3m"],
+                         "expected_3m_pct": x["expected_3m_pct"], "pre_review": x["pre_review"]} for r, x in rows[:4]],
+            "tasks": len(tasks), "proposals": len(props),
+            "last_contact": {k: contact[k] for k in ("at", "channel_label", "from_signal")} if contact else None,
+            "control": fid in today["control"],
+        })  # fmt: skip
+    families.sort(key=lambda f: (-f["level"], f["name"]))
+    return {
+        "role": "rm",
+        "as_of": time.time(),
+        "families": families,
+        "calls": [
+            {
+                "family_id": f["family_id"],
+                "name": f["name"],
+                "p10_3m_pct": f["worst"]["p10_3m_pct"],
+                "expected_3m": f["expected_3m"],
+                "events": f["events"],
+                "run_id": f["worst"]["run_id"],
+            }
+            for f in call_list
+        ],  # fmt: skip
+        "threshold_pct": today["threshold_pct"],
+        "tasks": [
+            {
+                k: t.get(k)
+                for k in (
+                    "family_id",
+                    "family_name",
+                    "level",
+                    "level_label",
+                    "goal",
+                    "note_title",
+                    "milestone",
+                    "rm_hint",
+                )
+            }
+            for t in today["goal_tasks"]
+        ],  # fmt: skip
+        "proposals": [
+            {
+                "id": r["id"],
+                "family_id": heads.get(r["client_id"], r["client_id"]),
+                "name": fixtures.client(r["client_id"])["name"],
+                "title": r["title"],
+                "kind": r["kind"],
+                "created": r["created"],
+            }
+            for r in waiting
+        ],  # fmt: skip
+        "contacts": [
+            {k: c[k] for k in ("id", "at", "family_id", "channel_label", "from_signal")} for c in today["contacts"][:6]
+        ],
+        "control": today["control"],
+    }
+
+
+BUILD = {"cio": cio, "rm": rm}
 
 
 def desk(role: str, viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

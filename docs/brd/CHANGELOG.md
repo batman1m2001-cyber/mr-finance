@@ -2,6 +2,12 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Multi-role UX M2: the RM works at “Sổ khách hàng” (experiment): the RM's families as a relationship
+  map by how soon they need the RM, sized by net worth; Hôm nay's calls, goal tasks, proposals, contacts; a family's
+  pages open with the client picker set; the RM's own assistant with `so_khach_hang`. Badges now styled on desks;
+  on a phone a sheet no longer widens to its row of tabs (Bản đồ tài chính drew its graph, not its list). —
+  FEAT-41 §RM, screens/rm.md SCR-RM-07, screen inventory, ux/role_desks.md (RM built), matrix OWN-MR-03 (and notes
+  01, 06, 07, 08, 09, 10, 12), api_reference, architecture/assistant.md, assets
 - 2026-10-18 — Multi-role UX M0–M1: the CIO works at its desk “Bàn quyết định” (experiment): the news-to-family flow,
   the decision queue, exposure, events, model and agents from the existing stores; its 13 pages kept as sheets at
   their addresses; its own docked assistant with four desk tools. A 500 found on the way (a client on a route open to

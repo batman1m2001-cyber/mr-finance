@@ -46,6 +46,12 @@ NODES: Dict[str, List[str]] = {
     "phoi_nhiem": ["exposure", "stage:families"],
     "lan_ap_dung": ["stage:runs"],
     "do_chinh_xac": ["model"],
+    # the RM's book: the map, the call list, goal tasks, proposals, contacts
+    "so_khach_hang": ["book", "calls", "proposals"],
+    "hom_nay": ["calls", "tasks"],
+    "de_xuat": ["proposals"],
+    "lien_he": ["contacts"],
+    "ghi_lien_he": ["contacts"],
 }
 
 

@@ -14,4 +14,14 @@ export const DESKS = {
       {id: "bo-nho", label: "Bộ nhớ", icon: "history", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
     ],
   },
+  rm: {
+    title: "Sổ khách hàng", view: "rm",
+    groups: [
+      {id: "ban", label: "Sổ khách hàng", icon: "users", tip: "Sổ khách hàng: gia đình của bạn, ai cần bạn trước", desk: true, nav: ["ban"]},
+      {id: "hom-nay", label: "Hôm nay", icon: "calendar", tip: "Hôm nay: cần xem trước, việc theo mục tiêu, nhật ký liên hệ", nav: ["hom-nay"]},
+      {id: "khach-hang", label: "Khách hàng", icon: "user", tip: "Khách hàng đang chọn: tác động tin, toàn cảnh, tài sản, kế hoạch, duyệt đề xuất", nav: ["khach-hang"]},
+      {id: "hieu-qua", label: "Hiệu quả tư vấn", icon: "activity", tip: "Hiệu quả tư vấn trên mọi khách hàng của bạn", nav: ["hieu-qua"]},
+      {id: "bo-nho", label: "Bộ nhớ", icon: "history", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
+    ],
+  },
 };

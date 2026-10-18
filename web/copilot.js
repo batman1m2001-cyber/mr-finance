@@ -30,7 +30,7 @@ const DESK = new Set(["cio", "compliance", "admin"]);  // A7: the panel links to
 const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ", specialist: "Chuyên gia", admin: "Quản trị"};
 const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
-  rm: ["Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Kịch bản lãi suất tăng", "Duyệt đề xuất đang chờ"],
+  rm: ["Sổ khách hàng có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
   cio: ["Có gì chờ tôi duyệt?", "Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
   compliance: ["Có bao nhiêu tin bị giữ?", "Mở tin bị giữ"],
   specialist: ["Khuyến nghị nào đang chờ tôi duyệt?"],
@@ -39,13 +39,13 @@ const START = {
 // what each role's own assistant is for (FEAT-41): the line before the first question, and the box's hint
 const INTRO = {
   client: "Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn.",
-  rm: "Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn.",
+  rm: "Hỏi về sổ khách hàng của bạn — ai cần gọi trước, đề xuất chờ duyệt, liên hệ — hay tài sản, dòng tiền, tin tác động của khách hàng đang chọn.",
   cio: "Hỏi về việc chờ bạn quyết định, phơi nhiễm, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
   compliance: "Hỏi về tin bị giữ, nghiên cứu và bản tin chờ duyệt, chính sách hay chuỗi nhật ký.",
   admin: "Hỏi về tình trạng hệ thống, nguồn dữ liệu, cảnh báo, cấu hình chờ duyệt hay chuỗi nhật ký.",
   specialist: "Hỏi về khuyến nghị chờ bạn duyệt và hồ sơ của gia đình được giao.",
 };
-const ASK = {client: "Hỏi về tài sản, dòng tiền, tin…", rm: "Hỏi về tài sản, dòng tiền, tin…", cio: "Hỏi về nhận định, phơi nhiễm, tin…",
+const ASK = {client: "Hỏi về tài sản, dòng tiền, tin…", rm: "Hỏi về sổ khách hàng, khách đang chọn…", cio: "Hỏi về nhận định, phơi nhiễm, tin…",
   compliance: "Hỏi về tin bị giữ, bản tin, nhật ký…", admin: "Hỏi về hệ thống, cảnh báo, cấu hình…", specialist: "Hỏi về khuyến nghị, hồ sơ khách…"};
 const MODE = {  // how the answer was written: the badge and the line under the form
   model: (a) => [`mô hình ${String(a.model || "").split("/").pop()}`.trim(), "Mô hình đọc kết quả công cụ của ứng dụng (chế độ demo) và viết câu trả lời; số liệu lấy từ công cụ. Không phải khuyến nghị đầu tư."],
