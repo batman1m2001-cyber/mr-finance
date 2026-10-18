@@ -1,7 +1,10 @@
 """The Assistant panel's width and reading scale (panel UX, 2026-10-18): a divider between the graph and the dock drags
 the dock between a width the conversation reads in and one that leaves the graph its room, folds it past the narrow
 end, opens a folded one, answers the keyboard, is kept per browser and resets; a phone has none. The conversation reads
-compact: 13 px answers, emphasis below bold, time and sources quieter than the answer, more of it on screen."""
+compact: 13 px answers, emphasis below bold, time and sources quieter than the answer, more of it on screen. A turn in
+flight says what is happening now."""
+
+import re
 
 DOCK = """() => { const $ = (q) => document.querySelector(q);
   const d = $('.ws-dock').getBoundingClientRect(), c = $('.ws-canvas').getBoundingClientRect();
@@ -137,3 +140,34 @@ def test_the_conversation_reads_compact_and_its_parts_step_back(open_page):
         else:
             assert r["input"] >= 16, r  # a phone does not zoom the page when the box takes focus
         assert not p.problems()
+
+
+PROGRESS = """() => { window.__prog = []; let last = '';
+  new MutationObserver(() => { const b = document.querySelector('#cp-msgs [data-busy]'); if (!b) return;
+    const rows = [...b.querySelectorAll('.cp-prog-r')].map(r => ({st: r.classList.contains('run') ? 'run'
+      : r.classList.contains('ok') ? 'ok' : 'bad', text: r.innerText.replace(/\\s+/g, ' ').trim()}));
+    const k = JSON.stringify(rows); if (k !== last) { last = k; window.__prog.push(rows); } })
+  .observe(document.querySelector('#cp-msgs'), {subtree: true, childList: true, characterData: true}); }"""
+
+
+def test_the_turn_in_flight_says_what_is_happening_in_the_servers_words_only(open_page):
+    """The owner (2026-10-18): between the tool and the answer's first words nothing said what was happening, and a
+    bare “Dòng tiền” says too little. The turn in flight is a short list: the question understood, each step in the
+    server's sentence (assistant/progress.py) and its time, then the results read and the answer written. A tool's
+    id, arguments or result never show."""
+    p = open_page()
+    p.go("#/client/xem/tong-quan")
+    p.page.wait_for_selector(".wedge")
+    p.page.evaluate(PROGRESS)
+    p.page.fill("#cp-q", "Dòng tiền tháng này thế nào?")  # no model in tests: the fallback calls the cash-flow tool
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_function(ANSWERED)
+    states = p.page.evaluate("window.__prog")
+    assert states and states[0] == [{"st": "run", "text": "Đang hiểu câu hỏi · đang chạy"}], states[:2]
+    rows = [r for s in states for r in s]
+    # the step in a sentence (the fallback answers within one redraw, so its done row may never be drawn)
+    assert any(re.match(r"(Đang|✓ Đã) xem tiền vào, tiền ra", r["text"]) for r in rows), rows
+    assert any(r["st"] == "ok" and re.match(r"✓ Đã hiểu câu hỏi .*\d,\d s$", r["text"]) for r in rows), rows
+    assert all(not re.search(r"[a-z]+_[a-z_]+|\{|C0\d", r["text"]) for r in rows), rows  # no id, argument, client
+    assert all(sum(r["st"] == "run" for r in s) <= 1 for s in states), states  # one thing happening at a time
+    assert not p.problems()

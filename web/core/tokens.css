@@ -1087,7 +1087,16 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 @keyframes ws-write { 0%, 100% { transform: scale(.96); opacity: .25; } 50% { transform: scale(1.04); opacity: .8; } }
 .ws-tool.ping { animation: ws-ping .9s var(--ease-out) 2; }
 .cp-live-text { margin-top: 6px; }
-.cp-steps .chip.cp-live-run { border-color: var(--accent); }
+/* the turn in flight: what is happening now leads, what is done steps back */
+.cp-prog { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 11.5px; line-height: 1.45; }
+.cp-prog-r { display: flex; align-items: flex-start; gap: 6px; color: var(--muted); min-width: 0; }
+.cp-prog-r > span:nth-child(2) { flex: 1; min-width: 0; }
+.cp-prog-r.run { color: var(--ink); }
+.cp-prog-r.bad { color: var(--critical); }
+.cp-prog-i { width: 22px; height: 1.45em; flex: none; display: inline-flex; align-items: center; justify-content: center; }
+.cp-prog-i .cp-dots { margin: 0; }
+.cp-prog-r.ok .cp-prog-i { color: var(--good); }
+.cp-prog-t { padding-left: 8px; white-space: nowrap; font-variant-numeric: tabular-nums; opacity: .8; }
 @keyframes ws-ping { 0%, 100% { transform: none; } 40% { transform: scale(1.14); } }
 @keyframes ws-pulse { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.5); } }
 /* the strip */

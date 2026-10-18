@@ -203,13 +203,26 @@ export function mount() {
     for (const b of box.querySelectorAll("[data-ok]")) b.onclick = () => confirmIt(Number(b.dataset.ok));
     for (const b of box.querySelectorAll("[data-no]")) b.onclick = () => declineIt(Number(b.dataset.no));
   };
-  // the turn in flight: each step as its events say (working, done, failed), the model's words so far
-  const STEP_ST = {run: ["", "đang chạy"], ok: ["", "xong"], bad: ["bad", "không thực hiện được"]};
+  // the turn in flight, as what is happening now: the question being understood, each step as the server says it
+  // (“Đang xem tiền vào, tiền ra tháng 09/2026”, then done, and how long), then the results read and the answer
+  // written, its words below as they come. The sentences are the server's (assistant/progress.py): never a tool's
+  // id, its arguments or its result.
+  const STEP_ST = {run: "đang chạy", ok: "xong", bad: "không thực hiện được"};
+  const secs = (ms) => `${(ms / 1000).toFixed(1).replace(".", ",")} s`;
   const liveHtml = () => {
     const dots = `<span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span>`;
-    if (!run || (!run.steps.length && !run.text && !run.waiting)) return `${dots} Đang xử lý…`;
-    const steps = run.steps.map(x => `<span class="chip cp-live-${x.st} ${STEP_ST[x.st][0]}">${esc(x.label)} <span class="sr-only">${STEP_ST[x.st][1]}</span>${x.st === "run" ? dots : x.st === "ok" ? "✓" : "✕"}</span>`).join(" ");
-    return `${steps ? `<div class="cp-steps small">${steps}</div>` : ""}${run.text ? `<div class="cp-live-text">${prose(run.text)}</div>` : ""}${run.waiting ? `<div class="small muted">Chờ bạn xác nhận…</div>` : ""}`;
+    const row = (st, label, ms) => `<li class="cp-prog-r ${st}"><span class="cp-prog-i" aria-hidden="true">${st === "run" ? dots : st === "ok" ? "✓" : "✕"}</span><span>${esc(label)}<span class="sr-only"> · ${STEP_ST[st]}</span></span>${ms != null ? `<span class="cp-prog-t">${secs(ms)}</span>` : ""}</li>`;
+    if (!run) return `<ol class="cp-prog">${row("run", "Đang hiểu câu hỏi")}</ol>`;
+    const rows = [];
+    // words before any step are the answer or a lead-in to a tool call: which, only the next event says
+    if (!run.steps.length) rows.push(row("run", run.waiting ? "Chờ bạn xác nhận" : run.text ? "Đang trả lời" : "Đang hiểu câu hỏi"));
+    else {
+      rows.push(row("ok", "Đã hiểu câu hỏi", run.steps[0].at - run.t0));
+      for (const x of run.steps) rows.push(row(x.st, x[x.st], x.ms));
+      if (run.waiting) rows.push(row("run", "Chờ bạn xác nhận"));
+      else if (run.steps.every(x => x.st !== "run")) rows.push(row("run", run.text ? "Đang viết câu trả lời" : "Đang đọc kết quả để trả lời"));
+    }
+    return `<ol class="cp-prog">${rows.join("")}</ol>${run.text ? `<div class="cp-live-text">${prose(run.text)}</div>` : ""}`;
   };
   // at most one redraw every 60 ms: each one lays the list out again (a burst of 37 events cost 1.2 s, one per event);
   // the graph still hears every event as it comes (tell)
@@ -218,7 +231,7 @@ export function mount() {
   const drawLive = () => { if (!liveTimer) liveTimer = setTimeout(drawLiveNow, 60); };
   // docked: the turn as it happens; returns the assistant's answer, or a failure that says what broke
   const streamed = async (body) => {
-    run = {steps: [], text: "", waiting: false};
+    run = {steps: [], text: "", waiting: false, t0: performance.now()};
     let answer = null, broke = null;
     const tell = (e) => { try { live && live.onEvent && live.onEvent(e); } catch (err) { console.error(err); } };
     tell({type: "reset"});
@@ -226,8 +239,12 @@ export function mount() {
       await stream("/api/assistant/stream", body, (e) => {
         // words before a tool call are a lead-in (“Tôi xem dòng tiền…”), not the answer: the step says it from here,
         // and the answer streams on its own, as it will be kept
-        if (e.type === "step" && e.phase === "start") { run.text = ""; run.steps.push({id: e.call_id, label: e.label || e.tool, st: "run"}); }
-        else if (e.type === "step" && e.phase === "end") { const x = run.steps.find(s => s.id === e.call_id && s.st === "run"); if (x) x.st = e.ok ? "ok" : "bad"; }
+        if (e.type === "step" && e.phase === "start") {
+          const name = e.label || "một chức năng";  // a server without the sentences: the step's panel name
+          run.text = "";
+          run.steps.push({id: e.call_id, st: "run", at: performance.now(), run: e.doing || `Đang dùng: ${name}`, ok: e.done || name, bad: e.failed || `Không thực hiện được: ${name}`});
+        }
+        else if (e.type === "step" && e.phase === "end") { const x = run.steps.find(s => s.id === e.call_id && s.st === "run"); if (x) { x.st = e.ok ? "ok" : "bad"; x.ms = e.ms; } }
         else if (e.type === "text") run.text += e.text;
         else if (e.type === "wait") run.waiting = true;
         else if (e.type === "answer") answer = e.assistant;

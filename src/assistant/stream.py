@@ -21,7 +21,7 @@ from operonx_agents.run.events import (
     TurnStarted,
 )
 
-from assistant import registry
+from assistant import progress, registry
 from assistant.base import Ctx
 
 # what each tool reads, as graph node ids (``ME``, ``FL:in``…) or kinds (``goal``, ``event``…): where its work shows
@@ -136,7 +136,8 @@ def translate(ev: Any, ctx: Ctx) -> Optional[Dict[str, Any]]:
     if isinstance(ev, ToolCallStarted):
         nodes = nodes_for(ev.tool, ev.args, ctx.graph)
         return {"type": "step", "phase": "start", "call_id": ev.call_id, "tool": ev.tool,
-                "label": registry.LABELS.get(ev.tool, ev.tool), "nodes": nodes}  # fmt: skip
+                "label": registry.LABELS.get(ev.tool, ev.tool), "nodes": nodes,
+                **progress.says(ev.tool, ev.args)}  # fmt: skip
     if isinstance(ev, ToolCallFinished):
         queue = ctx.trail.get(ev.call_id) or []
         return step_end(ev.tool, ev.call_id, ev.ok, ev.ms, queue[-1] if queue else None)

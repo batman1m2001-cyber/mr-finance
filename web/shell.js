@@ -11,10 +11,10 @@
    strip — mounted once; a Customer route changes its lens, and a page of the old menu opens as a sheet over the
    graph, drawn into #page as before. The other roles keep the menu. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261018p2";
+import {mount as mountCopilot} from "./copilot.js?v=20261018p3";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261017r2";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261018p2";
+import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261018p3";
 
 const ROLES = {
   client: {
@@ -154,7 +154,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261018p2");
+  wsLoad ||= import("./workspace/workspace.js?v=20261018p3");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});

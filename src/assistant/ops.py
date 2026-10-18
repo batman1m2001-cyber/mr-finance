@@ -11,7 +11,7 @@ from operonx import op
 from operonx.core.loggings import LOGGER
 
 from assistant import conversations as conv
-from assistant import knowledge, memory, registry, sessions, stream
+from assistant import knowledge, memory, progress, registry, sessions, stream
 from assistant import turn as turns
 from assistant.base import Ctx
 from control import audit, db, roles
@@ -144,6 +144,7 @@ async def fallback_events(r: Dict[str, Any], why: str):
             "tool": got["tool"],
             "label": label,
             "nodes": nodes,
+            **progress.says(got["tool"], got["args"]),
         }
     t0 = time.monotonic()
     step = await run_tool(

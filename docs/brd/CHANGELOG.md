@@ -2,6 +2,21 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — The Assistant panel says what it is doing while it works (owner: "display the progress… a message
+  with clear semantic, concise… but don't be insecure", experiment).
+  - A turn in flight is a short list. In order:
+    - "Đang hiểu câu hỏi" (understanding the question);
+    - each step in a sentence, then done, with its time ("Đã chạy kịch bản sốc: “VN-Index giảm 30%” · 0,1 s");
+    - "Đang đọc kết quả để trả lời" (reading the results to answer);
+    - "Đang viết câu trả lời" (writing the answer), with the words streaming below.
+    It replaces a bare "Đang xử lý…" and step chips. Until now nothing showed between the tool's end and the
+    answer's first words (~1.5 s).
+  - The sentences are the server's (`assistant/progress.py`): two fixed ones per tool. The only details are the
+    product's own names, a stress scenario's title or a YYYY-MM month. The person's text, ids, other arguments and
+    results never show. A failed step says so ("Không thực hiện được: …").
+  - Tests: tests/test_assistant_progress.py (new), tests/ui/test_assistant_panel_ui.py (the turn in flight).
+    Screenshots: docs/brd/testing/assistant/progress/.
+
 - 2026-10-18 — The assistant answers faster: hidden reasoning off (owner: "takes too much to respond", experiment).
   - Diagnosis: our code is ~0.1 s of a turn. The rest is the model: two calls on a tool turn, each reasoning first.
   - Same 26 conversations, in parallel on the same data: median turn 4.26 → 3.26 s (p90 7.50 → 5.26 s), first
