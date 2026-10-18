@@ -299,6 +299,33 @@ async def family_profile(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+# -- Compliance ----------------------------------------------------------------------------------------------------
+
+
+async def controls(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Bàn kiểm soát: what waits for Compliance, oldest first, then each control's steps and the chain."""
+    d = _desk(ctx, "compliance")
+    label = {c["id"]: c["label"] for c in d["controls"]}
+    q = d["queue"]
+    oldest = "; ".join(f"{x['title']} ({label[x['control']]}, {x['id']})" for x in q[:5])
+    head = f"{len(q)} việc chờ Tuân thủ, cũ nhất trước: {oldest}." if q else "Không việc nào chờ Tuân thủ."
+    each = "; ".join(
+        f"{c['label']}: " + ", ".join(f"{s['count']} {s['label'].lower()}" for s in c["steps"]) for c in d["controls"]
+    )
+    ch = d["chain"]
+    chain = "Chuỗi nhật ký nguyên vẹn" if ch["ok"] else f"Chuỗi nhật ký gãy ở dòng {ch['broken_at']}"
+    return {
+        "text": f"{head} Từng chốt: {each}. {chain} ({ch['count']} dòng). Quyết định ở trang của từng chốt.",
+        "data": {
+            "waiting": len(q),
+            "controls": {c["id"]: c["steps"][0]["count"] for c in d["controls"]},
+            "chain_ok": ch["ok"],
+        },  # fmt: skip
+        "focus": ["controls", "queue"] + [c["id"] for c in d["controls"] if c["steps"][0]["count"]],
+        "sources": ["Bàn kiểm soát"],
+    }
+
+
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
     for t in (
@@ -375,6 +402,15 @@ CATALOGUE: Dict[str, Tool] = {
             },
             page="ban-lam-viec",
             timeout=60.0,
+        ),
+        Tool(
+            "ban_kiem_soat",
+            "bàn kiểm soát của Tuân thủ: việc đang chờ Tuân thủ, cũ nhất trước (tin bị giữ, nghiên cứu chờ phát hành, "
+            "bản tin chờ duyệt, văn bản chính sách chờ xác nhận, cấu hình chờ duyệt), từng chốt và chuỗi nhật ký",
+            ("compliance",),
+            controls,
+            page="ban-lam-viec",
+            follow=["Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
         ),
         Tool(
             "chuoi_nhat_ky",

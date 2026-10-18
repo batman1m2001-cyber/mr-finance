@@ -94,3 +94,22 @@ the text below; “Nội bộ — không gửi khách hàng”), **Chạy Agent 
 bản**, the text with article headings and the quotes marked, and where it came from (the signed PDF and its hash);
 beside it **Nguồn** (address, who added it, and the verification or, for a second Compliance person, the form to
 verify), **Cập nhật trạng thái** (Compliance) and **Lịch sử**.
+
+## SCR-CMP-06 — Bàn kiểm soát (Compliance desk)
+
+| | |
+|---|---|
+| Route | `#/compliance`, `#/compliance/ban`; every other Compliance address opens its page as a sheet over the desk |
+| Feature | [FEAT-41](../../features/FEAT-41-role-desks.md) (and the pages it gathers: FEAT-02, 03, 11, 14, 15, 16, 17, 18) |
+| Requirements | OWN-MR-01, OWN-MR-06, OWN-MR-07, OWN-MR-10; BRD-BR-03, BR-04, FR-306, FR-701, FR-702, FR-801 |
+| Data | `GET /api/desk` — the held news, research, letters, policy documents and configuration the pages read, the audit check, the bell's alerts for Compliance |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CMP-06_desktop-light.jpg) · [a lane picked, dark](../../assets/current_ui/SCR-CMP-06-pick_desktop-dark.jpg) · [phone, dark](../../assets/current_ui/SCR-CMP-06_phone-dark.jpg) |
+
+**Centre.** Header “Tuân thủ · Bàn kiểm soát” with “<n> việc chờ Tuân thủ · <a> cảnh báo đang mở” and a pill for the
+chain. Six lanes, each a button with its icon, name and rule, then its steps as numbers joined by arrows (“1 Chờ phát
+hành → 0 Đã phát hành → 0 Từ chối”), the first in amber when something waits and the lane's border amber; the chain's
+lane (“657 dòng → ✓ băm khớp → 0 đoạn chỉ-ghi-một-lần”) opens Nhật ký. Below: **Chờ Tuân thủ** (oldest first: title,
+control, detail, age, “Chờ bạn” or “Chưa tới giờ”) and **Cảnh báo**. A phone puts each lane's name above its steps.
+
+**Thông tin (a lane picked).** The rule and the step counts, each item waiting (opening its own page), “Mở <page>”.
+

@@ -120,7 +120,7 @@ the composition its desk draws (`src/desk/reads.py`), so the assistant says the 
 `van_hanh` (what on the operations map is not green), `chuoi_nhat_ky` and `cau_hinh_cho_duyet` (Admin and
 Compliance: the chain checked now, configuration waiting); Expert (M4): `ban_chuyen_gia` (the queue, oldest first, and
 the certificate), `ho_so_khach` (an assigned family's picture through the overview and goal tools; any other family
-refused). They are in
+refused); Compliance (M5): `ban_kiem_soat` (what waits for Compliance, oldest first, each control's steps, the chain). They are in
 the map's `tools_app` family; `stream.NODES` maps each to the desk's `data-node` it lights.
 
 To come: `help` (product KB) and `materials` (user KB) in A5; memory tools in A4; `web_search` in A5;

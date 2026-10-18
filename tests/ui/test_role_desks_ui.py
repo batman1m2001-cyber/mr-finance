@@ -9,7 +9,7 @@ from pathlib import Path
 
 from conftest import in_thread
 from test_apply import MARKET, approved
-from test_role_desks import pending_view, recommendation
+from test_role_desks import controls_waiting, pending_view, recommendation
 
 WEB = Path(__file__).resolve().parents[2] / "web"
 
@@ -355,4 +355,77 @@ def test_no_other_role_reaches_the_bench_and_the_expert_on_a_phone(open_page):
         q.page.wait_for_selector(".desk-specialist [data-f]")
         assert not q.problems(), (theme, q.problems())
         q.go("#/specialist/duyet")
+        assert q.page.is_visible("#ws-sheet") and not q.problems(), (theme, q.problems())
+
+
+# -- Compliance · Bàn kiểm soát (M5) ---------------------------------------------------------------------------------
+
+
+def test_compliance_works_at_the_controls_and_every_page_is_a_sheet(open_page):
+    in_thread(controls_waiting)
+    p = open_page()
+    p.go("#/compliance")
+    p.page.wait_for_selector(".desk-compliance .cm-lane")
+    assert p.page.is_hidden("#nav") and p.page.locator("#ws-pane-a #cp-q").count() == 1
+    assert p.page.eval_on_selector_all("[data-c]", "bs => bs.map(b => b.dataset.c)") == [
+        "held",
+        "research",
+        "letters",
+        "policy",
+        "config",
+    ]
+    assert p.page.locator(".cm-lane.waits").count() == 5 and p.page.locator('[data-node="queue"] .dk-row').count() == 5
+    # a control picked lists what waits in Thông tin and opens its page, where the decision is made
+    p.page.click('[data-c="held"]')
+    p.page.wait_for_selector("#ws-pane-i:not([hidden]) a.btn")
+    assert "Sao Mai Land" in p.page.inner_text("#ws-pane-i")
+    p.page.click("#ws-pane-i a.btn")
+    p.page.wait_for_function("location.hash === '#/compliance/giu' && !document.querySelector('#ws-sheet').hidden")
+    seen = routes("compliance")
+    assert len(seen) == 9
+    for r in seen:
+        p.go(r)
+        assert p.page.is_visible("#ws-sheet"), r
+        assert p.page.locator(".ws-tool[aria-current]").count() == 1, r
+        assert not p.problems(), (r, p.problems())
+    p.go("#/compliance/ban-tin")
+    assert p.page.locator("#dk-tabs a").count() == 3  # Nội dung: research, letters, policy
+    p.go("#/compliance")
+    assert p.page.is_hidden("#ws-sheet") and not p.problems()
+
+
+def test_the_compliance_assistant_lights_the_controls(open_page):
+    step = {**STEP, "tool": "ban_kiem_soat", "label": "Bàn kiểm soát"}
+    script = [[0, {"type": "start"}],
+              [50, {**step, "phase": "start", "nodes": ["controls", "queue"]}],
+              [700, {**step, "phase": "end", "ok": True, "ms": 600}],
+              [1200, {"type": "answer", "assistant": {"status": "ok", "mode": "model", "text": "Không việc nào chờ.",
+                                                      "steps": []}}]]  # fmt: skip
+    p = open_page(theme="dark")
+    p.ctx.add_init_script(TIMED)
+    p.ctx.add_init_script(f"window.__script = {json.dumps(script)};")
+    p.go("#/compliance")
+    p.page.wait_for_selector(".desk-compliance .cm-lane")
+    assert "Có gì chờ Tuân thủ?" in p.page.inner_text("#ws-pane-a")
+    p.page.fill("#cp-q", "Có gì chờ Tuân thủ?")
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_selector('[data-node="controls"].act', timeout=4000)
+    p.page.wait_for_selector('[data-node="queue"].lit', timeout=6000)
+    assert p.page.evaluate("window.__body.role") == "compliance" and not p.problems()
+
+
+def test_no_other_role_reaches_the_controls_and_compliance_on_a_phone(open_page):
+    p = open_page()
+    for role in ("cio", "rm", "admin", "specialist"):
+        p.as_role(role)
+        p.page.evaluate("location.hash = '#/compliance'")
+        p.page.wait_for_timeout(400)
+        assert p.page.locator(".desk-compliance").count() == 0, role
+    p.errors.clear()
+    for theme in ("light", "dark"):
+        q = open_page(size="phone", theme=theme)
+        q.go("#/compliance")
+        q.page.wait_for_selector(".desk-compliance .cm-lane")
+        assert not q.problems(), (theme, q.problems())
+        q.go("#/compliance/giu")
         assert q.page.is_visible("#ws-sheet") and not q.problems(), (theme, q.problems())

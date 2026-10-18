@@ -87,6 +87,11 @@ def test_the_specialist_keeps_every_page_it_had():
     assert menu("specialist") == ["ban", "duyet", "bo-nho"]
 
 
+def test_compliance_keeps_every_page_it_had():
+    before = ["giu", "nghien-cuu", "ban-tin", "chinh-sach", "do-luong", "nhat-ky", "agent", "cau-hinh", "bo-nho"]
+    assert menu("compliance") == ["ban"] + before
+
+
 def test_admin_keeps_every_page_it_had():
     assert menu("admin") == ["ban", "he-thong", "du-lieu", "cau-hinh", "agent", "nhat-ky", "bo-nho"]
 
@@ -219,7 +224,7 @@ def test_the_cio_assistant_says_the_desks_numbers():
 DESK_TOOLS = {"ban_quyet_dinh": ("cio",), "phoi_nhiem": ("cio",), "lan_ap_dung": ("cio",), "do_chinh_xac": ("cio",),
               "so_khach_hang": ("rm",), "van_hanh": ("admin",), "chuoi_nhat_ky": ("admin", "compliance"),
               "cau_hinh_cho_duyet": ("admin", "compliance"), "ban_chuyen_gia": ("specialist",),
-              "ho_so_khach": ("specialist",)}  # fmt: skip
+              "ho_so_khach": ("specialist",), "ban_kiem_soat": ("compliance",)}  # fmt: skip
 
 
 @pytest.mark.parametrize("name", sorted(DESK_TOOLS))
@@ -405,3 +410,126 @@ def test_the_expert_assistant_says_the_queue_and_reads_only_an_assigned_family()
     assert one["data"] == {"family": "C01"} and "C01" in one["text"]
     with pytest.raises(ToolFailed):  # C02 is not sp_global's
         asyncio.run(execute(registry.REGISTRY["ho_so_khach"], ctx("specialist"), {"gia_dinh": "C02"}))
+
+
+# -- Compliance · Bàn kiểm soát (M5) -----------------------------------------------------------------------------------
+
+
+def controls_waiting():
+    """One of each thing waiting for Compliance, through the writes the existing tests use: news naming the
+    restricted list (held), research uploaded, a letter sent for approval, a policy document added, configuration
+    proposed."""
+    from test_news import NOW as NEWS_NOW
+    from test_news import feed, ingest, rfc
+    from test_newsletter import approved_view, draft
+    from test_research import report
+
+    from control import config
+    from newsletter import store as letters
+    from policy import store as policy
+    from research import store as research
+
+    ingest(
+        {
+            "vneconomy_tc": feed(
+                ("Sao Mai Land chậm trả lãi trái phiếu", "https://vneconomy.vn/sml.htm", "", rfc(NEWS_NOW - 60))
+            )
+        },
+        now=NEWS_NOW,
+    )
+    research.upload(report(), "cio")
+    letters.act(draft([approved_view()])["id"], "submit", "cio")
+    item = {"source_url": "https://www.sbv.gov.vn/du-thao-1", "title": "Dự thảo Thông tư sửa đổi", "status": "draft",
+            "number": "x/2026/TT-NHNN"}  # fmt: skip
+    policy.add(item, "compliance")
+    config.propose("thresholds", {**config.data("thresholds"), "pre_review_pct": -0.07}, "cio2", "thử")
+
+
+def test_the_compliance_desk_counts_what_each_control_page_counts(monkeypatch):
+    from app.web import app
+    from people import auth
+
+    controls_waiting()
+    monkeypatch.setenv("MF_AUTH", "on")
+    client = TestClient(app)
+    h = {"cookie": f"{auth.COOKIE}={auth.issue('compliance')}"}
+    d = client.get("/api/desk?role=cio", headers=h).json()
+    assert d["role"] == "compliance"
+    wait = {c["id"]: c["steps"][0]["count"] for c in d["controls"]}
+    held = client.get("/api/news/inbox?held=1", headers=h).json()["items"]
+    research = client.get("/api/research", headers=h).json()["items"]
+    letters = client.get("/api/newsletters", headers=h).json()["newsletters"]
+    docs = client.get("/api/policy", headers=h).json()["documents"]
+    cfg = client.get("/api/system", headers={"cookie": f"{auth.COOKIE}={auth.issue('admin')}"}).json()["config_waiting"]
+    assert (
+        wait
+        == {
+            "held": len(held),
+            "research": sum(r["status"] == "PENDING_RELEASE" for r in research),
+            "letters": sum(n["status"] == "PENDING_COMPLIANCE" for n in letters),
+            "policy": sum(1 for x in docs if not x.get("verified") and x["status"] != "dropped"),
+            "config": len(cfg),
+        }
+        == {"held": 1, "research": 1, "letters": 1, "policy": 1, "config": 1}
+    )
+    assert len(d["queue"]) == 5 and [x["at"] for x in d["queue"]] == sorted(x["at"] for x in d["queue"])
+    assert {x["control"] for x in d["queue"]} == set(wait) and all(
+        x["route"].startswith("#/compliance/") for x in d["queue"]
+    )
+    assert d["chain"]["ok"] and d["chain"]["count"] == client.get("/api/audit/verify", headers=h).json()["count"]
+
+
+def test_the_compliance_desk_is_compliances_alone(monkeypatch):
+    from app.web import app
+    from people import auth
+
+    monkeypatch.setenv("MF_AUTH", "on")
+    client = TestClient(app)
+    for who in ("cio", "rm01", "admin", "sp_global"):  # each their own desk, never Compliance's
+        assert (
+            client.get("/api/desk?role=compliance", headers={"cookie": f"{auth.COOKIE}={auth.issue(who)}"}).json()[
+                "role"
+            ]
+            != "compliance"
+        )
+    with pytest.raises(roles.Forbidden):
+        desk_reads.desk("client", {"id": "C01", "role": "client"})
+
+
+def test_the_compliance_assistant_says_what_waits_and_each_control():
+    controls_waiting()
+    d = desk_reads.desk("compliance", {"id": "compliance", "role": "compliance"})
+    said = asyncio.run(execute(registry.REGISTRY["ban_kiem_soat"], ctx("compliance"), {}))
+    each = {c["id"]: c["steps"][0]["count"] for c in d["controls"]}
+    assert said["data"] == {"waiting": len(d["queue"]), "controls": each, "chain_ok": True}
+    assert {"held", "research", "letters", "policy", "config"} <= set(said["focus"]) and "Sao Mai Land" in said["text"]
+
+
+SIGNED = {"ban_quyet_dinh": "cio", "phoi_nhiem": "cio", "lan_ap_dung": "cio", "do_chinh_xac": "cio",
+          "so_khach_hang": "rm01", "van_hanh": "admin", "chuoi_nhat_ky": "compliance", "cau_hinh_cho_duyet": "admin",
+          "ban_chuyen_gia": "sp_global", "ho_so_khach": "sp_global", "ban_kiem_soat": "compliance"}  # fmt: skip
+
+
+@pytest.mark.parametrize("name", sorted(SIGNED))
+def test_a_desk_tool_works_signed_in_inside_a_served_turn(name, monkeypatch):
+    # the assistant's turn is a served run: every read under it is checked against the person signed in, so a desk
+    # read touching a family the person may not see fails there, not in a test without sign-in (the RM's book did)
+    import operonx.app.serve.protocol as protocol
+
+    from people import auth
+    from people import store as people
+
+    who = SIGNED[name]
+    _, run = approved(*MARKET)
+    recommendation("C01", "Giảm cổ phiếu ngân hàng")
+    monkeypatch.setenv("MF_AUTH", "on")
+
+    class Session:
+        meta = {"path": "/api/assistant/stream", "headers": {"cookie": f"{auth.COOKIE}={auth.issue(who)}"}}
+
+    monkeypatch.setattr(protocol, "current_session", lambda: Session())
+    assert auth.checking() and auth.signed_in()["id"] == who
+    role = people.person(who)["role"]
+    c = Ctx(role=role, client_id=None, scope="personal", question="", user=who)
+    out = asyncio.run(execute(registry.REGISTRY[name], c, {}))
+    assert out["text"] and "không được xem" not in out["text"]

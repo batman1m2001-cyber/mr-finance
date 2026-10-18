@@ -32,7 +32,7 @@ const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
   rm: ["Sổ khách hàng có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
   cio: ["Có gì chờ tôi duyệt?", "Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
-  compliance: ["Có bao nhiêu tin bị giữ?", "Mở tin bị giữ"],
+  compliance: ["Có gì chờ Tuân thủ?", "Có bao nhiêu tin bị giữ?", "Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
   specialist: ["Khuyến nghị nào đang chờ tôi duyệt?", "Hồ sơ của gia đình này thế nào?", "Chứng chỉ của tôi còn hiệu lực không?"],
   admin: ["Hệ thống có gì bất thường?", "Chuỗi nhật ký còn nguyên không?", "Có cảnh báo hệ thống nào?", "Cấu hình nào chờ duyệt?"],
 };

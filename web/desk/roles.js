@@ -26,6 +26,18 @@ export const DESKS = {
       {id: "bo-nho", label: "Bộ nhớ", icon: "archive", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
     ],
   },
+  compliance: {
+    title: "Bàn kiểm soát", view: "compliance",
+    groups: [
+      {id: "ban", label: "Bàn kiểm soát", icon: "shield", tip: "Bàn kiểm soát: các chốt kiểm soát và việc chờ Tuân thủ", desk: true, nav: ["ban"]},
+      {id: "giu", label: "Tin bị giữ", icon: "lock", tip: "Tin bị giữ vì danh sách hạn chế", nav: ["giu"]},
+      {id: "noi-dung", label: "Nội dung", icon: "file", tip: "Nội dung: nghiên cứu, bản tin, chính sách", nav: ["nghien-cuu", "ban-tin", "chinh-sach"]},
+      {id: "do-luong", label: "Đo lường", icon: "activity", tip: "Đo lường: báo cáo hằng tháng", nav: ["do-luong"]},
+      {id: "nhat-ky", label: "Nhật ký", icon: "history", tip: "Nhật ký kiểm toán: chuỗi băm, xuất", nav: ["nhat-ky"]},
+      {id: "ai", label: "AI và cấu hình", icon: "bot", tip: "Agent và cấu hình theo phiên bản", nav: ["agent", "cau-hinh"]},
+      {id: "bo-nho", label: "Bộ nhớ", icon: "archive", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
+    ],
+  },
   specialist: {
     title: "Bàn chuyên gia", view: "specialist",
     groups: [

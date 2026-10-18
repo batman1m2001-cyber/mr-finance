@@ -136,7 +136,7 @@ reads use, with the same family filter.
 | M2 | RM desk + tool | same — **done 2026-10-18** |
 | M3 | Admin desk + tools | same — **done 2026-10-18** |
 | M4 | Expert desk + tools | same — **done 2026-10-18** |
-| M5 | Compliance desk + tools | same |
+| M5 | Compliance desk + tools | same — **done 2026-10-18** |
 | M6 | BRD close-out: IA, inventory, journeys, matrix rows, regression record; a few real-model turns per role (cost counted) | full suite + every UI test; `check_brd_docs.py` |
 
 **Tests every phase adds:** (1) *preservation* — every old route of the role opens its page as a sheet, with no

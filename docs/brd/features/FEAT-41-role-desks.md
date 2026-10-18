@@ -124,6 +124,22 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
 - **Every desk (from M4):** while a page is open as a sheet, the centre under it is inert — no focus, no click — so
   the Expert's decision bar cannot be reached behind Duyệt khuyến nghị.
 
+### Compliance — Bàn kiểm soát (SCR-CMP-06, built in M5, 2026-10-18)
+
+- **Rail:** Bàn kiểm soát · Tin bị giữ · Nội dung (Nghiên cứu, Bản tin, Chính sách) · Đo lường · Nhật ký · AI và cấu
+  hình (Agent, Cấu hình) · Bộ nhớ at the foot. All nine pages at their addresses.
+- **The controls:** one lane per control, its steps left to right, the first what waits — Tin bị giữ (held →
+  let through, BRD-BR-04), Nghiên cứu (waiting → released / rejected, BR-03), Bản tin (waiting → approved / returned,
+  FR-801), Chính sách (waiting for a second person's verification → verified → summarised by the policy agent,
+  FR-306), Cấu hình (waiting, FR-701), Chuỗi nhật ký (rows, the hash check, the write-once segments, FR-702). A lane
+  picked lists what waits in Thông tin, each opening its item, and “Mở <page>”.
+- **One queue:** everything waiting for Compliance, oldest first, each row its page; research not yet at its release
+  time says “Chưa tới giờ”. The alerts the bell holds for Compliance beside it.
+- **Read-only:** every figure from the stores the pages read; each decision stays on its page with its rule (a reason,
+  a second person, the release time).
+- **Assistant:** Compliance's own suggestions; `ban_kiem_soat` (what waits, oldest first, each control, the chain)
+  beside `tin_bi_giu`, `chuoi_nhat_ky`, `cau_hinh_cho_duyet`, which now light their lanes.
+
 ## API and data
 
 `GET /api/desk` → `{role, as_of, …the role's sections}`; see [api_reference.md](../architecture/api_reference.md).
@@ -152,7 +168,13 @@ as a sheet, a node opens its page, the assistant lights the chain, no other role
 write moves the item to “decided” and the note rule holds; the assistant's queue is the desk's and a family not
 assigned is refused; in the browser both Expert addresses as sheets, the picture beside the oldest, a family picked,
 a short rejection refused and an approval made on the bench, the assistant lights queue and evidence, no other role
-reaches the bench, phone light and dark.
+reaches the bench, phone light and dark. Compliance (M5): the menu kept page for page; each control's waiting
+count equals its page's (held news, research, letters, policy documents, configuration), the queue holds them all
+oldest first and the chain is the check's; no other role gets the desk; the assistant's counts are the desk's; in the
+browser five lanes waiting, a lane picked opens its page, all nine addresses as sheets with the Nội dung tabs, the
+assistant lights the controls, no other role reaches it, phone light and dark. Every desk tool also runs signed in
+inside a served turn (`test_a_desk_tool_works_signed_in_inside_a_served_turn`), where each read is checked against the
+person: a desk read that touches a family the person may not see fails there (the RM's book did, until fixed).
 
 ## Limitations
 

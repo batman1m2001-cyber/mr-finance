@@ -2,6 +2,15 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Fix (found by a real-model turn in M6 prep): the RM assistant's `so_khach_hang` was refused inside a
+  signed-in served turn (the book read mapped every client's family through the checked read); now through the people
+  table, never shown. Every desk tool is now tested signed in inside a served turn. — FEAT-41 §Acceptance, matrix
+  OWN-MR-10
+- 2026-10-18 — Multi-role UX M5: Compliance works at “Bàn kiểm soát” (experiment): every control as a lane with what
+  waits at each step (held news, research, letters, policy documents, configuration, the chain), one queue oldest
+  first, the alerts; Compliance's assistant with `ban_kiem_soat`. Every staff role now has its desk: OWN-MR-01, 06, 07,
+  10 verified. — FEAT-41 §Compliance, screens/compliance.md SCR-CMP-06, screen inventory, ux/role_desks.md
+  (Compliance built), matrix, api_reference, architecture/assistant.md, assets
 - 2026-10-18 — Multi-role UX M4: the Expert works at “Bàn chuyên gia” (experiment): the queue beside the evidence —
   the picked recommendation's actions and the RM's note, the family's net worth, risk, liquidity, allocation and goals
   through the reads a specialist already makes (Q-26 applied), the certificate, approve / reject through the existing

@@ -35,6 +35,12 @@ START = {
         "Chứng chỉ của tôi còn hiệu lực không?",
         "Tìm khách hàng",
     ],
+    "compliance": [
+        "Có gì chờ Tuân thủ?",
+        "Có bao nhiêu tin bị giữ?",
+        "Chuỗi nhật ký còn nguyên không?",
+        "Cấu hình nào chờ duyệt?",
+    ],
     "admin": [
         "Hệ thống có gì bất thường?",
         "Chuỗi nhật ký còn nguyên không?",

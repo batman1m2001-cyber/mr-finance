@@ -61,6 +61,9 @@ NODES: Dict[str, List[str]] = {
     "ban_chuyen_gia": ["queue"],
     "chuyen_gia_duyet": ["queue"],
     "ho_so_khach": ["evidence"],
+    # Compliance's controls: the chain and configuration tools light its lanes too (chain, config)
+    "ban_kiem_soat": ["controls", "queue"],
+    "tin_bi_giu": ["held"],
 }
 
 

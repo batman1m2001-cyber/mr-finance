@@ -18,6 +18,7 @@ ROUTE = {
     "rm": "#/rm",
     "admin": "#/admin",
     "specialist": "#/specialist",
+    "compliance": "#/compliance",
 }  # each role's desk address; a page's address is its menu id under it
 
 
@@ -209,13 +210,16 @@ def rm(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Sổ khách hàng (SCR-RM-07): the RM's families around the RM, nearer when they need the RM sooner — a family at
     the pre-review threshold of an effective run or a goal task to contact now, a proposal waiting for the RM or a
     goal to confirm, a reminder — with what Hôm nay, the approval queue and the contact log say of each."""
+    from people import store as people
     from wealth import fixtures
     from wealth import store as reviews
 
     book = _book(viewer)
     today = apply_reads.rm_today(book)
     mine = set(book)
-    heads = {c: fixtures.client(c).get("member_of") or c for c in fixtures.client_ids(members=True)}
+    # every member's family, to keep the queue to the book: from the people table, unchecked — the checked read
+    # refuses a family the RM may not see inside a served turn, and this map is never shown (only the book's are)
+    heads = {c: people.client(c).get("member_of") or c for c in people.client_ids(True)}
     waiting = [
         r
         for r in reviews.reviews(status="pending")
@@ -475,7 +479,107 @@ def specialist(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     }
 
 
-BUILD = {"cio": cio, "rm": rm, "admin": admin, "specialist": specialist}
+def compliance(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Bàn kiểm soát (SCR-CMP-06): each control Compliance owns as a flow with what waits at each step — news held for
+    the restricted list → released with a reason (BR-04); research waiting → released or rejected by another person
+    after its release time (BR-03); letters waiting → approved or returned (FR-801); policy documents added → verified
+    by a second person → summarised by the policy agent (FR-306); configuration waiting (FR-701); the audit chain
+    (FR-702) — from the stores those pages read, and one queue of what waits for Compliance, oldest first."""
+    from control import alerts as control_alerts
+    from control import audit, config, db, worm
+    from news import store as news
+    from newsletter import store as letters
+    from policy import store as policy
+    from research import store as research
+
+    now = time.time()
+    items = news.inbox(status="all", limit=5000)
+    held = [i for i in items if i["held"]]
+    cleared = [i for i in items if i.get("cleared")]
+    notes = research.listing()
+    r_wait = [r for r in notes if r["status"] == "PENDING_RELEASE"]
+    nls = letters.listing()
+    l_wait = [n for n in nls if n["status"] == "PENDING_COMPLIANCE"]
+    docs = policy.radar()["documents"]
+    unverified = [d for d in docs if not d.get("verified") and d["status"] != "dropped"]
+    verified = [d for d in docs if d.get("verified")]
+    summarised = [d for d in verified if d.get("summary")]
+    cfg = [k for k in config.overview() if k.get("pending")]
+    with db.tx() as con:
+        chain, copy = audit.verify(con), worm.verify(con)
+
+    def step(label, count, waits=False):
+        return {"label": label, "count": count, "waits": waits}
+
+    def item(control, id, title, sub, at, route, ready=True):
+        return {"control": control, "id": id, "title": title, "sub": sub, "at": at, "route": route, "ready": ready}
+
+    def control(id, label, rule, page, steps, rows):
+        return {"id": id, "label": label, "rule": rule, "route": f"#/compliance/{page[0]}", "page": page[1],
+                "steps": steps, "items": rows}  # fmt: skip
+
+    def research_item(r):
+        early = "" if now >= r["release_at"] else " · chưa tới giờ phát hành"
+        sub = f"{r.get('report_no') or r['kind']} · nạp bởi {r.get('uploaded_by') or '—'}{early}"
+        ready = now >= r["release_at"]
+        return item("research", r["id"], r["title"], sub, r["created"], "#/compliance/nghien-cuu", ready)
+
+    def config_item(k):
+        v = k["pending"]
+        sub = f"đề xuất bởi {v.get('proposed_by') or '—'} · {k['owner_label']} duyệt"
+        sub += " · cần người thứ hai" if k["two_person"] else ""
+        return item("config", v["id"], k["label"], sub, (v.get("history") or [{}])[0].get("at") or now,
+                    "#/compliance/cau-hinh")  # fmt: skip
+
+    def held_item(i):
+        sub = f"{i.get('outlet') or i.get('source')} · nhắc tới {', '.join(i.get('restricted') or [])}"
+        return item("held", i["id"], i["title"], sub, i.get("published") or now, "#/compliance/giu")
+
+    def letter_item(n):
+        return item("letters", n["id"], n.get("title") or n["id"], f"soạn bởi {n.get('author') or '—'}", n["created"],
+                    f"#/compliance/ban-tin/{n['id']}")  # fmt: skip
+
+    def policy_item(x):
+        sub = f"{policy.STATUS.get(x['status'], x['status'])} · thêm bởi {x.get('added_by') or '—'}"
+        return item("policy", x["id"], x["title"], sub, x["created"], f"#/compliance/chinh-sach/{x['id']}")
+
+    released = sum(r["status"] == "RELEASED" for r in notes)
+    rejected = sum(r["status"] == "REJECTED" for r in notes)
+    approved = sum(n["status"] == "APPROVED" for n in nls)
+    returned = sum(n["status"] == "RETURNED" for n in nls)
+    controls = [
+        control("held", "Tin bị giữ", "BRD-BR-04", ("giu", "Tin bị giữ"),
+                [step("Đang giữ", len(held), True), step("Đã cho phép", len(cleared))], [held_item(i) for i in held]),
+        control("research", "Nghiên cứu", "BRD-BR-03", ("nghien-cuu", "Nghiên cứu"),
+                [step("Chờ phát hành", len(r_wait), True), step("Đã phát hành", released), step("Từ chối", rejected)],
+                [research_item(r) for r in r_wait]),
+        control("letters", "Bản tin", "BRD-FR-801", ("ban-tin", "Bản tin"),
+                [step("Chờ duyệt", len(l_wait), True), step("Đã duyệt", approved), step("Bị trả lại", returned)],
+                [letter_item(n) for n in l_wait]),
+        control("policy", "Chính sách", "BRD-FR-306", ("chinh-sach", "Chính sách"),
+                [step("Chờ xác nhận", len(unverified), True), step("Đã xác nhận", len(verified)),
+                 step("Đã tóm tắt", len(summarised))], [policy_item(x) for x in unverified]),
+        control("config", "Cấu hình", "BRD-FR-701", ("cau-hinh", "Cấu hình"), [step("Chờ duyệt", len(cfg), True)],
+                [config_item(k) for k in cfg]),
+    ]  # fmt: skip
+    queue = sorted((x for c in controls for x in c["items"]), key=lambda x: x["at"])
+    return {
+        "role": "compliance",
+        "as_of": now,
+        "controls": controls,
+        "queue": queue,
+        "chain": {
+            "ok": chain["ok"],
+            "count": chain["count"],
+            "broken_at": chain.get("broken_at"),
+            "reason": chain.get("reason"),
+        },
+        "worm": copy,
+        "alerts": control_alerts.for_role("compliance"),
+    }
+
+
+BUILD = {"cio": cio, "rm": rm, "admin": admin, "specialist": specialist, "compliance": compliance}
 
 
 def desk(role: str, viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
