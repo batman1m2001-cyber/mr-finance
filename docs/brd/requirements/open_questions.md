@@ -162,3 +162,6 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
   family-scoped ones; `/api/trace/` and the staff-only reads stay closed to them).
 - **Interpretation (ours):** the Expert desk shows, beside a recommendation, what the specialist may already read of
   that family (net worth, allocation, risk profile, goals), through the existing reads; nothing more. Owner: Compliance.
+- **Applied (M4, 2026-10-18):** SCR-SP-02 reads the picture through `POST /api/dashboard` and `/api/goals` (family
+  scope), which already answer a specialist for an assigned family only; the assistant's `ho_so_khach` refuses any
+  other family. Nothing new is opened to the role.

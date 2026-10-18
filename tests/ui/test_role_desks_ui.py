@@ -9,7 +9,7 @@ from pathlib import Path
 
 from conftest import in_thread
 from test_apply import MARKET, approved
-from test_role_desks import pending_view
+from test_role_desks import pending_view, recommendation
 
 WEB = Path(__file__).resolve().parents[2] / "web"
 
@@ -267,3 +267,92 @@ def test_no_other_role_reaches_the_operations_map_and_admin_on_a_phone(open_page
     assert not q.problems(), q.problems()
     q.go("#/admin/he-thong")
     assert q.page.is_visible("#ws-sheet") and not q.problems(), q.problems()
+
+
+# -- Expert · Bàn chuyên gia (M4) ------------------------------------------------------------------------------------
+
+
+def test_the_expert_works_at_the_bench_and_every_page_is_a_sheet(open_page):
+    in_thread(recommendation, "C01", "Giảm cổ phiếu ngân hàng")
+    p = open_page()
+    p.go("#/specialist")
+    p.page.wait_for_selector(".desk-specialist [data-i]")
+    assert p.page.is_hidden("#nav") and p.page.locator("#ws-pane-a #cp-q").count() == 1
+    assert p.page.locator("[data-i]").count() == 1  # sp_global's one recommendation waiting
+    assert p.page.eval_on_selector_all("[data-f]", "bs => bs.map(b => b.dataset.f)") == ["C01", "C03"]
+    # the oldest is open beside the queue, with its family's picture read through the existing reads
+    p.page.wait_for_selector("#sp-pic .dk-kv")
+    assert "Giảm cổ phiếu ngân hàng" in p.page.inner_text("#sp-ev") and "Tài sản ròng" in p.page.inner_text("#sp-pic")
+    assert p.page.get_attribute("#ws-tab-a", "aria-selected") == "true"  # the assistant stays until a pick
+    p.page.click('[data-f="C03"]')
+    p.page.wait_for_selector("#ws-pane-i:not([hidden]) h3")
+    p.page.wait_for_selector("#sp-pic .dk-kv")
+    assert "C03" in p.page.inner_text("#sp-ev") and p.page.locator("#sp-ev [data-ok]").count() == 0
+    seen = routes("specialist")
+    assert seen == ["#/specialist/duyet", "#/specialist/bo-nho"]
+    for r in seen:
+        p.go(r)
+        assert p.page.is_visible("#ws-sheet"), r
+        assert p.page.locator(".ws-tool[aria-current]").count() == 1, r
+        assert not p.problems(), (r, p.problems())
+    p.go("#/specialist")
+    assert p.page.is_hidden("#ws-sheet") and not p.problems()
+
+
+def test_the_expert_decides_on_the_bench_through_the_existing_write(open_page):
+    in_thread(recommendation, "C01", "Giảm cổ phiếu ngân hàng")
+    p = open_page()
+    p.go("#/specialist")
+    p.page.wait_for_selector("#sp-ev [data-no]")
+    p.page.fill("#sp-note", "ngắn")
+    p.page.click("#sp-ev [data-no]")  # a rejection needs 10 characters: nothing is sent
+    p.page.wait_for_timeout(300)
+    assert p.page.locator("[data-i]").count() == 1
+    p.page.fill("#sp-note", "")
+    p.page.click("#sp-ev [data-ok]")
+    p.page.wait_for_function(
+        "!document.querySelector('[data-i]') && document.querySelector('[data-node=decided] .badge')"
+    )
+    assert "Đã duyệt" in p.page.inner_text('[data-node="decided"]') and not p.problems()
+
+
+def test_the_expert_assistant_lights_the_queue_and_the_evidence(open_page):
+    step = {**STEP, "tool": "ban_chuyen_gia", "label": "Bàn chuyên gia"}
+    prof = {**STEP, "call_id": "c2", "tool": "ho_so_khach", "label": "Hồ sơ khách"}
+    script = [[0, {"type": "start"}],
+              [50, {**step, "phase": "start", "nodes": ["queue"]}],
+              [600, {**step, "phase": "end", "ok": True, "ms": 500}],
+              [700, {**prof, "phase": "start", "nodes": ["evidence"]}],
+              [1300, {**prof, "phase": "end", "ok": True, "ms": 600}],
+              [1800, {"type": "answer", "assistant": {"status": "ok", "mode": "model", "text": "Một khuyến nghị.",
+                                                      "steps": []}}]]  # fmt: skip
+    in_thread(recommendation, "C01", "Giảm cổ phiếu ngân hàng")
+    p = open_page(theme="dark")
+    p.ctx.add_init_script(TIMED)
+    p.ctx.add_init_script(f"window.__script = {json.dumps(script)};")
+    p.go("#/specialist")
+    p.page.wait_for_selector(".desk-specialist [data-i]")
+    assert "Khuyến nghị nào đang chờ tôi duyệt?" in p.page.inner_text("#ws-pane-a")
+    p.page.fill("#cp-q", "Khuyến nghị nào đang chờ tôi duyệt?")
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_selector('[data-node="queue"].act', timeout=4000)
+    p.page.wait_for_selector('[data-node="evidence"].act', timeout=4000)
+    p.page.wait_for_selector('[data-node="queue"].lit', timeout=6000)
+    assert p.page.evaluate("window.__body.role") == "specialist" and not p.problems()
+
+
+def test_no_other_role_reaches_the_bench_and_the_expert_on_a_phone(open_page):
+    p = open_page()
+    for role in ("cio", "rm", "compliance", "admin"):
+        p.as_role(role)
+        p.page.evaluate("location.hash = '#/specialist'")
+        p.page.wait_for_timeout(400)
+        assert p.page.locator(".desk-specialist").count() == 0, role
+    p.errors.clear()
+    for theme in ("light", "dark"):
+        q = open_page(size="phone", theme=theme)
+        q.go("#/specialist")
+        q.page.wait_for_selector(".desk-specialist [data-f]")
+        assert not q.problems(), (theme, q.problems())
+        q.go("#/specialist/duyet")
+        assert q.page.is_visible("#ws-sheet") and not q.problems(), (theme, q.problems())

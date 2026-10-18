@@ -531,6 +531,9 @@ async def desk(request: Request) -> JSONResponse:
 
     v = viewer(request)
     role = v["role"] if v else request.query_params.get("role") or ""
+    if v is None and role == "specialist" and request.query_params.get("user"):
+        # sign-in off: the specialist the page decides as (Duyệt khuyến nghị's ``by``), as GET /api/review's page does
+        v = {"id": request.query_params["user"], "role": "specialist"}
     try:
         return JSONResponse(desk_reads.desk(role, v))
     except roles.Forbidden as exc:

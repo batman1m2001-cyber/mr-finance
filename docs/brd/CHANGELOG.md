@@ -2,6 +2,12 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Multi-role UX M4: the Expert works at “Bàn chuyên gia” (experiment): the queue beside the evidence —
+  the picked recommendation's actions and the RM's note, the family's net worth, risk, liquidity, allocation and goals
+  through the reads a specialist already makes (Q-26 applied), the certificate, approve / reject through the existing
+  write; the Expert's assistant with `ban_chuyen_gia`, `ho_so_khach`; a desk's centre is inert under a sheet. — FEAT-41 §Expert, screens/specialist.md
+  (SCR-SP-01 documented, SCR-SP-02), screen inventory, ux/role_desks.md (Expert built), matrix OWN-MR-05 verified and
+  notes, open_questions Q-26, api_reference, architecture/assistant.md, assets
 - 2026-10-18 — Multi-role UX M3: Admin works at “Vận hành” (experiment): Hệ thống's own read drawn as a map (sources →
   storage → AI → people, each node coloured by its last record), alerts, failing jobs, configuration waiting, people
   and roles (shown, not edited: Q-25), the chain; Admin's assistant with `van_hanh`, `chuoi_nhat_ky`,

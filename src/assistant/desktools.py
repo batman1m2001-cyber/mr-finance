@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from assistant.base import Ctx, Tool, ToolFailed
+from assistant.base import Ctx, Param, Tool, ToolFailed
 from assistant.tools import _pct, _vnd
 
 
@@ -243,6 +243,62 @@ async def config_waiting(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+# -- Expert (specialist) -------------------------------------------------------------------------------------------
+
+
+async def expert_desk(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Bàn chuyên gia: the recommendations waiting for this specialist, oldest first, and the certificate."""
+    d = _desk(ctx, "specialist")
+    cert = d["certificate"]
+    head = (
+        f"Chứng chỉ {cert['certificate']} ({cert['issuer']}) hiệu lực đến {cert['valid_until']}."
+        if cert
+        else "Bạn chưa có chứng chỉ còn hiệu lực nên chưa duyệt được khuyến nghị; Tuân thủ cập nhật trong Cấu hình."
+    )
+    w = d["waiting"]
+    each = "; ".join(
+        f"{x['title']} cho {x['name']} ({x['id']}, gia đình {x['family_id']}, RM {x['rm'] or '—'})" for x in w[:6]
+    )
+    return {
+        "text": f"{head} "
+        + (f"{len(w)} khuyến nghị chờ bạn duyệt: {each}." if w else "Không khuyến nghị nào chờ bạn."),
+        "data": {"waiting": len(w), "certified": bool(cert), "families": [f["id"] for f in d["families"]]},
+        "focus": ["queue"],
+        "sources": ["Duyệt khuyến nghị"],
+    }
+
+
+async def family_profile(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Hồ sơ khách: an assigned family's picture — net worth, allocation, risk against its limit, liquidity, goals —
+    through the reads the dashboard and the plan use; refused for a family not assigned to this specialist (Q-26)."""
+    from dataclasses import replace
+
+    from assistant.tools import goals, overview
+    from people import store as people
+
+    d = _desk(ctx, "specialist")
+    fid = str(args.get("gia_dinh") or "").strip().upper()
+    if not fid:
+        waiting = sorted({x["family_id"] for x in d["waiting"]})
+        if len(waiting) != 1:
+            raise ToolFailed("Cần biết gia đình nào: hãy nói mã gia đình (lấy từ bàn chuyên gia)")
+        fid = waiting[0]
+    if fid not in {f["id"] for f in d["families"]} or ctx.user not in people.specialists_of(fid):
+        raise ToolFailed(f"Gia đình {fid} không được giao cho bạn")
+    one = replace(ctx, client_id=fid, scope="family", followed=None)
+    a = await overview(one, {})
+    try:
+        g = (await goals(one, {}))["text"]
+    except ToolFailed:
+        g = ""
+    return {
+        "text": f"Gia đình {fid}: {a['text']} {g}".strip(),
+        "data": {"family": fid},
+        "focus": ["evidence"],
+        "sources": ["Bảng tổng quan", "Kế hoạch mục tiêu"],
+    }
+
+
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
     for t in (
@@ -298,6 +354,27 @@ CATALOGUE: Dict[str, Tool] = {
             operations,
             page="ban-lam-viec",
             follow=["Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
+        ),
+        Tool(
+            "ban_chuyen_gia",
+            "bàn chuyên gia: các khuyến nghị RM đã duyệt đang chờ bạn duyệt, cũ nhất trước, và chứng chỉ của bạn",
+            ("specialist",),
+            expert_desk,
+            page="ban-lam-viec",
+            follow=["Hồ sơ của gia đình này thế nào?"],
+        ),
+        Tool(
+            "ho_so_khach",
+            "hồ sơ một gia đình được giao cho bạn: tài sản ròng, phân bổ, rủi ro so với ngưỡng, thanh khoản, mục tiêu",
+            ("specialist",),
+            family_profile,
+            params={
+                "gia_dinh": Param(
+                    str, "mã gia đình, lấy từ công cụ ban_chuyen_gia; bỏ trống khi chỉ một gia đình chờ", ""
+                )
+            },
+            page="ban-lam-viec",
+            timeout=60.0,
         ),
         Tool(
             "chuoi_nhat_ky",

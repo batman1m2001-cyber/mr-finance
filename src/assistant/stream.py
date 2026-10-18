@@ -49,7 +49,7 @@ NODES: Dict[str, List[str]] = {
     # the RM's book: the map, the call list, goal tasks, proposals, contacts
     "so_khach_hang": ["book", "calls", "proposals"],
     "hom_nay": ["calls", "tasks"],
-    "de_xuat": ["proposals"],
+    "de_xuat": ["proposals", "queue"],  # the RM's proposals; the Expert's queue
     "lien_he": ["contacts"],
     "ghi_lien_he": ["contacts"],
     # Admin's operations map; the chain and configuration (Compliance's desk too)
@@ -57,6 +57,10 @@ NODES: Dict[str, List[str]] = {
     "canh_bao_he_thong": ["alerts"],
     "chuoi_nhat_ky": ["chain", "node:chain"],
     "cau_hinh_cho_duyet": ["config", "node:config"],
+    # the Expert's queue and the family's picture beside it
+    "ban_chuyen_gia": ["queue"],
+    "chuyen_gia_duyet": ["queue"],
+    "ho_so_khach": ["evidence"],
 }
 
 

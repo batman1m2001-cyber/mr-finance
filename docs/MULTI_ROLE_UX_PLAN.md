@@ -135,7 +135,7 @@ reads use, with the same family filter.
 | M1 | CIO desk + tools | preservation, isolation, desk UI tests; screenshots desktop/phone, light/dark — **done 2026-10-18** |
 | M2 | RM desk + tool | same — **done 2026-10-18** |
 | M3 | Admin desk + tools | same — **done 2026-10-18** |
-| M4 | Expert desk + tools | same |
+| M4 | Expert desk + tools | same — **done 2026-10-18** |
 | M5 | Compliance desk + tools | same |
 | M6 | BRD close-out: IA, inventory, journeys, matrix rows, regression record; a few real-model turns per role (cost counted) | full suite + every UI test; `check_brd_docs.py` |
 

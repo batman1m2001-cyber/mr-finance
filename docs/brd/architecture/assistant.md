@@ -118,7 +118,9 @@ the composition its desk draws (`src/desk/reads.py`), so the assistant says the 
 `lan_ap_dung` (runs by status), `do_chinh_xac` (history coverage, VN-Index direction, forecasts waiting); RM (M2):
 `so_khach_hang` (who in the RM's book needs them soon and why, proposals, goal tasks, the last contact); Admin (M3):
 `van_hanh` (what on the operations map is not green), `chuoi_nhat_ky` and `cau_hinh_cho_duyet` (Admin and
-Compliance: the chain checked now, configuration waiting). They are in
+Compliance: the chain checked now, configuration waiting); Expert (M4): `ban_chuyen_gia` (the queue, oldest first, and
+the certificate), `ho_so_khach` (an assigned family's picture through the overview and goal tools; any other family
+refused). They are in
 the map's `tools_app` family; `stream.NODES` maps each to the desk's `data-node` it lights.
 
 To come: `help` (product KB) and `materials` (user KB) in A5; memory tools in A4; `web_search` in A5;

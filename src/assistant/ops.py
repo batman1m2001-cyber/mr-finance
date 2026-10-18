@@ -29,7 +29,12 @@ START = {
         "Hộp tin có bao nhiêu tin?",
     ],
     "rm": ["Sổ khách hàng có gì cần làm?", *HELP["rm"][:3]],
-    "specialist": ["Khuyến nghị nào đang chờ tôi duyệt?", "Tìm khách hàng"],
+    "specialist": [
+        "Khuyến nghị nào đang chờ tôi duyệt?",
+        "Hồ sơ của gia đình này thế nào?",
+        "Chứng chỉ của tôi còn hiệu lực không?",
+        "Tìm khách hàng",
+    ],
     "admin": [
         "Hệ thống có gì bất thường?",
         "Chuỗi nhật ký còn nguyên không?",

@@ -93,7 +93,7 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `/api/events`, `/api/events/{id}` | — | events with their views | FEAT-02, 04 |
 | `/api/views/{id}` | — | a view with findings, decisions, agent runs, checks, preview | FEAT-04…06 |
 | `/api/agents` | — | mode, models, prompt version, demo users | FEAT-15, 12 |
-| `/api/desk` | `role` (only when sign-in is off) | the session's role's desk: CIO `{pipeline, decide, exposure, events, model, agents, items}`; RM `{families, calls, tasks, proposals, contacts, control, threshold_pct}` (the RM's own families); Admin `{nodes, alerts, failing, config, evals, roles, clients, no_password, chain, worm}` (Hệ thống's read, `system_read`); 403 for a role with no desk (a client) | FEAT-41 |
+| `/api/desk` | `role`, `user` (only when sign-in is off) | the session's role's desk: CIO `{pipeline, decide, exposure, events, model, agents, items}`; RM `{families, calls, tasks, proposals, contacts, control, threshold_pct}` (the RM's own families); Admin `{nodes, alerts, failing, config, evals, roles, clients, no_password, chain, worm}` (Hệ thống's read, `system_read`); Expert `{me, certificate, families, waiting, decided}` (Duyệt khuyến nghị's filter; sign-in off: `user` names the specialist); 403 for a role with no desk (a client) | FEAT-41 |
 | `/api/runs` | `role? (rm), view_id?` | runs, newest first | FEAT-08 |
 | `/api/runs/{id}`, `/api/runs/{id}/verify` | — | a run; its recomputation compared to the dong | FEAT-08 |
 | `/api/families/{id}/impact` | `role (default client)` | the family's impact as that role may see it (403 for an unknown role); each item has a `timeline` of its steps with their stored times | FEAT-13, FEAT-30 |

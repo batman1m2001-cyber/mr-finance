@@ -9,7 +9,7 @@
    Cấu hình, the history loaded on Hệ thống (BRD-RULE-ROLE-04). data-node marks what the assistant reads. */
 import {ago, esc} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
-import {JOB} from "../pages/system.js?v=20261018m5";  // the jobs' names as Hệ thống says them
+import {JOB} from "../pages/system.js?v=20261018m7";  // the jobs' names as Hệ thống says them
 
 const LANES = [["sources", "Nguồn"], ["store", "Lưu trữ"], ["ai", "AI"], ["people", "Con người"]];
 const STATE = {ok: ["good", "Ổn"], warn: ["warn", "Cần xem"], bad: ["bad", "Lỗi"], idle: ["", "Chưa chạy"]};

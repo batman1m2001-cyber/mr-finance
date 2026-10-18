@@ -26,6 +26,14 @@ export const DESKS = {
       {id: "bo-nho", label: "Bộ nhớ", icon: "archive", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
     ],
   },
+  specialist: {
+    title: "Bàn chuyên gia", view: "specialist",
+    groups: [
+      {id: "ban", label: "Bàn chuyên gia", icon: "scale", tip: "Bàn chuyên gia: khuyến nghị chờ bạn bên cạnh bức tranh của gia đình", desk: true, nav: ["ban"]},
+      {id: "duyet", label: "Duyệt khuyến nghị", icon: "check", tip: "Duyệt khuyến nghị: chờ bạn và đã xử lý", nav: ["duyet"]},
+      {id: "bo-nho", label: "Bộ nhớ", icon: "history", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
+    ],
+  },
   rm: {
     title: "Sổ khách hàng", view: "rm",
     groups: [

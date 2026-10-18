@@ -17,6 +17,7 @@ ROUTE = {
     "cio": "#/cio",
     "rm": "#/rm",
     "admin": "#/admin",
+    "specialist": "#/specialist",
 }  # each role's desk address; a page's address is its menu id under it
 
 
@@ -423,7 +424,58 @@ def admin(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     }
 
 
-BUILD = {"cio": cio, "rm": rm, "admin": admin}
+def specialist(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Bàn chuyên gia (SCR-SP-02): what Duyệt khuyến nghị reads (GET /api/review) — the recommendations an RM approved
+    for a family assigned to this specialist, whose certificate is in force, waiting for them (BRD-RULE-ROLE-05,
+    WF-08, G8); what they decided; their families. The family's picture beside a recommendation is read on the screen
+    through the reads a specialist may already make (POST /api/dashboard, /api/goals; Q-26), not composed here."""
+    from people import auth
+    from people import store as people
+    from review import specialist as sp
+    from wealth import store as reviews
+
+    v = viewer or {}
+    me = v.get("id") if v.get("role") == "specialist" else None
+    if v.get("families") is not None:
+        fams = list(v["families"])
+    elif me:
+        fams = people.families_of_specialist(me)
+    else:
+        fams = people.client_ids()
+    fams = auth.visible(sorted(fams))
+    approves = {f for f in fams if any(a["id"] == me for a in sp.approvers(f))} if me else set()
+    heads = {c: people.client(c).get("member_of") or c for c in people.client_ids(True)}
+    rows = reviews.reviews()  # newest first
+    waiting = [r for r in rows if r["status"] == "pending_specialist" and heads.get(r["client_id"]) in approves]
+    decided = [r for r in rows if me and r["data"].get("specialist_by") == me]
+
+    def item(r: Dict[str, Any]) -> Dict[str, Any]:
+        d = r["data"]
+        return {
+            "id": r["id"], "family_id": heads.get(r["client_id"], r["client_id"]), "client_id": r["client_id"],
+            "name": people.client(r["client_id"])["name"], "kind": r["kind"], "title": r["title"],
+            "actions": list((d.get("option") or {}).get("actions") or []), "rm": d.get("decided_by"),
+            "rm_note": r.get("note"), "status": r["status"], "created": r["created"], "decided": r.get("decided"),
+            "note": d.get("specialist_note"),
+        }  # fmt: skip
+
+    def family(f: str) -> Dict[str, Any]:
+        c = people.client(f)
+        return {"id": f, "name": c["name"], "segment": c.get("segment"), "approves": f in approves,
+                "waiting": sum(1 for r in waiting if heads.get(r["client_id"]) == f)}  # fmt: skip
+
+    return {
+        "role": "specialist",
+        "as_of": time.time(),
+        "me": me,
+        "certificate": sp.certificate(me) if me else None,
+        "families": [family(f) for f in fams],
+        "waiting": [item(r) for r in reversed(waiting)],  # oldest first: it has waited longest
+        "decided": [item(r) for r in decided[:8]],
+    }
+
+
+BUILD = {"cio": cio, "rm": rm, "admin": admin, "specialist": specialist}
 
 
 def desk(role: str, viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

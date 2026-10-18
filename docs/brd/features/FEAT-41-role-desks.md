@@ -102,6 +102,28 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
   `chuoi_nhat_ky` and `cau_hinh_cho_duyet` (also Compliance's) beside `canh_bao_he_thong` and `da_xem_canh_bao`.
   Steps light the map's nodes and panels.
 
+### Expert — Bàn chuyên gia (SCR-SP-02, built in M4, 2026-10-18)
+
+- **Rail:** Bàn chuyên gia · Duyệt khuyến nghị · Bộ nhớ at the foot. Both pages at their addresses.
+- **The bench:** the queue beside the evidence. Left, the recommendations an RM approved for the families assigned to
+  this specialist, oldest first (what Duyệt khuyến nghị lists: the same filter over the same queue), and the families
+  assigned with how many wait for each; right, the picked recommendation — its actions, who wrote it, the RM's note —
+  and its family's picture: net worth, risk profile, risk against the limit, liquidity, allocation, goals, read
+  through `POST /api/dashboard` and `/api/goals`, the reads a specialist already makes for an assigned family (Q-26).
+  A family picked shows its picture without a decision.
+- **The decision:** approve, or reject with a reason of 10 characters or more, through the existing
+  `POST /api/review/specialist`; the server checks the certificate and the assignment again (BRD-RULE-ROLE-05,
+  WF-08). The bar stays in view under a long picture. Without a certificate in force the bench says so and offers
+  no decision. Below: what the specialist decided.
+- **Sign-in off** (a developer's machine): the desk reads as the specialist the page decides as (`?user=`, the role's
+  demo user), as Duyệt khuyến nghị does.
+- **Assistant:** the Expert's own suggestions; `ban_chuyen_gia` (the queue, oldest first, and the certificate) and
+  `ho_so_khach` (an assigned family's picture through the overview and goal reads; refused for any other family)
+  beside the existing `de_xuat` and `chuyen_gia_duyet`. Steps light the queue and the evidence.
+- **Unchanged:** Duyệt khuyến nghị and its write; the RM's recommendation and decision writes.
+- **Every desk (from M4):** while a page is open as a sheet, the centre under it is inert — no focus, no click — so
+  the Expert's decision bar cannot be reached behind Duyệt khuyến nghị.
+
 ## API and data
 
 `GET /api/desk` → `{role, as_of, …the role's sections}`; see [api_reference.md](../architecture/api_reference.md).
@@ -124,7 +146,13 @@ RM's book is their families alone (rm01 C01/C04/C05, rm03 C03), the call list is
 a family's page opened from the book sets the client picker, the assistant lights the book, phone and dark. Admin
 (M3): the desk is Hệ thống's read (chain, configuration, people), a failing feed and a broken chain turn their nodes
 red and the assistant names them, the chain and configuration tools read what their pages read; every Admin address
-as a sheet, a node opens its page, the assistant lights the chain, no other role reaches the map, phone.
+as a sheet, a node opens its page, the assistant lights the chain, no other role reaches the map, phone. Expert
+(M4): each of the five specialists' desks is their families alone and lists what Duyệt khuyến nghị lists for them
+(none without a certificate), oldest first; sign-in off reads as the page's user; a decision through the existing
+write moves the item to “decided” and the note rule holds; the assistant's queue is the desk's and a family not
+assigned is refused; in the browser both Expert addresses as sheets, the picture beside the oldest, a family picked,
+a short rejection refused and an approval made on the bench, the assistant lights queue and evidence, no other role
+reaches the bench, phone light and dark.
 
 ## Limitations
 

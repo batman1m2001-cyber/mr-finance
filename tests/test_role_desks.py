@@ -83,6 +83,10 @@ def test_the_rm_keeps_every_page_it_had():
     assert re.findall(r'id: "([a-z-]+)"', block) == pages + ["duyet"]
 
 
+def test_the_specialist_keeps_every_page_it_had():
+    assert menu("specialist") == ["ban", "duyet", "bo-nho"]
+
+
 def test_admin_keeps_every_page_it_had():
     assert menu("admin") == ["ban", "he-thong", "du-lieu", "cau-hinh", "agent", "nhat-ky", "bo-nho"]
 
@@ -214,7 +218,8 @@ def test_the_cio_assistant_says_the_desks_numbers():
 
 DESK_TOOLS = {"ban_quyet_dinh": ("cio",), "phoi_nhiem": ("cio",), "lan_ap_dung": ("cio",), "do_chinh_xac": ("cio",),
               "so_khach_hang": ("rm",), "van_hanh": ("admin",), "chuoi_nhat_ky": ("admin", "compliance"),
-              "cau_hinh_cho_duyet": ("admin", "compliance")}  # fmt: skip
+              "cau_hinh_cho_duyet": ("admin", "compliance"), "ban_chuyen_gia": ("specialist",),
+              "ho_so_khach": ("specialist",)}  # fmt: skip
 
 
 @pytest.mark.parametrize("name", sorted(DESK_TOOLS))
@@ -306,3 +311,97 @@ def test_the_chain_and_the_configuration_tools_read_what_their_pages_read():
     config.propose("thresholds", {**config.data("thresholds"), "pre_review_pct": -0.07}, "cio2", "thử")
     got = asyncio.run(execute(registry.REGISTRY["cau_hinh_cho_duyet"], ctx("compliance"), {}))
     assert got["data"]["waiting"] == 1 and "cio2" in got["text"]
+
+
+# -- Expert · Bàn chuyên gia (M4) --------------------------------------------------------------------------------------
+
+
+def recommendation(cid, title, by="rm01"):
+    """An RM's recommendation for ``cid``, stored as the RM's write stores it: it waits for a certified specialist."""
+    from review import specialist
+    from wealth import store as reviews
+
+    item = reviews.propose(
+        cid, "rm_note", title, {"option": {"title": title, "actions": ["Bán bớt cổ phiếu"]}, "author": by}
+    )
+    return reviews.decide(item, "pending_specialist" if specialist.approvers(cid) else "approved", "Khách đồng ý.", by)
+
+
+def page_waiting(client, who):
+    """What Duyệt khuyến nghị lists as waiting for ``who`` (web/pages/specialist.js over GET /api/review)."""
+    q = client.get("/api/review", headers=who).json()
+    me = q["certificate"] and next(
+        a["id"] for a in sum(q["approvers"].values(), []) if a["certificate"] == q["certificate"]["certificate"]
+    )
+    mine = {c for c, a in q["approvers"].items() if any(x["id"] == me for x in a)}
+    return sorted(x["id"] for x in q["items"] if x["status"] == "pending_specialist" and x["family_id"] in mine)
+
+
+def test_the_expert_desk_is_what_duyet_khuyen_nghi_lists_for_each_specialist(monkeypatch):
+    from app.web import app
+    from people import auth
+    from people import store as people
+
+    c01, c04 = recommendation("C01", "Giảm cổ phiếu ngân hàng"), recommendation("C04", "Mua bảo hiểm sức khoẻ")
+    assert c01["status"] == c04["status"] == "pending_specialist"
+    monkeypatch.setenv("MF_AUTH", "on")
+    client = TestClient(app)
+    for who in ("sp_global", "sp_real_estate", "sp_insurance", "sp_banking", "sp_private"):
+        h = {"cookie": f"{auth.COOKIE}={auth.issue(who)}"}
+        d = client.get("/api/desk?role=cio", headers=h).json()
+        assert d["role"] == "specialist" and d["me"] == who
+        assert [f["id"] for f in d["families"]] == people.families_of_specialist(who), who  # their families alone
+        assert sorted(x["id"] for x in d["waiting"]) == (page_waiting(client, h) if d["certificate"] else []), who
+    h = lambda who: {"cookie": f"{auth.COOKIE}={auth.issue(who)}"}  # noqa: E731
+    ins = client.get("/api/desk", headers=h("sp_insurance")).json()
+    assert [x["id"] for x in ins["waiting"]] == [c01["id"], c04["id"]]  # oldest first
+    assert ins["waiting"][0]["rm"] == "rm01" and ins["waiting"][0]["rm_note"] == "Khách đồng ý."
+    assert [x["id"] for x in client.get("/api/desk", headers=h("sp_private")).json()["waiting"]] == [c04["id"]]
+    # assigned to C01 but no certificate in force: the family is theirs to read, not to decide (BRD-RULE-ROLE-05)
+    re_ = client.get("/api/desk", headers=h("sp_real_estate")).json()
+    assert re_["certificate"] is None and re_["waiting"] == [] and not any(f["approves"] for f in re_["families"])
+
+
+def test_without_sign_in_the_expert_desk_is_the_page_users(monkeypatch):
+    from app.web import app
+
+    recommendation("C01", "Giảm cổ phiếu ngân hàng")
+    client = TestClient(app)
+    d = client.get("/api/desk?role=specialist&user=sp_global").json()
+    assert d["me"] == "sp_global" and d["certificate"] and len(d["waiting"]) == 1
+    anyone = client.get("/api/desk?role=specialist").json()
+    assert anyone["me"] is None and anyone["certificate"] is None and anyone["waiting"] == []
+
+
+def test_a_decision_on_the_desk_is_the_existing_write_and_moves_the_item(monkeypatch):
+    from operonx.app import Application
+
+    from people import auth
+
+    item = recommendation("C01", "Giảm cổ phiếu ngân hàng")
+    monkeypatch.setenv("MF_AUTH", "on")
+    h = {"cookie": f"{auth.COOKIE}={auth.issue('sp_global')}"}
+    say = lambda decision, note: {"item_id": item["id"], "decision": decision, "note": note, "by": "sp_global"}  # noqa: E731
+    with TestClient(Application.find(str(ROOT)).asgi()) as client:  # the served app: the write is a served flow
+        short = client.post("/api/review/specialist", json=say("rejected", "ngắn"), headers=h)
+        assert short.status_code >= 400 and "10" in short.text  # the note rule, unchanged
+        assert (
+            client.post("/api/review/specialist", json=say("approved", ""), headers=h).json()["item"]["status"]
+            == "approved"
+        )
+        d = client.get("/api/desk", headers=h).json()
+    assert d["waiting"] == [] and [(x["id"], x["status"]) for x in d["decided"]] == [(item["id"], "approved")]
+
+
+def test_the_expert_assistant_says_the_queue_and_reads_only_an_assigned_family():
+    from assistant.base import ToolFailed
+
+    item = recommendation("C01", "Giảm cổ phiếu ngân hàng")
+    d = desk_reads.desk("specialist", {"id": "sp_global", "role": "specialist"})
+    said = asyncio.run(execute(registry.REGISTRY["ban_chuyen_gia"], ctx("specialist"), {}))
+    assert said["data"] == {"waiting": len(d["waiting"]), "certified": True, "families": ["C01", "C03"]}
+    assert item["id"] in said["text"] and d["certificate"]["certificate"] in said["text"]
+    one = asyncio.run(execute(registry.REGISTRY["ho_so_khach"], ctx("specialist"), {}))  # one family waits: C01
+    assert one["data"] == {"family": "C01"} and "C01" in one["text"]
+    with pytest.raises(ToolFailed):  # C02 is not sp_global's
+        asyncio.run(execute(registry.REGISTRY["ho_so_khach"], ctx("specialist"), {"gia_dinh": "C02"}))

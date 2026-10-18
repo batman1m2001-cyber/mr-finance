@@ -9,9 +9,9 @@ import {$, esc, get} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {dockFrame} from "../workspace/dock.js?v=20261018m0";
-import {DESKS} from "./roles.js?v=20261018m5";
+import {DESKS} from "./roles.js?v=20261018m7";
 
-export function mount(main, {role, nav, go, client = () => null, setClient = () => {}}) {
+export function mount(main, {role, nav, go, client = () => null, setClient = () => {}, user = () => null}) {
   const cfg = DESKS[role];
   const label = (id) => { const n = nav.find(x => x.id === id); return n ? n.label : id; };
   const pagesOf = (g) => g.nav.flatMap(id => {  // a group's pages, in menu order: a menu item with a sub-menu is its pages
@@ -75,7 +75,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
   let view = null, data = null, loading = null, sheet = null;
   const info = $("#ws-pane-i", root);
   const api = {
-    role, go, tab, client,
+    role, go, tab, client, user,
     /* open a page for a family: the client picker set first, as the header's picker would */
     open(family, href) { setClient(family); go(href); },
     /* the inspector: the module draws a pick into Thông tin and shows it */
@@ -85,7 +85,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
   async function load(again) {
     if (loading && !again) return loading;
     loading = (async () => {
-      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261018m5`), get("/api/desk")]);
+      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261018m7`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
       data = got;
       view = mod;
       mod.render($("#dk-body", root), data, api);
@@ -144,6 +144,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
       sheet = target ? navId : null;
       $("#ws-sheet", root).hidden = !sheet;
       root.classList.toggle("sheeted", !!sheet);
+      $("#dk-body", root).inert = !!sheet;  // the centre under a sheet takes no focus or click (the Expert's decision bar)
       if (!sheet) return;
       const key = target.sub ? `${navId}/${target.sub.id}` : navId;
       const here = group ? group.pages.find(p => p.key === key) : null;

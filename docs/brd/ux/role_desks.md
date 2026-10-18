@@ -62,8 +62,8 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-AD
 
 | Page (address) | Screen | Features | Key requirements | Rail group | State |
 |---|---|---|---|---|---|
-| Duyệt khuyến nghị `duyet` | SCR-SP-01 | FEAT-27 | BRD-RULE-ROLE-05, WF-08 | Duyệt khuyến nghị | planned |
-| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | planned |
+| Duyệt khuyến nghị `duyet` | SCR-SP-01 | FEAT-27 | BRD-RULE-ROLE-05, WF-08 | Duyệt khuyến nghị | built — `tests/ui/test_role_desks_ui.py::test_the_expert_works_at_the_bench_and_every_page_is_a_sheet` |
+| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_the_expert_works_at_the_bench_and_every_page_is_a_sheet` |
 
 ## Compliance (`#/compliance/…`) — desk "Bàn kiểm soát" (SCR-CMP-06)
 
