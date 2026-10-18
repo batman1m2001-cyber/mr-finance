@@ -50,6 +50,11 @@ sửa và xoá nhật ký.
 
 Như trang Agent của CIO: các tác vụ AI, chế độ, rủi ro, mô hình, lần chạy và chất lượng.
 
+## Việc nền — #/compliance/viec-nen
+
+Chỉ xem: các agent, các lần “Chạy Agent CIO”, lịch chạy và lần chạy tay của từng việc nền. CIO chạy các agent, Quản
+trị chạy các việc nền.
+
 ## Cấu hình — #/compliance/cau-hinh
 
 Như trang Cấu hình của CIO. Tuân thủ duyệt các loại của mình: Danh sách hạn chế, Cụm từ cấm, Đồng ý chia sẻ dữ liệu,

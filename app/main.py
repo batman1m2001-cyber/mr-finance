@@ -75,7 +75,15 @@ from assistant.graph import (
 )
 from contacts.graph import contact_flow
 from control import barrier
-from control.graph import alert_ack_flow, audit_check_flow, config_decide_flow, config_propose_flow, heartbeat_flow
+from control import jobs as control_jobs
+from control.graph import (
+    alert_ack_flow,
+    audit_check_flow,
+    config_decide_flow,
+    config_propose_flow,
+    heartbeat_flow,
+    job_run_flow,
+)
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow
@@ -416,6 +424,12 @@ APP = Application(
             graph=alert_ack_flow,
             description="POST {alert_id, by, note?}: “Đã xem” on an alert, by a role it is for (NFR-12).",
         ),
+        Service(
+            "job_run",
+            http("POST", "/api/jobs/run", port=PORT),
+            graph=job_run_flow,
+            description="POST {job, by}: Admin runs a background job now (control/jobs.py RUNNABLE); one at a time.",
+        ),
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
     ],
     jobs=[
@@ -594,7 +608,8 @@ APP = Application(
     ],
 )
 
-# Hệ thống lists the jobs as declared here (app/web.py cannot import this module)
+# Hệ thống lists the jobs as declared here (app/web.py cannot import this module); Việc nền runs them (control/jobs.py)
+control_jobs.register(APP.jobs)
 web.JOBS[:] = [
     {"id": j.name, "description": j.description, "when": (j.schedule.options if j.schedule else {})} for j in APP.jobs
 ]

@@ -14,8 +14,15 @@ chờ CIO quyết định, phơi nhiễm theo yếu tố, sự kiện gần đâ
 Agent CIO chạy khi CIO bấm **Chạy Agent CIO** trên một sự kiện (vào hàng đợi, mỗi lần một việc); Agent Phản biện kiểm
 tra nhận định trước khi duyệt; Agent Chính sách tóm tắt văn bản đã xác nhận. Việc nền theo lịch: lấy tin mỗi 10 phút,
 dữ liệu thị trường theo lịch từng nguồn, quét chính sách 07:00, tổng hợp trí nhớ mỗi 5 phút, lưu giữ 02:30. Trang
-Agent cho thấy từng agent và việc nền: trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay. Trợ lý đọc được
-trạng thái này nhưng không chạy agent.
+Agent cho thấy từng agent và việc nền: trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay.
+
+## Việc nền — #/cio/viec-nen
+
+Các agent và việc nền trên một trang. **Agent**: chế độ (mô hình thật hay mô phỏng), token đã dùng hôm nay, từng agent
+trong 7 ngày, các lần “Chạy Agent CIO”. CIO bấm **Chạy Agent CIO** trên một sự kiện chưa có nhận định, và **Phản biện
+lại** khi Agent Phản biện lần trước lỗi. Nhận định ra là bản nháp: qua Agent Phản biện, rồi CIO duyệt ở trang Sự kiện
+& nhận định. **Lịch chạy**: từng việc nền, lịch và lần gần nhất (Quản trị chạy ngay được). Trợ lý chạy Agent CIO hay
+chạy lại Agent Phản biện khi CIO bấm Xác nhận; nó không duyệt nhận định.
 
 ## Hộp tin — #/cio/hop-tin
 

@@ -60,3 +60,11 @@ def ack_alert(alert_id: str, by: str, note: str = "") -> dict:
     from control import alerts
 
     return {"alert": alerts.ack(alert_id, by, note)}
+
+
+@op
+async def run_job(job: str, by: str) -> dict:
+    """POST /api/jobs/run: Admin runs a background job now (owner 2026-10-18); the answer is the run's row, running."""
+    from control import jobs
+
+    return {"run": jobs.run_now(str(job or ""), by)}

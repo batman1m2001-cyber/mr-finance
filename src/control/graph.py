@@ -1,10 +1,10 @@
 """config_propose_flow / config_decide_flow (POST /api/config/propose, /api/config/decide; FR-701); audit_check_flow
 (the hourly chain check), heartbeat_flow (the 20-second heartbeat; NFR-03) and alert_ack_flow (POST
-/api/system/alerts/ack; NFR-12)."""
+/api/system/alerts/ack; NFR-12); job_run_flow (POST /api/jobs/run: Admin runs a job now)."""
 
 from operonx import END, START, graph
 
-from control.ops import ack_alert, check_chain, decide, heartbeat, propose
+from control.ops import ack_alert, check_chain, decide, heartbeat, propose, run_job
 
 
 @graph
@@ -39,4 +39,11 @@ def heartbeat_flow(tick=None, at=None):
 def alert_ack_flow(alert_id, by, note=""):
     """Someone who should look acknowledges an alert."""
     done = ack_alert(alert_id=alert_id, by=by, note=note)
+    START >> done >> END
+
+
+@graph
+def job_run_flow(job, by):
+    """Admin runs a background job now; it runs in the server's loop and records how it went."""
+    done = run_job(job=job, by=by)
     START >> done >> END

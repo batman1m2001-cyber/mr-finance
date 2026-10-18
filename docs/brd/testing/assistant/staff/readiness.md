@@ -67,8 +67,8 @@ customer's was. This page is the assessment for the five staff roles (RM, CIO, E
 - **Owner's decisions, not defects:**
   - whether a customer's own proposal, once the RM approves it, should go on to the specialist (the observation in
     defects.md);
-  - the confirm-gated agent controls and the jobs view for the CIO, still held for the owner. The assistant reads
-    the agents (`agent_nen`) and says plainly that it does not run them.
+  - the confirm-gated agent controls and the jobs view: built after this test (owner, 2026-10-18;
+    docs/OWNER_BACKLOG_1018_PLAN.md A). cio-lim-02 now expects the Xác nhận, and adm-act-02 runs a job.
 
 ## Spend
 

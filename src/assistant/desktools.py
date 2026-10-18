@@ -81,6 +81,38 @@ def _when(v: Any) -> str:
 STATE_SAY = {"done": "chạy xong", "active": "đang chạy", "waiting": "đang chờ", "failed": "lỗi", "idle": "chưa chạy"}
 
 
+def _can_run(ctx: Ctx) -> str:
+    """What this role may start (owner 2026-10-18): the CIO, Agent CIO on an event with no view and the challenger
+    where it failed; Admin, the jobs on the list; Compliance, nothing. Each runs on the person's Xác nhận, or from the
+    Việc nền page."""
+    if ctx.role == "cio":
+        from app.web import agents_read
+
+        a = agents_read()
+        evs = (
+            "; ".join(f"{e['id']} “{e['title']}”" for e in a["can_run"][:6])
+            or "không sự kiện nào (đều đã có nhận định)"
+        )
+        ch = "; ".join(f"{v['id']} (sự kiện “{v['title']}”)" for v in a["can_challenge"]) or "không"
+        return (
+            f"Bạn chạy được Agent CIO cho sự kiện chưa có nhận định: {evs}. Phản biện lỗi chờ chạy lại: {ch}. Trợ lý "
+            "chạy được khi bạn bấm Xác nhận, hoặc làm ở trang Việc nền; nhận định ra vẫn chờ bạn duyệt ở trang Sự "
+            "kiện & nhận định."
+        )
+    if ctx.role == "admin":
+        from control import jobs
+
+        busy = [r["label"] for r in jobs.recent(50) if r["status"] == "running"]
+        return (
+            "Việc chạy tay được: "
+            + ", ".join(jobs.RUNNABLE.values())
+            + ". "
+            + (f"Đang chạy: {', '.join(busy)}. " if busy else "")
+            + "Trợ lý chạy được khi bạn bấm Xác nhận, hoặc làm ở trang Việc nền. Các agent do CIO chạy."
+        )
+    return "CIO chạy các agent, Quản trị chạy các việc nền (trang Việc nền); Tuân thủ xem."
+
+
 async def background(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """The agents and the background jobs, as the Agent page's map reads them from their records: each one's state,
     its last run and today's runs and failures (staff stress test D07: the CIO asked, and nothing could say)."""
@@ -105,8 +137,8 @@ async def background(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
             else "Không agent hay việc nền nào lỗi. "
         )
         + "; ".join(line(n) for n in nodes)
-        + ". Agent CIO chỉ chạy khi CIO bấm Chạy Agent CIO trên một sự kiện (trang Sự kiện & nhận định); trợ lý đọc "
-        "trạng thái, không chạy agent."
+        + ". "
+        + _can_run(ctx)
     )
     return {
         "text": text,
@@ -445,11 +477,11 @@ CATALOGUE: Dict[str, Tool] = {
         Tool(
             "agent_nen",
             "các agent và việc chạy nền (Agent CIO, Phản biện, Chính sách, hàng đợi, lấy tin, dữ liệu thị trường, quét "
-            "chính sách, tổng hợp trí nhớ, lưu giữ): trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay; chỉ "
-            "đọc",
+            "chính sách, tổng hợp trí nhớ, lưu giữ): trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay; với "
+            "CIO các sự kiện chạy được Agent CIO và phản biện lỗi, với Quản trị các việc chạy tay được",
             ("cio", "compliance", "admin"),
             background,
-            page="agent",
+            page="viec-nen",
             follow=["Có việc nền nào lỗi không?", "Có gì chờ tôi duyệt?"],
         ),
         Tool(

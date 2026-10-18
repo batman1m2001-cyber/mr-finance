@@ -68,6 +68,7 @@ const ROLES = {
         {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"}]},
       {id: "do-luong", label: "Đo lường", page: "measure"},
       {id: "agent", label: "Agent", page: "agents"},
+      {id: "viec-nen", label: "Việc nền", page: "jobs"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
@@ -80,6 +81,7 @@ const ROLES = {
       {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "agent", label: "Agent", page: "agents"},
+      {id: "viec-nen", label: "Việc nền", page: "jobs"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
@@ -103,6 +105,7 @@ const ROLES = {
       {id: "do-luong", label: "Đo lường", page: "measure"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "agent", label: "Agent", page: "agents"},
+      {id: "viec-nen", label: "Việc nền", page: "jobs"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],

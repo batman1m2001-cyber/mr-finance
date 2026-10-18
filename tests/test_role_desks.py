@@ -89,18 +89,23 @@ def test_the_specialist_keeps_every_page_it_had():
 
 def test_compliance_keeps_every_page_it_had():
     before = ["giu", "nghien-cuu", "ban-tin", "chinh-sach", "do-luong", "nhat-ky", "agent", "cau-hinh", "bo-nho"]
-    assert menu("compliance") == ["ban"] + before
+    added = {"viec-nen"}  # owner 2026-10-18: Việc nền (docs/OWNER_BACKLOG_1018_PLAN.md A)
+    assert [p for p in menu("compliance") if p not in added] == ["ban"] + before and added <= set(menu("compliance"))
 
 
 def test_admin_keeps_every_page_it_had():
-    assert menu("admin") == ["ban", "he-thong", "du-lieu", "cau-hinh", "agent", "nhat-ky", "bo-nho"]
+    added = {"viec-nen", "tai-khoan"}  # owner 2026-10-18: Việc nền, Tài khoản và vai trò (Q-25)
+    kept = [p for p in menu("admin") if p not in added]
+    assert kept == ["ban", "he-thong", "du-lieu", "cau-hinh", "agent", "nhat-ky", "bo-nho"]
+    assert {"viec-nen"} <= set(menu("admin"))
 
 
 def test_the_cio_keeps_every_page_it_had():
     # the CIO's menu before the desk (6e735dd), page for page: the desk is added, nothing removed (OWN-MR-02)
     before = ["hop-tin", "nhan-dinh", "phoi-nhiem", "ap-dung", "do-thi", "nghien-cuu", "ban-tin", "chinh-sach"]
     before += ["mo-hinh", "do-luong", "agent", "cau-hinh", "bo-nho"]
-    assert menu("cio") == ["ban"] + before
+    added = {"viec-nen"}  # owner 2026-10-18: Việc nền (docs/OWNER_BACKLOG_1018_PLAN.md A)
+    assert [p for p in menu("cio") if p not in added] == ["ban"] + before and added <= set(menu("cio"))
 
 
 # -- the desk is the role's own -----------------------------------------------------------------------------------

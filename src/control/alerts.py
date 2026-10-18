@@ -19,6 +19,7 @@ KINDS: Dict[str, Dict[str, Any]] = {
     "audit_chain": {"label": "Chuỗi nhật ký kiểm toán gãy", "roles": ("compliance", "admin"), "severity": "high"},
     "inbox": {"label": "Gói từ vùng AI bị từ chối", "roles": ("cio", "admin"), "severity": "medium"},
     "zone_sync": {"label": "Không gửi được vùng AI", "roles": ("admin",), "severity": "medium"},
+    "job": {"label": "Việc nền chạy tay lỗi", "roles": ("admin",), "severity": "medium"},
     "availability": {"label": "Sẵn sàng trong giờ làm việc dưới 99,5 %", "roles": ("admin",), "severity": "high"},
 }
 ACTOR = "system:alerts"

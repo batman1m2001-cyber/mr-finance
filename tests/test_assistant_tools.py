@@ -110,6 +110,41 @@ def _a_follow_up(mp):
     return {"follow_up_id": followups.create(ctx("client"), "topic", topic="lãi suất")["id"]}
 
 
+def _a_failed_challenge(mp):
+    from views import agents
+    from views.graph import cio_agent_flow
+
+    ev = _an_event(mp)["event_id"]
+
+    async def down(*a, **k):
+        raise agents.AgentError("Agent Phản biện không trả lời")
+
+    with mp.context() as m:
+        m.setattr(agents, "challenge", down)
+        v = run(base.run_graph(cio_agent_flow, event_id=ev, by="cio", mode=None))["result"]["view"]
+    assert v["status"] == "PENDING_CHALLENGE"
+    return {"view_id": v["id"]}
+
+
+class FakeRun:
+    run_id, items, failed, timed_out, errors = "R-1", [object()], [], [], {}
+
+
+class FakeJob:
+    def __init__(self, name):
+        self.name = name
+
+    async def run(self, **kw):
+        return FakeRun()
+
+
+def _a_job(mp):
+    from control import jobs
+
+    mp.setitem(jobs._JOBS, "audit_check", FakeJob("audit_check"))
+    return {"job": "audit_check"}
+
+
 SETUP = {  # write → (who asks, what must exist first → the model's arguments)
     "duyet_de_xuat": ("rm", _review_pending),
     "lay_tin": ("cio", _feeds),
@@ -118,6 +153,9 @@ SETUP = {  # write → (who asks, what must exist first → the model's argument
     "khuyen_nghi": ("rm", lambda mp: {"title": "Tăng dự phòng", "actions": ["Gửi thêm 200 triệu kỳ hạn 12 tháng"]}),
     "chuyen_gia_duyet": ("specialist", _waiting_for_specialist),
     "danh_dau_khan": ("cio", _an_event),
+    "chay_agent_cio": ("cio", lambda mp: {"event_id": _an_event(mp)["event_id"], "mode": ""}),
+    "phan_bien_lai": ("cio", _a_failed_challenge),
+    "chay_viec_nen": ("admin", _a_job),
     "da_xem_canh_bao": ("cio", _an_alert),
     "ghi_nho": ("client", lambda mp: {"kind": "preference", "text": "Thích báo cáo ngắn"}),
     "quen": ("client", _an_item),
@@ -125,7 +163,17 @@ SETUP = {  # write → (who asks, what must exist first → the model's argument
     "huy_theo_doi": ("client", _a_follow_up),
 }
 DELETES = ("quen",)  # writes whose effect is an absence
-BUSINESS = ("reviews", "rm_contacts", "events", "alerts", "news_items", "audit_log")
+BUSINESS = (
+    "reviews",
+    "rm_contacts",
+    "events",
+    "alerts",
+    "news_items",
+    "audit_log",
+    "agent_jobs",
+    "challenges",
+    "job_runs",
+)
 
 
 def fingerprint(path):

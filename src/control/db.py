@@ -77,6 +77,9 @@ create table if not exists policy_documents (
 create table if not exists heartbeats (minute integer primary key, at real not null, business integer not null);
 create table if not exists rm_contacts (
   id text primary key, at real not null, family_id text not null, by text not null, signal text, data text not null);
+create table if not exists job_runs (
+  id text primary key, job text not null, status text not null, created real not null, data text not null);
+create index if not exists job_runs_open on job_runs (job, status);
 create table if not exists client_alerts (
   client_id text not null, key text not null, first_shown real not null, opened real, data text not null,
   primary key (client_id, key));
@@ -103,6 +106,7 @@ TABLES = (
     "heartbeats",
     "rm_contacts",
     "client_alerts",
+    "job_runs",
     "counters",
 )
 

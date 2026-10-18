@@ -40,6 +40,15 @@ không), Lời nhắc của agent và Mô hình AI của agent.
 
 Các tác vụ AI và chất lượng của chúng.
 
+## Việc nền — #/admin/viec-nen
+
+Các việc nền theo lịch và các agent trên một trang. **Lịch chạy**: từng việc, lịch, lần gần nhất và lỗi; Quản trị bấm
+**Chạy ngay** cho lấy tin, tin tham chiếu, các việc giá (cổ phiếu, tỷ giá, vàng…), quét chính sách, kiểm tra chuỗi
+nhật ký, nhập và gửi vùng AI, chấm độ chính xác. Mỗi việc chạy một lần một lúc; lần chạy được ghi nhật ký, lỗi thì có
+cảnh báo. Nhịp máy chủ, hàng đợi agent, tổng hợp trí nhớ và lưu giữ không chạy tay.
+**Lần chạy tay**: ai chạy việc gì, lúc nào, kết quả. Trợ lý chạy ngay một việc khi Quản trị bấm Xác nhận. Các agent
+(Agent CIO, Agent Phản biện) do CIO chạy.
+
 ## Nhật ký — #/admin/nhat-ky
 
 Như trang Nhật ký của Tuân thủ: kiểm tra chuỗi và các dòng mới nhất, tải JSON hoặc CSV.

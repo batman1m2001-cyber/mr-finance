@@ -106,3 +106,14 @@ def _set(con, r, status: str, **fields) -> None:
 
     data = {**json.loads(r["data"]), **fields}
     con.execute("update agent_jobs set status = ?, data = ? where id = ?", (status, db.dumps(data), r["id"]))
+
+
+def recent(limit: int = 20) -> List[Dict[str, Any]]:
+    """The last requests, newest first, with their event's title (Việc nền)."""
+    with db.tx() as con:
+        rows = con.execute(
+            "select j.*, json_extract(e.data, '$.title') as title from agent_jobs j left join events e on e.id = "
+            "j.event_id order by j.created desc limit ?",
+            (limit,),
+        ).fetchall()
+    return [{**_row(r), "title": r["title"]} for r in rows]

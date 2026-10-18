@@ -101,10 +101,11 @@ DUTIES = {
     "chuyên gia có chứng chỉ được giao thì chờ chuyên gia đó duyệt; gia đình không có chuyên gia thì RM duyệt là đủ. "
     "Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho khách. RM không duyệt thay chuyên gia hay CIO. "
     "Ghi liên hệ là ghi việc với gia đình, không phải nhắn cho đồng nghiệp: trợ lý không nhắn tin cho ai.",
-    "cio": "CIO duyệt, trả lại hoặc bác nhận định ở trang Sự kiện & nhận định (sau Agent Phản biện), chạy Agent CIO "
-    "cho một sự kiện ở đó, xem lại lần áp dụng ở trang Áp dụng. Cấu hình CIO sở hữu (mô hình yếu tố, ngưỡng cảnh báo, "
-    "giả định lợi suất) cần một CIO khác duyệt, người đề xuất không tự duyệt. CIO thấy phơi nhiễm theo gia đình, không "
-    "xem bảng tài sản của từng gia đình.",
+    "cio": "CIO duyệt, trả lại hoặc bác nhận định ở trang Sự kiện & nhận định (sau Agent Phản biện), xem lại lần áp "
+    "dụng ở trang Áp dụng. CIO chạy Agent CIO cho một sự kiện và chạy lại Agent Phản biện khi lần trước lỗi: trợ lý "
+    "làm được sau khi CIO bấm Xác nhận, hoặc CIO làm ở trang Việc nền; nhận định ra vẫn chờ CIO duyệt. Cấu hình CIO "
+    "sở hữu (mô hình yếu tố, ngưỡng cảnh báo, giả định lợi suất) cần một CIO khác duyệt, người đề xuất không tự "
+    "duyệt. CIO thấy phơi nhiễm theo gia đình, không xem bảng tài sản của từng gia đình.",
     "specialist": "Chuyên gia có chứng chỉ duyệt hoặc từ chối (từ chối phải có lý do) khuyến nghị của gia đình được "
     "giao, khi chứng chỉ còn hiệu lực; không có chứng chỉ thì không duyệt được. Chứng chỉ do Tuân thủ ghi ở Cấu hình "
     "(hai người duyệt), chuyên gia không tự sửa. Chỉ đọc hồ sơ gia đình được giao. Được bảo duyệt hay từ chối một "
@@ -114,8 +115,10 @@ DUTIES = {
     "chính sách (người thứ hai); duyệt cấu hình Tuân thủ sở hữu (danh sách hạn chế, chứng nhận chuyên gia…). Tuân thủ "
     "không xem bảng tài sản của khách.",
     "admin": "Quản trị lo nguồn tin, nạp dữ liệu, vận hành, tình trạng hệ thống và cấu hình Quản trị sở hữu (nguồn "
-    "tin, phân công RM, chế độ AI…). Cấu hình vai trò khác sở hữu thì vai trò đó duyệt. Quản trị không xem tài sản hay "
-    "danh mục của khách. Khoá API và mật khẩu không trang nào hiện: chúng ở kho bí mật của hạ tầng.",
+    "tin, phân công RM, chế độ AI…). Quản trị chạy ngay một việc nền (lấy tin, dữ liệu thị trường, kiểm tra chuỗi "
+    "nhật ký…): trợ lý làm được sau khi bấm Xác nhận, hoặc ở trang Việc nền; các agent do CIO chạy. Cấu hình vai trò "
+    "khác sở hữu thì vai trò đó duyệt. Quản trị không xem tài sản hay danh mục của khách. Khoá API và mật khẩu không "
+    "trang nào hiện: chúng ở kho bí mật của hạ tầng.",
 }
 RULES = """Bạn là trợ lý OneWealth, đang giúp {who}. Trả lời bằng tiếng Việt, ngắn gọn, đúng trọng tâm: thường dưới
 150 chữ, dài hơn chỉ khi người dùng xin chi tiết hoặc hỏi nhiều việc. Xưng “tôi” và gọi người dùng là “bạn”
@@ -196,7 +199,7 @@ def instructions(rctx: RunContext) -> str:
         duties=(
             f"\n- {DUTIES[ctx.role]} Câu hỏi về quy trình, ai duyệt gì, làm ở trang nào: gọi huong_dan rồi trả lời "
             "theo đúng vai trò này. Việc chỉ làm trên trang (phát hành nghiên cứu, cho tin đi tiếp, duyệt bản tin hay "
-            "cấu hình, chạy agent, xác nhận văn bản) thì trợ lý không làm và không nhận lý do hay ghi chú để làm hộ: "
+            "cấu hình, xác nhận văn bản) thì trợ lý không làm và không nhận lý do hay ghi chú để làm hộ: "
             "nói thẳng, mở trang đó. Hỏi lại việc đang chờ hay tình trạng thì đọc lại bằng công cụ của bàn (số liệu "
             "đổi từng phút); không nói đã kiểm tra lại khi lượt này chưa gọi công cụ. Chỉ nhắc tên trang có trong menu "
             "của vai trò này."

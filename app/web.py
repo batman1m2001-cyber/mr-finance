@@ -661,21 +661,16 @@ async def system_alerts(request: Request) -> JSONResponse:
 JOBS: list = []  # filled by app/main.py: {id, description, when: {every|at}}
 
 
-async def system(request: Request) -> JSONResponse:
-    return JSONResponse(system_read())
-
-
-def system_read() -> dict:
-    """Hệ thống (Admin; BRD-RULE-ROLE-04, NFR-12): the jobs and how each last went, the news feeds, the agents,
-    the audit chain's check, the loads of market history, the configuration waiting, the people and their accounts.
-    Read from the stored records only. Admin's desk (src/desk/reads.py) draws this same read."""
-    from control import config
+def _jobs_last(news: dict, loads: list) -> list:
+    """Each declared job with how it last went, from the records its work keeps (market, news, loads), and the last
+    manual run (control/jobs.py) where that is newer."""
+    from control import jobs as control_jobs
 
     market_health = market_store.job_health()
-    news = news_store.last_run() or {}
-    pending = config.pending_evals()
-    loads = market_store.loads()
-    jobs = []
+    manual = {}
+    for r in control_jobs.recent(100):
+        manual.setdefault(r["job"], r)
+    out = []
     for j in JOBS:
         last = None
         if j["id"] in market_health:
@@ -694,7 +689,82 @@ def system_read() -> dict:
                 "ok": loads[0]["status"] != "failed",
                 "error": loads[0].get("error"),
             }
-        jobs.append({**j, "last": last})
+        m = manual.get(j["id"])
+        if m and m["status"] != "running" and (last is None or (m.get("finished") or 0) > (last["at"] or 0)):
+            last = {"at": m.get("finished"), "ok": m["status"] == "done", "error": m.get("error"), "manual": m["id"]}
+        out.append(
+            {
+                **j,
+                "last": last,
+                "label": control_jobs.RUNNABLE.get(j["id"]),
+                "runnable": j["id"] in control_jobs.RUNNABLE,
+                "running": m["id"] if m and m["status"] == "running" else None,
+            }
+        )
+    return out
+
+
+async def jobs_page(request: Request) -> JSONResponse:
+    return JSONResponse(jobs_read())
+
+
+def agents_read() -> dict:
+    """The agents on Việc nền: the queue of Agent CIO requests, each agent's runs in 7 days, the mode and today's token
+    budget, and what the CIO may start (events with no view and no open request; views whose challenger failed)."""
+    from views import decide as view_decide
+
+    open_events = {j["event_id"] for j in agent_queue.recent(200) if j["status"] in ("queued", "running")}
+    events = []
+    for ev in events_store.listing()[:40]:
+        if ev["id"] in open_events or ev.get("blocked") or view_ops.event_views(ev["id"]):
+            continue
+        events.append({"id": ev["id"], "title": ev["title"], "urgent": bool(ev.get("urgent"))})
+    with control_db.tx() as con:
+        rows = con.execute(
+            "select id from views where status in (%s) order by rowid desc limit 20"
+            % ",".join("?" * len(view_decide.FROM["challenge"])),
+            view_decide.FROM["challenge"],
+        ).fetchall()
+    challenge = []
+    for r in rows:
+        v = views_store.get(r["id"])
+        challenge.append({"id": v["id"], "event_id": v["event_id"], "title": events_store.get(v["event_id"])["title"],
+                          "error": v.get("challenge_error")})  # fmt: skip
+    return {
+        "status": view_ops.agent_status(),
+        "health": views_store.run_health(),
+        "queue": agent_queue.recent(20),
+        "can_run": events[:12],
+        "can_challenge": challenge,
+    }
+
+
+def jobs_read() -> dict:
+    """Việc nền (owner 2026-10-18; CIO, Admin, Compliance): the agents (:func:`agents_read`) and the jobs — each one's
+    clock, last run and whether Admin may run it now — and the last manual runs. Read from the stored records only."""
+    from control import jobs as control_jobs
+
+    return {
+        "agents": agents_read(),
+        "jobs": _jobs_last(news_store.last_run() or {}, market_store.loads()),
+        "manual": control_jobs.recent(20),
+    }
+
+
+async def system(request: Request) -> JSONResponse:
+    return JSONResponse(system_read())
+
+
+def system_read() -> dict:
+    """Hệ thống (Admin; BRD-RULE-ROLE-04, NFR-12): the jobs and how each last went, the news feeds, the agents,
+    the audit chain's check, the loads of market history, the configuration waiting, the people and their accounts.
+    Read from the stored records only. Admin's desk (src/desk/reads.py) draws this same read."""
+    from control import config
+
+    news = news_store.last_run() or {}
+    pending = config.pending_evals()
+    loads = market_store.loads()
+    jobs = _jobs_last(news, loads)
     with control_db.tx() as con:
         chain = control_audit.verify(con)
         kept = control_worm.verify(con)
@@ -1055,6 +1125,7 @@ ROUTE_ROLES = {
     "/api/market": ("cio", "admin"),
     "/api/audit": ("compliance", "admin"),
     "/api/system": ("admin",),
+    "/api/jobs": OVERSIGHT,  # Việc nền: agents and jobs; Admin runs jobs, the CIO the agents
     "/api/system/alerts": OVERSIGHT,  # the bell: each role its kinds of alert
     "/api/newsletters": ("cio", "compliance"),  # the CIO writes, Compliance approves (FR-801)
     "/api/policy": ("cio", "compliance"),  # Compliance keeps the radar, the CIO reads it (FR-306)
@@ -1169,6 +1240,7 @@ app = Starlette(
         Route("/api/audit", audit_list),
         Route("/api/market", market),
         Route("/api/system", system),
+        Route("/api/jobs", jobs_page),
         Route("/api/system/alerts", system_alerts),
         Route("/api/newsletters", newsletters),
         Route("/api/newsletters/{newsletter_id}", newsletter_one),

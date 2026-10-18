@@ -79,6 +79,7 @@ READS = {
     "/api/audit/verify": {"compliance", "admin"},
     "/api/audit/export": {"compliance", "admin"},
     "/api/system": {"admin"},
+    "/api/jobs": DESK,  # Việc nền: Admin runs the jobs, the CIO the agents, Compliance reads
     "/api/system/alerts": DESK,  # the bell: each role its kinds of alert
     "/api/rm/today": {"rm01", "rm03"},
 }
@@ -139,6 +140,7 @@ def actions(vid, item):
         ("/api/model/estimate", {"by": "BY"}, {"cio"}),
         ("/api/market/load", {"by": "BY", "since": "2026-01-01"}, {"admin"}),
         ("/api/system/alerts/ack", {"alert_id": "AL-0", "by": "BY"}, DESK),
+        ("/api/jobs/run", {"job": "audit_check", "by": "BY"}, {"admin"}),
     ]
 
 

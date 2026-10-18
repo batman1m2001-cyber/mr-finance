@@ -128,10 +128,10 @@ def test_a_recommendation_says_why_it_went_straight_through_or_whom_it_waits_for
 def test_d07_the_cio_can_read_the_agents_and_background_jobs():
     """D07: “các agent đang chạy nền có những gì?” had no tool; the answer pointed at the wrong pages."""
     assert set(registry.REGISTRY["agent_nen"].roles) == {"cio", "compliance", "admin"}
-    assert not registry.REGISTRY["agent_nen"].write  # it reads; running an agent stays on its page
+    assert not registry.REGISTRY["agent_nen"].write  # it reads; the runs are their own writes (chay_agent_cio…)
     out = call("agent_nen", ctx("cio"))
     assert all(f"{name}:" in out["text"] for name in ("Agent CIO", "Agent Phản biện", "Tin tức", "Quét chính sách"))
-    assert "không chạy agent" in out["text"]
+    assert "bấm Xác nhận" in out["text"]  # owner 2026-10-18: the assistant runs them on a confirm
     assert {"cio", "challenger", "news"} <= {n["id"] for n in out["data"]["nodes"]}
 
 

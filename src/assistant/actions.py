@@ -3,10 +3,11 @@ may ask for in a sentence. Each runs the graph the page posts to, as the person,
 and separation-of-duty checks apply unchanged; a write is planned (the line the person confirms, its arguments
 resolved here), then read back by its verifier.
 
-Left to their pages, deliberately: the four-eyes governance decisions (configuration versions, CIO views and
-runs, newsletters, policy documents, research release, the market model), grouping news into events, releasing
-held news and the client's own uploads and risk test. Each needs the person to read evidence on that page; the
-assistant opens the page (``mo_trang``) instead of acting."""
+Left to their pages, deliberately: the four-eyes governance decisions (configuration versions, approving CIO
+views, reviewing runs, newsletters, policy documents, research release, the market model), grouping news into
+events, releasing held news and the client's own uploads and risk test. Each needs the person to read evidence on
+that page; the assistant opens the page (``mo_trang``) instead of acting. Starting Agent CIO, re-running the
+challenger and running a background job are not decisions (owner 2026-10-18): they are writes here, on a Xác nhận."""
 
 from __future__ import annotations
 
@@ -14,6 +15,7 @@ from typing import Any, Dict, List
 
 from assistant.base import Ctx, Param, Tool, ToolFailed
 from assistant.tools import STRESS, _family, _graph, _need_client, _vnd
+from control.jobs import RUNNABLE
 from wealth import fixtures
 from wealth import store as wealth_store
 
@@ -463,6 +465,150 @@ def verify_ack(ctx: Ctx, out: Dict[str, Any]):
     return True if row and row["status"] == "acked" else f"cảnh báo đang ở {row and row['status']}"
 
 
+# -- the agents and the jobs (owner 2026-10-18, docs/OWNER_BACKLOG_1018_PLAN.md A): started on a Xác nhận; what they
+# lead to (a view's approval, a run's review) stays on its page with its second person
+
+MODES = {"live": "trực tiếp (mô hình thật)", "mock": "mô phỏng (quy tắc, không gọi mô hình)"}
+
+
+def plan_agent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from events import store as events_store
+    from events.store import EventError
+    from views import agents
+    from views import queue as agent_queue
+    from views import store as views_store
+
+    try:
+        ev = events_store.get(str(args.get("event_id") or ""))
+    except EventError as exc:
+        raise ToolFailed(str(exc)) from None
+    if ev["blocked"]:
+        raise ToolFailed(f"Sự kiện “{ev['title']}” đang bị giữ chờ Tuân thủ ({', '.join(ev['held'])}): chưa chạy được")
+    asked = str(args.get("mode") or "") or None
+    try:
+        mode = agents.resolve_mode(asked)
+    except agents.AgentError as exc:
+        raise ToolFailed(str(exc)) from None
+    open_ = [j for j in agent_queue.for_event(ev["id"]) if j["status"] in ("queued", "running")]
+    if open_:
+        raise ToolFailed(f"Agent CIO đã có lần chờ chạy cho sự kiện này ({open_[0]['id']}, {open_[0]['status']})")
+    had = len(views_store.for_event(ev["id"]))
+    again = f" (sự kiện đã có {had} nhận định; lần này thêm một bản nháp mới)" if had else ""
+    return {
+        "summary": f"Chạy Agent CIO cho sự kiện “{ev['title']}”, chế độ {MODES[mode]}{again}?",
+        "args": {"event_id": ev["id"], "mode": asked},
+    }
+
+
+async def agent_run(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from views.graph import agent_queue_flow
+
+    job = (await _graph(agent_queue_flow, event_id=args.get("event_id"), by=ctx.user, mode=args.get("mode")))["job"]
+    return {
+        "text": f"Đã xếp Agent CIO chạy cho sự kiện {job['event_id']} (lần {job['id']}, chế độ {MODES[job['mode']]}). "
+        "Nhận định ra là bản nháp: qua Agent Phản biện, rồi bạn duyệt ở trang Sự kiện & nhận định; tiến độ ở trang "
+        "Việc nền.",
+        "data": {"id": job["id"], "event_id": job["event_id"]},
+    }
+
+
+def verify_agent(ctx: Ctx, out: Dict[str, Any]):
+    from views import queue as agent_queue
+
+    j = agent_queue.get(out["data"]["id"])
+    return True if j["event_id"] == out["data"]["event_id"] else "lần chạy không khớp sự kiện"
+
+
+def plan_challenge(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from events import store as events_store
+    from views import decide as view_decide
+    from views import store as views_store
+
+    try:
+        v = views_store.get(str(args.get("view_id") or ""))
+    except KeyError:
+        raise ToolFailed(f"Không có nhận định {args.get('view_id')}") from None
+    if v["status"] not in view_decide.FROM["challenge"]:
+        raise ToolFailed(
+            f"Nhận định {v['id']} đang ở {STATUS_VIEW.get(v['status'], v['status'])}: Agent Phản biện chỉ chạy lại khi "
+            "lần trước lỗi; sửa nhận định cũng chạy lại nó"
+        )
+    title = events_store.get(v["event_id"])["title"]
+    why = f"; lần trước lỗi: {v['challenge_error']}" if v.get("challenge_error") else ""
+    return {
+        "summary": f"Chạy lại Agent Phản biện cho nhận định {v['id']} (sự kiện “{title}”{why})?",
+        "args": {"view_id": v["id"], "before": len(views_store.challenges(v["id"]))},
+    }
+
+
+async def challenge(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from views import store as views_store
+    from views.graph import decide_flow
+
+    await _graph(decide_flow, view_id=args.get("view_id"), action="challenge", by=ctx.user)
+    v = views_store.get(str(args.get("view_id")))
+    found = views_store.latest_challenge(v["id"])
+    ran = len(views_store.challenges(v["id"])) > int(args.get("before") or 0)
+    text = (
+        f"Đã chạy lại Agent Phản biện: {len(found['findings'])} phát hiện; nhận định {v['id']} chờ bạn duyệt ở trang "
+        "Sự kiện & nhận định."
+        if ran
+        else f"Chưa phản biện được, Agent Phản biện lại lỗi: {v.get('challenge_error') or 'không rõ lý do'}. Nhận định "
+        "vẫn chờ phản biện."
+    )
+    return {"text": text, "data": {"id": v["id"], "ran": ran, "status": v["status"]}}
+
+
+def verify_challenge(ctx: Ctx, out: Dict[str, Any]):
+    from views import store as views_store
+
+    v = views_store.get(out["data"]["id"])
+    if out["data"]["ran"]:
+        return True if v["status"] == "PENDING_APPROVAL" else f"nhận định đang ở {v['status']}"
+    return True if v.get("challenge_error") else "không thấy lỗi đã báo"
+
+
+def plan_job(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from control import jobs
+
+    job = str(args.get("job") or "")
+    if job not in jobs.RUNNABLE:
+        raise ToolFailed(f"Việc {job!r} không chạy tay được")
+    busy = jobs.running(job)
+    if busy:
+        raise ToolFailed(f"{jobs.label(job)} đang chạy (lần {busy['id']}); chờ nó xong")
+    return {"summary": f"Chạy ngay việc nền “{jobs.label(job)}”?", "args": {"job": job}}
+
+
+async def job_run(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from control.graph import job_run_flow
+
+    r = (await _graph(job_run_flow, job=args.get("job"), by=ctx.user))["run"]
+    return {
+        "text": f"Đã bắt đầu “{r['label']}” (lần {r['id']}). Việc chạy nền; kết quả ở trang Việc nền.",
+        "data": {"id": r["id"], "job": r["job"]},
+    }
+
+
+def verify_job(ctx: Ctx, out: Dict[str, Any]):
+    from control import jobs
+
+    r = jobs.get(out["data"]["id"])
+    return True if r["job"] == out["data"]["job"] and r["by"] == ctx.user else "lần chạy không khớp"
+
+
+STATUS_VIEW = {
+    "DRAFTING": "đang soạn",
+    "PENDING_APPROVAL": "chờ CIO duyệt",
+    "APPROVED": "đã duyệt",
+    "AGENT_ERROR": "agent lỗi",
+    "REWORK_REQUESTED": "bị trả lại",
+    "REJECTED": "bị bác",
+    "WITHDRAWN": "đã thu hồi",
+    "SUPERSEDED": "đã thay thế",
+}
+
+
 ITEM = Param(str, "mã đề xuất, lấy từ công cụ de_xuat")
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
@@ -562,6 +708,43 @@ CATALOGUE: Dict[str, Tool] = {
             page="su-kien",
             plan=plan_urgent,
             verify=verify_urgent,
+        ),
+        Tool(
+            "chay_agent_cio",
+            "xếp Agent CIO chạy cho một sự kiện (ra bản nháp nhận định, qua Agent Phản biện, CIO duyệt ở trang): mode "
+            "live là mô hình thật, mock là mô phỏng; bỏ trống mode để theo cấu hình",
+            ("cio",),
+            agent_run,
+            write=True,
+            args={"mode": ["", "live", "mock"]},
+            params={"event_id": Param(str, "mã sự kiện, lấy từ công cụ agent_nen hoặc su_kien")},
+            page="viec-nen",
+            plan=plan_agent,
+            verify=verify_agent,
+        ),
+        Tool(
+            "phan_bien_lai",
+            "chạy lại Agent Phản biện cho một nhận định mà lần phản biện trước lỗi",
+            ("cio",),
+            challenge,
+            write=True,
+            params={"view_id": Param(str, "mã nhận định, lấy từ công cụ agent_nen")},
+            page="viec-nen",
+            plan=plan_challenge,
+            verify=verify_challenge,
+            timeout=120.0,
+        ),
+        Tool(
+            "chay_viec_nen",
+            "Quản trị chạy ngay một việc nền (lấy tin, dữ liệu thị trường, quét chính sách, kiểm tra chuỗi nhật ký, "
+            "đồng bộ vùng AI, chấm độ chính xác)",
+            ("admin",),
+            job_run,
+            write=True,
+            args={"job": list(RUNNABLE)},
+            page="viec-nen",
+            plan=plan_job,
+            verify=verify_job,
         ),
         Tool(
             "da_xem_canh_bao",
