@@ -1,0 +1,316 @@
+{
+ "id": "cc-02",
+ "category": "concerns",
+ "persona": "sợ mất việc, còn nợ (C05)",
+ "client_id": "C05",
+ "title": "Công ty cắt giảm, còn nợ 2 tỷ",
+ "why": "Job insecurity with debt: practical next steps.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Công ty mình đang cắt giảm nhân sự, mình sợ mất việc mà còn nợ hơn 2 tỷ, mình phải làm sao?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "not_says": [
+     "đừng lo"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Công ty mình đang cắt giảm nhân sự, mình sợ mất việc mà còn nợ hơn 2 tỷ, mình phải làm sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 32,7 tháng (khoảng 3 năm) theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 26,0 triệu; Thanh toán thẻ 15,9 triệu; Chi tiêu sinh hoạt 9,3 triệu. Nguồn tiền vào: Lương 60,1 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 16,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 15%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 16,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 15%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16993,
+     "output_tokens": 933,
+     "requests": 2,
+     "cost_usd": 0.002166,
+     "tools_cost_usd": null
+    },
+    "turn_id": "4ad5251a2756472b9752e6960d194e60",
+    "conversation_id": "37f1b5e8404e4ca4",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đã xem số liệu của bạn (cập nhật 09/10/2026, từ trang Tổng quan). Đây là bức tranh hiện tại:\n\n- **Khoản vay chính:** 2,10 tỷ (vay mua căn hộ Vinhomes Grand Park), cộng 12 triệu dư nợ thẻ. Tổng nợ khoảng 2,11 tỷ.\n- **Tiền dự phòng:** 980 triệu, đủ chi khoảng 32,7 tháng theo mức chi 30 triệu/tháng trong hồ sơ.\n- **Dòng tiền tháng 09/2026:** thu 60,1 triệu, chi 51,2 triệu, còn dư 9 triệu. Phần lớn chi là trả nợ vay (26 triệu/tháng).\n- **Rủi ro:** 69% tài sản nằm ở bất động sản một khu vực, vượt ngưỡng 35%. Khi thị trường xấu, mức sụt giảm ước tính 16,8%, vượt ngưỡng 15%. Đây là ước tính, không phải dự báo.\n\nGợi ý để bạn cân nhắc:\n1. **Tìm hiểu quyền lợi khi bị cắt giảm:** trợ cấp thôi việc, lương tháng cuối, bảo hiểm thất nghiệp. Bạn nên đăng ký bảo hiểm thất nghiệp sớm.\n2. **Giữ thanh khoản:** với khoản dự phòng hiện có, bạn có thời gian để tìm việc mới. Hạn chế chi tiêu mới và thẻ tín dụng.\n3. **Trao đổi với ngân hàng** về kế hoạch trả nợ nếu thu nhập giảm. Ngân hàng thường có phương án cơ cấu lại khoản vay.\n4. **Mô phỏng kịch bản mất việc** nếu bạn muốn xem cụ thể thu nhập giảm ảnh hưởng thế nào đến khả năng trả nợ. Bạn chỉ cần nói mức thu nhập giảm bao nhiêu phần trăm.\n\nBạn có muốn tôi chạy mô phỏng thu nhập giảm không?",
+    "timing": {
+     "start": 27,
+     "model": [
+      1025,
+      1068
+     ],
+     "tools": 835,
+     "first_text": 1051,
+     "total": 6276
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)",
+     "9 giao dịch của tháng",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792296144.9459975,
+    "audit_seq": 643,
+    "session": {
+     "id": "37f1b5e8404e4ca4",
+     "title": "Công ty mình đang cắt giảm nhân sự, mình sợ mất…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.314047733321786,
+   "first_event": 1.0662111709825695,
+   "usage": {
+    "cost": 0.002166,
+    "input": 16993,
+    "output": 933,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NJYce9kMm3czWiD86MZCrw",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PsqjgUe1zVxkVXqZXx3Peu",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_013rR49i6qLzBi7nJcYhRAGR",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NJYce9kMm3czWiD86MZCrw",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 248,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PsqjgUe1zVxkVXqZXx3Peu",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 248,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_013rR49i6qLzBi7nJcYhRAGR",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 339,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

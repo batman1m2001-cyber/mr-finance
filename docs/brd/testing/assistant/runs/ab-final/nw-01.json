@@ -1,0 +1,502 @@
+{
+ "id": "nw-01",
+ "category": "news",
+ "persona": "chuyên gia, hoài nghi (C01)",
+ "client_id": "C01",
+ "title": "Tin nào ảnh hưởng nhất, chắc hay ước, nguồn đâu",
+ "why": "The biggest impact, then fact against estimate, then the source.",
+ "brd": [
+  "BR-08",
+  "BRD-RULE-CONTENT-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "chu_y"
+    ],
+    "sourced": true
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "expect": {
+    "says": "ước tính"
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "dieu_tra",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "text": "2 sự kiện đang có hiệu lực; tác động kỳ vọng 3 tháng cộng lại +0,2 triệu. Lớn nhất: Bất động sản (+98,6 triệu). Đây là ước tính theo kịch bản CIO duyệt, không phải khuyến nghị.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bất động sản",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "+98,6 triệu",
+         "tone": "good",
+         "focus": "event:EV-2026-0002"
+        },
+        {
+         "title": "Thị trường cổ phiếu",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "−98,4 triệu",
+         "tone": "bad",
+         "focus": "event:EV-2026-0001"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "2 lần áp dụng CIO duyệt",
+       "CafeF",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 11,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 8%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 11,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 8%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15950,
+     "output_tokens": 438,
+     "requests": 2,
+     "cost_usd": 0.001814,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1e812318345c4a36a787eafdac337fa9",
+    "conversation_id": "6016395662564e28",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 2 sự kiện đã được CIO duyệt đang tác động tới tài sản của bạn (số liệu ngày 9/10/2026):\n\n- **Lớn nhất là bất động sản: ước tính +98,6 triệu** trong 3 tháng tới.\n- Tổng tác động kỳ vọng của cả hai sự kiện cộng lại chỉ khoảng **+0,2 triệu**.\n\nLưu ý: đây là ước tính theo kịch bản CIO duyệt, không phải dự báo hay khuyến nghị.\n\nNgoài ra, có một điều đáng chú ý: mức sụt giảm ước tính khi thị trường xấu là **11,8%**, đang vượt ngưỡng chấp nhận **8%** của sản phẩm.\n\nNếu bạn muốn, tôi có thể mở trang tác động để xem chi tiết từng tin, hoặc chạy thử kịch bản chứng khoán giảm 30% để xem tác động lên danh mục.",
+    "timing": {
+     "start": 25,
+     "model": [
+      1027,
+      1033
+     ],
+     "tools": 281,
+     "first_text": 1051,
+     "total": 3961
+    },
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "2 lần áp dụng CIO duyệt",
+     "CafeF",
+     "Vietstock",
+     "VnEconomy",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792296031.754591,
+    "audit_seq": 603,
+    "session": {
+     "id": "6016395662564e28",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.00346381822601,
+   "first_event": 1.065625004004687,
+   "usage": {
+    "cost": 0.001814,
+    "input": 15950,
+    "output": 438,
+    "requests": 2
+   },
+   "why": [
+    "numbers not from the tools or the person: ['30%']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GUWTV1cW3q7vjCQ48XCG25",
+     "tool": "tac_dong",
+     "label": "Tác động tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SRwaGxFkFnFfMGvEnGjXZN",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GUWTV1cW3q7vjCQ48XCG25",
+     "tool": "tac_dong",
+     "ok": true,
+     "ms": 60,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SRwaGxFkFnFfMGvEnGjXZN",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 221,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8613,
+     "output_tokens": 299,
+     "requests": 1,
+     "cost_usd": 0.001011,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0c4cff900b7544b59b53d6f314c0a769",
+    "conversation_id": "6016395662564e28",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đó là ước tính, không phải con số chắc chắn.\n\n- **Số đọc từ hệ thống** (ví dụ tài sản, các khoản nợ) là số ghi nhận tại thời điểm 9/10/2026.\n- **Con số +98,6 triệu cho bất động sản** là ước tính theo kịch bản mà CIO đã duyệt, áp lên tài sản hiện có trong 3 tháng. Nó phụ thuộc vào giả định về mức thay đổi giá và thời gian, nên thực tế có thể khác.\n- **Mức sụt giảm 11,8%** cũng là mô phỏng khi thị trường xấu, không phải dự báo.\n\nNếu bạn muốn kiểm tra giả định đằng sau các con số này, tôi có thể đưa ra phần điều tra đường đi từ tin đến tài sản.",
+    "timing": {
+     "start": 27,
+     "model": [
+      1105
+     ],
+     "tools": 0,
+     "first_text": 1132,
+     "total": 2628
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296034.466395,
+    "audit_seq": 604,
+    "session": {
+     "id": "6016395662564e28",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.6664664428681135,
+   "first_event": 1.1479208208620548,
+   "usage": {
+    "cost": 0.001011,
+    "input": 8613,
+    "output": 299,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dieu_tra",
+      "label": "Điều tra tin",
+      "status": "ok",
+      "text": "Bất động sản: 4 tin, CIO duyệt 3 kịch bản (chính: Trung tính, thị trường đi ngang · 55%); đi qua VN-Index, Giá nhà ở Việt Nam; tới Bất động sản, Cổ phiếu, Chứng chỉ quỹ. Tác động kỳ vọng 3 tháng +98,6 triệu. Có thể ảnh hưởng theo kịch bản, không phải quan hệ nhân quả.",
+      "card": {
+       "kind": "chain",
+       "steps": [
+        {
+         "label": "Tin",
+         "items": [
+          "VnEconomy · 15/10 19:51",
+          "VnEconomy · 15/10 15:31"
+         ]
+        },
+        {
+         "label": "Sự kiện",
+         "items": [
+          "Bất động sản"
+         ]
+        },
+        {
+         "label": "Kịch bản",
+         "items": [
+          "Trung tính, thị trường đi ngang · 55%",
+          "Chính sách cụ thể hóa, tâm lý cải thiện · 25%",
+          "Cầu suy yếu kéo dài, căng thẳng tín dụng · 20%"
+         ]
+        },
+        {
+         "label": "Yếu tố",
+         "items": [
+          "VN-Index",
+          "Giá nhà ở Việt Nam",
+          "Chênh lệch tín dụng DN bất động sản"
+         ]
+        },
+        {
+         "label": "Tài sản",
+         "items": [
+          "Bất động sản +66,8 triệu",
+          "Cổ phiếu +29,7 triệu",
+          "Chứng chỉ quỹ +2,9 triệu"
+         ]
+        },
+        {
+         "label": "Mục tiêu",
+         "items": [
+          "Học phí du học (Úc) – Minh An: Đạt → Đạt",
+          "Quyết toán thuế TNCN 2026: Đạt → Đạt"
+         ]
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": null,
+      "sources": [
+       "Lần áp dụng AR-0002-v1-2",
+       "Nhận định VW-0002-v1",
+       "CafeF",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Đồ thị tác động",
+       "route": "#/client/tin/do-thi"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18233,
+     "output_tokens": 410,
+     "requests": 2,
+     "cost_usd": 0.002028,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b8802f1a1eef4b15a91bc505d342e2e8",
+    "conversation_id": "6016395662564e28",
+    "compacted": false,
+    "status": "ok",
+    "text": "Con số +98,6 triệu cho bất động sản đến từ sự kiện EV-2026-0002, dựa trên 4 tin và các nguồn sau:\n\n- **CafeF**\n- **VnEconomy**\n- Nhận định nội bộ VW-0002-v1 và lần áp dụng AR-0002-v1-2 do CIO duyệt\n\nPhần tin này đi qua 3 yếu tố (VN-Index, giá nhà ở Việt Nam và một yếu tố nữa), rồi ảnh hưởng đến 6 tài sản thuộc bất động sản, cổ phiếu và chứng chỉ quỹ. Kịch bản chính CIO duyệt là \"thị trường đi ngang\" với xác suất 55%.\n\nLưu ý: hệ thống ghi đây là ảnh hưởng theo kịch bản, không phải quan hệ nhân quả đã được chứng minh. Bạn có thể xem chi tiết từng tin tại trang tin của ứng dụng.",
+    "timing": {
+     "start": 29,
+     "model": [
+      1055,
+      1335
+     ],
+     "tools": 97,
+     "first_text": 1084,
+     "total": 4318
+    },
+    "citations": [
+     {
+      "label": "Đồ thị tác động",
+      "route": "#/client/tin/do-thi"
+     }
+    ],
+    "sources": [
+     "Lần áp dụng AR-0002-v1-2",
+     "Nhận định VW-0002-v1",
+     "CafeF",
+     "VnEconomy"
+    ],
+    "as_of": null,
+    "focus": [
+     "event:EV-2026-0002"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tạo kịch bản VN-Index giảm mạnh",
+     "Tin nào ảnh hưởng tới tôi?"
+    ],
+    "answered_at": 1792296038.8630006,
+    "audit_seq": 605,
+    "session": {
+     "id": "6016395662564e28",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 4.359256976284087,
+   "first_event": 1.0988662200979888,
+   "usage": {
+    "cost": 0.002028,
+    "input": 18233,
+    "output": 410,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JhjErXAg4rx8HgiQJ8MGhQ",
+     "tool": "dieu_tra",
+     "label": "Điều tra tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JhjErXAg4rx8HgiQJ8MGhQ",
+     "tool": "dieu_tra",
+     "ok": true,
+     "ms": 97,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

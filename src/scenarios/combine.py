@@ -11,6 +11,8 @@
 - **Liquidity, income and expenses after:** the liquid holdings after their shocks; spending plus the costs ÷ 12;
   income changed by the person's what-if.
 - **Goals:** each followed goal recomputed on the shocked picture, the same way the goals page computes it.
+- **Against the client's drawdown limit:** the fall as a share of net worth before, over the limit or within it, the
+  standalone rule's verdict (``_sim._stress``), so no reader has to compare the two numbers itself.
 
 Nothing here touches the client's records: the result is a what-if, never added to net worth."""
 
@@ -140,6 +142,8 @@ def combine(
 
     nw_before = before_assets - debt
     nw_after = after_assets - debt - yearly
+    share = (nw_before - nw_after) / nw_before if nw_before else 0.0
+    limit = p.profile["drawdown_limit"]
     warnings = [
         f"{c['label']}: {len(c['also']) + 1} kịch bản cùng giả định — tính một lần ({vnd(c['amount'])}/năm)"
         for c in costs.values()
@@ -171,6 +175,7 @@ def combine(
             "surplus": income_after - spending_after,
         },
         "change": nw_after - nw_before,
+        "drawdown": {"share": share, "limit": limit, "over": share > limit},
         "goals": [
             {"id": gid, "title": g["title"], "before": g, "after": goals_after[gid]} for gid, g in goals_before.items()
         ],

@@ -87,6 +87,9 @@ def test_the_comparison_is_the_engines_own_alone_and_together():
     assert got["data"]["alone"]["vni_30"] == pytest.approx(combined(["vni_30"])["change"])
     assert got["data"]["alone"]["rates_up"] == pytest.approx(combined(["rates_up"])["change"])
     assert "Cùng lúc" in got["text"] and "không cộng vào tài sản ròng" in got["text"]
+    dd = both["drawdown"]  # the verdict against the limit is the engine's, said: the model compares nothing
+    assert got["data"]["drawdown"] == dd and f"ngưỡng chấp nhận {dd['limit'] * 100:.0f}%" in got["text"]
+    assert ("vượt ngưỡng" if dd["over"] else "trong ngưỡng") in got["text"]
     assert {"scenario:vni_30", "scenario:rates_up", "class:stock"} <= set(got["focus"])
     assert got["data"]["goals"] == {g["id"]: [g["before"]["status"], g["after"]["status"]] for g in both["goals"]}
     picked = run(graphtools.compare(ctx({"active": ["vni_30", "rates_up"], "selected": PICK}), {}))

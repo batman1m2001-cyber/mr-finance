@@ -1,0 +1,489 @@
+{
+ "id": "ms-02",
+ "category": "memory_sessions",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Phiên mới không biết điều chưa được ghi nhớ",
+ "why": "A fact said in one session, not saved: a new session must not pretend to know it.",
+ "brd": [
+  "OWN-AS-11",
+  "OWN-AS-12",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "expect": {
+    "grounded": false
+   },
+   "new_session": true
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ, cần 1,72 tỷ (trong 24 tháng), có 800,0 triệu (thanh khoản ngoài 6 tháng chi tiêu), thiếu 924,0 triệu, cần để dành 36,7 triệu/tháng, dòng tiền dư 30,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 26,0 triệu; Thanh toán thẻ 15,9 triệu; Chi tiêu sinh hoạt 9,3 triệu. Nguồn tiền vào: Lương 60,1 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16671,
+     "output_tokens": 722,
+     "requests": 2,
+     "cost_usd": 0.002028,
+     "tools_cost_usd": null
+    },
+    "turn_id": "f4d33d92d51344b39de175fce376fc76",
+    "conversation_id": "b10d844c97e44365",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chúc mừng bạn! Dựa trên dữ liệu hiện có (ghi nhận đến 09/10/2026):\n\n- **Thanh khoản:** tiền gửi và tiền mặt khoảng 980 triệu, đủ chi khoảng 3 năm theo mức chi 30 triệu/tháng trong hồ sơ.\n- **Dòng tiền:** tháng 09/2026 thu 60,1 triệu, chi 51,2 triệu, còn dư 9,0 triệu. Trong đó trả nợ vay 26,0 triệu là khoản chi lớn nhất.\n- **Mục tiêu đang theo dõi:** mua thêm bất động sản bằng vốn vay đang chậm tiến độ. Bạn còn thiếu khoảng 924 triệu, cần để dành khoảng 36,7 triệu/tháng trong 24 tháng, trong khi dòng tiền dư hiện là 30 triệu/tháng.\n- **Rủi ro:** tài sản đang tập trung 69% vào bất động sản Vinhomes Grand Park, vượt ngưỡng 35%. Khi thị trường xấu, mức sụt giảm ước tính vượt ngưỡng 15%.\n\nVới thời điểm sinh con, bạn nên cân nhắc giữ thanh khoản và điều chỉnh kế hoạch mua thêm bất động sản. Nếu muốn, tôi có thể chạy thử kịch bản thu nhập giảm hoặc cập nhật mức chi dự kiến cho giai đoạn sinh con để xem ảnh hưởng.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)",
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792294753.233567,
+    "audit_seq": 640,
+    "session": {
+     "id": "b10d844c97e44365",
+     "title": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.295388733968139,
+   "first_event": 1.6795776290819049,
+   "usage": {
+    "cost": 0.002028,
+    "input": 16671,
+    "output": 722,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JBZntLYi61LFGHJGCxYn3U",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BbiZiA2UcrC3Tf52PEr6aY",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JtttVLkAiUEz4Kc6XqoPeT",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JBZntLYi61LFGHJGCxYn3U",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 240,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BbiZiA2UcrC3Tf52PEr6aY",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 240,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JtttVLkAiUEz4Kc6XqoPeT",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 240,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ, cần 1,72 tỷ (trong 24 tháng), có 800,0 triệu (thanh khoản ngoài 6 tháng chi tiêu), thiếu 924,0 triệu, cần để dành 36,7 triệu/tháng, dòng tiền dư 30,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 16,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 15%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 16,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 15%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15650,
+     "output_tokens": 497,
+     "requests": 2,
+     "cost_usd": 0.001814,
+     "tools_cost_usd": null
+    },
+    "turn_id": "93268815c73d47efa1786a6ed9c835eb",
+    "conversation_id": "e4cc4eff5edc4ec8",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa thấy sự kiện nào được ghi cho tháng 3 năm sau trong dữ liệu hiện có. Điều gần nhất là mục tiêu **mua thêm bất động sản bằng vốn vay**, đang chậm tiến độ: cần khoảng 1,72 tỷ trong 24 tháng, hiện có 800 triệu, còn thiếu khoảng 924 triệu. Bạn cần để dành khoảng 36,7 triệu mỗi tháng, trong khi dòng tiền dư hiện là 30 triệu mỗi tháng. Số liệu lấy từ trang Mục tiêu, tính trên tài sản hiện có.\n\nNgoài ra, bảng tin cho biết mức sụt giảm ước tính khi thị trường xấu là 16,8%, vượt ngưỡng chấp nhận 15%.\n\nNếu tháng 3 năm sau có một khoản chi, kế hoạch hay việc cụ thể nào bạn đang nghĩ tới, bạn cho tôi biết để tôi ghi nhớ và kiểm tra lại.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": null,
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792294757.7021887,
+    "audit_seq": 641,
+    "session": {
+     "id": "e4cc4eff5edc4ec8",
+     "title": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.428832512814552,
+   "first_event": 1.0485888510011137,
+   "usage": {
+    "cost": 0.001814,
+    "input": 15650,
+    "output": 497,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011rUmmrrshKg71UNAVVt1CU",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CmkKwVGxadarvcK2GXAWnP",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011rUmmrrshKg71UNAVVt1CU",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 298,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CmkKwVGxadarvcK2GXAWnP",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 373,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

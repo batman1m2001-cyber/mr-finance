@@ -1,0 +1,483 @@
+{
+ "id": "pf-02",
+ "category": "personal_finance",
+ "persona": "nghỉ hưu, chi nhiều hơn thu (C04)",
+ "client_id": "C04",
+ "title": "Tiêu có lố không, cắt khoản nào",
+ "why": "Spending above income: the facts, then what to cut, from her data.",
+ "brd": [
+  "OWN-AS-03",
+  "KIT-COPILOT-02"
+ ],
+ "turns": [
+  {
+   "say": "Tháng này tôi tiêu có lố không?",
+   "expect": {
+    "tools_any": [
+     "dong_tien"
+    ]
+   }
+  },
+  {
+   "say": "Lương hưu của tôi 37 triệu mà tiêu 40 triệu thì có sao không?",
+   "expect": {
+    "tools_any": [
+     "dong_tien",
+     "tong_quan"
+    ]
+   }
+  },
+  {
+   "say": "Vậy tôi nên cắt bớt khoản nào trước?",
+   "expect": {
+    "tools_any": [
+     "dong_luc",
+     "dong_tien"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tháng này tôi tiêu có lố không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 37,0 triệu, tiền ra 17,5 triệu, còn lại 19,5 triệu. Khoản chi lớn nhất: Chi tiêu sinh hoạt 11,1 triệu (6 giao dịch). Các nhóm chi: Chi tiêu sinh hoạt 11,1 triệu; Y tế 6,5 triệu. Nguồn tiền vào: Tiền cho thuê 25,0 triệu; Lương hưu 12,0 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 11083000.0,
+         "text": "11,1 triệu"
+        },
+        {
+         "label": "Y tế",
+         "value": 6450000.0,
+         "text": "6,5 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "37,0 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "17,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "19,5 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:living"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15745,
+     "output_tokens": 342,
+     "requests": 2,
+     "cost_usd": 0.001746,
+     "tools_cost_usd": null
+    },
+    "turn_id": "30b8a8b25fe941759e7a1ab8b4251c21",
+    "conversation_id": "499909d394bb4f68",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tháng 09/2026 (tháng gần nhất có dữ liệu), bạn chi 17,5 triệu và thu 37,0 triệu, còn lại 19,5 triệu.\n\nHệ thống chưa có ngưỡng chi tiêu để so sánh, nên tôi không thể nói chắc là có lố hay không. Các khoản chi chính:\n- Chi tiêu sinh hoạt: 11,1 triệu (6 giao dịch)\n- Y tế: 6,5 triệu\n\nNếu bạn cho tôi biết mức chi bạn muốn giữ mỗi tháng, tôi sẽ so với con số này.\n\nNguồn số liệu: trang Toàn cảnh, dữ liệu ghi nhận đến 09/2026.",
+    "timing": {
+     "start": 29,
+     "model": [
+      1124,
+      1043
+     ],
+     "tools": 90,
+     "first_text": 1153,
+     "total": 3777
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:living"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792296001.5388281,
+    "audit_seq": 592,
+    "session": {
+     "id": "499909d394bb4f68",
+     "title": "Tháng này tôi tiêu có lố không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.8177213170565665,
+   "first_event": 1.1697622588835657,
+   "usage": {
+    "cost": 0.001746,
+    "input": 15745,
+    "output": 342,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016BLTk4vH9tPWECmUEjYFCE",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016BLTk4vH9tPWECmUEjYFCE",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 90,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:living"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Lương hưu của tôi 37 triệu mà tiêu 40 triệu thì có sao không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8356,
+     "output_tokens": 326,
+     "requests": 1,
+     "cost_usd": 0.000999,
+     "tools_cost_usd": null
+    },
+    "turn_id": "19da5c99838349adb7938ae9e9d88d5c",
+    "conversation_id": "499909d394bb4f68",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi cần sửa lại một chỗ trong câu hỏi: theo dữ liệu, lương hưu của bạn là 12,0 triệu/tháng, còn 37,0 triệu là tổng tiền vào trong tháng 09/2026, gồm 25,0 triệu tiền cho thuê và 12,0 triệu lương hưu.\n\nVới số liệu này, chi tiêu tháng 09 là 17,5 triệu, thấp hơn tổng thu. Nếu chỉ tính lương hưu 12,0 triệu mà chi 40 triệu, bạn sẽ thiếu khoảng 28 triệu mỗi tháng, và phải lấy từ tiền cho thuê hoặc tài sản dự phòng.\n\nBạn có thể cho tôi biết mức chi 40 triệu là dự kiến hay đã phát sinh không? Tôi sẽ xem thêm thanh khoản dự phòng.",
+    "timing": {
+     "start": 26,
+     "model": [
+      1025
+     ],
+     "tools": 0,
+     "first_text": 1051,
+     "total": 2449
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296004.067797,
+    "audit_seq": 593,
+    "session": {
+     "id": "499909d394bb4f68",
+     "title": "Tháng này tôi tiêu có lố không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.4898285940289497,
+   "first_event": 1.0658660079352558,
+   "usage": {
+    "cost": 0.000999,
+    "input": 8356,
+    "output": 326,
+    "requests": 1
+   },
+   "why": [
+    "numbers not from the tools or the person: ['28 triệu']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Vậy tôi nên cắt bớt khoản nào trước?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 29,20 tỷ (60%), Tiền & tiền gửi 8,50 tỷ (18%), Trái phiếu 5,08 tỷ (11%), Vàng 3,00 tỷ (6%), Chứng chỉ quỹ 2,60 tỷ (5%), Bảo hiểm 0,0 triệu (0%). Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 354,0 tháng (khoảng 30 năm) theo mức chi 40,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,64 tỷ; lớn nhất: Nhà phố Quận 3 (đang ở) −1,80 tỷ (sốc 10%); Căn hộ Võ Văn Tần (cho thuê) −1,12 tỷ (sốc 10%); Vàng miếng SJC −300,0 triệu (sốc 10%); Trái phiếu TCB12401 (Techcombank) −161,9 triệu (sốc 8%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 7,5% khi thị trường xấu — Gần ngưỡng chấp nhận 8%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 7,5% khi thị trường xấu",
+         "sub": "Gần ngưỡng chấp nhận 8%",
+         "chip": "Vừa",
+         "tone": "warn",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18649,
+     "output_tokens": 623,
+     "requests": 2,
+     "cost_usd": 0.002176,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ee90c105bebd43cda527c684e53437d7",
+    "conversation_id": "499909d394bb4f68",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa có danh sách chi tiết từng khoản để chỉ ra nên cắt khoản nào trước. Dữ liệu tháng 09/2026 chỉ cho thấy hai nhóm lớn: Chi tiêu sinh hoạt 11,1 triệu (6 giao dịch) và Y tế 6,5 triệu. Y tế là khoản khó cắt nhất, nên nếu cần giảm, sinh hoạt là chỗ để xem trước.\n\nVề mặt tài chính, bạn không đang thiếu tiền ngay: thanh khoản dự phòng khoảng 14,16 tỷ, đủ chi khoảng 30 năm với mức 40 triệu/tháng trong hồ sơ. Tài sản chính lại tập trung: bất động sản chiếm 60%, và khu vực Võ Văn Tần vượt ngưỡng 35% (đang ở mức 60,4%). Mức sụt giảm ước tính khi thị trường xấu là 7,5%, sát ngưỡng chấp nhận 8%.\n\nNguồn: trang Toàn cảnh, số liệu ghi nhận đến 09/10/2026. Đây là số liệu hiện tại, không phải khuyến nghị đầu tư.\n\nNếu bạn muốn, tôi có thể chạy mô phỏng nếu thu nhập từ cho thuê giảm để xem tác động.",
+    "timing": {
+     "start": 28,
+     "model": [
+      1012,
+      1071
+     ],
+     "tools": 717,
+     "first_text": 1040,
+     "total": 5216
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792296009.3614063,
+    "audit_seq": 594,
+    "session": {
+     "id": "499909d394bb4f68",
+     "title": "Tháng này tôi tiêu có lố không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 5.260606173425913,
+   "first_event": 1.0539595182053745,
+   "usage": {
+    "cost": 0.002176,
+    "input": 18649,
+    "output": 623,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CXWjhxAsfByPK3rnUuyRAu",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01XMrMZhzk4SBbQRQkSWsf1e",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CXWjhxAsfByPK3rnUuyRAu",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 308,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01XMrMZhzk4SBbQRQkSWsf1e",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 409,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

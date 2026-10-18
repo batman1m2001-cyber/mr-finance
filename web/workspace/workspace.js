@@ -6,10 +6,10 @@
 import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261018p1";
-import {render as inspect} from "./inspector.js?v=20261018p1";
-import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261018p1";
-import {mount as mountStrip} from "./strip.js?v=20261018p1";
+import {createGraph} from "./graph.js?v=20261018p2";
+import {render as inspect} from "./inspector.js?v=20261018p2";
+import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261018p2";
+import {mount as mountStrip} from "./strip.js?v=20261018p2";
 
 export function mount(main, {client, scope, go, page}) {
   const root = document.createElement("div");

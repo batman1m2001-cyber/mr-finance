@@ -1,0 +1,463 @@
+{
+ "id": "ms-01",
+ "category": "memory_sessions",
+ "persona": "founder trẻ (C03)",
+ "client_id": "C03",
+ "title": "Nhớ trong cuộc trò chuyện",
+ "why": "Context across turns, a derived figure, and recalling an earlier question.",
+ "brd": [
+  "OWN-AS-11",
+  "KIT-COPILOT-02"
+ ],
+ "turns": [
+  {
+   "say": "Thu nhập mỗi tháng của em là bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "dong_tien",
+     "tong_quan"
+    ]
+   }
+  },
+  {
+   "say": "Còn chi tiêu?",
+   "expect": {
+    "tools_any": [
+     "dong_tien"
+    ]
+   }
+  },
+  {
+   "say": "Vậy em để dành được bao nhiêu phần trăm thu nhập?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Câu thứ hai em hỏi là gì nhỉ?",
+   "expect": {
+    "grounded": false,
+    "says": "chi tiêu"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Thu nhập mỗi tháng của em là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 79,8 triệu, tiền ra 56,5 triệu, còn lại 23,3 triệu. Khoản chi lớn nhất: Thanh toán thẻ 27,2 triệu (1 giao dịch). Các nhóm chi: Thanh toán thẻ 27,2 triệu; Tiền thuê nhà 15,0 triệu; Chi tiêu sinh hoạt 14,3 triệu. Nguồn tiền vào: Lương 79,8 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Thanh toán thẻ",
+         "value": 27190000.0,
+         "text": "27,2 triệu"
+        },
+        {
+         "label": "Tiền thuê nhà",
+         "value": 15000000.0,
+         "text": "15,0 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 14297000.0,
+         "text": "14,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "79,8 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "56,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "23,3 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:card"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "11 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15761,
+     "output_tokens": 238,
+     "requests": 2,
+     "cost_usd": 0.001695,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ca7a04b18b8043df86103deb0fa6da0b",
+    "conversation_id": "ede04f2ce5674de1",
+    "compacted": false,
+    "status": "ok",
+    "text": "Thu nhập hằng tháng của bạn gần nhất là khoảng **79,8 triệu đồng**, toàn bộ là tiền lương, theo dữ liệu tháng 09/2026.\n\nTrong tháng đó, tiền ra là 56,5 triệu, còn lại 23,3 triệu. Số liệu này lấy từ trang Tổng quan (dòng tiền) và là số ghi nhận trong hệ thống, không phải ước tính.",
+    "timing": {
+     "start": 30,
+     "model": [
+      1143,
+      1157
+     ],
+     "tools": 88,
+     "first_text": 1173,
+     "total": 3476
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "11 giao dịch của tháng"
+    ],
+    "as_of": "2026-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:card"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792296158.5858958,
+    "audit_seq": 652,
+    "session": {
+     "id": "ede04f2ce5674de1",
+     "title": "Thu nhập mỗi tháng của em là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.516905493568629,
+   "first_event": 1.187866197898984,
+   "usage": {
+    "cost": 0.001695,
+    "input": 15761,
+    "output": 238,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GeUbgwGCAVZhi74vP7jE1p",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GeUbgwGCAVZhi74vP7jE1p",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 88,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:card"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Còn chi tiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8234,
+     "output_tokens": 191,
+     "requests": 1,
+     "cost_usd": 0.000919,
+     "tools_cost_usd": null
+    },
+    "turn_id": "48b4c1648bb84e1b8a00d28e40cc2531",
+    "conversation_id": "ede04f2ce5674de1",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chi tiêu tháng 09/2026 của bạn là **56,5 triệu đồng**, theo dữ liệu dòng tiền ghi nhận trong hệ thống. Các nhóm chi chính:\n\n- Thanh toán thẻ: 27,2 triệu (một giao dịch lớn nhất)\n- Tiền thuê nhà: 15,0 triệu\n- Chi tiêu sinh hoạt: 14,3 triệu\n\nNếu bạn muốn, tôi có thể xem thêm các tháng khác để so sánh.",
+    "timing": {
+     "start": 26,
+     "model": [
+      1087
+     ],
+     "tools": 0,
+     "first_text": 1113,
+     "total": 1807
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296160.471616,
+    "audit_seq": 653,
+    "session": {
+     "id": "ede04f2ce5674de1",
+     "title": "Thu nhập mỗi tháng của em là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.8415579721331596,
+   "first_event": 1.1293310383334756,
+   "usage": {
+    "cost": 0.000919,
+    "input": 8234,
+    "output": 191,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Vậy em để dành được bao nhiêu phần trăm thu nhập?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tỷ lệ tiết kiệm tháng 09/2026: 23.313/79.8*100 = 29,21",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17194,
+     "output_tokens": 323,
+     "requests": 2,
+     "cost_usd": 0.001881,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c603dbe136dc4ed68791b9311a39b0db",
+    "conversation_id": "ede04f2ce5674de1",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn để dành được khoảng **29%** thu nhập trong tháng 09/2026.\n\nCông thức: 23,3 / 79,8 × 100 ≈ 29,2%. Đây là một tháng riêng lẻ, dựa trên số ghi nhận trong hệ thống; nếu muốn xem mức trung bình, tôi có thể xem thêm các tháng khác.",
+    "timing": {
+     "start": 25,
+     "model": [
+      981,
+      1006
+     ],
+     "tools": 1,
+     "first_text": 1006,
+     "total": 3222
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296163.7645779,
+    "audit_seq": 654,
+    "session": {
+     "id": "ede04f2ce5674de1",
+     "title": "Thu nhập mỗi tháng của em là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 3.261369425803423,
+   "first_event": 1.020225001964718,
+   "usage": {
+    "cost": 0.001881,
+    "input": 17194,
+    "output": 323,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01P7GbbogPChGqxDuWfUtt7E",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01P7GbbogPChGqxDuWfUtt7E",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Câu thứ hai em hỏi là gì nhỉ?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8898,
+     "output_tokens": 86,
+     "requests": 1,
+     "cost_usd": 0.000933,
+     "tools_cost_usd": null
+    },
+    "turn_id": "27885c5ccc6240e48a6658758d3e6512",
+    "conversation_id": "ede04f2ce5674de1",
+    "compacted": false,
+    "status": "ok",
+    "text": "Câu thứ hai bạn hỏi là: **\"Còn chi tiêu?\"**, tức là chi tiêu của bạn trong tháng đó là bao nhiêu. Tôi đã trả lời là 56,5 triệu đồng.",
+    "timing": {
+     "start": 28,
+     "model": [
+      953
+     ],
+     "tools": 0,
+     "first_text": 981,
+     "total": 1356
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296165.208241,
+    "audit_seq": 655,
+    "session": {
+     "id": "ede04f2ce5674de1",
+     "title": "Thu nhập mỗi tháng của em là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 4
+    },
+    "describe": true
+   },
+   "seconds": 1.4021812011487782,
+   "first_event": 1.0004682121798396,
+   "usage": {
+    "cost": 0.000933,
+    "input": 8898,
+    "output": 86,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

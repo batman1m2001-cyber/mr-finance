@@ -1,0 +1,367 @@
+{
+ "id": "nav-01",
+ "category": "navigation",
+ "persona": "người mới, nói chuyện thân mật (C05)",
+ "client_id": "C05",
+ "title": "Người mới hỏi đồ thị nghĩa là gì",
+ "why": "A first-time user reads the graph: the core, the dotted lines, then asks to open a page.",
+ "brd": [
+  "OWN-AS-02",
+  "KIT-COPILOT-02",
+  "OWN-GW-38"
+ ],
+ "turns": [
+  {
+   "say": "Mình mới dùng app này, cái vòng tròn to ở giữa màn hình là gì vậy?",
+   "expect": {
+    "tools_any": [
+     "huong_dan",
+     "tong_quan"
+    ],
+    "says": "tài sản ròng"
+   }
+  },
+  {
+   "say": "Còn mấy đường chấm chấm nối vào nó nghĩa là gì?",
+   "expect": {
+    "says": "giả định|ước tính",
+    "grounded": false
+   }
+  },
+  {
+   "say": "Ok, mở giúp mình chỗ xem dòng tiền đi",
+   "expect": {
+    "tools_any": [
+     "mo_trang"
+    ],
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình mới dùng app này, cái vòng tròn to ở giữa màn hình là gì vậy?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Đồ thị tài chính (màn hình chính)] Màn hình chính của khách hàng là một đồ thị luôn hiện. Vòng tròn lớn ở giữa là bạn: con số trong vòng là tài sản ròng (tổng tài sản trừ nợ). Ở chế độ Gia đình vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách. - Góc nhìn (thanh công cụ): Tổng quan, Tài sản (#/client/xem/tai-san), Dòng tiền (…/dong-tien), Mục tiêu & kịch bản (…/muc-tieu), Tin & sự kiện (…/tin), Rủi ro (…/rui-ro) [Đồ thị tài chính (màn hình chính)] Trợ lý (thẻ Trợ lý cạnh ô Thông tin) biết bạn đang ở góc nhìn nào và đang chọn gì: hỏi “mục này là gì?” là hỏi về mục đang chọn. Các mục trợ lý đang đọc sáng lên trên đồ thị. - Các trang chi tiết (Toàn cảnh, Tài sản, Kế hoạch, …) mở thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như cũ. [Toàn cảnh] Mở từ góc nhìn Tổng quan của đồ thị (tấm phủ “Toàn cảnh”): trong một màn hình, bạn có bao nhiêu và thay đổi thế nào, tháng trước tiền vào ra bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu. - Bốn thẻ nhịp tài chính: tài sản ròng và các nhóm tài sản làm nó thay đổi nhiều nhất trong tháng; dòng tiền tháng (vào, ra, phần để dành) với sáu tháng gần nhất; thanh khoản dự phòng tính bằng số tháng chi tiêu (vòng tròn, mốc an toàn 6 tháng); mức lỗ khi thị trường căng thẳng so với ngưỡng bạn chấp nhận. - Dòng tiền của bạn: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức… [Một mốc của dải kết quả] Cách tính Một mốc của dải kết quả: Kỳ vọng = trung bình theo xác suất các kịch bản; P5, P10, P50, P90 = các mốc của phân bố kết quả (5%, 10%, 50%, 90% khả năng thấp hơn), tính từ độ biến động và tương quan giữa các yếu tố trong mô hình đã duyệt, cộng theo từng kịch bản.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Hướng dẫn sử dụng · Toàn cảnh",
+       "Cách tính · Một mốc của dải kết quả"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Đồ thị tài chính (màn hình chính)",
+       "route": "#/client/xem/tong-quan"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16523,
+     "output_tokens": 487,
+     "requests": 2,
+     "cost_usd": 0.001896,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c14444a5a1d64cea880500be205a9817",
+    "conversation_id": "7192c79ddb014623",
+    "compacted": false,
+    "status": "ok",
+    "text": "Vòng tròn lớn ở giữa màn hình là **tài sản ròng** của bạn, tức tổng tài sản trừ đi các khoản nợ. Con số hiển thị trong vòng chính là giá trị đó.\n\nQuanh vòng tròn là các nhóm thông tin như lớp tài sản, tiền vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin tức và chính sách. Bạn bấm vào từng nhóm để xem chi tiết. Ở chế độ Gia đình, vòng tròn là tổng của cả nhà, và chữ cái trên viền cho biết khoản đó thuộc về thành viên nào.\n\nThanh công cụ phía trên giúp bạn chuyển giữa các góc nhìn: Tổng quan, Tài sản, Dòng tiền, Mục tiêu và kịch bản, Tin và sự kiện, Rủi ro. Nếu bạn muốn, mình có thể mở phần Tổng quan để xem số liệu cụ thể của bạn.",
+    "citations": [
+     {
+      "label": "Đồ thị tài chính (màn hình chính)",
+      "route": "#/client/xem/tong-quan"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+     "Hướng dẫn sử dụng · Toàn cảnh",
+     "Cách tính · Một mốc của dải kết quả"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294599.3971863,
+    "audit_seq": 580,
+    "session": {
+     "id": "7192c79ddb014623",
+     "title": "Mình mới dùng app này, cái vòng tròn to ở giữa…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 8.021195081993937,
+   "first_event": 2.5216335309669375,
+   "usage": {
+    "cost": 0.001896,
+    "input": 16523,
+    "output": 487,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_019JozF5QvPpGSjhopY3HuYW",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_019JozF5QvPpGSjhopY3HuYW",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 2716,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Còn mấy đường chấm chấm nối vào nó nghĩa là gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Đồ thị tài chính (màn hình chính)] Màn hình chính của khách hàng là một đồ thị luôn hiện. Vòng tròn lớn ở giữa là bạn: con số trong vòng là tài sản ròng (tổng tài sản trừ nợ). Ở chế độ Gia đình vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách. - Góc nhìn (thanh công cụ): Tổng quan, Tài sản (#/client/xem/tai-san), Dòng tiền (…/dong-tien), Mục tiêu & kịch bản (…/muc-tieu), Tin & sự kiện (…/tin), Rủi ro (…/rui-ro) [Cách tính] Bấm vào một con số có gạch chân (hoặc nút “Cách tính”) để mở ngăn bên phải: con số là gì, công thức bằng lời, các đầu vào với giá trị của chúng và nơi chúng được tính. Tham số là giả định thì được ghi là giả định. [Toàn cảnh] Mở từ góc nhìn Tổng quan của đồ thị (tấm phủ “Toàn cảnh”): trong một màn hình, bạn có bao nhiêu và thay đổi thế nào, tháng trước tiền vào ra bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu. - Bốn thẻ nhịp tài chính: tài sản ròng và các nhóm tài sản làm nó thay đổi nhiều nhất trong tháng; dòng tiền tháng (vào, ra, phần để dành) với sáu tháng gần nhất; thanh khoản dự phòng tính bằng số tháng chi tiêu (vòng tròn, mốc an toàn 6 tháng); mức lỗ khi thị trường căng thẳng so với ngưỡng bạn chấp nhận. - Dòng tiền của bạn: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức… [Tài sản ròng nếu các kịch bản đang bật xảy ra] Cách tính Tài sản ròng nếu các kịch bản đang bật xảy ra: Sau = tài sản sau các cú sốc (nhân theo từng khoản) − nợ − một năm chi phí giả định. Mỗi loại chi phí (lãi vay thả nổi, chi tiêu ngoại tệ) chỉ tính một lần, lấy mức lớn nhất giữa các kịch bản. Thay đổi = sau − tài sản ròng hôm nay. Một kịch bản bật riêng cho đúng kết quả stress test của nó. Không cộng vào tài sản ròng.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+       "Hướng dẫn sử dụng · Cách tính",
+       "Hướng dẫn sử dụng · Toàn cảnh",
+       "Cách tính · Tài sản ròng nếu các kịch bản đang bật xảy ra"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Đồ thị tài chính (màn hình chính)",
+       "route": "#/client/xem/tong-quan"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 20339,
+     "output_tokens": 410,
+     "requests": 2,
+     "cost_usd": 0.002239,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5c889b68a547418bbcb4fb7caf98f66f",
+    "conversation_id": "7192c79ddb014623",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hướng dẫn không mô tả rõ các đường chấm chấm nối vào vòng tròn, nên mình không chắc về ý nghĩa cụ thể của chúng. Điều mình chắc là: các nhóm quanh vòng tròn (lớp tài sản, dòng tiền, mục tiêu, rủi ro, kịch bản, tin và chính sách) đều nối với vòng tròn, và đường nối thể hiện mối liên hệ giữa nhóm đó với tài sản ròng của bạn.\n\nNếu bạn muốn biết chính xác một đường cụ thể đang nối với gì, bạn có thể chọn mục đó trên đồ thị và mình sẽ xem các liên kết của nó. Bạn cũng có thể bấm vào một con số có gạch chân để mở ngăn \"Cách tính\", nơi có công thức và nguồn của con số đó.",
+    "citations": [
+     {
+      "label": "Đồ thị tài chính (màn hình chính)",
+      "route": "#/client/xem/tong-quan"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Đồ thị tài chính (màn hình chính)",
+     "Hướng dẫn sử dụng · Cách tính",
+     "Hướng dẫn sử dụng · Toàn cảnh",
+     "Cách tính · Tài sản ròng nếu các kịch bản đang bật xảy ra"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294603.4724987,
+    "audit_seq": 581,
+    "session": {
+     "id": "7192c79ddb014623",
+     "title": "Mình mới dùng app này, cái vòng tròn to ở giữa…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 4.0163309327326715,
+   "first_event": 1.0780291580595076,
+   "usage": {
+    "cost": 0.002239,
+    "input": 20339,
+    "output": 410,
+    "requests": 2
+   },
+   "why": [
+    "does not say /giả định|ước tính/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01989sDuGjMyzsJSbdYbxrBo",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01989sDuGjMyzsJSbdYbxrBo",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 88,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Ok, mở giúp mình chỗ xem dòng tiền đi",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Đồ thị · Dòng tiền.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/client/xem/dong-tien",
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 22640,
+     "output_tokens": 291,
+     "requests": 2,
+     "cost_usd": 0.00241,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5a9afe9c8ae54a24920c2c8e8c235b87",
+    "conversation_id": "7192c79ddb014623",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mình đã mở trang Dòng tiền. Ở đó bạn chọn tháng cần xem, và biểu đồ sẽ hiện dòng chảy từ nguồn tiền vào như lương, cổ tức… đến các khoản chi, cùng phần còn lại để dành.\n\nNếu bạn muốn, mình có thể lấy số liệu tiền vào, tiền ra và khoản chi lớn nhất của một tháng cụ thể. Bạn cho mình biết tháng nào (dạng YYYY-MM), hoặc để trống để xem tháng gần nhất có dữ liệu.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": "#/client/xem/dong-tien",
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294607.7873273,
+    "audit_seq": 582,
+    "session": {
+     "id": "7192c79ddb014623",
+     "title": "Mình mới dùng app này, cái vòng tròn to ở giữa…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 4.276138349901885,
+   "first_event": 1.939293760806322,
+   "usage": {
+    "cost": 0.00241,
+    "input": 22640,
+    "output": 291,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01X38FzANp8HWkq5349xTjNs",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01X38FzANp8HWkq5349xTjNs",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

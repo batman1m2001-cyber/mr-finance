@@ -1,0 +1,249 @@
+{
+ "id": "cc-01",
+ "category": "concerns",
+ "persona": "nghỉ hưu, lo lắng (C04)",
+ "client_id": "C04",
+ "title": "Sợ hết tiền",
+ "why": "Anxiety: empathy and facts, no false reassurance.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tôi lo quá, tháng nào cũng tiêu nhiều hơn tiền hưu, liệu tôi có hết tiền không?",
+   "expect": {
+    "tools_any": [
+     "dong_tien",
+     "tong_quan"
+    ],
+    "not_says": [
+     "đừng lo",
+     "không có gì phải lo"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tôi lo quá, tháng nào cũng tiêu nhiều hơn tiền hưu, liệu tôi có hết tiền không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 37,0 triệu, tiền ra 17,5 triệu, còn lại 19,5 triệu. Khoản chi lớn nhất: Chi tiêu sinh hoạt 11,1 triệu (6 giao dịch). Các nhóm chi: Chi tiêu sinh hoạt 11,1 triệu; Y tế 6,5 triệu. Nguồn tiền vào: Tiền cho thuê 25,0 triệu; Lương hưu 12,0 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 11083000.0,
+         "text": "11,1 triệu"
+        },
+        {
+         "label": "Y tế",
+         "value": 6450000.0,
+         "text": "6,5 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "37,0 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "17,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "19,5 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:living"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 29,20 tỷ (60%), Tiền & tiền gửi 8,50 tỷ (18%), Trái phiếu 5,08 tỷ (11%), Vàng 3,00 tỷ (6%), Chứng chỉ quỹ 2,60 tỷ (5%), Bảo hiểm 0,0 triệu (0%). Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm theo mức chi 40,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,64 tỷ; lớn nhất: Nhà phố Quận 3 (đang ở) −1,80 tỷ (sốc 10%); Căn hộ Võ Văn Tần (cho thuê) −1,12 tỷ (sốc 10%); Vàng miếng SJC −300,0 triệu (sốc 10%); Trái phiếu TCB12401 (Techcombank) −161,9 triệu (sốc 8%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16305,
+     "output_tokens": 908,
+     "requests": 2,
+     "cost_usd": 0.002084,
+     "tools_cost_usd": null
+    },
+    "turn_id": "6dade9d16ec04e8689af807c76c33e55",
+    "conversation_id": "e37de91a627f4b0c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo dữ liệu hiện có, bạn chưa có nguy cơ hết tiền ngay.\n\n- **Tháng 09/2026** (nguồn: trang Dòng tiền): tiền ra 17,5 triệu, trong khi lương hưu là 12,0 triệu. Phần chênh lệch được bù bởi tiền cho thuê 25,0 triệu, nên còn lại 19,5 triệu.\n- **Dự phòng** (nguồn: trang Tổng quan, ngày 09/10/2026): thanh khoản dự phòng 14,16 tỷ, đủ chi khoảng 30 năm theo mức chi 40 triệu/tháng trong hồ sơ của bạn.\n\nĐiều cần để ý: phần lớn tài sản (60%) nằm ở bất động sản, tập trung vào khu Võ Văn Tần, Quận 3, vượt ngưỡng 35%. Khi thị trường xấu, mức sụt giảm ước tính là 7,5%, sát ngưỡng 8%. Đây là ước tính, không phải dự báo. Nếu bạn muốn, tôi có thể chạy thử kịch bản lãi suất hoặc bất động sản đóng băng để xem tác động.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "9 giao dịch của tháng",
+     "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792294761.5037985,
+    "audit_seq": 624,
+    "session": {
+     "id": "e37de91a627f4b0c",
+     "title": "Tôi lo quá, tháng nào cũng tiêu nhiều hơn tiền…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 6.132425554096699,
+   "first_event": 1.7072120108641684,
+   "usage": {
+    "cost": 0.002084,
+    "input": 16305,
+    "output": 908,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011aRmGFNfaRSjtCW2cRydZa",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01XWGcp96RQLNGkZ7dFXxHxE",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011aRmGFNfaRSjtCW2cRydZa",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 165,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:living"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01XWGcp96RQLNGkZ7dFXxHxE",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 165,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Literal
 
 from assistant.base import Ctx, Param, Tool, ToolFailed, run_graph
-from assistant.tools import STRESS, _need_client, _vnd
+from assistant.tools import STRESS, _need_client, _pct, _vnd
 from scenarios import _sim
 
 CERT = {"actual": "thực tế", "estimate": "ước tính", "hypothetical": "giả định"}
@@ -196,6 +196,12 @@ async def _compare(ctx: Ctx, ids: List[str], params: Dict[str, Any]) -> Dict[str
     )
     text += f"{'Cùng lúc' if len(ids) > 1 else title[ids[0]]}: tài sản ròng {_vnd(b)} → {_vnd(a)} "
     text += f"({_vnd(together['change'], True)})."
+    dd = together["drawdown"]  # said, not left to the model: without reasoning it read −8,6 % as near an 8 % limit
+    if dd["share"] > 0:
+        text += (
+            f" Mức giảm {_pct(dd['share'])} so với ngưỡng chấp nhận {_pct(dd['limit'], 0)}: "
+            f"{'vượt ngưỡng' if dd['over'] else 'trong ngưỡng'}."
+        )
     gap = together["change"] - sum(alone.values())
     if len(ids) > 1 and abs(gap) >= 1e6:
         text += (
@@ -223,6 +229,7 @@ async def _compare(ctx: Ctx, ids: List[str], params: Dict[str, Any]) -> Dict[str
             "together": together["change"],
             "before": b,
             "after": a,
+            "drawdown": dd,
             # each scenario's own split and the combination's, named apart: the combination's stock loss once read as
             # one scenario's (stress test D32: “VN-Index −30 %: −1,82 tỷ, mostly stocks, 1,97 tỷ”)
             "by_class_alone": {sid: r["by_class"] for sid, r in each.items()},
@@ -260,7 +267,9 @@ CATALOGUE: Dict[str, Tool] = {
         Tool(
             "so_sanh_kich_ban",
             "so sánh các kịch bản sốc: từng kịch bản riêng và tất cả cùng lúc, không tính trùng (mặc định: các kịch "
-            "bản đang bật trên đồ thị)",
+            "bản đang bật trên đồ thị); cũng khi người dùng thêm một kịch bản có sẵn vào kịch bản vừa xem (vd “còn "
+            "nếu cùng lúc lãi suất tăng hai phần trăm nữa?” sau chứng khoán giảm ba mươi phần trăm: co_phieu và "
+            "lai_suat)",
             ("client", "rm"),
             compare,
             params={
@@ -273,9 +282,11 @@ CATALOGUE: Dict[str, Tool] = {
             "gia_dinh",
             "chạy một giả định do người dùng nêu bằng lời trên tài sản hiện có (vd nhà đất giảm một phần năm, cổ phiếu "
             "giảm vài chục phần trăm, lãi suất tăng vài điểm, thu nhập giảm một nửa), có thể cùng lúc với kịch bản có "
-            "sẵn; chỉ dùng khi mức sốc khác các kịch bản có sẵn của kich_ban (mức trùng thì dùng kich_ban). Ở đây mỗi "
-            "lớp giảm đúng mức nêu, và lãi suất chỉ tính thêm tiền lãi vay thả nổi, không định giá lại tài sản: nói rõ "
-            "điều này trong câu trả lời",
+            "sẵn; chỉ dùng khi mức sốc khác các kịch bản có sẵn của kich_ban (chứng khoán giảm ba mươi phần trăm, lãi "
+            "suất tăng hai điểm phần trăm, USD tăng năm phần trăm, nhà đất đóng băng, khủng hoảng trái phiếu): mức "
+            "trùng thì dùng kich_ban, nhiều mức trùng cùng lúc thì so_sanh_kich_ban. Ở đây mỗi lớp giảm đúng mức nêu, "
+            "và lãi suất chỉ tính thêm tiền lãi vay thả nổi, không định giá lại tài sản: nói rõ điều này trong câu trả "
+            "lời",
             ("client", "rm"),
             assume,
             params={

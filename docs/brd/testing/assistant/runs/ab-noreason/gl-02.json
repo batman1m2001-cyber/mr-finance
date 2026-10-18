@@ -1,0 +1,511 @@
+{
+ "id": "gl-02",
+ "category": "goals",
+ "persona": "founder trẻ muốn mua nhà (C03)",
+ "client_id": "C03",
+ "title": "Mua nhà 5 tỷ trong 5 năm",
+ "why": "A goal the app does not hold: clarify, use the person's numbers, show the calculation.",
+ "brd": [
+  "BRIEF-SCEN-01",
+  "KIT-COPILOT-05",
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Em muốn mua căn nhà 5 tỷ trong 5 năm nữa, có khả thi không?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Em có sẵn 1 tỷ, mỗi tháng để dành được 30 triệu.",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Nếu tiền để dành sinh lãi 6% một năm thì sao?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Em muốn mua căn nhà 5 tỷ trong 5 năm nữa, có khả thi không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước) = tổng tài sản 8,17 tỷ − nợ 628,0 triệu (Vay ký quỹ TCBS 600,0 triệu; Dư nợ thẻ Visa Platinum 28,0 triệu). Phân bổ tài sản: Cổ phiếu 4,38 tỷ (54%), Tài sản số 2,56 tỷ (31%), Chứng chỉ quỹ 930,0 triệu (11%), Tiền & tiền gửi 300,0 triệu (4%). Tập trung vượt ngưỡng: Tổ chức phát hành SSI: 16,2% tài sản (ngưỡng 10%); Tổ chức phát hành Đức Giang: 11,3% tài sản (ngưỡng 10%); Tổ chức phát hành Hòa Phát: 10,1% tài sản (ngưỡng 10%). Thanh khoản dự phòng 300,0 triệu, đủ chi 7 tháng theo mức chi 45,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,25 tỷ; lớn nhất: Bitcoin −1,26 tỷ (sốc 60%); Cổ phiếu SSI −495,0 triệu (sốc 38%); Cổ phiếu DGC −299,0 triệu (sốc 32%); Quỹ cổ phiếu TCEF −279,0 triệu (sốc 30%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "2 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 10,80 tỷ (55 tuổi), có 72,66 tỷ (dự kiến có lúc 55 tuổi), dư 61,86 tỷ, dòng tiền dư 35,0 triệu/tháng; Mua thêm BĐS bằng vốn vay: chậm tiến độ, cần 1,72 tỷ (trong 24 tháng), có 30,0 triệu (thanh khoản ngoài 6 tháng chi tiêu), thiếu 1,69 tỷ, cần để dành 67,3 triệu/tháng, dòng tiền dư 35,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 10,80 tỷ · có 72,66 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 30,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.017401894559604534,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 79,8 triệu, tiền ra 56,5 triệu, còn lại 23,3 triệu. Khoản chi lớn nhất: Thanh toán thẻ 27,2 triệu (1 giao dịch). Các nhóm chi: Thanh toán thẻ 27,2 triệu; Tiền thuê nhà 15,0 triệu; Chi tiêu sinh hoạt 14,3 triệu. Nguồn tiền vào: Lương 79,8 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Thanh toán thẻ",
+         "value": 27190000.0,
+         "text": "27,2 triệu"
+        },
+        {
+         "label": "Tiền thuê nhà",
+         "value": 15000000.0,
+         "text": "15,0 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 14297000.0,
+         "text": "14,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "79,8 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "56,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "23,3 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:card"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "11 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16888,
+     "output_tokens": 759,
+     "requests": 2,
+     "cost_usd": 0.002068,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e87d96a6f83d4188996ee019cfb283cc",
+    "conversation_id": "aa194a86a4d6473f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Ngắn gọn: với dữ liệu hiện có, mục tiêu mua nhà 5 tỷ trong 5 năm **chưa khả thi nếu chỉ dựa vào dòng tiền hiện tại**, nhưng không phải là không thể nếu bạn điều chỉnh.\n\n**Tình hình hiện tại** (số ghi nhận ngày 09/10/2026):\n- Tài sản ròng 7,54 tỷ, nhưng phần lớn nằm ở cổ phiếu (54%) và tài sản số (31%), nên biến động mạnh.\n- Tiền mặt và tiền gửi chỉ 300 triệu.\n- Dòng tiền tháng 09/2026: còn dư 23,3 triệu.\n- Mục tiêu \"Mua thêm BĐS bằng vốn vay\" đang chậm tiến độ.\n\n**Ước tính đơn giản** (không tính lãi đầu tư, chỉ là phép tính sơ bộ):\n- Nếu dư 35 triệu/tháng (con số hệ thống ghi nhận) trong 60 tháng, tổng tiền tiết kiệm khoảng 2,1 tỷ.\n- Cộng với tiền mặt hiện có 0,3 tỷ, bạn còn thiếu khoảng 2,6 tỷ trước khi tính vay ngân hàng.\n- Nếu vay 70% giá nhà (3,5 tỷ), phần vốn tự có cần khoảng 1,5 tỷ, tức là khả thi hơn nhiều.\n\nTôi có thể chạy thêm: tính chính xác số tiền cần tích lũy mỗi tháng theo lãi suất bạn kỳ vọng, hoặc xem các rủi ro chính ảnh hưởng đến kế hoạch này. Bạn muốn xem phần nào?",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "11 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:card"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792294688.7958362,
+    "audit_seq": 613,
+    "session": {
+     "id": "aa194a86a4d6473f",
+     "title": "Em muốn mua căn nhà 5 tỷ trong 5 năm nữa, có…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.640262783039361,
+   "first_event": 1.0281685409136117,
+   "usage": {
+    "cost": 0.002068,
+    "input": 16888,
+    "output": 759,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Awdx4A8EhwmfmW3vVPtwsr",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LyLyDvBPuF1R19h6jBQ3AY",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01FcSMScwLh6EJw1PqZMx5W4",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Awdx4A8EhwmfmW3vVPtwsr",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 253,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LyLyDvBPuF1R19h6jBQ3AY",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 253,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01FcSMScwLh6EJw1PqZMx5W4",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 252,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:card"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Em có sẵn 1 tỷ, mỗi tháng để dành được 30 triệu.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tổng tiền có sau 5 năm, chưa tính lãi: 1000000000 + 30000000*60 = 2.800.000.000",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 20391,
+     "output_tokens": 528,
+     "requests": 2,
+     "cost_usd": 0.002303,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5d3116d9e81c4bb1a11d0ce5dc49c829",
+    "conversation_id": "aa194a86a4d6473f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tổng tiền có sau 5 năm, chưa tính lãi: 1 tỷ + 30 triệu × 60 tháng = **2,8 tỷ** (công thức: 1.000.000.000 + 30.000.000 × 60).\n\nSo với giá nhà 5 tỷ:\n- Nếu mua toàn bộ bằng tiền mặt: còn thiếu khoảng **2,2 tỷ**.\n- Nếu vay 70% (3,5 tỷ), vốn tự có cần 1,5 tỷ: bạn đã đủ, dư khoảng 1,3 tỷ.\n- Nếu vay 50% (2,5 tỷ), vốn tự có cần 2,5 tỷ: còn thiếu khoảng 0,3 tỷ.\n\nLưu ý: đây là phép tính chưa tính lãi đầu tư, chi phí lãi vay, hay lạm phát. Số thực tế có thể khác. Tôi có thể tính thêm với mức lãi suất bạn kỳ vọng nếu bạn muốn.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294693.0063233,
+    "audit_seq": 614,
+    "session": {
+     "id": "aa194a86a4d6473f",
+     "title": "Em muốn mua căn nhà 5 tỷ trong 5 năm nữa, có…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 4.172680578194559,
+   "first_event": 1.025012232363224,
+   "usage": {
+    "cost": 0.002303,
+    "input": 20391,
+    "output": 528,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01ANbSSvMaB7pRwHcYYR8WEf",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01ANbSSvMaB7pRwHcYYR8WEf",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Nếu tiền để dành sinh lãi 6% một năm thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tổng tiền sau 60 tháng, 1 tỷ ban đầu và 30 triệu mỗi tháng, lãi 6%/năm gộp hàng tháng: 1000000000*(1.005)**60 + 30000000*((1.005)**60 - 1)/0.005 = 3.441.951.068",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 21858,
+     "output_tokens": 652,
+     "requests": 2,
+     "cost_usd": 0.002512,
+     "tools_cost_usd": null
+    },
+    "turn_id": "026383faba70432cbfcbd6d0b0c071d6",
+    "conversation_id": "aa194a86a4d6473f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Với lãi 6%/năm (gộp hàng tháng), sau 5 năm bạn có khoảng **3,44 tỷ**.\n\nCông thức: 1.000.000.000 × 1,005⁶⁰ + 30.000.000 × (1,005⁶⁰ − 1) / 0,005\n\nSo với giá nhà 5 tỷ:\n- Mua bằng tiền mặt: còn thiếu khoảng **1,56 tỷ**.\n- Vay 70% (3,5 tỷ), vốn tự có 1,5 tỷ: đủ, dư khoảng 1,9 tỷ.\n- Vay 50% (2,5 tỷ), vốn tự có 2,5 tỷ: còn thiếu khoảng 0,94 tỷ... nhưng bạn đã có 3,44 tỷ nên thực ra **dư khoảng 0,94 tỷ**.\n\nLưu ý: 6% là giả định của bạn, không phải mức được đảm bảo. Lợi nhuận đầu tư có thể cao hơn hoặc thấp hơn, và chưa tính lạm phát hay thuế. Tôi có thể chạy thêm kịch bản lãi suất thấp hơn để so sánh nếu bạn cần.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294700.3042374,
+    "audit_seq": 615,
+    "session": {
+     "id": "aa194a86a4d6473f",
+     "title": "Em muốn mua căn nhà 5 tỷ trong 5 năm nữa, có…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 7.255745612084866,
+   "first_event": 1.0625321469269693,
+   "usage": {
+    "cost": 0.002512,
+    "input": 21858,
+    "output": 652,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NcMidzzqEnLvG4q4xcL7mA",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NcMidzzqEnLvG4q4xcL7mA",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

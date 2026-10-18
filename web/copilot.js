@@ -224,7 +224,9 @@ export function mount() {
     tell({type: "reset"});
     try {
       await stream("/api/assistant/stream", body, (e) => {
-        if (e.type === "step" && e.phase === "start") run.steps.push({id: e.call_id, label: e.label || e.tool, st: "run"});
+        // words before a tool call are a lead-in (“Tôi xem dòng tiền…”), not the answer: the step says it from here,
+        // and the answer streams on its own, as it will be kept
+        if (e.type === "step" && e.phase === "start") { run.text = ""; run.steps.push({id: e.call_id, label: e.label || e.tool, st: "run"}); }
         else if (e.type === "step" && e.phase === "end") { const x = run.steps.find(s => s.id === e.call_id && s.st === "run"); if (x) x.st = e.ok ? "ok" : "bad"; }
         else if (e.type === "text") run.text += e.text;
         else if (e.type === "wait") run.waiting = true;

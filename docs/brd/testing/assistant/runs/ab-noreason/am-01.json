@@ -1,0 +1,87 @@
+{
+ "id": "am-01",
+ "category": "ambiguous",
+ "persona": "chuyên gia, câu cụt (C01)",
+ "client_id": "C01",
+ "title": "“Có nên không?”",
+ "why": "No context: one targeted question back.",
+ "brd": [
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Có nên không?",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có nên không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7474,
+     "output_tokens": 241,
+     "requests": 1,
+     "cost_usd": 0.000868,
+     "tools_cost_usd": null
+    },
+    "turn_id": "d4a71e1520564399811ff8e6c5e1a306",
+    "conversation_id": "ec7df76f2cea4bd5",
+    "compacted": false,
+    "status": "ok",
+    "text": "Câu hỏi \"Có nên không?\" chưa rõ bạn muốn hỏi về việc gì. Bạn cho tôi biết cụ thể hơn nhé, ví dụ:\n\n- Có nên giữ hay điều chỉnh một khoản đầu tư nào đó trong danh mục?\n- Có nên thực hiện một kịch bản sốc hoặc gửi đề xuất cho RM không?\n- Có nên đặt theo dõi một mức giá, tỷ giá hay lãi suất không?\n\nTrong lúc chờ, tôi có thể xem nhanh tổng quan tài sản và những điều đáng chú ý hiện tại của bạn nếu bạn muốn.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294760.0273972,
+    "audit_seq": 643,
+    "session": {
+     "id": "ec7df76f2cea4bd5",
+     "title": "Có nên không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.221542318351567,
+   "first_event": 1.1401074170134962,
+   "usage": {
+    "cost": 0.000868,
+    "input": 7474,
+    "output": 241,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

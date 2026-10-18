@@ -1,0 +1,422 @@
+{
+ "id": "gl-01",
+ "category": "goals",
+ "persona": "bố lo học phí (C01)",
+ "client_id": "C01",
+ "title": "Học phí cho con, du học, để dành mỗi tháng",
+ "why": "A goal's status, a variant, the monthly need.",
+ "brd": [
+  "BRIEF-SCEN-01",
+  "FEAT-26",
+  "OWN-GW-36"
+ ],
+ "turns": [
+  {
+   "say": "Tiền học phí cho con tôi có đủ không?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu"
+    ]
+   }
+  },
+  {
+   "say": "Nếu con đi du học thay vì học trong nước thì sao?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu",
+     "kich_ban"
+    ]
+   }
+  },
+  {
+   "say": "Vậy mỗi tháng tôi cần để dành bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "muc_tieu"
+    ],
+    "says": "triệu"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tiền học phí cho con tôi có đủ không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "4 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): chậm tiến độ, cần 7,56 tỷ (2030), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 3,53 tỷ, cần để dành 79,1 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 27,60 tỷ (55 tuổi), có 27,30 tỷ (dự kiến có lúc 55 tuổi), thiếu 302,6 triệu, cần để dành 1,3 triệu/tháng, dòng tiền dư 5,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 1,00 tỷ (dự phòng sẵn), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 3,03 tỷ, dòng tiền dư 5,0 triệu/tháng; Định cư / con đi du học: chậm tiến độ, cần 5,53 tỷ (trong 12 tháng), có 4,03 tỷ (thanh khoản ngoài 6 tháng chi tiêu), thiếu 1,50 tỷ, cần để dành 122,4 triệu/tháng, dòng tiền dư 5,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 7,56 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.533068783068783,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 27,60 tỷ · có 27,30 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 0.989036976218332,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Chi phí y tế lớn",
+         "sub": "cần 1,00 tỷ · có 4,03 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:medical"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 4,03 tỷ",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.7282913165266106,
+         "focus": "goal:emigrate"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 41,0 tháng (khoảng 3 năm) theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17410,
+     "output_tokens": 554,
+     "requests": 2,
+     "cost_usd": 0.002018,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ed1a23b84e994be397035a8e1ec038ac",
+    "conversation_id": "c65bf57e8084424f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện tại **chưa đủ**. Theo mục tiêu học phí trong hồ sơ:\n\n- **Cần:** 7,56 tỷ đồng vào năm 2030\n- **Có:** 4,03 tỷ đồng (thanh khoản ngoài 6 tháng chi tiêu)\n- **Thiếu:** 3,53 tỷ đồng\n- **Cần để dành:** khoảng 79,1 triệu đồng mỗi tháng\n- **Dòng tiền dư hiện tại:** 5,0 triệu đồng mỗi tháng\n\nMục tiêu này đang chậm tiến độ. Với dòng tiền dư 5,0 triệu mỗi tháng, bạn chưa đạt được mức để dành cần thiết. Cần tăng tiết kiệm, điều chỉnh mục tiêu hoặc xem lại tài sản đang nắm giữ.\n\nSố liệu lấy từ trang Mục tiêu (theo hồ sơ khách hàng, tính trên tài sản hiện tại, ngày 2026-10-09). Đây là ước tính dựa trên giả định hiện có, không phải dự báo chắc chắn.\n\nNếu muốn, tôi có thể xem chi tiết dòng tiền từng tháng để tìm chỗ tiết kiệm thêm.",
+    "timing": {
+     "start": 29,
+     "model": [
+      1119,
+      1063
+     ],
+     "tools": 443,
+     "first_text": 1148,
+     "total": 4579
+    },
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792296048.551123,
+    "audit_seq": 609,
+    "session": {
+     "id": "c65bf57e8084424f",
+     "title": "Tiền học phí cho con tôi có đủ không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.623957816045731,
+   "first_event": 1.163675736170262,
+   "usage": {
+    "cost": 0.002018,
+    "input": 17410,
+    "output": 554,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01H3jw8LGZU21SDSdio5aWMN",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KYsMUx4bksGd6EcFNGN63J",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01H3jw8LGZU21SDSdio5aWMN",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 221,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KYsMUx4bksGd6EcFNGN63J",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 221,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Nếu con đi du học thay vì học trong nước thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10202,
+     "output_tokens": 526,
+     "requests": 1,
+     "cost_usd": 0.001283,
+     "tools_cost_usd": null
+    },
+    "turn_id": "4f85520ad80c46fe98df70ba90d30509",
+    "conversation_id": "c65bf57e8084424f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Mục tiêu \"Định cư / con đi du học\" trong hồ sơ của bạn cho thấy kịch bản du học, và số liệu hiện tại như sau:\n\n- **Cần:** 5,53 tỷ đồng trong 12 tháng\n- **Có:** 4,03 tỷ đồng (thanh khoản ngoài 6 tháng chi tiêu)\n- **Thiếu:** 1,50 tỷ đồng\n- **Cần để dành:** khoảng 122,4 triệu đồng mỗi tháng\n- **Dòng tiền dư hiện tại:** 5,0 triệu đồng mỗi tháng\n\nSo với học trong nước (cần 7,56 tỷ vào 2030, thiếu 3,53 tỷ), du học có mục tiêu tổng nhỏ hơn nhưng hạn gần hơn nhiều, và mức để dành mỗi tháng cao hơn (122,4 triệu so với 79,1 triệu). Mục tiêu này cũng đang chậm tiến độ.\n\nLưu ý: hai con số trên lấy từ hai mục tiêu khác nhau trong hồ sơ, không phải một kịch bản mô phỏng so sánh trực tiếp. Số liệu ghi nhận theo trang Mục tiêu, ngày 2026-10-09, là ước tính dựa trên giả định hiện có.\n\nNếu bạn muốn, tôi có thể xem thêm dòng tiền để thấy khả năng để dành cho từng phương án.",
+    "timing": {
+     "start": 27,
+     "model": [
+      1004
+     ],
+     "tools": 0,
+     "first_text": 1031,
+     "total": 3042
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296051.674789,
+    "audit_seq": 610,
+    "session": {
+     "id": "c65bf57e8084424f",
+     "title": "Tiền học phí cho con tôi có đủ không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.0834256717935205,
+   "first_event": 1.044681800995022,
+   "usage": {
+    "cost": 0.001283,
+    "input": 10202,
+    "output": 526,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Vậy mỗi tháng tôi cần để dành bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10759,
+     "output_tokens": 321,
+     "requests": 1,
+     "cost_usd": 0.001236,
+     "tools_cost_usd": null
+    },
+    "turn_id": "527fd8f6be324d53b230f662d8a2a3e0",
+    "conversation_id": "c65bf57e8084424f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo hồ sơ hiện tại, mỗi tháng bạn cần để dành:\n\n- **Học phí trong nước:** khoảng 79,1 triệu đồng\n- **Du học (trong 12 tháng):** khoảng 122,4 triệu đồng\n- **Nghỉ hưu sớm:** khoảng 1,3 triệu đồng\n\nDòng tiền dư hiện tại chỉ có 5,0 triệu đồng mỗi tháng, nên cả hai mục tiêu học phí đều chưa thể đạt chỉ bằng mức này.\n\nCác con số lấy từ trang Mục tiêu, ngày 2026-10-09, dựa trên tài sản và giả định trong hồ sơ, là ước tính chứ không phải dự báo.\n\nNếu bạn muốn, tôi có thể xem dòng tiền từng tháng để tìm thêm khoản có thể tiết kiệm.",
+    "timing": {
+     "start": 29,
+     "model": [
+      1828
+     ],
+     "tools": 0,
+     "first_text": 1856,
+     "total": 3177
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296054.9331903,
+    "audit_seq": 611,
+    "session": {
+     "id": "c65bf57e8084424f",
+     "title": "Tiền học phí cho con tôi có đủ không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 3.2163100480102003,
+   "first_event": 1.870623345952481,
+   "usage": {
+    "cost": 0.001236,
+    "input": 10759,
+    "output": 321,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

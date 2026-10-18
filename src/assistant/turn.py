@@ -44,6 +44,9 @@ from wealth import ai
 # the cap of one reply, the model's hidden reasoning included: 1 200 cut answers mid-sentence (stress test D07,
 # measured: 339 reasoning tokens + 1 424 characters of Vietnamese ≈ 1 200, finish_reason "length")
 ANSWER_TOKENS = 2400
+# no hidden reasoning before the tool call or the answer (OpenRouter's parameter; other OpenAI-compatible servers
+# ignore it): it delayed each of a tool turn's two calls by 0.3–0.45 s (measured 2026-10-18, latency report)
+NO_REASONING = {"reasoning": {"enabled": False}}
 LIMITS = UsageLimits(turns=8, tool_calls=12, total_tokens=60_000, wall_s=60)
 APPROVAL_TTL = 600.0  # a write left unanswered for 10 minutes no longer runs
 # Short-term memory (OWN-AS-11): once a prompt reaches 75 % of this budget, the older exchanges become one summary
@@ -179,7 +182,7 @@ def agent(role: str) -> Agent:
         instructions=instructions,
         tools=list(registry.agent_tools(role)),
         limits=LIMITS,
-        settings=ModelSettings(temperature=0, max_tokens=ANSWER_TOKENS),
+        settings=ModelSettings(temperature=0, max_tokens=ANSWER_TOKENS, extra=NO_REASONING),
         approval_ttl=APPROVAL_TTL,
         context=CONTEXT,
     )

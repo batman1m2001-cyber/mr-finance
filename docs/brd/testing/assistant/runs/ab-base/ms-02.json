@@ -1,0 +1,308 @@
+{
+ "id": "ms-02",
+ "category": "memory_sessions",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Phiên mới không biết điều chưa được ghi nhớ",
+ "why": "A fact said in one session, not saved: a new session must not pretend to know it.",
+ "brd": [
+  "OWN-AS-11",
+  "OWN-AS-12",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "expect": {
+    "grounded": false,
+    "no_write": true
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "expect": {
+    "grounded": false
+   },
+   "new_session": true
+  }
+ ],
+ "run": [
+  {
+   "say": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7496,
+     "output_tokens": 469,
+     "requests": 1,
+     "cost_usd": 0.000984,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a3ffe3235ee6406ba8603882cb602698",
+    "conversation_id": "9b2e99fa1b644c42",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chúc mừng bạn! Nếu bạn muốn, tôi có thể xem lại dòng tiền và các mục tiêu hiện tại để ước tính chi phí chuẩn bị cho em bé từ nay đến tháng 3. Bạn cũng có thể cho tôi biết các khoản dự kiến, như sinh con, chăm sóc sau sinh hoặc giảm thu nhập nếu nghỉ việc, để tôi tính cụ thể hơn.\n\nNếu bạn muốn tôi ghi nhớ thông tin này cho các lần trò chuyện sau, bạn chỉ cần nhờ tôi.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294801.8190825,
+    "audit_seq": 640,
+    "session": {
+     "id": "9b2e99fa1b644c42",
+     "title": "Mình sắp sinh em bé vào tháng 3 năm sau đó.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.403589137364179,
+   "first_event": 2.347340625245124,
+   "usage": {
+    "cost": 0.000984,
+    "input": 7496,
+    "output": 469,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "1 mục tiêu đang theo dõi. Mua thêm BĐS bằng vốn vay: chậm tiến độ, cần 1,72 tỷ (trong 24 tháng), có 800,0 triệu (thanh khoản ngoài 6 tháng chi tiêu), thiếu 924,0 triệu, cần để dành 36,7 triệu/tháng, dòng tiền dư 30,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 800,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.46405052158945426,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 16,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 15%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 16,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 15%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “tháng 3” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 23820,
+     "output_tokens": 845,
+     "requests": 3,
+     "cost_usd": 0.002804,
+     "tools_cost_usd": null
+    },
+    "turn_id": "4dbc92edb6324dfe82431c45c1b4737b",
+    "conversation_id": "02a835cf61b1404e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa thấy việc nào được đánh dấu vào tháng 3 năm sau trong dữ liệu của bạn.\n\nĐiều gần nhất tôi tìm được là mục tiêu **mua thêm bất động sản bằng vốn vay**. Mục tiêu này đang chậm tiến độ:\n- Cần khoảng 1,72 tỷ đồng trong vòng 24 tháng.\n- Hiện có 800 triệu đồng, còn thiếu khoảng 924 triệu đồng.\n- Cần để dành khoảng 36,7 triệu đồng mỗi tháng, trong khi dòng tiền dư hiện là 30 triệu đồng mỗi tháng.\n\nNgoài ra, trang Tổng quan đang có một điểm cần chú ý: mức sụt giảm ước tính khi thị trường xấu là 16,8%, vượt ngưỡng chấp nhận 15%.\n\nNếu tháng 3 năm sau có kế hoạch cụ thể (đóng tiền, đáo hạn khoản vay, mốc mục tiêu…), bạn có thể cho tôi biết để tôi ghi nhớ hoặc đặt theo dõi.",
+    "citations": [
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": null,
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294809.5638468,
+    "audit_seq": 641,
+    "session": {
+     "id": "02a835cf61b1404e",
+     "title": "Tháng 3 năm sau mình có chuyện gì nhỉ?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.704904448240995,
+   "first_event": 2.1969977230764925,
+   "usage": {
+    "cost": 0.002804,
+    "input": 23820,
+    "output": 845,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QukECfqGHXjUjkuE4jhYKB",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GzeuTK2tjpa8yELCjisyKk",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QukECfqGHXjUjkuE4jhYKB",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 186,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GzeuTK2tjpa8yELCjisyKk",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 273,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01TNrXRSwk8xWibqBqMTMpLJ",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01TNrXRSwk8xWibqBqMTMpLJ",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 128,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

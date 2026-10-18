@@ -188,10 +188,12 @@ async def turn_events(r: Dict[str, Any]):
     ran: List[Dict[str, Any]] = []  # its steps as they end
     labels: Dict[str, str] = {}
     ended = False
+    clock = stream.Clock()
 
     def done(result: Dict[str, Any]) -> Dict[str, Any]:
         nonlocal ended
         ended = True
+        result = {**result, "timing": clock.summary()}
         return {"type": "result", "result": {**result, "turn_seq": seq} if seq is not None else result}
 
     async def fall(why: str, cid: Optional[str]):
@@ -211,7 +213,7 @@ async def turn_events(r: Dict[str, Any]):
     if cid is not None:
         seq = conv.begin(cid, r["message"] or None)
     try:
-        async for e in _turn(r, ctx, cid, done, fall):
+        async for e in _turn(r, ctx, cid, done, fall, clock):
             if seq is not None and e.get("type") == "step":
                 if e.get("phase") == "start":
                     labels[e["call_id"]] = e.get("label") or e["tool"]
@@ -225,7 +227,7 @@ async def turn_events(r: Dict[str, Any]):
             conv.interrupt(cid, seq, ran)
 
 
-async def _turn(r: Dict[str, Any], ctx: Ctx, cid: Optional[str], done, fall):
+async def _turn(r: Dict[str, Any], ctx: Ctx, cid: Optional[str], done, fall, clock: stream.Clock):
     if not turns.live():
         async for e in fall("chưa cấu hình mô hình cho trợ lý", cid):
             yield e
@@ -245,7 +247,9 @@ async def _turn(r: Dict[str, Any], ctx: Ctx, cid: Optional[str], done, fall):
                     redo = f"mô hình lỗi ({got['model_error'].split(':')[0]})"
                 else:
                     yield done(got)
-            elif (e := stream.translate(ev, ctx)) is not None:
+                continue
+            clock.see(ev)
+            if (e := stream.translate(ev, ctx)) is not None:
                 yield e
     except ValueError as exc:  # nothing waiting for this person, or too late
         yield done({"status": "failed", "mode": "model", "steps": [], "text": str(exc), "conversation_id": cid})
@@ -315,6 +319,7 @@ def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
                 "confirm": bool(r["approvals"]),
                 "tokens": (usage.get("input_tokens") or 0) + (usage.get("output_tokens") or 0),
                 "cost_usd": usage.get("cost_usd"),
+                "timing": result.get("timing"),  # ms, no words: where a slow turn's time went (stream.Clock)
             },
         )
     out = {

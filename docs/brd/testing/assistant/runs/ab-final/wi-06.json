@@ -1,0 +1,398 @@
+{
+ "id": "wi-06",
+ "category": "what_if",
+ "persona": "founder trẻ, hai mục tiêu tranh nhau (C03)",
+ "client_id": "C03",
+ "title": "Mua nhà hay khởi nghiệp lần hai",
+ "why": "Competing goals: clarify, do not decide for him.",
+ "brd": [
+  "BRIEF-SCEN-01",
+  "BRD-RULE-SCOPE-02"
+ ],
+ "turns": [
+  {
+   "say": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần hai, nên ưu tiên cái nào?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Khởi nghiệp chắc cần 2 tỷ, nhà thì 5 tỷ.",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần hai, nên ưu tiên cái nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 7,54 tỷ (+309,0 triệu, 4,3% so với tháng trước) = tổng tài sản 8,17 tỷ − nợ 628,0 triệu (Vay ký quỹ TCBS 600,0 triệu; Dư nợ thẻ Visa Platinum 28,0 triệu). Phân bổ tài sản: Cổ phiếu 4,38 tỷ (54%), Tài sản số 2,56 tỷ (31%), Chứng chỉ quỹ 930,0 triệu (11%), Tiền & tiền gửi 300,0 triệu (4%). Tập trung vượt ngưỡng: Tổ chức phát hành SSI: 16,2% tài sản (ngưỡng 10%); Tổ chức phát hành Đức Giang: 11,3% tài sản (ngưỡng 10%); Tổ chức phát hành Hòa Phát: 10,1% tài sản (ngưỡng 10%). Thanh khoản dự phòng 300,0 triệu, đủ chi 6,7 tháng theo mức chi 45,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 43,0% so với ngưỡng 30%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,25 tỷ; lớn nhất: Bitcoin −1,26 tỷ (sốc 60%); Cổ phiếu SSI −495,0 triệu (sốc 38%); Cổ phiếu DGC −299,0 triệu (sốc 32%); Quỹ cổ phiếu TCEF −279,0 triệu (sốc 30%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "7,54 tỷ",
+         "sub": "+309,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "300,0 triệu",
+         "sub": "đủ chi 7 tháng"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "43,0%",
+         "sub": "ngưỡng 30% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "2 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 10,80 tỷ (55 tuổi), có 72,66 tỷ (dự kiến có lúc 55 tuổi), dư 61,86 tỷ, dòng tiền dư 35,0 triệu/tháng; Mua thêm BĐS bằng vốn vay: chậm tiến độ, cần 1,72 tỷ (trong 24 tháng), có 30,0 triệu (thanh khoản ngoài 6 tháng chi tiêu), thiếu 1,69 tỷ, cần để dành 67,3 triệu/tháng, dòng tiền dư 35,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nghỉ hưu sớm năm 55 tuổi",
+         "sub": "cần 10,80 tỷ · có 72,66 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:retire_early"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 30,0 triệu",
+         "chip": "chậm tiến độ",
+         "tone": "bad",
+         "progress": 0.017401894559604534,
+         "focus": "goal:leverage_buy"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 79,8 triệu, tiền ra 56,5 triệu, còn lại 23,3 triệu. Khoản chi lớn nhất: Thanh toán thẻ 27,2 triệu (1 giao dịch). Các nhóm chi: Thanh toán thẻ 27,2 triệu; Tiền thuê nhà 15,0 triệu; Chi tiêu sinh hoạt 14,3 triệu. Nguồn tiền vào: Lương 79,8 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Thanh toán thẻ",
+         "value": 27190000.0,
+         "text": "27,2 triệu"
+        },
+        {
+         "label": "Tiền thuê nhà",
+         "value": 15000000.0,
+         "text": "15,0 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 14297000.0,
+         "text": "14,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "79,8 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "56,5 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "23,3 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:card"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "11 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17325,
+     "output_tokens": 645,
+     "requests": 2,
+     "cost_usd": 0.002055,
+     "tools_cost_usd": null
+    },
+    "turn_id": "852176d57e8e43058f1281dc8af9eb2d",
+    "conversation_id": "43b9dcfbb02c4dad",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa thể nói bạn nên ưu tiên cái nào, nhưng dữ liệu hiện có cho thấy vài điều đáng cân nhắc:\n\n- **Mua nhà**: mục tiêu đang chậm tiến độ. Cần khoảng 1,72 tỷ trong 24 tháng, mới có 30 triệu, thiếu khoảng 1,69 tỷ, cần để dành khoảng 67 triệu/tháng. Dòng tiền dư hiện chỉ khoảng 35 triệu/tháng, nên mục tiêu này chưa khả thi nếu không tăng thu nhập hoặc giảm chi.\n- **Khởi nghiệp**: hồ sơ hiện chưa có mục tiêu này nên tôi chưa tính được. Phần tiền mặt dự phòng chỉ 300 triệu (đủ khoảng 6,7 tháng chi), và danh mục đang vượt ngưỡng rủi ro, nên khởi nghiệp lúc này sẽ tiêu hao vốn dự phòng nhanh.\n- Ngoài ra, bạn đang vay ký quỹ 600 triệu, nên cần thận trọng thêm.\n\nNếu bạn muốn, tôi có thể thêm mục tiêu khởi nghiệp vào hồ sơ để so sánh trực tiếp hai hướng với cùng một bảng số liệu. Bạn cho tôi biết số vốn dự kiến và thời điểm bắt đầu nhé.",
+    "timing": {
+     "start": 25,
+     "model": [
+      1013,
+      1039
+     ],
+     "tools": 808,
+     "first_text": 1038,
+     "total": 5108
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 4 nguồn: Techcombank (2 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có",
+     "11 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:card"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792296130.4920967,
+    "audit_seq": 638,
+    "session": {
+     "id": "43b9dcfbb02c4dad",
+     "title": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.148628286086023,
+   "first_event": 1.0525511340238154,
+   "usage": {
+    "cost": 0.002055,
+    "input": 17325,
+    "output": 645,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RdEyZMtHAe687gq8YSezoM",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QbPU2d58RVDTVdUGzefXqh",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QJxi9GwjGhVNnJj7fWAQGn",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RdEyZMtHAe687gq8YSezoM",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 269,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QbPU2d58RVDTVdUGzefXqh",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 269,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QJxi9GwjGhVNnJj7fWAQGn",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 269,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:card"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Khởi nghiệp chắc cần 2 tỷ, nhà thì 5 tỷ.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10172,
+     "output_tokens": 468,
+     "requests": 1,
+     "cost_usd": 0.001251,
+     "tools_cost_usd": null
+    },
+    "turn_id": "473b3a71bae44e0a957cdb2fce6903b3",
+    "conversation_id": "43b9dcfbb02c4dad",
+    "compacted": false,
+    "status": "ok",
+    "text": "Cảm ơn bạn. Tôi sẽ thêm mục tiêu khởi nghiệp (2 tỷ) để so sánh cùng lúc với mua nhà (5 tỷ), nhưng cần biết thêm một điều: bạn muốn bắt đầu khởi nghiệp trong bao lâu nữa? Và mục tiêu mua nhà 5 tỷ là trong bao nhiêu tháng? Hồ sơ hiện ghi mua thêm bất động sản là 1,72 tỷ trong 24 tháng, nên tôi cần biết con số 5 tỷ có thay thế mục tiêu đó không.\n\nTrong lúc chờ, tôi đã có số liệu hiện tại để so sánh: tài sản ròng 7,54 tỷ, tiền dự phòng 300 triệu, dòng tiền dư khoảng 35 triệu/tháng. Với tổng nhu cầu 7 tỷ (2 tỷ + 5 tỷ) nếu cần cùng lúc, số tiền cần tích lũy thêm gần như toàn bộ phần tài sản ròng hiện có phải được giữ nguyên và sinh lời, nên đây là điểm cần xem kỹ.\n\nBạn trả lời giúp hai câu trên, tôi sẽ chạy so sánh chi tiết.",
+    "timing": {
+     "start": 25,
+     "model": [
+      980
+     ],
+     "tools": 0,
+     "first_text": 1005,
+     "total": 3060
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296133.6495578,
+    "audit_seq": 639,
+    "session": {
+     "id": "43b9dcfbb02c4dad",
+     "title": "Em vừa muốn mua nhà vừa muốn khởi nghiệp lần…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.1177117829211056,
+   "first_event": 1.0386209851130843,
+   "usage": {
+    "cost": 0.001251,
+    "input": 10172,
+    "output": 468,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

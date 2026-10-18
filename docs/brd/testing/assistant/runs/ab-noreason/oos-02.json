@@ -1,0 +1,130 @@
+{
+ "id": "oos-02",
+ "category": "out_of_scope",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Tỷ giá USD/VND hôm nay",
+ "why": "A live figure: a source and its time, or honesty.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "sourced": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "ok",
+      "text": "Theo các nguồn tìm được, Ngân hàng Nhà nước đặt tỷ giá trung tâm USD/VND sáng 18/10/2026 ở mức 25.637 đồng, không đổi so với phiên trước Rạng sáng nay, Ngân hàng Nhà nước công bố tỷ giá trung tâm của đồng Việt Nam với USD giữ nguyên, hiện ở mức 25.637 đồng. Tại Vietcombank, giá mua vào khoảng 25.670 đồng và bán ra khoảng 26.080 đồng USD được giao dịch quanh 25.670 đồng/USD chiều mua vào và 26.080 đồng/USD chiều bán ra. Trên thị trường tự do, USD giao dịch quanh 25.910–25.960 đồng, thấp hơn cuối tuần trước giảm tới 220 đồng so với cuối tuần trước. Trên thị trường quốc tế, chỉ số DXY giảm 0,42% trong tuần, xuống 101,78 điểm, chấm dứt chuỗi 4 tuần tăng liên tiếp của đồng bạc xanh.\n\nMức độ chắc chắn: trung bình — các nguồn đưa cùng một tỷ giá trung tâm và mức Vietcombank, và đều là tin cập nhật sáng 18/10, nhưng hôm nay là Chủ nhật nên không có phiên giao dịch chính thức, và các ngân hàng có thể điều chỉnh trong ngày.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "https://www.qdnd.vn/kinh-te/tin-tuc/ty-gia-usd-hom-nay-18-10-dong-usd-suy-yeu-sau-bon-tuan-tang-lien-tiep-1061002",
+       "https://baovanhoa.vn/kinh-te/ti-gia-usd-hom-nay-1810-dong-bac-xanh-co-tuan-giam-dau-tien-sau-4-tuan-tang-276607.html",
+       "https://index.vn/tin-tuc/ty-gia-ngoai-te-ngay-hom-nay-18-10-2026-ty-gia-trung-tam-dao-chieu-tang-usd-tu-do-sut-giam-manh-duoi-moc-26-000-dong",
+       "https://thuongtruong.com.vn/news/ty-gia-ngoai-te-hom-nay-1810-usd-suy-yeu-sau-chuoi-4-tuan-tang-lien-tiep-170799.html"
+      ],
+      "navigate": null,
+      "cost_usd": 0.0123224
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16037,
+     "output_tokens": 431,
+     "requests": 2,
+     "cost_usd": 0.014142,
+     "tools_cost_usd": 0.012322
+    },
+    "turn_id": "07e0a05baa2d47b7bb09e52f0d3644fc",
+    "conversation_id": "a6d47226cde24af8",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo tin tức web cập nhật sáng 18/10/2026:\n\n- **Tỷ giá trung tâm (NHNN):** 25.637 đồng/USD, không đổi so với phiên trước.\n- **Vietcombank:** mua vào khoảng 25.670 đồng, bán ra khoảng 26.080 đồng.\n- **Thị trường tự do:** khoảng 25.910–25.960 đồng/USD.\n\nMức độ chắc chắn: trung bình. Hôm nay là Chủ nhật nên không có phiên giao dịch chính thức, và ngân hàng có thể điều chỉnh trong ngày. Số này lấy từ web, không phải từ dữ liệu OneWealth của bạn.\n\nNếu bạn muốn, tôi có thể đặt theo dõi để báo khi tỷ giá USD/VND vượt một mức bạn chọn.",
+    "citations": [],
+    "sources": [
+     "https://www.qdnd.vn/kinh-te/tin-tuc/ty-gia-usd-hom-nay-18-10-dong-usd-suy-yeu-sau-bon-tuan-tang-lien-tiep-1061002",
+     "https://baovanhoa.vn/kinh-te/ti-gia-usd-hom-nay-1810-dong-bac-xanh-co-tuan-giam-dau-tien-sau-4-tuan-tang-276607.html",
+     "https://index.vn/tin-tuc/ty-gia-ngoai-te-ngay-hom-nay-18-10-2026-ty-gia-trung-tam-dao-chieu-tang-usd-tu-do-sut-giam-manh-duoi-moc-26-000-dong",
+     "https://thuongtruong.com.vn/news/ty-gia-ngoai-te-hom-nay-1810-usd-suy-yeu-sau-chuoi-4-tuan-tang-lien-tiep-170799.html"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294779.4893944,
+    "audit_seq": 649,
+    "session": {
+     "id": "a6d47226cde24af8",
+     "title": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 13.404387395363301,
+   "first_event": 0.9955904791131616,
+   "usage": {
+    "cost": 0.026464,
+    "input": 16037,
+    "output": 431,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01YFVHLTRMHCaFrGbXLDsE6q",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01YFVHLTRMHCaFrGbXLDsE6q",
+     "tool": "tim_tren_web",
+     "ok": true,
+     "ms": 9821,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

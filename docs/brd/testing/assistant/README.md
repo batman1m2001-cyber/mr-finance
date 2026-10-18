@@ -11,6 +11,7 @@ honestly. Plan and decisions: `docs/ASSISTANT_STRESS_PLAN.md`.
 | [defects.md](defects.md) | Every defect found, ranked by severity, with its cause, fix, regression test and status |
 | [coverage.md](coverage.md) | The BRD requirements the conversations test, and whether they held |
 | [readiness.md](readiness.md) | The assessment: what is ready, what blocks, what remains |
+| [latency.md](latency.md) | Why a turn took 4–5 s, reasoning turned off (−0.8 s a turn), the A/B and its quality check |
 | `runs/<tag>/` | Every run: a JSON record (the answer, its events, the state read back) and a Markdown transcript per conversation |
 | [browser.md](browser.md), `browser/` | The browser pass (the real panel, desktop and phone): its record and screenshots |
 

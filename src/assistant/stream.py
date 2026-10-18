@@ -9,9 +9,17 @@ the answer). The graph lights a node only for these."""
 
 from __future__ import annotations
 
+import time
 from typing import Any, Dict, List, Optional
 
-from operonx_agents.run.events import ApprovalRequired, TextDelta, ToolCallFinished, ToolCallStarted
+from operonx_agents.run.events import (
+    ApprovalRequired,
+    TextDelta,
+    ToolCallFinished,
+    ToolCallStarted,
+    TurnFinished,
+    TurnStarted,
+)
 
 from assistant import registry
 from assistant.base import Ctx
@@ -71,6 +79,56 @@ def step_end(tool: str, call_id: str, ok: bool, ms: float, got: Optional[Dict[st
         out["scenario"] = {"id": data["scenario"], "effect": data["after"] - data["before"]}
         out["focus"].append(f"scenario:{data['scenario']}")
     return out
+
+
+class Clock:
+    """A turn's time, without its words (the latency report, 2026-10-18; the assistant's traces are off because its
+    ops hold what people say). Milliseconds: ``start`` the first model call, from the turn's start; ``calls`` each
+    model call as [its first output, its end] from the call's start (the end: its tool calls begin, or its answer is
+    written); ``tools`` the tools' own time; ``first_text`` the first words the person sees, from the turn's start
+    (a model that writes before its tool call shows them early); ``total`` the turn."""
+
+    def __init__(self) -> None:
+        self.t0 = time.monotonic()
+        self.start: Optional[float] = None
+        self.calls: List[List[Optional[float]]] = []
+        self.tools = 0.0
+        self.first_text: Optional[float] = None
+        self._call: Optional[List[Optional[float]]] = None  # [its start, its first output]
+
+    def _now(self) -> float:
+        return (time.monotonic() - self.t0) * 1000
+
+    def _close(self) -> None:
+        if self._call is not None:
+            began, first = self._call
+            self.calls.append([None if first is None else first - began, self._now() - began])
+            self._call = None
+
+    def see(self, ev: Any) -> None:
+        if isinstance(ev, TurnStarted):
+            self._close()
+            self._call = [self._now(), None]
+            self.start = self._call[0] if self.start is None else self.start
+            return
+        words = isinstance(ev, TextDelta) and bool(ev.text)
+        if (words or isinstance(ev, ToolCallStarted)) and self._call is not None and self._call[1] is None:
+            self._call[1] = self._now()
+        if words and self.first_text is None:
+            self.first_text = self._now()
+        if isinstance(ev, (ToolCallStarted, TurnFinished)):
+            self._close()
+        if isinstance(ev, ToolCallFinished):
+            self.tools += ev.ms or 0
+
+    def summary(self) -> Dict[str, Any]:
+        self._close()
+
+        def r(v: Optional[float]) -> Optional[int]:
+            return None if v is None else round(v)
+
+        return {"start": r(self.start), "calls": [[r(a), r(b)] for a, b in self.calls], "tools": round(self.tools),
+                "first_text": r(self.first_text), "total": round(self._now())}  # fmt: skip
 
 
 def translate(ev: Any, ctx: Ctx) -> Optional[Dict[str, Any]]:

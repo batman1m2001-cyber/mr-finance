@@ -69,6 +69,23 @@ def test_the_turn_is_audited_without_its_text():
     assert "Tài sản" not in json.dumps(row, ensure_ascii=False)
 
 
+def test_the_turn_is_timed_without_its_words_and_the_model_does_not_reason_first():
+    """The latency report (2026-10-18): a tool turn's two model calls each waited 0.3–0.45 s on hidden reasoning, and
+    nothing recorded where a turn's time went (the assistant's traces are off: they would hold people's words)."""
+    llm = ScriptedLLM(asks(("tong_quan", {})), says("Ổn."))
+    with scripted(copilot=llm):
+        a = ask("Tài sản của tôi thế nào?")
+    assert all(q.get("reasoning") == {"enabled": False} for q in llm.requests), llm.requests[0].keys()
+    t = a["timing"]
+    assert len(t["calls"]) == 2 and t["start"] is not None and t["first_text"] is not None, t  # tool call, answer
+    assert all(first is not None and 0 <= first <= end for first, end in t["calls"]), t
+    assert t["start"] <= t["first_text"] <= t["total"] and t["tools"] >= 0, t
+    assert t["start"] + t["calls"][0][1] <= t["first_text"], t  # this model wrote nothing before its tool call
+    with db.tx() as con:
+        row = con.execute("select data from audit_log where seq = ?", (a["audit_seq"],)).fetchone()
+    assert json.loads(row["data"])["timing"] == t  # the audit keeps it: a slow turn can be read back
+
+
 def test_a_write_waits_for_the_person_who_asked_then_runs_once_and_is_checked():
     before = len(wealth_store.reviews("C01"))
     llm = ScriptedLLM(asks(("gui_de_xuat", {"scenario": "co_phieu", "option": "light"})), says("Đã gửi, chờ RM."))

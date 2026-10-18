@@ -84,6 +84,8 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     nw, lq, rk = d["net_worth"], d["liquidity"], d["risk"]
     status = {"ok": "an toàn", "near": "gần ngưỡng", "over": "vượt ngưỡng"}[rk["status"]]
     months = f"{lq['months'] / 12:.0f} năm" if lq["months"] >= 24 else f"{lq['months']:.0f} tháng"
+    # the months themselves, said: a model without reasoning divided them out itself (“32 tháng”, latency report)
+    exact = f"{lq['months']:.1f}".replace(".", ",") + " tháng" + (f" (khoảng {months})" if lq["months"] >= 24 else "")
     debts = [h for h in d["holdings"] if h["kind"] == "liability"]
     owed = "; ".join(f"{h['name']} {_vnd(h['value'])}" for h in debts)
     mix = ", ".join(f"{a['group']} {_vnd(a['value'])} ({_pct(a['share'], 0)})" for a in d["allocation"])  # D08
@@ -93,7 +95,7 @@ async def overview(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         f"tháng trước) = tổng tài sản {_vnd(nw['assets'])} − nợ {_vnd(nw['liabilities'])}"
         f"{f' ({owed})' if owed else ''}. Phân bổ tài sản: {mix}."
         f"{(' Tập trung vượt ngưỡng: ' + '; '.join(over) + '.') if over else ''} Thanh khoản dự phòng "
-        f"{_vnd(lq['value'])}, đủ chi {months} theo mức chi {_vnd(lq['spending_monthly'])}/tháng trong hồ sơ. "
+        f"{_vnd(lq['value'])}, đủ chi {exact} theo mức chi {_vnd(lq['spending_monthly'])}/tháng trong hồ sơ. "
         f"Khi thị trường xấu, mức sụt giảm ước tính {_pct(rk['current'])} so "
         f"với ngưỡng {_pct(rk['limit'], 0)}: {status}."
     )

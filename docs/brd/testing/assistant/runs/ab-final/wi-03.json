@@ -1,0 +1,261 @@
+{
+ "id": "wi-03",
+ "category": "what_if",
+ "persona": "trưởng phòng sợ mất việc (C05)",
+ "client_id": "C05",
+ "title": "Mất việc 6 tháng",
+ "why": "Income loss: the tools have no job-loss scenario by name; months of reserve are the honest answer.",
+ "brd": [
+  "BRIEF-SCEN-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Nếu mình mất việc 6 tháng thì sao?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien",
+     "kich_ban"
+    ],
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nếu mình mất việc 6 tháng thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 32,7 tháng (khoảng 3 năm) theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 26,0 triệu; Thanh toán thẻ 15,9 triệu; Chi tiêu sinh hoạt 9,3 triệu. Nguồn tiền vào: Lương 60,1 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16668,
+     "output_tokens": 750,
+     "requests": 2,
+     "cost_usd": 0.002042,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9c0a50c7d21d46ecbfd39c020c2cb680",
+    "conversation_id": "f7cfcdbbc63b4947",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nếu bạn mất việc 6 tháng, tiền mặt dự phòng hiện có (980 triệu) vẫn đủ chi khoảng 32,7 tháng theo mức chi 30 triệu/tháng trong hồ sơ. Tức là 6 tháng không có lương vẫn được bảo đảm về mặt tiền mặt.\n\nPhép tính đơn giản:\n- Chi 6 tháng: 30 triệu × 6 = 180 triệu\n- Tiền dự phòng còn lại: 980 − 180 = 800 triệu\n\nĐiểm cần lưu ý:\n- **Khoản vay mua căn hộ 2,10 tỷ** vẫn phải trả. Tiền trả nợ hằng tháng vào khoảng 26 triệu (tháng 9/2026), nên 6 tháng cần thêm khoảng 156 triệu. Phần này nằm trong khoản chi 30 triệu/tháng ở trên hay không, bạn cần kiểm tra lại hồ sơ.\n- **Dòng tiền tháng 9/2026** còn dương 9 triệu khi có lương 60,1 triệu. Không có lương thì dòng tiền âm mỗi tháng.\n- **Tập trung rủi ro**: 69% tài sản nằm ở một khu vực bất động sản (ngưỡng 35%). Nếu thị trường xấu, mức sụt giảm ước tính vượt ngưỡng 15%. Đây là rủi ro về tài sản, không ảnh hưởng trực tiếp đến tiền mặt 6 tháng.\n\nSố liệu tính đến 09/10/2026, lấy từ trang Tổng quan và Dòng tiền. Đây là ước tính đơn giản, không phải dự báo. Nếu muốn, tôi có thể chạy thêm kịch bản thu nhập giảm để xem chi tiết hơn.",
+    "timing": {
+     "start": 25,
+     "model": [
+      1059,
+      1009
+     ],
+     "tools": 384,
+     "first_text": 1084,
+     "total": 5501
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)",
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792296110.8657842,
+    "audit_seq": 631,
+    "session": {
+     "id": "f7cfcdbbc63b4947",
+     "title": "Nếu mình mất việc 6 tháng thì sao?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.537671423982829,
+   "first_event": 1.0991136259399354,
+   "usage": {
+    "cost": 0.002042,
+    "input": 16668,
+    "output": 750,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_017gBneWGYY4c9UGtkycBjEw",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01WfdsyF6C1c6Pipiv7q2yyd",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_017gBneWGYY4c9UGtkycBjEw",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 192,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01WfdsyF6C1c6Pipiv7q2yyd",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 192,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

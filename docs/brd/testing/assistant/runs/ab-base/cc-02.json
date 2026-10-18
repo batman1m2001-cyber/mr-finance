@@ -1,0 +1,335 @@
+{
+ "id": "cc-02",
+ "category": "concerns",
+ "persona": "sợ mất việc, còn nợ (C05)",
+ "client_id": "C05",
+ "title": "Công ty cắt giảm, còn nợ 2 tỷ",
+ "why": "Job insecurity with debt: practical next steps.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Công ty mình đang cắt giảm nhân sự, mình sợ mất việc mà còn nợ hơn 2 tỷ, mình phải làm sao?",
+   "expect": {
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ],
+    "not_says": [
+     "đừng lo"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Công ty mình đang cắt giảm nhân sự, mình sợ mất việc mà còn nợ hơn 2 tỷ, mình phải làm sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 3 năm theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 26,0 triệu; Thanh toán thẻ 15,9 triệu; Chi tiêu sinh hoạt 9,3 triệu. Nguồn tiền vào: Lương 60,1 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "số tháng thanh khoản dự phòng chịu chi theo chi tiêu tháng 09/2026 (51,2 triệu): 980000000/51200000 = 19,14",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     },
+     {
+      "tool": "gia_dinh",
+      "label": "Giả định của bạn",
+      "status": "ok",
+      "text": "Giả định của bạn: thu nhập hằng tháng −50%. Kịch bản của bạn: tài sản ròng 3,53 tỷ → 3,53 tỷ (0,0 triệu). Mục tiêu: Mua thêm BĐS bằng vốn vay chậm tiến độ (giữ nguyên). Đây là giả định trên tài sản hiện có, không phải dự báo, không cộng vào tài sản ròng.",
+      "card": {
+       "kind": "figures",
+       "title": "So sánh kịch bản",
+       "items": [
+        {
+         "label": "Kịch bản của bạn",
+         "value": "0,0 triệu"
+        }
+       ]
+      },
+      "focus": [
+       "scenario:custom"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 25754,
+     "output_tokens": 2090,
+     "requests": 3,
+     "cost_usd": 0.00362,
+     "tools_cost_usd": null
+    },
+    "turn_id": "96ef809a0fdf4347922d6e719a1902ec",
+    "conversation_id": "30278f3e72a84a43",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi thấy số liệu của bạn đúng như bạn nói, và bạn có chỗ đứng khá vững:\n\n- **Nợ:** Khoản vay mua căn hộ Vinhomes Grand Park là 2,10 tỷ, cộng thẻ tín dụng 12 triệu. Tổng nợ 2,11 tỷ.\n- **Tiền dự phòng:** 980 triệu tiền mặt và tiền gửi. Với mức chi tháng 09/2026 là 51,2 triệu, số này đủ khoảng 19 tháng (980 ÷ 51,2 ≈ 19,1). Hồ sơ của bạn ghi mức chi 30 triệu/tháng nên con số thực tế có thể khác.\n- **Rủi ro:** Khoảng 69% tài sản nằm ở bất động sản trong khu Vinhomes Grand Park, vượt ngưỡng 35%. Nếu thị trường xấu, mức sụt giảm ước tính vượt ngưỡng 15%.\n\nViệc nên làm trước:\n1. **Xem lịch trả nợ vay** và giữ đủ tiền cho các kỳ trả sắp tới.\n2. **Không vay thêm** và tạm hoãn kế hoạch mua thêm bất động sản bằng vốn vay. Mô phỏng thu nhập giảm một nửa cho thấy mục tiêu này đang chậm tiến độ.\n3. **Liên hệ ngân hàng sớm** nếu thu nhập giảm: hỏi về cơ cấu lại kỳ hạn hoặc hoãn trả gốc trước khi bị trễ hạn.\n4. **Hỏi công ty** về trợ cấp thôi việc và thời hạn nhận, rồi tính xem số tiền đó phủ được bao nhiêu tháng trả nợ.\n\nTôi có thể chạy thêm mô phỏng nếu bạn cho biết mức thu nhập có thể giảm bao nhiêu. Các con số trên là ước tính từ dữ liệu hiện có, không phải dự báo.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)",
+     "9 giao dịch của tháng",
+     "Mô phỏng kịch bản trên các khoản hiện có: một bộ máy cho riêng lẻ và cùng lúc"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "scenario:custom"
+    ],
+    "navigate": null,
+    "suggest": [
+     "So sánh các kịch bản đang bật",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792294774.8328588,
+    "audit_seq": 626,
+    "session": {
+     "id": "30278f3e72a84a43",
+     "title": "Công ty mình đang cắt giảm nhân sự, mình sợ mất…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 13.23413770692423,
+   "first_event": 1.6519941398873925,
+   "usage": {
+    "cost": 0.00362,
+    "input": 25754,
+    "output": 2090,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01QMjXpcs6hQvRvc8JpPgbz4",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01AAMbcZt2PYo1NtSN4oUt47",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01QMjXpcs6hQvRvc8JpPgbz4",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 202,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01AAMbcZt2PYo1NtSN4oUt47",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 201,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Dvn3Dktgh5nEhD8HWKmXSh",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HjmLf7oLEfWRywok8MDbJR",
+     "tool": "gia_dinh",
+     "label": "Giả định của bạn",
+     "nodes": [
+      "scenario"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Dvn3Dktgh5nEhD8HWKmXSh",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 15,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HjmLf7oLEfWRywok8MDbJR",
+     "tool": "gia_dinh",
+     "ok": true,
+     "ms": 116,
+     "focus": [
+      "scenario:custom"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -57,6 +57,20 @@ def _c(cls):
     return {"cash": "deposit"}.get(cls, cls)
 
 
+def test_against_the_limit_as_the_standalone_rule_says_it():
+    """The combination says over or within the client's drawdown limit itself, as one stress test does (latency
+    report 2026-10-18: a model without reasoning read a −8,6 % fall as near an 8 % limit)."""
+    for cid in fixtures.client_ids():
+        for sid in STRESS:
+            alone, together = run(SINGLE, client_id=cid, scenario=sid, params={}, scope="personal"), both(cid, [sid])
+            said = next(x["value"] for x in alone["summary"] if x["label"] == "So với ngưỡng chấp nhận")
+            dd = together["drawdown"]
+            assert dd["share"] == pytest.approx(alone["loss_share"], abs=1e-9) and dd["over"] == ("vượt" in said), (
+                cid,
+                sid,
+            )
+
+
 def test_shocks_compound_on_a_holding_never_add():
     p = pic([asset("VNM", "stock", 100 * TR, beta=1)])
     r = combine(p, ["vni_30", "custom"], {"custom": {"stock": -0.5}})

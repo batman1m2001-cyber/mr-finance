@@ -2,6 +2,7 @@
 docs/brd/testing/assistant/defects.md): each test names the defect it holds fixed."""
 
 import asyncio
+import re
 
 import pytest
 
@@ -144,6 +145,8 @@ def test_d11_the_reserves_months_name_the_spending_they_are_counted_against():
     """D11: “đủ chi 3 năm” against a month that spent more: the basis (the profile's spending) was not said."""
     out = run(registry.REGISTRY["tong_quan"].run(ctx(), {}))
     assert "/tháng trong hồ sơ" in out["text"] and "(D11)" not in out["text"]
+    # and the months themselves, to one decimal: without reasoning the model divided “3 năm” out itself (“32 tháng”)
+    assert re.search(r"đủ chi \d+,\d tháng", out["text"]), out["text"]
 
 
 def assume(**args):
@@ -360,6 +363,10 @@ def test_d24_a_shock_at_a_planning_scenarios_level_runs_that_scenario():
     for level in ("ba mươi phần trăm", "hai điểm phần trăm", "mười tám tháng", "năm phần trăm"):
         assert level in k
     assert "mức trùng thì dùng kich_ban" in g and "không định giá lại tài sản" in g
+    # without reasoning the model did not look the levels up in kich_ban (latency report, 2026-10-18): they are said
+    # here too, and a preset added to the one just run goes to the comparison
+    s = registry.REGISTRY["so_sanh_kich_ban"].description
+    assert "ba mươi phần trăm" in g and "so_sanh_kich_ban" in g and "co_phieu và lai_suat" in s
 
 
 def test_d25_the_cash_flow_names_every_spending_group_and_income_source():

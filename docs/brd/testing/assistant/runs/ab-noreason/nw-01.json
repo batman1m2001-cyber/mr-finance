@@ -1,0 +1,369 @@
+{
+ "id": "nw-01",
+ "category": "news",
+ "persona": "chuyên gia, hoài nghi (C01)",
+ "client_id": "C01",
+ "title": "Tin nào ảnh hưởng nhất, chắc hay ước, nguồn đâu",
+ "why": "The biggest impact, then fact against estimate, then the source.",
+ "brd": [
+  "BR-08",
+  "BRD-RULE-CONTENT-02",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "chu_y"
+    ],
+    "sourced": true
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "expect": {
+    "says": "ước tính"
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "expect": {
+    "tools_any": [
+     "tac_dong",
+     "dieu_tra",
+     "tim_kiem"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới tài sản của tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tac_dong",
+      "label": "Tác động tin",
+      "status": "ok",
+      "text": "2 sự kiện đang có hiệu lực; tác động kỳ vọng 3 tháng cộng lại +0,2 triệu. Lớn nhất: Bất động sản (+98,6 triệu). Đây là ước tính theo kịch bản CIO duyệt, không phải khuyến nghị.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Bất động sản",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "+98,6 triệu",
+         "tone": "good",
+         "focus": "event:EV-2026-0002"
+        },
+        {
+         "title": "Thị trường cổ phiếu",
+         "sub": "kỳ vọng 3 tháng",
+         "value": "−98,4 triệu",
+         "tone": "bad",
+         "focus": "event:EV-2026-0001"
+        }
+       ]
+      },
+      "focus": [
+       "event:EV-2026-0002"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "2 lần áp dụng CIO duyệt",
+       "CafeF",
+       "Vietstock",
+       "VnEconomy"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Tác động tin",
+       "route": "#/client/tin/thi-truong"
+      }
+     },
+     {
+      "tool": "chu_y",
+      "label": "Điều cần chú ý",
+      "status": "ok",
+      "text": "1 điều đáng chú ý. 1) Mức sụt giảm ước tính 11,8% khi thị trường xấu — Vượt ngưỡng chấp nhận 8%.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mức sụt giảm ước tính 11,8% khi thị trường xấu",
+         "sub": "Vượt ngưỡng chấp nhận 8%",
+         "chip": "Cao",
+         "tone": "bad",
+         "focus": "feed:dashboard:risk"
+        }
+       ]
+      },
+      "focus": [
+       "feed:dashboard:risk"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15530,
+     "output_tokens": 475,
+     "requests": 2,
+     "cost_usd": 0.00179,
+     "tools_cost_usd": null
+    },
+    "turn_id": "4dff7d80783e47d88f72ea414a508f70",
+    "conversation_id": "bbafea247a6d4e0e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 2 sự kiện đã được CIO duyệt đang tác động tới tài sản của bạn (dữ liệu ngày 09/10/2026, nguồn: CafeF, Vietstock, VnEconomy).\n\n- **Ảnh hưởng lớn nhất: nhà đất**, ước tính **+98,6 triệu** trong 3 tháng tới.\n- Tổng tác động kỳ vọng của cả hai sự kiện cộng lại chỉ khoảng **+0,2 triệu**.\n\nLưu ý: đây là ước tính theo kịch bản đã duyệt, không phải dự báo hay khuyến nghị đầu tư.\n\nNgoài ra, một điều đáng chú ý: khi thị trường xấu, mức sụt giảm ước tính của danh mục là **11,8%**, đang vượt ngưỡng chấp nhận **8%** của bạn.\n\nNếu muốn, tôi có thể xem chi tiết tin nào đã tác động đến nhà đất hoặc chạy thử kịch bản giảm giá của một nhóm tài sản cụ thể.",
+    "citations": [
+     {
+      "label": "Tác động tin",
+      "route": "#/client/tin/thi-truong"
+     },
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "2 lần áp dụng CIO duyệt",
+     "CafeF",
+     "Vietstock",
+     "VnEconomy",
+     "Bảng tin: ngưỡng của sản phẩm trên số liệu tổng hợp, giao dịch và tin đã duyệt"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "feed:dashboard:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Tin nào ảnh hưởng tới tôi?",
+     "Tổng quan tài sản?"
+    ],
+    "answered_at": 1792294661.013583,
+    "audit_seq": 603,
+    "session": {
+     "id": "bbafea247a6d4e0e",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.217991766985506,
+   "first_event": 1.022843848913908,
+   "usage": {
+    "cost": 0.00179,
+    "input": 15530,
+    "output": 475,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SVB63gLfj1VvCvyRRzszVw",
+     "tool": "tac_dong",
+     "label": "Tác động tin",
+     "nodes": [
+      "event"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_017Ni7H8YLSUDEeHsRArd9nY",
+     "tool": "chu_y",
+     "label": "Điều cần chú ý",
+     "nodes": [
+      "alert",
+      "event",
+      "risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SVB63gLfj1VvCvyRRzszVw",
+     "tool": "tac_dong",
+     "ok": true,
+     "ms": 95,
+     "focus": [
+      "event:EV-2026-0002"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_017Ni7H8YLSUDEeHsRArd9nY",
+     "tool": "chu_y",
+     "ok": true,
+     "ms": 295,
+     "focus": [
+      "feed:dashboard:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Con số đó là chắc chắn hay chỉ là ước tính?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8440,
+     "output_tokens": 261,
+     "requests": 1,
+     "cost_usd": 0.000974,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7aee459c42ed4b8e979e04efcf61932c",
+    "conversation_id": "bbafea247a6d4e0e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Con số đó là **ước tính**, không phải con số chắc chắn.\n\n- Số **+98,6 triệu** (nhà đất) và **11,8%** (mức sụt giảm khi thị trường xấu) đều là kết quả mô phỏng dựa trên kịch bản CIO đã duyệt và dữ liệu tài sản hiện có. Chúng không phải dự báo, cũng không đảm bảo sẽ xảy ra.\n- Phần **số liệu tài sản** và các khoản đã ghi nhận trong hệ thống là số ghi nhận, lấy từ dữ liệu ngày 09/10/2026.\n\nNếu cần, tôi có thể đưa thêm phép tính từng bước để bạn tự kiểm lại.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294663.2136347,
+    "audit_seq": 604,
+    "session": {
+     "id": "bbafea247a6d4e0e",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.1623037196695805,
+   "first_event": 1.0034244889393449,
+   "usage": {
+    "cost": 0.000974,
+    "input": 8440,
+    "output": 261,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Tin đó lấy từ nguồn nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8722,
+     "output_tokens": 197,
+     "requests": 1,
+     "cost_usd": 0.000971,
+     "tools_cost_usd": null
+    },
+    "turn_id": "af679b61dfa54d3183a6f9279257d230",
+    "conversation_id": "bbafea247a6d4e0e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hệ thống ghi nhận nguồn của hai sự kiện đã duyệt là **CafeF, Vietstock và VnEconomy**. Tuy nhiên, công cụ chỉ cho biết tên nguồn chung, chưa cho tôi biết bài báo cụ thể nào hay ngày đăng của từng tin.\n\nNếu bạn cần xem đường đi chi tiết của từng tin (tin gốc, kịch bản, tài sản bị ảnh hưởng), tôi có thể mở phần điều tra để kiểm tra thêm.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294665.4404466,
+    "audit_seq": 605,
+    "session": {
+     "id": "bbafea247a6d4e0e",
+     "title": "Tin tức nào gần đây ảnh hưởng nhiều nhất tới…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 2.18888248084113,
+   "first_event": 1.1917338082566857,
+   "usage": {
+    "cost": 0.000971,
+    "input": 8722,
+    "output": 197,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,301 @@
+{
+ "tag": "ab-noreason",
+ "base": "http://127.0.0.1:8042",
+ "spent_total": 0.109151,
+ "conversations": [
+  {
+   "id": "nav-01",
+   "category": "navigation",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "does not say /giả định|ước tính/"
+     ]
+    ]
+   ],
+   "cost": 0.006545,
+   "seconds": 16.6,
+   "tokens": 60690
+  },
+  {
+   "id": "nav-02",
+   "category": "navigation",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004416,
+   "seconds": 9.4,
+   "tokens": 39618
+  },
+  {
+   "id": "pf-01",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00464,
+   "seconds": 8.9,
+   "tokens": 43664
+  },
+  {
+   "id": "pf-02",
+   "category": "personal_finance",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004951,
+   "seconds": 11.2,
+   "tokens": 43977
+  },
+  {
+   "id": "kn-01",
+   "category": "knowledge",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004202,
+   "seconds": 11.9,
+   "tokens": 35556
+  },
+  {
+   "id": "kn-02",
+   "category": "knowledge",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002932,
+   "seconds": 7.5,
+   "tokens": 25696
+  },
+  {
+   "id": "nw-01",
+   "category": "news",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003735,
+   "seconds": 8.7,
+   "tokens": 33625
+  },
+  {
+   "id": "nw-02",
+   "category": "news",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001993,
+   "seconds": 4.9,
+   "tokens": 17485
+  },
+  {
+   "id": "gl-01",
+   "category": "goals",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005698,
+   "seconds": 12.7,
+   "tokens": 50910
+  },
+  {
+   "id": "gl-02",
+   "category": "goals",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.006883,
+   "seconds": 17.2,
+   "tokens": 61076
+  },
+  {
+   "id": "wi-01",
+   "category": "what_if",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "called none of ['so_sanh_kich_ban']",
+      "does not say /3,8/",
+      "numbers not from the tools or the person: ['8,6%']"
+     ]
+    ]
+   ],
+   "cost": 0.004735,
+   "seconds": 9.8,
+   "tokens": 43245
+  },
+  {
+   "id": "wi-02",
+   "category": "what_if",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "numbers not from the tools or the person: ['−1,62 tỷ']"
+     ]
+    ]
+   ],
+   "cost": 0.002907,
+   "seconds": 7.4,
+   "tokens": 25936
+  },
+  {
+   "id": "cc-01",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001885,
+   "seconds": 4.4,
+   "tokens": 16824
+  },
+  {
+   "id": "cc-02",
+   "category": "concerns",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002121,
+   "seconds": 6.8,
+   "tokens": 17484
+  },
+  {
+   "id": "act-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     3,
+     [
+      "called none of ['nho_lai']"
+     ]
+    ]
+   ],
+   "cost": 0.003261,
+   "seconds": 4.8,
+   "tokens": 30837
+  },
+  {
+   "id": "act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004088,
+   "seconds": 4.3,
+   "tokens": 39317
+  },
+  {
+   "id": "ms-01",
+   "category": "memory_sessions",
+   "turns": 4,
+   "ok": true,
+   "failed": [],
+   "cost": 0.005317,
+   "seconds": 10.2,
+   "tokens": 49691
+  },
+  {
+   "id": "ms-02",
+   "category": "memory_sessions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003842,
+   "seconds": 9.9,
+   "tokens": 33540
+  },
+  {
+   "id": "am-01",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000868,
+   "seconds": 2.3,
+   "tokens": 7715
+  },
+  {
+   "id": "am-02",
+   "category": "ambiguous",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001777,
+   "seconds": 3.7,
+   "tokens": 16286
+  },
+  {
+   "id": "oos-01",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000885,
+   "seconds": 2.2,
+   "tokens": 7762
+  },
+  {
+   "id": "oos-02",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.026464,
+   "seconds": 13.5,
+   "tokens": 16468
+  },
+  {
+   "id": "adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000815,
+   "seconds": 1.8,
+   "tokens": 7638
+  },
+  {
+   "id": "adv-02",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000902,
+   "seconds": 2.5,
+   "tokens": 7799
+  },
+  {
+   "id": "fm-04",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001658,
+   "seconds": 4.2,
+   "tokens": 15425
+  },
+  {
+   "id": "fm-05",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001631,
+   "seconds": 3.2,
+   "tokens": 15365
+  }
+ ],
+ "passed": 22,
+ "of": 26,
+ "turns": 53,
+ "turns_failed": 4
+}

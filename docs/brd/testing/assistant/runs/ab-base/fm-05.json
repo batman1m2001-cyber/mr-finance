@@ -1,0 +1,121 @@
+{
+ "id": "fm-05",
+ "category": "failure_modes",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Tháng không có dữ liệu",
+ "why": "A tool that finds nothing: said plainly, no figure invented.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tháng 1 năm 2020 tôi chi tiêu bao nhiêu?",
+   "expect": {
+    "grounded": true,
+    "says": "không có|chưa có|không (tìm )?thấy"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tháng 1 năm 2020 tôi chi tiêu bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "failed",
+      "text": "Không thực hiện được: Không có giao dịch trong tháng 1/2020",
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15096,
+     "output_tokens": 218,
+     "requests": 2,
+     "cost_usd": 0.001619,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c24a5e1feb86487bbe0d269f24080a2a",
+    "conversation_id": "011dd24abcb74413",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không tìm thấy giao dịch nào trong tháng 1 năm 2020 trong dữ liệu của bạn, nên chưa có số chi tiêu để báo cho tháng đó.\n\nNếu bạn muốn, tôi có thể xem dòng tiền của một tháng khác có dữ liệu, hoặc tóm tắt tình hình tài chính hiện tại.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792294852.4108217,
+    "audit_seq": 657,
+    "session": {
+     "id": "011dd24abcb74413",
+     "title": "Tháng 1 năm 2020 tôi chi tiêu bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.9910703878849745,
+   "first_event": 1.3626514920033514,
+   "usage": {
+    "cost": 0.001619,
+    "input": 15096,
+    "output": 218,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014j5EKwYfwA3amTCjhzGtbV",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014j5EKwYfwA3amTCjhzGtbV",
+     "tool": "dong_tien",
+     "ok": false,
+     "ms": 87,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

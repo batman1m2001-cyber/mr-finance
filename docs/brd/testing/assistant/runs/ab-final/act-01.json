@@ -1,0 +1,353 @@
+{
+ "id": "act-01",
+ "category": "actions",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Ghi nhớ một sở thích, rồi dùng nó ở phiên mới",
+ "why": "A memory write: confirmation, the state read back, then used in a new session.",
+ "brd": [
+  "OWN-AS-06",
+  "OWN-AS-12",
+  "OWN-AS-14",
+  "OWN-AS-05",
+  "KIT-COPILOT-06"
+ ],
+ "turns": [
+  {
+   "say": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm vào bất động sản nữa.",
+   "expect": {
+    "status": "pending",
+    "pending": "ghi_nho",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "status": "ok",
+    "grounded": false
+   },
+   "state": {
+    "memory_has": "bất động sản"
+   }
+  },
+  {
+   "say": "Bạn nhớ gì về tôi?",
+   "expect": {
+    "tools_any": [
+     "nho_lai"
+    ],
+    "says": "bất động sản",
+    "grounded": false
+   },
+   "new_session": true
+  }
+ ],
+ "run": [
+  {
+   "say": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm vào bất động sản nữa.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7719,
+     "output_tokens": 120,
+     "requests": 1,
+     "cost_usd": 0.000832,
+     "tools_cost_usd": null
+    },
+    "turn_id": "24ff8b8efca64f66af02ea330c547ef8",
+    "conversation_id": "f198adec824d4f04",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "315fa45cd3614f542aa8cc411d304270",
+      "tool": "ghi_nho",
+      "summary": "Ghi nhớ (Sở thích): “Không muốn đầu tư thêm vào bất động sản nữa”?"
+     }
+    ],
+    "text": "Ghi nhớ (Sở thích): “Không muốn đầu tư thêm vào bất động sản nữa”?",
+    "timing": {
+     "start": 30,
+     "model": [
+      919
+     ],
+     "tools": 0,
+     "first_text": 948,
+     "total": 1448
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296146.5366042,
+    "audit_seq": 645,
+    "session": {
+     "id": "f198adec824d4f04",
+     "title": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.4842316810972989,
+   "first_event": 0.9648874420672655,
+   "usage": {
+    "cost": 0.000832,
+    "input": 7719,
+    "output": 120,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_012fRNBwKweNvsiFdrFq8X2F",
+     "tool": "ghi_nho",
+     "label": "Ghi nhớ"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ghi_nho",
+      "label": "Ghi nhớ",
+      "status": "ok",
+      "text": "Đã ghi nhớ: “Không muốn đầu tư thêm vào bất động sản nữa”. Bạn xem, sửa hoặc xoá ở trang Bộ nhớ.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/client/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15730,
+     "output_tokens": 195,
+     "requests": 2,
+     "cost_usd": 0.001671,
+     "tools_cost_usd": null
+    },
+    "turn_id": "24ff8b8efca64f66af02ea330c547ef8",
+    "conversation_id": "f198adec824d4f04",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã ghi nhớ: bạn không muốn đầu tư thêm vào bất động sản nữa. Bạn có thể xem, sửa hoặc xoá mục này ở trang Bộ nhớ.",
+    "timing": {
+     "start": 24,
+     "model": [
+      0,
+      973
+     ],
+     "tools": 147,
+     "first_text": 1181,
+     "total": 1548
+    },
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/client/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296148.1567392,
+    "audit_seq": 646,
+    "session": {
+     "id": "f198adec824d4f04",
+     "title": "Ghi nhớ giúp tôi: tôi không muốn đầu tư thêm…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.582367666065693,
+   "first_event": 0.17716062488034368,
+   "usage": {
+    "cost": 0.001671,
+    "input": 15730,
+    "output": 195,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012fRNBwKweNvsiFdrFq8X2F",
+     "tool": "ghi_nho",
+     "label": "Ghi nhớ",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012fRNBwKweNvsiFdrFq8X2F",
+     "tool": "ghi_nho",
+     "ok": true,
+     "ms": 147,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "6da27c7ea34641c7a53d49b9f3ae4c2b",
+      "kind": "preference",
+      "text": "Không muốn đầu tư thêm vào bất động sản nữa",
+      "source": {
+       "conversation": "f198adec824d4f04"
+      },
+      "confidence": 1.0,
+      "created": 1792296146.7716284,
+      "updated": 1792296146.7716284,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Bạn nhớ gì về tôi?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7794,
+     "output_tokens": 173,
+     "requests": 1,
+     "cost_usd": 0.000866,
+     "tools_cost_usd": null
+    },
+    "turn_id": "f78dde3d21004a97b32ccf6015835e56",
+    "conversation_id": "5e550f042e834f84",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi đang có một điều đã được bạn nhờ ghi nhớ: bạn không muốn đầu tư thêm vào bất động sản nữa.\n\nBạn có thể xem và sửa toàn bộ phần ghi nhớ ở trang Bộ nhớ. Nếu bạn muốn, tôi cũng có thể tìm thêm những điều khác bạn đã nhờ lưu, hoặc mở trang Tổng quan để xem tình hình tài sản hiện tại.",
+    "timing": {
+     "start": 26,
+     "model": [
+      1072
+     ],
+     "tools": 0,
+     "first_text": 1098,
+     "total": 1759
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296149.9959004,
+    "audit_seq": 647,
+    "session": {
+     "id": "5e550f042e834f84",
+     "title": "Bạn nhớ gì về tôi?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.806442302186042,
+   "first_event": 1.120757658034563,
+   "usage": {
+    "cost": 0.000866,
+    "input": 7794,
+    "output": 173,
+    "requests": 1
+   },
+   "why": [
+    "called none of ['nho_lai']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "6da27c7ea34641c7a53d49b9f3ae4c2b",
+      "kind": "preference",
+      "text": "Không muốn đầu tư thêm vào bất động sản nữa",
+      "source": {
+       "conversation": "f198adec824d4f04"
+      },
+      "confidence": 1.0,
+      "created": 1792296146.7716284,
+      "updated": 1792296146.7716284,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

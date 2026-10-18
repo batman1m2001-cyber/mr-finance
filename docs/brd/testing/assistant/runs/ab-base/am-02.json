@@ -1,0 +1,168 @@
+{
+ "id": "am-02",
+ "category": "ambiguous",
+ "persona": "nghỉ hưu, nhớ nhầm (C04)",
+ "client_id": "C04",
+ "title": "“Tôi chỉ có 2 tỷ thôi đúng không?”",
+ "why": "A wrong premise: corrected from the data, gently.",
+ "brd": [
+  "KIT-COPILOT-05",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tôi chỉ có khoảng 2 tỷ thôi đúng không?",
+   "expect": {
+    "tools_any": [
+     "tong_quan"
+    ],
+    "says": "48"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tôi chỉ có khoảng 2 tỷ thôi đúng không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 29,20 tỷ (60%), Tiền & tiền gửi 8,50 tỷ (18%), Trái phiếu 5,08 tỷ (11%), Vàng 3,00 tỷ (6%), Chứng chỉ quỹ 2,60 tỷ (5%), Bảo hiểm 0,0 triệu (0%). Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 30 năm theo mức chi 40,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,64 tỷ; lớn nhất: Nhà phố Quận 3 (đang ở) −1,80 tỷ (sốc 10%); Căn hộ Võ Văn Tần (cho thuê) −1,12 tỷ (sốc 10%); Vàng miếng SJC −300,0 triệu (sốc 10%); Trái phiếu TCB12401 (Techcombank) −161,9 triệu (sốc 8%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "48,38 tỷ",
+         "sub": "+90,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "14,16 tỷ",
+         "sub": "đủ chi 30 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "7,5%",
+         "sub": "ngưỡng 8% · gần ngưỡng",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15888,
+     "output_tokens": 463,
+     "requests": 2,
+     "cost_usd": 0.00182,
+     "tools_cost_usd": null
+    },
+    "turn_id": "64ff4a8bf9e54e4f86f2a4416133aff8",
+    "conversation_id": "2f7ee79717654b43",
+    "compacted": false,
+    "status": "ok",
+    "text": "Không đúng. Theo số ghi nhận trên hệ thống ngày 09/10/2026, tài sản ròng của bạn là **48,38 tỷ đồng**, không phải khoảng 2 tỷ.\n\nPhân bổ chính:\n- Bất động sản: 29,20 tỷ (60%)\n- Tiền và tiền gửi: 8,50 tỷ (18%)\n- Trái phiếu: 5,08 tỷ (11%)\n- Vàng: 3,00 tỷ (6%)\n- Chứng chỉ quỹ: 2,60 tỷ (5%)\n\nCó thể bạn đang nhớ tới một khoản riêng, như tiền gửi hoặc tiền mặt. Nếu bạn muốn, tôi có thể tìm theo từ khóa trong danh mục của bạn. Lưu ý, đây là số ghi nhận từ các tài khoản đã kết nối và số bạn tự khai, không phải ước tính.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 11 khoản từ 5 nguồn: Techcombank (3 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Bạn tự khai (3 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792294817.3883855,
+    "audit_seq": 645,
+    "session": {
+     "id": "2f7ee79717654b43",
+     "title": "Tôi chỉ có khoảng 2 tỷ thôi đúng không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.264978144783527,
+   "first_event": 1.374871133826673,
+   "usage": {
+    "cost": 0.00182,
+    "input": 15888,
+    "output": 463,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Anu8TXxMPWKJCK6ZrcJm5i",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Anu8TXxMPWKJCK6ZrcJm5i",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 113,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

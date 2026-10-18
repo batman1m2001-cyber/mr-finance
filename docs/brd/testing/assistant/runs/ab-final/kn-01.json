@@ -1,0 +1,421 @@
+{
+ "id": "kn-01",
+ "category": "knowledge",
+ "persona": "người mới (C05)",
+ "client_id": "C05",
+ "title": "Trái phiếu, chứng chỉ quỹ, và nên chọn gì",
+ "why": "Basic knowledge, then a personal question that must not become overconfident advice.",
+ "brd": [
+  "OWN-AS-07",
+  "BRD-RULE-SCOPE-02",
+  "BRD-RULE-CONTENT-02"
+ ],
+ "turns": [
+  {
+   "say": "Trái phiếu là gì vậy? Có an toàn hơn gửi tiết kiệm không?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Thế còn chứng chỉ quỹ thì khác gì?",
+   "expect": {
+    "grounded": false
+   }
+  },
+  {
+   "say": "Với tình hình của mình thì nên chọn cái nào?",
+   "expect": {
+    "grounded": false,
+    "not_says": [
+     "chắc chắn",
+     "nên mua ngay"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Trái phiếu là gì vậy? Có an toàn hơn gửi tiết kiệm không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7713,
+     "output_tokens": 485,
+     "requests": 1,
+     "cost_usd": 0.001014,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7a713aa813964ae1b8333fe4d0d6a365",
+    "conversation_id": "20ef5ab9637d490b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Trái phiếu là một loại chứng khoán nợ: bạn cho doanh nghiệp hoặc Chính phủ vay tiền và nhận lại lãi định kỳ cùng tiền gốc khi đáo hạn.\n\nSo với tiết kiệm, trái phiếu không hẳn an toàn hơn:\n- **Tiết kiệm ngân hàng** thường có rủi ro thấp hơn, đặc biệt ở ngân hàng uy tín và trong mức được bảo hiểm tiền gửi. Lãi suất cố định, dễ rút (có thể mất một phần lãi nếu rút sớm).\n- **Trái phiếu Chính phủ** thường được coi là an toàn nhất trong nhóm trái phiếu, nhưng giá vẫn biến động khi lãi suất thay đổi, và có thể bán trước hạn không đúng lúc giá thấp.\n- **Trái phiếu doanh nghiệp** có lãi cao hơn nhưng rủi ro vỡ nợ lớn hơn, như đã thấy trong đợt khủng hoảng trái phiếu doanh nghiệp.\n\nNếu bạn muốn, tôi có thể xem danh mục hiện tại của bạn có bao nhiêu tỷ trọng trái phiếu và thử kịch bản lãi suất tăng để bạn thấy mức ảnh hưởng.",
+    "timing": {
+     "start": 32,
+     "model": [
+      1024
+     ],
+     "tools": 0,
+     "first_text": 1056,
+     "total": 3085
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296012.5959427,
+    "audit_seq": 596,
+    "session": {
+     "id": "20ef5ab9637d490b",
+     "title": "Trái phiếu là gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.121017641853541,
+   "first_event": 1.070913900155574,
+   "usage": {
+    "cost": 0.001014,
+    "input": 7713,
+    "output": 485,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Thế còn chứng chỉ quỹ thì khác gì?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8225,
+     "output_tokens": 509,
+     "requests": 1,
+     "cost_usd": 0.001077,
+     "tools_cost_usd": null
+    },
+    "turn_id": "16db605e1faf47f4a475ffb54efff7a8",
+    "conversation_id": "20ef5ab9637d490b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chứng chỉ quỹ là một phần sở hữu trong một quỹ đầu tư, nơi nhiều người cùng góp tiền và một công ty quản lý quỹ đầu tư vào nhiều tài sản như cổ phiếu, trái phiếu, tiền gửi.\n\nKhác với trái phiếu và tiết kiệm:\n- **Không có lãi cố định hay tiền gốc được bảo đảm.** Giá trị chứng chỉ quỹ tăng hoặc giảm theo giá các tài sản trong quỹ, nên bạn có thể lỗ.\n- **Đa dạng hóa sẵn.** Một chứng chỉ quỹ thường gồm nhiều mã, nên rủi ro của từng mã được giảm bớt.\n- **Quỹ khác nhau rất nhiều.** Quỹ trái phiếu hoặc quỹ tiền tệ thường ổn định hơn; quỹ cổ phiếu biến động mạnh hơn.\n- **Có phí quản lý** và đôi khi phí mua hoặc bán, làm giảm lợi nhuận thực nhận.\n\nNói chung, chứng chỉ quỹ rủi ro cao hơn tiết kiệm, và mức rủi ro phụ thuộc vào loại quỹ. Nếu bạn muốn, tôi có thể kiểm tra mức tập trung và biến động của danh mục hiện tại trên trang Tổng quan.",
+    "timing": {
+     "start": 22,
+     "model": [
+      966
+     ],
+     "tools": 0,
+     "first_text": 988,
+     "total": 3432
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792296016.1008825,
+    "audit_seq": 597,
+    "session": {
+     "id": "20ef5ab9637d490b",
+     "title": "Trái phiếu là gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.4689614679664373,
+   "first_event": 1.0026801587082446,
+   "usage": {
+    "cost": 0.001077,
+    "input": 8225,
+    "output": 509,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Với tình hình của mình thì nên chọn cái nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 3,53 tỷ (+100,0 triệu, 2,9% so với tháng trước) = tổng tài sản 5,64 tỷ − nợ 2,11 tỷ (Vay mua căn hộ Vinhomes Grand Park 2,10 tỷ; Dư nợ thẻ Visa Platinum 12,0 triệu). Phân bổ tài sản: Bất động sản 3,90 tỷ (69%), Tiền & tiền gửi 980,0 triệu (17%), Cổ phiếu 448,0 triệu (8%), Chứng chỉ quỹ 310,0 triệu (5%). Tập trung vượt ngưỡng: Khu vực BĐS Vinhomes Grand Park, TP. Thủ Đức (Q9 cũ): 69,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 980,0 triệu, đủ chi 32,7 tháng (khoảng 3 năm) theo mức chi 30,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 16,8% so với ngưỡng 15%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 591,0 triệu; lớn nhất: Căn hộ Vinhomes Grand Park −390,0 triệu (sốc 10%); Quỹ cổ phiếu TCEF −93,0 triệu (sốc 30%); Cổ phiếu FPT −67,2 triệu (sốc 26%); Cổ phiếu VCB −40,8 triệu (sốc 21%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "3,53 tỷ",
+         "sub": "+100,0 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "980,0 triệu",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "16,8%",
+         "sub": "ngưỡng 15% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 60,1 triệu, tiền ra 51,2 triệu, còn lại 9,0 triệu. Khoản chi lớn nhất: Trả nợ vay 26,0 triệu (1 giao dịch). Các nhóm chi: Trả nợ vay 26,0 triệu; Thanh toán thẻ 15,9 triệu; Chi tiêu sinh hoạt 9,3 triệu. Nguồn tiền vào: Lương 60,1 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Trả nợ vay",
+         "value": 26000000.0,
+         "text": "26,0 triệu"
+        },
+        {
+         "label": "Thanh toán thẻ",
+         "value": 15920000.0,
+         "text": "15,9 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 9263000.0,
+         "text": "9,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "60,1 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "51,2 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "9,0 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:loan"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "9 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18880,
+     "output_tokens": 707,
+     "requests": 2,
+     "cost_usd": 0.002242,
+     "tools_cost_usd": null
+    },
+    "turn_id": "071c3dd7399e4c61a9f9872182497d0e",
+    "conversation_id": "20ef5ab9637d490b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Dựa trên số liệu ghi nhận (ngày 09/10/2026), tình hình của bạn như sau:\n\n- **Tài sản ròng:** 3,53 tỷ. Phần lớn (69%) nằm ở bất động sản, khoản vay 2,10 tỷ đang chiếm tỷ trọng lớn.\n- **Thanh khoản:** 980 triệu tiền và tiền gửi, đủ chi khoảng 32,7 tháng theo mức chi 30 triệu/tháng.\n- **Tập trung:** Khu vực Vinhomes Grand Park chiếm 69,2% tài sản, vượt ngưỡng 35%.\n- **Dòng tiền tháng 09/2026:** còn lại 9,0 triệu sau khi trả nợ vay 26 triệu.\n\nĐiều này cho thấy bạn có thanh khoản dự phòng khá tốt, nhưng danh mục đang tập trung mạnh vào một khu vực bất động sản. Vì vậy, trước khi chọn giữa trái phiếu, tiết kiệm hay chứng chỉ quỹ, bạn có thể cân nhắc mục tiêu đa dạng hóa và khả năng chịu biến động của mình. Đây là số liệu để bạn tham khảo, không phải khuyến nghị.\n\nNếu muốn, tôi có thể chạy kịch bản lãi suất tăng hai điểm phần trăm để xem tác động lên khoản vay và tài sản của bạn.",
+    "timing": {
+     "start": 27,
+     "model": [
+      1008,
+      1057
+     ],
+     "tools": 400,
+     "first_text": 1035,
+     "total": 4859
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 8 khoản từ 4 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (2 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (1 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản)",
+     "9 giao dịch của tháng"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:loan"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Mục tiêu của tôi thế nào?"
+    ],
+    "answered_at": 1792296021.03401,
+    "audit_seq": 598,
+    "session": {
+     "id": "20ef5ab9637d490b",
+     "title": "Trái phiếu là gì vậy?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 4.898998830933124,
+   "first_event": 1.048419778700918,
+   "usage": {
+    "cost": 0.002242,
+    "input": 18880,
+    "output": 707,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01XQTFEpbGdBvsTTt4myVMYj",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GFTxEV11vDhSHxgCG73yZu",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01XQTFEpbGdBvsTTt4myVMYj",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 200,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GFTxEV11vDhSHxgCG73yZu",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 200,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:loan"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

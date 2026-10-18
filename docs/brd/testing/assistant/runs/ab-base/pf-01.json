@@ -1,0 +1,342 @@
+{
+ "id": "pf-01",
+ "category": "personal_finance",
+ "persona": "chuyên gia (C01)",
+ "client_id": "C01",
+ "title": "Tài sản, nợ, và tỷ lệ nợ",
+ "why": "Plain figures, then a ratio the person asks to be worked out.",
+ "brd": [
+  "BRIEF-DASH-01",
+  "OWN-AS-03",
+  "KIT-COPILOT-05"
+ ],
+ "turns": [
+  {
+   "say": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+   "expect": {
+    "tools_any": [
+     "tong_quan"
+    ],
+    "says": "4[356],\\d"
+   }
+  },
+  {
+   "say": "Còn nợ thì bao nhiêu?",
+   "expect": {
+    "says": "2,4"
+   }
+  },
+  {
+   "say": "Vậy nợ chiếm bao nhiêu phần trăm tổng tài sản?",
+   "expect": {
+    "grounded": false,
+    "says": "5[,.]\\d|5 ?%|5,3"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 43,53 tỷ (+980,5 triệu, 2,3% so với tháng trước) = tổng tài sản 45,97 tỷ − nợ 2,44 tỷ (Vay mua nhà Thảo Điền 2,40 tỷ; Dư nợ thẻ Visa Signature 45,0 triệu). Phân bổ tài sản: Bất động sản 32,40 tỷ (70%), Cổ phiếu 4,93 tỷ (11%), Tiền & tiền gửi 3,72 tỷ (8%), Chứng chỉ quỹ 1,62 tỷ (4%), Trái phiếu 1,50 tỷ (3%), Vàng 1,50 tỷ (3%), Bảo hiểm 300,0 triệu (1%). Tập trung vượt ngưỡng: Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%). Thanh khoản dự phòng 4,72 tỷ, đủ chi 3 năm theo mức chi 115,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 11,8% so với ngưỡng 8%: vượt ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 5,15 tỷ; lớn nhất: Căn hộ Thảo Điền −1,44 tỷ (sốc 10%); Đất Long Thành (tự khai) −1,80 tỷ (sốc 10%); Cổ phiếu FPT −504,0 triệu (sốc 26%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "43,53 tỷ",
+         "sub": "+980,5 triệu tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "4,72 tỷ",
+         "sub": "đủ chi 3 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "11,8%",
+         "sub": "ngưỡng 8% · vượt ngưỡng",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 15979,
+     "output_tokens": 361,
+     "requests": 2,
+     "cost_usd": 0.001778,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1c08b05737694d95b8dd14f24e394dcb",
+    "conversation_id": "c51e758d8bb24f0b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tổng tài sản của bạn hiện là **45,97 tỷ đồng**, tài sản ròng là **43,53 tỷ đồng** sau khi trừ nợ 2,44 tỷ đồng. Số liệu ghi nhận ngày 09/10/2026, lấy từ trang Tổng quan.\n\nTài sản ròng tăng 980,5 triệu đồng (2,3%) so với tháng trước. Bất động sản chiếm khoảng 70% tổng tài sản.\n\nCó một điểm cần chú ý: khu vực đất nền Long Thành (Đồng Nai) chiếm 39,2% tài sản, vượt ngưỡng 35%.",
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 21 khoản từ 7 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); Techcom Capital (2 khoản, chứng chỉ quỹ); OneHousing (1 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (1 khoản, số dư, danh mục); Sao kê tải lên (3 khoản, đọc sao kê pdf / excel); Bạn tự khai (4 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "kpi:net_worth",
+     "kpi:liquidity",
+     "kpi:risk"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?",
+     "Dòng tiền tháng này?"
+    ],
+    "answered_at": 1792294622.1298897,
+    "audit_seq": 588,
+    "session": {
+     "id": "c51e758d8bb24f0b",
+     "title": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.087938840966672,
+   "first_event": 1.3493750598281622,
+   "usage": {
+    "cost": 0.001778,
+    "input": 15979,
+    "output": 361,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01EkKB7jLGJFVr75yKtP8DQK",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01EkKB7jLGJFVr75yKtP8DQK",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 122,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Còn nợ thì bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8741,
+     "output_tokens": 223,
+     "requests": 1,
+     "cost_usd": 0.000986,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1a74d2046ee14c878194171b34b0ac42",
+    "conversation_id": "c51e758d8bb24f0b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tổng nợ của bạn là **2,44 tỷ đồng**, ghi nhận ngày 09/10/2026, theo trang Tổng quan. Gồm:\n\n- Vay mua nhà Thảo Điền: 2,40 tỷ đồng\n- Dư nợ thẻ Visa Signature: 45,0 triệu đồng",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294624.1965744,
+    "audit_seq": 589,
+    "session": {
+     "id": "c51e758d8bb24f0b",
+     "title": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.026586276013404,
+   "first_event": 1.6019876268692315,
+   "usage": {
+    "cost": 0.000986,
+    "input": 8741,
+    "output": 223,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  },
+  {
+   "say": "Vậy nợ chiếm bao nhiêu phần trăm tổng tài sản?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tinh",
+      "label": "Tính toán",
+      "status": "ok",
+      "text": "tỷ lệ nợ trên tổng tài sản: 2445000000/45971000000*100 = 5,32",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17981,
+     "output_tokens": 282,
+     "requests": 2,
+     "cost_usd": 0.001939,
+     "tools_cost_usd": null
+    },
+    "turn_id": "66ea4afbbb3640eea64047c7f9df0d20",
+    "conversation_id": "c51e758d8bb24f0b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Nợ chiếm khoảng **5,32%** tổng tài sản.\n\nCông thức: 2.445.000.000 ÷ 45.971.000.000 × 100 = 5,32%. Số liệu ghi nhận ngày 09/10/2026, lấy từ trang Tổng quan.",
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294627.5631073,
+    "audit_seq": 590,
+    "session": {
+     "id": "c51e758d8bb24f0b",
+     "title": "Tổng tài sản của tôi bây giờ là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 3.3263622978702188,
+   "first_event": 1.8776125330477953,
+   "usage": {
+    "cost": 0.001939,
+    "input": 17981,
+    "output": 282,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01HZy2b5pwszB8EutW2ci6xF",
+     "tool": "tinh",
+     "label": "Tính toán",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01HZy2b5pwszB8EutW2ci6xF",
+     "tool": "tinh",
+     "ok": true,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

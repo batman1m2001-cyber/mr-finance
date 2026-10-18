@@ -1,0 +1,353 @@
+{
+ "id": "gl-05",
+ "category": "goals",
+ "persona": "chủ doanh nghiệp (C02)",
+ "client_id": "C02",
+ "title": "Tự do tài chính là gì, tôi đạt chưa",
+ "why": "A concept applied to his data.",
+ "brd": [
+  "OWN-AS-07",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Tự do tài chính nghĩa là gì, và tôi đã đạt được chưa?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tong_quan",
+     "dong_tien"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tự do tài chính nghĩa là gì, và tôi đã đạt được chưa?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tong_quan",
+      "label": "Tổng quan",
+      "status": "ok",
+      "text": "Tài sản ròng 95,30 tỷ (+1,44 tỷ, 1,5% so với tháng trước) = tổng tài sản 100,42 tỷ − nợ 5,12 tỷ (Vay mua đất Long Thành 5,00 tỷ; Dư nợ thẻ Visa Infinite 120,0 triệu). Phân bổ tài sản: Bất động sản 45,39 tỷ (45%), Cổ phiếu 21,69 tỷ (22%), Cổ phần DN 12,00 tỷ (12%), Tiền & tiền gửi 8,90 tỷ (9%), Vàng 7,50 tỷ (7%), Trái phiếu 4,94 tỷ (5%). Thanh khoản dự phòng 8,90 tỷ, đủ chi 49,4 tháng (khoảng 4 năm) theo mức chi 180,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 15,9% so với ngưỡng 20%: an toàn. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 15,16 tỷ; lớn nhất: 30% cổ phần Logistics Phát Đạt −3,00 tỷ (sốc 25%); Biệt thự Phú Mỹ Hưng −2,38 tỷ (sốc 10%); Cổ phiếu TCB −2,29 tỷ (sốc 29%); Đất nền Long Thành −1,80 tỷ (sốc 10%).",
+      "card": {
+       "kind": "figures",
+       "items": [
+        {
+         "label": "Tài sản ròng",
+         "value": "95,30 tỷ",
+         "sub": "+1,44 tỷ tháng này",
+         "tone": "good"
+        },
+        {
+         "label": "Thanh khoản dự phòng",
+         "value": "8,90 tỷ",
+         "sub": "đủ chi 4 năm"
+        },
+        {
+         "label": "Sụt giảm khi thị trường xấu",
+         "value": "15,9%",
+         "sub": "ngưỡng 20% · an toàn",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "kpi:net_worth",
+       "kpi:liquidity",
+       "kpi:risk"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "dong_tien",
+      "label": "Dòng tiền",
+      "status": "ok",
+      "text": "Tháng 09/2026: tiền vào 263,8 triệu, tiền ra 251,0 triệu, còn lại 12,8 triệu. Khoản chi lớn nhất: Thanh toán thẻ 90,8 triệu (1 giao dịch). Các nhóm chi: Thanh toán thẻ 90,8 triệu; Trả nợ vay 85,0 triệu; Chi tiêu sinh hoạt 75,3 triệu. Nguồn tiền vào: Lương 251,8 triệu; Tiền cho thuê 12,0 triệu.",
+      "card": {
+       "kind": "bars",
+       "title": "Chi lớn nhất trong tháng",
+       "items": [
+        {
+         "label": "Thanh toán thẻ",
+         "value": 90760000.0,
+         "text": "90,8 triệu"
+        },
+        {
+         "label": "Trả nợ vay",
+         "value": 85000000.0,
+         "text": "85,0 triệu"
+        },
+        {
+         "label": "Chi tiêu sinh hoạt",
+         "value": 75253000.0,
+         "text": "75,3 triệu"
+        }
+       ],
+       "figures": [
+        {
+         "label": "Vào",
+         "value": "263,8 triệu",
+         "tone": "good"
+        },
+        {
+         "label": "Ra",
+         "value": "251,0 triệu",
+         "tone": "bad"
+        },
+        {
+         "label": "Còn lại",
+         "value": "12,8 triệu",
+         "tone": "good"
+        }
+       ]
+      },
+      "focus": [
+       "flow:2026-09",
+       "flow:2026-09:out:card"
+      ],
+      "as_of": "2026-09",
+      "sources": [
+       "12 giao dịch của tháng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Toàn cảnh",
+       "route": "#/client/tong-quan/toan-canh"
+      }
+     },
+     {
+      "tool": "muc_tieu",
+      "label": "Mục tiêu",
+      "status": "ok",
+      "text": "6 mục tiêu đang theo dõi. Học phí cho con (trong nước / du học): đúng tiến độ, cần 5,04 tỷ (2029), có 5,04 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dòng tiền dư 82,0 triệu/tháng; Mua thêm BĐS bằng vốn vay: cần chú ý, cần 1,72 tỷ (trong 24 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 6,10 tỷ, dòng tiền dư 82,0 triệu/tháng; Chuyển giao tài sản cho con: đúng tiến độ, cần 1,97 tỷ (trong 12 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 5,85 tỷ, dòng tiền dư 82,0 triệu/tháng; Doanh nghiệp cần vốn gấp: đúng tiến độ, cần 5,00 tỷ (trong 2 – 4 tuần), có 5,00 tỷ (huy động được), dòng tiền dư 82,0 triệu/tháng; Định cư / con đi du học: đúng tiến độ, cần 5,53 tỷ (trong 12 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 2,29 tỷ, dòng tiền dư 82,0 triệu/tháng; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ, cần 3,00 tỷ (trong 12 tháng), có 7,82 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 4,82 tỷ, dòng tiền dư 82,0 triệu/tháng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học)",
+         "sub": "cần 5,04 tỷ · có 5,04 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:tuition"
+        },
+        {
+         "title": "Mua thêm BĐS bằng vốn vay",
+         "sub": "cần 1,72 tỷ · có 7,82 tỷ",
+         "chip": "cần chú ý",
+         "tone": "warn",
+         "progress": 1.0,
+         "focus": "goal:leverage_buy"
+        },
+        {
+         "title": "Chuyển giao tài sản cho con",
+         "sub": "cần 1,97 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:pass_on"
+        },
+        {
+         "title": "Doanh nghiệp cần vốn gấp",
+         "sub": "cần 5,00 tỷ · có 5,00 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:business_cash"
+        },
+        {
+         "title": "Định cư / con đi du học",
+         "sub": "cần 5,53 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:emigrate"
+        },
+        {
+         "title": "Cưới hỏi / hỗ trợ con mua nhà",
+         "sub": "cần 3,00 tỷ · có 7,82 tỷ",
+         "chip": "đúng tiến độ",
+         "tone": "good",
+         "progress": 1.0,
+         "focus": "goal:wedding"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Kế hoạch",
+       "route": "#/client/muc-tieu/ke-hoach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18039,
+     "output_tokens": 862,
+     "requests": 2,
+     "cost_usd": 0.002235,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ed5874c1cd0c4672a4f6dc9d63261813",
+    "conversation_id": "fbd5b707d53b4e29",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo số liệu ghi nhận, bạn **chưa đạt** tự do tài chính theo định nghĩa thu nhập từ tài sản đủ chi tiêu, nhưng nền tảng khá vững.\n\n**Cách so sánh (ước tính):**\n- Chi tiêu hằng tháng trong hồ sơ: 180,0 triệu.\n- Thu nhập thụ động rõ nhất hiện có: tiền cho thuê 12,0 triệu/tháng (tháng 09/2026). Phần còn lại của chi tiêu vẫn phụ thuộc lương (251,8 triệu/tháng).\n- Tỷ lệ thu nhập thụ động trên chi tiêu khoảng 12,0 / 180,0 ≈ 6,7%.\n\n**Điểm tích cực:**\n- Tài sản ròng 95,30 tỷ (ngày 09/10/2026), tăng 1,5% so với tháng trước.\n- Tiền dự phòng 8,90 tỷ, đủ chi khoảng 49 tháng.\n- Mức sụt giảm ước tính khi thị trường xấu là 15,9%, dưới ngưỡng 20%.\n- Các mục tiêu chính như học phí và tiền mặt kinh doanh đang đúng tiến độ.\n\n**Điều cần lưu ý:** Phần lớn tài sản (45%) là bất động sản và vẫn còn khoản vay 5,00 tỷ, nên thu nhập từ tài sản hiện chưa đủ để thay thế lương.\n\nĐây là mô phỏng dựa trên dữ liệu ghi nhận, không phải khuyến nghị đầu tư. Nếu bạn muốn, tôi có thể tính thêm mức tài sản cần có để thu nhập đạt 180 triệu/tháng với một tỷ suất giả định.",
+    "timing": {
+     "start": 27,
+     "model": [
+      1046,
+      991
+     ],
+     "tools": 707,
+     "first_text": 1072,
+     "total": 5757
+    },
+    "citations": [
+     {
+      "label": "Toàn cảnh",
+      "route": "#/client/tong-quan/toan-canh"
+     },
+     {
+      "label": "Kế hoạch",
+      "route": "#/client/muc-tieu/ke-hoach"
+     }
+    ],
+    "sources": [
+     "Tổng hợp 17 khoản từ 5 nguồn: Techcombank (4 khoản, tiền gửi, thẻ, khoản vay, giao dịch); TCBS (6 khoản, cổ phiếu, trái phiếu, lãi lỗ); OneHousing (3 khoản, định giá bất động sản); Open API (ngân hàng / CTCK khác) (2 khoản, số dư, danh mục); Bạn tự khai (2 khoản, vàng, bđs ngoài hệ thống, cổ phần, bảo hiểm)",
+     "12 giao dịch của tháng",
+     "Mục tiêu theo hồ sơ khách hàng, tính trên tài sản hiện có"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "flow:2026-09",
+     "flow:2026-09:out:card"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792296088.8923852,
+    "audit_seq": 622,
+    "session": {
+     "id": "fbd5b707d53b4e29",
+     "title": "Tự do tài chính nghĩa là gì, và tôi đã đạt được…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 5.798772996291518,
+   "first_event": 1.0880708531476557,
+   "usage": {
+    "cost": 0.002235,
+    "input": 18039,
+    "output": 862,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012TPJTaq7yvg7tMBwUjCU6z",
+     "tool": "tong_quan",
+     "label": "Tổng quan",
+     "nodes": [
+      "ME",
+      "class",
+      "LQ:reserve",
+      "RK:drawdown"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01EBXqBngtSC5zZoemZZzsNJ",
+     "tool": "dong_tien",
+     "label": "Dòng tiền",
+     "nodes": [
+      "FL:in",
+      "FL:out"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LG6kNvFKRHT8VV95xAUhUK",
+     "tool": "muc_tieu",
+     "label": "Mục tiêu",
+     "nodes": [
+      "goal"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012TPJTaq7yvg7tMBwUjCU6z",
+     "tool": "tong_quan",
+     "ok": true,
+     "ms": 236,
+     "focus": [
+      "kpi:net_worth",
+      "kpi:liquidity",
+      "kpi:risk"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01EBXqBngtSC5zZoemZZzsNJ",
+     "tool": "dong_tien",
+     "ok": true,
+     "ms": 236,
+     "focus": [
+      "flow:2026-09",
+      "flow:2026-09:out:card"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LG6kNvFKRHT8VV95xAUhUK",
+     "tool": "muc_tieu",
+     "ok": true,
+     "ms": 235,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}

@@ -2,6 +2,18 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — The assistant answers faster: hidden reasoning off (owner: "takes too much to respond", experiment).
+  - Diagnosis: our code is ~0.1 s of a turn. The rest is the model: two calls on a tool turn, each reasoning first.
+  - Same 26 conversations, in parallel on the same data: median turn 4.26 → 3.26 s (p90 7.50 → 5.26 s), first
+    step or words 1.71 → 1.06 s, 11% cheaper.
+  - Quality held after three changes that let tools, not the model, state figures:
+    - the combined scenarios say over or within the drawdown limit;
+    - the overview says the reserve's months;
+    - the scenario tools name the preset levels.
+    The panel drops the lead-in sentence the model now writes before a tool call.
+  - Each turn's audit row keeps its timing (no words); `scripts/assistant_latency.py` reads it back.
+  - Documents: docs/brd/testing/assistant/latency.md (new), its README; runs ab-base, ab-noreason, ab-final.
+
 - 2026-10-18 — The Assistant panel and the graph's energy flows tuned against measurement (owner request, experiment).
   - The panel resizes from a divider (300–720 px, the graph keeps 420 px), folds by drag, answers the keyboard, is
     kept per browser and resets. A drag costs 29 ms frames on the dense graph, against 167 ms for a naive live

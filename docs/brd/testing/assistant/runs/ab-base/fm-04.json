@@ -1,0 +1,203 @@
+{
+ "id": "fm-04",
+ "category": "failure_modes",
+ "persona": "trưởng phòng trẻ (C05)",
+ "client_id": "C05",
+ "title": "Tìm kiếm web hết lượt",
+ "why": "The day's web searches are used up (the real cap, set in the copy): honest, still useful, nothing invented.",
+ "brd": [
+  "OWN-AS-07",
+  "OWN-AS-08"
+ ],
+ "turns": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "expect": {
+    "grounded": false,
+    "tools_any": [
+     "tim_tren_web"
+    ],
+    "says": "hết lượt|chưa (tìm|tra) được|không (tìm|tra) được",
+    "not_says": [
+     "\\b2[3-7][.,]\\d{3}\\b"
+    ]
+   }
+  }
+ ],
+ "setup": {
+  "web_cap": "C05"
+ },
+ "run": [
+  {
+   "say": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_tren_web",
+      "label": "Tìm trên web",
+      "status": "failed",
+      "text": "Không thực hiện được: Tìm kiếm web tạm hết lượt hôm nay"
+     },
+     {
+      "tool": "dong_luc",
+      "label": "Chính sách & dự án",
+      "status": "ok",
+      "text": "6 yếu tố đang tác động: 3 rủi ro, 3 cơ hội; tổng ước tính +161,6 triệu. Lớn nhất: Đường Vành đai 3 TP.HCM hoàn thành — Cơ hội: BĐS gần dự án (Căn hộ Vinhomes Grand Park) ước tính +234 triệu. Từng yếu tố: Đường Vành đai 3 TP.HCM hoàn thành (dự án hạ tầng, đang lấy ý kiến / dự kiến) +117,0 triệu; Nâng hạng thị trường chứng khoán (chính sách, đã thông qua / đã diễn ra) +32,3 triệu; Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh (chính sách, đã thông qua / đã diễn ra) +20,4 triệu; Lãi suất điều hành tăng 0,5% (vĩ mô, đang lấy ý kiến / dự kiến) −5,2 triệu; Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định) (chính sách, dự thảo) −2,6 triệu; Thay đổi thuế chuyển nhượng chứng khoán (chính sách, dự thảo) −0,2 triệu.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Đường Vành đai 3 TP.HCM hoàn thành",
+         "sub": "+117,0 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Cao",
+         "tone": "good"
+        },
+        {
+         "title": "Nâng hạng thị trường chứng khoán",
+         "sub": "+32,3 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh",
+         "sub": "+20,4 triệu · Đã thông qua / đã diễn ra",
+         "chip": "Trung bình",
+         "tone": "good"
+        },
+        {
+         "title": "Lãi suất điều hành tăng 0,5%",
+         "sub": "−5,2 triệu · Đang lấy ý kiến / dự kiến",
+         "chip": "Thấp",
+         "tone": "warn"
+        },
+        {
+         "title": "Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định)",
+         "sub": "−2,6 triệu · Dự thảo",
+         "chip": "Thấp",
+         "tone": "warn"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": "2026-10-09",
+      "sources": [
+       "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+       "Kế hoạch thông xe 2026 (cần kiểm tra tiến độ)",
+       "Mức giảm trừ gia cảnh 15,5 triệu (bản thân) và 6,2 triệu (mỗi người phụ thuộc) từ 2026 (cần kiểm tra)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Chi phí chính sách",
+       "route": "#/client/tin/chinh-sach"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 23521,
+     "output_tokens": 704,
+     "requests": 3,
+     "cost_usd": 0.002704,
+     "tools_cost_usd": null
+    },
+    "turn_id": "fd55a25d3a77485b87611bd2060f1fc0",
+    "conversation_id": "04be66c7df1c41ad",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa lấy được tỷ giá USD/VND hôm nay. Công cụ tìm kiếm web đã hết lượt trong ngày, và dữ liệu OneWealth mà tôi truy cập được không có số tỷ giá.\n\nBạn có thể xem tỷ giá trên trang tin tức tài chính hoặc ngân hàng bạn đang dùng. Khi tìm kiếm web hoạt động lại, tôi sẽ thử tra cứu lần nữa. Tôi cũng có thể chạy kịch bản USD/VND tăng 5% để xem ảnh hưởng lên danh mục của bạn.",
+    "citations": [
+     {
+      "label": "Chi phí chính sách",
+      "route": "#/client/tin/chinh-sach"
+     }
+    ],
+    "sources": [
+     "FTSE Russell công bố nâng hạng Việt Nam lên thị trường mới nổi thứ cấp, hiệu lực 09/2026 (cần kiểm tra)",
+     "Kế hoạch thông xe 2026 (cần kiểm tra tiến độ)",
+     "Mức giảm trừ gia cảnh 15,5 triệu (bản thân) và 6,2 triệu (mỗi người phụ thuộc) từ 2026 (cần kiểm tra)"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Tài sản của tôi thế nào?",
+     "Dòng tiền tháng này?",
+     "Có gì cần chú ý?",
+     "Vì sao tin này ảnh hưởng tới tôi?",
+     "Tạo kịch bản VN-Index giảm mạnh"
+    ],
+    "answered_at": 1792294849.32405,
+    "audit_seq": 655,
+    "session": {
+     "id": "04be66c7df1c41ad",
+     "title": "Tỷ giá USD/VND hôm nay là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.0464768330566585,
+   "first_event": 2.130575609393418,
+   "usage": {
+    "cost": 0.002704,
+    "input": 23521,
+    "output": 704,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01AUQ5LnohUC3fnnY9LrivSv",
+     "tool": "tim_tren_web",
+     "label": "Tìm trên web",
+     "nodes": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01AUQ5LnohUC3fnnY9LrivSv",
+     "tool": "tim_tren_web",
+     "ok": false,
+     "ms": 4,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018b2HVXZAkFQX6fEegRRYWW",
+     "tool": "dong_luc",
+     "label": "Chính sách & dự án",
+     "nodes": [
+      "alert"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018b2HVXZAkFQX6fEegRRYWW",
+     "tool": "dong_luc",
+     "ok": true,
+     "ms": 133,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0
+   }
+  }
+ ]
+}
