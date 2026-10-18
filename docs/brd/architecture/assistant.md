@@ -112,6 +112,12 @@ newsletters, policy documents, research release, the market model), grouping new
 the client's own uploads and risk test, the advisory track record (mock data) and the measurement reports (tables,
 not sentences). Each needs the person to read evidence there; the assistant opens the page (`mo_trang`).
 
+Role desks (FEAT-41, OWN-MR-10; `src/assistant/desktools.py`, M1 2026-10-18): each staff role's own reads over
+the composition its desk draws (`src/desk/reads.py`), so the assistant says the screen's numbers — CIO:
+`ban_quyet_dinh` (what waits, the flow), `phoi_nhiem` (the newest effective run by factor, worst families),
+`lan_ap_dung` (runs by status), `do_chinh_xac` (history coverage, VN-Index direction, forecasts waiting). They are in
+the map's `tools_app` family; `stream.NODES` maps each to the desk's `data-node` it lights.
+
 To come: `help` (product KB) and `materials` (user KB) in A5; memory tools in A4; `web_search` in A5;
 `follow_up` (create, list, cancel) in A6.
 

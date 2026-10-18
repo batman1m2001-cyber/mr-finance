@@ -37,6 +37,15 @@ NODES: Dict[str, List[str]] = {
     "lien_ket": [],
     "so_sanh_kich_ban": ["scenario"],
     "gia_dinh": ["scenario"],
+    # a staff desk's elements (data-node, FEAT-41): the CIO's pipeline stages and panels
+    "hop_tin": ["stage:news"],
+    "lay_tin": ["stage:news"],
+    "su_kien": ["stage:events", "events"],
+    "danh_dau_khan": ["stage:events"],
+    "ban_quyet_dinh": ["decide", "stage:views", "stage:runs"],
+    "phoi_nhiem": ["exposure", "stage:families"],
+    "lan_ap_dung": ["stage:runs"],
+    "do_chinh_xac": ["model"],
 }
 
 

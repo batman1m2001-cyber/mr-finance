@@ -37,6 +37,29 @@ except through an existing, already-checked write.
 
 Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expert (M4), Compliance (M5).
 
+### CIO — Bàn quyết định (SCR-CIO-15, built in M1, 2026-10-18)
+
+- **Rail:** Bàn quyết định · Tin & sự kiện (Hộp tin, Sự kiện & nhận định) · Tác động (Lần áp dụng, Phơi nhiễm, Đồ
+  thị) · Nội dung (Nghiên cứu, Bản tin, Chính sách) · Mô hình (Tham số, Dữ liệu thị trường, Độ chính xác, Đo lường) ·
+  AI & cấu hình (Agent, Cấu hình) · Bộ nhớ at the foot. All 13 pages of the old menu, at their old addresses.
+- **The flow** from news to families, six stages, each with its count, what waits (a badge) and a note: Tin (new
+  inbox items; high relevance waits) → Sự kiện (events; those with no view or held wait) → Nhận định (view versions;
+  `PENDING_APPROVAL` waits) → Lần áp dụng (effective runs; `NEEDS_CIO_REVIEW` and computing wait) → Gia đình
+  (families in effective runs; those at the RM pre-review threshold flagged) → RM (families on the RM's Hôm nay).
+  A stage picked lists its items in Thông tin, each opening its page, and a button opens the stage's page.
+- **Cần bạn quyết định:** views awaiting approval, runs held for review, CIO-owned configuration pending (“Chờ một
+  CIO khác duyệt” when this CIO proposed a two-person kind), newsletters Compliance returned, events with no view —
+  newest first, each opening its page as a sheet (the approval controls are the page's, unchanged).
+- **Phơi nhiễm:** the newest effective run's expected 3-month change over every family (with “Cách tính”), the six
+  largest factor totals as bars, the three worst families with the pre-review badge.
+- **Sự kiện gần đây**, **Mô hình và dữ liệu** (factors with real data, failing data jobs, approved views' forecasts
+  waiting to be scored and the next due date), **Agent dưới bàn** (Agent CIO's mode, models, prompt version, today's
+  tokens — FEAT-04, 05 run from their pages as before).
+- **Assistant:** the CIO's own (intro and suggestions for the CIO); four read tools over the same composition —
+  `ban_quyet_dinh`, `phoi_nhiem`, `lan_ap_dung`, `do_chinh_xac` — plus the CIO tools it had (`hop_tin`, `lay_tin`,
+  `su_kien`, `danh_dau_khan`, …). A step lights the stage or panel it reads (`data-node`).
+- **Unchanged:** every page, write and permission; the Customer's workspace (FEAT-40).
+
 ## API and data
 
 `GET /api/desk` → `{role, as_of, …the role's sections}`; see [api_reference.md](../architecture/api_reference.md).
@@ -48,7 +71,12 @@ role), `web/workspace/dock.js` (divider and fold, shared with FEAT-40).
 
 ## Acceptance and tests
 
-Listed per phase in the plan §4 and in the traceability rows OWN-MR-01…12.
+Listed per phase in the plan §4 and in the traceability rows OWN-MR-01…12. CIO (M1): `tests/test_role_desks.py`
+(menu kept page for page, every page in one rail group, the desk the session's role's alone, figures equal to the
+runs, inbox and RM reads, the assistant's numbers equal to the desk's, the agent map counts the new tools) and
+`tests/ui/test_role_desks_ui.py` (every old CIO address opens as a sheet with no error, group tabs, a stage pick, the
+queue opens a view with its approval, the docked assistant lights the desk, no other role reaches it, phone and
+dark, the Customer's workspace after it).
 
 ## Limitations
 

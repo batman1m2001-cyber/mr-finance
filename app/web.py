@@ -524,6 +524,19 @@ async def trace(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc.args[0])}, status_code=404)
 
 
+async def desk(request: Request) -> JSONResponse:
+    """The desk of the person signed in (FEAT-41, ADR-0036): their role's alone, from the session — ``?role=`` only
+    with sign-in off (a developer's machine). Read-only; composed from the stores these reads use (src/desk)."""
+    from desk import reads as desk_reads
+
+    v = viewer(request)
+    role = v["role"] if v else request.query_params.get("role") or ""
+    try:
+        return JSONResponse(desk_reads.desk(role, v))
+    except roles.Forbidden as exc:
+        return JSONResponse({"error": str(exc)}, status_code=403)
+
+
 async def rm_today(request: Request) -> JSONResponse:
     v = viewer(request)
     return JSONResponse(apply_reads.rm_today(v.get("families") if v else None))
@@ -1041,8 +1054,10 @@ ROUTE_ROLES = {
     "/api/newsletters": ("cio", "compliance"),  # the CIO writes, Compliance approves (FR-801)
     "/api/policy": ("cio", "compliance"),  # Compliance keeps the radar, the CIO reads it (FR-306)
     "/api/rm/": ("rm",),
+    "/api/desk": ("cio", "rm", "compliance", "admin", "specialist"),  # each gets its own role's desk (FEAT-41)
 }
-ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị"}
+ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị",
+              "specialist": "Chuyên gia"}  # fmt: skip
 
 
 def allowed_roles(path: str):
@@ -1145,6 +1160,7 @@ app = Starlette(
         Route("/api/how", how_catalogue),
         Route("/api/trace/{run_id}/{family_id}", trace),
         Route("/api/rm/today", rm_today),
+        Route("/api/desk", desk),
         Route("/api/audit", audit_list),
         Route("/api/market", market),
         Route("/api/system", system),

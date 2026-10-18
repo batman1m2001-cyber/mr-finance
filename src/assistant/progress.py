@@ -52,6 +52,11 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "theo_doi": ("Đang chuẩn bị đặt theo dõi để bạn xác nhận", "Đã xử lý việc theo dõi"),
     "theo_doi_cua_toi": ("Đang xem các việc bạn đang theo dõi", "Đã xem việc theo dõi"),
     "huy_theo_doi": ("Đang chuẩn bị huỷ theo dõi để bạn xác nhận", "Đã xử lý việc huỷ theo dõi"),
+    # the staff desks (FEAT-41)
+    "ban_quyet_dinh": ("Đang xem việc chờ bạn quyết định", "Đã xem việc chờ bạn quyết định"),
+    "phoi_nhiem": ("Đang xem phơi nhiễm của mọi gia đình", "Đã xem phơi nhiễm của mọi gia đình"),
+    "lan_ap_dung": ("Đang xem các lần áp dụng", "Đã xem các lần áp dụng"),
+    "do_chinh_xac": ("Đang xem độ chính xác của mô hình", "Đã xem độ chính xác của mô hình"),
 }
 MONTH = re.compile(r"(?:(\d{4})-)?(0?[1-9]|1[0-2])")  # “2026-09”, or the month alone (“09”: the latest with data)
 

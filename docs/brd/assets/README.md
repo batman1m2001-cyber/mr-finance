@@ -156,6 +156,10 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-CL-12-edge_phone-dark.jpg` | SCR-CL-12, a picked news edge on a phone | current (experiment `exp/graph-workspace`) | phone 390×844, dark, full page | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
 | `SCR-CL-12-compare_desktop-dark.jpg` | SCR-CL-12, the assistant comparing the active scenarios: their hypothetical edges lit, hollow pulses home (scripted stream; OWN-GW-42, 47) | current (experiment `exp/graph-workspace`) | desktop 1440×900, dark, viewport | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
 | `SCR-CL-12-compare_phone-dark.jpg` | SCR-CL-12, the comparison on a phone | current (experiment `exp/graph-workspace`) | phone 390×844, dark, full page | 2026-10-17, experiment server :8040, seeded demo data (client C01) |
+| `SCR-CIO-15_desktop-light.jpg` | SCR-CIO-15 Bàn quyết định: the flow, the decision queue, exposure, events | current (experiment `exp/graph-workspace`) | desktop 1440×900, light, viewport | 2026-10-18, multi-role M1, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
+| `SCR-CIO-15_desktop-dark.jpg` | SCR-CIO-15 Bàn quyết định, dark | current (experiment `exp/graph-workspace`) | desktop 1440×900, dark, viewport | 2026-10-18, multi-role M1, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
+| `SCR-CIO-15_phone-light.jpg` | SCR-CIO-15 Bàn quyết định on a phone: the rail on top, the stages two by two | current (experiment `exp/graph-workspace`) | phone 390×844, light, viewport | 2026-10-18, multi-role M1, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
+| `SCR-CIO-15-sheet_desktop-light.jpg` | SCR-CIO-15, a page as a sheet (Dữ liệu thị trường) with its group's tabs | current (experiment `exp/graph-workspace`) | desktop 1440×900, light, viewport | 2026-10-18, multi-role M1, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
 
 ## proposed_ui/ — the redesign kit (SRC-03)
 

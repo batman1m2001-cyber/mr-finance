@@ -22,6 +22,12 @@ from people import auth
 
 START = {
     **HELP,
+    "cio": [
+        "Có gì chờ tôi duyệt?",
+        "Phơi nhiễm lớn nhất ở đâu?",
+        "Độ chính xác của mô hình?",
+        "Hộp tin có bao nhiêu tin?",
+    ],
     "specialist": ["Khuyến nghị nào đang chờ tôi duyệt?", "Tìm khách hàng"],
     "admin": ["Có cảnh báo hệ thống nào?", "Mở trang Hệ thống"],
 }

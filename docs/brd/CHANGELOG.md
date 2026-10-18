@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Multi-role UX M0–M1: the CIO works at its desk “Bàn quyết định” (experiment): the news-to-family flow,
+  the decision queue, exposure, events, model and agents from the existing stores; its 13 pages kept as sheets at
+  their addresses; its own docked assistant with four desk tools. A 500 found on the way (a client on a route open to
+  the specialist got a KeyError, not 403) fixed. — FEAT-41 §CIO, screens/cio.md SCR-CIO-15, screen inventory,
+  ux/role_desks.md (CIO built), matrix OWN-MR-01, 02, 06…12, api_reference (`/api/desk`), architecture/assistant.md
 - 2026-10-18 — Multi-role UX: plan and audit (owner request OWN-MR-01…12, experiment). Every staff role gets its own
   desk in the Customer workspace's frame, its pages kept as sheets at their addresses, and its own docked assistant.
   — docs/MULTI_ROLE_UX_PLAN.md, sources/owner_requests/2026-10-18_multi_role_ux.md, owner_requirements.md (MR),

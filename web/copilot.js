@@ -31,11 +31,22 @@ const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "T
 const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
   rm: ["Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Kịch bản lãi suất tăng", "Duyệt đề xuất đang chờ"],
-  cio: ["Hộp tin có bao nhiêu tin?", "Lấy tin mới"],
+  cio: ["Có gì chờ tôi duyệt?", "Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
   compliance: ["Có bao nhiêu tin bị giữ?", "Mở tin bị giữ"],
   specialist: ["Khuyến nghị nào đang chờ tôi duyệt?"],
   admin: ["Có cảnh báo hệ thống nào?", "Mở trang Hệ thống"],
 };
+// what each role's own assistant is for (FEAT-41): the line before the first question, and the box's hint
+const INTRO = {
+  client: "Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn.",
+  rm: "Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn.",
+  cio: "Hỏi về việc chờ bạn quyết định, phơi nhiễm, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
+  compliance: "Hỏi về tin bị giữ, nghiên cứu và bản tin chờ duyệt, chính sách hay chuỗi nhật ký.",
+  admin: "Hỏi về tình trạng hệ thống, nguồn dữ liệu, cảnh báo, cấu hình chờ duyệt hay chuỗi nhật ký.",
+  specialist: "Hỏi về khuyến nghị chờ bạn duyệt và hồ sơ của gia đình được giao.",
+};
+const ASK = {client: "Hỏi về tài sản, dòng tiền, tin…", rm: "Hỏi về tài sản, dòng tiền, tin…", cio: "Hỏi về nhận định, phơi nhiễm, tin…",
+  compliance: "Hỏi về tin bị giữ, bản tin, nhật ký…", admin: "Hỏi về hệ thống, cảnh báo, cấu hình…", specialist: "Hỏi về khuyến nghị, hồ sơ khách…"};
 const MODE = {  // how the answer was written: the badge and the line under the form
   model: (a) => [`mô hình ${String(a.model || "").split("/").pop()}`.trim(), "Mô hình đọc kết quả công cụ của ứng dụng (chế độ demo) và viết câu trả lời; số liệu lấy từ công cụ. Không phải khuyến nghị đầu tư."],
   template: () => ["mẫu cố định", "Mô hình chỉ thấy câu hỏi đã che tên và số, không thấy số liệu; câu trả lời ghép từ kết quả công cụ theo mẫu. Không phải khuyến nghị đầu tư."],
@@ -161,9 +172,10 @@ export function mount() {
     const c = context();
     if (c.role !== role) {  // another role: its own conversations
       const had = role; role = c.role; msgs = []; shown = 0; cid = null; sess = null; resumed = false; listing = null; drawSess();
+      $("#cp-q", panel).placeholder = ASK[role] || ASK.client;
       if (had && !panel.hidden) { draw(); sugg(); resume(); }
     }
-    const page = (docked ? document.querySelector("#ws-sheet:not([hidden]) #ws-sheet-t") || document.querySelector("#ws-title")
+    const page = (docked ? document.querySelector("#ws-sheet:not([hidden]) #ws-sheet-t") || document.querySelector("#ws-title, #dk-title") || {}
       : document.querySelector("#subnav:not([hidden]) [aria-current=page]") || document.querySelector("#nav [aria-current=page]") || {}).textContent || "";
     const name = (($("#client") || {}).selectedOptions || [])[0];
     $("#cp-ctx", panel).textContent = `Đang xem: ${page.trim() || "—"} · ${ROLE_LABEL[role]}${["client", "rm"].includes(role) && name ? " · " + name.textContent.split("·")[0].trim() : ""}`;
@@ -191,7 +203,7 @@ export function mount() {
           ${(m.citations || []).length || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${(m.citations || []).filter(c => !(m.here && c.route === location.hash)).map(c => `<a class="small" data-ev="${i}" href="${esc(c.route)}">Mở ${esc(c.label)} →</a>`).join("")}</div>` : ""}
           ${m.compacted ? `<div class="small muted mt">Các lượt trước đã được tóm tắt để trợ lý nhớ gọn; cuộc trò chuyện vẫn được lưu đủ.</div>` : ""}
           ${m.seen ? `<details class="small muted mt"><summary>Mô hình thấy gì</summary>“${esc(m.seen)}” · ${esc(m.router)}</details>` : ""}</div>`).join("")
-      : `<div class="small muted">Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn. Tôi chỉ dùng các chức năng sẵn có của ứng dụng.</div>`;
+      : `<div class="small muted">${esc(INTRO[role] || INTRO.client)} Tôi chỉ dùng các chức năng sẵn có của ứng dụng.</div>`;
     shown = msgs.length;
     box.setAttribute("aria-busy", String(busy));
     box.dataset.conversation = cid || "";

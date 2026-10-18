@@ -43,6 +43,11 @@ PAGES = {  # page key → (label, route per role); the router may name a key, ne
     ),
     "su-kien": ("Sự kiện & nhận định", {"cio": "#/cio/nhan-dinh"}),
     "he-thong": ("Hệ thống", {"admin": "#/admin/he-thong"}),
+    # the staff desks (FEAT-41) and the pages their tools cite
+    "ban-lam-viec": ("Bàn làm việc", {"cio": "#/cio"}),
+    "phoi-nhiem": ("Phơi nhiễm", {"cio": "#/cio/phoi-nhiem"}),
+    "ap-dung": ("Lần áp dụng", {"cio": "#/cio/ap-dung"}),
+    "do-chinh-xac": ("Độ chính xác", {"cio": "#/cio/mo-hinh/do-chinh-xac"}),
     "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "compliance", "admin", "specialist")}),
 }
 

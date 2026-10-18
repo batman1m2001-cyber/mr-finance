@@ -131,8 +131,8 @@ reads use, with the same family filter.
 
 | Phase | What | Gate |
 |---|---|---|
-| M0 | Foundation: `src/desk/reads.py` + `GET /api/desk`; `web/desk/` frame; `dock.js` extraction; shell routing; docked Copilot for staff; plan + ADR-0036 + owner request | full suite; Customer UI tests unchanged |
-| M1 | CIO desk + tools | preservation, isolation, desk UI tests; screenshots desktop/phone, light/dark |
+| M0 | Foundation: `src/desk/reads.py` + `GET /api/desk`; `web/desk/` frame; `dock.js` extraction; shell routing; docked Copilot for staff; plan + ADR-0036 + owner request | full suite; Customer UI tests unchanged — **done 2026-10-18** |
+| M1 | CIO desk + tools | preservation, isolation, desk UI tests; screenshots desktop/phone, light/dark — **done 2026-10-18** |
 | M2 | RM desk + tool | same |
 | M3 | Admin desk + tools | same |
 | M4 | Expert desk + tools | same |

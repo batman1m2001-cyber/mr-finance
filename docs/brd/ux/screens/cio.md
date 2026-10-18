@@ -290,3 +290,28 @@ time, responsible person, AI label, opening, sections, the footer of labels), an
 (Đạt, or each finding; the agent's fallback reason), **Phân phối** (same time, or both times with the reason),
 **Sửa** while a draft or returned (title, opening, each section's heading; **Lưu**, **Gửi Tuân thủ duyệt** only
 when the check passes), **Rút bản tin**, and **Lịch sử**.
+
+## SCR-CIO-15 — Bàn quyết định (CIO desk)
+
+| | |
+|---|---|
+| Route | `#/cio`, `#/cio/ban`; every other CIO address opens its page as a sheet over the desk |
+| Feature | [FEAT-41](../../features/FEAT-41-role-desks.md) (and the pages it gathers: FEAT-02, 04, 08, 14, 15, 18) |
+| Requirements | OWN-MR-01, OWN-MR-02, OWN-MR-06, OWN-MR-07, OWN-MR-09, OWN-MR-10 |
+| Data | `GET /api/desk` (role from the session) |
+| Screenshots | [desktop](../../assets/current_ui/SCR-CIO-15_desktop-light.jpg) · [desktop, dark](../../assets/current_ui/SCR-CIO-15_desktop-dark.jpg) · [phone](../../assets/current_ui/SCR-CIO-15_phone-light.jpg) · [a page as a sheet](../../assets/current_ui/SCR-CIO-15-sheet_desktop-light.jpg) |
+
+**Frame.** The rail (Bàn quyết định, Tin & sự kiện, Tác động, Nội dung, Mô hình, AI & cấu hình; Bộ nhớ at the foot;
+Trợ lý), the centre, the dock (Trợ lý · Thông tin) — the Customer workspace's frame. A phone stacks rail, centre,
+dock.
+
+**Centre.** Header “CIO · Bàn quyết định” with “<n> việc chờ bạn · <m> tin mới · <k> lần áp dụng đang hiệu lực” and
+the Agent CIO mode pill. The flow of six stages (Tin → Sự kiện → Nhận định → Lần áp dụng → Gia đình → RM), each a
+button with its count, unit, note and a badge for what waits; picking one fills Thông tin with its items and “Mở trang
+…”. Below: **Cần bạn quyết định** (each item with its kind, id, age and status, opening its page), **Phơi nhiễm**
+(the total with “Cách tính”, factor bars, the worst three families), **Sự kiện gần đây**, **Mô hình và dữ liệu**,
+**Agent dưới bàn**. Empty states say what to do (“duyệt một nhận định để máy tính cho mọi gia đình”).
+
+**A page as a sheet.** Back to the desk (← Bàn quyết định, ✕, Escape); the page's title; its group's pages as tabs
+(e.g. Tham số · Dữ liệu thị trường · Độ chính xác · Đo lường); the page itself below, unchanged.
+

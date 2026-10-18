@@ -9,12 +9,15 @@
 
    The Customer has one page (FEAT-40, ADR-0035): the workspace — toolbar, the persistent graph, the dock, the
    strip — mounted once; a Customer route changes its lens, and a page of the old menu opens as a sheet over the
-   graph, drawn into #page as before. The other roles keep the menu. */
+   graph, drawn into #page as before. A staff role with a desk (FEAT-41, ADR-0036: desk/roles.js) works the same way:
+   its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
+   other menu address opens its page, unchanged, as a sheet over it. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261018p3";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261017r2";
 import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261018p3";
+import {DESKS} from "./desk/roles.js?v=20261018m1";
 
 const ROLES = {
   client: {
@@ -50,6 +53,7 @@ const ROLES = {
   cio: {
     label: "CIO", user: "cio",
     nav: [
+      {id: "ban", label: "Bàn quyết định", desk: true},  // FEAT-41: the CIO's desk (SCR-CIO-15)
       {id: "hop-tin", label: "Hộp tin", page: "inbox"},
       {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events"},
       {id: "phoi-nhiem", label: "Phơi nhiễm", page: "exposure"},
@@ -170,6 +174,28 @@ function leaveWorkspace() {
   copilot.undock();
 }
 
+// a staff role's desk (FEAT-41): mounted on the role's first route, kept while the role routes
+let dk = null, dkRole = null, dkLoad = null;
+async function desk(role) {
+  if (dk && dkRole === role) return dk;
+  leaveDesk();
+  dkLoad ||= import("./desk/desk.js?v=20261018m2");
+  const mod = await dkLoad;
+  if (!dk) {
+    dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go});
+    dkRole = role;
+    document.body.classList.add("ws-on");
+    copilot.dock(dk.dock, {onEvent: dk.live});  // the role's own assistant, docked; its steps light the desk
+  }
+  return dk;
+}
+function leaveDesk() {
+  if (!dk) return;
+  dk.destroy(); dk = null; dkRole = null;
+  document.body.classList.remove("ws-on");
+  copilot.undock();
+}
+
 function drawChrome(rt) {
   const r = ROLES[rt.role];
   $(".rolebox").hidden = state.auth;
@@ -214,6 +240,7 @@ async function route() {
   let target = rt.sub || rt.nav;
   const seq = ++state.seq;
   if (rt.role === "client") {
+    leaveDesk();
     const w = await workspace();
     const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent).slice(1);
     const sheet = await w.route(parts);
@@ -226,7 +253,19 @@ async function route() {
     }
     target = {page: sheet.page};
     rt.param = sheet.param;
-  } else leaveWorkspace();
+  } else if (DESKS[rt.role]) {
+    leaveWorkspace();
+    const d = await desk(rt.role);
+    if (seq !== state.seq) return;
+    await d.route(rt.nav.desk ? null : {nav: rt.nav, sub: rt.sub});
+    if (seq !== state.seq) return;
+    if (rt.nav.desk) {  // the desk is the page: nothing to draw into the sheet
+      $("#page").replaceChildren();
+      window.dispatchEvent(new CustomEvent("mf:page", {detail: {route: location.hash}}));
+      warm(rt.role);
+      return;
+    }
+  } else { leaveWorkspace(); leaveDesk(); }
   const ok = await draw(target, rt, seq, false);
   // a page drawn from what was kept: its reads went to the server again; when an answer changed, it is drawn once
   // more from the new answers, unless the person has started using it (their next visit shows the new answers)

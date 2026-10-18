@@ -1,0 +1,141 @@
+"""Each staff role's desk in the browser (FEAT-41, ADR-0036, OWN-MR-01…12): the desk is the role's home; every page
+of its menu opens as a sheet at its old address, with its group's tabs, and back; a stage picked lists its items in
+Thông tin; the role's assistant is docked and its step lights what it reads (a scripted stream through the real
+panel); another role never sees the desk; phone and dark; the Customer's workspace is untouched."""
+
+import json
+import re
+from pathlib import Path
+
+from conftest import in_thread
+from test_apply import MARKET, approved
+from test_role_desks import pending_view
+
+WEB = Path(__file__).resolve().parents[2] / "web"
+
+TIMED = """(() => { const real = window.fetch;
+  window.fetch = (url, opts) => {
+    if (!String(url).includes('/api/assistant/stream')) return real(url, opts);
+    window.__body = JSON.parse(opts.body);
+    const enc = new TextEncoder(), ev = window.__script || [];
+    const body = new ReadableStream({start(c) { let n = 0;
+      for (const [t, e] of ev) setTimeout(() => {
+        c.enqueue(enc.encode(`id: ${++n}\\ndata: ${JSON.stringify(e)}\\n\\n`));
+        if (e.type === 'answer') c.close(); }, t); }});
+    return Promise.resolve(new Response(body, {status: 200, headers: {'content-type': 'text/event-stream'}}));
+  }; })();"""
+STEP = {"type": "step", "call_id": "c1", "tool": "ban_quyet_dinh", "label": "Bàn quyết định"}
+SCRIPT = [
+    [0, {"type": "start"}],
+    [50, {**STEP, "phase": "start", "nodes": ["decide", "stage:views", "stage:runs"]}],
+    [700, {**STEP, "phase": "end", "ok": True, "ms": 640}],
+    [1200, {"type": "answer", "assistant": {"status": "ok", "mode": "model", "text": "Một nhận định chờ bạn duyệt.",
+                                            "steps": []}}],
+]  # fmt: skip
+
+
+SUB = re.compile(r'\{id: "([a-z-]+)", label: "[^"]+", page:')
+
+
+def routes(role):
+    """Every old address of ``role``'s menu (web/shell.js), a sub-menu's pages each, the desk's own entry left out."""
+    shell = (WEB / "shell.js").read_text(encoding="utf-8")
+    block = re.split(r"\n  [a-z]+: \{", shell.split(f"\n  {role}: {{", 1)[1], maxsplit=1)[0]
+    out = []
+    for line in block.splitlines():
+        top = re.match(r'^      \{id: "([a-z-]+)"', line)
+        if top and "desk: true" not in line:
+            out.append((top.group(1), SUB.findall(line.split("sub: [", 1)[1]) if "sub: [" in line else []))
+        elif out and line.startswith("        {id:"):
+            out[-1][1].extend(SUB.findall(line))
+    return [f"#/{role}/{i}/{s}" for i, subs in out for s in subs] + [f"#/{role}/{i}" for i, subs in out if not subs]
+
+
+def test_the_cio_works_at_its_desk_and_every_page_is_a_sheet(open_page):
+    in_thread(approved, *MARKET)
+    p = open_page()
+    p.go("#/cio")
+    p.page.wait_for_selector(".desk-cio .dk-stage")
+    assert p.page.is_hidden("#nav") and p.page.is_hidden(".cp-fab")  # the rail and the docked assistant instead
+    assert p.page.locator(".dk-stage").count() == 6
+    assert p.page.get_attribute('[data-tool="ban"]', "aria-current") is not None
+    assert p.page.locator("#ws-pane-a #cp-q").count() == 1  # the CIO's assistant, docked
+
+    # a stage picked lists its items in Thông tin, each opening its page
+    p.page.click('[data-stage="runs"]')
+    p.page.wait_for_selector("#ws-pane-i:not([hidden]) .dk-row")
+    assert "AR-" in p.page.inner_text("#ws-pane-i")
+
+    # every page of the old menu, at its old address, opens as a sheet over the desk with its group's tabs
+    seen = routes("cio")
+    assert len(seen) >= 14
+    for r in seen:
+        p.go(r)
+        assert p.page.is_visible("#ws-sheet"), r
+        assert p.page.inner_text("#ws-sheet-t").strip(), r
+        assert p.page.locator("#ws-sheet-b #page").count() == 1
+        assert p.page.locator(".ws-tool[aria-current]").count() == 1, r
+        assert not p.problems(), (r, p.problems())
+    p.go("#/cio/mo-hinh/du-lieu")
+    tabs = p.page.eval_on_selector_all("#dk-tabs a", "as => as.map(a => a.getAttribute('href'))")
+    assert tabs == ["#/cio/mo-hinh/tham-so", "#/cio/mo-hinh/du-lieu", "#/cio/mo-hinh/do-chinh-xac", "#/cio/do-luong"]
+    p.page.click("#ws-sheet-x")
+    p.page.wait_for_function("document.querySelector('#ws-sheet').hidden && location.hash === '#/cio'")
+    assert not p.problems()
+
+
+def test_a_view_waiting_opens_from_the_queue_with_its_approval(open_page):
+    _, view = in_thread(pending_view, "Lãi suất liên ngân hàng tăng")
+    p = open_page()
+    p.go("#/cio")
+    p.page.wait_for_selector(".desk-cio .dk-stage")
+    assert p.page.inner_text('[data-stage="views"] .dk-badge') == "1"
+    row = f'[data-node="decide"] a.dk-row[href="#/cio/nhan-dinh/{view["id"]}"]'
+    p.page.click(row)
+    p.page.wait_for_selector('#ws-sheet:not([hidden]) [data-act="approve"]')  # the approval, as on the page
+    assert p.page.inner_text("#ws-sheet-t") == "Sự kiện & nhận định"
+    assert not p.problems()
+
+
+def test_the_cio_assistant_lights_what_it_reads_on_the_desk(open_page):
+    p = open_page(theme="dark")
+    p.ctx.add_init_script(TIMED)
+    p.ctx.add_init_script(f"window.__script = {json.dumps(SCRIPT)};")
+    p.go("#/cio")
+    p.page.wait_for_selector(".desk-cio .dk-stage")
+    p.page.fill("#cp-q", "Có gì chờ tôi duyệt?")
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_selector('[data-node="decide"].act', timeout=4000)  # while the step runs
+    p.page.wait_for_selector('[data-node="stage:views"].lit', timeout=6000)  # kept once answered
+    assert p.page.locator('[data-node="decide"].act').count() == 0
+    assert p.page.evaluate("window.__body.role") == "cio"  # the CIO's assistant, not the Customer's
+    assert not p.problems()
+
+
+def test_no_other_role_reaches_the_cio_desk(open_page):
+    p = open_page()
+    for role in ("rm", "compliance", "admin", "specialist"):
+        p.as_role(role)
+        p.page.evaluate("location.hash = '#/cio'")
+        p.page.wait_for_timeout(400)
+        assert p.page.locator(".desk-cio").count() == 0, role
+        assert not p.page.url.endswith("#/cio"), role
+    p.errors.clear()  # the 403s asked for on the way are the refusals under test
+
+
+def test_the_desk_on_a_phone_and_dark_and_the_customer_untouched(open_page):
+    in_thread(approved, *MARKET)
+    for theme in ("dark", "light"):
+        p = open_page(size="phone", theme=theme)
+        p.go("#/cio")
+        p.page.wait_for_selector(".desk-cio .dk-stage")
+        assert not p.problems(), (theme, p.problems())
+        p.go("#/cio/phoi-nhiem")
+        assert p.page.is_visible("#ws-sheet") and not p.problems(), (theme, p.problems())
+    p = open_page()
+    p.go("#/cio")
+    p.page.wait_for_selector(".desk-cio")
+    p.go("#/client")
+    p.page.wait_for_selector(".wnode.k-family")
+    assert p.page.locator(".desk").count() == 0 and p.page.locator(".ws").count() == 1
+    assert p.page.is_hidden("#nav") and not p.problems()

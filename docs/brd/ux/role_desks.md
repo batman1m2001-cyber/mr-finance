@@ -12,22 +12,22 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-AD
 
 | Page (address) | Screen | Features | Key requirements | Rail group | State |
 |---|---|---|---|---|---|
-| Hộp tin `hop-tin` | SCR-CIO-01 | FEAT-01, 02 | BRD-FR-101…103 | Tin & sự kiện | planned |
-| Sự kiện & nhận định `nhan-dinh[/EV-…]` | SCR-CIO-02 | FEAT-02, 04 | BRD-FR-103, 301, 307 | Tin & sự kiện | planned |
-| Nhận định `nhan-dinh/VW-…` | SCR-CIO-03 | FEAT-04, 05, 06 | BRD-BR-05…07, BR-14, FR-302…305 | Tin & sự kiện | planned |
-| Phơi nhiễm `phoi-nhiem` | SCR-CIO-04 | FEAT-08 | BRD-BR-13, FR-403 | Tác động | planned |
-| Lần áp dụng `ap-dung[/AR-…]` | SCR-CIO-05 | FEAT-08 | BRD-FR-401, 405, 501 | Tác động | planned |
-| Đồ thị lần áp dụng `do-thi[/AR-…]` | SCR-CIO-10 | FEAT-30 | KIT-UX-04 | Tác động | planned |
-| Nghiên cứu `nghien-cuu` | SCR-CIO-06 | FEAT-03, 10 | BRD-FR-201, 204, 603 | Nội dung | planned |
-| Bản tin `ban-tin[/NL-…]` | SCR-CIO-14 | FEAT-17 | BRD-FR-801 | Nội dung | planned |
-| Chính sách `chinh-sach[/PD-…]` (read only) | SCR-CMP-05 | FEAT-16 | BRD-FR-306 | Nội dung | planned |
-| Mô hình → Tham số `mo-hinh/tham-so` | SCR-CIO-07 | FEAT-07, 14 | BRD-RULE-ENG-08…11 | Mô hình | planned |
-| Mô hình → Dữ liệu thị trường `mo-hinh/du-lieu` | SCR-CIO-11 | FEAT-35 | BRD-RULE-ENG-11 | Mô hình | planned |
-| Mô hình → Độ chính xác `mo-hinh/do-chinh-xac` | SCR-CIO-12 | FEAT-18 | BRD-BR-15, KPI-03/04 | Mô hình | planned |
-| Đo lường `do-luong` | SCR-CIO-13 | FEAT-18 | BRD-RULE-MEAS-03, 05 | Mô hình | planned |
-| Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | AI & cấu hình | planned |
-| Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701 | AI & cấu hình | planned |
-| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | planned |
+| Hộp tin `hop-tin` | SCR-CIO-01 | FEAT-01, 02 | BRD-FR-101…103 | Tin & sự kiện | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Sự kiện & nhận định `nhan-dinh[/EV-…]` | SCR-CIO-02 | FEAT-02, 04 | BRD-FR-103, 301, 307 | Tin & sự kiện | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Nhận định `nhan-dinh/VW-…` | SCR-CIO-03 | FEAT-04, 05, 06 | BRD-BR-05…07, BR-14, FR-302…305 | Tin & sự kiện | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Phơi nhiễm `phoi-nhiem` | SCR-CIO-04 | FEAT-08 | BRD-BR-13, FR-403 | Tác động | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Lần áp dụng `ap-dung[/AR-…]` | SCR-CIO-05 | FEAT-08 | BRD-FR-401, 405, 501 | Tác động | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Đồ thị lần áp dụng `do-thi[/AR-…]` | SCR-CIO-10 | FEAT-30 | KIT-UX-04 | Tác động | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Nghiên cứu `nghien-cuu` | SCR-CIO-06 | FEAT-03, 10 | BRD-FR-201, 204, 603 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Bản tin `ban-tin[/NL-…]` | SCR-CIO-14 | FEAT-17 | BRD-FR-801 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Chính sách `chinh-sach[/PD-…]` (read only) | SCR-CMP-05 | FEAT-16 | BRD-FR-306 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Mô hình → Tham số `mo-hinh/tham-so` | SCR-CIO-07 | FEAT-07, 14 | BRD-RULE-ENG-08…11 | Mô hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Mô hình → Dữ liệu thị trường `mo-hinh/du-lieu` | SCR-CIO-11 | FEAT-35 | BRD-RULE-ENG-11 | Mô hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Mô hình → Độ chính xác `mo-hinh/do-chinh-xac` | SCR-CIO-12 | FEAT-18 | BRD-BR-15, KPI-03/04 | Mô hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Đo lường `do-luong` | SCR-CIO-13 | FEAT-18 | BRD-RULE-MEAS-03, 05 | Mô hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | AI & cấu hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701 | AI & cấu hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 
 ## RM (`#/rm/…`) — desk "Sổ khách hàng" (SCR-RM-07)
 

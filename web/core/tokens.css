@@ -1275,3 +1275,70 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-edge dt { color: var(--ink-2); font-size: 12px; font-weight: 600; }
 .ws-edge dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 @media (max-width: 480px) { .ws-edge { grid-template-columns: 1fr; gap: 2px; } .ws-edge dd { margin-bottom: 8px; } }
+/* ── Role desks (FEAT-41, ADR-0036): the workspace's frame, each staff role's own centre ─────────────────────────
+   The rail, dock and sheets are the classes above; the centre scrolls; a stage or panel the assistant reads glows. */
+.desk .ws-tool:nth-child(7) { margin-top: 0; }
+.desk .ws-tool.ws-foot { margin-top: auto; }
+.dk-center { grid-template-rows: minmax(0, 1fr); }
+.dk-body { min-height: 0; overflow: auto; padding: 14px 20px 28px; }
+.dk-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+.dk-flow { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+.dk-flow li { position: relative; min-width: 0; display: flex; }
+.dk-flow li + li::before { content: ""; position: absolute; left: -16px; top: 30px; width: 16px; border-top: 2px solid var(--axis); }
+.dk-flow li + li::after { content: ""; position: absolute; left: -7px; top: 26px; border: 5px solid transparent; border-left-color: var(--axis); }
+.dk-stage { position: relative; flex: 1; display: grid; align-content: start; justify-items: start; gap: 2px; min-width: 0; text-align: left;
+  padding: 12px 12px 10px; border: 1px solid var(--hair); border-radius: 14px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.dk-stage:hover { border-color: var(--accent); }
+.dk-stage.sel, .dk-stage:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); outline: none; }
+.dk-stage-i { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); margin-bottom: 4px; }
+.dk-stage-n { font-size: 24px; font-weight: 750; line-height: 1.1; }
+.dk-stage-l { font-weight: 650; font-size: 13.5px; }
+.dk-stage-u { line-height: 1.35; }
+.dk-stage.waits { border-color: color-mix(in srgb, var(--warning) 55%, var(--hair)); }
+.dk-badge { position: absolute; top: 8px; right: 8px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--warning);
+  color: #fff; font-size: 12px; font-weight: 750; display: grid; place-items: center; }
+/* what the assistant reads: a ring over the panel or stage that fades in (opacity only, B-01) */
+.dk-center [data-node] { position: relative; }
+.dk-center [data-node]::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; opacity: 0;
+  border: 2px solid var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); transition: opacity var(--dur-2) var(--ease-out); }
+.dk-center [data-node].act::after { opacity: 1; border-color: var(--pulse); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pulse) 30%, transparent); }
+.dk-center [data-node].lit::after { opacity: 1; }
+.dk-center [data-node].bad::after { opacity: 1; border-color: var(--critical); box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .dk-center [data-node]::after { transition: none; } }
+.dk-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.dk-grid > .panel { min-width: 0; margin: 0; }
+.dk-wide { grid-column: 1 / -1; }
+.dk-list { display: grid; gap: 2px; }
+.dk-row { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; text-decoration: none; color: var(--ink); min-width: 0; }
+.dk-row:hover { background: var(--surface-2); }
+.dk-row-t { flex: 1; min-width: 0; display: grid; }
+.dk-row-t b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-row-t small { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-row .pill, .dk-row .badge { flex: none; }
+.dk-big { font-size: 26px; font-weight: 750; margin: 4px 0 0; font-variant-numeric: tabular-nums; }
+.dk-bars { display: grid; gap: 6px; margin-top: 10px; }
+.dk-bar { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 12.5px; }
+.dk-bar-l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-bar-t { height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.dk-bar-t i { display: block; height: 100%; border-radius: 4px; }
+.dk-bar-t i.neg { background: var(--down); } .dk-bar-t i.pos { background: var(--up); }
+.dk-kv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; margin: 8px 0 0; font-size: 13px; }
+.dk-kv dt { color: var(--ink-2); } .dk-kv dd { margin: 0; text-align: right; }
+.dk-tabs { display: flex; gap: 4px; overflow-x: auto; min-width: 0; }
+.dk-tabs a { padding: 5px 10px; border-radius: 8px; text-decoration: none; color: var(--ink-2); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.dk-tabs a[aria-current] { background: var(--accent-soft); color: var(--accent); }
+.desk .ws-sheet-h .iconbtn { flex: none; }
+@media (max-width: 1280px) {
+  .dk-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dk-flow li:nth-child(4)::before, .dk-flow li:nth-child(4)::after { display: none; }
+}
+@media (max-width: 760px) {
+  .dk-body { overflow: visible; padding: 12px 14px 20px; }
+  .dk-head { flex-direction: column; gap: 6px; }
+  .dk-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .dk-flow li::before, .dk-flow li::after { display: none; }
+  .dk-grid { grid-template-columns: minmax(0, 1fr); }
+  .ws.sheeted .dk-body { display: none; }
+  .desk .ws-sheet-h { flex-wrap: wrap; padding: 8px 14px; }
+  .dk-tabs { order: 5; flex-basis: 100%; }
+}
