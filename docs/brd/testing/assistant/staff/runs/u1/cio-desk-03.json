@@ -1,0 +1,305 @@
+{
+ "id": "cio-desk-03",
+ "category": "desk",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO kiểm tra mô hình",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Lần áp dụng và độ chính xác",
+ "why": "The apply runs (in force, waiting) and the model's accuracy, each from its tool.",
+ "brd": [
+  "OWN-MR-01",
+  "BRD-FR-503"
+ ],
+ "turns": [
+  {
+   "say": "Lần áp dụng nào đang hiệu lực?",
+   "expect": {
+    "tools_any": [
+     "lan_ap_dung"
+    ]
+   }
+  },
+  {
+   "say": "Mô hình dự báo đúng tới đâu?",
+   "expect": {
+    "tools_any": [
+     "do_chinh_xac"
+    ],
+    "says": "%|dải"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Lần áp dụng nào đang hiệu lực?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "lan_ap_dung",
+      "label": "Lần áp dụng",
+      "status": "ok",
+      "text": "2 lần áp dụng đang hiệu lực: AR-0001-v1-2 kỳ vọng 3 tháng −628,1 triệu, 5 gia đình, 1 chạm ngưỡng; AR-0002-v1-2 kỳ vọng 3 tháng +421,9 triệu, 5 gia đình, 1 chạm ngưỡng. 2 đã thay thế (AR-0002-v1-1, AR-0001-v1-1).",
+      "card": null,
+      "focus": [
+       "stage:runs"
+      ],
+      "as_of": null,
+      "sources": [
+       "4 lần áp dụng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Lần áp dụng",
+       "route": "#/cio/ap-dung"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11982,
+     "output_tokens": 323,
+     "requests": 2,
+     "cost_usd": 0.00136,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e72ae4f3756e4b9ebba5f256ab770f83",
+    "conversation_id": "dc6943667a3c4fb3",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 2 lần áp dụng đang hiệu lực (nguồn: trang Áp dụng, số ghi nhận hệ thống):\n\n1. **AR-0001-v1-2**: kỳ vọng 3 tháng **−628,1 triệu**, 5 gia đình, 1 gia đình chạm ngưỡng.\n2. **AR-0002-v1-2**: kỳ vọng 3 tháng **+421,9 triệu**, 5 gia đình, 1 gia đình chạm ngưỡng.\n\nHai lần đã được thay thế là AR-0001-v1-1 và AR-0002-v1-1.\n\nĐây là số ghi nhận từ hệ thống, không phải dự báo chắc chắn. Nếu cần xem phơi nhiễm theo từng gia đình, tôi có thể lấy thêm.",
+    "timing": {
+     "start": 32,
+     "calls": [
+      [
+       1296,
+       1296
+      ],
+      [
+       1166,
+       2188
+      ]
+     ],
+     "tools": 5,
+     "first_text": 2532,
+     "total": 3568
+    },
+    "citations": [
+     {
+      "label": "Lần áp dụng",
+      "route": "#/cio/ap-dung"
+     }
+    ],
+    "sources": [
+     "4 lần áp dụng"
+    ],
+    "as_of": null,
+    "focus": [
+     "stage:runs"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Phơi nhiễm lớn nhất ở đâu?"
+    ],
+    "answered_at": 1792329910.7890184,
+    "audit_seq": 685,
+    "session": {
+     "id": "dc6943667a3c4fb3",
+     "title": "Lần áp dụng nào đang hiệu lực?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.605386031791568,
+   "first_event": 1.344083433970809,
+   "usage": {
+    "cost": 0.00136,
+    "input": 11982,
+    "output": 323,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LGitrHkrrJM3VpbHK3AuQU",
+     "tool": "lan_ap_dung",
+     "label": "Lần áp dụng",
+     "nodes": [
+      "stage:runs"
+     ],
+     "doing": "Đang xem các lần áp dụng",
+     "done": "Đã xem các lần áp dụng",
+     "failed": "Không thực hiện được: xem các lần áp dụng"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LGitrHkrrJM3VpbHK3AuQU",
+     "tool": "lan_ap_dung",
+     "ok": true,
+     "ms": 5,
+     "focus": [
+      "stage:runs"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Mô hình dự báo đúng tới đâu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "do_chinh_xac",
+      "label": "Độ chính xác",
+      "status": "ok",
+      "text": "Mô hình chạy lại trên lịch sử 2022-01-31 đến 2026-10-17: 1 tuần: 72% trong dải P10–P90 (đạt); 3 tháng: 77% trong dải P10–P90 (đạt); 12 tháng: 75% trong dải P10–P90 (đạt). Hướng VN-Index so với mục tiêu 70%: 1 tuần: đúng hướng 57% trên 245 lần (chưa đạt); 3 tháng: đúng hướng 72% trên 54 lần (đạt); 12 tháng: đúng hướng 96% trên 45 lần (đạt). Dự báo của các nhận định đã duyệt: 90 dự báo, 90 chờ đến hạn chấm, hạn gần nhất 2026-10-22.",
+      "card": null,
+      "focus": [
+       "model"
+      ],
+      "as_of": "2026-10-17",
+      "sources": [
+       "lịch sử thị trường",
+       "90 dự báo"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Độ chính xác",
+       "route": "#/cio/mo-hinh/do-chinh-xac"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13317,
+     "output_tokens": 406,
+     "requests": 2,
+     "cost_usd": 0.001535,
+     "tools_cost_usd": null
+    },
+    "turn_id": "f243f4a78e8c4976acb8b73aa29f1ffa",
+    "conversation_id": "dc6943667a3c4fb3",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo trang Độ chính xác (số ghi nhận đến 17/10/2026), mô hình chạy lại trên lịch sử từ 31/01/2022 đến 17/10/2026:\n\n- **Dải P10–P90** (tỷ lệ biến động thực nằm trong dải):\n  - 1 tuần: 72% (đạt)\n  - 3 tháng: 77% (đạt)\n  - 12 tháng: 75% (đạt)\n- **Hướng VN-Index so với mục tiêu 70%**:\n  - 1 tuần: 57% trên 245 lần (**chưa đạt**)\n  - 3 tháng: 72% trên 54 lần (đạt)\n  - 12 tháng: 96% trên 45 lần (đạt)\n- **Dự báo đã duyệt**: 90 dự báo, tất cả đang chờ đến hạn chấm. Hạn gần nhất là 22/10/2026.\n\nĐộ chính xác dự báo 1 tuần còn thấp. Các số này là kết quả trên lịch sử, không bảo đảm cho tương lai.",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       1327,
+       1327
+      ],
+      [
+       1089,
+       2323
+      ]
+     ],
+     "tools": 2174,
+     "first_text": 4644,
+     "total": 5892
+    },
+    "citations": [
+     {
+      "label": "Độ chính xác",
+      "route": "#/cio/mo-hinh/do-chinh-xac"
+     }
+    ],
+    "sources": [
+     "lịch sử thị trường",
+     "90 dự báo"
+    ],
+    "as_of": "2026-10-17",
+    "focus": [
+     "model"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792329916.7461329,
+    "audit_seq": 686,
+    "session": {
+     "id": "dc6943667a3c4fb3",
+     "title": "Lần áp dụng nào đang hiệu lực?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 5.9251251057721674,
+   "first_event": 3.5380508177913725,
+   "usage": {
+    "cost": 0.001535,
+    "input": 13317,
+    "output": 406,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MLpE255T68k1ZTJjG9WFsd",
+     "tool": "do_chinh_xac",
+     "label": "Độ chính xác",
+     "nodes": [
+      "model"
+     ],
+     "doing": "Đang xem độ chính xác của mô hình",
+     "done": "Đã xem độ chính xác của mô hình",
+     "failed": "Không thực hiện được: xem độ chính xác của mô hình"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MLpE255T68k1ZTJjG9WFsd",
+     "tool": "do_chinh_xac",
+     "ok": true,
+     "ms": 2174,
+     "focus": [
+      "model"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

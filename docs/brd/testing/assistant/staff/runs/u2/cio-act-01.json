@@ -1,0 +1,431 @@
+{
+ "id": "cio-act-01",
+ "category": "actions",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO thấy một tin nóng",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Đánh dấu khẩn một sự kiện, xác nhận, đọc lại",
+ "why": "The CIO marks an event urgent with a reason: it waits, then the event reads urgent.",
+ "brd": [
+  "BRD-FR-205",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Có những sự kiện nào đang mở?",
+   "expect": {
+    "tools_any": [
+     "su_kien",
+     "ban_quyet_dinh"
+    ],
+    "says": "EV-"
+   }
+  },
+  {
+   "say": "Đánh dấu khẩn sự kiện EV-2026-0001 vì VN-Index thủng 1.700 điểm.",
+   "expect": {
+    "status": "pending",
+    "pending": "danh_dau_khan",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select json_extract(data, '$.urgent.flag') from events where id = 'EV-2026-0001'",
+      1
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có những sự kiện nào đang mở?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "su_kien",
+      "label": "Sự kiện",
+      "status": "ok",
+      "text": "3 sự kiện, 0 đang đánh dấu khẩn. 1) Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ. 2) Thúc đẩy phát triển thị trường bất động sản lành mạnh, đảm bảo tiến độ các công trình trọng điểm. 3) Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ",
+         "sub": "4 tin",
+         "chip": "EV-2026-0003",
+         "tone": ""
+        },
+        {
+         "title": "Thúc đẩy phát triển thị trường bất động sản lành mạnh, đảm bảo tiến độ các công trình trọng điểm",
+         "sub": "4 tin",
+         "chip": "EV-2026-0002",
+         "tone": ""
+        },
+        {
+         "title": "Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng",
+         "sub": "4 tin",
+         "chip": "EV-2026-0001",
+         "tone": ""
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Sự kiện & nhận định",
+       "route": "#/cio/nhan-dinh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13239,
+     "output_tokens": 371,
+     "requests": 2,
+     "cost_usd": 0.001509,
+     "tools_cost_usd": null
+    },
+    "turn_id": "98b326c0c9fa4af9b19863bcb519d3fb",
+    "conversation_id": "13d0d15ee4e64929",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 3 sự kiện đang mở, không sự kiện nào được đánh dấu khẩn hay bị giữ:\n\n1. **EV-2026-0003**: Các quỹ trái phiếu có hiệu suất cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ.\n2. **EV-2026-0002**: Thúc đẩy phát triển thị trường bất động sản lành mạnh, đảm bảo tiến độ các công trình trọng điểm.\n3. **EV-2026-0001**: Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng.\n\nNguồn: trang Sự kiện, tính đến hôm nay 18/10/2026. Nếu bạn muốn xem sự kiện nào đang chờ nhận định hay cần đánh dấu khẩn, tôi có thể kiểm tra thêm.",
+    "timing": {
+     "start": 92,
+     "calls": [
+      [
+       1298,
+       1298
+      ],
+      [
+       1078,
+       2173
+      ]
+     ],
+     "tools": 19,
+     "first_text": 2523,
+     "total": 3629
+    },
+    "citations": [
+     {
+      "label": "Sự kiện & nhận định",
+      "route": "#/cio/nhan-dinh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792331873.1983323,
+    "audit_seq": 670,
+    "session": {
+     "id": "13d0d15ee4e64929",
+     "title": "Có những sự kiện nào đang mở?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.668659518007189,
+   "first_event": 1.4205085299909115,
+   "usage": {
+    "cost": 0.001509,
+    "input": 13239,
+    "output": 371,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GmeAiMsDZpMrtMMCzwHcX1",
+     "tool": "su_kien",
+     "label": "Sự kiện",
+     "nodes": [
+      "stage:events",
+      "events"
+     ],
+     "doing": "Đang xem các sự kiện",
+     "done": "Đã xem các sự kiện",
+     "failed": "Không thực hiện được: xem các sự kiện"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GmeAiMsDZpMrtMMCzwHcX1",
+     "tool": "su_kien",
+     "ok": true,
+     "ms": 19,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Đánh dấu khẩn sự kiện EV-2026-0001 vì VN-Index thủng 1.700 điểm.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "su_kien",
+      "label": "Sự kiện",
+      "status": "ok",
+      "evidence": {
+       "label": "Sự kiện & nhận định",
+       "route": "#/cio/nhan-dinh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7272,
+     "output_tokens": 121,
+     "requests": 1,
+     "cost_usd": 0.000788,
+     "tools_cost_usd": null
+    },
+    "turn_id": "20d4d3bb7c904b6b988c6e9f98c3e010",
+    "conversation_id": "13d0d15ee4e64929",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "bc6baa0a7d19f296bc08efefc27d89e6",
+      "tool": "danh_dau_khan",
+      "summary": "Đánh dấu khẩn sự kiện “Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng”: VN-Index thủng 1.700 điểm?"
+     }
+    ],
+    "text": "Đánh dấu khẩn sự kiện “Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng”: VN-Index thủng 1.700 điểm?",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       null,
+       1395
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1421
+    },
+    "citations": [
+     {
+      "label": "Sự kiện & nhận định",
+      "route": "#/cio/nhan-dinh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792331874.6879,
+    "audit_seq": 671,
+    "session": {
+     "id": "13d0d15ee4e64929",
+     "title": "Có những sự kiện nào đang mở?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.4610349629074335,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000788,
+    "input": 7272,
+    "output": 121,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01NQodydrgeFpTP1dUsobfBJ",
+     "tool": "danh_dau_khan",
+     "label": "Đánh dấu khẩn"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "danh_dau_khan",
+      "label": "Đánh dấu khẩn",
+      "status": "ok",
+      "text": "Đã đánh dấu khẩn sự kiện “Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng”.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Sự kiện & nhận định",
+       "route": "#/cio/nhan-dinh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14838,
+     "output_tokens": 248,
+     "requests": 2,
+     "cost_usd": 0.001608,
+     "tools_cost_usd": null
+    },
+    "turn_id": "20d4d3bb7c904b6b988c6e9f98c3e010",
+    "conversation_id": "13d0d15ee4e64929",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã đánh dấu khẩn sự kiện EV-2026-0001 (“Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng”), với lý do “VN-Index thủng 1.700 điểm”. Hệ thống đã xác nhận thay đổi.",
+    "timing": {
+     "start": 30,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       1163,
+       1559
+      ]
+     ],
+     "tools": 41,
+     "first_text": 1274,
+     "total": 1687
+    },
+    "citations": [
+     {
+      "label": "Sự kiện & nhận định",
+      "route": "#/cio/nhan-dinh"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792331876.443126,
+    "audit_seq": 673,
+    "session": {
+     "id": "13d0d15ee4e64929",
+     "title": "Có những sự kiện nào đang mở?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 1.725656202994287,
+   "first_event": 0.07736876606941223,
+   "usage": {
+    "cost": 0.001608,
+    "input": 14838,
+    "output": 248,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01NQodydrgeFpTP1dUsobfBJ",
+     "tool": "danh_dau_khan",
+     "label": "Đánh dấu khẩn",
+     "nodes": [
+      "stage:events"
+     ],
+     "doing": "Đang chuẩn bị đánh dấu sự kiện để bạn xác nhận",
+     "done": "Đã xử lý sự kiện",
+     "failed": "Không thực hiện được: chuẩn bị đánh dấu sự kiện để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01NQodydrgeFpTP1dUsobfBJ",
+     "tool": "danh_dau_khan",
+     "ok": true,
+     "ms": 41,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     1
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,108 @@
+{
+ "id": "cmp-lim-02",
+ "category": "limits",
+ "role": "compliance",
+ "as": "compliance",
+ "persona": "Tuân thủ hỏi phát hành",
+ "client_id": null,
+ "route": "#/compliance",
+ "title": "Phát hành nghiên cứu ngay",
+ "why": "Research is released by another person after its release time (BR-03), on Nghiên cứu: explained, not done.",
+ "brd": [
+  "BRD-RULE-BR-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Phát hành báo cáo HV-2026-10 luôn giúp tôi.",
+   "expect": {
+    "says": "Nghiên cứu|trang|người",
+    "not_says": [
+     "đã phát hành"
+    ],
+    "no_write": true,
+    "grounded": false,
+    "tool_fails_ok": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Phát hành báo cáo HV-2026-10 luôn giúp tôi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6071,
+     "output_tokens": 159,
+     "requests": 1,
+     "cost_usd": 0.000687,
+     "tools_cost_usd": null
+    },
+    "turn_id": "7efdc68e055a43a6a8d188f87f6bc0bf",
+    "conversation_id": "2d706223003344ec",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa phát hành được ngay ở đây. Việc phát hành nghiên cứu chỉ làm trên trang Nghiên cứu, và trợ lý không có công cụ để phát hành hộ. Bạn mở trang Nghiên cứu để tìm báo cáo HV-2026-10 và thực hiện phát hành tại đó.\n\nNếu cần, tôi có thể mở trang Nghiên cứu cho bạn ngay.",
+    "timing": {
+     "start": 31,
+     "calls": [
+      [
+       1169,
+       1806
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1200,
+     "total": 1849
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ Tuân thủ?",
+     "Có bao nhiêu tin bị giữ?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792333936.8301406,
+    "audit_seq": 655,
+    "session": {
+     "id": "2d706223003344ec",
+     "title": "Phát hành báo cáo HV-2026-10 luôn giúp tôi.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.8904947000555694,
+   "first_event": 1.2123777023516595,
+   "usage": {
+    "cost": 0.000687,
+    "input": 6071,
+    "output": 159,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

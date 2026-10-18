@@ -1,0 +1,248 @@
+{
+ "id": "sp-desk-01",
+ "category": "desk",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "Chuyên gia bảo hiểm",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Khuyến nghị nào chờ tôi",
+ "why": "The queue: the two recommendations for C01 and C04, oldest first, with their RM.",
+ "brd": [
+  "OWN-MR-05",
+  "FEAT-41"
+ ],
+ "turns": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "expect": {
+    "tools_any": [
+     "ban_chuyen_gia",
+     "de_xuat"
+    ],
+    "says": [
+     "C04|Hạnh",
+     "bảo hiểm"
+    ]
+   }
+  },
+  {
+   "say": "Cái nào cũ nhất?",
+   "expect": {
+    "says": "C01|Khoa|ngân hàng",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "text": "Chứng chỉ Tư vấn bảo hiểm nhân thọ (demo) (Bộ Tài chính) hiệu lực đến 2027-06-30. 3 khuyến nghị chờ bạn duyệt: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01); Mua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (R-7d37ad52, gia đình C04, RM rm01); Học phí cho con (trong nước / du học) — Tích lũy đều cho Nguyễn Minh Khoa (R-c3ca1b86, gia đình C01, RM rm01).",
+      "card": null,
+      "focus": [
+       "queue"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10826,
+     "output_tokens": 359,
+     "requests": 2,
+     "cost_usd": 0.001262,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ff34476ed9a34145902116052ce21f34",
+    "conversation_id": "017f1d494c1342db",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 3 khuyến nghị đang chờ bạn duyệt:\n\n1. **Giảm tỷ trọng cổ phiếu ngân hàng** cho Nguyễn Minh Khoa (gia đình C01), mã R-14ce4eb4\n2. **Mua bảo hiểm sức khoẻ cho gia đình** cho Đỗ Thị Hạnh (gia đình C04), mã R-7d37ad52\n3. **Học phí cho con (trong nước / du học)**, tích lũy đều cho Nguyễn Minh Khoa (gia đình C01), mã R-c3ca1b86\n\nCả ba do RM rm01 đề xuất. Nếu muốn xem hồ sơ của gia đình nào trước khi quyết định, bạn cho tôi biết.",
+    "timing": {
+     "start": 68,
+     "calls": [
+      [
+       1031,
+       1358
+      ],
+      [
+       1025,
+       1922
+      ]
+     ],
+     "tools": 64,
+     "first_text": 1099,
+     "total": 3460
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "queue"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hồ sơ của gia đình này thế nào?"
+    ],
+    "answered_at": 1792329684.4349592,
+    "audit_seq": 656,
+    "session": {
+     "id": "017f1d494c1342db",
+     "title": "Khuyến nghị nào đang chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.499207347165793,
+   "first_event": 1.111447929404676,
+   "usage": {
+    "cost": 0.001262,
+    "input": 10826,
+    "output": 359,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0151grV4gfwgvSxjm27d6WS1",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0151grV4gfwgvSxjm27d6WS1",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 64,
+     "focus": [
+      "queue"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Cái nào cũ nhất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 5926,
+     "output_tokens": 231,
+     "requests": 1,
+     "cost_usd": 0.000708,
+     "tools_cost_usd": null
+    },
+    "turn_id": "4db2731ab8274d0bbe2d9f4d173e01ab",
+    "conversation_id": "017f1d494c1342db",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo thứ tự hàng chờ, khuyến nghị cũ nhất là **Giảm tỷ trọng cổ phiếu ngân hàng** cho Nguyễn Minh Khoa (gia đình C01), mã R-14ce4eb4. Công cụ bàn chuyên gia liệt kê các mục theo thứ tự cũ nhất trước, nên mục này đứng đầu.\n\nCông cụ không trả về ngày gửi cụ thể, nên tôi chưa thể xác nhận chênh lệch thời gian giữa ba khuyến nghị. Nếu cần, bạn có thể xem thêm trong trang hàng chờ.",
+    "timing": {
+     "start": 144,
+     "calls": [
+      [
+       1130,
+       2111
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1274,
+     "total": 2269
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792329686.776796,
+    "audit_seq": 657,
+    "session": {
+     "id": "017f1d494c1342db",
+     "title": "Khuyến nghị nào đang chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.3081727786920965,
+   "first_event": 1.2869126698933542,
+   "usage": {
+    "cost": 0.000708,
+    "input": 5926,
+    "output": 231,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

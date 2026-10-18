@@ -1,0 +1,147 @@
+{
+ "id": "fm-specialist",
+ "category": "failure_modes",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "specialist, mô hình không trả lời",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Mô hình không trả lời",
+ "why": "The provider is down: the keyword path answers from the role's tools and says so.",
+ "brd": [
+  "BRD-NFR-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "expect": {
+    "mode": "fallback",
+    "grounded": false
+   }
+  }
+ ],
+ "server": "fail",
+ "run": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "graph": null,
+   "answer": {
+    "status": "ok",
+    "mode": "fallback",
+    "why": "mô hình lỗi (ModelError)",
+    "seen": "Khuyến nghị nào đang chờ tôi duyệt?",
+    "text": "Chứng chỉ Tư vấn bảo hiểm nhân thọ (demo) (Bộ Tài chính) hiệu lực đến 2027-06-30. 2 khuyến nghị chờ bạn duyệt, cũ nhất trước: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01, gửi 18/10 20:19); Mua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (R-7d37ad52, gia đình C04, RM rm01, gửi 18/10 20:19). Gia đình được giao cho bạn: C01, C04.",
+    "steps": [
+     {
+      "status": "ok",
+      "text": "Chứng chỉ Tư vấn bảo hiểm nhân thọ (demo) (Bộ Tài chính) hiệu lực đến 2027-06-30. 2 khuyến nghị chờ bạn duyệt, cũ nhất trước: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01, gửi 18/10 20:19); Mua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (R-7d37ad52, gia đình C04, RM rm01, gửi 18/10 20:19). Gia đình được giao cho bạn: C01, C04.",
+      "tool": "ban_chuyen_gia",
+      "navigate": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      },
+      "focus": [
+       "queue"
+      ],
+      "suggest": [
+       "Hồ sơ của gia đình này thế nào?"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "card": null
+     }
+    ],
+    "suggest": [
+     "Hồ sơ của gia đình này thế nào?"
+    ],
+    "conversation_id": "b213ebe9cc894802",
+    "timing": {
+     "start": 68,
+     "calls": [
+      [
+       null,
+       1503
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1571
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "queue"
+    ],
+    "navigate": null,
+    "answered_at": 1792335096.9983757,
+    "audit_seq": 649,
+    "session": {
+     "id": "b213ebe9cc894802",
+     "title": "Khuyến nghị nào đang chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.613644018303603,
+   "first_event": 1.574568449985236,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "fallback",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "fallback",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 61,
+     "focus": [
+      "queue"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

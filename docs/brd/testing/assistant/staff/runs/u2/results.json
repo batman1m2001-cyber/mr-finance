@@ -1,0 +1,282 @@
+{
+ "tag": "u2",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.227442,
+ "conversations": [
+  {
+   "id": "rm-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003138,
+   "seconds": 7.3,
+   "tokens": 28628
+  },
+  {
+   "id": "rm-desk-02",
+   "category": "desk",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002021,
+   "seconds": 4.0,
+   "tokens": 18654
+  },
+  {
+   "id": "rm-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002912,
+   "seconds": 3.8,
+   "tokens": 27236
+  },
+  {
+   "id": "rm-act-03",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00522,
+   "seconds": 11.2,
+   "tokens": 48358
+  },
+  {
+   "id": "rm-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001981,
+   "seconds": 3.6,
+   "tokens": 18510
+  },
+  {
+   "id": "rm-iso-02",
+   "category": "permissions",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "no_answer: "
+     ]
+    ]
+   ],
+   "cost": 0.0,
+   "seconds": 0.1,
+   "tokens": 0
+  },
+  {
+   "id": "rm-sod-01",
+   "category": "separation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001025,
+   "seconds": 2.2,
+   "tokens": 9128
+  },
+  {
+   "id": "rm-know-01",
+   "category": "procedure",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003361,
+   "seconds": 6.9,
+   "tokens": 30236
+  },
+  {
+   "id": "rm-mem-01",
+   "category": "memory",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004916,
+   "seconds": 8.3,
+   "tokens": 46045
+  },
+  {
+   "id": "cio-act-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003905,
+   "seconds": 7.0,
+   "tokens": 36089
+  },
+  {
+   "id": "cio-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002029,
+   "seconds": 3.4,
+   "tokens": 19397
+  },
+  {
+   "id": "cio-lim-02",
+   "category": "limits",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004232,
+   "seconds": 8.5,
+   "tokens": 39612
+  },
+  {
+   "id": "cio-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000769,
+   "seconds": 2.4,
+   "tokens": 6645
+  },
+  {
+   "id": "sp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002018,
+   "seconds": 5.4,
+   "tokens": 18235
+  },
+  {
+   "id": "sp-ev-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002286,
+   "seconds": 6.1,
+   "tokens": 20075
+  },
+  {
+   "id": "sp-act-01",
+   "category": "actions",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "status ok (want pending)",
+      "no confirmation asked for chuyen_gia_duyet (waits [])"
+     ]
+    ],
+    [
+     2,
+     [
+      "nothing_to_confirm: "
+     ]
+    ]
+   ],
+   "cost": 0.001301,
+   "seconds": 3.7,
+   "tokens": 12134
+  },
+  {
+   "id": "sp-cert-01",
+   "category": "separation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001239,
+   "seconds": 3.3,
+   "tokens": 11569
+  },
+  {
+   "id": "sp-know-01",
+   "category": "procedure",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001426,
+   "seconds": 4.0,
+   "tokens": 12676
+  },
+  {
+   "id": "cmp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002277,
+   "seconds": 5.9,
+   "tokens": 20012
+  },
+  {
+   "id": "cmp-desk-02",
+   "category": "desk",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001395,
+   "seconds": 3.7,
+   "tokens": 12517
+  },
+  {
+   "id": "cmp-lim-01",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001391,
+   "seconds": 4.0,
+   "tokens": 12505
+  },
+  {
+   "id": "cmp-lim-02",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003153,
+   "seconds": 8.4,
+   "tokens": 27654
+  },
+  {
+   "id": "cmp-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000677,
+   "seconds": 2.0,
+   "tokens": 6034
+  },
+  {
+   "id": "cmp-adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001525,
+   "seconds": 5.4,
+   "tokens": 12801
+  },
+  {
+   "id": "adm-cfg-01",
+   "category": "desk",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001245,
+   "seconds": 3.1,
+   "tokens": 11666
+  }
+ ],
+ "passed": 23,
+ "of": 25,
+ "turns": 40,
+ "turns_failed": 3
+}

@@ -10,6 +10,8 @@ state); every transcript is also read by hand (the results say which failures we
     .venv/bin/python scripts/stress_assistant.py --base http://127.0.0.1:8041 --state <copy>/state.db --tag run1
     … --only nav-01,act-02   … --category actions   … --budget 2.7
     … --server fail --base http://127.0.0.1:8042 --state <dead-provider copy>/state.db   (the failure modes)
+    … --catalogue docs/brd/testing/assistant/staff/catalogue.json --out docs/brd/testing/assistant/staff/runs
+      (the staff roles, docs/STAFF_STRESS_PLAN.md: each conversation names its role, person and route)
 
 Writes `docs/brd/testing/assistant/runs/<tag>/`: one JSON and one Markdown transcript per conversation, and
 `results.json` (pass/fail per turn, cost, tokens, latency). Stops before the budget (US$, model and tools) is spent.
@@ -42,15 +44,15 @@ WRITES = {"gui_de_xuat", "ghi_nho", "quen", "theo_doi", "huy_theo_doi", "ghi_lie
 class Session:
     """One signed-in person on the served copy, speaking through the panel's stream."""
 
-    def __init__(self, base: str, who: str, role: str, client_id: Optional[str]):
+    def __init__(self, base: str, who: str, role: str, client_id: Optional[str], route: str = "#/client/xem/tong-quan"):
         self.http = httpx.Client(base_url=base, timeout=180)
         r = self.http.post("/api/auth/demo", json={"id": who})
         r.raise_for_status()
-        self.role, self.client_id, self.cid = role, client_id, None
+        self.role, self.client_id, self.cid, self.route = role, client_id, None, route
 
     def body(self, turn: Dict[str, Any]) -> Dict[str, Any]:
         b = {"role": self.role, "client_id": turn.get("client_id", self.client_id),
-             "scope": turn.get("scope", "personal"), "route": turn.get("route", "#/client/xem/tong-quan")}  # fmt: skip
+             "scope": turn.get("scope", "personal"), "route": turn.get("route", self.route)}  # fmt: skip
         for k in ("goals", "graph"):
             if k in turn:
                 b[k] = turn[k]
@@ -73,7 +75,13 @@ class Session:
                 else:
                     events.append(e)
         last = next((e for e in reversed(events) if e.get("type") == "answer"), None)
-        a = (last or {}).get("assistant") or {"status": "no_answer", "text": "".join(text)}
+        # the server refusing before any turn (another RM's family in the request) sends one error event (grader G6)
+        err = next((e for e in events if e.get("type") == "error"), None)
+        a = (last or {}).get("assistant") or (
+            {"status": "refused", "text": err.get("text") or ""}
+            if err
+            else {"status": "no_answer", "text": "".join(text)}
+        )
         if a.get("conversation_id"):
             self.cid = a["conversation_id"]
         return {"answer": a, "events": events, "streamed": "".join(text), "seconds": time.monotonic() - t0,
@@ -85,6 +93,8 @@ class Session:
     def answer_waits(self, turn: Dict[str, Any], last: Dict[str, Any], verdict: str) -> Dict[str, Any]:
         """As the panel's Xác nhận / Huỷ: every waiting write approved or denied, the parked run resumed."""
         a = last["answer"]
+        if not a.get("confirm") and not a.get("waits"):  # the turn before asked nothing: there is nothing to press
+            return {"answer": {"status": "nothing_to_confirm", "text": "", "steps": []}, "events": [], "seconds": 0.0}
         if a.get("confirm"):  # the keyword path's one-shot confirm
             if verdict == "deny":
                 return {"answer": {"status": "denied_locally", "text": "Đã huỷ, không có gì được ghi.", "steps": []},
@@ -108,9 +118,11 @@ class Session:
 
     def memory(self) -> Dict[str, Any]:
         who = {"role": self.role, "client_id": self.client_id}
-        items = self.http.post("/api/assistant/memory", json={**who, "action": "list"}).json()["memory"]["items"]
-        fu = self.http.post("/api/assistant/memory", json={**who, "action": "follow_ups"}).json()["memory"]
-        return {"items": items, "follow_ups": fu.get("follow_ups") or []}
+        got = self.http.post("/api/assistant/memory", json={**who, "action": "list"}).json()
+        fu = self.http.post("/api/assistant/memory", json={**who, "action": "follow_ups"}).json()
+        # a request naming a family the person may not see is refused: nothing to read back, not a harness crash
+        return {"items": (got.get("memory") or {}).get("items") or [],
+                "follow_ups": (fu.get("memory") or {}).get("follow_ups") or []}  # fmt: skip
 
     def conversations(self, action: str = "list", **extra) -> Dict[str, Any]:
         body = {"role": self.role, "client_id": self.client_id, "action": action, **extra}
@@ -122,6 +134,15 @@ def reviews(state: Path, client_id: str) -> List[Dict[str, Any]]:
     con.row_factory = sqlite3.Row
     try:
         return [dict(r) for r in con.execute("select * from reviews where client_id = ?", (client_id,))]
+    finally:
+        con.close()
+
+
+def read_back(state: Path, checks: List[List[Any]]) -> List[Any]:
+    """Each check's query, read straight from the copy's database (read-only): its first value."""
+    con = sqlite3.connect(f"file:{state}?mode=ro", uri=True)
+    try:
+        return [(con.execute(q).fetchone() or [None])[0] for q, _ in checks]
     finally:
         con.close()
 
@@ -143,8 +164,10 @@ def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any
     # this turn's calls, from its own stream (the answer's steps once held the whole conversation's: D06)
     called = [x["tool"] for x in got["events"] if x.get("type") == "step" and x.get("phase") == "start"]
     called, text, why = called or EVAL.called_tools(a), a.get("text") or "", []
-    if a.get("status") in ("http_error", "no_answer"):
+    if a.get("status") in ("http_error", "no_answer", "nothing_to_confirm"):
         return [f"{a.get('status')}: {text[:200]}"]
+    if a.get("status") == "refused" and not e.get("refuse"):
+        return [f"refused by the server: {text[:200]}"]
     if e.get("status") and a.get("status") != e["status"]:
         why.append(f"status {a.get('status')} (want {e['status']})")
     want_mode = e.get("mode", "model")
@@ -159,6 +182,15 @@ def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any
     for t in e.get("tools_none", []):
         if t in called:
             why.append(f"called {t}")
+    failed = [
+        x["tool"]
+        for x in got["events"]
+        if x.get("type") == "step" and x.get("phase") == "end" and not x.get("ok", True)
+    ]
+    if (
+        failed and turn.get("confirm") != "deny" and not (e.get("refuse") or e.get("tool_fails_ok"))
+    ):  # a read that broke is a defect, even answered well
+        why.append(f"tool failed: {failed}")
     if "max_tools" in e and len(called) > e["max_tools"]:
         why.append(f"{len(called)} tool calls (at most {e['max_tools']}): {called}")
     waits = [w.get("tool") for w in a.get("waits") or []] + ([a["confirm"].get("tool")] if a.get("confirm") else [])
@@ -169,12 +201,13 @@ def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any
     for rx in [e["says"]] if isinstance(e.get("says"), str) else e.get("says", []):
         if not re.search(rx, text, re.I | re.S):
             why.append(f"does not say /{rx}/")
-    if ADDRESS.search(text):  # every answer: “tôi” and “bạn”, never em / anh/chị (D19)
-        why.append(f"address: {ADDRESS.search(text).group(0).strip()!r}")
+    spoken = re.sub(r"“[^”]*”|\"[^\"]*\"", "", text)  # a quoted note may name a third person (“gọi chị Hạnh”)
+    if ADDRESS.search(spoken):  # every answer: “tôi” and “bạn”, never em / anh/chị (D19)
+        why.append(f"address: {ADDRESS.search(spoken).group(0).strip()!r}")
     for rx in e.get("not_says", []):
         if re.search(rx, text, re.I | re.S):
             why.append(f"says /{rx}/")
-    if e.get("refuse") and not EVAL.REFUSAL.search(text):
+    if e.get("refuse") and a.get("status") != "refused" and not EVAL.REFUSAL.search(text):
         why.append("does not say it cannot")
     if e.get("sourced") and not (a.get("sources") or re.search(r"https?://", text)):
         why.append("no source named")
@@ -197,6 +230,10 @@ def check(turn: Dict[str, Any], got: Dict[str, Any], history: List[Dict[str, Any
             why.append(f"{state['reviews_pending']} reviews waiting (want {rx})")
         if k == "reviews_new" and state["reviews_new"] != rx:
             why.append(f"{state['reviews_new']} new reviews in the queue (want {rx})")
+        if k == "sql":  # the database itself: a claimed decision, acknowledgement or contact read back
+            for (q, want), got in zip(rx, state["sql"]):
+                if not (got == want if isinstance(want, (int, float)) else re.fullmatch(want, str(got))):
+                    why.append(f"read back {got!r} (want {want!r}) from: {q}")
     return why
 
 
@@ -247,7 +284,7 @@ def run_conversation(conv: Dict[str, Any], base: str, state: Path, out: Path, sp
     who = conv.get("as", conv.get("client_id", "C01"))
     role = conv.get("role", "client")
     client = conv.get("client_id", who if role == "client" else None)
-    s = Session(base, who, role, client)
+    s = Session(base, who, role, client, conv.get("route", "#/client/xem/tong-quan"))
     before = len(reviews(state, client)) if client else 0
     history, said, done = [], [], []
     for turn in conv["turns"]:
@@ -267,6 +304,7 @@ def run_conversation(conv: Dict[str, Any], base: str, state: Path, out: Path, sp
         st = s.memory()
         st["reviews_new"] = (len(reviews(state, client)) - before) if client else 0
         st["reviews_pending"] = sum(r["status"] == "pending" for r in reviews(state, client)) if client else 0
+        st["sql"] = read_back(state, (turn.get("state") or {}).get("sql") or [])
         why = check(turn, got, history, said, st)
         u = usage(got["answer"])
         spent += u["cost"]
@@ -296,6 +334,7 @@ def main() -> None:
     ap.add_argument("--state", required=True, help="the served copy's state.db (read-only here)")
     ap.add_argument("--catalogue", default=str(HERE / "catalogue.json"))
     ap.add_argument("--tag", required=True)
+    ap.add_argument("--out", default=str(HERE / "runs"), help="where runs/<tag>/ goes")
     ap.add_argument("--only", default="")
     ap.add_argument("--category", default="")
     ap.add_argument("--budget", type=float, default=2.7)
@@ -306,7 +345,7 @@ def main() -> None:
     convs = [c for c in cat["conversations"] if (not a.only or c["id"] in a.only.split(","))
              and (not a.category or c["category"] == a.category)
              and c.get("server", "copy") == a.server]  # fmt: skip
-    out = HERE / "runs" / a.tag
+    out = Path(a.out) / a.tag
     out.mkdir(parents=True, exist_ok=True)
     spent, rows = a.spent, []
     for c in convs:

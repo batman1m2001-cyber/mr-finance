@@ -1,0 +1,248 @@
+{
+ "id": "sp-ev-01",
+ "category": "desk",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "Chuyên gia đọc hồ sơ",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Hồ sơ gia đình C04 trước khi duyệt",
+ "why": "The evidence: the family's net worth, risk, liquidity, allocation and goals from the tool.",
+ "brd": [
+  "OWN-MR-05",
+  "BRD-RULE-ROLE-05"
+ ],
+ "turns": [
+  {
+   "say": "Hồ sơ của gia đình C04 thế nào?",
+   "expect": {
+    "tools_any": [
+     "ho_so_khach"
+    ],
+    "says": "48[,.]3"
+   }
+  },
+  {
+   "say": "Thanh khoản dự phòng của họ đủ mấy tháng?",
+   "expect": {
+    "says": "tháng"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Hồ sơ của gia đình C04 thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ho_so_khach",
+      "label": "Hồ sơ khách",
+      "status": "ok",
+      "text": "Gia đình C04: Tài sản ròng 48,38 tỷ (+90,5 triệu, 0,2% so với tháng trước) = tổng tài sản 48,38 tỷ − nợ 0,0 triệu. Phân bổ tài sản: Bất động sản 29,20 tỷ (60%), Tiền & tiền gửi 8,50 tỷ (18%), Trái phiếu 5,08 tỷ (11%), Vàng 3,00 tỷ (6%), Chứng chỉ quỹ 2,60 tỷ (5%), Bảo hiểm 0,0 triệu (0%). Tập trung vượt ngưỡng: Khu vực BĐS Võ Văn Tần, Quận 3: 60,4% tài sản (ngưỡng 35%). Thanh khoản dự phòng 14,16 tỷ, đủ chi 354,0 tháng (khoảng 30 năm) theo mức chi 40,0 triệu/tháng trong hồ sơ. Khi thị trường xấu, mức sụt giảm ước tính 7,5% so với ngưỡng 8%: gần ngưỡng. Cách tính: mỗi khoản giảm theo mức sốc riêng của nó, tổng mất 3,64 tỷ; lớn nhất: Nhà phố Quận 3 (đang ở) −1,80 tỷ (sốc 10%); Căn hộ Võ Văn Tần (cho thuê) −1,12 tỷ (sốc 10%); Vàng miếng SJC −300,0 triệu (sốc 10%); Trái phiếu TCB12401 (Techcombank) −161,9 triệu (sốc 8%). 3 mục tiêu đang theo dõi. Nghỉ hưu sớm năm 55 tuổi: đúng tiến độ, cần 2,10 tỷ (55 tuổi), có 19,18 tỷ (dự kiến có lúc 55 tuổi), dư 17,08 tỷ, dòng tiền dư −3,0 triệu/tháng; Chi phí y tế lớn: đúng tiến độ, cần 400,0 triệu (dự phòng sẵn), có 10,86 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 10,46 tỷ, dòng tiền dư −3,0 triệu/tháng; Cưới hỏi / hỗ trợ con mua nhà: đúng tiến độ, cần 3,00 tỷ (trong 12 tháng), có 10,86 tỷ (thanh khoản ngoài 6 tháng chi tiêu), dư 7,86 tỷ, dòng tiền dư −3,0 triệu/tháng. Số liệu ngày 2026-10-09.",
+      "card": null,
+      "focus": [
+       "evidence"
+      ],
+      "as_of": "2026-10-09",
+      "sources": [
+       "Bảng tổng quan",
+       "Kế hoạch mục tiêu"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12857,
+     "output_tokens": 595,
+     "requests": 2,
+     "cost_usd": 0.001583,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3d94b228b74f4676acf19616035302c1",
+    "conversation_id": "7fe746b74f7744f4",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Gia đình C04** (số liệu ngày 09/10/2026, nguồn: Bảng tổng quan và Kế hoạch mục tiêu)\n\n- **Tài sản ròng:** 48,38 tỷ, tăng 90,5 triệu (0,2%) so với tháng trước. Không có nợ.\n- **Phân bổ:** Bất động sản 60%, tiền gửi 18%, trái phiếu 11%, vàng 6%, chứng chỉ quỹ 5%.\n- **Cảnh báo tập trung:** Khu vực BĐS Võ Văn Tần, Quận 3 chiếm 60,4% tài sản, vượt ngưỡng 35%.\n- **Rủi ro thị trường:** Mức sụt giảm ước tính 7,5%, gần ngưỡng 8%. Đây là ước tính theo kịch bản sốc, không phải dự báo.\n- **Thanh khoản:** 14,16 tỷ, đủ chi khoảng 30 năm theo mức chi 40 triệu/tháng.\n- **Mục tiêu:** Cả ba mục tiêu (nghỉ hưu sớm, chi phí y tế, cưới hỏi/hỗ trợ con mua nhà) đều đúng tiến độ. Dòng tiền hiện âm 3 triệu/tháng so với kế hoạch.\n\nBạn muốn xem thêm đề xuất đang chờ liên quan đến gia đình này không?",
+    "timing": {
+     "start": 27,
+     "calls": [
+      [
+       1195,
+       1506
+      ],
+      [
+       1060,
+       2700
+      ]
+     ],
+     "tools": 253,
+     "first_text": 1222,
+     "total": 4521
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Bảng tổng quan",
+     "Kế hoạch mục tiêu"
+    ],
+    "as_of": "2026-10-09",
+    "focus": [
+     "evidence"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792334985.2740414,
+    "audit_seq": 717,
+    "session": {
+     "id": "7fe746b74f7744f4",
+     "title": "Hồ sơ của gia đình C04 thế nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.559713342692703,
+   "first_event": 1.234836327843368,
+   "usage": {
+    "cost": 0.001583,
+    "input": 12857,
+    "output": 595,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01L2Sja8ZgoGV3MMnBc7uv1D",
+     "tool": "ho_so_khach",
+     "label": "Hồ sơ khách",
+     "nodes": [
+      "evidence"
+     ],
+     "doing": "Đang xem hồ sơ gia đình",
+     "done": "Đã xem hồ sơ gia đình",
+     "failed": "Không thực hiện được: xem hồ sơ gia đình"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01L2Sja8ZgoGV3MMnBc7uv1D",
+     "tool": "ho_so_khach",
+     "ok": true,
+     "ms": 253,
+     "focus": [
+      "evidence"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Thanh khoản dự phòng của họ đủ mấy tháng?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7536,
+     "output_tokens": 147,
+     "requests": 1,
+     "cost_usd": 0.000827,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5b4bb643283d4fa0ab21a86df434d62e",
+    "conversation_id": "7fe746b74f7744f4",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo hồ sơ C04 (số liệu ngày 09/10/2026, nguồn Bảng tổng quan), thanh khoản dự phòng 14,16 tỷ đủ chi khoảng **354 tháng**, tức khoảng 30 năm, theo mức chi 40 triệu/tháng trong hồ sơ.\n\nCon số này là số ghi nhận từ hệ thống, không phải dự báo.",
+    "timing": {
+     "start": 24,
+     "calls": [
+      [
+       1092,
+       1489
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1116,
+     "total": 1525
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792334986.8727252,
+    "audit_seq": 718,
+    "session": {
+     "id": "7fe746b74f7744f4",
+     "title": "Hồ sơ của gia đình C04 thế nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.5576536860316992,
+   "first_event": 1.1315890667028725,
+   "usage": {
+    "cost": 0.000827,
+    "input": 7536,
+    "output": 147,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

@@ -69,6 +69,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "do_chinh_xac": "Độ chính xác",
     "so_khach_hang": "Sổ khách hàng",
     "van_hanh": "Vận hành",
+    "agent_nen": "Agent và việc nền",
     "ban_kiem_soat": "Bàn kiểm soát",
     "ban_chuyen_gia": "Bàn chuyên gia",
     "ho_so_khach": "Hồ sơ khách",
@@ -107,6 +108,16 @@ class Seen(pydantic.BaseModel):
         return super().model_dump_json(**kw)
 
 
+def _as_of(v: Any) -> Optional[str]:
+    """A tool's date as the model's result carries it: a string. An epoch (a run's time) failed the whole read on the
+    model's path only — the fallback and the offline tests never build a ``Seen`` (staff stress test, agent_nen)."""
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        from datetime import datetime
+
+        return datetime.fromtimestamp(v).strftime("%Y-%m-%d %H:%M")
+    return None if v is None else str(v)
+
+
 def _seen(tool: Tool, ctx: Ctx, out: Dict[str, Any]) -> Seen:
     page = tools.PAGES.get(tool.page or "")
     link = page and page[1].get(ctx.role)
@@ -116,7 +127,7 @@ def _seen(tool: Tool, ctx: Ctx, out: Dict[str, Any]) -> Seen:
             tool=tool.name,
             text=out.get("text"),
             data=out.get("data"),
-            as_of=out.get("as_of"),
+            as_of=_as_of(out.get("as_of")),
             sources=[x for x in out.get("sources") or [] if x] or None,
             page=link or None,
         )

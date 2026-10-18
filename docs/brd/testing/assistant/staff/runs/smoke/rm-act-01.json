@@ -1,0 +1,458 @@
+{
+ "id": "rm-act-01",
+ "category": "actions",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM của C01 (rm01)",
+ "client_id": "C01",
+ "route": "#/rm",
+ "title": "Duyệt đề xuất của khách, xác nhận, đọc lại",
+ "why": "The RM approves the client's proposal: it waits for Xác nhận, then the queue says approved.",
+ "brd": [
+  "BRD-FR-603",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Khách C01 có đề xuất nào đang chờ tôi không?",
+   "expect": {
+    "tools_any": [
+     "de_xuat",
+     "so_khach_hang"
+    ],
+    "no_write": true
+   }
+  },
+  {
+   "say": "Được, duyệt đề xuất đó.",
+   "expect": {
+    "status": "pending",
+    "pending": "duyet_de_xuat",
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select count(*) from reviews where client_id = 'C01' and status = 'pending'",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select count(*) from reviews where client_id = 'C01' and status = 'pending'",
+      0
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Khách C01 có đề xuất nào đang chờ tôi không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "text": "4 đề xuất, 2 đang chờ. 1) Học phí cho con (trong nước / du học) — Tích lũy đều — chờ RM duyệt. 2) Giảm tỷ trọng cổ phiếu ngân hàng — chờ chuyên gia duyệt. 3) Học phí cho con (trong nước / du học) — Tích lũy đều — đã duyệt. 4) Học phí cho con (trong nước / du học) — Tích lũy đều — đã duyệt.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · chờ RM duyệt",
+         "chip": "R-c3ca1b86",
+         "tone": "warn",
+         "focus": "review:R-c3ca1b86"
+        },
+        {
+         "title": "Giảm tỷ trọng cổ phiếu ngân hàng",
+         "sub": "Nguyễn Minh Khoa · chờ chuyên gia duyệt",
+         "chip": "R-14ce4eb4",
+         "tone": "warn",
+         "focus": "review:R-14ce4eb4"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-821ffb1b",
+         "tone": "",
+         "focus": "review:R-821ffb1b"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-a4a7e60d",
+         "tone": "",
+         "focus": "review:R-a4a7e60d"
+        }
+       ]
+      },
+      "focus": [
+       "review:R-c3ca1b86",
+       "review:R-14ce4eb4"
+      ],
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17421,
+     "output_tokens": 255,
+     "requests": 2,
+     "cost_usd": 0.00187,
+     "tools_cost_usd": null
+    },
+    "turn_id": "6db7720139fa4c43a4a7e9227dc39f72",
+    "conversation_id": "a2cbd8cda5664729",
+    "compacted": false,
+    "status": "ok",
+    "text": "Khách C01 hiện có 2 đề xuất đang chờ:\n\n1. **Học phí cho con (trong nước / du học) — Tích lũy đều**: đang chờ RM (bạn) duyệt.\n2. **Giảm tỷ trọng cổ phiếu ngân hàng**: đang chờ chuyên gia duyệt, bạn chưa thao tác được ở bước này.\n\nNgoài ra có 2 đề xuất học phí khác đã được duyệt.\n\nBạn muốn duyệt hay từ chối đề xuất học phí đang chờ không?",
+    "timing": {
+     "start": 29,
+     "calls": [
+      [
+       1072,
+       1397
+      ],
+      [
+       1129,
+       1981
+      ]
+     ],
+     "tools": 25,
+     "first_text": 1101,
+     "total": 3475
+    },
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [
+     "review:R-c3ca1b86",
+     "review:R-14ce4eb4"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329670.5288682,
+    "audit_seq": 648,
+    "session": {
+     "id": "a2cbd8cda5664729",
+     "title": "Khách C01 có đề xuất nào đang chờ tôi không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.5192022449336946,
+   "first_event": 1.115289242938161,
+   "usage": {
+    "cost": 0.00187,
+    "input": 17421,
+    "output": 255,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JMrU1buYkVbx6SAcygfuKH",
+     "tool": "de_xuat",
+     "label": "Hàng chờ đề xuất",
+     "nodes": [
+      "proposals",
+      "queue"
+     ],
+     "doing": "Đang xem hàng chờ đề xuất",
+     "done": "Đã xem hàng chờ đề xuất",
+     "failed": "Không thực hiện được: xem hàng chờ đề xuất"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JMrU1buYkVbx6SAcygfuKH",
+     "tool": "de_xuat",
+     "ok": true,
+     "ms": 25,
+     "focus": [
+      "review:R-c3ca1b86",
+      "review:R-14ce4eb4"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 1,
+    "sql": []
+   }
+  },
+  {
+   "say": "Được, duyệt đề xuất đó.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9173,
+     "output_tokens": 55,
+     "requests": 1,
+     "cost_usd": 0.000945,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e8eb6db84a2a4f40ba4603f6ad978a74",
+    "conversation_id": "a2cbd8cda5664729",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "b4ad29f0689a178ae8287799366955bc",
+      "tool": "duyet_de_xuat",
+      "summary": "Duyệt đề xuất “Học phí cho con (trong nước / du học) — Tích lũy đều”?"
+     }
+    ],
+    "text": "Duyệt đề xuất “Học phí cho con (trong nước / du học) — Tích lũy đều”?",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       null,
+       1576
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1602
+    },
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329672.210415,
+    "audit_seq": 649,
+    "session": {
+     "id": "a2cbd8cda5664729",
+     "title": "Khách C01 có đề xuất nào đang chờ tôi không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.6321808299981058,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000945,
+    "input": 9173,
+    "output": 55,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_012rnGJr6mYwR9a7zaCZHDBb",
+     "tool": "duyet_de_xuat",
+     "label": "Duyệt đề xuất"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 1,
+    "sql": [
+     1
+    ]
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "duyet_de_xuat",
+      "label": "Duyệt đề xuất",
+      "status": "ok",
+      "text": "Đã ghi: duyệt, chờ chuyên gia có chứng chỉ duyệt tiếp “Học phí cho con (trong nước / du học) — Tích lũy đều”.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Duyệt đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18573,
+     "output_tokens": 152,
+     "requests": 2,
+     "cost_usd": 0.001933,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e8eb6db84a2a4f40ba4603f6ad978a74",
+    "conversation_id": "a2cbd8cda5664729",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã ghi nhận bạn duyệt đề xuất **Học phí cho con (trong nước / du học) — Tích lũy đều**. Đề xuất này còn chờ chuyên gia có chứng chỉ duyệt tiếp trước khi có hiệu lực.",
+    "timing": {
+     "start": 33,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       1025,
+       1426
+      ]
+     ],
+     "tools": 48,
+     "first_text": 1150,
+     "total": 1572
+    },
+    "citations": [
+     {
+      "label": "Duyệt đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329673.850661,
+    "audit_seq": 651,
+    "session": {
+     "id": "a2cbd8cda5664729",
+     "title": "Khách C01 có đề xuất nào đang chờ tôi không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 1.617117972113192,
+   "first_event": 0.0914575532078743,
+   "usage": {
+    "cost": 0.001933,
+    "input": 18573,
+    "output": 152,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012rnGJr6mYwR9a7zaCZHDBb",
+     "tool": "duyet_de_xuat",
+     "label": "Duyệt đề xuất",
+     "nodes": [],
+     "doing": "Đang chuẩn bị duyệt đề xuất để bạn xác nhận",
+     "done": "Đã xử lý đề xuất",
+     "failed": "Không thực hiện được: chuẩn bị duyệt đề xuất để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012rnGJr6mYwR9a7zaCZHDBb",
+     "tool": "duyet_de_xuat",
+     "ok": true,
+     "ms": 48,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     0
+    ]
+   }
+  }
+ ]
+}

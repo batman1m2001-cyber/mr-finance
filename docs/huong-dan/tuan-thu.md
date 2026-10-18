@@ -2,6 +2,13 @@
 
 Các trang của Tuân thủ (`#/compliance/…`). Nhiều việc cần hai người Tuân thủ khác nhau.
 
+## Bàn kiểm soát — #/compliance
+
+Trang đầu của Tuân thủ: mỗi chốt kiểm soát một dòng (tin bị giữ, nghiên cứu, bản tin, chính sách, cấu hình) với số
+việc chờ ở từng bước, chuỗi nhật ký, một hàng chờ chung cũ nhất trước và các cảnh báo. Mỗi quyết định làm ở trang của
+nó với quy tắc của nó: cho tin đi tiếp cần lý do; nghiên cứu do người khác người nạp phát hành, khi đã tới giờ; văn bản
+chính sách do người thứ hai xác nhận. Tuân thủ không xem bảng tài sản của khách.
+
 ## Tin bị giữ — #/compliance/giu
 
 Trang đầu tiên của Tuân thủ: tin nhắc tới tổ chức trong danh sách hạn chế, với nguồn, thời gian và các tên được nhắc.

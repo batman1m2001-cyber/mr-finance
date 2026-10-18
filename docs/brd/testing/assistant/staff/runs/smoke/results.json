@@ -1,0 +1,71 @@
+{
+ "tag": "smoke",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.016575,
+ "conversations": [
+  {
+   "id": "rm-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002962,
+   "seconds": 7.5,
+   "tokens": 27152
+  },
+  {
+   "id": "rm-act-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004748,
+   "seconds": 6.9,
+   "tokens": 45629
+  },
+  {
+   "id": "cio-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002248,
+   "seconds": 7.0,
+   "tokens": 19612
+  },
+  {
+   "id": "sp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00197,
+   "seconds": 5.9,
+   "tokens": 17342
+  },
+  {
+   "id": "cmp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002084,
+   "seconds": 6.2,
+   "tokens": 18238
+  },
+  {
+   "id": "adm-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002563,
+   "seconds": 7.3,
+   "tokens": 23800
+  }
+ ],
+ "passed": 6,
+ "of": 6,
+ "turns": 13,
+ "turns_failed": 0
+}

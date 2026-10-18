@@ -1,0 +1,342 @@
+{
+ "id": "rm-act-03",
+ "category": "actions",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM viết khuyến nghị (rm01)",
+ "client_id": "C05",
+ "route": "#/rm",
+ "title": "Khuyến nghị cho C05, gia đình chưa có chuyên gia",
+ "why": "An action recommendation goes to the family's certified specialist (CONTENT-01 flow 3); C05 has none, so the RM's own approval stands (WF-08 “if any”): read back approved, and the assistant says why when asked.",
+ "brd": [
+  "BRD-RULE-CONTENT-01",
+  "BRD-RULE-WF-08",
+  "BRD-RULE-ROLE-05"
+ ],
+ "turns": [
+  {
+   "say": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự phòng lên sáu tháng chi tiêu và giảm nợ thẻ tín dụng.",
+   "expect": {
+    "status": "pending",
+    "pending": "khuyen_nghi",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from reviews where client_id = 'C05' and kind = 'rm_note' order by created desc limit 1",
+      "approved"
+     ]
+    ]
+   }
+  },
+  {
+   "say": "Có chuyên gia nào phải duyệt khuyến nghị này không?",
+   "expect": {
+    "says": "không|chưa",
+    "no_write": true,
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự phòng lên sáu tháng chi tiêu và giảm nợ thẻ tín dụng.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8506,
+     "output_tokens": 167,
+     "requests": 1,
+     "cost_usd": 0.000934,
+     "tools_cost_usd": null
+    },
+    "turn_id": "48166511002e44d79d864d8382a93168",
+    "conversation_id": "4704fea289284e6e",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "94d7d0ed9825a897bc256b3fbcd2fc44",
+      "tool": "khuyen_nghi",
+      "summary": "Gửi khuyến nghị “Củng cố tài chính gia đình C05” (2 việc) cho Vũ Ngọc Anh?"
+     }
+    ],
+    "text": "Gửi khuyến nghị “Củng cố tài chính gia đình C05” (2 việc) cho Vũ Ngọc Anh?",
+    "timing": {
+     "start": 37,
+     "calls": [
+      [
+       1025,
+       1566
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1062,
+     "total": 1603
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329862.115168,
+    "audit_seq": 658,
+    "session": {
+     "id": "4704fea289284e6e",
+     "title": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.6372773828916252,
+   "first_event": 1.0765570867806673,
+   "usage": {
+    "cost": 0.000934,
+    "input": 8506,
+    "output": 167,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01SvWjPe6FEDiXDfoVfx14aS",
+     "tool": "khuyen_nghi",
+     "label": "Khuyến nghị"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "khuyen_nghi",
+      "label": "Khuyến nghị",
+      "status": "ok",
+      "text": "Đã gửi khuyến nghị “Củng cố tài chính gia đình C05”: đã duyệt.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Duyệt đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17385,
+     "output_tokens": 279,
+     "requests": 2,
+     "cost_usd": 0.001878,
+     "tools_cost_usd": null
+    },
+    "turn_id": "48166511002e44d79d864d8382a93168",
+    "conversation_id": "4704fea289284e6e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã gửi khuyến nghị \"Củng cố tài chính gia đình C05\" cho gia đình C05, gồm hai việc: tăng quỹ dự phòng lên sáu tháng chi tiêu và giảm nợ thẻ tín dụng. Mã khuyến nghị là R-20a49f0a.",
+    "timing": {
+     "start": 29,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       1030,
+       1361
+      ]
+     ],
+     "tools": 64,
+     "first_text": 1174,
+     "total": 1515
+    },
+    "citations": [
+     {
+      "label": "Duyệt đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329863.701635,
+    "audit_seq": 660,
+    "session": {
+     "id": "4704fea289284e6e",
+     "title": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.5571893868036568,
+   "first_event": 0.10456265090033412,
+   "usage": {
+    "cost": 0.001878,
+    "input": 17385,
+    "output": 279,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SvWjPe6FEDiXDfoVfx14aS",
+     "tool": "khuyen_nghi",
+     "label": "Khuyến nghị",
+     "nodes": [],
+     "doing": "Đang chuẩn bị khuyến nghị để bạn xác nhận",
+     "done": "Đã xử lý khuyến nghị",
+     "failed": "Không thực hiện được: chuẩn bị khuyến nghị để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SvWjPe6FEDiXDfoVfx14aS",
+     "tool": "khuyen_nghi",
+     "ok": true,
+     "ms": 64,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 1,
+    "reviews_pending": 0,
+    "sql": [
+     "approved"
+    ]
+   }
+  },
+  {
+   "say": "Có chuyên gia nào phải duyệt khuyến nghị này không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9021,
+     "output_tokens": 178,
+     "requests": 1,
+     "cost_usd": 0.000991,
+     "tools_cost_usd": null
+    },
+    "turn_id": "050490bf6f73499cb994a0f590e47577",
+    "conversation_id": "4704fea289284e6e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không có thông tin về quy trình duyệt nội bộ cho khuyến nghị này. Công cụ gửi khuyến nghị chỉ trả về trạng thái \"đã duyệt\" cho mã R-20a49f0a, không nêu người hay bước duyệt nào khác.\n\nNếu cần kiểm tra, bạn có thể xem trang Duyệt hoặc Hàng chờ để xem trạng thái và người phụ trách. Tôi có thể mở trang đó cho bạn.",
+    "timing": {
+     "start": 27,
+     "calls": [
+      [
+       1165,
+       1960
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1192,
+     "total": 1995
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329865.7768164,
+    "audit_seq": 661,
+    "session": {
+     "id": "4704fea289284e6e",
+     "title": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 2.027962375897914,
+   "first_event": 1.2050031651742756,
+   "usage": {
+    "cost": 0.000991,
+    "input": 9021,
+    "output": 178,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 1,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

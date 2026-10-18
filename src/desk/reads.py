@@ -189,7 +189,7 @@ URGENCY = {3: "Cần gọi ngay", 2: "Cần xử lý", 1: "Nhắc", 0: "Ổn"}
 TASK_URGENCY = {"contact_now": 3, "confirm_goal": 2, "remind": 1}
 
 
-def _book(viewer: Optional[Dict[str, Any]]) -> List[str]:
+def book_of(viewer: Optional[Dict[str, Any]]) -> List[str]:
     """The RM's families, as Hôm nay reads them: the viewer's assigned families (sign-in on), the account's when
     the assistant asks for it, every family with sign-in off; never one the request may not see."""
     from people import auth
@@ -214,7 +214,7 @@ def rm(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     from wealth import fixtures
     from wealth import store as reviews
 
-    book = _book(viewer)
+    book = book_of(viewer)
     today = apply_reads.rm_today(book)
     mine = set(book)
     # every member's family, to keep the queue to the book: from the people table, unchecked — the checked read

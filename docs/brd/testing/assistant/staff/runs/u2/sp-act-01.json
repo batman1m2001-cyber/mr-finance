@@ -1,0 +1,273 @@
+{
+ "id": "sp-act-01",
+ "category": "actions",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "Chuyên gia duyệt",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Duyệt khuyến nghị bảo hiểm C04",
+ "why": "The specialist approves: it waits, then the recommendation reads approved.",
+ "brd": [
+  "BRD-RULE-ROLE-05",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Duyệt khuyến nghị mua bảo hiểm sức khoẻ của gia đình C04.",
+   "expect": {
+    "status": "pending",
+    "pending": "chuyen_gia_duyet",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from reviews where client_id = 'C04' and kind = 'rm_note' order by created desc limit 1",
+      "approved"
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Duyệt khuyến nghị mua bảo hiểm sức khoẻ của gia đình C04.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "text": "2 đề xuất, 2 đang chờ. 1) Mua bảo hiểm sức khoẻ cho gia đình (Đỗ Thị Hạnh, mã R-7d37ad52) — chờ chuyên gia duyệt. 2) Giảm tỷ trọng cổ phiếu ngân hàng (Nguyễn Minh Khoa, mã R-14ce4eb4) — chờ chuyên gia duyệt.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Mua bảo hiểm sức khoẻ cho gia đình",
+         "sub": "Đỗ Thị Hạnh · chờ chuyên gia duyệt",
+         "chip": "R-7d37ad52",
+         "tone": "warn",
+         "focus": "review:R-7d37ad52"
+        },
+        {
+         "title": "Giảm tỷ trọng cổ phiếu ngân hàng",
+         "sub": "Nguyễn Minh Khoa · chờ chuyên gia duyệt",
+         "chip": "R-14ce4eb4",
+         "tone": "warn",
+         "focus": "review:R-14ce4eb4"
+        }
+       ]
+      },
+      "focus": [
+       "review:R-7d37ad52",
+       "review:R-14ce4eb4"
+      ],
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/specialist/duyet"
+      }
+     },
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "text": "Chứng chỉ Tư vấn bảo hiểm nhân thọ (demo) (Bộ Tài chính) hiệu lực đến 2027-06-30. 2 khuyến nghị chờ bạn duyệt, cũ nhất trước: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01, gửi 18/10 20:19); Mua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (R-7d37ad52, gia đình C04, RM rm01, gửi 18/10 20:19). Gia đình được giao cho bạn: C01, C04.",
+      "card": null,
+      "focus": [
+       "queue"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11914,
+     "output_tokens": 220,
+     "requests": 2,
+     "cost_usd": 0.001301,
+     "tools_cost_usd": null
+    },
+    "turn_id": "187be9b3207341f6882d2d6fe01b0d03",
+    "conversation_id": "324e6567e1df43d5",
+    "compacted": false,
+    "status": "ok",
+    "text": "Khuyến nghị mua bảo hiểm sức khoẻ của gia đình C04 (Đỗ Thị Hạnh, mã R-7d37ad52) đang chờ bạn duyệt. Chứng chỉ của bạn còn hiệu lực đến 30/06/2027.\n\nBạn xác nhận duyệt khuyến nghị này chứ?",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       1001,
+       1327
+      ],
+      [
+       1039,
+       1993
+      ]
+     ],
+     "tools": 178,
+     "first_text": 1030,
+     "total": 3503
+    },
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/specialist/duyet"
+     },
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "queue"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hồ sơ của gia đình này thế nào?"
+    ],
+    "answered_at": 1792331905.7535963,
+    "audit_seq": 689,
+    "session": {
+     "id": "324e6567e1df43d5",
+     "title": "Duyệt khuyến nghị mua bảo hiểm sức khoẻ của gia…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.5448834970593452,
+   "first_event": 1.043918157927692,
+   "usage": {
+    "cost": 0.001301,
+    "input": 11914,
+    "output": 220,
+    "requests": 2
+   },
+   "why": [
+    "status ok (want pending)",
+    "no confirmation asked for chuyen_gia_duyet (waits [])"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RvKAXy12rHdbTADh6sx7TL",
+     "tool": "de_xuat",
+     "label": "Hàng chờ đề xuất",
+     "nodes": [
+      "proposals",
+      "queue"
+     ],
+     "doing": "Đang xem hàng chờ đề xuất",
+     "done": "Đã xem hàng chờ đề xuất",
+     "failed": "Không thực hiện được: xem hàng chờ đề xuất"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01P6MM1a8pccuZe4LkbhbTiR",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RvKAXy12rHdbTADh6sx7TL",
+     "tool": "de_xuat",
+     "ok": true,
+     "ms": 89,
+     "focus": [
+      "review:R-7d37ad52",
+      "review:R-14ce4eb4"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01P6MM1a8pccuZe4LkbhbTiR",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 89,
+     "focus": [
+      "queue"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "status": "nothing_to_confirm",
+    "text": "",
+    "steps": []
+   },
+   "seconds": 0.0,
+   "first_event": null,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [
+    "nothing_to_confirm: "
+   ],
+   "events": [],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     "pending_specialist"
+    ]
+   }
+  }
+ ]
+}

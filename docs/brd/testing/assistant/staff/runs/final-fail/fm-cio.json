@@ -1,0 +1,160 @@
+{
+ "id": "fm-cio",
+ "category": "failure_modes",
+ "role": "cio",
+ "as": "cio",
+ "persona": "cio, mô hình không trả lời",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Mô hình không trả lời",
+ "why": "The provider is down: the keyword path answers from the role's tools and says so.",
+ "brd": [
+  "BRD-NFR-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Có gì chờ tôi duyệt?",
+   "expect": {
+    "mode": "fallback",
+    "grounded": false
+   }
+  }
+ ],
+ "server": "fail",
+ "run": [
+  {
+   "say": "Có gì chờ tôi duyệt?",
+   "graph": null,
+   "answer": {
+    "status": "ok",
+    "mode": "fallback",
+    "why": "mô hình lỗi (ModelError)",
+    "seen": "Có gì chờ tôi duyệt?",
+    "text": "2 việc chờ CIO quyết định: Ngưỡng cảnh báo (CF-thresholds-v2, Chờ một CIO khác duyệt); Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ (VW-0003-v1, Chờ CIO duyệt). Dòng chảy: Tin: 583 tin mới (61 liên quan cao). Sự kiện: 3 sự kiện (0 chưa có nhận định). Nhận định: 3 phiên bản (1 chờ CIO duyệt). Lần áp dụng: 2 đang hiệu lực (0 chờ CIO xem lại). Gia đình: 5 gia đình được tính (1 chạm ngưỡng RM xem trước). RM: 1 gia đình RM cần xem trước (trên trang Hôm nay của RM).",
+    "steps": [
+     {
+      "status": "ok",
+      "text": "2 việc chờ CIO quyết định: Ngưỡng cảnh báo (CF-thresholds-v2, Chờ một CIO khác duyệt); Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ (VW-0003-v1, Chờ CIO duyệt). Dòng chảy: Tin: 583 tin mới (61 liên quan cao). Sự kiện: 3 sự kiện (0 chưa có nhận định). Nhận định: 3 phiên bản (1 chờ CIO duyệt). Lần áp dụng: 2 đang hiệu lực (0 chờ CIO xem lại). Gia đình: 5 gia đình được tính (1 chạm ngưỡng RM xem trước). RM: 1 gia đình RM cần xem trước (trên trang Hôm nay của RM).",
+      "tool": "ban_quyet_dinh",
+      "navigate": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/cio"
+      },
+      "focus": [
+       "decide",
+       "stage:news",
+       "stage:views",
+       "stage:families"
+      ],
+      "suggest": [
+       "Phơi nhiễm lớn nhất ở đâu?",
+       "Lần áp dụng nào đang hiệu lực?"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bàn quyết định"
+      ],
+      "card": null
+     }
+    ],
+    "suggest": [
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Lần áp dụng nào đang hiệu lực?"
+    ],
+    "conversation_id": "215fdb425aa5425d",
+    "timing": {
+     "start": 70,
+     "calls": [
+      [
+       null,
+       1834
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1904
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/cio"
+     }
+    ],
+    "sources": [
+     "Bàn quyết định"
+    ],
+    "as_of": null,
+    "focus": [
+     "decide",
+     "stage:news",
+     "stage:views",
+     "stage:families"
+    ],
+    "navigate": null,
+    "answered_at": 1792335095.3144112,
+    "audit_seq": 647,
+    "session": {
+     "id": "215fdb425aa5425d",
+     "title": "Có gì chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.9390616961754858,
+   "first_event": 1.9049070202745497,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "fallback",
+     "tool": "ban_quyet_dinh",
+     "label": "Bàn quyết định",
+     "nodes": [
+      "decide",
+      "stage:views",
+      "stage:runs"
+     ],
+     "doing": "Đang xem việc chờ bạn quyết định",
+     "done": "Đã xem việc chờ bạn quyết định",
+     "failed": "Không thực hiện được: xem việc chờ bạn quyết định"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "fallback",
+     "tool": "ban_quyet_dinh",
+     "ok": true,
+     "ms": 549,
+     "focus": [
+      "decide",
+      "stage:news",
+      "stage:views",
+      "stage:families"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

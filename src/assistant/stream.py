@@ -54,16 +54,17 @@ NODES: Dict[str, List[str]] = {
     "ghi_lien_he": ["contacts"],
     # Admin's operations map; the chain and configuration (Compliance's desk too)
     "van_hanh": ["ops", "alerts", "jobs"],
+    "agent_nen": ["agents", "jobs"],
     "canh_bao_he_thong": ["alerts"],
     "chuoi_nhat_ky": ["chain", "node:chain"],
-    "cau_hinh_cho_duyet": ["config", "node:config"],
+    "cau_hinh_cho_duyet": ["config", "node:config", "controls"],  # Compliance's desk: configuration is a control
     # the Expert's queue and the family's picture beside it
     "ban_chuyen_gia": ["queue"],
     "chuyen_gia_duyet": ["queue"],
     "ho_so_khach": ["evidence"],
     # Compliance's controls: the chain and configuration tools light its lanes too (chain, config)
     "ban_kiem_soat": ["controls", "queue"],
-    "tin_bi_giu": ["held"],
+    "tin_bi_giu": ["held", "queue"],  # Compliance's desk: held news waits in its queue (U3 lit nothing)
 }
 
 

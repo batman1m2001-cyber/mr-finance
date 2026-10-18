@@ -59,6 +59,7 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "do_chinh_xac": ("Đang xem độ chính xác của mô hình", "Đã xem độ chính xác của mô hình"),
     "so_khach_hang": ("Đang xem sổ khách hàng của bạn", "Đã xem sổ khách hàng của bạn"),
     "van_hanh": ("Đang xem tình trạng vận hành", "Đã xem tình trạng vận hành"),
+    "agent_nen": ("Đang xem các agent và việc nền", "Đã xem các agent và việc nền"),
     "ban_kiem_soat": ("Đang xem các chốt kiểm soát", "Đã xem các chốt kiểm soát"),
     "ban_chuyen_gia": ("Đang xem khuyến nghị chờ bạn duyệt", "Đã xem khuyến nghị chờ bạn duyệt"),
     "ho_so_khach": ("Đang xem hồ sơ gia đình", "Đã xem hồ sơ gia đình"),

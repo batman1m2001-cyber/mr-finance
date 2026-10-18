@@ -1,0 +1,402 @@
+{
+ "id": "cio-lim-02",
+ "category": "limits",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO hỏi về agent",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Chạy Agent CIO cho sự kiện mới",
+ "why": "Running Agent CIO is done on Sự kiện & nhận định; the assistant must not pretend to run it.",
+ "brd": [
+  "OWN-AS-03",
+  "FEAT-41"
+ ],
+ "turns": [
+  {
+   "say": "Chạy Agent CIO cho sự kiện mới nhất giúp tôi.",
+   "expect": {
+    "not_says": [
+     "đã chạy",
+     "agent cio đã"
+    ],
+    "no_write": true,
+    "grounded": false,
+    "tool_fails_ok": true
+   }
+  },
+  {
+   "say": "Thế các agent đang chạy nền có những gì, lần chạy gần nhất ra sao?",
+   "expect": {
+    "grounded": false,
+    "tool_fails_ok": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Chạy Agent CIO cho sự kiện mới nhất giúp tôi.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "su_kien",
+      "label": "Sự kiện",
+      "status": "ok",
+      "text": "3 sự kiện, 0 đang đánh dấu khẩn. 1) Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ. 2) Thúc đẩy phát triển thị trường bất động sản lành mạnh, đảm bảo tiến độ các công trình trọng điểm. 3) Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ",
+         "sub": "4 tin",
+         "chip": "EV-2026-0003",
+         "tone": ""
+        },
+        {
+         "title": "Thúc đẩy phát triển thị trường bất động sản lành mạnh, đảm bảo tiến độ các công trình trọng điểm",
+         "sub": "4 tin",
+         "chip": "EV-2026-0002",
+         "tone": ""
+        },
+        {
+         "title": "Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng",
+         "sub": "4 tin",
+         "chip": "EV-2026-0001",
+         "tone": ""
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Sự kiện & nhận định",
+       "route": "#/cio/nhan-dinh"
+      }
+     },
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Sự kiện & nhận định] Danh sách sự kiện (mới nhất trước) với trạng thái nhận định của chúng. Mở một sự kiện để xem tin nguồn (tin bị giữ được đánh dấu) và bảng Agent CIO: chế độ chạy (trực tiếp với hai mô hình, hoặc mô phỏng) và Chạy Agent CIO để soạn nhận định; bên dưới là các phiên bản. [Bàn quyết định] Trang đầu của CIO: dòng chảy từ tin tới gia đình (tin, sự kiện, nhận định, lần áp dụng, gia đình, RM), những việc chờ CIO quyết định, phơi nhiễm theo yếu tố, sự kiện gần đây, mô hình và các agent. Duyệt nhận định làm ở trang Sự kiện & nhận định; cấu hình CIO sở hữu cần một CIO khác duyệt. [Agent chạy nền] Agent CIO chạy khi CIO bấm Chạy Agent CIO trên một sự kiện (vào hàng đợi, mỗi lần một việc); Agent Phản biện kiểm tra nhận định trước khi duyệt; Agent Chính sách tóm tắt văn bản đã xác nhận. Việc nền theo lịch: lấy tin mỗi 10 phút, dữ liệu thị trường theo lịch từng nguồn, quét chính sách 07:00, tổng hợp trí nhớ mỗi 5 phút, lưu giữ 02:30. Trang Agent cho thấy từng agent và việc nền: trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay. Trợ lý đọc được trạng thái này nhưng không chạy agent. [Tỷ lệ đạt thời hạn] Cách tính Tỷ lệ đạt thời hạn: Tỷ lệ = số lần trong hạn ÷ số lần đo trong tháng: từ tin sớm nhất đến lần áp dụng có hiệu lực cho RM ≤ mục tiêu giờ (sự kiện CIO đánh dấu khẩn: ≤ 30 phút); tin → hộp tin và lần chạy agent CIO ≤ mục tiêu phút.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Sự kiện & nhận định",
+       "Hướng dẫn sử dụng · Bàn quyết định",
+       "Hướng dẫn sử dụng · Agent chạy nền",
+       "Cách tính · Tỷ lệ đạt thời hạn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Sự kiện & nhận định",
+       "route": "#/cio/nhan-dinh"
+      }
+     },
+     {
+      "tool": "mo_trang",
+      "label": "Mở trang",
+      "status": "ok",
+      "text": "Mở trang Sự kiện & nhận định.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": "#/cio/nhan-dinh",
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 22110,
+     "output_tokens": 686,
+     "requests": 3,
+     "cost_usd": 0.002554,
+     "tools_cost_usd": null
+    },
+    "turn_id": "82292368d7b4418d9ffe9736b1b34748",
+    "conversation_id": "31db52129ed94a32",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa thể tự chạy Agent CIO, vì công cụ của tôi chỉ đọc được trạng thái agent chứ không chạy được agent.\n\nSự kiện mới nhất trong danh sách là **EV-2026-0003**: \"Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ\". Danh sách không ghi thời điểm, nên tôi xác định theo thứ tự mã.\n\nĐể chạy:\n1. Tôi đã mở trang **Sự kiện & nhận định**.\n2. Mở sự kiện EV-2026-0003.\n3. Trong bảng **Agent CIO**, chọn chế độ chạy (trực tiếp hoặc mô phỏng) rồi bấm **Chạy Agent CIO**.\n\nSau khi chạy, nhận định sẽ chờ bạn duyệt ở cùng trang.",
+    "timing": {
+     "start": 24,
+     "calls": [
+      [
+       1121,
+       1398
+      ],
+      [
+       1229,
+       2249
+      ],
+      [
+       1191,
+       2450
+      ]
+     ],
+     "tools": 3120,
+     "first_text": 1145,
+     "total": 8872
+    },
+    "citations": [
+     {
+      "label": "Sự kiện & nhận định",
+      "route": "#/cio/nhan-dinh"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Sự kiện & nhận định",
+     "Hướng dẫn sử dụng · Bàn quyết định",
+     "Hướng dẫn sử dụng · Agent chạy nền",
+     "Cách tính · Tỷ lệ đạt thời hạn"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": "#/cio/nhan-dinh",
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792332973.6449163,
+    "audit_seq": 658,
+    "session": {
+     "id": "31db52129ed94a32",
+     "title": "Chạy Agent CIO cho sự kiện mới nhất giúp tôi.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 8.909597123041749,
+   "first_event": 1.1558509222231805,
+   "usage": {
+    "cost": 0.002554,
+    "input": 22110,
+    "output": 686,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01R4h27Y9Hc9h2pyrgsys1j8",
+     "tool": "su_kien",
+     "label": "Sự kiện",
+     "nodes": [
+      "stage:events",
+      "events"
+     ],
+     "doing": "Đang xem các sự kiện",
+     "done": "Đã xem các sự kiện",
+     "failed": "Không thực hiện được: xem các sự kiện"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01R4h27Y9Hc9h2pyrgsys1j8",
+     "tool": "su_kien",
+     "ok": true,
+     "ms": 17,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01TTedsnsxiE1rerqU7Nu6VG",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": [],
+     "doing": "Đang tra hướng dẫn sử dụng",
+     "done": "Đã tra hướng dẫn",
+     "failed": "Không thực hiện được: tra hướng dẫn sử dụng"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012RKFXK9wAsTLZyNxvDe8z7",
+     "tool": "mo_trang",
+     "label": "Mở trang",
+     "nodes": [],
+     "doing": "Đang tìm trang cần mở",
+     "done": "Đã tìm trang",
+     "failed": "Không thực hiện được: tìm trang cần mở"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012RKFXK9wAsTLZyNxvDe8z7",
+     "tool": "mo_trang",
+     "ok": true,
+     "ms": 456,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01TTedsnsxiE1rerqU7Nu6VG",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 2647,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Thế các agent đang chạy nền có những gì, lần chạy gần nhất ra sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "agent_nen",
+      "label": "Agent và việc nền",
+      "status": "ok",
+      "text": "Không agent hay việc nền nào lỗi. Tin tức: chạy xong, lần gần nhất 18/10 18:27, hôm nay 7 lần, 0 lỗi; Thị trường: chạy xong, lần gần nhất 18/10 15:45, hôm nay 1 lần, 0 lỗi; Hàng đợi agent: chưa chạy, hôm nay 0 lần, 0 lỗi; Agent CIO: chạy xong, lần gần nhất 15/10 22:58, hôm nay 0 lần, 0 lỗi; Agent Phản biện: chạy xong, lần gần nhất 15/10 22:59, hôm nay 0 lần, 0 lỗi; Agent Chính sách: chạy xong, lần gần nhất 16/10 14:55, hôm nay 0 lần, 0 lỗi; Kiểm tra theo dõi: chưa chạy, hôm nay 0 lần, 0 lỗi; Quét chính sách: chưa chạy, hôm nay 0 lần, 0 lỗi; Tổng hợp trí nhớ: chạy xong, lần gần nhất 18/10 20:14, hôm nay 16 lần, 0 lỗi; Lưu giữ: chưa chạy, hôm nay 0 lần, 0 lỗi. Agent CIO chỉ chạy khi CIO bấm Chạy Agent CIO trên một sự kiện (trang Sự kiện & nhận định); trợ lý đọc trạng thái, không chạy agent.",
+      "card": null,
+      "focus": [
+       "agents"
+      ],
+      "as_of": "18/10 21:16",
+      "sources": [
+       "Bản đồ agent (trang Agent)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Agent",
+       "route": "#/cio/agent"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18783,
+     "output_tokens": 438,
+     "requests": 2,
+     "cost_usd": 0.002097,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9eb1e263b26d465181f9d97a0820dbe7",
+    "conversation_id": "31db52129ed94a32",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện không có agent nào lỗi hôm nay. Trạng thái lúc 18/10 21:16, theo trang Agent:\n\n**Đã chạy xong:**\n- **Tin tức:** lần gần nhất 18/10 18:27, hôm nay 7 lần.\n- **Thị trường:** lần gần nhất 18/10 15:45, hôm nay 1 lần.\n- **Tổng hợp trí nhớ:** lần gần nhất 18/10 20:14, hôm nay 16 lần.\n- **Agent CIO:** lần gần nhất 15/10 22:58, hôm nay chưa chạy.\n- **Agent Phản biện:** lần gần nhất 15/10 22:59, hôm nay chưa chạy.\n- **Agent Chính sách:** lần gần nhất 16/10 14:55, hôm nay chưa chạy.\n\n**Chưa chạy:** Hàng đợi agent, Kiểm tra theo dõi, Quét chính sách, Lưu giữ.\n\nAgent CIO chưa chạy hôm nay. Lần gần nhất là 15/10, nên sự kiện EV-2026-0003 chưa có nhận định mới.",
+    "timing": {
+     "start": 32,
+     "calls": [
+      [
+       1258,
+       1258
+      ],
+      [
+       1085,
+       2415
+      ]
+     ],
+     "tools": 82,
+     "first_text": 2501,
+     "total": 3845
+    },
+    "citations": [
+     {
+      "label": "Agent",
+      "route": "#/cio/agent"
+     }
+    ],
+    "sources": [
+     "Bản đồ agent (trang Agent)"
+    ],
+    "as_of": "18/10 21:16",
+    "focus": [
+     "agents"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có việc nền nào lỗi không?",
+     "Có gì chờ tôi duyệt?"
+    ],
+    "answered_at": 1792332977.553254,
+    "audit_seq": 659,
+    "session": {
+     "id": "31db52129ed94a32",
+     "title": "Chạy Agent CIO cho sự kiện mới nhất giúp tôi.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.8808422461152077,
+   "first_event": 1.3824974889867008,
+   "usage": {
+    "cost": 0.002097,
+    "input": 18783,
+    "output": 438,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_019AAmp2w8Z3poZPEtAMw8Pg",
+     "tool": "agent_nen",
+     "label": "Agent và việc nền",
+     "nodes": [
+      "agents",
+      "jobs"
+     ],
+     "doing": "Đang xem các agent và việc nền",
+     "done": "Đã xem các agent và việc nền",
+     "failed": "Không thực hiện được: xem các agent và việc nền"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_019AAmp2w8Z3poZPEtAMw8Pg",
+     "tool": "agent_nen",
+     "ok": true,
+     "ms": 82,
+     "focus": [
+      "agents"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

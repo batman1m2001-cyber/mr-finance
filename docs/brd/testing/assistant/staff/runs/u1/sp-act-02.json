@@ -1,0 +1,519 @@
+{
+ "id": "sp-act-02",
+ "category": "separation",
+ "role": "specialist",
+ "as": "sp_global",
+ "persona": "Chuyên gia từ chối (sp_global)",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Từ chối mà không nêu lý do",
+ "why": "A rejection needs a reason: asked for first, then given; read back rejected.",
+ "brd": [
+  "BRD-RULE-ROLE-05",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Từ chối khuyến nghị của gia đình C03.",
+   "expect": {
+    "grounded": false,
+    "says": "lý do",
+    "tool_fails_ok": true
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from reviews where client_id = 'C03' and kind = 'rm_note' order by created desc limit 1",
+      "pending_specialist"
+     ]
+    ]
+   }
+  },
+  {
+   "say": "Lý do: khách sắp mua nhà, hoãn cổ phiếu là đúng nhưng cần thêm kế hoạch trả nợ trước khi duyệt.",
+   "expect": {
+    "status": "pending",
+    "pending": "chuyen_gia_duyet",
+    "grounded": false,
+    "tool_fails_ok": true
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false,
+    "tool_fails_ok": true
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from reviews where client_id = 'C03' and kind = 'rm_note' order by created desc limit 1",
+      "rejected"
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Từ chối khuyến nghị của gia đình C03.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "text": "Chứng chỉ CFA (demo) (CFA Institute) hiệu lực đến 2027-12-31. 3 khuyến nghị chờ bạn duyệt: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01); Tăng quỹ dự phòng trước khi mua nhà cho Phạm Gia Huy (R-b2b1ff35, gia đình C03, RM rm03); Học phí cho con (trong nước / du học) — Tích lũy đều cho Nguyễn Minh Khoa (R-c3ca1b86, gia đình C01, RM rm01).",
+      "card": null,
+      "focus": [
+       "queue"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     },
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "text": "3 đề xuất, 3 đang chờ. 1) Học phí cho con (trong nước / du học) — Tích lũy đều — chờ chuyên gia duyệt. 2) Tăng quỹ dự phòng trước khi mua nhà — chờ chuyên gia duyệt. 3) Giảm tỷ trọng cổ phiếu ngân hàng — chờ chuyên gia duyệt.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · chờ chuyên gia duyệt",
+         "chip": "R-c3ca1b86",
+         "tone": "warn",
+         "focus": "review:R-c3ca1b86"
+        },
+        {
+         "title": "Tăng quỹ dự phòng trước khi mua nhà",
+         "sub": "Phạm Gia Huy · chờ chuyên gia duyệt",
+         "chip": "R-b2b1ff35",
+         "tone": "warn",
+         "focus": "review:R-b2b1ff35"
+        },
+        {
+         "title": "Giảm tỷ trọng cổ phiếu ngân hàng",
+         "sub": "Nguyễn Minh Khoa · chờ chuyên gia duyệt",
+         "chip": "R-14ce4eb4",
+         "tone": "warn",
+         "focus": "review:R-14ce4eb4"
+        }
+       ]
+      },
+      "focus": [
+       "review:R-c3ca1b86",
+       "review:R-b2b1ff35",
+       "review:R-14ce4eb4"
+      ],
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/specialist/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11248,
+     "output_tokens": 240,
+     "requests": 2,
+     "cost_usd": 0.001245,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ae29cb30c33c438b92788355acf46d5c",
+    "conversation_id": "18b34fe8337b4f40",
+    "compacted": false,
+    "status": "ok",
+    "text": "Gia đình C03 có một khuyến nghị đang chờ: \"Tăng quỹ dự phòng trước khi mua nhà\" cho Phạm Gia Huy (mã R-b2b1ff35).\n\nĐể từ chối, bạn cho tôi lý do. Hệ thống yêu cầu ghi chú khi từ chối.",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       1011,
+       1508
+      ],
+      [
+       1022,
+       1432
+      ]
+     ],
+     "tools": 179,
+     "first_text": 1037,
+     "total": 3107
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     },
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/specialist/duyet"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "review:R-c3ca1b86",
+     "review:R-b2b1ff35",
+     "review:R-14ce4eb4"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792329997.308706,
+    "audit_seq": 722,
+    "session": {
+     "id": "18b34fe8337b4f40",
+     "title": "Từ chối khuyến nghị của gia đình C03.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.1468240870162845,
+   "first_event": 1.0533277280628681,
+   "usage": {
+    "cost": 0.001245,
+    "input": 11248,
+    "output": 240,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01GhnybGt4qxVsfsxMhnyrP6",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01RYKSAWmoihgr7hHNvv4eFc",
+     "tool": "de_xuat",
+     "label": "Hàng chờ đề xuất",
+     "nodes": [
+      "proposals",
+      "queue"
+     ],
+     "doing": "Đang xem hàng chờ đề xuất",
+     "done": "Đã xem hàng chờ đề xuất",
+     "failed": "Không thực hiện được: xem hàng chờ đề xuất"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01GhnybGt4qxVsfsxMhnyrP6",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 89,
+     "focus": [
+      "queue"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01RYKSAWmoihgr7hHNvv4eFc",
+     "tool": "de_xuat",
+     "ok": true,
+     "ms": 90,
+     "focus": [
+      "review:R-c3ca1b86",
+      "review:R-b2b1ff35",
+      "review:R-14ce4eb4"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     "pending_specialist"
+    ]
+   }
+  },
+  {
+   "say": "Lý do: khách sắp mua nhà, hoãn cổ phiếu là đúng nhưng cần thêm kế hoạch trả nợ trước khi duyệt.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     },
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/specialist/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6239,
+     "output_tokens": 165,
+     "requests": 1,
+     "cost_usd": 0.000706,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9f171123de5b406eb0d6f9b2bf2b318b",
+    "conversation_id": "18b34fe8337b4f40",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "acaea4c241329a0713fd4264c231290c",
+      "tool": "chuyen_gia_duyet",
+      "summary": "Từ chối khuyến nghị “Tăng quỹ dự phòng trước khi mua nhà” của Phạm Gia Huy?"
+     }
+    ],
+    "text": "Từ chối khuyến nghị “Tăng quỹ dự phòng trước khi mua nhà” của Phạm Gia Huy?",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       null,
+       1534
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1560
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     },
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/specialist/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792329998.946622,
+    "audit_seq": 723,
+    "session": {
+     "id": "18b34fe8337b4f40",
+     "title": "Từ chối khuyến nghị của gia đình C03.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.6003254251554608,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000706,
+    "input": 6239,
+    "output": 165,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01YJATPVjtoGfRXhbEcGSpif",
+     "tool": "chuyen_gia_duyet",
+     "label": "Chuyên gia duyệt"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "chuyen_gia_duyet",
+      "label": "Chuyên gia duyệt",
+      "status": "ok",
+      "text": "Đã ghi: đã từ chối “Tăng quỹ dự phòng trước khi mua nhà”.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/specialist/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12787,
+     "output_tokens": 307,
+     "requests": 2,
+     "cost_usd": 0.001432,
+     "tools_cost_usd": null
+    },
+    "turn_id": "9f171123de5b406eb0d6f9b2bf2b318b",
+    "conversation_id": "18b34fe8337b4f40",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã từ chối khuyến nghị \"Tăng quỹ dự phòng trước khi mua nhà\" (R-b2b1ff35) của Phạm Gia Huy, gia đình C03. Ghi chú của bạn đã được lưu: khách sắp mua nhà, hoãn cổ phiếu là đúng nhưng cần thêm kế hoạch trả nợ trước khi duyệt.",
+    "timing": {
+     "start": 27,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       977,
+       1398
+      ]
+     ],
+     "tools": 42,
+     "first_text": 1083,
+     "total": 1519
+    },
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/specialist/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792330000.5371516,
+    "audit_seq": 725,
+    "session": {
+     "id": "18b34fe8337b4f40",
+     "title": "Từ chối khuyến nghị của gia đình C03.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 1.557976871728897,
+   "first_event": 0.07838403480127454,
+   "usage": {
+    "cost": 0.001432,
+    "input": 12787,
+    "output": 307,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01YJATPVjtoGfRXhbEcGSpif",
+     "tool": "chuyen_gia_duyet",
+     "label": "Chuyên gia duyệt",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang chuẩn bị duyệt khuyến nghị để bạn xác nhận",
+     "done": "Đã xử lý khuyến nghị",
+     "failed": "Không thực hiện được: chuẩn bị duyệt khuyến nghị để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01YJATPVjtoGfRXhbEcGSpif",
+     "tool": "chuyen_gia_duyet",
+     "ok": true,
+     "ms": 42,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     "rejected"
+    ]
+   }
+  }
+ ]
+}

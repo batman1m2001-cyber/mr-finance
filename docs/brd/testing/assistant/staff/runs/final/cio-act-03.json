@@ -1,0 +1,388 @@
+{
+ "id": "cio-act-03",
+ "category": "actions",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO dọn chuông",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Cảnh báo nguồn tin: xem rồi đánh dấu đã xem",
+ "why": "The seeded alert (a news source down) is named, acknowledged with a note, read back acked.",
+ "brd": [
+  "BRD-FR-703",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Có cảnh báo hệ thống nào không?",
+   "expect": {
+    "tools_any": [
+     "canh_bao_he_thong"
+    ],
+    "says": "CafeF|nguồn tin"
+   }
+  },
+  {
+   "say": "Đánh dấu đã xem cảnh báo đó, ghi chú là đã báo bộ phận vận hành.",
+   "expect": {
+    "status": "pending",
+    "pending": "da_xem_canh_bao",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from alerts where key = 'cafef_rss'",
+      "acked"
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có cảnh báo hệ thống nào không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "canh_bao_he_thong",
+      "label": "Cảnh báo hệ thống",
+      "status": "ok",
+      "text": "1 cảnh báo hệ thống, 1 chưa ai xem. 1) Nguồn tin không lấy được: Nguồn tin CafeF không trả lời.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Nguồn tin CafeF không trả lời",
+         "sub": "Nguồn tin không lấy được",
+         "chip": "Chưa xem",
+         "tone": "bad"
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13598,
+     "output_tokens": 216,
+     "requests": 2,
+     "cost_usd": 0.001468,
+     "tools_cost_usd": null
+    },
+    "turn_id": "57556601c87d4b23a67a9b8685e14d45",
+    "conversation_id": "6b5115f91c8a449d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Có 1 cảnh báo hệ thống, chưa ai xem: **nguồn tin CafeF không trả lời** (mã AL-000007).\n\nNghĩa là hệ thống chưa lấy được tin từ CafeF, nên tin từ nguồn này có thể chưa được cập nhật. Bạn muốn tôi đánh dấu đã xem cảnh báo này, hay thử lấy tin mới từ các nguồn khác?",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       1042,
+       1365
+      ],
+      [
+       979,
+       1627
+      ]
+     ],
+     "tools": 4,
+     "first_text": 1070,
+     "total": 3080
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792334929.2571726,
+    "audit_seq": 696,
+    "session": {
+     "id": "6b5115f91c8a449d",
+     "title": "Có cảnh báo hệ thống nào không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.119537128135562,
+   "first_event": 1.0816572569310665,
+   "usage": {
+    "cost": 0.001468,
+    "input": 13598,
+    "output": 216,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01CnoET6kgx7yqnELsk4EE38",
+     "tool": "canh_bao_he_thong",
+     "label": "Cảnh báo hệ thống",
+     "nodes": [
+      "alerts"
+     ],
+     "doing": "Đang xem cảnh báo hệ thống",
+     "done": "Đã xem cảnh báo hệ thống",
+     "failed": "Không thực hiện được: xem cảnh báo hệ thống"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01CnoET6kgx7yqnELsk4EE38",
+     "tool": "canh_bao_he_thong",
+     "ok": true,
+     "ms": 4,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Đánh dấu đã xem cảnh báo đó, ghi chú là đã báo bộ phận vận hành.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "canh_bao_he_thong",
+      "label": "Cảnh báo hệ thống",
+      "status": "ok"
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7098,
+     "output_tokens": 95,
+     "requests": 1,
+     "cost_usd": 0.000757,
+     "tools_cost_usd": null
+    },
+    "turn_id": "278cdf5f6f9040f5be2f7f0cff7d6437",
+    "conversation_id": "6b5115f91c8a449d",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "58813cadea7c35ba5fe27020c7af6dbb",
+      "tool": "da_xem_canh_bao",
+      "summary": "Đánh dấu đã xem cảnh báo “Nguồn tin CafeF không trả lời”?"
+     }
+    ],
+    "text": "Đánh dấu đã xem cảnh báo “Nguồn tin CafeF không trả lời”?",
+    "timing": {
+     "start": 29,
+     "calls": [
+      [
+       null,
+       1642
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1671
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792334930.99512,
+    "audit_seq": 697,
+    "session": {
+     "id": "6b5115f91c8a449d",
+     "title": "Có cảnh báo hệ thống nào không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.704782190732658,
+   "first_event": null,
+   "usage": {
+    "cost": 0.000757,
+    "input": 7098,
+    "output": 95,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01Lqx8DUPLeh9bw25GvbtZGJ",
+     "tool": "da_xem_canh_bao",
+     "label": "Đã xem cảnh báo"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "da_xem_canh_bao",
+      "label": "Đã xem cảnh báo",
+      "status": "ok",
+      "text": "Đã đánh dấu đã xem cảnh báo AL-000007.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14395,
+     "output_tokens": 159,
+     "requests": 2,
+     "cost_usd": 0.001519,
+     "tools_cost_usd": null
+    },
+    "turn_id": "278cdf5f6f9040f5be2f7f0cff7d6437",
+    "conversation_id": "6b5115f91c8a449d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã đánh dấu xem cảnh báo AL-000007 (nguồn tin CafeF không trả lời), với ghi chú \"Đã báo bộ phận vận hành\".",
+    "timing": {
+     "start": 53,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       1003,
+       1223
+      ]
+     ],
+     "tools": 37,
+     "first_text": 1144,
+     "total": 1376
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792334932.4306982,
+    "audit_seq": 699,
+    "session": {
+     "id": "6b5115f91c8a449d",
+     "title": "Có cảnh báo hệ thống nào không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 1.4065650906413794,
+   "first_event": 0.09701179387047887,
+   "usage": {
+    "cost": 0.001519,
+    "input": 14395,
+    "output": 159,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Lqx8DUPLeh9bw25GvbtZGJ",
+     "tool": "da_xem_canh_bao",
+     "label": "Đã xem cảnh báo",
+     "nodes": [],
+     "doing": "Đang chuẩn bị đánh dấu cảnh báo để bạn xác nhận",
+     "done": "Đã xử lý cảnh báo",
+     "failed": "Không thực hiện được: chuẩn bị đánh dấu cảnh báo để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Lqx8DUPLeh9bw25GvbtZGJ",
+     "tool": "da_xem_canh_bao",
+     "ok": true,
+     "ms": 37,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     "acked"
+    ]
+   }
+  }
+ ]
+}

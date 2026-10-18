@@ -1,0 +1,303 @@
+{
+ "id": "rm-desk-01",
+ "category": "desk",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM đầu ngày (rm01)",
+ "client_id": null,
+ "route": "#/rm",
+ "title": "Sổ khách hàng: ai cần gọi trước",
+ "why": "The RM opens the day on the book: the desk tool's families, who needs the RM and why; then a follow-up on the first one.",
+ "brd": [
+  "OWN-MR-02",
+  "FEAT-41",
+  "BRD-FR-602"
+ ],
+ "turns": [
+  {
+   "say": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+   "expect": {
+    "tools_any": [
+     "so_khach_hang",
+     "hom_nay"
+    ],
+    "says": "C01|Khoa"
+   }
+  },
+  {
+   "say": "Gia đình nào nên gọi trước, vì sao?",
+   "expect": {
+    "says": "vì|do|nên"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "so_khach_hang",
+      "label": "Sổ khách hàng",
+      "status": "ok",
+      "text": "Sổ của bạn có 3 gia đình: Nguyễn Minh Khoa (C01), Vũ Ngọc Anh (C05), Đỗ Thị Hạnh (C04); gia đình khác không thuộc sổ của bạn. 1 cần bạn sớm: Nguyễn Minh Khoa — cần xử lý: 1 đề xuất chờ bạn duyệt. 1 đề xuất chờ duyệt: Học phí cho con (trong nước / du học) — Tích lũy đều (Nguyễn Minh Khoa), 0 việc theo mục tiêu. Chưa ghi liên hệ nào.",
+      "card": null,
+      "focus": [
+       "book",
+       "family:C01"
+      ],
+      "as_of": null,
+      "sources": [
+       "Sổ khách hàng",
+       "Hôm nay",
+       "Duyệt đề xuất"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/rm"
+      }
+     },
+     {
+      "tool": "hom_nay",
+      "label": "Hôm nay",
+      "status": "ok",
+      "text": "Không có gia đình nào chạm ngưỡng xem trước.",
+      "card": {
+       "kind": "list",
+       "items": []
+      },
+      "focus": [],
+      "as_of": null,
+      "sources": [
+       "Hậu kiểm của các lần áp dụng đang hiệu lực"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hôm nay",
+       "route": "#/rm/hom-nay"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18722,
+     "output_tokens": 399,
+     "requests": 2,
+     "cost_usd": 0.002072,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c15d52bfe97647a9a5f2f4a3e4f25831",
+    "conversation_id": "2e05721f68d047a6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Sáng nay sổ của bạn có 3 gia đình: Nguyễn Minh Khoa (C01), Vũ Ngọc Anh (C05) và Đỗ Thị Hạnh (C04).\n\n- **Cần xử lý sớm:** Nguyễn Minh Khoa có 1 đề xuất đang chờ bạn duyệt: \"Học phí cho con (trong nước / du học)\" thuộc mục tiêu Tích lũy đều.\n- **Trang Hôm nay:** không gia đình nào chạm ngưỡng xem trước.\n- **Mục tiêu:** không có việc theo mục tiêu cần làm.\n- **Liên hệ:** chưa ghi nhận liên hệ nào gần đây.\n\nBạn muốn tôi mở trang Duyệt để xem chi tiết đề xuất của Nguyễn Minh Khoa không?",
+    "timing": {
+     "start": 230,
+     "calls": [
+      [
+       1625,
+       1939
+      ],
+      [
+       1129,
+       2207
+      ]
+     ],
+     "tools": 542,
+     "first_text": 1855,
+     "total": 4706
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/rm"
+     },
+     {
+      "label": "Hôm nay",
+      "route": "#/rm/hom-nay"
+     }
+    ],
+    "sources": [
+     "Sổ khách hàng",
+     "Hôm nay",
+     "Duyệt đề xuất",
+     "Hậu kiểm của các lần áp dụng đang hiệu lực"
+    ],
+    "as_of": null,
+    "focus": [
+     "book",
+     "family:C01"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792334838.7927098,
+    "audit_seq": 645,
+    "session": {
+     "id": "2e05721f68d047a6",
+     "title": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.7575535690411925,
+   "first_event": 1.8809562819078565,
+   "usage": {
+    "cost": 0.002072,
+    "input": 18722,
+    "output": 399,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JtKT7PvRXijdZ35u6okPLP",
+     "tool": "so_khach_hang",
+     "label": "Sổ khách hàng",
+     "nodes": [
+      "book",
+      "calls",
+      "proposals"
+     ],
+     "doing": "Đang xem sổ khách hàng của bạn",
+     "done": "Đã xem sổ khách hàng của bạn",
+     "failed": "Không thực hiện được: xem sổ khách hàng của bạn"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01WLhGLNvVG7aPvbdFyKAtgk",
+     "tool": "hom_nay",
+     "label": "Hôm nay",
+     "nodes": [
+      "calls",
+      "tasks"
+     ],
+     "doing": "Đang xem các gia đình cần xem hôm nay",
+     "done": "Đã xem danh sách hôm nay",
+     "failed": "Không thực hiện được: xem các gia đình cần xem hôm nay"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JtKT7PvRXijdZ35u6okPLP",
+     "tool": "so_khach_hang",
+     "ok": true,
+     "ms": 271,
+     "focus": [
+      "book",
+      "family:C01"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01WLhGLNvVG7aPvbdFyKAtgk",
+     "tool": "hom_nay",
+     "ok": true,
+     "ms": 271,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Gia đình nào nên gọi trước, vì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9979,
+     "output_tokens": 244,
+     "requests": 1,
+     "cost_usd": 0.00112,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1717d4e199e44fe8b93a00bd56c6b73b",
+    "conversation_id": "2e05721f68d047a6",
+    "compacted": false,
+    "status": "ok",
+    "text": "Gia đình nên gọi trước là **Nguyễn Minh Khoa (C01)**. Lý do: đây là gia đình duy nhất được hệ thống đánh dấu cần bạn sớm, và đang có 1 đề xuất chờ bạn duyệt về mục tiêu Học phí cho con (trong nước / du học) thuộc Tích lũy đều.\n\nVũ Ngọc Anh (C05) và Đỗ Thị Hạnh (C04) hiện không có việc nào cần xử lý ngay. Nếu bạn muốn, tôi có thể mở trang Duyệt để bạn xem đề xuất của Nguyễn Minh Khoa trước khi gọi.",
+    "timing": {
+     "start": 30,
+     "calls": [
+      [
+       1044,
+       1939
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1074,
+     "total": 1986
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792334840.853125,
+    "audit_seq": 646,
+    "session": {
+     "id": "2e05721f68d047a6",
+     "title": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.0279412460513413,
+   "first_event": 1.0897717918269336,
+   "usage": {
+    "cost": 0.00112,
+    "input": 9979,
+    "output": 244,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

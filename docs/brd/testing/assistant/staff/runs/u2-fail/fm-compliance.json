@@ -1,0 +1,168 @@
+{
+ "id": "fm-compliance",
+ "category": "failure_modes",
+ "role": "compliance",
+ "as": "compliance",
+ "persona": "compliance, mô hình không trả lời",
+ "client_id": null,
+ "route": "#/compliance",
+ "title": "Mô hình không trả lời",
+ "why": "The provider is down: the keyword path answers from the role's tools and says so.",
+ "brd": [
+  "BRD-NFR-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Có gì chờ Tuân thủ?",
+   "expect": {
+    "mode": "fallback",
+    "grounded": false
+   }
+  }
+ ],
+ "server": "fail",
+ "run": [
+  {
+   "say": "Có gì chờ Tuân thủ?",
+   "graph": null,
+   "answer": {
+    "status": "ok",
+    "mode": "fallback",
+    "why": "mô hình lỗi (ModelError)",
+    "seen": "Có gì chờ Tuân thủ?",
+    "text": "6 việc chờ Tuân thủ, cũ nhất trước: Hòa Bình Energy công bố kế hoạch phát hành thêm cổ phiếu (Tin bị giữ, NW-000595, từ 18/10 20:09); Sao Mai Land chậm trả lãi trái phiếu đợt hai (Tin bị giữ, NW-000594, từ 18/10 20:09); Quan điểm quý IV: ưu tiên trái phiếu ngắn hạn (Nghiên cứu, RS-0001, từ 18/10 20:19); Bản tin thị trường tuần 42 (Bản tin, NL-0001, từ 18/10 20:19); Dự thảo Thông tư về tư vấn đầu tư cá nhân (demo) (Chính sách, PD-0002, từ 18/10 20:19). Từng chốt: Tin bị giữ: 2 đang giữ, 0 đã cho phép; Nghiên cứu: 1 chờ phát hành, 0 đã phát hành, 0 từ chối; Bản tin: 1 chờ duyệt, 0 đã duyệt, 0 bị trả lại; Chính sách: 1 chờ xác nhận, 1 đã xác nhận, 1 đã tóm tắt; Cấu hình: 1 chờ duyệt. Chuỗi nhật ký nguyên vẹn (650 dòng). Quyết định ở trang của từng chốt.",
+    "steps": [
+     {
+      "status": "ok",
+      "text": "6 việc chờ Tuân thủ, cũ nhất trước: Hòa Bình Energy công bố kế hoạch phát hành thêm cổ phiếu (Tin bị giữ, NW-000595, từ 18/10 20:09); Sao Mai Land chậm trả lãi trái phiếu đợt hai (Tin bị giữ, NW-000594, từ 18/10 20:09); Quan điểm quý IV: ưu tiên trái phiếu ngắn hạn (Nghiên cứu, RS-0001, từ 18/10 20:19); Bản tin thị trường tuần 42 (Bản tin, NL-0001, từ 18/10 20:19); Dự thảo Thông tư về tư vấn đầu tư cá nhân (demo) (Chính sách, PD-0002, từ 18/10 20:19). Từng chốt: Tin bị giữ: 2 đang giữ, 0 đã cho phép; Nghiên cứu: 1 chờ phát hành, 0 đã phát hành, 0 từ chối; Bản tin: 1 chờ duyệt, 0 đã duyệt, 0 bị trả lại; Chính sách: 1 chờ xác nhận, 1 đã xác nhận, 1 đã tóm tắt; Cấu hình: 1 chờ duyệt. Chuỗi nhật ký nguyên vẹn (650 dòng). Quyết định ở trang của từng chốt.",
+      "tool": "ban_kiem_soat",
+      "navigate": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/compliance"
+      },
+      "focus": [
+       "controls",
+       "queue",
+       "held",
+       "research",
+       "letters",
+       "policy",
+       "config"
+      ],
+      "suggest": [
+       "Chuỗi nhật ký còn nguyên không?",
+       "Cấu hình nào chờ duyệt?"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bàn kiểm soát"
+      ],
+      "card": null
+     }
+    ],
+    "suggest": [
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "conversation_id": "8de55a2091ed4dd9",
+    "timing": {
+     "start": 75,
+     "calls": [
+      [
+       null,
+       1621
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1697
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/compliance"
+     }
+    ],
+    "sources": [
+     "Bàn kiểm soát"
+    ],
+    "as_of": null,
+    "focus": [
+     "controls",
+     "queue",
+     "held",
+     "research",
+     "letters",
+     "policy",
+     "config"
+    ],
+    "navigate": null,
+    "answered_at": 1792331953.5301602,
+    "audit_seq": 651,
+    "session": {
+     "id": "8de55a2091ed4dd9",
+     "title": "Có gì chờ Tuân thủ?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.7325383820571005,
+   "first_event": 1.6973349670879543,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "fallback",
+     "tool": "ban_kiem_soat",
+     "label": "Bàn kiểm soát",
+     "nodes": [
+      "controls",
+      "queue"
+     ],
+     "doing": "Đang xem các chốt kiểm soát",
+     "done": "Đã xem các chốt kiểm soát",
+     "failed": "Không thực hiện được: xem các chốt kiểm soát"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "fallback",
+     "tool": "ban_kiem_soat",
+     "ok": true,
+     "ms": 143,
+     "focus": [
+      "controls",
+      "queue",
+      "held",
+      "research",
+      "letters",
+      "policy",
+      "config"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

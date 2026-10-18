@@ -1,0 +1,266 @@
+{
+ "id": "cmp-desk-01",
+ "category": "desk",
+ "role": "compliance",
+ "as": "compliance",
+ "persona": "Tuân thủ đầu ngày",
+ "client_id": null,
+ "route": "#/compliance",
+ "title": "Có gì chờ Tuân thủ",
+ "why": "The controls: what waits at each one (held news, research, the letter, the policy document, configuration), oldest first.",
+ "brd": [
+  "OWN-MR-11",
+  "FEAT-41"
+ ],
+ "turns": [
+  {
+   "say": "Có gì đang chờ Tuân thủ?",
+   "expect": {
+    "tools_any": [
+     "ban_kiem_soat"
+    ],
+    "says": [
+     "nghiên cứu|HV-2026",
+     "bản tin|Bản tin"
+    ]
+   }
+  },
+  {
+   "say": "Việc nào chờ lâu nhất?",
+   "expect": {
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có gì đang chờ Tuân thủ?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_kiem_soat",
+      "label": "Bàn kiểm soát",
+      "status": "ok",
+      "text": "6 việc chờ Tuân thủ, cũ nhất trước: Hòa Bình Energy công bố kế hoạch phát hành thêm cổ phiếu (Tin bị giữ, NW-000595, VnEconomy · nhắc tới Hòa Bình Energy (mock), từ 18/10 20:09); Sao Mai Land chậm trả lãi trái phiếu đợt hai (Tin bị giữ, NW-000594, VnEconomy · nhắc tới Sao Mai Land (mock), từ 18/10 20:09); Quan điểm quý IV: ưu tiên trái phiếu ngắn hạn (Nghiên cứu, RS-0001, HV-2026-10 · nạp bởi cio, từ 18/10 20:19); Bản tin thị trường tuần 42 (Bản tin, NL-0001, soạn bởi cio, từ 18/10 20:19); Dự thảo Thông tư về tư vấn đầu tư cá nhân (demo) (Chính sách, PD-0002, Lấy ý kiến · thêm bởi compliance, từ 18/10 20:19). Từng chốt: Tin bị giữ: 2 đang giữ, 0 đã cho phép; Nghiên cứu: 1 chờ phát hành, 0 đã phát hành, 0 từ chối; Bản tin: 1 chờ duyệt, 0 đã duyệt, 0 bị trả lại; Chính sách: 1 chờ xác nhận, 1 đã xác nhận, 1 đã tóm tắt; Cấu hình: 1 chờ duyệt. Chuỗi nhật ký nguyên vẹn (736 dòng). Quyết định ở trang của từng chốt.",
+      "card": null,
+      "focus": [
+       "controls",
+       "queue",
+       "held",
+       "research",
+       "letters",
+       "policy",
+       "config"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bàn kiểm soát"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/compliance"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13055,
+     "output_tokens": 519,
+     "requests": 2,
+     "cost_usd": 0.001565,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3301ac60a9e243b999d1319169eef794",
+    "conversation_id": "dc22e6056a6d498c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 6 việc đang chờ Tuân thủ, cũ nhất trước:\n\n1. **Tin bị giữ NW-000595**: Hòa Bình Energy công bố kế hoạch phát hành thêm cổ phiếu (từ 18/10 20:09).\n2. **Tin bị giữ NW-000594**: Sao Mai Land chậm trả lãi trái phiếu đợt hai (từ 18/10 20:09).\n3. **Nghiên cứu RS-0001**: \"Quan điểm quý IV: ưu tiên trái phiếu ngắn hạn\", chờ phát hành (từ 18/10 20:19).\n4. **Bản tin NL-0001**: \"Bản tin thị trường tuần 42\", chờ duyệt (từ 18/10 20:19).\n5. **Chính sách PD-0002**: Dự thảo Thông tư về tư vấn đầu tư cá nhân, chờ xác nhận (từ 18/10 20:19).\n6. **Cấu hình**: 1 mục chờ duyệt.\n\nChuỗi nhật ký còn nguyên vẹn (736 dòng). Để xử lý từng việc, bạn mở trang tương ứng trong ứng dụng. Số liệu này là thời điểm bạn hỏi, và có thể thay đổi.",
+    "timing": {
+     "start": 74,
+     "calls": [
+      [
+       1146,
+       1489
+      ],
+      [
+       1101,
+       2609
+      ]
+     ],
+     "tools": 125,
+     "first_text": 1219,
+     "total": 4346
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/compliance"
+     }
+    ],
+    "sources": [
+     "Bàn kiểm soát"
+    ],
+    "as_of": null,
+    "focus": [
+     "controls",
+     "queue",
+     "held",
+     "research",
+     "letters",
+     "policy",
+     "config"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792335017.1945784,
+    "audit_seq": 737,
+    "session": {
+     "id": "dc22e6056a6d498c",
+     "title": "Có gì đang chờ Tuân thủ?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.379217319190502,
+   "first_event": 1.2309623379260302,
+   "usage": {
+    "cost": 0.001565,
+    "input": 13055,
+    "output": 519,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01TdM5PnALBcjDWzeNnKvhav",
+     "tool": "ban_kiem_soat",
+     "label": "Bàn kiểm soát",
+     "nodes": [
+      "controls",
+      "queue"
+     ],
+     "doing": "Đang xem các chốt kiểm soát",
+     "done": "Đã xem các chốt kiểm soát",
+     "failed": "Không thực hiện được: xem các chốt kiểm soát"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01TdM5PnALBcjDWzeNnKvhav",
+     "tool": "ban_kiem_soat",
+     "ok": true,
+     "ms": 125,
+     "focus": [
+      "controls",
+      "queue",
+      "held",
+      "research",
+      "letters",
+      "policy",
+      "config"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Việc nào chờ lâu nhất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 7389,
+     "output_tokens": 188,
+     "requests": 1,
+     "cost_usd": 0.000833,
+     "tools_cost_usd": null
+    },
+    "turn_id": "43386d6ef4b44782866a12ad9d42b0e8",
+    "conversation_id": "dc22e6056a6d498c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Việc chờ lâu nhất là hai tin bị giữ **NW-000595** (Hòa Bình Energy, kế hoạch phát hành thêm cổ phiếu) và **NW-000594** (Sao Mai Land, chậm trả lãi trái phiếu đợt hai), cùng từ 18/10 lúc 20:09.\n\nTheo số liệu bàn kiểm soát lúc bạn hỏi, các việc còn lại đều vào lúc 20:19 cùng ngày. Số này có thể đã thay đổi.",
+    "timing": {
+     "start": 23,
+     "calls": [
+      [
+       974,
+       1699
+      ]
+     ],
+     "tools": 0,
+     "first_text": 996,
+     "total": 1736
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ Tuân thủ?",
+     "Có bao nhiêu tin bị giữ?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792335018.9931667,
+    "audit_seq": 738,
+    "session": {
+     "id": "dc22e6056a6d498c",
+     "title": "Có gì đang chờ Tuân thủ?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.7687208508141339,
+   "first_event": 1.0079574538394809,
+   "usage": {
+    "cost": 0.000833,
+    "input": 7389,
+    "output": 188,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

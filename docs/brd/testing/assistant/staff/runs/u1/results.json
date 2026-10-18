@@ -1,0 +1,581 @@
+{
+ "tag": "u1",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.155423,
+ "conversations": [
+  {
+   "id": "rm-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "tool failed: ['hom_nay']"
+     ]
+    ]
+   ],
+   "cost": 0.002942,
+   "seconds": 7.5,
+   "tokens": 27104
+  },
+  {
+   "id": "rm-desk-02",
+   "category": "desk",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "tool failed: ['de_xuat']",
+      "does not say /C01|Khoa|học phí/"
+     ]
+    ]
+   ],
+   "cost": 0.001764,
+   "seconds": 3.3,
+   "tokens": 17112
+  },
+  {
+   "id": "rm-act-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004756,
+   "seconds": 7.0,
+   "tokens": 45687
+  },
+  {
+   "id": "rm-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "address: '. Chị'"
+     ]
+    ],
+    [
+     2,
+     [
+      "tool failed: ['ghi_lien_he']"
+     ]
+    ]
+   ],
+   "cost": 0.002746,
+   "seconds": 3.4,
+   "tokens": 26049
+  },
+  {
+   "id": "rm-act-03",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003803,
+   "seconds": 5.4,
+   "tokens": 35536
+  },
+  {
+   "id": "rm-what-01",
+   "category": "desk",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00199,
+   "seconds": 4.2,
+   "tokens": 18149
+  },
+  {
+   "id": "rm-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002767,
+   "seconds": 5.8,
+   "tokens": 26250
+  },
+  {
+   "id": "rm-iso-02",
+   "category": "permissions",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "harness: KeyError: 'memory'"
+     ]
+    ]
+   ],
+   "cost": 0,
+   "seconds": 0.1,
+   "tokens": 0
+  },
+  {
+   "id": "rm-sod-01",
+   "category": "separation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000999,
+   "seconds": 2.5,
+   "tokens": 8792
+  },
+  {
+   "id": "rm-know-01",
+   "category": "procedure",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "does not say /chuyên gia/"
+     ]
+    ],
+    [
+     2,
+     [
+      "does not say /chuyên gia/"
+     ]
+    ]
+   ],
+   "cost": 0.002046,
+   "seconds": 5.3,
+   "tokens": 17948
+  },
+  {
+   "id": "rm-mem-01",
+   "category": "memory",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     3,
+     [
+      "tool failed: ['hom_nay']"
+     ]
+    ]
+   ],
+   "cost": 0.004715,
+   "seconds": 7.4,
+   "tokens": 44126
+  },
+  {
+   "id": "rm-adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001026,
+   "seconds": 2.6,
+   "tokens": 8943
+  },
+  {
+   "id": "cio-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002333,
+   "seconds": 7.4,
+   "tokens": 19863
+  },
+  {
+   "id": "cio-desk-02",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00218,
+   "seconds": 6.0,
+   "tokens": 19578
+  },
+  {
+   "id": "cio-desk-03",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002895,
+   "seconds": 9.6,
+   "tokens": 26028
+  },
+  {
+   "id": "cio-act-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": false,
+   "failed": [
+    [
+     3,
+     [
+      "read back '{\"at\":1792329922.084242,\"by\":\"cio\",\"flag\":true,\"reason\":\"VN-Index thủng 1.700 điểm\"}' (want 1) from: select json_extract(data, '$.urgent') from events where id = 'EV-2026-0001'"
+     ]
+    ]
+   ],
+   "cost": 0.003601,
+   "seconds": 6.9,
+   "tokens": 33294
+  },
+  {
+   "id": "cio-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     2,
+     [
+      "tool failed: ['lay_tin']"
+     ]
+    ]
+   ],
+   "cost": 0.001874,
+   "seconds": 3.9,
+   "tokens": 17861
+  },
+  {
+   "id": "cio-act-03",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003297,
+   "seconds": 6.0,
+   "tokens": 31157
+  },
+  {
+   "id": "cio-lim-01",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001412,
+   "seconds": 4.1,
+   "tokens": 12587
+  },
+  {
+   "id": "cio-lim-02",
+   "category": "limits",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003962,
+   "seconds": 10.4,
+   "tokens": 35503
+  },
+  {
+   "id": "cio-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001389,
+   "seconds": 4.1,
+   "tokens": 12454
+  },
+  {
+   "id": "cio-know-01",
+   "category": "procedure",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001742,
+   "seconds": 7.9,
+   "tokens": 14431
+  },
+  {
+   "id": "cio-oos-01",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.047632,
+   "seconds": 15.9,
+   "tokens": 13206
+  },
+  {
+   "id": "cio-adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000767,
+   "seconds": 2.5,
+   "tokens": 6239
+  },
+  {
+   "id": "sp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002019,
+   "seconds": 6.1,
+   "tokens": 17486
+  },
+  {
+   "id": "sp-ev-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002195,
+   "seconds": 6.3,
+   "tokens": 19049
+  },
+  {
+   "id": "sp-act-01",
+   "category": "actions",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "status ok (want pending)",
+      "no confirmation asked for chuyen_gia_duyet (waits [])"
+     ]
+    ],
+    [
+     2,
+     [
+      "no_answer: "
+     ]
+    ]
+   ],
+   "cost": 0.00123,
+   "seconds": 3.3,
+   "tokens": 11472
+  },
+  {
+   "id": "sp-act-02",
+   "category": "separation",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003383,
+   "seconds": 6.5,
+   "tokens": 30986
+  },
+  {
+   "id": "sp-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001185,
+   "seconds": 3.4,
+   "tokens": 10760
+  },
+  {
+   "id": "sp-cert-01",
+   "category": "separation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001185,
+   "seconds": 3.3,
+   "tokens": 10881
+  },
+  {
+   "id": "sp-adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001324,
+   "seconds": 3.6,
+   "tokens": 11712
+  },
+  {
+   "id": "sp-know-01",
+   "category": "procedure",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000681,
+   "seconds": 2.4,
+   "tokens": 5537
+  },
+  {
+   "id": "cmp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00206,
+   "seconds": 5.6,
+   "tokens": 18182
+  },
+  {
+   "id": "cmp-desk-02",
+   "category": "desk",
+   "turns": 1,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "does not say /Sao Mai/"
+     ]
+    ]
+   ],
+   "cost": 0.001175,
+   "seconds": 3.4,
+   "tokens": 10988
+  },
+  {
+   "id": "cmp-chain-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002471,
+   "seconds": 6.3,
+   "tokens": 22977
+  },
+  {
+   "id": "cmp-lim-01",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001291,
+   "seconds": 4.2,
+   "tokens": 11418
+  },
+  {
+   "id": "cmp-lim-02",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000638,
+   "seconds": 2.0,
+   "tokens": 5537
+  },
+  {
+   "id": "cmp-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001218,
+   "seconds": 3.6,
+   "tokens": 11075
+  },
+  {
+   "id": "cmp-adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001237,
+   "seconds": 3.8,
+   "tokens": 11133
+  },
+  {
+   "id": "cmp-know-01",
+   "category": "procedure",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001462,
+   "seconds": 4.9,
+   "tokens": 12262
+  },
+  {
+   "id": "adm-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002645,
+   "seconds": 8.5,
+   "tokens": 24065
+  },
+  {
+   "id": "adm-act-01",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002998,
+   "seconds": 4.7,
+   "tokens": 27802
+  },
+  {
+   "id": "adm-cfg-01",
+   "category": "desk",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001149,
+   "seconds": 3.3,
+   "tokens": 10781
+  },
+  {
+   "id": "adm-lim-01",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000634,
+   "seconds": 2.0,
+   "tokens": 5445
+  },
+  {
+   "id": "adm-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00121,
+   "seconds": 3.6,
+   "tokens": 10853
+  },
+  {
+   "id": "adm-adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000652,
+   "seconds": 2.3,
+   "tokens": 5488
+  },
+  {
+   "id": "adm-oos-01",
+   "category": "out_of_scope",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000836,
+   "seconds": 4.2,
+   "tokens": 5856
+  },
+  {
+   "id": "x-mem-01",
+   "category": "memory",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001307,
+   "seconds": 3.4,
+   "tokens": 12128
+  }
+ ],
+ "passed": 38,
+ "of": 48,
+ "turns": 75,
+ "turns_failed": 13
+}

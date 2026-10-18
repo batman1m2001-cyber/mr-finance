@@ -1,0 +1,21 @@
+{
+ "tag": "u2c",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.233257,
+ "conversations": [
+  {
+   "id": "sp-act-01",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003257,
+   "seconds": 6.1,
+   "tokens": 30304
+  }
+ ],
+ "passed": 1,
+ "of": 1,
+ "turns": 2,
+ "turns_failed": 0
+}

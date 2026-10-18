@@ -108,16 +108,28 @@ async def queue(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """The proposals and recommendations in the queue: the selected client's (client, RM), or those waiting for this
     specialist."""
     from people import auth
+    from people import store as people
 
-    if ctx.role == "specialist":
-        items = [r for r in wealth_store.reviews(status="pending_specialist") if auth.visible([r["client_id"]])]
+    def family(r: Dict[str, Any]) -> str:
+        return people.client(r["client_id"]).get("member_of") or r["client_id"]
+
+    if ctx.role == "specialist":  # the families assigned to them, as Bàn chuyên gia reads it, also with sign-in off
+        mine = set(people.families_of_specialist(ctx.user))
+        items = [r for r in wealth_store.reviews(status="pending_specialist")
+                 if family(r) in mine and auth.visible([r["client_id"]])]  # fmt: skip
+    elif ctx.role == "rm" and not ctx.client_id:  # no family picked: the RM's whole book (staff stress test D02)
+        from desk import reads as desk_reads
+
+        book = set(desk_reads.book_of({"id": ctx.user, "role": "rm"}))
+        items = [r for r in wealth_store.reviews() if family(r) in book]
     else:
         items = wealth_store.reviews(client_id=_need_client(ctx))
     if not items:
         return {"text": "Không có đề xuất nào trong hàng chờ.", "data": {"items": []}}
     waiting = [r for r in items if r["status"] in ("pending", "pending_specialist")]
     text = f"{len(items)} đề xuất, {len(waiting)} đang chờ. " + " ".join(
-        f"{k + 1}) {r['title']} — {STATUS.get(r['status'], r['status'])}." for k, r in enumerate(items[:4])
+        f"{k + 1}) {r['title']} ({_name(r['client_id'])}, mã {r['id']}) — {STATUS.get(r['status'], r['status'])}."
+        for k, r in enumerate(items[:4])
     )
     return {
         "text": text,
@@ -324,8 +336,19 @@ async def recommend(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
             by=ctx.user,
         )
     )["item"]
+    # why it went straight through, or whom it waits for: without it the assistant told the RM an approved
+    # recommendation “may have skipped the specialist” (staff stress test, rm-act-03)
+    if it["status"] == "pending_specialist":
+        from review import specialist as sp
+
+        who = ", ".join(a["name"] for a in sp.approvers(it["client_id"])) or "chuyên gia được giao"
+        why = f" Gia đình có chuyên gia có chứng chỉ được giao, nên khuyến nghị chờ {who} duyệt rồi mới tới khách."
+    elif it["status"] == "approved":
+        why = " Gia đình chưa có chuyên gia có chứng chỉ được giao, nên RM duyệt là đủ: khuyến nghị đã tới khách."
+    else:
+        why = ""
     return {
-        "text": f"Đã gửi khuyến nghị “{it['title']}”: {STATUS.get(it['status'], it['status'])}.",
+        "text": f"Đã gửi khuyến nghị “{it['title']}”: {STATUS.get(it['status'], it['status'])}.{why}",
         "data": {"id": it["id"], "status": it["status"]},
     }
 
@@ -514,7 +537,8 @@ CATALOGUE: Dict[str, Tool] = {
         ),
         Tool(
             "chuyen_gia_duyet",
-            "chuyên gia duyệt hoặc từ chối một khuyến nghị đang chờ mình",
+            "chuyên gia duyệt hoặc từ chối một khuyến nghị đang chờ mình: người dùng nói “duyệt” là decision approved, "
+            "“từ chối” là decision rejected (kèm lý do ở note); gọi ngay, không hỏi lại duyệt hay từ chối",
             ("specialist",),
             specialist,
             write=True,

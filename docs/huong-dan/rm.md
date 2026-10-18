@@ -3,6 +3,19 @@
 Các trang của RM (`#/rm/…`). RM chỉ thấy các gia đình được phân công cho mình; ô chọn khách hàng trên cùng liệt kê
 các gia đình đó.
 
+## Sổ khách hàng — #/rm
+
+Trang đầu của RM: các gia đình được giao cho bạn, gần tâm hơn khi cần bạn sớm hơn (chạm ngưỡng xem trước, việc theo
+mục tiêu, đề xuất chờ bạn duyệt), kèm cuộc gọi, đề xuất và liên hệ gần đây. Bạn chỉ thấy sổ của mình; gia đình khác
+thuộc RM khác và không mở được. Hôm nay ở `#/rm/hom-nay`.
+
+## Ai duyệt gì — khuyến nghị và đề xuất
+
+RM duyệt hay từ chối phương án khách gửi, và viết khuyến nghị hành động cho gia đình của mình. Nếu gia đình có chuyên
+gia có chứng chỉ được giao, việc RM đã duyệt còn chờ chuyên gia đó duyệt (từ chối phải có lý do) rồi mới tới khách;
+gia đình không có chuyên gia thì RM duyệt là đủ. Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho khách,
+luôn qua chuyên gia có chứng chỉ. RM không duyệt thay chuyên gia.
+
 ## Hôm nay — #/rm/hom-nay
 
 Trang đầu tiên của RM: buổi sáng cần xem gia đình nào trước, theo thứ tự nào.

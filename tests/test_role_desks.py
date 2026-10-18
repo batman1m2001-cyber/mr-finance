@@ -182,7 +182,7 @@ def test_the_rm_desk_is_hom_nay_the_queue_and_the_contacts_of_the_rms_own_famili
     reviews.propose("C03", "plan", "Không phải của rm01", {})
     note = reviews.propose("C01", "rm_note", "Ghi chú của RM", {})  # the RM's own note: not theirs to approve
     for who in ("rm01", "rm03"):
-        book = sorted(desk_reads._book({"id": who, "role": "rm"}))
+        book = sorted(desk_reads.book_of({"id": who, "role": "rm"}))
         d = desk_reads.desk("rm", {"id": who, "role": "rm", "families": book})
         today = apply_reads.rm_today(book)
         assert sorted(f["id"] for f in d["families"]) == book

@@ -1,0 +1,128 @@
+{
+ "rm_desktop": {
+  "text": "Hôm nay có 1 việc cần xử lý trong sổ của bạn (3 gia đình: Nguyễn Minh Khoa, Vũ Ngọc Anh, Đỗ Thị Hạnh):\n\nNguyễn Minh Khoa (C01): có 1 đề xuất đang chờ bạn duyệt, \"Học phí cho con (trong nước / du học)\" thuộc mục tiêu Tích lũy đều.\n\nKhông có gia đình nào chạm ngưỡng xem trước hôm nay, không có việc theo mục tiêu nào cần làm, và chưa ghi nhận liên hệ nào gần đây.\n\nBạn muốn tôi mở đề xuất này để xem chi tiết và duyệt không?\n\ntrả lời lúc 21:45\nNguồn: Sổ khách hàng · Hôm nay · Duyệt đề xuất · Hậu kiểm của các lần áp dụng đang hiệu lực\nCác bước:\nSổ khách hàng ✓\nHôm nay ✓\nMở Bàn làm việc →\nMở Hôm nay →",
+  "marks": [
+   "book",
+   "calls",
+   "proposals",
+   "tasks"
+  ],
+  "lit": 4,
+  "state": "ok",
+  "sideways": false,
+  "errors": [],
+  "write": {
+   "asked": "Chờ xác nhận\n\nGhi nhớ (Sở thích): “Chỉ gọi khách vào buổi sáng, trước 11 giờ.”?\n\nCác bước:\nSổ khách hàng ✓\nHôm nay ✓\nXác nhận\nHuỷ\nMở Bàn làm việc →\nMở Hôm nay →",
+   "button": 1,
+   "saved_before_click": 0,
+   "after": "Đã ghi nhớ: bạn chỉ gọi khách vào buổi sáng, trước 11 giờ. Bạn có thể xem hoặc sửa ở trang Bộ nhớ.\n\ntrả lời lúc 21:45\nMở Bộ nhớ →",
+   "saved_after_click": 1
+  }
+ },
+ "rm_phone": {
+  "text": "Hôm nay sổ của bạn có 3 gia đình: Nguyễn Minh Khoa (C01), Vũ Ngọc Anh (C05) và Đỗ Thị Hạnh (C04).\n\nCần làm:\n\nNguyễn Minh Khoa cần xử lý sớm: 1 đề xuất \"Học phí cho con (trong nước / du học) – Tích lũy đều\" đang chờ bạn duyệt (mã R-c3ca1b86).\n\nThông tin thêm:\n\nĐề xuất \"Giảm tỷ trọng cổ phiếu ngân hàng\" của Nguyễn Minh Khoa đang chờ chuyên gia duyệt, bạn chưa cần làm gì.\nHai đề xuất học phí khác của gia đình này đã được duyệt.\nChưa có lần liên hệ nào được ghi nhận, và không có việc theo mục tiêu nào.\n\nBạn muốn duyệt đề xuất học phí của ông Khoa ngay bây giờ không? Lưu ý theo ghi nhớ của bạn, nên gọi khách trước 11 giờ sáng.\n\nHọc phí cho con (trong nước / du học) — Tích lũy đều\nR-c3ca1b86\nNguyễn Minh Khoa · chờ RM duyệt\nGiảm tỷ trọng cổ phiếu ngân hàng\nR-14ce4eb4\nNguyễn Minh Khoa · chờ chuyên gia duyệt\nHọc phí cho con (trong nước / du học) — Tích lũy đều\nR-821ffb1b\nNguyễn Minh Khoa · đã duyệt\nHọc phí cho con (trong nước / du học) — Tích lũy đều\nR-a4a7e60d\nNguyễn Minh Khoa · đã duyệt\ntrả lời lúc 21:45\nNguồn: Sổ khách hàng · Hôm nay · Duyệt đề xuất\nCác bước:\nSổ khách hàng ✓\nHàng chờ đề xuất ✓\nMở Bàn làm việc →\nMở Hàng chờ đề xuất →",
+  "marks": [
+   "book",
+   "calls",
+   "proposals"
+  ],
+  "lit": 3,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "cio_desktop": {
+  "text": "Bạn đang có 2 việc chờ:\n\nNhận định VW-0003-v1 (chờ bạn duyệt): Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ.\nNgưỡng cảnh báo CF-thresholds-v2: đang chờ một CIO khác duyệt, nên bạn không tự duyệt được việc này.\n\nNgoài ra, hôm nay có 583 tin mới (61 tin liên quan cao), 3 sự kiện, và 1 gia đình chạm ngưỡng cần RM xem trước.\n\nBạn muốn tôi mở trang Sự kiện & nhận định để xem chi tiết nhận định VW-0003-v1 không?\n\ntrả lời lúc 21:45\nNguồn: Bàn quyết định\nMở Bàn làm việc →",
+  "marks": [
+   "decide",
+   "stage:runs",
+   "stage:views"
+  ],
+  "lit": 3,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "cio_phone": {
+  "text": "Hiện có 2 việc đang chờ bạn quyết định:\n\nNgưỡng cảnh báo (CF-thresholds-v2): đang chờ một CIO khác duyệt, nên bạn không duyệt được việc này.\nNhận định VW-0003-v1: hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ. Việc này đang chờ bạn duyệt.\n\nNgoài ra, hệ thống có 583 tin mới (61 tin liên quan cao) và 1 gia đình chạm ngưỡng RM cần xem trước. Số liệu lấy từ bàn quyết định hôm nay, 18/10/2026. Bạn muốn tôi mở trang Sự kiện & nhận định để xem chi tiết nhận định VW-0003-v1 không?\n\ntrả lời lúc 21:45\nNguồn: Bàn quyết định\nMở Bàn làm việc →",
+  "marks": [
+   "decide",
+   "stage:runs",
+   "stage:views"
+  ],
+  "lit": 3,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "specialist_desktop": {
+  "text": "Hiện có 2 khuyến nghị đang chờ bạn duyệt, cũ nhất trước:\n\nGiảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (gia đình C01, mã R-14ce4eb4), do RM rm01 gửi lúc 18/10 20:19.\nMua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (gia đình C04, mã R-7d37ad52), do RM rm01 gửi lúc 18/10 20:19.\n\nChứng chỉ của bạn còn hiệu lực đến 30/06/2027. Bạn muốn duyệt hay từ chối khuyến nghị nào? Nếu từ chối, tôi cần lý do.\n\ntrả lời lúc 21:45\nNguồn: Duyệt khuyến nghị\nMở Bàn làm việc →",
+  "marks": [
+   "queue"
+  ],
+  "lit": 1,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "specialist_phone": {
+  "text": "Có 2 khuyến nghị đang chờ bạn duyệt, cũ nhất trước:\n\nGiảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (gia đình C01, RM rm01, gửi 18/10 20:19). Mã: R-14ce4eb4.\nMua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (gia đình C04, RM rm01, gửi 18/10 20:19). Mã: R-7d37ad52.\n\nChứng chỉ của bạn còn hiệu lực đến 30/06/2027. Bạn muốn xem hồ sơ gia đình trước khi quyết định, hay duyệt/từ chối ngay? Khi từ chối, bạn cần nêu lý do.\n\ntrả lời lúc 21:45\nNguồn: Duyệt khuyến nghị\nMở Bàn làm việc →",
+  "marks": [
+   "queue"
+  ],
+  "lit": 1,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "compliance_desktop": {
+  "text": "Hiện có 6 việc đang chờ Tuân thủ, cũ nhất trước:\n\nTin bị giữ NW-000595: Hòa Bình Energy công bố kế hoạch phát hành thêm cổ phiếu (VnEconomy, từ 18/10 20:09).\nTin bị giữ NW-000594: Sao Mai Land chậm trả lãi trái phiếu đợt hai (VnEconomy, từ 18/10 20:09).\nNghiên cứu RS-0001: \"Quan điểm quý IV: ưu tiên trái phiếu ngắn hạn\", chờ phát hành (từ 18/10 20:19).\nBản tin NL-0001: \"Bản tin thị trường tuần 42\", chờ duyệt (từ 18/10 20:19).\nChính sách PD-0002: Dự thảo Thông tư về tư vấn đầu tư cá nhân (demo), chờ xác nhận (từ 18/10 20:19).\nCấu hình: 1 mục chờ duyệt.\n\nChuỗi nhật ký kiểm toán nguyên vẹn (658 dòng). Bạn xử lý từng việc ở trang tương ứng; tôi không phát hành, duyệt hay cho tin đi tiếp trực tiếp được.\n\ntrả lời lúc 21:45\nNguồn: Bàn kiểm soát\nMở Bàn làm việc →",
+  "marks": [
+   "controls",
+   "queue"
+  ],
+  "lit": 2,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "compliance_phone": {
+  "text": "Hiện có 6 việc đang chờ Tuân thủ, cũ nhất trước:\n\nTin bị giữ NW-000595: Hòa Bình Energy công bố kế hoạch phát hành thêm cổ phiếu (từ 18/10, 20:09).\nTin bị giữ NW-000594: Sao Mai Land chậm trả lãi trái phiếu đợt hai (từ 18/10, 20:09).\nNghiên cứu RS-0001: \"Quan điểm quý IV: ưu tiên trái phiếu ngắn hạn\", chờ phát hành (từ 18/10, 20:19).\nBản tin NL-0001: \"Bản tin thị trường tuần 42\", chờ duyệt (từ 18/10, 20:19).\nChính sách PD-0002: \"Dự thảo Thông tư về tư vấn đầu tư cá nhân (demo)\", chờ xác nhận (từ 18/10, 20:19).\nCấu hình: 1 mục chờ duyệt.\n\nChuỗi nhật ký còn nguyên vẹn (660 dòng). Bạn quyết định từng việc ở trang tương ứng.\n\ntrả lời lúc 21:45\nNguồn: Bàn kiểm soát\nMở Bàn làm việc →",
+  "marks": [
+   "controls",
+   "queue"
+  ],
+  "lit": 2,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "admin_desktop": {
+  "text": "Hệ thống có 2 điểm bất thường, cùng 1 cấu hình đang chờ duyệt:\n\nVùng AI lỗi: không gửi được gói sang vùng AI (cảnh báo AL-000008, chưa ai xem).\nNguồn tin CafeF không trả lời (cảnh báo AL-000007, chưa ai xem).\nCấu hình chờ duyệt: 1 mục.\n\nHệ thống chưa có lần chạy nào để đánh giá mục Sẵn sàng. Bạn có muốn tôi đánh dấu đã xem hai cảnh báo này không, hay xem chi tiết cấu hình chờ duyệt?\n\nKhông gửi được gói sang vùng AI\nChưa xem\nKhông gửi được vùng AI\nNguồn tin CafeF không trả lời\nChưa xem\nNguồn tin không lấy được\ntrả lời lúc 21:46\nNguồn: Hệ thống\nCác bước:\nVận hành ✓\nCảnh báo hệ thống ✓\nMở Bàn làm việc →\nMở Hệ thống →",
+  "marks": [
+   "alerts",
+   "jobs",
+   "ops"
+  ],
+  "lit": 3,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "admin_phone": {
+  "text": "Hệ thống đang có 2 vấn đề:\n\nKhông gửi được gói sang vùng AI (AL-000008, chưa ai xem). Phần Vùng AI đang lỗi.\nNguồn tin CafeF không trả lời (AL-000007, chưa ai xem). Hệ thống không lấy được tin từ nguồn này.\n\nNgoài ra, có 1 cấu hình đang chờ duyệt, cần xem ở trang Cấu hình.\n\nPhần Sẵn sàng chưa có lần chạy nào để đánh giá. Lịch chạy và chuỗi nhật ký hiện không báo lỗi.\n\nBạn muốn tôi đánh dấu đã xem hai cảnh báo này, hay xem chi tiết cấu hình đang chờ duyệt?\n\nKhông gửi được gói sang vùng AI\nChưa xem\nKhông gửi được vùng AI\nNguồn tin CafeF không trả lời\nChưa xem\nNguồn tin không lấy được\ntrả lời lúc 21:46\nNguồn: Hệ thống\nCác bước:\nVận hành ✓\nCảnh báo hệ thống ✓\nMở Bàn làm việc →\nMở Hệ thống →",
+  "marks": [
+   "alerts",
+   "jobs",
+   "ops"
+  ],
+  "lit": 3,
+  "state": "ok",
+  "sideways": false,
+  "errors": []
+ },
+ "spent": {
+  "cost": 0.01927,
+  "turns": 12
+ }
+}

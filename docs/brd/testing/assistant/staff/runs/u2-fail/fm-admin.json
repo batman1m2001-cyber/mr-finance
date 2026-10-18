@@ -1,0 +1,160 @@
+{
+ "id": "fm-admin",
+ "category": "failure_modes",
+ "role": "admin",
+ "as": "admin",
+ "persona": "admin, mô hình không trả lời",
+ "client_id": null,
+ "route": "#/admin",
+ "title": "Mô hình không trả lời",
+ "why": "The provider is down: the keyword path answers from the role's tools and says so.",
+ "brd": [
+  "BRD-NFR-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Hệ thống có gì bất thường?",
+   "expect": {
+    "mode": "fallback",
+    "grounded": false
+   }
+  }
+ ],
+ "server": "fail",
+ "run": [
+  {
+   "say": "Hệ thống có gì bất thường?",
+   "graph": null,
+   "answer": {
+    "status": "ok",
+    "mode": "fallback",
+    "why": "mô hình lỗi (ModelError)",
+    "seen": "Hệ thống có gì bất thường?",
+    "text": "2 phần cần xem: Vùng AI (lỗi: Không gửi được gói sang vùng AI); Cấu hình (cần xem: 1 chờ duyệt). 2 cảnh báo đang mở: Không gửi được gói sang vùng AI; Nguồn tin CafeF không trả lời. 1 cấu hình chờ duyệt. Chưa có lần chạy nào để đánh giá: Sẵn sàng.",
+    "steps": [
+     {
+      "status": "ok",
+      "text": "2 phần cần xem: Vùng AI (lỗi: Không gửi được gói sang vùng AI); Cấu hình (cần xem: 1 chờ duyệt). 2 cảnh báo đang mở: Không gửi được gói sang vùng AI; Nguồn tin CafeF không trả lời. 1 cấu hình chờ duyệt. Chưa có lần chạy nào để đánh giá: Sẵn sàng.",
+      "tool": "van_hanh",
+      "navigate": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/admin"
+      },
+      "focus": [
+       "ops",
+       "node:zone",
+       "node:config",
+       "alerts"
+      ],
+      "suggest": [
+       "Chuỗi nhật ký còn nguyên không?",
+       "Cấu hình nào chờ duyệt?"
+      ],
+      "as_of": null,
+      "sources": [
+       "Hệ thống"
+      ],
+      "card": null
+     }
+    ],
+    "suggest": [
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "conversation_id": "6b75f75cc48f4657",
+    "timing": {
+     "start": 73,
+     "calls": [
+      [
+       null,
+       1549
+      ]
+     ],
+     "tools": 0,
+     "first_text": null,
+     "total": 1622
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/admin"
+     }
+    ],
+    "sources": [
+     "Hệ thống"
+    ],
+    "as_of": null,
+    "focus": [
+     "ops",
+     "node:zone",
+     "node:config",
+     "alerts"
+    ],
+    "navigate": null,
+    "answered_at": 1792331955.2970843,
+    "audit_seq": 653,
+    "session": {
+     "id": "6b75f75cc48f4657",
+     "title": "Hệ thống có gì bất thường?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.6607025950215757,
+   "first_event": 1.6286861798726022,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "fallback",
+     "tool": "van_hanh",
+     "label": "Vận hành",
+     "nodes": [
+      "ops",
+      "alerts",
+      "jobs"
+     ],
+     "doing": "Đang xem tình trạng vận hành",
+     "done": "Đã xem tình trạng vận hành",
+     "failed": "Không thực hiện được: xem tình trạng vận hành"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "fallback",
+     "tool": "van_hanh",
+     "ok": true,
+     "ms": 164,
+     "focus": [
+      "ops",
+      "node:zone",
+      "node:config",
+      "alerts"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

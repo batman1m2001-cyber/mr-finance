@@ -1,0 +1,317 @@
+{
+ "id": "cmp-chain-01",
+ "category": "desk",
+ "role": "compliance",
+ "as": "compliance",
+ "persona": "Tuân thủ kiểm toán",
+ "client_id": null,
+ "route": "#/compliance",
+ "title": "Chuỗi nhật ký và cấu hình chờ",
+ "why": "The audit chain checked now, then the configuration waiting (who proposed, whether a second person is needed).",
+ "brd": [
+  "BRD-FR-702",
+  "BRD-FR-701"
+ ],
+ "turns": [
+  {
+   "say": "Chuỗi nhật ký kiểm toán còn nguyên không?",
+   "expect": {
+    "tools_any": [
+     "chuoi_nhat_ky",
+     "ban_kiem_soat"
+    ],
+    "says": "nguyên|khớp"
+   }
+  },
+  {
+   "say": "Cấu hình nào đang chờ duyệt, ai đề xuất?",
+   "expect": {
+    "tools_any": [
+     "cau_hinh_cho_duyet",
+     "ban_kiem_soat"
+    ],
+    "says": "cio|CIO"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Chuỗi nhật ký kiểm toán còn nguyên không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "chuoi_nhat_ky",
+      "label": "Chuỗi nhật ký",
+      "status": "ok",
+      "text": "Chuỗi nhật ký nguyên vẹn: 739 dòng, đầu chuỗi 1bc3689d9b16…. Bản chỉ-ghi-một-lần: 0 đoạn, khớp.",
+      "card": null,
+      "focus": [
+       "chain",
+       "node:chain"
+      ],
+      "as_of": null,
+      "sources": [
+       "chuỗi nhật ký kiểm toán"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Nhật ký",
+       "route": "#/compliance/nhat-ky"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10870,
+     "output_tokens": 212,
+     "requests": 2,
+     "cost_usd": 0.001193,
+     "tools_cost_usd": null
+    },
+    "turn_id": "293ae8c8bb5e4ff6bf5dd9b2ca1f3d2c",
+    "conversation_id": "c47f81e04d6b4e9e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chuỗi nhật ký kiểm toán còn nguyên vẹn: 739 dòng, không có đoạn nào bị gãy.\n\nBản chỉ-ghi-một-lần (WORM) cũng khớp, với 0 đoạn sai lệch. Đầu chuỗi là 1bc3689d9b16… Kết quả này là tại thời điểm 18/10/2026, lấy từ công cụ kiểm tra chuỗi nhật ký.",
+    "timing": {
+     "start": 20,
+     "calls": [
+      [
+       1028,
+       1337
+      ],
+      [
+       1022,
+       1620
+      ]
+     ],
+     "tools": 40,
+     "first_text": 1048,
+     "total": 3062
+    },
+    "citations": [
+     {
+      "label": "Nhật ký",
+      "route": "#/compliance/nhat-ky"
+     }
+    ],
+    "sources": [
+     "chuỗi nhật ký kiểm toán"
+    ],
+    "as_of": null,
+    "focus": [
+     "chain",
+     "node:chain"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ Tuân thủ?",
+     "Có bao nhiêu tin bị giữ?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330025.4204266,
+    "audit_seq": 740,
+    "session": {
+     "id": "c47f81e04d6b4e9e",
+     "title": "Chuỗi nhật ký kiểm toán còn nguyên không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.1010146429762244,
+   "first_event": 1.0675870762206614,
+   "usage": {
+    "cost": 0.001193,
+    "input": 10870,
+    "output": 212,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_011EqgjVfnFtiGjo7sW8uqPK",
+     "tool": "chuoi_nhat_ky",
+     "label": "Chuỗi nhật ký",
+     "nodes": [
+      "chain",
+      "node:chain"
+     ],
+     "doing": "Đang kiểm tra chuỗi nhật ký",
+     "done": "Đã kiểm tra chuỗi nhật ký",
+     "failed": "Không thực hiện được: kiểm tra chuỗi nhật ký"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_011EqgjVfnFtiGjo7sW8uqPK",
+     "tool": "chuoi_nhat_ky",
+     "ok": true,
+     "ms": 40,
+     "focus": [
+      "chain",
+      "node:chain"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Cấu hình nào đang chờ duyệt, ai đề xuất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "cau_hinh_cho_duyet",
+      "label": "Cấu hình chờ duyệt",
+      "status": "ok",
+      "text": "1 cấu hình chờ duyệt: Ngưỡng cảnh báo (CF-thresholds-v2, đề xuất bởi cio, CIO duyệt, cần người thứ hai). Duyệt ở trang Cấu hình.",
+      "card": null,
+      "focus": [
+       "config",
+       "node:config"
+      ],
+      "as_of": null,
+      "sources": [
+       "Cấu hình"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Cấu hình",
+       "route": "#/compliance/cau-hinh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11674,
+     "output_tokens": 221,
+     "requests": 2,
+     "cost_usd": 0.001278,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1020a6b9b5d04498b0ce1fb939bde6a1",
+    "conversation_id": "c47f81e04d6b4e9e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 1 cấu hình đang chờ duyệt:\n\n- **Ngưỡng cảnh báo** (mã CF-thresholds-v2)\n- **Đề xuất bởi:** CIO\n- **Ai duyệt:** CIO duyệt, và cần thêm một người thứ hai.\n\nBạn duyệt ở trang Cấu hình. Tôi không thực hiện việc duyệt từ phiên này vì vai trò tuân thủ không có quyền duyệt cấu hình do CIO đề xuất.",
+    "timing": {
+     "start": 25,
+     "calls": [
+      [
+       1253,
+       1253
+      ],
+      [
+       1029,
+       1671
+      ]
+     ],
+     "tools": 39,
+     "first_text": 2380,
+     "total": 3034
+    },
+    "citations": [
+     {
+      "label": "Cấu hình",
+      "route": "#/compliance/cau-hinh"
+     }
+    ],
+    "sources": [
+     "Cấu hình"
+    ],
+    "as_of": null,
+    "focus": [
+     "config",
+     "node:config"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ Tuân thủ?",
+     "Có bao nhiêu tin bị giữ?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330028.5114255,
+    "audit_seq": 741,
+    "session": {
+     "id": "c47f81e04d6b4e9e",
+     "title": "Chuỗi nhật ký kiểm toán còn nguyên không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.0669936309568584,
+   "first_event": 1.327024457976222,
+   "usage": {
+    "cost": 0.001278,
+    "input": 11674,
+    "output": 221,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SiBE2tYMsBpeb3eN71Rd2Q",
+     "tool": "cau_hinh_cho_duyet",
+     "label": "Cấu hình chờ duyệt",
+     "nodes": [
+      "config",
+      "node:config"
+     ],
+     "doing": "Đang xem cấu hình chờ duyệt",
+     "done": "Đã xem cấu hình chờ duyệt",
+     "failed": "Không thực hiện được: xem cấu hình chờ duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SiBE2tYMsBpeb3eN71Rd2Q",
+     "tool": "cau_hinh_cho_duyet",
+     "ok": true,
+     "ms": 39,
+     "focus": [
+      "config",
+      "node:config"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

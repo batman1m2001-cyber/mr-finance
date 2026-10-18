@@ -1,0 +1,291 @@
+{
+ "id": "rm-desk-01",
+ "category": "desk",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM đầu ngày (rm01)",
+ "client_id": null,
+ "route": "#/rm",
+ "title": "Sổ khách hàng: ai cần gọi trước",
+ "why": "The RM opens the day on the book: the desk tool's families, who needs the RM and why; then a follow-up on the first one.",
+ "brd": [
+  "OWN-MR-02",
+  "FEAT-41",
+  "BRD-FR-602"
+ ],
+ "turns": [
+  {
+   "say": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+   "expect": {
+    "tools_any": [
+     "so_khach_hang",
+     "hom_nay"
+    ],
+    "says": "C01|Khoa"
+   }
+  },
+  {
+   "say": "Gia đình nào nên gọi trước, vì sao?",
+   "expect": {
+    "says": "vì|do|nên"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "so_khach_hang",
+      "label": "Sổ khách hàng",
+      "status": "ok",
+      "text": "Sổ của bạn có 3 gia đình. 1 cần bạn sớm: Nguyễn Minh Khoa — cần xử lý: 1 đề xuất chờ bạn duyệt. 1 đề xuất chờ duyệt, 0 việc theo mục tiêu. Chưa ghi liên hệ nào.",
+      "card": null,
+      "focus": [
+       "book",
+       "family:C01"
+      ],
+      "as_of": null,
+      "sources": [
+       "Sổ khách hàng",
+       "Hôm nay",
+       "Duyệt đề xuất"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/rm"
+      }
+     },
+     {
+      "tool": "hom_nay",
+      "label": "Hôm nay",
+      "status": "failed",
+      "text": "Không thực hiện được: Hoàng Hải Yến không được xem dữ liệu của khách hàng này",
+      "evidence": {
+       "label": "Hôm nay",
+       "route": "#/rm/hom-nay"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17356,
+     "output_tokens": 366,
+     "requests": 2,
+     "cost_usd": 0.001919,
+     "tools_cost_usd": null
+    },
+    "turn_id": "8c13d4f1007e4486bbadbc19b6cc3b0d",
+    "conversation_id": "c3bdc9c871d44e4a",
+    "compacted": false,
+    "status": "ok",
+    "text": "Sổ của bạn có 3 gia đình. Một gia đình cần xử lý sớm là **Nguyễn Minh Khoa**, với 1 đề xuất đang chờ bạn duyệt. Hiện không có việc theo mục tiêu nào và chưa ghi nhận liên hệ nào.\n\nPhần \"Hôm nay\" (các gia đình cần xem trước) không tải được vì hệ thống báo phiên của bạn không có quyền xem dữ liệu của một khách hàng trong danh sách đó. Bạn có thể kiểm tra lại quyền truy cập với quản trị viên.\n\nBạn có muốn tôi mở trang Duyệt đề xuất để xem chi tiết đề xuất của ông Nguyễn Minh Khoa không?",
+    "timing": {
+     "start": 249,
+     "calls": [
+      [
+       1655,
+       2026
+      ],
+      [
+       1065,
+       2188
+      ]
+     ],
+     "tools": 380,
+     "first_text": 1904,
+     "total": 4707
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/rm"
+     },
+     {
+      "label": "Hôm nay",
+      "route": "#/rm/hom-nay"
+     }
+    ],
+    "sources": [
+     "Sổ khách hàng",
+     "Hôm nay",
+     "Duyệt đề xuất"
+    ],
+    "as_of": null,
+    "focus": [
+     "book",
+     "family:C01"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì cần chú ý?"
+    ],
+    "answered_at": 1792329664.3243566,
+    "audit_seq": 645,
+    "session": {
+     "id": "c3bdc9c871d44e4a",
+     "title": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.736520589794964,
+   "first_event": 1.9176904587075114,
+   "usage": {
+    "cost": 0.001919,
+    "input": 17356,
+    "output": 366,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01WjcZjQjYwLTGgHS7om6UKf",
+     "tool": "so_khach_hang",
+     "label": "Sổ khách hàng",
+     "nodes": [
+      "book",
+      "calls",
+      "proposals"
+     ],
+     "doing": "Đang xem sổ khách hàng của bạn",
+     "done": "Đã xem sổ khách hàng của bạn",
+     "failed": "Không thực hiện được: xem sổ khách hàng của bạn"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01KLyEhn6LoNT3KoSKjuUyZv",
+     "tool": "hom_nay",
+     "label": "Hôm nay",
+     "nodes": [
+      "calls",
+      "tasks"
+     ],
+     "doing": "Đang xem các gia đình cần xem hôm nay",
+     "done": "Đã xem danh sách hôm nay",
+     "failed": "Không thực hiện được: xem các gia đình cần xem hôm nay"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01WjcZjQjYwLTGgHS7om6UKf",
+     "tool": "so_khach_hang",
+     "ok": true,
+     "ms": 190,
+     "focus": [
+      "book",
+      "family:C01"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01KLyEhn6LoNT3KoSKjuUyZv",
+     "tool": "hom_nay",
+     "ok": false,
+     "ms": 190,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Gia đình nào nên gọi trước, vì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 9181,
+     "output_tokens": 249,
+     "requests": 1,
+     "cost_usd": 0.001043,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e171ad7b6b4447eb9ad448b50de2e2a2",
+    "conversation_id": "c3bdc9c871d44e4a",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa thể xác định chắc chắn gia đình nào nên gọi trước. Sổ khách hàng chỉ cho biết **Nguyễn Minh Khoa** là gia đình cần xử lý sớm, vì có 1 đề xuất đang chờ bạn duyệt. Hệ thống không nêu lý do cụ thể cho hai gia đình còn lại, và phần \"Hôm nay\" vẫn không tải được do quyền truy cập.\n\nĐể biết thêm, tôi có thể xem các điều đáng chú ý hiện tại bằng công cụ chu_y, hoặc xem chi tiết đề xuất chờ duyệt. Bạn muốn tôi làm việc nào?",
+    "timing": {
+     "start": 27,
+     "calls": [
+      [
+       1425,
+       2493
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1452,
+     "total": 2539
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329666.9257526,
+    "audit_seq": 646,
+    "session": {
+     "id": "c3bdc9c871d44e4a",
+     "title": "Sáng nay sổ khách hàng của tôi có gì cần làm?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.5814234651625156,
+   "first_event": 1.468009540811181,
+   "usage": {
+    "cost": 0.001043,
+    "input": 9181,
+    "output": 249,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

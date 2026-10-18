@@ -1,0 +1,102 @@
+{
+ "id": "sp-know-01",
+ "category": "procedure",
+ "role": "specialist",
+ "as": "sp_global",
+ "persona": "Chuyên gia hỏi quy định",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Mua bán một mã có gửi thẳng khách",
+ "why": "SCOPE-02 in words: never straight to a client; through a certified specialist.",
+ "brd": [
+  "BRD-RULE-SCOPE-02"
+ ],
+ "turns": [
+  {
+   "say": "Theo quy định của hệ thống, khuyến nghị mua bán một mã cổ phiếu có được gửi thẳng cho khách không?",
+   "expect": {
+    "says": "chuyên gia",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Theo quy định của hệ thống, khuyến nghị mua bán một mã cổ phiếu có được gửi thẳng cho khách không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 5220,
+     "output_tokens": 317,
+     "requests": 1,
+     "cost_usd": 0.000681,
+     "tools_cost_usd": null
+    },
+    "turn_id": "f22a40c83ef84d0196917785e84db69e",
+    "conversation_id": "971d5a1d5a64488c",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không có thông tin đầy đủ về quy định nội bộ của hệ thống OneWealth, nên không thể xác nhận chính sách cụ thể ở đây. Điều tôi có thể nói chắc là: tôi không có công cụ gửi khuyến nghị trực tiếp đến khách, và các thao tác ghi trong ứng dụng đều cần bạn xác nhận trước khi được lưu.\n\nNếu bạn muốn, tôi có thể:\n- Tìm hướng dẫn trong ứng dụng về quy trình gửi và duyệt khuyến nghị (công cụ hướng dẫn).\n- Xem hàng chờ đề xuất hiện tại và trạng thái duyệt của từng mục.\n- Xem bàn chuyên gia để biết các khuyến nghị đang chờ bạn duyệt.\n\nBạn muốn tôi kiểm tra mục nào?",
+    "timing": {
+     "start": 23,
+     "calls": [
+      [
+       991,
+       2252
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1015,
+     "total": 2291
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792330013.205168,
+    "audit_seq": 733,
+    "session": {
+     "id": "971d5a1d5a64488c",
+     "title": "Theo quy định của hệ thống, khuyến nghị mua bán…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.330824778880924,
+   "first_event": 1.0288229179568589,
+   "usage": {
+    "cost": 0.000681,
+    "input": 5220,
+    "output": 317,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

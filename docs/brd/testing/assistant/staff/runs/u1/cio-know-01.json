@@ -1,0 +1,260 @@
+{
+ "id": "cio-know-01",
+ "category": "procedure",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO mới",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Lần áp dụng khác gì nhận định",
+ "why": "The guide explains a view and an apply run, and who approves each.",
+ "brd": [
+  "OWN-AS-02",
+  "BRD-FR-501"
+ ],
+ "turns": [
+  {
+   "say": "Nhận định với lần áp dụng khác nhau thế nào, ai duyệt cái nào?",
+   "expect": {
+    "says": "nhận định",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nhận định với lần áp dụng khác nhau thế nào, ai duyệt cái nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Lần áp dụng] Một lần áp dụng: trạng thái, nhận định, số gia đình, ngày giá, phiên bản mô hình và bộ tính. Kiểm tra tính lại (khớp tới từng đồng) và Thẩm định lại với dữ liệu mới. Tổng kỳ vọng 3 tháng, Hậu kiểm (các phát hiện P1–P5), Thu hồi lần áp dụng với lý do, hoặc Cho hiệu lực một lần đang bị giữ; lịch sử trạng thái và danh sách mọi lần áp dụng. [Đồ thị lần áp dụng] Một lần áp dụng vẽ thành sáu cột: Tin, Sự kiện, Kịch bản, Yếu tố, Nhóm tài sản, Gia đình — mọi gia đình được tính, cạnh mang thay đổi 3 tháng của gia đình. Chọn lần áp dụng khác ở ô chọn; chọn một nút để làm sáng đường đi. [Nhận định] Đọc nhận định, xem phản biện, trả lời, xem trước tác động lên thị trường rồi quyết định. - Tiến trình: Agent soạn → Phản biện → CIO duyệt → Đã duyệt. - Điều kiện duyệt a–g với ✓ / ✕ và lý do; Duyệt và áp dụng chỉ bấm được khi mọi điều kiện đạt; Trả lại, Bác; sau khi duyệt có Thu hồi nhận định. - Kịch bản: xác suất các nhánh, cú sốc chính theo yếu tố, lan truyền ra thị trường, lập luận. - Dòng tác động và Phản biện độc lập (phát hiện theo mức độ, ô trả lời cho từng phát hiện còn mở). - Lần áp dụng do lần duyệt tạo ra; Vết chạy agent từng bước (đầu vào, prompt, mô hình, đầu ra). - Sửa tóm tắt, d [Lần áp dụng (application run)] Lần áp dụng (application run): One computation of an approved view for every family, with a snapshot (AR-…)",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Lần áp dụng",
+       "Hướng dẫn sử dụng · Đồ thị lần áp dụng",
+       "Hướng dẫn sử dụng · Nhận định",
+       "Thuật ngữ · Lần áp dụng (application run)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Lần áp dụng",
+       "route": "#/cio/ap-dung"
+      }
+     },
+     {
+      "tool": "ban_quyet_dinh",
+      "label": "Bàn quyết định",
+      "status": "ok",
+      "text": "2 việc chờ CIO quyết định: Ngưỡng cảnh báo (CF-thresholds-v2, Chờ một CIO khác duyệt); Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ (VW-0003-v1, Chờ CIO duyệt). Dòng chảy: Tin: 583 tin mới (61 liên quan cao). Sự kiện: 3 sự kiện (0 chưa có nhận định). Nhận định: 3 phiên bản (1 chờ CIO duyệt). Lần áp dụng: 2 đang hiệu lực (0 chờ CIO xem lại). Gia đình: 5 gia đình được tính (1 chạm ngưỡng RM xem trước). RM: 1 gia đình RM cần xem trước (trên trang Hôm nay của RM).",
+      "card": null,
+      "focus": [
+       "decide",
+       "stage:news",
+       "stage:views",
+       "stage:families"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bàn quyết định"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/cio"
+      }
+     },
+     {
+      "tool": "lan_ap_dung",
+      "label": "Lần áp dụng",
+      "status": "ok",
+      "text": "2 lần áp dụng đang hiệu lực: AR-0001-v1-2 kỳ vọng 3 tháng −628,1 triệu, 5 gia đình, 1 chạm ngưỡng; AR-0002-v1-2 kỳ vọng 3 tháng +421,9 triệu, 5 gia đình, 1 chạm ngưỡng. 2 đã thay thế (AR-0002-v1-1, AR-0001-v1-1).",
+      "card": null,
+      "focus": [
+       "stage:runs"
+      ],
+      "as_of": null,
+      "sources": [
+       "4 lần áp dụng"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Lần áp dụng",
+       "route": "#/cio/ap-dung"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13684,
+     "output_tokens": 747,
+     "requests": 2,
+     "cost_usd": 0.001742,
+     "tools_cost_usd": null
+    },
+    "turn_id": "796465802aac4eecba5b75c18383a7b6",
+    "conversation_id": "9f5146d0b4554c31",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Nhận định** là một quan điểm thị trường do agent soạn. Nó đi qua: Agent soạn → Phản biện → **CIO duyệt** → Đã duyệt. Bạn xem phản biện, kiểm tra các điều kiện duyệt (a–g), rồi duyệt, trả lại hoặc bác. Chỉ khi mọi điều kiện đạt thì nút \"Duyệt và áp dụng\" mới bấm được.\n\n**Lần áp dụng** là lần tính toán của một nhận định đã duyệt cho mọi gia đình, kèm ảnh chụp dữ liệu (mã AR-…). Nó không phải việc duyệt lại nhận định. Trên trang Áp dụng, bạn kiểm tra tính lại, thẩm định với dữ liệu mới, xem hậu kiểm, và có thể thu hồi hoặc cho hiệu lực một lần đang bị giữ.\n\n**Ai duyệt cái nào (theo bàn quyết định hiện tại):**\n- Nhận định **VW-0003-v1** (hiệu suất quỹ trái phiếu): đang chờ CIO duyệt, tức là bạn.\n- Mục **Ngưỡng cảnh báo** (CF-thresholds-v2): chờ một CIO khác duyệt, không phải bạn.\n- Lần áp dụng: hiện có 2 lần đang hiệu lực (AR-0001-v1-2, AR-0002-v1-2), không lần nào đang chờ bạn xem lại.\n\nLưu ý: đây là mô tả quy trình trong ứng dụng, không phải khuyến nghị đầu tư.",
+    "timing": {
+     "start": 25,
+     "calls": [
+      [
+       1028,
+       1643
+      ],
+      [
+       1158,
+       3337
+      ]
+     ],
+     "tools": 4021,
+     "first_text": 1053,
+     "total": 7766
+    },
+    "citations": [
+     {
+      "label": "Lần áp dụng",
+      "route": "#/cio/ap-dung"
+     },
+     {
+      "label": "Bàn làm việc",
+      "route": "#/cio"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Lần áp dụng",
+     "Hướng dẫn sử dụng · Đồ thị lần áp dụng",
+     "Hướng dẫn sử dụng · Nhận định",
+     "Thuật ngữ · Lần áp dụng (application run)",
+     "Bàn quyết định",
+     "4 lần áp dụng"
+    ],
+    "as_of": null,
+    "focus": [
+     "stage:runs"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Phơi nhiễm lớn nhất ở đâu?"
+    ],
+    "answered_at": 1792329959.9060025,
+    "audit_seq": 708,
+    "session": {
+     "id": "9f5146d0b4554c31",
+     "title": "Nhận định với lần áp dụng khác nhau thế nào, ai…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 7.806622393894941,
+   "first_event": 1.0646065156906843,
+   "usage": {
+    "cost": 0.001742,
+    "input": 13684,
+    "output": 747,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Jr8MC8NJgUE1w1FoHfLMSC",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": [],
+     "doing": "Đang tra hướng dẫn sử dụng",
+     "done": "Đã tra hướng dẫn",
+     "failed": "Không thực hiện được: tra hướng dẫn sử dụng"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Dji7eWibjwfoFtz1SnoxYa",
+     "tool": "ban_quyet_dinh",
+     "label": "Bàn quyết định",
+     "nodes": [
+      "decide",
+      "stage:views",
+      "stage:runs"
+     ],
+     "doing": "Đang xem việc chờ bạn quyết định",
+     "done": "Đã xem việc chờ bạn quyết định",
+     "failed": "Không thực hiện được: xem việc chờ bạn quyết định"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01Y3rajTM6zYfHAstsDNdm6u",
+     "tool": "lan_ap_dung",
+     "label": "Lần áp dụng",
+     "nodes": [
+      "stage:runs"
+     ],
+     "doing": "Đang xem các lần áp dụng",
+     "done": "Đã xem các lần áp dụng",
+     "failed": "Không thực hiện được: xem các lần áp dụng"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Dji7eWibjwfoFtz1SnoxYa",
+     "tool": "ban_quyet_dinh",
+     "ok": true,
+     "ms": 653,
+     "focus": [
+      "decide",
+      "stage:news",
+      "stage:views",
+      "stage:families"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Y3rajTM6zYfHAstsDNdm6u",
+     "tool": "lan_ap_dung",
+     "ok": true,
+     "ms": 653,
+     "focus": [
+      "stage:runs"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01Jr8MC8NJgUE1w1FoHfLMSC",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 2714,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

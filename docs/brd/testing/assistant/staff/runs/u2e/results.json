@@ -1,0 +1,61 @@
+{
+ "tag": "u2e",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.264419,
+ "conversations": [
+  {
+   "id": "cio-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00209,
+   "seconds": 4.6,
+   "tokens": 20155
+  },
+  {
+   "id": "cio-lim-01",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002371,
+   "seconds": 7.7,
+   "tokens": 21649
+  },
+  {
+   "id": "cmp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002345,
+   "seconds": 6.5,
+   "tokens": 20832
+  },
+  {
+   "id": "cmp-lim-01",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002226,
+   "seconds": 5.8,
+   "tokens": 20111
+  },
+  {
+   "id": "cmp-lim-02",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.000687,
+   "seconds": 2.0,
+   "tokens": 6230
+  }
+ ],
+ "passed": 5,
+ "of": 5,
+ "turns": 7,
+ "turns_failed": 0
+}

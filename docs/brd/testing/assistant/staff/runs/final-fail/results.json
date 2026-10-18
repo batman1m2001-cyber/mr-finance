@@ -1,0 +1,61 @@
+{
+ "tag": "final-fail",
+ "base": "http://127.0.0.1:8042",
+ "spent_total": 0.0,
+ "conversations": [
+  {
+   "id": "fm-rm",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 2.0,
+   "tokens": 0
+  },
+  {
+   "id": "fm-cio",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 2.0,
+   "tokens": 0
+  },
+  {
+   "id": "fm-specialist",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.7,
+   "tokens": 0
+  },
+  {
+   "id": "fm-compliance",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.7,
+   "tokens": 0
+  },
+  {
+   "id": "fm-admin",
+   "category": "failure_modes",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.0,
+   "seconds": 1.6,
+   "tokens": 0
+  }
+ ],
+ "passed": 5,
+ "of": 5,
+ "turns": 5,
+ "turns_failed": 0
+}

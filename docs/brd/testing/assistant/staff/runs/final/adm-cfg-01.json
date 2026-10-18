@@ -1,0 +1,168 @@
+{
+ "id": "adm-cfg-01",
+ "category": "desk",
+ "role": "admin",
+ "as": "admin",
+ "persona": "Quản trị xem cấu hình",
+ "client_id": null,
+ "route": "#/admin",
+ "title": "Cấu hình chờ duyệt",
+ "why": "The threshold change waiting: who proposed, who approves, whether a second person is needed.",
+ "brd": [
+  "BRD-FR-701"
+ ],
+ "turns": [
+  {
+   "say": "Có cấu hình nào đang chờ duyệt?",
+   "expect": {
+    "tools_any": [
+     "cau_hinh_cho_duyet",
+     "van_hanh"
+    ],
+    "says": "ngưỡng|thresholds"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có cấu hình nào đang chờ duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "cau_hinh_cho_duyet",
+      "label": "Cấu hình chờ duyệt",
+      "status": "ok",
+      "text": "1 cấu hình chờ duyệt: Ngưỡng cảnh báo (CF-thresholds-v2, đề xuất bởi cio, CIO duyệt, cần người thứ hai). Duyệt ở trang Cấu hình.",
+      "card": null,
+      "focus": [
+       "config",
+       "node:config"
+      ],
+      "as_of": null,
+      "sources": [
+       "Cấu hình"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Cấu hình",
+       "route": "#/admin/cau-hinh"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11993,
+     "output_tokens": 184,
+     "requests": 2,
+     "cost_usd": 0.001291,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a2c08fb53afd46778bf74736c59c7609",
+    "conversation_id": "313c9e403b4e45e9",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 1 cấu hình đang chờ duyệt: **Ngưỡng cảnh báo** (mã CF-thresholds-v2), do CIO đề xuất. Cấu hình này thuộc vai trò CIO duyệt và cần thêm một người duyệt thứ hai.\n\nQuản trị không duyệt được cấu hình này. Bạn có thể xem chi tiết ở trang Cấu hình.",
+    "timing": {
+     "start": 23,
+     "calls": [
+      [
+       1263,
+       1263
+      ],
+      [
+       2060,
+       2337
+      ]
+     ],
+     "tools": 37,
+     "first_text": 3415,
+     "total": 3708
+    },
+    "citations": [
+     {
+      "label": "Cấu hình",
+      "route": "#/admin/cau-hinh"
+     }
+    ],
+    "sources": [
+     "Cấu hình"
+    ],
+    "as_of": null,
+    "focus": [
+     "config",
+     "node:config"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hệ thống có gì bất thường?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Có cảnh báo hệ thống nào?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792335067.7783234,
+    "audit_seq": 762,
+    "session": {
+     "id": "313c9e403b4e45e9",
+     "title": "Có cấu hình nào đang chờ duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.7490810970775783,
+   "first_event": 1.3361234893091023,
+   "usage": {
+    "cost": 0.001291,
+    "input": 11993,
+    "output": 184,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_019Su7YFFhWJzvR3mDH83GxG",
+     "tool": "cau_hinh_cho_duyet",
+     "label": "Cấu hình chờ duyệt",
+     "nodes": [
+      "config",
+      "node:config",
+      "controls"
+     ],
+     "doing": "Đang xem cấu hình chờ duyệt",
+     "done": "Đã xem cấu hình chờ duyệt",
+     "failed": "Không thực hiện được: xem cấu hình chờ duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_019Su7YFFhWJzvR3mDH83GxG",
+     "tool": "cau_hinh_cho_duyet",
+     "ok": true,
+     "ms": 37,
+     "focus": [
+      "config",
+      "node:config"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

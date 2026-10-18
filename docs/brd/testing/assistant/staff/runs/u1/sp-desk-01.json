@@ -1,0 +1,248 @@
+{
+ "id": "sp-desk-01",
+ "category": "desk",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "Chuyên gia bảo hiểm",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Khuyến nghị nào chờ tôi",
+ "why": "The queue: the two recommendations for C01 and C04, oldest first, with their RM.",
+ "brd": [
+  "OWN-MR-05",
+  "FEAT-41"
+ ],
+ "turns": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "expect": {
+    "tools_any": [
+     "ban_chuyen_gia",
+     "de_xuat"
+    ],
+    "says": [
+     "C04|Hạnh",
+     "bảo hiểm"
+    ]
+   }
+  },
+  {
+   "say": "Cái nào cũ nhất?",
+   "expect": {
+    "says": "C01|Khoa|ngân hàng",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "text": "Chứng chỉ Tư vấn bảo hiểm nhân thọ (demo) (Bộ Tài chính) hiệu lực đến 2027-06-30. 3 khuyến nghị chờ bạn duyệt: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01); Mua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (R-7d37ad52, gia đình C04, RM rm01); Học phí cho con (trong nước / du học) — Tích lũy đều cho Nguyễn Minh Khoa (R-c3ca1b86, gia đình C01, RM rm01).",
+      "card": null,
+      "focus": [
+       "queue"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10830,
+     "output_tokens": 412,
+     "requests": 2,
+     "cost_usd": 0.001289,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a476552395b249a0981c53161f2455f4",
+    "conversation_id": "e2070a19d4584f99",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 3 khuyến nghị đang chờ bạn duyệt:\n\n1. **Giảm tỷ trọng cổ phiếu ngân hàng** cho Nguyễn Minh Khoa (mã R-14ce4eb4, gia đình C01, do RM rm01 gửi)\n2. **Mua bảo hiểm sức khoẻ cho gia đình** cho Đỗ Thị Hạnh (mã R-7d37ad52, gia đình C04, do RM rm01 gửi)\n3. **Học phí cho con (trong nước / du học) – Tích lũy đều** cho Nguyễn Minh Khoa (mã R-c3ca1b86, gia đình C01, do RM rm01 gửi)\n\nNguồn: bàn chuyên gia, trạng thái tại thời điểm hôm nay (18/10/2026). Bạn muốn xem hồ sơ gia đình nào trước để cân nhắc?",
+    "timing": {
+     "start": 68,
+     "calls": [
+      [
+       1003,
+       1337
+      ],
+      [
+       1047,
+       2094
+      ]
+     ],
+     "tools": 63,
+     "first_text": 1071,
+     "total": 3608
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "queue"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hồ sơ của gia đình này thế nào?"
+    ],
+    "answered_at": 1792329982.1046824,
+    "audit_seq": 714,
+    "session": {
+     "id": "e2070a19d4584f99",
+     "title": "Khuyến nghị nào đang chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.6444872012361884,
+   "first_event": 1.0842416239902377,
+   "usage": {
+    "cost": 0.001289,
+    "input": 10830,
+    "output": 412,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MSUuAMwEDTA2ApsMFAavE3",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MSUuAMwEDTA2ApsMFAavE3",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 63,
+     "focus": [
+      "queue"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Cái nào cũ nhất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 5979,
+     "output_tokens": 265,
+     "requests": 1,
+     "cost_usd": 0.00073,
+     "tools_cost_usd": null
+    },
+    "turn_id": "af8e2211a1cd4c92aa6873ea36dec077",
+    "conversation_id": "e2070a19d4584f99",
+    "compacted": false,
+    "status": "ok",
+    "text": "Kết quả từ bàn chuyên gia không ghi ngày gửi của từng khuyến nghị, nên tôi chưa xác định được cái nào cũ nhất. Theo thứ tự hiển thị trong hàng chờ (thường là cũ trước), khuyến nghị đầu tiên là **Giảm tỷ trọng cổ phiếu ngân hàng** cho Nguyễn Minh Khoa (R-14ce4eb4), nhưng đó chỉ là suy đoán từ thứ tự, chưa được xác nhận.\n\nĐể chắc chắn, tôi có thể tra thêm chi tiết từng khuyến nghị qua hồ sơ gia đình C01 và C04. Bạn muốn tôi làm việc đó không?",
+    "timing": {
+     "start": 23,
+     "calls": [
+      [
+       1055,
+       2199
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1079,
+     "total": 2240
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792329984.414562,
+    "audit_seq": 715,
+    "session": {
+     "id": "e2070a19d4584f99",
+     "title": "Khuyến nghị nào đang chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.2828239491209388,
+   "first_event": 1.0915084281004965,
+   "usage": {
+    "cost": 0.00073,
+    "input": 5979,
+    "output": 265,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

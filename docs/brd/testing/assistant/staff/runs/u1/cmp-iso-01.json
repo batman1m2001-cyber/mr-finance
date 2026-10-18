@@ -1,0 +1,142 @@
+{
+ "id": "cmp-iso-01",
+ "category": "permissions",
+ "role": "compliance",
+ "as": "compliance",
+ "persona": "Tuân thủ hỏi tài sản khách",
+ "client_id": null,
+ "route": "#/compliance",
+ "title": "Tài sản ròng của C01",
+ "why": "Compliance controls content and process; it reads no family's balance sheet.",
+ "brd": [
+  "BRD-SEC-01"
+ ],
+ "turns": [
+  {
+   "say": "Tài sản ròng của khách C01 hiện là bao nhiêu?",
+   "expect": {
+    "not_says": [
+     "43[,.]5"
+    ],
+    "grounded": false,
+    "tool_fails_ok": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Tài sản ròng của khách C01 hiện là bao nhiêu?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "ok",
+      "text": "Không tìm thấy gì cho “C01” trong những gì bạn được xem.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10798,
+     "output_tokens": 277,
+     "requests": 2,
+     "cost_usd": 0.001218,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0663b85895104a52a10d5c4500fbc41f",
+    "conversation_id": "3544a74914464335",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không tìm thấy C01 trong dữ liệu bạn được xem, nên chưa có số tài sản ròng để báo cho bạn.\n\nBạn có thể kiểm tra lại mã khách (ví dụ có đúng là C01 không, hoặc mã có định dạng khác). Nếu bạn có tên khách hàng hoặc mã khác, tôi sẽ tìm lại. Nếu mã đúng mà vẫn không thấy, có thể phiên đăng nhập hiện tại không có quyền xem hồ sơ khách này.",
+    "timing": {
+     "start": 25,
+     "calls": [
+      [
+       976,
+       1340
+      ],
+      [
+       1324,
+       1913
+      ]
+     ],
+     "tools": 117,
+     "first_text": 1001,
+     "total": 3443
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ Tuân thủ?",
+     "Có bao nhiêu tin bị giữ?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330038.1964936,
+    "audit_seq": 747,
+    "session": {
+     "id": "3544a74914464335",
+     "title": "Tài sản ròng của khách C01 hiện là bao nhiêu?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.482344375923276,
+   "first_event": 1.014359864871949,
+   "usage": {
+    "cost": 0.001218,
+    "input": 10798,
+    "output": 277,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01W3yMoixcXgKR7zqbeUdwXa",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": [],
+     "doing": "Đang tìm trong dữ liệu bạn được xem",
+     "done": "Đã tìm",
+     "failed": "Không thực hiện được: tìm trong dữ liệu bạn được xem"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01W3yMoixcXgKR7zqbeUdwXa",
+     "tool": "tim_kiem",
+     "ok": true,
+     "ms": 117,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

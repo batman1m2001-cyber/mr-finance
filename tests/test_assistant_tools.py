@@ -171,10 +171,12 @@ def test_the_catalogue_is_whole():
             assert x.spec.readonly != t.write and x.spec.timeout == t.timeout
 
 
-def test_the_copilot_keeps_its_thirteen():
+def test_the_copilot_keeps_its_thirteen_and_each_desks_reads():
     from copilot.tools import TOOLS
 
-    assert len(TOOLS) == 13 and all(TOOLS[n] is registry.REGISTRY[n] for n in TOOLS)
+    # the thirteen, plus the staff desks' reads so the fallback answers each role (staff stress D13)
+    assert len(TOOLS) == 26 and all(TOOLS[n] is registry.REGISTRY[n] for n in TOOLS)
+    assert not any(TOOLS[n].write for n in TOOLS if n not in ("lay_tin", "duyet_de_xuat"))
 
 
 # -- role refusal: never offered, and refused when called anyway --------------------------------

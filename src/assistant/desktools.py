@@ -4,6 +4,7 @@ its role, and the read under it is that role's alone. Their steps light the desk
 
 from __future__ import annotations
 
+import time
 from typing import Any, Dict
 
 from assistant.base import Ctx, Param, Tool, ToolFailed
@@ -63,6 +64,60 @@ async def exposure(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         "focus": ["exposure", "stage:families"],
         "as_of": e["run_id"],
         "sources": [f"lần áp dụng {e['run_id']}"],
+    }
+
+
+def _when(v: Any) -> str:
+    """A record's time as the person reads it (dd/mm hh:mm): a desk item's age, so “the oldest” can be said (D08)."""
+    from datetime import datetime
+
+    try:
+        t = datetime.fromtimestamp(float(v)) if isinstance(v, (int, float)) else datetime.fromisoformat(str(v))
+    except (TypeError, ValueError):
+        return "—"
+    return t.strftime("%d/%m %H:%M")
+
+
+STATE_SAY = {"done": "chạy xong", "active": "đang chạy", "waiting": "đang chờ", "failed": "lỗi", "idle": "chưa chạy"}
+
+
+async def background(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """The agents and the background jobs, as the Agent page's map reads them from their records: each one's state,
+    its last run and today's runs and failures (staff stress test D07: the CIO asked, and nothing could say)."""
+    from views import ecosystem
+
+    e = ecosystem.ecosystem()
+    nodes = [n for n in e["nodes"] if n.get("group") in ("cio", "rules", "background") or n["id"] == "news"
+             or n["id"] == "market"]  # fmt: skip
+
+    def line(n: Dict[str, Any]) -> str:
+        day = n.get("day") or {}
+        last = f", lần gần nhất {time.strftime('%d/%m %H:%M', time.localtime(n['at']))}" if n.get("at") else ""
+        waits = f", {n['waiting']} việc chờ" if n.get("waiting") else ""
+        return (f"{n['label']}: {STATE_SAY.get(n.get('state') or 'idle', n.get('state'))}{last}, hôm nay "
+                f"{day.get('runs', 0)} lần, {day.get('failed', 0)} lỗi{waits}")  # fmt: skip
+
+    failing = [n for n in nodes if n.get("state") == "failed" or (n.get("day") or {}).get("failed")]
+    text = (
+        (
+            "Có việc lỗi: " + ", ".join(n["label"] for n in failing) + ". "
+            if failing
+            else "Không agent hay việc nền nào lỗi. "
+        )
+        + "; ".join(line(n) for n in nodes)
+        + ". Agent CIO chỉ chạy khi CIO bấm Chạy Agent CIO trên một sự kiện (trang Sự kiện & nhận định); trợ lý đọc "
+        "trạng thái, không chạy agent."
+    )
+    return {
+        "text": text,
+        "data": {
+            "nodes": [
+                {"id": n["id"], "state": n.get("state"), "at": n.get("at"), **(n.get("day") or {})} for n in nodes
+            ]
+        },  # fmt: skip
+        "focus": ["agents"],
+        "as_of": _when(e.get("as_of")),  # a string: the model's result type refused the ecosystem's epoch
+        "sources": ["Bản đồ agent (trang Agent)"],
     }
 
 
@@ -146,10 +201,14 @@ async def book(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     each = "; ".join(f"{f['name']} — {f['level_label'].lower()}: {why(f)}" for f in soon[:6])
     last = d["contacts"][0] if d["contacts"] else None
     name = {f["id"]: f["name"] for f in fams}
+    # every family named with its code: a family outside this list is another RM's (staff stress test D04)
+    listed = ", ".join(f"{f['name']} ({f['id']})" for f in fams)
+    waiting = "; ".join(f"{p['title']} ({name.get(p['family_id'], p['family_id'])})" for p in d["proposals"][:4])
     text = (
-        f"Sổ của bạn có {len(fams)} gia đình. "
+        f"Sổ của bạn có {len(fams)} gia đình: {listed}; gia đình khác không thuộc sổ của bạn. "
         + (f"{len(soon)} cần bạn sớm: {each}. " if soon else "Không gia đình nào cần gọi ngay hay chờ bạn duyệt. ")
-        + f"{len(d['proposals'])} đề xuất chờ duyệt, {len(d['tasks'])} việc theo mục tiêu. "
+        + f"{len(d['proposals'])} đề xuất chờ duyệt{': ' + waiting if waiting else ''}, "
+        + f"{len(d['tasks'])} việc theo mục tiêu. "
         + (
             f"Liên hệ gần nhất: {name.get(last['family_id'], last['family_id'])} qua {last['channel_label'].lower()}."
             if last
@@ -257,11 +316,15 @@ async def expert_desk(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     )
     w = d["waiting"]
     each = "; ".join(
-        f"{x['title']} cho {x['name']} ({x['id']}, gia đình {x['family_id']}, RM {x['rm'] or '—'})" for x in w[:6]
+        f"{x['title']} cho {x['name']} ({x['id']}, gia đình {x['family_id']}, RM {x['rm'] or '—'}, gửi "
+        f"{_when(x['created'])})"
+        for x in w[:6]
     )
+    mine = ", ".join(f["id"] for f in d["families"])
     return {
         "text": f"{head} "
-        + (f"{len(w)} khuyến nghị chờ bạn duyệt: {each}." if w else "Không khuyến nghị nào chờ bạn."),
+        + (f"{len(w)} khuyến nghị chờ bạn duyệt, cũ nhất trước: {each}." if w else "Không khuyến nghị nào chờ bạn.")
+        + (f" Gia đình được giao cho bạn: {mine}." if mine else ""),
         "data": {"waiting": len(w), "certified": bool(cert), "families": [f["id"] for f in d["families"]]},
         "focus": ["queue"],
         "sources": ["Duyệt khuyến nghị"],
@@ -291,9 +354,11 @@ async def family_profile(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         g = (await goals(one, {}))["text"]
     except ToolFailed:
         g = ""
+    day = f" Số liệu ngày {a['as_of']}." if a.get("as_of") else ""  # the data's own date (D10)
     return {
-        "text": f"Gia đình {fid}: {a['text']} {g}".strip(),
+        "text": f"Gia đình {fid}: {a['text']} {g}".strip() + day,
         "data": {"family": fid},
+        "as_of": a.get("as_of"),
         "focus": ["evidence"],
         "sources": ["Bảng tổng quan", "Kế hoạch mục tiêu"],
     }
@@ -307,7 +372,11 @@ async def controls(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     d = _desk(ctx, "compliance")
     label = {c["id"]: c["label"] for c in d["controls"]}
     q = d["queue"]
-    oldest = "; ".join(f"{x['title']} ({label[x['control']]}, {x['id']})" for x in q[:5])
+    # the item's own line too (a report's number, who uploaded it): “HV-2026-10” was “not in the system” (cmp-lim-02)
+    oldest = "; ".join(
+        f"{x['title']} ({label[x['control']]}, {x['id']}{', ' + x['sub'] if x.get('sub') else ''}, từ {_when(x['at'])})"
+        for x in q[:5]
+    )
     head = f"{len(q)} việc chờ Tuân thủ, cũ nhất trước: {oldest}." if q else "Không việc nào chờ Tuân thủ."
     each = "; ".join(
         f"{c['label']}: " + ", ".join(f"{s['count']} {s['label'].lower()}" for s in c["steps"]) for c in d["controls"]
@@ -372,6 +441,16 @@ CATALOGUE: Dict[str, Tool] = {
             book,
             page="ban-lam-viec",
             follow=["Hôm nay cần gọi ai?", "Có gì cần chú ý với khách này?"],
+        ),
+        Tool(
+            "agent_nen",
+            "các agent và việc chạy nền (Agent CIO, Phản biện, Chính sách, hàng đợi, lấy tin, dữ liệu thị trường, quét "
+            "chính sách, tổng hợp trí nhớ, lưu giữ): trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay; chỉ "
+            "đọc",
+            ("cio", "compliance", "admin"),
+            background,
+            page="agent",
+            follow=["Có việc nền nào lỗi không?", "Có gì chờ tôi duyệt?"],
         ),
         Tool(
             "van_hanh",

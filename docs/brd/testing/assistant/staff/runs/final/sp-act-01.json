@@ -1,0 +1,313 @@
+{
+ "id": "sp-act-01",
+ "category": "actions",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "Chuyên gia duyệt",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Duyệt khuyến nghị bảo hiểm C04",
+ "why": "The specialist approves: it waits, then the recommendation reads approved.",
+ "brd": [
+  "BRD-RULE-ROLE-05",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Duyệt khuyến nghị mua bảo hiểm sức khoẻ của gia đình C04.",
+   "expect": {
+    "status": "pending",
+    "pending": "chuyen_gia_duyet",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from reviews where client_id = 'C04' and kind = 'rm_note' order by created desc limit 1",
+      "approved"
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Duyệt khuyến nghị mua bảo hiểm sức khoẻ của gia đình C04.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "text": "Chứng chỉ Tư vấn bảo hiểm nhân thọ (demo) (Bộ Tài chính) hiệu lực đến 2027-06-30. 3 khuyến nghị chờ bạn duyệt, cũ nhất trước: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01, gửi 18/10 20:19); Mua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (R-7d37ad52, gia đình C04, RM rm01, gửi 18/10 20:19); Học phí cho con (trong nước / du học) — Tích lũy đều cho Nguyễn Minh Khoa (R-c3ca1b86, gia đình C01, RM rm01, gửi 18/10 20:19). Gia đình được giao cho bạn: C01, C04.",
+      "card": null,
+      "focus": [
+       "queue"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12233,
+     "output_tokens": 209,
+     "requests": 2,
+     "cost_usd": 0.001328,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5a18fa52e02840beb308103aaafd67d7",
+    "conversation_id": "053ed2d12a184a14",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "151bf0c0facfb7f5924548bbca67efd7",
+      "tool": "chuyen_gia_duyet",
+      "summary": "Duyệt khuyến nghị “Mua bảo hiểm sức khoẻ cho gia đình” của Đỗ Thị Hạnh?"
+     }
+    ],
+    "text": "Duyệt khuyến nghị “Mua bảo hiểm sức khoẻ cho gia đình” của Đỗ Thị Hạnh?",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       992,
+       1293
+      ],
+      [
+       1097,
+       1608
+      ]
+     ],
+     "tools": 59,
+     "first_text": 1019,
+     "total": 3016
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "queue"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hồ sơ của gia đình này thế nào?"
+    ],
+    "answered_at": 1792334990.016831,
+    "audit_seq": 720,
+    "session": {
+     "id": "053ed2d12a184a14",
+     "title": "Duyệt khuyến nghị mua bảo hiểm sức khoẻ của gia…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.0600178916938603,
+   "first_event": 1.0368646490387619,
+   "usage": {
+    "cost": 0.001328,
+    "input": 12233,
+    "output": 209,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01SmgK4aYKoPc2bAPRD8GgNe",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01SmgK4aYKoPc2bAPRD8GgNe",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 59,
+     "focus": [
+      "queue"
+     ]
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01VQVXC8ej7Egh1FoSfDMqX5",
+     "tool": "chuyen_gia_duyet",
+     "label": "Chuyên gia duyệt"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "chuyen_gia_duyet",
+      "label": "Chuyên gia duyệt",
+      "status": "ok",
+      "text": "Đã ghi: đã duyệt “Mua bảo hiểm sức khoẻ cho gia đình”.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/specialist/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18885,
+     "output_tokens": 286,
+     "requests": 3,
+     "cost_usd": 0.002032,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5a18fa52e02840beb308103aaafd67d7",
+    "conversation_id": "053ed2d12a184a14",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã duyệt khuyến nghị \"Mua bảo hiểm sức khoẻ cho gia đình\" của gia đình C04 (cho Đỗ Thị Hạnh, mã R-7d37ad52).",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       1048,
+       1310
+      ]
+     ],
+     "tools": 51,
+     "first_text": 1167,
+     "total": 1445
+    },
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/specialist/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792334991.5325725,
+    "audit_seq": 722,
+    "session": {
+     "id": "053ed2d12a184a14",
+     "title": "Duyệt khuyến nghị mua bảo hiểm sức khoẻ của gia…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.4840760598890483,
+   "first_event": 0.08838020265102386,
+   "usage": {
+    "cost": 0.002032,
+    "input": 18885,
+    "output": 286,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VQVXC8ej7Egh1FoSfDMqX5",
+     "tool": "chuyen_gia_duyet",
+     "label": "Chuyên gia duyệt",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang chuẩn bị duyệt khuyến nghị để bạn xác nhận",
+     "done": "Đã xử lý khuyến nghị",
+     "failed": "Không thực hiện được: chuẩn bị duyệt khuyến nghị để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VQVXC8ej7Egh1FoSfDMqX5",
+     "tool": "chuyen_gia_duyet",
+     "ok": true,
+     "ms": 51,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     "approved"
+    ]
+   }
+  }
+ ]
+}

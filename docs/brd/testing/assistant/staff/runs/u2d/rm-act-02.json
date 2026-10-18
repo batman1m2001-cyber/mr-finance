@@ -1,0 +1,239 @@
+{
+ "id": "rm-act-02",
+ "category": "actions",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM đổi ý (rm01)",
+ "client_id": "C04",
+ "route": "#/rm",
+ "title": "Ghi một cuộc gọi, rồi huỷ",
+ "why": "The RM asks to log a call, then presses Huỷ: nothing is written.",
+ "brd": [
+  "BRD-FR-602",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Ghi lại giúp tôi: vừa gọi chị Hạnh, chị muốn hẹn gặp tuần sau để bàn bảo hiểm.",
+   "expect": {
+    "status": "pending",
+    "pending": "ghi_lien_he",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "deny",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select count(*) from rm_contacts where family_id = 'C04'",
+      0
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Ghi lại giúp tôi: vừa gọi chị Hạnh, chị muốn hẹn gặp tuần sau để bàn bảo hiểm.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8907,
+     "output_tokens": 160,
+     "requests": 1,
+     "cost_usd": 0.000971,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5c613bced79d4109b2a3162528ecb993",
+    "conversation_id": "a731a6f6b24a43ae",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "47541a0a3bb32afc6bee54158c4daff4",
+      "tool": "ghi_lien_he",
+      "summary": "Ghi một cuộc gọi với gia đình Đỗ Thị Hạnh: “Gọi chị Hạnh. Chị muốn hẹn gặp tuần sau để bàn về bảo hiểm.”?"
+     }
+    ],
+    "text": "Ghi một cuộc gọi với gia đình Đỗ Thị Hạnh: “Gọi chị Hạnh. Chị muốn hẹn gặp tuần sau để bàn về bảo hiểm.”?",
+    "timing": {
+     "start": 227,
+     "calls": [
+      [
+       1648,
+       2216
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1876,
+     "total": 2443
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792332950.6048124,
+    "audit_seq": 645,
+    "session": {
+     "id": "a731a6f6b24a43ae",
+     "title": "Ghi lại giúp tôi: vừa gọi chị Hạnh, chị muốn…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.50232705892995,
+   "first_event": 1.9083106010220945,
+   "usage": {
+    "cost": 0.000971,
+    "input": 8907,
+    "output": 160,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01BYdH3iErQQqthxBBxurUHf",
+     "tool": "ghi_lien_he",
+     "label": "Ghi liên hệ"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Huỷ",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ghi_lien_he",
+      "label": "Ghi liên hệ",
+      "status": "declined",
+      "text": "Bạn đã huỷ: không có gì được ghi.",
+      "evidence": {
+       "label": "Hôm nay",
+       "route": "#/rm/hom-nay"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18042,
+     "output_tokens": 240,
+     "requests": 2,
+     "cost_usd": 0.001924,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5c613bced79d4109b2a3162528ecb993",
+    "conversation_id": "a731a6f6b24a43ae",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn đã huỷ việc ghi lại, nên tôi không ghi gì vào hồ sơ của chị Hạnh. Bạn có muốn tôi ghi lại lần liên hệ này theo cách khác không?",
+    "timing": {
+     "start": 36,
+     "calls": [
+      [
+       null,
+       19
+      ],
+      [
+       1127,
+       1522
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1196,
+     "total": 1604
+    },
+    "citations": [
+     {
+      "label": "Hôm nay",
+      "route": "#/rm/hom-nay"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792332952.288866,
+    "audit_seq": 646,
+    "session": {
+     "id": "a731a6f6b24a43ae",
+     "title": "Ghi lại giúp tôi: vừa gọi chị Hạnh, chị muốn…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.6427179416641593,
+   "first_event": 0.05662597203627229,
+   "usage": {
+    "cost": 0.001924,
+    "input": 18042,
+    "output": 240,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BYdH3iErQQqthxBBxurUHf",
+     "tool": "ghi_lien_he",
+     "ok": false,
+     "ms": 0,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     0
+    ]
+   }
+  }
+ ]
+}

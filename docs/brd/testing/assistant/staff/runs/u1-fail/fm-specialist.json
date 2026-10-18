@@ -1,0 +1,73 @@
+{
+ "id": "fm-specialist",
+ "category": "failure_modes",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "specialist, mô hình không trả lời",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Mô hình không trả lời",
+ "why": "The provider is down: the keyword path answers from the role's tools and says so.",
+ "brd": [
+  "BRD-NFR-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "expect": {
+    "mode": "fallback",
+    "grounded": false
+   }
+  }
+ ],
+ "server": "fail",
+ "run": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "graph": null,
+   "answer": {
+    "status": "no_answer",
+    "text": ""
+   },
+   "seconds": 1.5461142556741834,
+   "first_event": 1.5449540307745337,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [
+    "no_answer: "
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "fallback",
+     "tool": "duyet_de_xuat",
+     "label": "Duyệt đề xuất",
+     "nodes": [],
+     "doing": "Đang chuẩn bị duyệt đề xuất để bạn xác nhận",
+     "done": "Đã xử lý đề xuất",
+     "failed": "Không thực hiện được: chuẩn bị duyệt đề xuất để bạn xác nhận"
+    },
+    {
+     "type": "error",
+     "text": "Trợ lý gặp lỗi (KeyError)"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

@@ -1,0 +1,258 @@
+{
+ "id": "cio-desk-01",
+ "category": "desk",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO đầu ngày",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Có gì chờ tôi, dòng chảy từ tin",
+ "why": "The decision desk: what waits for the CIO (the pending view), then the flow's counts.",
+ "brd": [
+  "OWN-MR-01",
+  "FEAT-41"
+ ],
+ "turns": [
+  {
+   "say": "Có gì đang chờ tôi quyết định?",
+   "expect": {
+    "tools_any": [
+     "ban_quyet_dinh"
+    ],
+    "says": "VW-"
+   }
+  },
+  {
+   "say": "Từ tin tới gia đình, dòng chảy hôm nay thế nào?",
+   "expect": {
+    "tools_any": [
+     "ban_quyet_dinh"
+    ],
+    "says": "tin"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có gì đang chờ tôi quyết định?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_quyet_dinh",
+      "label": "Bàn quyết định",
+      "status": "ok",
+      "text": "2 việc chờ CIO quyết định: Ngưỡng cảnh báo (CF-thresholds-v2, Chờ một CIO khác duyệt); Hiệu suất các quỹ trái phiếu cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ (VW-0003-v1, Chờ CIO duyệt). Dòng chảy: Tin: 583 tin mới (61 liên quan cao). Sự kiện: 3 sự kiện (0 chưa có nhận định). Nhận định: 3 phiên bản (1 chờ CIO duyệt). Lần áp dụng: 2 đang hiệu lực (0 chờ CIO xem lại). Gia đình: 5 gia đình được tính (1 chạm ngưỡng RM xem trước). RM: 1 gia đình RM cần xem trước (trên trang Hôm nay của RM).",
+      "card": null,
+      "focus": [
+       "decide",
+       "stage:news",
+       "stage:views",
+       "stage:families"
+      ],
+      "as_of": null,
+      "sources": [
+       "Bàn quyết định"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/cio"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12186,
+     "output_tokens": 402,
+     "requests": 2,
+     "cost_usd": 0.00142,
+     "tools_cost_usd": null
+    },
+    "turn_id": "ef2c9c4e8df14f03b9e14bcbba0c45a7",
+    "conversation_id": "3252df753bf24ebe",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 2 việc đang chờ bạn quyết định (theo bàn quyết định, hôm nay 18/10/2026):\n\n1. **Ngưỡng cảnh báo (CF-thresholds-v2)**: đang chờ một CIO khác duyệt, nên có thể bạn chưa cần làm gì ở đây.\n2. **VW-0003-v1 – Hiệu suất quỹ trái phiếu**: quỹ trái phiếu có hiệu suất cao hơn lãi suất tiền gửi nhưng vẫn bị rút ròng 8.300 tỷ. Nhận định này đang chờ bạn duyệt.\n\nNgoài ra: 583 tin mới (61 tin liên quan cao), 3 sự kiện (đều đã có nhận định), 1 gia đình chạm ngưỡng cần RM xem trước.\n\nBạn muốn tôi mở trang Bộ nhớ hoặc xem chi tiết sự kiện nào không?",
+    "timing": {
+     "start": 80,
+     "calls": [
+      [
+       1099,
+       1726
+      ],
+      [
+       1058,
+       2456
+      ]
+     ],
+     "tools": 315,
+     "first_text": 1180,
+     "total": 4622
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/cio"
+     }
+    ],
+    "sources": [
+     "Bàn quyết định"
+    ],
+    "as_of": null,
+    "focus": [
+     "decide",
+     "stage:news",
+     "stage:views",
+     "stage:families"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Lần áp dụng nào đang hiệu lực?"
+    ],
+    "answered_at": 1792329678.605657,
+    "audit_seq": 653,
+    "session": {
+     "id": "3252df753bf24ebe",
+     "title": "Có gì đang chờ tôi quyết định?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.6637013098225,
+   "first_event": 1.1917239278554916,
+   "usage": {
+    "cost": 0.00142,
+    "input": 12186,
+    "output": 402,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01MFAyC616LX4f39LrfbJaru",
+     "tool": "ban_quyet_dinh",
+     "label": "Bàn quyết định",
+     "nodes": [
+      "decide",
+      "stage:views",
+      "stage:runs"
+     ],
+     "doing": "Đang xem việc chờ bạn quyết định",
+     "done": "Đã xem việc chờ bạn quyết định",
+     "failed": "Không thực hiện được: xem việc chờ bạn quyết định"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01MFAyC616LX4f39LrfbJaru",
+     "tool": "ban_quyet_dinh",
+     "ok": true,
+     "ms": 315,
+     "focus": [
+      "decide",
+      "stage:news",
+      "stage:views",
+      "stage:families"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Từ tin tới gia đình, dòng chảy hôm nay thế nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6710,
+     "output_tokens": 314,
+     "requests": 1,
+     "cost_usd": 0.000828,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1cd57d7f25a54c579d457aa0d23d5c94",
+    "conversation_id": "3252df753bf24ebe",
+    "compacted": false,
+    "status": "ok",
+    "text": "Dòng chảy từ tin đến gia đình hôm nay (theo bàn quyết định, 18/10/2026):\n\n- **Tin**: 583 tin mới, trong đó 61 tin liên quan cao.\n- **Sự kiện**: 3 sự kiện, chưa có sự kiện nào thiếu nhận định.\n- **Nhận định**: 3 phiên bản, 1 phiên bản đang chờ bạn duyệt.\n- **Lần áp dụng**: 2 đang hiệu lực, không có lần nào chờ bạn xem lại.\n- **Gia đình**: 5 gia đình được tính, 1 gia đình chạm ngưỡng và cần RM xem trước trên trang Hôm nay của RM.\n\nNếu muốn xem gia đình nào chịu phơi nhiễm nhiều nhất, tôi có thể lấy số liệu phơi nhiễm.",
+    "timing": {
+     "start": 27,
+     "calls": [
+      [
+       1055,
+       2143
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1083,
+     "total": 2184
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792329680.8582542,
+    "audit_seq": 654,
+    "session": {
+     "id": "3252df753bf24ebe",
+     "title": "Có gì đang chờ tôi quyết định?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.212685028091073,
+   "first_event": 1.0936103272251785,
+   "usage": {
+    "cost": 0.000828,
+    "input": 6710,
+    "output": 314,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

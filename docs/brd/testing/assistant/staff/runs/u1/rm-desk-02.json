@@ -1,0 +1,153 @@
+{
+ "id": "rm-desk-02",
+ "category": "desk",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM bận, hỏi cụt (rm01)",
+ "client_id": null,
+ "route": "#/rm",
+ "title": "Đề xuất nào đang chờ tôi",
+ "why": "Terse: the client's proposal waiting for the RM (seeded) is named with its family.",
+ "brd": [
+  "BRD-FR-603",
+  "OWN-MR-02"
+ ],
+ "turns": [
+  {
+   "say": "đề xuất chờ duyệt?",
+   "expect": {
+    "tools_any": [
+     "so_khach_hang",
+     "de_xuat"
+    ],
+    "says": "C01|Khoa|học phí",
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "đề xuất chờ duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "failed",
+      "text": "Không thực hiện được: Chưa chọn khách hàng",
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16980,
+     "output_tokens": 132,
+     "requests": 2,
+     "cost_usd": 0.001764,
+     "tools_cost_usd": null
+    },
+    "turn_id": "3090193c67d94db794574c8ddb514cba",
+    "conversation_id": "a2620ef4fe854b91",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa xem được đề xuất chờ duyệt vì chưa có khách hàng nào được chọn. Bạn chọn một gia đình trong sổ khách hàng giúp tôi, hoặc tôi có thể mở sổ khách hàng để bạn xem danh sách trước.",
+    "timing": {
+     "start": 29,
+     "calls": [
+      [
+       1427,
+       1427
+      ],
+      [
+       1142,
+       1652
+      ]
+     ],
+     "tools": 1,
+     "first_text": 2635,
+     "total": 3163
+    },
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329850.0108898,
+    "audit_seq": 648,
+    "session": {
+     "id": "a2620ef4fe854b91",
+     "title": "đề xuất chờ duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.200903499033302,
+   "first_event": 1.4685245561413467,
+   "usage": {
+    "cost": 0.001764,
+    "input": 16980,
+    "output": 132,
+    "requests": 2
+   },
+   "why": [
+    "tool failed: ['de_xuat']",
+    "does not say /C01|Khoa|học phí/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014g1n7KquLJdrrrvp4Bo665",
+     "tool": "de_xuat",
+     "label": "Hàng chờ đề xuất",
+     "nodes": [
+      "proposals",
+      "queue"
+     ],
+     "doing": "Đang xem hàng chờ đề xuất",
+     "done": "Đã xem hàng chờ đề xuất",
+     "failed": "Không thực hiện được: xem hàng chờ đề xuất"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014g1n7KquLJdrrrvp4Bo665",
+     "tool": "de_xuat",
+     "ok": false,
+     "ms": 1,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

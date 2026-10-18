@@ -30,8 +30,16 @@ HELP = {
         "Kịch bản lãi suất tăng",
         "Duyệt đề xuất đang chờ",
     ],
-    "cio": ["Hộp tin có bao nhiêu tin?", "Lấy tin mới", "Mở hộp tin"],
-    "compliance": ["Có bao nhiêu tin bị giữ?", "Mở tin bị giữ"],
+    "cio": [
+        "Có gì chờ tôi duyệt?",
+        "Phơi nhiễm lớn nhất ở đâu?",
+        "Các agent chạy nền thế nào?",
+        "Hộp tin có bao nhiêu tin?",
+    ],
+    "compliance": ["Có gì chờ Tuân thủ?", "Có bao nhiêu tin bị giữ?", "Chuỗi nhật ký còn nguyên không?"],
+    # every role has its list: a role without one crashed the fallback (staff stress test D12)
+    "specialist": ["Khuyến nghị nào đang chờ tôi duyệt?", "Chứng chỉ của tôi còn hiệu lực không?"],
+    "admin": ["Hệ thống có gì bất thường?", "Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
 }
 
 
@@ -78,7 +86,10 @@ async def decide(question: str = "", role: str = "client", route: str = "", conf
     if router.live():
         got = await router.llm(seen, route, role)
     else:
-        got = {**router.keyword(seen, route), "router": {"kind": "keyword", "note": "bộ định tuyến từ khóa (mô phỏng)"}}
+        got = {
+            **router.keyword(seen, route, role),
+            "router": {"kind": "keyword", "note": "bộ định tuyến từ khóa (mô phỏng)"},
+        }
     return {**got, "seen": seen, "confirmed": False}
 
 
@@ -112,11 +123,11 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question, foll
         return {
             "status": "unknown",
             "text": "Tôi chưa hiểu câu hỏi này. Tôi có thể giúp những việc dưới đây.",
-            "suggest": HELP[role],
+            "suggest": HELP.get(role, []),
         }
     t = TOOLS.get(tool)
     if t is None:
-        return {"status": "unknown", "text": "Không có công cụ này.", "suggest": HELP[role]}
+        return {"status": "unknown", "text": "Không có công cụ này.", "suggest": HELP.get(role, [])}
     try:
         allowed(t, role)
         if t.write and not confirmed:
@@ -131,7 +142,7 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question, foll
             args = {k: v for k, v in args.items() if k in ("item_id", "decision")}
         out = await execute(t, ctx, args)  # within its timeout; a write read back after
     except roles.Forbidden as exc:
-        return {"status": "forbidden", "text": str(exc), "tool": t.name, "suggest": HELP[role]}
+        return {"status": "forbidden", "text": str(exc), "tool": t.name, "suggest": HELP.get(role, [])}
     except NotConfirmed as exc:
         return {"status": "failed", "text": str(exc), "tool": t.name}
     except (ToolFailed, ValueError, KeyError) as exc:
@@ -145,7 +156,7 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question, foll
         "navigate": out.get("navigate"),
         "evidence": link and {"label": page[0], "route": link},
         "focus": out.get("focus") or [],  # page elements the answer was read from (data-focus keys)
-        "suggest": t.follow or HELP[role],
+        "suggest": t.follow or HELP.get(role, []),
         "as_of": out.get("as_of"),  # the data's own date (prices, month), when the tool has one
         "sources": [x for x in out.get("sources") or [] if x],
         "card": out.get("card"),  # figures / list / bars / chain, drawn by the panel from the tool's numbers

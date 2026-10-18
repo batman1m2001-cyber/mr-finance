@@ -1,0 +1,207 @@
+{
+ "id": "rm-desk-02",
+ "category": "desk",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM bận, hỏi cụt (rm01)",
+ "client_id": null,
+ "route": "#/rm",
+ "title": "Đề xuất nào đang chờ tôi",
+ "why": "Terse: the client's proposal waiting for the RM (seeded) is named with its family.",
+ "brd": [
+  "BRD-FR-603",
+  "OWN-MR-02"
+ ],
+ "turns": [
+  {
+   "say": "đề xuất chờ duyệt?",
+   "expect": {
+    "tools_any": [
+     "so_khach_hang",
+     "de_xuat"
+    ],
+    "says": "C01|Khoa|học phí",
+    "no_write": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "đề xuất chờ duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "de_xuat",
+      "label": "Hàng chờ đề xuất",
+      "status": "ok",
+      "text": "5 đề xuất, 3 đang chờ. 1) Học phí cho con (trong nước / du học) — Tích lũy đều (Nguyễn Minh Khoa, mã R-c3ca1b86) — chờ RM duyệt. 2) Mua bảo hiểm sức khoẻ cho gia đình (Đỗ Thị Hạnh, mã R-7d37ad52) — chờ chuyên gia duyệt. 3) Giảm tỷ trọng cổ phiếu ngân hàng (Nguyễn Minh Khoa, mã R-14ce4eb4) — chờ chuyên gia duyệt. 4) Học phí cho con (trong nước / du học) — Tích lũy đều (Nguyễn Minh Khoa, mã R-821ffb1b) — đã duyệt.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · chờ RM duyệt",
+         "chip": "R-c3ca1b86",
+         "tone": "warn",
+         "focus": "review:R-c3ca1b86"
+        },
+        {
+         "title": "Mua bảo hiểm sức khoẻ cho gia đình",
+         "sub": "Đỗ Thị Hạnh · chờ chuyên gia duyệt",
+         "chip": "R-7d37ad52",
+         "tone": "warn",
+         "focus": "review:R-7d37ad52"
+        },
+        {
+         "title": "Giảm tỷ trọng cổ phiếu ngân hàng",
+         "sub": "Nguyễn Minh Khoa · chờ chuyên gia duyệt",
+         "chip": "R-14ce4eb4",
+         "tone": "warn",
+         "focus": "review:R-14ce4eb4"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-821ffb1b",
+         "tone": "",
+         "focus": "review:R-821ffb1b"
+        },
+        {
+         "title": "Học phí cho con (trong nước / du học) — Tích lũy đều",
+         "sub": "Nguyễn Minh Khoa · đã duyệt",
+         "chip": "R-a4a7e60d",
+         "tone": "",
+         "focus": "review:R-a4a7e60d"
+        }
+       ]
+      },
+      "focus": [
+       "review:R-c3ca1b86",
+       "review:R-7d37ad52",
+       "review:R-14ce4eb4"
+      ],
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hàng chờ đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18266,
+     "output_tokens": 388,
+     "requests": 2,
+     "cost_usd": 0.002021,
+     "tools_cost_usd": null
+    },
+    "turn_id": "87d7c9d0bc88441ba03ca27ebb888b02",
+    "conversation_id": "120bdf16e70e428a",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 3 đề xuất đang chờ, trong đó 1 đề xuất đang chờ bạn duyệt:\n\n**Chờ RM (bạn) duyệt:**\n- Học phí cho con (trong nước / du học) – Tích lũy đều, khách Nguyễn Minh Khoa (mã R-c3ca1b86)\n\n**Chờ chuyên gia duyệt (bạn không duyệt thay được):**\n- Mua bảo hiểm sức khoẻ cho gia đình, khách Đỗ Thị Hạnh (mã R-7d37ad52)\n- Giảm tỷ trọng cổ phiếu ngân hàng, khách Nguyễn Minh Khoa (mã R-14ce4eb4)\n\nNgoài ra có 2 đề xuất học phí của Nguyễn Minh Khoa đã được duyệt. Bạn muốn duyệt hoặc từ chối đề xuất R-c3ca1b86 không?",
+    "timing": {
+     "start": 25,
+     "calls": [
+      [
+       1049,
+       1534
+      ],
+      [
+       1084,
+       2190
+      ]
+     ],
+     "tools": 80,
+     "first_text": 1074,
+     "total": 3879
+    },
+    "citations": [
+     {
+      "label": "Hàng chờ đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [
+     "review:R-c3ca1b86",
+     "review:R-7d37ad52",
+     "review:R-14ce4eb4"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792331833.4598396,
+    "audit_seq": 648,
+    "session": {
+     "id": "120bdf16e70e428a",
+     "title": "đề xuất chờ duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.9153119497932494,
+   "first_event": 1.0854139709845185,
+   "usage": {
+    "cost": 0.002021,
+    "input": 18266,
+    "output": 388,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01X8ar2YwAa3mNKc71HoZuqo",
+     "tool": "de_xuat",
+     "label": "Hàng chờ đề xuất",
+     "nodes": [
+      "proposals",
+      "queue"
+     ],
+     "doing": "Đang xem hàng chờ đề xuất",
+     "done": "Đã xem hàng chờ đề xuất",
+     "failed": "Không thực hiện được: xem hàng chờ đề xuất"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01X8ar2YwAa3mNKc71HoZuqo",
+     "tool": "de_xuat",
+     "ok": true,
+     "ms": 80,
+     "focus": [
+      "review:R-c3ca1b86",
+      "review:R-7d37ad52",
+      "review:R-14ce4eb4"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

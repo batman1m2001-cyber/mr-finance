@@ -1,0 +1,159 @@
+{
+ "id": "cmp-know-01",
+ "category": "procedure",
+ "role": "compliance",
+ "as": "compliance2",
+ "persona": "Tuân thủ giải thích",
+ "client_id": null,
+ "route": "#/compliance",
+ "title": "Vì sao cần người thứ hai",
+ "why": "Two-person rules explained: research release, configuration.",
+ "brd": [
+  "BRD-RULE-BR-03",
+  "BRD-FR-701"
+ ],
+ "turns": [
+  {
+   "say": "Vì sao báo cáo nghiên cứu phải do một người khác phát hành?",
+   "expect": {
+    "says": "người",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Vì sao báo cáo nghiên cứu phải do một người khác phát hành?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Nghiên cứu] Danh sách báo cáo và ghi chú quy định chờ phát hành. Mỗi mục chờ có ô Ghi chú của Tuân thủ (từ 20 ký tự) và nút Phát hành / Từ chối. Bị từ chối khi: ghi chú quá ngắn, người nạp tự phát hành, chưa tới giờ phát hành, hoặc báo cáo nhắc tên trong danh sách hạn chế. [Bàn kiểm soát] Trang đầu của Tuân thủ: mỗi chốt kiểm soát một dòng (tin bị giữ, nghiên cứu, bản tin, chính sách, cấu hình) với số việc chờ ở từng bước, chuỗi nhật ký, một hàng chờ chung cũ nhất trước và các cảnh báo. Mỗi quyết định làm ở trang của nó với quy tắc của nó: cho tin đi tiếp cần lý do; nghiên cứu do người khác người nạp phát hành, khi đã tới giờ; văn bản chính sách do người thứ hai xác nhận. Tuân thủ không xem bảng tài sản của khách. [Hướng dẫn cho Tuân thủ] Các trang của Tuân thủ (#/compliance/…). Nhiều việc cần hai người Tuân thủ khác nhau. [Giá trị tập trung] Cách tính Giá trị tập trung: Giá trị = cộng giá trị các khoản cùng khu vực bất động sản, cùng tổ chức phát hành hoặc cùng ngành; tỷ trọng = giá trị ÷ tổng tài sản, so với ngưỡng (khu vực 35%, tổ chức 10%, ngành 20%).",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Nghiên cứu",
+       "Hướng dẫn sử dụng · Bàn kiểm soát",
+       "Hướng dẫn sử dụng · Hướng dẫn cho Tuân thủ",
+       "Cách tính · Giá trị tập trung"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Nghiên cứu",
+       "route": "#/compliance/nghien-cuu"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 13296,
+     "output_tokens": 379,
+     "requests": 2,
+     "cost_usd": 0.001519,
+     "tools_cost_usd": null
+    },
+    "turn_id": "cb51918657bf4350b9b702b129aa6e6f",
+    "conversation_id": "4c0809b2f6d542f3",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo hướng dẫn, báo cáo nghiên cứu phải do người khác với người nạp phát hành. Đây là kiểm soát hai người: người nạp không tự duyệt được nội dung của mình. Hệ thống cũng từ chối phát hành khi người nạp tự phát hành, khi chưa tới giờ phát hành, hoặc khi báo cáo nhắc tên trong danh sách hạn chế.\n\nViệc phát hành làm trên trang Nghiên cứu, không làm qua trợ lý này. Bạn mở trang đó để xem danh sách chờ phát hành và ghi chú của Tuân thủ (tối thiểu 20 ký tự) trước khi bấm Phát hành hoặc Từ chối.",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       1118,
+       1529
+      ],
+      [
+       990,
+       2002
+      ]
+     ],
+     "tools": 88,
+     "first_text": 1145,
+     "total": 3692
+    },
+    "citations": [
+     {
+      "label": "Nghiên cứu",
+      "route": "#/compliance/nghien-cuu"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Nghiên cứu",
+     "Hướng dẫn sử dụng · Bàn kiểm soát",
+     "Hướng dẫn sử dụng · Hướng dẫn cho Tuân thủ",
+     "Cách tính · Giá trị tập trung"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ Tuân thủ?",
+     "Có bao nhiêu tin bị giữ?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792335051.3856034,
+    "audit_seq": 753,
+    "session": {
+     "id": "4c0809b2f6d542f3",
+     "title": "Vì sao báo cáo nghiên cứu phải do một người…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.7309793359600008,
+   "first_event": 1.1595912887714803,
+   "usage": {
+    "cost": 0.001519,
+    "input": 13296,
+    "output": 379,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0158vmthMzuMNxGiMo8ZPHc8",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": [],
+     "doing": "Đang tra hướng dẫn sử dụng",
+     "done": "Đã tra hướng dẫn",
+     "failed": "Không thực hiện được: tra hướng dẫn sử dụng"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0158vmthMzuMNxGiMo8ZPHc8",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 88,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

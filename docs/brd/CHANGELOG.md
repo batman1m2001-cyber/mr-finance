@@ -2,6 +2,8 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Staff assistant stress test (owner request): each staff role's assistant tested as its users would use it — 54 conversations on the real model, a browser pass on every desk, the fallback per role; 14 S2 defects fixed (role duties in the prompt and the guide, the RM's book, agent_nen, every staff page openable, no pretended page-only decisions…), no S1; US$0.4858 of US$3. — testing/assistant/staff/*, requirements_traceability.md OWN-MR-10, docs/STAFF_STRESS_PLAN.md, docs/huong-dan/*
+
 - 2026-10-18 — The floating Copilot button is gone (owner): the assistant is docked in every role's Trợ lý tab, its
   open/close mode and styles removed; Q-24 answered by the owner; Q-26 records what the BRD says of a specialist. —
   open_questions.md Q-24, Q-26; ux/design_system.md; docs/MULTI_ROLE_UX_REPORT.md §6

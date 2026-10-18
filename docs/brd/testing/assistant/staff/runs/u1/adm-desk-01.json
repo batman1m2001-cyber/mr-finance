@@ -1,0 +1,382 @@
+{
+ "id": "adm-desk-01",
+ "category": "desk",
+ "role": "admin",
+ "as": "admin",
+ "persona": "Quản trị đầu ngày",
+ "client_id": null,
+ "route": "#/admin",
+ "title": "Hệ thống có gì bất thường",
+ "why": "The operations map: the seeded source alert named; what is not failing said plainly.",
+ "brd": [
+  "OWN-MR-04",
+  "FEAT-41"
+ ],
+ "turns": [
+  {
+   "say": "Hệ thống có gì bất thường không?",
+   "expect": {
+    "tools_any": [
+     "van_hanh",
+     "canh_bao_he_thong"
+    ],
+    "says": "CafeF|nguồn tin"
+   }
+  },
+  {
+   "say": "Còn chuỗi nhật ký thì sao?",
+   "expect": {
+    "tools_any": [
+     "chuoi_nhat_ky",
+     "van_hanh"
+    ],
+    "says": "nguyên|khớp"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Hệ thống có gì bất thường không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "van_hanh",
+      "label": "Vận hành",
+      "status": "ok",
+      "text": "2 phần cần xem: Vùng AI (lỗi: Không gửi được gói sang vùng AI); Cấu hình (cần xem: 1 chờ duyệt). 1 cảnh báo đang mở: Không gửi được gói sang vùng AI. 1 cấu hình chờ duyệt. Chưa có lần chạy nào để đánh giá: Sẵn sàng.",
+      "card": null,
+      "focus": [
+       "ops",
+       "node:zone",
+       "node:config",
+       "alerts"
+      ],
+      "as_of": null,
+      "sources": [
+       "Hệ thống"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/admin"
+      }
+     },
+     {
+      "tool": "canh_bao_he_thong",
+      "label": "Cảnh báo hệ thống",
+      "status": "ok",
+      "text": "2 cảnh báo hệ thống, 1 chưa ai xem. 1) Không gửi được vùng AI: Không gửi được gói sang vùng AI. 2) Nguồn tin không lấy được: Nguồn tin CafeF không trả lời.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Không gửi được gói sang vùng AI",
+         "sub": "Không gửi được vùng AI",
+         "chip": "Chưa xem",
+         "tone": "bad"
+        },
+        {
+         "title": "Nguồn tin CafeF không trả lời",
+         "sub": "Nguồn tin không lấy được",
+         "chip": "Đã xem",
+         "tone": ""
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hệ thống",
+       "route": "#/admin/he-thong"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10976,
+     "output_tokens": 435,
+     "requests": 2,
+     "cost_usd": 0.001315,
+     "tools_cost_usd": null
+    },
+    "turn_id": "17e52dce18b14568981d4832f1abcf4a",
+    "conversation_id": "6659554d7e934e6f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Có, hệ thống đang có 2 điểm bất thường:\n\n1. **Vùng AI không nhận được gói dữ liệu** (cảnh báo AL-000008, đang mở, chưa ai xem). Đây là lỗi đang hoạt động cần xử lý.\n2. **Nguồn tin CafeF không trả lời** (AL-000007, đã được ghi nhận xem).\n\nNgoài ra có **1 cấu hình đang chờ duyệt**. Các phần còn lại (dữ liệu thị trường, lịch chạy, sẵn sàng) không có lỗi; riêng mục sẵn sàng chưa có lần chạy nào để đánh giá.\n\nNguồn: trang Hệ thống, số liệu ghi nhận tại thời điểm kiểm tra (18/10/2026). Nếu bạn muốn, tôi có thể đánh dấu đã xem cảnh báo AL-000008 hoặc mở trang Hệ thống để xem chi tiết.",
+    "timing": {
+     "start": 74,
+     "calls": [
+      [
+       1097,
+       1461
+      ],
+      [
+       1106,
+       2661
+      ]
+     ],
+     "tools": 317,
+     "first_text": 1171,
+     "total": 4400
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/admin"
+     },
+     {
+      "label": "Hệ thống",
+      "route": "#/admin/he-thong"
+     }
+    ],
+    "sources": [
+     "Hệ thống"
+    ],
+    "as_of": null,
+    "focus": [
+     "ops",
+     "node:zone",
+     "node:config",
+     "alerts"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hệ thống có gì bất thường?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Có cảnh báo hệ thống nào?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330051.4210455,
+    "audit_seq": 753,
+    "session": {
+     "id": "6659554d7e934e6f",
+     "title": "Hệ thống có gì bất thường không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.434511569794267,
+   "first_event": 1.18336120294407,
+   "usage": {
+    "cost": 0.001315,
+    "input": 10976,
+    "output": 435,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_017XG443epMLP2GmKAGzy6ax",
+     "tool": "van_hanh",
+     "label": "Vận hành",
+     "nodes": [
+      "ops",
+      "alerts",
+      "jobs"
+     ],
+     "doing": "Đang xem tình trạng vận hành",
+     "done": "Đã xem tình trạng vận hành",
+     "failed": "Không thực hiện được: xem tình trạng vận hành"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_018DhPRXASrZpzEvrrPid5KR",
+     "tool": "canh_bao_he_thong",
+     "label": "Cảnh báo hệ thống",
+     "nodes": [
+      "alerts"
+     ],
+     "doing": "Đang xem cảnh báo hệ thống",
+     "done": "Đã xem cảnh báo hệ thống",
+     "failed": "Không thực hiện được: xem cảnh báo hệ thống"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_017XG443epMLP2GmKAGzy6ax",
+     "tool": "van_hanh",
+     "ok": true,
+     "ms": 158,
+     "focus": [
+      "ops",
+      "node:zone",
+      "node:config",
+      "alerts"
+     ]
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_018DhPRXASrZpzEvrrPid5KR",
+     "tool": "canh_bao_he_thong",
+     "ok": true,
+     "ms": 158,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Còn chuỗi nhật ký thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "chuoi_nhat_ky",
+      "label": "Chuỗi nhật ký",
+      "status": "ok",
+      "text": "Chuỗi nhật ký nguyên vẹn: 753 dòng, đầu chuỗi ae8521a3eaa2…. Bản chỉ-ghi-một-lần: 0 đoạn, khớp.",
+      "card": null,
+      "focus": [
+       "chain",
+       "node:chain"
+      ],
+      "as_of": null,
+      "sources": [
+       "chuỗi nhật ký kiểm toán"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Nhật ký",
+       "route": "#/admin/nhat-ky"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12492,
+     "output_tokens": 162,
+     "requests": 2,
+     "cost_usd": 0.00133,
+     "tools_cost_usd": null
+    },
+    "turn_id": "2cf97cf562b04579874a299decd69232",
+    "conversation_id": "6659554d7e934e6f",
+    "compacted": false,
+    "status": "ok",
+    "text": "Chuỗi nhật ký kiểm toán còn nguyên vẹn: 753 dòng, không có đoạn nào bị gãy. Bản chỉ ghi một lần cũng khớp (0 đoạn lệch).\n\nKết quả này được kiểm tra ngay tại thời điểm hỏi (18/10/2026), từ trang Nhật ký.",
+    "timing": {
+     "start": 27,
+     "calls": [
+      [
+       1382,
+       1382
+      ],
+      [
+       1946,
+       2367
+      ]
+     ],
+     "tools": 40,
+     "first_text": 3429,
+     "total": 3867
+    },
+    "citations": [
+     {
+      "label": "Nhật ký",
+      "route": "#/admin/nhat-ky"
+     }
+    ],
+    "sources": [
+     "chuỗi nhật ký kiểm toán"
+    ],
+    "as_of": null,
+    "focus": [
+     "chain",
+     "node:chain"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hệ thống có gì bất thường?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Có cảnh báo hệ thống nào?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330055.3506114,
+    "audit_seq": 754,
+    "session": {
+     "id": "6659554d7e934e6f",
+     "title": "Hệ thống có gì bất thường không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 3.9016440440900624,
+   "first_event": 1.460218305233866,
+   "usage": {
+    "cost": 0.00133,
+    "input": 12492,
+    "output": 162,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_0127t87KXkncvSCnzFdhYd3j",
+     "tool": "chuoi_nhat_ky",
+     "label": "Chuỗi nhật ký",
+     "nodes": [
+      "chain",
+      "node:chain"
+     ],
+     "doing": "Đang kiểm tra chuỗi nhật ký",
+     "done": "Đã kiểm tra chuỗi nhật ký",
+     "failed": "Không thực hiện được: kiểm tra chuỗi nhật ký"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_0127t87KXkncvSCnzFdhYd3j",
+     "tool": "chuoi_nhat_ky",
+     "ok": true,
+     "ms": 40,
+     "focus": [
+      "chain",
+      "node:chain"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

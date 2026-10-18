@@ -1,0 +1,248 @@
+{
+ "id": "sp-desk-01",
+ "category": "desk",
+ "role": "specialist",
+ "as": "sp_insurance",
+ "persona": "Chuyên gia bảo hiểm",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Khuyến nghị nào chờ tôi",
+ "why": "The queue: the two recommendations for C01 and C04, oldest first, with their RM.",
+ "brd": [
+  "OWN-MR-05",
+  "FEAT-41"
+ ],
+ "turns": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "expect": {
+    "tools_any": [
+     "ban_chuyen_gia",
+     "de_xuat"
+    ],
+    "says": [
+     "C04|Hạnh",
+     "bảo hiểm"
+    ]
+   }
+  },
+  {
+   "say": "Cái nào cũ nhất?",
+   "expect": {
+    "says": "C01|Khoa|ngân hàng",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Khuyến nghị nào đang chờ tôi duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "text": "Chứng chỉ Tư vấn bảo hiểm nhân thọ (demo) (Bộ Tài chính) hiệu lực đến 2027-06-30. 2 khuyến nghị chờ bạn duyệt, cũ nhất trước: Giảm tỷ trọng cổ phiếu ngân hàng cho Nguyễn Minh Khoa (R-14ce4eb4, gia đình C01, RM rm01, gửi 18/10 20:19); Mua bảo hiểm sức khoẻ cho gia đình cho Đỗ Thị Hạnh (R-7d37ad52, gia đình C04, RM rm01, gửi 18/10 20:19). Gia đình được giao cho bạn: C01, C04.",
+      "card": null,
+      "focus": [
+       "queue"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 11505,
+     "output_tokens": 338,
+     "requests": 2,
+     "cost_usd": 0.001319,
+     "tools_cost_usd": null
+    },
+    "turn_id": "e483f3d203b8480ba23c9792272c3a2a",
+    "conversation_id": "88613ce3488b42f8",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện có 2 khuyến nghị đang chờ bạn duyệt, đều do RM rm01 gửi lúc 20:19 ngày 18/10:\n\n1. **Giảm tỷ trọng cổ phiếu ngân hàng** cho Nguyễn Minh Khoa (gia đình C01), mã R-14ce4eb4.\n2. **Mua bảo hiểm sức khoẻ cho gia đình** cho Đỗ Thị Hạnh (gia đình C04), mã R-7d37ad52.\n\nChứng chỉ của bạn còn hiệu lực đến 30/06/2027, nên bạn có thể duyệt hoặc từ chối cả hai. Bạn muốn xem hồ sơ của gia đình nào trước?",
+    "timing": {
+     "start": 74,
+     "calls": [
+      [
+       1056,
+       1393
+      ],
+      [
+       1025,
+       1916
+      ]
+     ],
+     "tools": 60,
+     "first_text": 1130,
+     "total": 3501
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "queue"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hồ sơ của gia đình này thế nào?"
+    ],
+    "answered_at": 1792331894.2973928,
+    "audit_seq": 683,
+    "session": {
+     "id": "88613ce3488b42f8",
+     "title": "Khuyến nghị nào đang chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.5426686219871044,
+   "first_event": 1.1469470621086657,
+   "usage": {
+    "cost": 0.001319,
+    "input": 11505,
+    "output": 338,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01VRLbMfvNfWySTtPAQoKXt4",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01VRLbMfvNfWySTtPAQoKXt4",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 60,
+     "focus": [
+      "queue"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Cái nào cũ nhất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6243,
+     "output_tokens": 149,
+     "requests": 1,
+     "cost_usd": 0.000699,
+     "tools_cost_usd": null
+    },
+    "turn_id": "25b0e6eca0884f25bd4aa092e795d3bc",
+    "conversation_id": "88613ce3488b42f8",
+    "compacted": false,
+    "status": "ok",
+    "text": "Cái cũ nhất là **Giảm tỷ trọng cổ phiếu ngân hàng** cho Nguyễn Minh Khoa (gia đình C01, mã R-14ce4eb4). Cả hai đều gửi lúc 20:19 ngày 18/10, nên mốc giờ không phân biệt được. Hệ thống xếp khuyến nghị này trước, nên nó là cái cũ nhất.",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       1040,
+       1654
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1066,
+     "total": 1697
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792331896.065491,
+    "audit_seq": 684,
+    "session": {
+     "id": "88613ce3488b42f8",
+     "title": "Khuyến nghị nào đang chờ tôi duyệt?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.732485210057348,
+   "first_event": 1.0791187016293406,
+   "usage": {
+    "cost": 0.000699,
+    "input": 6243,
+    "output": 149,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

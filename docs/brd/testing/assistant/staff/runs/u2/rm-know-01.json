@@ -1,0 +1,243 @@
+{
+ "id": "rm-know-01",
+ "category": "procedure",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM mới vào nghề (rm01)",
+ "client_id": null,
+ "route": "#/rm",
+ "title": "Khi nào phải qua chuyên gia",
+ "why": "A rule explained: an action recommendation needs a certified specialist; a single ticker never goes straight to a client.",
+ "brd": [
+  "BRD-RULE-CONTENT-01",
+  "BRD-RULE-SCOPE-02"
+ ],
+ "turns": [
+  {
+   "say": "Em mới làm RM. Khi nào một khuyến nghị phải qua chuyên gia duyệt?",
+   "expect": {
+    "says": "chuyên gia",
+    "grounded": false
+   }
+  },
+  {
+   "say": "Nếu tôi chỉ muốn khuyên khách mua thêm một mã cổ phiếu thì sao?",
+   "expect": {
+    "says": "chuyên gia",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Em mới làm RM. Khi nào một khuyến nghị phải qua chuyên gia duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Ai duyệt gì] RM duyệt hay từ chối phương án khách gửi, và viết khuyến nghị hành động cho gia đình của mình. Nếu gia đình có chuyên gia có chứng chỉ được giao, việc RM đã duyệt còn chờ chuyên gia đó duyệt (từ chối phải có lý do) rồi mới tới khách; gia đình không có chuyên gia thì RM duyệt là đủ. Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho khách, luôn qua chuyên gia có chứng chỉ. RM không duyệt thay chuyên gia. [Duyệt đề xuất] Các phương án khách đã gửi từ trang Kế hoạch: việc cần làm, số liệu tóm tắt, ô ghi chú, Duyệt hoặc Từ chối. Chỉ RM được quyết định (máy chủ kiểm tra lại). Việc RM duyệt có thể còn cần chuyên gia có chứng chỉ duyệt trước khi tới khách. [Hiệu quả tư vấn (một khách)] Trang nội bộ: số khuyến nghị, tỷ lệ đúng, tiền được / mất, việc bỏ lỡ, tin quan trọng bị bỏ lỡ, điểm các bước AI theo 12 tháng, nhật ký khuyến nghị, mức đọc tin và khẩu vị rủi ro theo thời gian. Toàn bộ là dữ liệu giả định cho demo, không phải đo độ chính xác. [Khuyến nghị có người duyệt và nhật ký] Cách tính Khuyến nghị có người duyệt và nhật ký: Tỷ lệ = khuyến nghị có người duyệt và có nhật ký ÷ khuyến nghị đã đưa ra trong tháng. Khuyến nghị (Đề xuất): lần áp dụng đã hiệu lực, bản tin đã duyệt, đề xuất của khách RM đã duyệt. Người duyệt là một người trong danh sách nhân viên, không phải agent hay hệ thống, khác người soạn; nhật ký là các dòng duyệt trong chuỗi nhật ký. Mục tiêu 100 %.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Ai duyệt gì",
+       "Hướng dẫn sử dụng · Duyệt đề xuất",
+       "Hướng dẫn sử dụng · Hiệu quả tư vấn (một khách)",
+       "Cách tính · Khuyến nghị có người duyệt và nhật ký"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Duyệt đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18879,
+     "output_tokens": 544,
+     "requests": 2,
+     "cost_usd": 0.00216,
+     "tools_cost_usd": null
+    },
+    "turn_id": "d09e2ac5f9f24be79f67b069aef818a5",
+    "conversation_id": "c7f1276061964fdb",
+    "compacted": false,
+    "status": "ok",
+    "text": "Theo hướng dẫn, phần lớn khuyến nghị do bạn duyệt là đủ, trừ khi gia đình có chuyên gia có chứng chỉ được giao.\n\n**Khi nào cần chuyên gia duyệt:**\n- **Gia đình có chuyên gia được giao:** việc bạn đã duyệt còn phải chờ chuyên gia đó duyệt rồi mới tới khách. Nếu chuyên gia từ chối, họ phải ghi lý do.\n- **Khuyến nghị mua bán một mã cổ phiếu:** không bao giờ gửi thẳng cho khách, luôn phải qua chuyên gia có chứng chỉ.\n\n**Khi nào bạn duyệt là đủ:**\n- Gia đình không có chuyên gia được giao.\n\n**Điều bạn không làm được:** duyệt thay chuyên gia hay CIO.\n\nBạn duyệt hoặc từ chối đề xuất của khách ở trang Duyệt đề xuất, và viết khuyến nghị hành động cho gia đình mình. Nếu cần, tôi có thể kiểm tra xem gia đình nào trong sổ của bạn đang có đề xuất chờ duyệt.",
+    "timing": {
+     "start": 40,
+     "calls": [
+      [
+       1045,
+       1490
+      ],
+      [
+       1009,
+       2584
+      ]
+     ],
+     "tools": 96,
+     "first_text": 1085,
+     "total": 4262
+    },
+    "citations": [
+     {
+      "label": "Duyệt đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Ai duyệt gì",
+     "Hướng dẫn sử dụng · Duyệt đề xuất",
+     "Hướng dẫn sử dụng · Hiệu quả tư vấn (một khách)",
+     "Cách tính · Khuyến nghị có người duyệt và nhật ký"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792331858.7187357,
+    "audit_seq": 663,
+    "session": {
+     "id": "c7f1276061964fdb",
+     "title": "Em mới làm RM.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.2970069837756455,
+   "first_event": 1.0988061469979584,
+   "usage": {
+    "cost": 0.00216,
+    "input": 18879,
+    "output": 544,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01UWYUoCe3qcwTmNL2aV585T",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": [],
+     "doing": "Đang tra hướng dẫn sử dụng",
+     "done": "Đã tra hướng dẫn",
+     "failed": "Không thực hiện được: tra hướng dẫn sử dụng"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01UWYUoCe3qcwTmNL2aV585T",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 96,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Nếu tôi chỉ muốn khuyên khách mua thêm một mã cổ phiếu thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10514,
+     "output_tokens": 299,
+     "requests": 1,
+     "cost_usd": 0.001201,
+     "tools_cost_usd": null
+    },
+    "turn_id": "d08cee6511fe47dd95a8a38b7f9356a9",
+    "conversation_id": "c7f1276061964fdb",
+    "compacted": false,
+    "status": "ok",
+    "text": "Khuyến nghị mua một mã cổ phiếu không được gửi thẳng cho khách. Bạn phải chuyển qua chuyên gia có chứng chỉ được giao cho gia đình đó, và họ là người quyết định có gửi cho khách hay không. Bạn không tự gửi trực tiếp, kể cả khi bạn đã có ý kiến riêng.\n\nBạn vẫn có thể:\n- Ghi lại trao đổi với khách ở mục liên hệ, nêu rõ bạn đã đề cập đến mã đó.\n- Viết khuyến nghị hành động chung (không kèm lệnh mua một mã cụ thể) để gửi cho khách.\n\nNếu bạn muốn, tôi có thể kiểm tra gia đình đó có chuyên gia được giao hay không và có đề xuất nào đang chờ không.",
+    "timing": {
+     "start": 25,
+     "calls": [
+      [
+       1055,
+       2354
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1080,
+     "total": 2399
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792331861.1778796,
+    "audit_seq": 664,
+    "session": {
+     "id": "c7f1276061964fdb",
+     "title": "Em mới làm RM.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.437829946167767,
+   "first_event": 1.090378109831363,
+   "usage": {
+    "cost": 0.001201,
+    "input": 10514,
+    "output": 299,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

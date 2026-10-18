@@ -1,0 +1,320 @@
+{
+ "id": "adm-act-01",
+ "category": "actions",
+ "role": "admin",
+ "as": "admin2",
+ "persona": "Quản trị thứ hai (admin2)",
+ "client_id": null,
+ "route": "#/admin",
+ "title": "Đánh dấu đã xem cảnh báo, đọc lại",
+ "why": "The AI-zone alert (Admin's alone) acknowledged with a note: waits, then acked.",
+ "brd": [
+  "BRD-FR-703",
+  "OWN-AS-06"
+ ],
+ "turns": [
+  {
+   "say": "Đánh dấu đã xem cảnh báo vùng AI, ghi chú: đang chờ đội hạ tầng.",
+   "expect": {
+    "status": "pending",
+    "pending": "da_xem_canh_bao",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from alerts where key = 'zone_a'",
+      "acked"
+     ]
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Đánh dấu đã xem cảnh báo vùng AI, ghi chú: đang chờ đội hạ tầng.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "canh_bao_he_thong",
+      "label": "Cảnh báo hệ thống",
+      "status": "ok",
+      "text": "2 cảnh báo hệ thống, 1 chưa ai xem. 1) Không gửi được vùng AI: Không gửi được gói sang vùng AI. 2) Nguồn tin không lấy được: Nguồn tin CafeF không trả lời.",
+      "card": {
+       "kind": "list",
+       "items": [
+        {
+         "title": "Không gửi được gói sang vùng AI",
+         "sub": "Không gửi được vùng AI",
+         "chip": "Chưa xem",
+         "tone": "bad"
+        },
+        {
+         "title": "Nguồn tin CafeF không trả lời",
+         "sub": "Nguồn tin không lấy được",
+         "chip": "Đã xem",
+         "tone": ""
+        }
+       ]
+      },
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hệ thống",
+       "route": "#/admin/he-thong"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10744,
+     "output_tokens": 203,
+     "requests": 2,
+     "cost_usd": 0.001176,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0d97ead92a7743afb3359e8dc609dfd1",
+    "conversation_id": "db9dcb33ad4e4b91",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "7224d9374e05139c08aa1d94adb0c597",
+      "tool": "da_xem_canh_bao",
+      "summary": "Đánh dấu đã xem cảnh báo “Không gửi được gói sang vùng AI”?"
+     }
+    ],
+    "text": "Đánh dấu đã xem cảnh báo “Không gửi được gói sang vùng AI”?",
+    "timing": {
+     "start": 25,
+     "calls": [
+      [
+       1024,
+       1393
+      ],
+      [
+       1019,
+       1415
+      ]
+     ],
+     "tools": 3,
+     "first_text": 1049,
+     "total": 2866
+    },
+    "citations": [
+     {
+      "label": "Hệ thống",
+      "route": "#/admin/he-thong"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Hệ thống có gì bất thường?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Có cảnh báo hệ thống nào?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330058.3410301,
+    "audit_seq": 756,
+    "session": {
+     "id": "db9dcb33ad4e4b91",
+     "title": "Đánh dấu đã xem cảnh báo vùng AI, ghi chú: đang…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.9051508139818907,
+   "first_event": 1.0608223690651357,
+   "usage": {
+    "cost": 0.001176,
+    "input": 10744,
+    "output": 203,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_016oX78o3Unm8roFaaSf6AQW",
+     "tool": "canh_bao_he_thong",
+     "label": "Cảnh báo hệ thống",
+     "nodes": [
+      "alerts"
+     ],
+     "doing": "Đang xem cảnh báo hệ thống",
+     "done": "Đã xem cảnh báo hệ thống",
+     "failed": "Không thực hiện được: xem cảnh báo hệ thống"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_016oX78o3Unm8roFaaSf6AQW",
+     "tool": "canh_bao_he_thong",
+     "ok": true,
+     "ms": 3,
+     "focus": []
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_015pBBUxAwwfabvd3rUy8Roe",
+     "tool": "da_xem_canh_bao",
+     "label": "Đã xem cảnh báo"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "da_xem_canh_bao",
+      "label": "Đã xem cảnh báo",
+      "status": "ok",
+      "text": "Đã đánh dấu đã xem cảnh báo AL-000008.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Hệ thống",
+       "route": "#/admin/he-thong"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 16514,
+     "output_tokens": 341,
+     "requests": 3,
+     "cost_usd": 0.001822,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0d97ead92a7743afb3359e8dc609dfd1",
+    "conversation_id": "db9dcb33ad4e4b91",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã đánh dấu xem cảnh báo AL-000008 \"Không gửi được gói sang vùng AI\", ghi chú: \"đang chờ đội hạ tầng\".\n\nCảnh báo CafeF (AL-000007) vẫn ở trạng thái đã xem trước đó. Bạn có muốn tôi kiểm tra tình trạng vận hành của nguồn tin này không?",
+    "timing": {
+     "start": 34,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       932,
+       1507
+      ]
+     ],
+     "tools": 36,
+     "first_text": 1044,
+     "total": 1633
+    },
+    "citations": [
+     {
+      "label": "Hệ thống",
+      "route": "#/admin/he-thong"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Hệ thống có gì bất thường?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Có cảnh báo hệ thống nào?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330060.0397856,
+    "audit_seq": 758,
+    "session": {
+     "id": "db9dcb33ad4e4b91",
+     "title": "Đánh dấu đã xem cảnh báo vùng AI, ghi chú: đang…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.6724954368546605,
+   "first_event": 0.07684430480003357,
+   "usage": {
+    "cost": 0.001822,
+    "input": 16514,
+    "output": 341,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_015pBBUxAwwfabvd3rUy8Roe",
+     "tool": "da_xem_canh_bao",
+     "label": "Đã xem cảnh báo",
+     "nodes": [],
+     "doing": "Đang chuẩn bị đánh dấu cảnh báo để bạn xác nhận",
+     "done": "Đã xử lý cảnh báo",
+     "failed": "Không thực hiện được: chuẩn bị đánh dấu cảnh báo để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_015pBBUxAwwfabvd3rUy8Roe",
+     "tool": "da_xem_canh_bao",
+     "ok": true,
+     "ms": 36,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": [
+     "acked"
+    ]
+   }
+  }
+ ]
+}

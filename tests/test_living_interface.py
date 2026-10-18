@@ -50,7 +50,7 @@ def test_every_focus_key_has_a_page_that_renders_it():
 
 def test_only_transform_and_opacity_animate():
     frames = re.findall(r"@keyframes\s+([\w-]+)\s*\{((?:[^{}]*\{[^{}]*\})*)\s*\}", CSS)
-    assert {n for n, _ in frames} >= {"mf-breathe", "mf-rise", "mf-dot", "mf-mark", "mf-lit", "mf-halo"}
+    assert {n for n, _ in frames} >= {"mf-rise", "mf-dot", "mf-mark", "mf-lit", "mf-halo"}
     for name, body in frames:
         props = set(re.findall(r"([a-z-]+)\s*:", re.sub(r"[\d.%,\s]+\{", "{", body)))
         # shimmer predates B-01; the graph's money spark slides a dash along its wire, as Studio's data flow does
@@ -67,7 +67,7 @@ def test_only_transform_and_opacity_animate():
 def test_hidden_tabs_pause_reduced_motion_stops_and_no_js_loop():
     assert "html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !important; }" in CSS
     reduced = CSS.split("@media (prefers-reduced-motion: reduce) {\n  .cp-panel")[1].split("\n}\n")[0]
-    for cls in (".cp-in", ".cp-dots i", ".cp-star", ".mf-lit", ".mf-focus::after", ".cp-dot::after"):
+    for cls in (".cp-in", ".cp-dots i", ".mf-lit", ".mf-focus::after", ".cp-dot::after"):
         assert cls in reduced
     js = (WEB / "motion.js").read_text() + (WEB / "copilot.js").read_text()
     assert "setInterval" not in js and js.count("requestAnimationFrame") == 1  # one frame after a page renders

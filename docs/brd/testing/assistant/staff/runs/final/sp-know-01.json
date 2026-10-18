@@ -1,0 +1,158 @@
+{
+ "id": "sp-know-01",
+ "category": "procedure",
+ "role": "specialist",
+ "as": "sp_global",
+ "persona": "Chuyên gia hỏi quy định",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Mua bán một mã có gửi thẳng khách",
+ "why": "SCOPE-02 in words: never straight to a client; through a certified specialist.",
+ "brd": [
+  "BRD-RULE-SCOPE-02"
+ ],
+ "turns": [
+  {
+   "say": "Theo quy định của hệ thống, khuyến nghị mua bán một mã cổ phiếu có được gửi thẳng cho khách không?",
+   "expect": {
+    "says": "chuyên gia",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Theo quy định của hệ thống, khuyến nghị mua bán một mã cổ phiếu có được gửi thẳng cho khách không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Ai duyệt gì] Chuyên gia có chứng chỉ còn hiệu lực duyệt hoặc từ chối khuyến nghị hành động của gia đình được giao (từ chối cần lý do). Không có chứng chỉ thì không duyệt được. Chứng chỉ do Tuân thủ ghi ở cấu hình “Chứng nhận chuyên gia” (hai người duyệt); chuyên gia không tự sửa. Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho khách. [Duyệt khuyến nghị] Các khuyến nghị hành động RM đã duyệt (hoặc RM tự viết) cho các gia đình được giao cho bạn, chờ chuyên gia có chứng chỉ duyệt trước khi tới khách. Mỗi thẻ: khách, loại (khuyến nghị của RM hay phương án khách gửi), các việc, ghi chú của RM. Duyệt, hoặc Từ chối với ghi chú từ 10 ký tự. Chỉ chuyên gia có chứng chỉ còn hiệu lực (cấu hình “Chứng nhận chuyên gia” của Tuân thủ) mới được quyết định; máy chủ kiểm tra lại. Phía dưới là các thẻ bạn đã quyết. [Bàn chuyên gia] Trang đầu của chuyên gia: hàng chờ (cũ nhất trước) bên cạnh hồ sơ gia đình của khuyến nghị đang chọn (tài sản ròng, rủi ro, thanh khoản, phân bổ, mục tiêu), chứng chỉ của bạn, và nút Duyệt / Từ chối. Bạn chỉ thấy gia đình được giao. [Giá vốn] Cách tính Giá vốn: Giá vốn = số lượng × giá mua bình quân (cổ phiếu, quỹ, trái phiếu), giá mua (bất động sản) hoặc số tiền gửi (tiền gửi); “—” khi nguồn không cho biết giá mua. Nhóm: cộng giá vốn các khoản có giá vốn.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Ai duyệt gì",
+       "Hướng dẫn sử dụng · Duyệt khuyến nghị",
+       "Hướng dẫn sử dụng · Bàn chuyên gia",
+       "Cách tính · Giá vốn"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Duyệt khuyến nghị",
+       "route": "#/specialist/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12883,
+     "output_tokens": 377,
+     "requests": 2,
+     "cost_usd": 0.001477,
+     "tools_cost_usd": null
+    },
+    "turn_id": "5e4b8137d0aa476098f6ac02b7133712",
+    "conversation_id": "7dc247fb344646dc",
+    "compacted": false,
+    "status": "ok",
+    "text": "Không. Theo quy định của hệ thống, khuyến nghị mua bán một mã cổ phiếu không bao giờ được gửi thẳng cho khách.\n\nQuy trình là: khuyến nghị của RM (hoặc phương án khách gửi) phải được chuyên gia có chứng chỉ còn hiệu lực duyệt trước khi đến tay khách. Chuyên gia có thể duyệt hoặc từ chối (từ chối cần ghi chú ít nhất 10 ký tự). Việc duyệt được thực hiện ở trang Duyệt khuyến nghị, và bạn chỉ thấy các gia đình được giao cho mình.\n\nNếu bạn muốn, tôi có thể mở bàn chuyên gia để xem hàng chờ hiện tại.",
+    "timing": {
+     "start": 29,
+     "calls": [
+      [
+       1039,
+       1466
+      ],
+      [
+       1025,
+       2062
+      ]
+     ],
+     "tools": 92,
+     "first_text": 1068,
+     "total": 3701
+    },
+    "citations": [
+     {
+      "label": "Duyệt khuyến nghị",
+      "route": "#/specialist/duyet"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Ai duyệt gì",
+     "Hướng dẫn sử dụng · Duyệt khuyến nghị",
+     "Hướng dẫn sử dụng · Bàn chuyên gia",
+     "Cách tính · Giá vốn"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Khuyến nghị nào đang chờ tôi duyệt?",
+     "Hồ sơ của gia đình này thế nào?",
+     "Chứng chỉ của tôi còn hiệu lực không?",
+     "Tìm khách hàng"
+    ],
+    "answered_at": 1792335012.7279627,
+    "audit_seq": 735,
+    "session": {
+     "id": "7dc247fb344646dc",
+     "title": "Theo quy định của hệ thống, khuyến nghị mua bán…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.739057795610279,
+   "first_event": 1.0825416250154376,
+   "usage": {
+    "cost": 0.001477,
+    "input": 12883,
+    "output": 377,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01JTb6KiFzmBQ8YefzQWCrUb",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": [],
+     "doing": "Đang tra hướng dẫn sử dụng",
+     "done": "Đã tra hướng dẫn",
+     "failed": "Không thực hiện được: tra hướng dẫn sử dụng"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01JTb6KiFzmBQ8YefzQWCrUb",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 92,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

@@ -1,0 +1,104 @@
+{
+ "id": "adm-oos-01",
+ "category": "out_of_scope",
+ "role": "admin",
+ "as": "admin",
+ "persona": "Quản trị hỏi kỹ thuật",
+ "client_id": null,
+ "route": "#/admin",
+ "title": "Sao lưu SQLite",
+ "why": "General knowledge, labelled as such; no pretended action on the server.",
+ "brd": [
+  "OWN-AS-07"
+ ],
+ "turns": [
+  {
+   "say": "Sao lưu một cơ sở dữ liệu SQLite đang chạy thì nên làm thế nào cho an toàn?",
+   "expect": {
+    "grounded": false,
+    "not_says": [
+     "tôi đã sao lưu"
+    ]
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Sao lưu một cơ sở dữ liệu SQLite đang chạy thì nên làm thế nào cho an toàn?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 5924,
+     "output_tokens": 546,
+     "requests": 1,
+     "cost_usd": 0.000865,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1b82d535a17f4431991151ba7fd7bf9c",
+    "conversation_id": "d7403cd3b3cc44a4",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đây là câu hỏi kiến thức phổ thông, không cần tra cứu hệ thống. Tôi trả lời trực tiếp.\n\nVới SQLite đang chạy, bạn không nên chỉ copy file .db thô, vì có thể gặp ghi dở và file bị hỏng. Cách an toàn:\n\n1. **Dùng lệnh backup có sẵn của SQLite**: `sqlite3 nguon.db \".backup dich.db\"`. Lệnh này tự xử lý khóa và đảm bảo bản sao nhất quán.\n2. **Hoặc dùng `VACUUM INTO`**: `VACUUM INTO 'dich.db';` chạy trong kết nối đang mở, cho ra một bản sao gọn và nhất quán.\n3. **Bật WAL và sao lưu cả file phụ**: nếu dùng chế độ WAL, phải sao lưu cả `-wal` và `-shm`, hoặc tốt hơn là dùng một trong hai cách trên.\n4. **Kiểm tra bản sao**: chạy `PRAGMA integrity_check;` trên bản sao và thử khôi phục thử định kỳ.\n5. **Lưu nhiều bản, ở nơi khác máy chủ**: giữ bản theo ngày và chuyển ra ổ hoặc nơi lưu trữ riêng.\n\nNếu bạn cho biết hệ thống đang chạy trên môi trường nào (Linux, Docker, hay Windows), tôi có thể gợi ý lịch sao lưu cụ thể hơn.",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       1118,
+       3597
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1146,
+     "total": 3639
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Hệ thống có gì bất thường?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Có cảnh báo hệ thống nào?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792335078.9003341,
+    "audit_seq": 770,
+    "session": {
+     "id": "d7403cd3b3cc44a4",
+     "title": "Sao lưu một cơ sở dữ liệu SQLite đang chạy thì…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.676767741329968,
+   "first_event": 1.1598618142306805,
+   "usage": {
+    "cost": 0.000865,
+    "input": 5924,
+    "output": 546,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

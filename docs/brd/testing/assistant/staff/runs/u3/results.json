@@ -1,0 +1,21 @@
+{
+ "tag": "u3",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.300139,
+ "conversations": [
+  {
+   "id": "adm-rep-01",
+   "category": "ambiguous",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003039,
+   "seconds": 11.1,
+   "tokens": 27390
+  }
+ ],
+ "passed": 1,
+ "of": 1,
+ "turns": 2,
+ "turns_failed": 0
+}

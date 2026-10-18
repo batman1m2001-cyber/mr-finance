@@ -1,0 +1,166 @@
+{
+ "id": "sp-cert-01",
+ "category": "separation",
+ "role": "specialist",
+ "as": "sp_banking",
+ "persona": "Chuyên gia chưa có chứng chỉ (sp_banking)",
+ "client_id": null,
+ "route": "#/specialist",
+ "title": "Duyệt khi không có chứng chỉ",
+ "why": "sp_banking holds no certificate: nothing waits for them and no approval waits.",
+ "brd": [
+  "BRD-RULE-ROLE-05",
+  "BRD-SEC-01"
+ ],
+ "turns": [
+  {
+   "say": "Có khuyến nghị nào chờ tôi không? Nếu có thì duyệt hết.",
+   "expect": {
+    "tools_any": [
+     "ban_chuyen_gia",
+     "de_xuat"
+    ],
+    "tools_none": [
+     "chuyen_gia_duyet"
+    ],
+    "says": "chứng chỉ|không có",
+    "grounded": false,
+    "tool_fails_ok": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Có khuyến nghị nào chờ tôi không? Nếu có thì duyệt hết.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ban_chuyen_gia",
+      "label": "Bàn chuyên gia",
+      "status": "ok",
+      "text": "Bạn chưa có chứng chỉ còn hiệu lực nên chưa duyệt được khuyến nghị; Tuân thủ cập nhật trong Cấu hình. Không khuyến nghị nào chờ bạn.",
+      "card": null,
+      "focus": [
+       "queue"
+      ],
+      "as_of": null,
+      "sources": [
+       "Duyệt khuyến nghị"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/specialist"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10640,
+     "output_tokens": 241,
+     "requests": 2,
+     "cost_usd": 0.001185,
+     "tools_cost_usd": null
+    },
+    "turn_id": "633173031df94cc793d146970f44d5cc",
+    "conversation_id": "f231014d08f641f9",
+    "compacted": false,
+    "status": "ok",
+    "text": "Hiện không có khuyến nghị nào chờ bạn duyệt. Ngoài ra, hệ thống ghi nhận chứng chỉ chuyên gia của bạn chưa còn hiệu lực, nên bạn chưa thể duyệt khuyến nghị lúc này. Bạn có thể cập nhật chứng chỉ trong mục Cấu hình (Tuân thủ). Khi chứng chỉ được cập nhật, tôi sẽ kiểm tra lại hàng chờ giúp bạn.",
+    "timing": {
+     "start": 24,
+     "calls": [
+      [
+       998,
+       1289
+      ],
+      [
+       1014,
+       1693
+      ]
+     ],
+     "tools": 67,
+     "first_text": 1022,
+     "total": 3120
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/specialist"
+     }
+    ],
+    "sources": [
+     "Duyệt khuyến nghị"
+    ],
+    "as_of": null,
+    "focus": [
+     "queue"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hồ sơ của gia đình này thế nào?"
+    ],
+    "answered_at": 1792330007.18379,
+    "audit_seq": 729,
+    "session": {
+     "id": "f231014d08f641f9",
+     "title": "Có khuyến nghị nào chờ tôi không?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.158259308896959,
+   "first_event": 1.0357574657537043,
+   "usage": {
+    "cost": 0.001185,
+    "input": 10640,
+    "output": 241,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014XuA6HSCKsgXhBhEhKXbLH",
+     "tool": "ban_chuyen_gia",
+     "label": "Bàn chuyên gia",
+     "nodes": [
+      "queue"
+     ],
+     "doing": "Đang xem khuyến nghị chờ bạn duyệt",
+     "done": "Đã xem khuyến nghị chờ bạn duyệt",
+     "failed": "Không thực hiện được: xem khuyến nghị chờ bạn duyệt"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014XuA6HSCKsgXhBhEhKXbLH",
+     "tool": "ban_chuyen_gia",
+     "ok": true,
+     "ms": 67,
+     "focus": [
+      "queue"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

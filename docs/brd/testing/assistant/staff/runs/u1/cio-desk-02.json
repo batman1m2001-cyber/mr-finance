@@ -1,0 +1,250 @@
+{
+ "id": "cio-desk-02",
+ "category": "desk",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO xem rủi ro",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Phơi nhiễm và gia đình chịu nhiều nhất",
+ "why": "Exposure from the latest apply run: total, by factor, the most affected family.",
+ "brd": [
+  "OWN-MR-01",
+  "BRD-FR-501"
+ ],
+ "turns": [
+  {
+   "say": "Phơi nhiễm lớn nhất đang ở yếu tố nào?",
+   "expect": {
+    "tools_any": [
+     "phoi_nhiem"
+    ]
+   }
+  },
+  {
+   "say": "Gia đình nào bị ảnh hưởng nhiều nhất?",
+   "expect": {
+    "tools_any": [
+     "phoi_nhiem"
+    ],
+    "says": "C0|gia đình"
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Phơi nhiễm lớn nhất đang ở yếu tố nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "phoi_nhiem",
+      "label": "Phơi nhiễm",
+      "status": "ok",
+      "text": "Lần áp dụng AR-0001-v1-2 (Tiền trong nước bắt đáy khi VN-Index thủng 1.700 điểm, khối ngoại vẫn tích cực xả hàng): kỳ vọng 3 tháng −628,1 triệu trên 5 gia đình, 1 gia đình chạm ngưỡng RM xem trước. Theo yếu tố, tổng mọi gia đình: VN-Index −668,6 triệu; Giá vàng thế giới +29,6 triệu; Chênh lệch vàng SJC so với thế giới +13,6 triệu; Bitcoin +13,0 triệu; Lợi suất TPCP Việt Nam −11,5 triệu; Tỷ giá USD/VND +10,3 triệu. Gia đình ảnh hưởng nhiều nhất: Lê Văn Phát −0,46%; Nguyễn Minh Khoa −0,18%; Phạm Gia Huy −1,13% (RM xem trước). Tham số mô hình là giả định; đây là ước tính, không phải dự báo.",
+      "card": null,
+      "focus": [
+       "exposure",
+       "stage:families"
+      ],
+      "as_of": "AR-0001-v1-2",
+      "sources": [
+       "lần áp dụng AR-0001-v1-2"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Phơi nhiễm",
+       "route": "#/cio/phoi-nhiem"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 12252,
+     "output_tokens": 381,
+     "requests": 2,
+     "cost_usd": 0.001416,
+     "tools_cost_usd": null
+    },
+    "turn_id": "79edbbe7522c4cf1bf1be5ce48421b2b",
+    "conversation_id": "b3bd05973e21435e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Yếu tố có phơi nhiễm lớn nhất là **VN-Index**, với kỳ vọng 3 tháng **−668,6 triệu** (tổng mọi gia đình).\n\nĐây là kết quả của lần áp dụng AR-0001-v1-2, lấy từ trang Phơi nhiễm. Các yếu tố còn lại gồm giá vàng thế giới +29,6 triệu, chênh lệch vàng SJC +13,6 triệu, Bitcoin +13,0 triệu, lợi suất TPCP −11,5 triệu và tỷ giá USD/VND +10,3 triệu.\n\nVề gia đình, Phạm Gia Huy chịu ảnh hưởng nhiều nhất (−1,13%) và đang ở mức RM xem trước. Kế đến là Lê Văn Phát (−0,46%) và Nguyễn Minh Khoa (−0,18%).\n\nĐây là ước tính dựa trên giả định của mô hình, không phải dự báo.",
+    "timing": {
+     "start": 29,
+     "calls": [
+      [
+       1306,
+       1306
+      ],
+      [
+       1032,
+       2245
+      ]
+     ],
+     "tools": 379,
+     "first_text": 2770,
+     "total": 4001
+    },
+    "citations": [
+     {
+      "label": "Phơi nhiễm",
+      "route": "#/cio/phoi-nhiem"
+     }
+    ],
+    "sources": [
+     "lần áp dụng AR-0001-v1-2"
+    ],
+    "as_of": "AR-0001-v1-2",
+    "focus": [
+     "exposure",
+     "stage:families"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Độ chính xác của mô hình?"
+    ],
+    "answered_at": 1792329905.2208393,
+    "audit_seq": 682,
+    "session": {
+     "id": "b3bd05973e21435e",
+     "title": "Phơi nhiễm lớn nhất đang ở yếu tố nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.039105312898755,
+   "first_event": 1.7269227211363614,
+   "usage": {
+    "cost": 0.001416,
+    "input": 12252,
+    "output": 381,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01LAQhbLQ5x6PuBrXm5Bs5BN",
+     "tool": "phoi_nhiem",
+     "label": "Phơi nhiễm",
+     "nodes": [
+      "exposure",
+      "stage:families"
+     ],
+     "doing": "Đang xem phơi nhiễm của mọi gia đình",
+     "done": "Đã xem phơi nhiễm của mọi gia đình",
+     "failed": "Không thực hiện được: xem phơi nhiễm của mọi gia đình"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01LAQhbLQ5x6PuBrXm5Bs5BN",
+     "tool": "phoi_nhiem",
+     "ok": true,
+     "ms": 379,
+     "focus": [
+      "exposure",
+      "stage:families"
+     ]
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Gia đình nào bị ảnh hưởng nhiều nhất?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 6771,
+     "output_tokens": 174,
+     "requests": 1,
+     "cost_usd": 0.000764,
+     "tools_cost_usd": null
+    },
+    "turn_id": "a5fb0c302bbb4ae7b2db4b9fd7d87856",
+    "conversation_id": "b3bd05973e21435e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Gia đình bị ảnh hưởng nhiều nhất là **Phạm Gia Huy**, với −1,13%, và đang ở mức RM xem trước.\n\nTiếp theo là Lê Văn Phát (−0,46%) và Nguyễn Minh Khoa (−0,18%). Số liệu lấy từ lần áp dụng AR-0001-v1-2 trên trang Phơi nhiễm. Đây là ước tính theo giả định của mô hình, không phải dự báo.",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       1111,
+       1757
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1137,
+     "total": 1800
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792329907.091956,
+    "audit_seq": 683,
+    "session": {
+     "id": "b3bd05973e21435e",
+     "title": "Phơi nhiễm lớn nhất đang ở yếu tố nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.8462274088524282,
+   "first_event": 1.1544439098797739,
+   "usage": {
+    "cost": 0.000764,
+    "input": 6771,
+    "output": 174,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

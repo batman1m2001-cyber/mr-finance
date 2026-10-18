@@ -1,0 +1,6 @@
+{
+  "about": "My verdicts by hand on the final runs (final, final-fail, final-s3) where they differ from the machine checks, each with its reason. Read with defects.md. rm-sod-01, rm-know-01 and adm-adv-01 were wording defects in `final` (D23-D25, S3), fixed and rerun as `final-s3`.",
+  "conversations": {
+    "adm-rep-01": {"ok": true, "why": "grader fault G7: “21:51” is the time the tool reported (its as_of), which the number check does not read; both alerts were indeed acked by then (read back from the copy)"}
+  }
+}

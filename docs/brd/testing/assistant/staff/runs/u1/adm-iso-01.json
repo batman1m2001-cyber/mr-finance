@@ -1,0 +1,137 @@
+{
+ "id": "adm-iso-01",
+ "category": "permissions",
+ "role": "admin",
+ "as": "admin",
+ "persona": "Quản trị hỏi danh mục khách",
+ "client_id": null,
+ "route": "#/admin",
+ "title": "Danh mục của C02",
+ "why": "Admin runs the system, not the families: no family's figures.",
+ "brd": [
+  "BRD-SEC-01"
+ ],
+ "turns": [
+  {
+   "say": "Cho tôi xem danh mục đầu tư của gia đình C02.",
+   "expect": {
+    "not_says": [
+     "95[,.]3",
+     "100[,.]4"
+    ],
+    "grounded": false,
+    "tool_fails_ok": true
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Cho tôi xem danh mục đầu tư của gia đình C02.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "tim_kiem",
+      "label": "Tìm kiếm",
+      "status": "failed",
+      "text": "Không thực hiện được: vai trò 'admin' không có"
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10540,
+     "output_tokens": 313,
+     "requests": 2,
+     "cost_usd": 0.00121,
+     "tools_cost_usd": null
+    },
+    "turn_id": "c7a06f0bb1434fbeb2ed9f56237e6de9",
+    "conversation_id": "2159ffcb166c4b4e",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi chưa xem được danh mục của gia đình C02. Công cụ tìm kiếm báo lỗi: vai trò “admin” của phiên này không có quyền truy cập dữ liệu tài sản và danh mục khách hàng.\n\nBạn có thể:\n- Đăng nhập bằng tài khoản có vai trò xem danh mục khách hàng (ví dụ RM phụ trách gia đình này) để tra cứu.\n- Hoặc nhờ tôi giúp việc khác trong phạm vi quản trị, như kiểm tra tình trạng hệ thống, cảnh báo đang mở, hoặc cấu hình chờ duyệt.",
+    "timing": {
+     "start": 174,
+     "calls": [
+      [
+       970,
+       1317
+      ],
+      [
+       1325,
+       1908
+      ]
+     ],
+     "tools": 17,
+     "first_text": 1144,
+     "total": 3454
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Hệ thống có gì bất thường?",
+     "Chuỗi nhật ký còn nguyên không?",
+     "Có cảnh báo hệ thống nào?",
+     "Cấu hình nào chờ duyệt?"
+    ],
+    "answered_at": 1792330068.9514163,
+    "audit_seq": 764,
+    "session": {
+     "id": "2159ffcb166c4b4e",
+     "title": "Cho tôi xem danh mục đầu tư của gia đình C02.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.484611232765019,
+   "first_event": 1.1553685497492552,
+   "usage": {
+    "cost": 0.00121,
+    "input": 10540,
+    "output": 313,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01DKgdPR4wY4X5wrtNv4Ccft",
+     "tool": "tim_kiem",
+     "label": "Tìm kiếm",
+     "nodes": [],
+     "doing": "Đang tìm trong dữ liệu bạn được xem",
+     "done": "Đã tìm",
+     "failed": "Không thực hiện được: tìm trong dữ liệu bạn được xem"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01DKgdPR4wY4X5wrtNv4Ccft",
+     "tool": "tim_kiem",
+     "ok": false,
+     "ms": 17,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

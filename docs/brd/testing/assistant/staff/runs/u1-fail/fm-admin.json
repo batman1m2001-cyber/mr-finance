@@ -1,0 +1,62 @@
+{
+ "id": "fm-admin",
+ "category": "failure_modes",
+ "role": "admin",
+ "as": "admin",
+ "persona": "admin, mô hình không trả lời",
+ "client_id": null,
+ "route": "#/admin",
+ "title": "Mô hình không trả lời",
+ "why": "The provider is down: the keyword path answers from the role's tools and says so.",
+ "brd": [
+  "BRD-NFR-03",
+  "OWN-AS-03"
+ ],
+ "turns": [
+  {
+   "say": "Hệ thống có gì bất thường?",
+   "expect": {
+    "mode": "fallback",
+    "grounded": false
+   }
+  }
+ ],
+ "server": "fail",
+ "run": [
+  {
+   "say": "Hệ thống có gì bất thường?",
+   "graph": null,
+   "answer": {
+    "status": "no_answer",
+    "text": ""
+   },
+   "seconds": 1.4713309211656451,
+   "first_event": null,
+   "usage": {
+    "cost": 0.0,
+    "input": 0,
+    "output": 0,
+    "requests": 0
+   },
+   "why": [
+    "no_answer: "
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "error",
+     "text": "Trợ lý gặp lỗi (KeyError)"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

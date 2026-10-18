@@ -1,0 +1,81 @@
+{
+ "tag": "u2d",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.254675,
+ "conversations": [
+  {
+   "id": "rm-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002895,
+   "seconds": 4.3,
+   "tokens": 27349
+  },
+  {
+   "id": "rm-act-03",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.006087,
+   "seconds": 7.3,
+   "tokens": 57274
+  },
+  {
+   "id": "rm-sod-01",
+   "category": "separation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00099,
+   "seconds": 2.0,
+   "tokens": 9101
+  },
+  {
+   "id": "cio-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002033,
+   "seconds": 3.1,
+   "tokens": 19751
+  },
+  {
+   "id": "cio-lim-02",
+   "category": "limits",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.004651,
+   "seconds": 12.9,
+   "tokens": 42017
+  },
+  {
+   "id": "cio-iso-01",
+   "category": "permissions",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001549,
+   "seconds": 4.1,
+   "tokens": 14045
+  },
+  {
+   "id": "cmp-lim-02",
+   "category": "limits",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00317,
+   "seconds": 7.9,
+   "tokens": 28539
+  }
+ ],
+ "passed": 7,
+ "of": 7,
+ "turns": 12,
+ "turns_failed": 0
+}

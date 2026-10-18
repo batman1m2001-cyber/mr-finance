@@ -3,6 +3,20 @@
 Các trang của CIO (`#/cio/…`): từ tin thị trường tới nhận định được duyệt, áp dụng cho mọi gia đình, và chất lượng
 của mô hình. Việc hai người (duyệt cấu hình, mô hình) cần một CIO khác.
 
+## Bàn quyết định — #/cio
+
+Trang đầu của CIO: dòng chảy từ tin tới gia đình (tin, sự kiện, nhận định, lần áp dụng, gia đình, RM), những việc
+chờ CIO quyết định, phơi nhiễm theo yếu tố, sự kiện gần đây, mô hình và các agent. Duyệt nhận định làm ở trang Sự kiện
+& nhận định; cấu hình CIO sở hữu cần một CIO khác duyệt.
+
+## Agent chạy nền — #/cio/agent
+
+Agent CIO chạy khi CIO bấm **Chạy Agent CIO** trên một sự kiện (vào hàng đợi, mỗi lần một việc); Agent Phản biện kiểm
+tra nhận định trước khi duyệt; Agent Chính sách tóm tắt văn bản đã xác nhận. Việc nền theo lịch: lấy tin mỗi 10 phút,
+dữ liệu thị trường theo lịch từng nguồn, quét chính sách 07:00, tổng hợp trí nhớ mỗi 5 phút, lưu giữ 02:30. Trang
+Agent cho thấy từng agent và việc nền: trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay. Trợ lý đọc được
+trạng thái này nhưng không chạy agent.
+
 ## Hộp tin — #/cio/hop-tin
 
 Trang đầu tiên của CIO: “<n> tin chờ xử lý”. Tin được lấy tự động mỗi 10 phút từ các nguồn đã duyệt; **Lấy tin ngay**

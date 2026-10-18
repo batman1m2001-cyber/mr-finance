@@ -2,6 +2,13 @@
 
 Các trang của Quản trị (`#/admin/…`).
 
+## Vận hành — #/admin
+
+Trang đầu của Quản trị: hệ thống như một bản đồ (nguồn → lưu trữ → AI → người dùng), mỗi phần xanh, vàng hay đỏ theo
+lần ghi nhận gần nhất; cảnh báo, việc lỗi, cấu hình chờ duyệt, người dùng theo vai trò, chuỗi nhật ký. Cấu hình do
+vai trò khác sở hữu (ngưỡng của CIO, chứng nhận chuyên gia của Tuân thủ) thì vai trò đó duyệt. Quản trị không xem tài
+sản hay danh mục của khách.
+
 ## Hệ thống — #/admin/he-thong
 
 Trang đầu tiên của Quản trị.

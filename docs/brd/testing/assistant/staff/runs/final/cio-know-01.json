@@ -1,0 +1,159 @@
+{
+ "id": "cio-know-01",
+ "category": "procedure",
+ "role": "cio",
+ "as": "cio",
+ "persona": "CIO mới",
+ "client_id": null,
+ "route": "#/cio",
+ "title": "Lần áp dụng khác gì nhận định",
+ "why": "The guide explains a view and an apply run, and who approves each.",
+ "brd": [
+  "OWN-AS-02",
+  "BRD-FR-501"
+ ],
+ "turns": [
+  {
+   "say": "Nhận định với lần áp dụng khác nhau thế nào, ai duyệt cái nào?",
+   "expect": {
+    "says": "nhận định",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Nhận định với lần áp dụng khác nhau thế nào, ai duyệt cái nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "huong_dan",
+      "label": "Hướng dẫn sử dụng",
+      "status": "ok",
+      "text": "Theo hướng dẫn sử dụng: [Lần áp dụng] Một lần áp dụng: trạng thái, nhận định, số gia đình, ngày giá, phiên bản mô hình và bộ tính. Kiểm tra tính lại (khớp tới từng đồng) và Thẩm định lại với dữ liệu mới. Tổng kỳ vọng 3 tháng, Hậu kiểm (các phát hiện P1–P5), Thu hồi lần áp dụng với lý do, hoặc Cho hiệu lực một lần đang bị giữ; lịch sử trạng thái và danh sách mọi lần áp dụng. [Bàn quyết định] Trang đầu của CIO: dòng chảy từ tin tới gia đình (tin, sự kiện, nhận định, lần áp dụng, gia đình, RM), những việc chờ CIO quyết định, phơi nhiễm theo yếu tố, sự kiện gần đây, mô hình và các agent. Duyệt nhận định làm ở trang Sự kiện & nhận định; cấu hình CIO sở hữu cần một CIO khác duyệt. [Đồ thị lần áp dụng] Một lần áp dụng vẽ thành sáu cột: Tin, Sự kiện, Kịch bản, Yếu tố, Nhóm tài sản, Gia đình — mọi gia đình được tính, cạnh mang thay đổi 3 tháng của gia đình. Chọn lần áp dụng khác ở ô chọn; chọn một nút để làm sáng đường đi. [Lần áp dụng (application run)] Lần áp dụng (application run): One computation of an approved view for every family, with a snapshot (AR-…)",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": [
+       "Hướng dẫn sử dụng · Lần áp dụng",
+       "Hướng dẫn sử dụng · Bàn quyết định",
+       "Hướng dẫn sử dụng · Đồ thị lần áp dụng",
+       "Thuật ngữ · Lần áp dụng (application run)"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Lần áp dụng",
+       "route": "#/cio/ap-dung"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 14398,
+     "output_tokens": 568,
+     "requests": 2,
+     "cost_usd": 0.001724,
+     "tools_cost_usd": null
+    },
+    "turn_id": "56922095fffe4ae5977e9b225600a984",
+    "conversation_id": "03531bc9cb0842d4",
+    "compacted": false,
+    "status": "ok",
+    "text": "**Nhận định** là kết luận về một sự kiện, do Agent CIO soạn sau khi Agent Phản biện xem xét. Bạn duyệt, trả lại hoặc bác nhận định ở trang **Sự kiện & nhận định**. Việc chờ quyết định hiện có ở **Bàn quyết định**.\n\n**Lần áp dụng** là một lượt tính nhận định đã duyệt cho tất cả gia đình, kèm ảnh chụp dữ liệu (mã AR-…). Ở trang **Áp dụng**, bạn xem lại lần áp dụng: kiểm tra tính lại, thẩm định với dữ liệu mới, xem tổng kỳ vọng 3 tháng và hậu kiểm, rồi thu hồi (kèm lý do) hoặc cho hiệu lực lần đang bị giữ.\n\n**Cấu hình** do CIO sở hữu (mô hình yếu tố, ngưỡng cảnh báo, giả định lợi suất) cần một CIO khác duyệt; người đề xuất không tự duyệt.\n\nNói ngắn: nhận định duyệt ở Sự kiện & nhận định, còn lần áp dụng xem lại và cho hiệu lực ở trang Áp dụng.",
+    "timing": {
+     "start": 32,
+     "calls": [
+      [
+       1065,
+       1532
+      ],
+      [
+       1082,
+       2914
+      ]
+     ],
+     "tools": 85,
+     "first_text": 1097,
+     "total": 4617
+    },
+    "citations": [
+     {
+      "label": "Lần áp dụng",
+      "route": "#/cio/ap-dung"
+     }
+    ],
+    "sources": [
+     "Hướng dẫn sử dụng · Lần áp dụng",
+     "Hướng dẫn sử dụng · Bàn quyết định",
+     "Hướng dẫn sử dụng · Đồ thị lần áp dụng",
+     "Thuật ngữ · Lần áp dụng (application run)"
+    ],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Có gì chờ tôi duyệt?",
+     "Phơi nhiễm lớn nhất ở đâu?",
+     "Độ chính xác của mô hình?",
+     "Hộp tin có bao nhiêu tin?"
+    ],
+    "answered_at": 1792334953.9535563,
+    "audit_seq": 708,
+    "session": {
+     "id": "03531bc9cb0842d4",
+     "title": "Nhận định với lần áp dụng khác nhau thế nào, ai…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 4.658579200040549,
+   "first_event": 1.109100772999227,
+   "usage": {
+    "cost": 0.001724,
+    "input": 14398,
+    "output": 568,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01DLLsy2uF9w3P8KLE4Frdgy",
+     "tool": "huong_dan",
+     "label": "Hướng dẫn sử dụng",
+     "nodes": [],
+     "doing": "Đang tra hướng dẫn sử dụng",
+     "done": "Đã tra hướng dẫn",
+     "failed": "Không thực hiện được: tra hướng dẫn sử dụng"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01DLLsy2uF9w3P8KLE4Frdgy",
+     "tool": "huong_dan",
+     "ok": true,
+     "ms": 85,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

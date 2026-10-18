@@ -1,0 +1,463 @@
+{
+ "id": "rm-mem-01",
+ "category": "memory",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM có thói quen (rm01)",
+ "client_id": null,
+ "route": "#/rm",
+ "title": "Ghi nhớ một thói quen, dùng ở phiên sau",
+ "why": "A preference remembered (confirmed, read back) and used in a new session.",
+ "brd": [
+  "OWN-AS-11",
+  "FEAT-37"
+ ],
+ "turns": [
+  {
+   "say": "Nhớ giúp tôi: tôi chỉ gọi khách vào buổi sáng, trước 11 giờ.",
+   "expect": {
+    "status": "pending",
+    "pending": "ghi_nho",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "memory_has": "sáng"
+   }
+  },
+  {
+   "say": "Hôm nay tôi nên gọi khách vào lúc nào?",
+   "expect": {
+    "says": "sáng|11",
+    "grounded": false
+   },
+   "new_session": true
+  }
+ ],
+ "run": [
+  {
+   "say": "Nhớ giúp tôi: tôi chỉ gọi khách vào buổi sáng, trước 11 giờ.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8485,
+     "output_tokens": 144,
+     "requests": 1,
+     "cost_usd": 0.00092,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0ff27388a50a4fbab66022ae5dfceecf",
+    "conversation_id": "d04059d120d24ecd",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "87b403d73a5839c14687695de0a3f6cc",
+      "tool": "ghi_nho",
+      "summary": "Ghi nhớ (Sở thích): “Chỉ gọi khách hàng vào buổi sáng, trước 11 giờ”?"
+     }
+    ],
+    "text": "Ghi nhớ (Sở thích): “Chỉ gọi khách hàng vào buổi sáng, trước 11 giờ”?",
+    "timing": {
+     "start": 26,
+     "calls": [
+      [
+       1182,
+       1731
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1208,
+     "total": 1757
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329885.6441207,
+    "audit_seq": 673,
+    "session": {
+     "id": "d04059d120d24ecd",
+     "title": "Nhớ giúp tôi: tôi chỉ gọi khách vào buổi sáng…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 1.7967231841757894,
+   "first_event": 1.22143815131858,
+   "usage": {
+    "cost": 0.00092,
+    "input": 8485,
+    "output": 144,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_012TkffoUDLs1uCQuCbqo7S9",
+     "tool": "ghi_nho",
+     "label": "Ghi nhớ"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "ghi_nho",
+      "label": "Ghi nhớ",
+      "status": "ok",
+      "text": "Đã ghi nhớ: “Chỉ gọi khách hàng vào buổi sáng, trước 11 giờ”. Bạn xem, sửa hoặc xoá ở trang Bộ nhớ.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bộ nhớ",
+       "route": "#/rm/bo-nho"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17294,
+     "output_tokens": 219,
+     "requests": 2,
+     "cost_usd": 0.001839,
+     "tools_cost_usd": null
+    },
+    "turn_id": "0ff27388a50a4fbab66022ae5dfceecf",
+    "conversation_id": "d04059d120d24ecd",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã ghi nhớ: bạn chỉ gọi khách hàng vào buổi sáng, trước 11 giờ. Bạn có thể xem hoặc sửa ở trang Bộ nhớ.",
+    "timing": {
+     "start": 33,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       1326,
+       1361
+      ]
+     ],
+     "tools": 67,
+     "first_text": 1470,
+     "total": 1522
+    },
+    "citations": [
+     {
+      "label": "Bộ nhớ",
+      "route": "#/rm/bo-nho"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329887.2318494,
+    "audit_seq": 674,
+    "session": {
+     "id": "d04059d120d24ecd",
+     "title": "Nhớ giúp tôi: tôi chỉ gọi khách vào buổi sáng…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.5598741360008717,
+   "first_event": 0.10045896423980594,
+   "usage": {
+    "cost": 0.001839,
+    "input": 17294,
+    "output": 219,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_012TkffoUDLs1uCQuCbqo7S9",
+     "tool": "ghi_nho",
+     "label": "Ghi nhớ",
+     "nodes": [],
+     "doing": "Đang chuẩn bị ghi nhớ để bạn xác nhận",
+     "done": "Đã xử lý việc ghi nhớ",
+     "failed": "Không thực hiện được: chuẩn bị ghi nhớ để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_012TkffoUDLs1uCQuCbqo7S9",
+     "tool": "ghi_nho",
+     "ok": true,
+     "ms": 67,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "0e76cf8ee6214a6aa32dfde34f0b4d06",
+      "kind": "preference",
+      "text": "Chỉ gọi khách hàng vào buổi sáng, trước 11 giờ",
+      "source": {
+       "conversation": "d04059d120d24ecd"
+      },
+      "confidence": 1.0,
+      "created": 1792329885.798518,
+      "updated": 1792329885.798518,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Hôm nay tôi nên gọi khách vào lúc nào?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "hom_nay",
+      "label": "Hôm nay",
+      "status": "failed",
+      "text": "Không thực hiện được: Hoàng Hải Yến không được xem dữ liệu của khách hàng này",
+      "evidence": {
+       "label": "Hôm nay",
+       "route": "#/rm/hom-nay"
+      }
+     },
+     {
+      "tool": "so_khach_hang",
+      "label": "Sổ khách hàng",
+      "status": "ok",
+      "text": "Sổ của bạn có 3 gia đình. Không gia đình nào cần gọi ngay hay chờ bạn duyệt. 0 đề xuất chờ duyệt, 0 việc theo mục tiêu. Chưa ghi liên hệ nào.",
+      "card": null,
+      "focus": [
+       "book"
+      ],
+      "as_of": null,
+      "sources": [
+       "Sổ khách hàng",
+       "Hôm nay",
+       "Duyệt đề xuất"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/rm"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 17590,
+     "output_tokens": 394,
+     "requests": 2,
+     "cost_usd": 0.001956,
+     "tools_cost_usd": null
+    },
+    "turn_id": "259455d30c834962af634e8da488a448",
+    "conversation_id": "b97df31ce1644f1b",
+    "compacted": false,
+    "status": "ok",
+    "text": "Bạn nên gọi khách vào buổi sáng, trước 11 giờ, theo sở thích bạn đã ghi nhớ.\n\nHôm nay không có gia đình nào cần gọi ngay, và không có đề xuất hay việc theo mục tiêu nào đang chờ bạn. Sổ của bạn hiện có 3 gia đình, chưa ghi nhận liên hệ nào.\n\nLưu ý: công cụ \"Hôm nay\" báo lỗi quyền truy cập với tài khoản của bạn, nên tôi chưa xem được danh sách ưu tiên chi tiết từ trang đó. Nếu cần, bạn có thể mở trang Hôm nay để kiểm tra thêm.",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       1040,
+       1559
+      ],
+      [
+       1075,
+       2004
+      ]
+     ],
+     "tools": 379,
+     "first_text": 1068,
+     "total": 3848
+    },
+    "citations": [
+     {
+      "label": "Hôm nay",
+      "route": "#/rm/hom-nay"
+     },
+     {
+      "label": "Bàn làm việc",
+      "route": "#/rm"
+     }
+    ],
+    "sources": [
+     "Sổ khách hàng",
+     "Hôm nay",
+     "Duyệt đề xuất"
+    ],
+    "as_of": null,
+    "focus": [
+     "book"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?"
+    ],
+    "answered_at": 1792329891.1466107,
+    "audit_seq": 675,
+    "session": {
+     "id": "b97df31ce1644f1b",
+     "title": "Hôm nay tôi nên gọi khách vào lúc nào?",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.886024843901396,
+   "first_event": 1.0795372552238405,
+   "usage": {
+    "cost": 0.001956,
+    "input": 17590,
+    "output": 394,
+    "requests": 2
+   },
+   "why": [
+    "tool failed: ['hom_nay']"
+   ],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01PWX2R9D2fPbHzSXAJCym6t",
+     "tool": "hom_nay",
+     "label": "Hôm nay",
+     "nodes": [
+      "calls",
+      "tasks"
+     ],
+     "doing": "Đang xem các gia đình cần xem hôm nay",
+     "done": "Đã xem danh sách hôm nay",
+     "failed": "Không thực hiện được: xem các gia đình cần xem hôm nay"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01K3niBPPmshPqak9aMdaFYZ",
+     "tool": "so_khach_hang",
+     "label": "Sổ khách hàng",
+     "nodes": [
+      "book",
+      "calls",
+      "proposals"
+     ],
+     "doing": "Đang xem sổ khách hàng của bạn",
+     "done": "Đã xem sổ khách hàng của bạn",
+     "failed": "Không thực hiện được: xem sổ khách hàng của bạn"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01PWX2R9D2fPbHzSXAJCym6t",
+     "tool": "hom_nay",
+     "ok": false,
+     "ms": 189,
+     "focus": []
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01K3niBPPmshPqak9aMdaFYZ",
+     "tool": "so_khach_hang",
+     "ok": true,
+     "ms": 190,
+     "focus": [
+      "book"
+     ]
+    }
+   ],
+   "state": {
+    "items": [
+     {
+      "id": "0e76cf8ee6214a6aa32dfde34f0b4d06",
+      "kind": "preference",
+      "text": "Chỉ gọi khách hàng vào buổi sáng, trước 11 giờ",
+      "source": {
+       "conversation": "d04059d120d24ecd"
+      },
+      "confidence": 1.0,
+      "created": 1792329885.798518,
+      "updated": 1792329885.798518,
+      "expires": null,
+      "kind_label": "Sở thích"
+     }
+    ],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

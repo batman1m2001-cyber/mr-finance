@@ -156,7 +156,7 @@ async def fallback_events(r: Dict[str, Any], why: str):
                "text": "Không còn việc nào chờ xác nhận: trợ lý đang chạy chế độ dự phòng, hãy hỏi lại."}}  # fmt: skip
         return
     seen = scrub(r["message"])
-    got = router.keyword(seen, r["route"])
+    got = router.keyword(seen, r["route"], r["role"])
     known = got["tool"] in registry.REGISTRY
     if known:
         label, nodes = registry.LABELS.get(got["tool"], got["tool"]), stream.nodes_for(got["tool"], got["args"])

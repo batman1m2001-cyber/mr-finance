@@ -39,6 +39,37 @@ RULES: List[Tuple[Optional[str], str]] = [  # (tool, folded keywords as a regex)
     ("tac_dong", r"\btin\b|tac dong|thi truong|anh huong|su kien"),
     ("tong_quan", r"tai san|tong quan|rui ro|thanh khoan|bao nhieu tien|gia tri"),
 ]
+# each staff role's own questions first, to its desk tools (staff stress test D13: with the model down, the CIO's
+# “có gì chờ tôi duyệt” went to the RM's approval and every desk question was “cần trợ lý AI”); first match wins
+DESK_RULES: Dict[str, List[Tuple[str, str]]] = {
+    "rm": [("so_khach_hang", r"so khach|can lam|cho (toi )?duyet|dang cho|de xuat nao|de xuat cho|khach nao")],
+    "cio": [
+        ("agent_nen", r"\bagent\b|chay nen|viec nen|lich chay"),
+        ("phoi_nhiem", r"phoi nhiem"),
+        ("lan_ap_dung", r"ap dung"),
+        ("do_chinh_xac", r"chinh xac|du bao dung"),
+        ("ban_quyet_dinh", r"cho toi|quyet dinh|cho duyet|dang cho|nhan dinh|dong chay"),
+        ("su_kien", r"su kien"),
+        ("canh_bao_he_thong", r"canh bao"),
+    ],
+    "specialist": [("ban_chuyen_gia", r"khuyen nghi|cho toi|cho duyet|dang cho|chung chi|ban chuyen gia")],
+    "compliance": [
+        ("chuoi_nhat_ky", r"chuoi|nhat ky"),
+        ("cau_hinh_cho_duyet", r"cau hinh"),
+        ("tin_bi_giu", r"bi giu|han che"),
+        ("agent_nen", r"\bagent\b|chay nen|viec nen"),
+        ("ban_kiem_soat", r"cho tuan thu|dang cho|kiem soat|cho duyet|cho toi"),
+        ("canh_bao_he_thong", r"canh bao"),
+    ],
+    "admin": [
+        ("chuoi_nhat_ky", r"chuoi|nhat ky"),
+        ("cau_hinh_cho_duyet", r"cau hinh"),
+        ("agent_nen", r"\bagent\b|chay nen|viec nen|lich chay"),
+        ("canh_bao_he_thong", r"canh bao"),
+        ("van_hanh", r"bat thuong|van hanh|he thong|loi|su co|tinh trang"),
+    ],
+}
+COMMAND = r"(duyet|tu choi|lay tin|cap nhat tin|tai tin|danh dau|ghi lien he|gui)\b"
 PAGE_WORDS = {
     "toan-canh": "toan canh",
     "ban-do": "ban do",
@@ -69,9 +100,21 @@ def page_path(route: Optional[str]) -> str:
     return "/".join(parts[:3])
 
 
-def keyword(scrubbed: str, route: str) -> Dict[str, Any]:
+def keyword(scrubbed: str, route: str, role: Optional[str] = None) -> Dict[str, Any]:
+    """One tool for the question: the role's desk rules, then the shared rules — skipping a tool the role is not
+    offered (with ``role``), so a question never lands on another role's tool. A command (“Duyệt …”, “Lấy tin …”)
+    goes to its write whoever asks, so a person without the right is told “Không có quyền”."""
     q = fold(scrubbed)
+    mine = {n for n, t in TOOLS.items() if role in t.roles} if role else None
+    # a command (“Duyệt đề xuất đang chờ”) is the write's, never a desk read that shares its words
+    command = re.match(COMMAND, q.strip())
+    desk = [] if command else DESK_RULES.get(role or "", [])
+    for tool, pat in desk:
+        if tool in TOOLS and re.search(pat, q):
+            return {"tool": tool, "args": {}}
     for tool, pat in RULES:
+        if tool is not None and mine is not None and tool not in mine and not command:
+            continue  # a question never lands on another role's tool; a command does, to be refused as one
         if re.search(pat, q):
             if tool is None:
                 return {"tool": None, "args": {}}
@@ -146,7 +189,7 @@ async def llm(scrubbed: str, route: str, role: str) -> Dict[str, Any]:
         args = {k: v for k, v in args.items() if k in allowed and v in allowed[k]}
         return {"tool": tool, "args": args, "router": {"kind": "llm", **meta}}
     except Exception:  # noqa: BLE001 — an unusable reply falls back to the keyword router, labelled
-        got = keyword(scrubbed, route)
+        got = keyword(scrubbed, route, role)
         return {**got, "router": {"kind": "keyword", "fallback": "mô hình trả lời ngoài danh mục", **meta}}
 
 

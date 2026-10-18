@@ -1,0 +1,407 @@
+{
+ "id": "rm-act-03",
+ "category": "actions",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM viết khuyến nghị (rm01)",
+ "client_id": "C05",
+ "route": "#/rm",
+ "title": "Khuyến nghị cho C05, gia đình chưa có chuyên gia",
+ "why": "An action recommendation goes to the family's certified specialist (CONTENT-01 flow 3); C05 has none, so the RM's own approval stands (WF-08 “if any”): read back approved, and the assistant says why when asked.",
+ "brd": [
+  "BRD-RULE-CONTENT-01",
+  "BRD-RULE-WF-08",
+  "BRD-RULE-ROLE-05"
+ ],
+ "turns": [
+  {
+   "say": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự phòng lên sáu tháng chi tiêu và giảm nợ thẻ tín dụng.",
+   "expect": {
+    "status": "pending",
+    "pending": "khuyen_nghi",
+    "grounded": false
+   }
+  },
+  {
+   "confirm": "approve",
+   "expect": {
+    "grounded": false
+   },
+   "state": {
+    "sql": [
+     [
+      "select status from reviews where client_id = 'C05' and kind = 'rm_note' order by created desc limit 1",
+      "approved"
+     ]
+    ]
+   }
+  },
+  {
+   "say": "Có chuyên gia nào phải duyệt khuyến nghị này không?",
+   "expect": {
+    "says": "không|chưa",
+    "no_write": true,
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự phòng lên sáu tháng chi tiêu và giảm nợ thẻ tín dụng.",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "so_khach_hang",
+      "label": "Sổ khách hàng",
+      "status": "ok",
+      "text": "Sổ của bạn có 3 gia đình: Nguyễn Minh Khoa (C01), Vũ Ngọc Anh (C05), Đỗ Thị Hạnh (C04); gia đình khác không thuộc sổ của bạn. 1 cần bạn sớm: Nguyễn Minh Khoa — cần xử lý: 1 đề xuất chờ bạn duyệt. 1 đề xuất chờ duyệt: Học phí cho con (trong nước / du học) — Tích lũy đều (Nguyễn Minh Khoa), 0 việc theo mục tiêu. Chưa ghi liên hệ nào.",
+      "card": null,
+      "focus": [
+       "book",
+       "family:C01"
+      ],
+      "as_of": null,
+      "sources": [
+       "Sổ khách hàng",
+       "Hôm nay",
+       "Duyệt đề xuất"
+      ],
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Bàn làm việc",
+       "route": "#/rm"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 18253,
+     "output_tokens": 301,
+     "requests": 2,
+     "cost_usd": 0.001976,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b166f904db564e63a621d61463a8da80",
+    "conversation_id": "895e0e183a514e5d",
+    "compacted": false,
+    "status": "pending",
+    "waits": [
+     {
+      "id": "8a8933b08b5d1ed7fd7220d0c9d0b33f",
+      "tool": "khuyen_nghi",
+      "summary": "Gửi khuyến nghị “Tăng quỹ dự phòng và giảm nợ thẻ tín dụng” (2 việc) cho Vũ Ngọc Anh?"
+     }
+    ],
+    "text": "Gửi khuyến nghị “Tăng quỹ dự phòng và giảm nợ thẻ tín dụng” (2 việc) cho Vũ Ngọc Anh?",
+    "timing": {
+     "start": 33,
+     "calls": [
+      [
+       1056,
+       1441
+      ],
+      [
+       1387,
+       2038
+      ]
+     ],
+     "tools": 203,
+     "first_text": 1088,
+     "total": 3741
+    },
+    "citations": [
+     {
+      "label": "Bàn làm việc",
+      "route": "#/rm"
+     }
+    ],
+    "sources": [
+     "Sổ khách hàng",
+     "Hôm nay",
+     "Duyệt đề xuất"
+    ],
+    "as_of": null,
+    "focus": [
+     "book",
+     "family:C01"
+    ],
+    "navigate": null,
+    "suggest": [
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?"
+    ],
+    "answered_at": 1792332956.1647809,
+    "audit_seq": 648,
+    "session": {
+     "id": "895e0e183a514e5d",
+     "title": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 3.7827786239795387,
+   "first_event": 1.1025848481804132,
+   "usage": {
+    "cost": 0.001976,
+    "input": 18253,
+    "output": 301,
+    "requests": 2
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_014c2Xbn7fD3byF1qgcJaw6p",
+     "tool": "so_khach_hang",
+     "label": "Sổ khách hàng",
+     "nodes": [
+      "book",
+      "calls",
+      "proposals"
+     ],
+     "doing": "Đang xem sổ khách hàng của bạn",
+     "done": "Đã xem sổ khách hàng của bạn",
+     "failed": "Không thực hiện được: xem sổ khách hàng của bạn"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_014c2Xbn7fD3byF1qgcJaw6p",
+     "tool": "so_khach_hang",
+     "ok": true,
+     "ms": 203,
+     "focus": [
+      "book",
+      "family:C01"
+     ]
+    },
+    {
+     "type": "wait",
+     "call_id": "toolu_01BvFUNrVtTjseZJAYH4VALx",
+     "tool": "khuyen_nghi",
+     "label": "Khuyến nghị"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Xác nhận",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [
+     {
+      "tool": "khuyen_nghi",
+      "label": "Khuyến nghị",
+      "status": "ok",
+      "text": "Đã gửi khuyến nghị “Tăng quỹ dự phòng và giảm nợ thẻ tín dụng”: đã duyệt. Gia đình chưa có chuyên gia có chứng chỉ được giao, nên RM duyệt là đủ: khuyến nghị đã tới khách.",
+      "card": null,
+      "focus": null,
+      "as_of": null,
+      "sources": null,
+      "navigate": null,
+      "cost_usd": null,
+      "evidence": {
+       "label": "Duyệt đề xuất",
+       "route": "#/rm/khach-hang/duyet"
+      }
+     }
+    ],
+    "seen": null,
+    "usage": {
+     "input_tokens": 28077,
+     "output_tokens": 493,
+     "requests": 3,
+     "cost_usd": 0.003054,
+     "tools_cost_usd": null
+    },
+    "turn_id": "b166f904db564e63a621d61463a8da80",
+    "conversation_id": "895e0e183a514e5d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Đã gửi khuyến nghị \"Tăng quỹ dự phòng và giảm nợ thẻ tín dụng\" cho gia đình Vũ Ngọc Anh (C05). Khuyến nghị đã được duyệt và đã tới khách, vì gia đình này không có chuyên gia có chứng chỉ cần duyệt thêm.\n\nNội dung gồm hai việc:\n- Tăng quỹ dự phòng lên sáu tháng chi tiêu.\n- Giảm dần số dư nợ thẻ tín dụng.",
+    "timing": {
+     "start": 24,
+     "calls": [
+      [
+       0,
+       0
+      ],
+      [
+       1091,
+       1664
+      ]
+     ],
+     "tools": 63,
+     "first_text": 1217,
+     "total": 1802
+    },
+    "citations": [
+     {
+      "label": "Duyệt đề xuất",
+      "route": "#/rm/khach-hang/duyet"
+     }
+    ],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792332958.0456235,
+    "audit_seq": 650,
+    "session": {
+     "id": "895e0e183a514e5d",
+     "title": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 1.8411482931114733,
+   "first_event": 0.09887225786224008,
+   "usage": {
+    "cost": 0.003054,
+    "input": 28077,
+    "output": 493,
+    "requests": 3
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "step",
+     "phase": "start",
+     "call_id": "toolu_01BvFUNrVtTjseZJAYH4VALx",
+     "tool": "khuyen_nghi",
+     "label": "Khuyến nghị",
+     "nodes": [],
+     "doing": "Đang chuẩn bị khuyến nghị để bạn xác nhận",
+     "done": "Đã xử lý khuyến nghị",
+     "failed": "Không thực hiện được: chuẩn bị khuyến nghị để bạn xác nhận"
+    },
+    {
+     "type": "step",
+     "phase": "end",
+     "call_id": "toolu_01BvFUNrVtTjseZJAYH4VALx",
+     "tool": "khuyen_nghi",
+     "ok": true,
+     "ms": 63,
+     "focus": []
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 1,
+    "reviews_pending": 0,
+    "sql": [
+     "approved"
+    ]
+   }
+  },
+  {
+   "say": "Có chuyên gia nào phải duyệt khuyến nghị này không?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 10046,
+     "output_tokens": 104,
+     "requests": 1,
+     "cost_usd": 0.001057,
+     "tools_cost_usd": null
+    },
+    "turn_id": "93fc6ee5e805428ba3f346bcca4647b1",
+    "conversation_id": "895e0e183a514e5d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Không. Kết quả gửi khuyến nghị ghi rõ gia đình Vũ Ngọc Anh (C05) chưa có chuyên gia có chứng chỉ được giao, nên RM duyệt là đủ. Khuyến nghị đã được duyệt và đã tới khách.",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       1009,
+       1415
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1037,
+     "total": 1461
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792332959.58165,
+    "audit_seq": 651,
+    "session": {
+     "id": "895e0e183a514e5d",
+     "title": "Gửi khuyến nghị cho gia đình C05: tăng quỹ dự…",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 3
+    },
+    "describe": false
+   },
+   "seconds": 1.5012991596013308,
+   "first_event": 1.0506518906913698,
+   "usage": {
+    "cost": 0.001057,
+    "input": 10046,
+    "output": 104,
+    "requests": 1
+   },
+   "why": [],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 1,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}

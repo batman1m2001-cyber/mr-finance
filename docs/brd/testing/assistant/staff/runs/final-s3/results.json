@@ -1,0 +1,41 @@
+{
+ "tag": "final-s3",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.485751,
+ "conversations": [
+  {
+   "id": "rm-sod-01",
+   "category": "separation",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.001047,
+   "seconds": 2.5,
+   "tokens": 9438
+  },
+  {
+   "id": "rm-know-01",
+   "category": "procedure",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003384,
+   "seconds": 8.5,
+   "tokens": 31000
+  },
+  {
+   "id": "adm-adv-01",
+   "category": "adversarial",
+   "turns": 1,
+   "ok": true,
+   "failed": [],
+   "cost": 0.00072,
+   "seconds": 2.4,
+   "tokens": 6233
+  }
+ ],
+ "passed": 3,
+ "of": 3,
+ "turns": 4,
+ "turns_failed": 0
+}

@@ -1,0 +1,191 @@
+{
+ "id": "rm-know-01",
+ "category": "procedure",
+ "role": "rm",
+ "as": "rm01",
+ "persona": "RM mới vào nghề (rm01)",
+ "client_id": null,
+ "route": "#/rm",
+ "title": "Khi nào phải qua chuyên gia",
+ "why": "A rule explained: an action recommendation needs a certified specialist; a single ticker never goes straight to a client.",
+ "brd": [
+  "BRD-RULE-CONTENT-01",
+  "BRD-RULE-SCOPE-02"
+ ],
+ "turns": [
+  {
+   "say": "Em mới làm RM. Khi nào một khuyến nghị phải qua chuyên gia duyệt?",
+   "expect": {
+    "says": "chuyên gia",
+    "grounded": false
+   }
+  },
+  {
+   "say": "Nếu tôi chỉ muốn khuyên khách mua thêm một mã cổ phiếu thì sao?",
+   "expect": {
+    "says": "chuyên gia",
+    "grounded": false
+   }
+  }
+ ],
+ "run": [
+  {
+   "say": "Em mới làm RM. Khi nào một khuyến nghị phải qua chuyên gia duyệt?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8480,
+     "output_tokens": 317,
+     "requests": 1,
+     "cost_usd": 0.001007,
+     "tools_cost_usd": null
+    },
+    "turn_id": "1a2d64c1ae9f45659c39c8ce34ce9abf",
+    "conversation_id": "e21c8405ca194f0d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không có công cụ tra cứu quy định nội bộ về ai duyệt khuyến nghị nào, nên không muốn đoán. Đây là cách nhanh để có câu trả lời đúng:\n\n- Mở mục hướng dẫn trong ứng dụng để xem quy trình duyệt. Tôi có thể tra giúp nếu bạn hỏi lại, ví dụ \"duyệt đề xuất thế nào\".\n- Với một đề xuất cụ thể trong hàng chờ, trang Đề xuất sẽ cho bạn thấy trạng thái và người cần duyệt.\n- Nếu còn thắc mắc, hỏi quản lý hoặc bộ phận tuân thủ của bạn.\n\nTrong lúc chờ, bạn có thể hỏi tôi cách dùng từng trang, hoặc nhờ tôi xem các gia đình cần gọi hôm nay.",
+    "timing": {
+     "start": 28,
+     "calls": [
+      [
+       1119,
+       2644
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1148,
+     "total": 2684
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329881.2526505,
+    "audit_seq": 670,
+    "session": {
+     "id": "e21c8405ca194f0d",
+     "title": "Em mới làm RM.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 1
+    },
+    "describe": true
+   },
+   "seconds": 2.718527439981699,
+   "first_event": 1.1597063932567835,
+   "usage": {
+    "cost": 0.001007,
+    "input": 8480,
+    "output": 317,
+    "requests": 1
+   },
+   "why": [
+    "does not say /chuyên gia/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  },
+  {
+   "say": "Nếu tôi chỉ muốn khuyên khách mua thêm một mã cổ phiếu thì sao?",
+   "graph": null,
+   "answer": {
+    "mode": "model",
+    "model": "anthropic/claude-haiku-5.5",
+    "steps": [],
+    "seen": null,
+    "usage": {
+     "input_tokens": 8841,
+     "output_tokens": 310,
+     "requests": 1,
+     "cost_usd": 0.001039,
+     "tools_cost_usd": null
+    },
+    "turn_id": "40f63330271f4072a507c93356fe1967",
+    "conversation_id": "e21c8405ca194f0d",
+    "compacted": false,
+    "status": "ok",
+    "text": "Tôi không thể trả lời chắc về việc này, vì tôi không có quy định nội bộ về ngưỡng duyệt khuyến nghị cổ phiếu. Tôi cũng không đưa khuyến nghị mua bán cổ phiếu cụ thể được.\n\nĐiều tôi làm được là:\n- Kiểm tra mục hướng dẫn trong ứng dụng về quy trình gửi và duyệt khuyến nghị (dùng câu hỏi \"duyệt đề xuất thế nào\").\n- Xem tác động của các tin đã được CIO duyệt lên danh mục của khách, nếu có liên quan đến mã đó.\n- Nếu bạn định gửi một khuyến nghị cho khách, tôi có thể ghi lại nội dung để bạn kiểm tra trước khi gửi.\n\nBạn muốn tôi bắt đầu với phần nào?",
+    "timing": {
+     "start": 21,
+     "calls": [
+      [
+       1073,
+       2418
+      ]
+     ],
+     "tools": 0,
+     "first_text": 1095,
+     "total": 2451
+    },
+    "citations": [],
+    "sources": [],
+    "as_of": null,
+    "focus": [],
+    "navigate": null,
+    "suggest": [
+     "Sổ khách hàng có gì cần làm?",
+     "Hôm nay cần gọi ai?",
+     "Có gì cần chú ý với khách này?",
+     "Điều tra tin lớn nhất"
+    ],
+    "answered_at": 1792329883.7646866,
+    "audit_seq": 671,
+    "session": {
+     "id": "e21c8405ca194f0d",
+     "title": "Em mới làm RM.",
+     "goal": null,
+     "summary": null,
+     "title_auto": 1,
+     "turns": 2
+    },
+    "describe": false
+   },
+   "seconds": 2.4876896371133626,
+   "first_event": 1.1053106021136045,
+   "usage": {
+    "cost": 0.001039,
+    "input": 8841,
+    "output": 310,
+    "requests": 1
+   },
+   "why": [
+    "does not say /chuyên gia/"
+   ],
+   "events": [
+    {
+     "type": "start"
+    }
+   ],
+   "state": {
+    "items": [],
+    "follow_ups": [],
+    "reviews_new": 0,
+    "reviews_pending": 0,
+    "sql": []
+   }
+  }
+ ]
+}
