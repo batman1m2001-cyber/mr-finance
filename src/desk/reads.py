@@ -13,7 +13,11 @@ from apply import reads as apply_reads
 from apply import run as apply_run
 from control import roles
 
-ROUTE = {"cio": "#/cio", "rm": "#/rm"}  # each role's desk address; a page's address is its menu id under it
+ROUTE = {
+    "cio": "#/cio",
+    "rm": "#/rm",
+    "admin": "#/admin",
+}  # each role's desk address; a page's address is its menu id under it
 
 
 def _late(job: Dict[str, Any]) -> bool:
@@ -307,7 +311,119 @@ def rm(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     }
 
 
-BUILD = {"cio": cio, "rm": rm}
+def _state(ok: Optional[bool], warn: bool = False) -> str:
+    """A node's colour: no record yet → idle; a failure → bad; something waiting → warn."""
+    if ok is None:
+        return "idle"
+    return "bad" if not ok else "warn" if warn else "ok"
+
+
+def admin(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Vận hành (SCR-ADM-02): Hệ thống's own read (``app.web.system_read``) drawn as a map — sources, storage, AI,
+    people — with the bell's alerts for Admin, the jobs failing, configuration waiting, people by role, the chain."""
+    from app.web import system_read
+    from control import alerts as control_alerts
+    from control import config
+
+    s = system_read()
+    jobs = [j for j in s["jobs"] if j.get("last")]
+    failing = [j for j in jobs if not j["last"]["ok"]]
+    market = [j for j in jobs if j["id"].startswith("market_")]
+    feeds_bad = [f for f in s["feeds"] if f.get("error")]
+    runs = s["agent_runs"]
+    agents_bad = [r for r in runs if r.get("last_status") not in (None, "ok")]
+    up = s["availability"]
+    pending = {k["pending"]["id"]: k for k in config.overview() if k.get("pending")}
+    people = s["people"]
+    roles_n: Dict[str, int] = {}
+    for p in people:
+        roles_n[p["role"]] = roles_n.get(p["role"], 0) + 1
+    alerts = control_alerts.for_role("admin")  # what the bell holds for Admin: open and acknowledged
+    zone = [a for a in alerts if a["kind"] in ("inbox", "zone_sync") and a["status"] == "open"]
+
+    def node(id, lane, label, value, state, route, page, note="", error=None, items=None, at=None):
+        return {"id": id, "lane": lane, "label": label, "value": value, "state": state, "route": route,
+                "page": page, "note": note, "error": error, "items": items or [], "at": at}  # fmt: skip
+
+    nodes = [
+        node("feeds", "sources", "Nguồn tin", f"{len(s['feeds']) - len(feeds_bad)}/{len(s['feeds'])} nguồn",
+             _state(not feeds_bad if s["feeds"] else None), "#/admin/he-thong", "Hệ thống",
+             note="lấy gần nhất" if s.get("news_at") else "chưa lấy lần nào", at=s.get("news_at"),
+             error="; ".join(f"{f['id']}: {f['error']}" for f in feeds_bad) or None,
+             items=[{"title": f["id"], "sub": f"{f.get('accepted', 0)} tin nhận · {f.get('refused', 0)} từ chối",
+                     "state": "bad" if f.get("error") else "ok"} for f in s["feeds"]]),
+        node("market", "sources", "Dữ liệu thị trường",
+             f"{sum(1 for j in market if j['last']['ok'])}/{len(market)} việc",
+             _state(all(j["last"]["ok"] for j in market) if market else None), "#/admin/du-lieu", "Dữ liệu thị trường",
+             error="; ".join(f"{j['id']}: {j['last']['error']}" for j in market if not j["last"]["ok"]) or None,
+             items=[{"job": j["id"], "title": j["id"], "sub": "", "at": j["last"]["at"],
+                     "state": "ok" if j["last"]["ok"] else "bad"} for j in market]),
+        node("zone", "sources", "Vùng AI", f"{len(s['inbox'])} gói gần đây",
+             _state(not zone) if (s["inbox"] or s["zone_syncs"] or zone) else "idle",
+             "#/admin/he-thong", "Hệ thống", note=f"{len(s['zone_syncs'])} lần gửi gần đây",
+             error="; ".join(a["title"] for a in zone) or None),
+        node("schedule", "store", "Lịch chạy", f"{len(jobs) - len(failing)}/{len(jobs)} việc ổn",
+             _state(not failing if jobs else None), "#/admin/he-thong", "Hệ thống",
+             note=f"{len(s['jobs'])} việc khai báo, {len(jobs)} đã chạy",
+             error="; ".join(f"{j['id']}: {j['last']['error']}" for j in failing) or None),
+        node("chain", "store", "Chuỗi nhật ký", f"{s['chain']['count']} dòng",
+             _state(s["chain"]["ok"] and s["worm"]["ok"]),
+             "#/admin/nhat-ky", "Nhật ký", note="băm nối tiếp" + (" · chỉ-ghi-một-lần" if s["worm"]["on"] else ""),
+             error=s["chain"].get("reason") or s["worm"].get("reason") or None),
+        node("uptime", "store", "Sẵn sàng",
+             f"{up['availability'] * 100:.2f}%".replace(".", ",") if up.get("availability") is not None else "chưa đo",
+             _state(up.get("met") if up.get("availability") is not None else None), "#/admin/he-thong", "Hệ thống",
+             note=f"mục tiêu {up['target'] * 100:.1f}% giờ làm việc".replace(".", ",")),
+        node("agents", "ai", "Agent", {"live": "Mô hình thật", "mock": "Mô phỏng", "inbox": "Hộp chờ"}.get(
+                 s["agents"]["mode"], s["agents"]["mode"]),
+             _state(not agents_bad if runs else None), "#/admin/agent", "Agent",
+             note=f"{sum(r['runs'] for r in runs)} lần chạy · {sum(r['failed'] for r in runs)} lỗi",
+             error="; ".join(f"{r['agent']}: {r['last_error']}" for r in agents_bad) or None,
+             items=[{"title": r["agent"], "sub": f"{r['runs']} lần · {r['failed']} lỗi", "at": r.get("last"),
+                     "state": "ok" if r.get("last_status") == "ok" else "bad"} for r in runs]),
+        node("queue", "ai", "Hàng đợi", f"{s['agent_queue']} yêu cầu",
+             _state(True, warn=bool(s["agent_queue"] or s["evals_waiting"])), "#/admin/agent", "Agent",
+             note=f"{len(s['evals_waiting'])} chờ bộ đánh giá"),
+        node("people", "people", "Người dùng", f"{len(people)} nhân viên", "ok", "#/admin/he-thong", "Hệ thống",
+             note=f"{s['clients']} khách hàng"),
+        node("config", "people", "Cấu hình", f"{len(s['config_waiting'])} chờ duyệt",
+             _state(True, warn=bool(s["config_waiting"])), "#/admin/cau-hinh", "Cấu hình",
+             items=[{"title": c["label"], "sub": c["id"]} for c in s["config_waiting"]]),
+    ]  # fmt: skip
+    return {
+        "role": "admin",
+        "as_of": time.time(),
+        "nodes": nodes,
+        "alerts": alerts,
+        "failing": [
+            {
+                "id": j["id"],
+                "at": j["last"]["at"],
+                "error": j["last"]["error"],
+                "route": "#/admin/du-lieu" if j["id"].startswith("market_") else "#/admin/he-thong",
+            }
+            for j in failing
+        ],  # fmt: skip
+        "config": [
+            {
+                "id": c["id"],
+                "label": c["label"],
+                "by": pending[c["id"]]["pending"].get("proposed_by"),
+                "two_person": bool(pending[c["id"]].get("two_person")),
+            }
+            for c in s["config_waiting"]
+            if c["id"] in pending
+        ],  # fmt: skip
+        "evals": s["evals_waiting"],
+        "roles": roles_n,
+        "clients": s["clients"],
+        "no_password": sum(1 for p in people if not p.get("has_password")),
+        "chain": s["chain"],
+        "worm": s["worm"],
+    }
+
+
+BUILD = {"cio": cio, "rm": rm, "admin": admin}
 
 
 def desk(role: str, viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

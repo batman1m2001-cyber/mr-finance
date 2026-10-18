@@ -43,7 +43,7 @@ READS = {
     "/api/model": STAFF,
     "/api/model/estimate": STAFF,
     "/api/agents": STAFF,
-    "/api/desk": {"cio", "rm01", "rm03"},  # FEAT-41: each role its own desk; grows as each desk is built (M3–M5)
+    "/api/desk": {"cio", "rm01", "rm03", "admin"},  # FEAT-41: each role its own desk; grows as each is built (M4–M5)
     "/api/agents/catalogue": DESK,
     "/api/agents/map": DESK,  # A7
     "/api/agents/map/assistant": DESK,

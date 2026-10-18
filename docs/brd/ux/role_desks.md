@@ -51,12 +51,12 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-AD
 
 | Page (address) | Screen | Features | Key requirements | Rail group | State |
 |---|---|---|---|---|---|
-| Hệ thống `he-thong` | SCR-ADM-01 | FEAT-12, 19, 36 | BRD-RULE-ROLE-04, NFR-12 | Hệ thống | planned |
-| Dữ liệu thị trường `du-lieu` | SCR-CIO-11 | FEAT-35 | BRD-RULE-ENG-11 | Dữ liệu thị trường | planned |
-| Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701, RULE-SEC-05 | Cấu hình | planned |
-| Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | Agent | planned |
-| Nhật ký `nhat-ky` | SCR-CMP-03 | FEAT-11 | BRD-BR-12, FR-702 | Nhật ký | planned |
-| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | planned |
+| Hệ thống `he-thong` | SCR-ADM-01 | FEAT-12, 19, 36 | BRD-RULE-ROLE-04, NFR-12 | Hệ thống | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
+| Dữ liệu thị trường `du-lieu` | SCR-CIO-11 | FEAT-35 | BRD-RULE-ENG-11 | Dữ liệu thị trường | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
+| Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701, RULE-SEC-05 | Cấu hình | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
+| Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | Agent | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
+| Nhật ký `nhat-ky` | SCR-CMP-03 | FEAT-11 | BRD-BR-12, FR-702 | Nhật ký | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
+| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
 
 ## Expert (`#/specialist/…`) — desk "Bàn chuyên gia" (SCR-SP-02)
 

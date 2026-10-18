@@ -163,6 +163,9 @@ page error, console error or horizontal scroll in any capture.
 | `SCR-RM-07_desktop-light.jpg` | SCR-RM-07 Sổ khách hàng (rm03): a family at the threshold picked, its card in Thông tin | current (experiment `exp/graph-workspace`) | desktop 1440×900, light, viewport | 2026-10-18, multi-role M2, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
 | `SCR-RM-07-calm_desktop-dark.jpg` | SCR-RM-07 Sổ khách hàng (rm01): three families, nothing waiting | current (experiment `exp/graph-workspace`) | desktop 1440×900, dark, viewport | 2026-10-18, multi-role M2, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
 | `SCR-RM-07_phone-dark.jpg` | SCR-RM-07 Sổ khách hàng on a phone (rm01) | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-18, multi-role M2, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
+| `SCR-ADM-02_desktop-light.jpg` | SCR-ADM-02 Vận hành: the operations map, alerts, failing jobs, configuration, people | current (experiment `exp/graph-workspace`) | desktop 1440×900, light, viewport | 2026-10-18, multi-role M3, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
+| `SCR-ADM-02-pick_desktop-dark.jpg` | SCR-ADM-02, the Agent node picked: each agent's runs in Thông tin | current (experiment `exp/graph-workspace`) | desktop 1440×900, dark, viewport | 2026-10-18, multi-role M3, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
+| `SCR-ADM-02_phone-dark.jpg` | SCR-ADM-02 on a phone: two lanes per row | current (experiment `exp/graph-workspace`) | phone 390×844, dark, viewport | 2026-10-18, multi-role M3, copy server :8042 on a copy of the experiment's state (`ux/multi-role`) |
 
 ## proposed_ui/ — the redesign kit (SRC-03)
 

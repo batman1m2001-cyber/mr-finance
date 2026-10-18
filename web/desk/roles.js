@@ -14,6 +14,18 @@ export const DESKS = {
       {id: "bo-nho", label: "Bộ nhớ", icon: "history", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
     ],
   },
+  admin: {
+    title: "Vận hành", view: "admin",
+    groups: [
+      {id: "ban", label: "Vận hành", icon: "activity", tip: "Vận hành: bản đồ hệ thống, cảnh báo, việc lỗi, cấu hình chờ", desk: true, nav: ["ban"]},
+      {id: "he-thong", label: "Hệ thống", icon: "settings", tip: "Hệ thống: lịch chạy, nguồn tin, agent, người dùng, nạp lịch sử", nav: ["he-thong"]},
+      {id: "du-lieu", label: "Dữ liệu thị trường", icon: "stock", tip: "Dữ liệu thị trường: nguồn, lịch lấy, chuỗi", nav: ["du-lieu"]},
+      {id: "cau-hinh", label: "Cấu hình", icon: "sliders", tip: "Cấu hình theo phiên bản, hai người duyệt", nav: ["cau-hinh"]},
+      {id: "agent", label: "Agent", icon: "bot", tip: "Agent: danh mục, bản đồ, lần chạy", nav: ["agent"]},
+      {id: "nhat-ky", label: "Nhật ký", icon: "history", tip: "Nhật ký kiểm toán: chuỗi băm, xuất", nav: ["nhat-ky"]},
+      {id: "bo-nho", label: "Bộ nhớ", icon: "archive", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
+    ],
+  },
   rm: {
     title: "Sổ khách hàng", view: "rm",
     groups: [

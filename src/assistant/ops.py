@@ -30,7 +30,12 @@ START = {
     ],
     "rm": ["Sổ khách hàng có gì cần làm?", *HELP["rm"][:3]],
     "specialist": ["Khuyến nghị nào đang chờ tôi duyệt?", "Tìm khách hàng"],
-    "admin": ["Có cảnh báo hệ thống nào?", "Mở trang Hệ thống"],
+    "admin": [
+        "Hệ thống có gì bất thường?",
+        "Chuỗi nhật ký còn nguyên không?",
+        "Có cảnh báo hệ thống nào?",
+        "Cấu hình nào chờ duyệt?",
+    ],
 }
 
 

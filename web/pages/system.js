@@ -4,7 +4,7 @@
 import {ago, esc, get, n as how, num, pct, post, toast} from "../core/core.js";
 
 const ROLE = {cio: "CIO", rm: "RM", compliance: "Tuân thủ", admin: "Quản trị"};
-const JOB = {  // what each job does, in the product's language (the declaration in app/main.py is for developers)
+export const JOB = {  // what each job does (also the Admin desk's names, desk/admin.js), in the product's language (the declaration in app/main.py is for developers)
   policy_sweep: "Rà soát quy định mới cho từng khách hàng",
   news_ingest: "Lấy tin từ các nguồn trong danh sách trắng vào hộp tin (FR-101)",
   market_equity: "Giá đóng cửa VN-Index và cổ phiếu (VNDirect, dự phòng Vietcap)",

@@ -165,6 +165,84 @@ async def book(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+# -- Admin (and Compliance: the chain and configuration) ---------------------------------------------------------
+
+
+async def operations(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Vận hành: what on the operations map is not green, the alerts open, the jobs failing, configuration waiting."""
+    d = _desk(ctx, "admin")
+    off = [n for n in d["nodes"] if n["state"] in ("bad", "warn")]
+    opened = [a for a in d["alerts"] if a["status"] == "open"]
+    parts = [
+        "Mọi phần của hệ thống đều ổn ở lần chạy gần nhất."
+        if not off
+        else f"{len(off)} phần cần xem: "
+        + "; ".join(
+            f"{n['label']} ({'lỗi' if n['state'] == 'bad' else 'cần xem'}: {n['error'] or n['value']})" for n in off
+        )
+        + "."
+    ]
+    if opened:
+        parts.append(f"{len(opened)} cảnh báo đang mở: " + "; ".join(a["title"] for a in opened[:4]) + ".")
+    if d["failing"]:
+        parts.append(f"{len(d['failing'])} việc lỗi: " + ", ".join(j["id"] for j in d["failing"][:5]) + ".")
+    if d["config"]:
+        parts.append(f"{len(d['config'])} cấu hình chờ duyệt.")
+    idle = [n["label"] for n in d["nodes"] if n["state"] == "idle"]
+    if idle:
+        parts.append("Chưa có lần chạy nào để đánh giá: " + ", ".join(idle) + ".")
+    return {
+        "text": " ".join(parts),
+        "data": {"off": len(off), "alerts": len(opened), "failing": len(d["failing"]), "config": len(d["config"])},
+        "focus": ["ops"] + [f"node:{n['id']}" for n in off] + (["alerts"] if opened else []),
+        "sources": ["Hệ thống"],
+    }
+
+
+async def chain(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Chuỗi nhật ký: the audit chain checked now (BRD-BR-12, FR-702) and its write-once copy."""
+    from control import audit, db, worm
+
+    with db.tx() as con:
+        c, w = audit.verify(con), worm.verify(con)
+    head = (
+        f"Chuỗi nhật ký nguyên vẹn: {c['count']} dòng, đầu chuỗi {str(c['head'])[:12]}…"
+        if c["ok"]
+        else f"Chuỗi nhật ký GÃY ở dòng {c['broken_at']}: {c.get('reason') or 'băm không khớp'}"
+    )
+    copy = (
+        f"Bản chỉ-ghi-một-lần: {w['segments']} đoạn, {'khớp' if w['ok'] else 'lệch: ' + str(w.get('reason') or '')}."
+        if w.get("on")
+        else "Bản chỉ-ghi-một-lần đang tắt."
+    )
+    return {
+        "text": f"{head}. {copy}",
+        "data": {"ok": c["ok"], "count": c["count"], "worm_ok": w["ok"]},
+        "focus": ["chain", "node:chain"],
+        "sources": ["chuỗi nhật ký kiểm toán"],
+    }
+
+
+async def config_waiting(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Cấu hình chờ duyệt: each kind with a version proposed, who proposed it, whether a second person must approve."""
+    from control import config
+
+    waiting = [k for k in config.overview() if k.get("pending")]
+    if not waiting:
+        return {"text": "Không cấu hình nào chờ duyệt.", "data": {"waiting": 0}, "focus": ["config", "node:config"]}
+    each = "; ".join(
+        f"{k['label']} ({k['pending']['id']}, đề xuất bởi {k['pending'].get('proposed_by') or '—'}, "
+        f"{k['owner_label']} duyệt{', cần người thứ hai' if k['two_person'] else ''})"
+        for k in waiting
+    )
+    return {
+        "text": f"{len(waiting)} cấu hình chờ duyệt: {each}. Duyệt ở trang Cấu hình.",
+        "data": {"waiting": len(waiting)},
+        "focus": ["config", "node:config"],
+        "sources": ["Cấu hình"],
+    }
+
+
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
     for t in (
@@ -211,6 +289,29 @@ CATALOGUE: Dict[str, Tool] = {
             book,
             page="ban-lam-viec",
             follow=["Hôm nay cần gọi ai?", "Có gì cần chú ý với khách này?"],
+        ),
+        Tool(
+            "van_hanh",
+            "tình trạng vận hành: phần nào của hệ thống không ổn (nguồn tin, dữ liệu thị trường, lịch chạy, chuỗi nhật "
+            "ký, sẵn sàng, agent), cảnh báo đang mở, việc lỗi, cấu hình chờ duyệt",
+            ("admin",),
+            operations,
+            page="ban-lam-viec",
+            follow=["Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
+        ),
+        Tool(
+            "chuoi_nhat_ky",
+            "kiểm tra chuỗi nhật ký kiểm toán ngay bây giờ: nguyên vẹn hay gãy ở đâu, số dòng, bản chỉ ghi một lần",
+            ("admin", "compliance"),
+            chain,
+            page="nhat-ky",
+        ),
+        Tool(
+            "cau_hinh_cho_duyet",
+            "các cấu hình đang chờ duyệt: loại, ai đề xuất, vai trò nào duyệt, có cần người thứ hai không",
+            ("admin", "compliance"),
+            config_waiting,
+            page="cau-hinh",
         ),
     )
 }

@@ -659,9 +659,13 @@ JOBS: list = []  # filled by app/main.py: {id, description, when: {every|at}}
 
 
 async def system(request: Request) -> JSONResponse:
+    return JSONResponse(system_read())
+
+
+def system_read() -> dict:
     """Hệ thống (Admin; BRD-RULE-ROLE-04, NFR-12): the jobs and how each last went, the news feeds, the agents,
     the audit chain's check, the loads of market history, the configuration waiting, the people and their accounts.
-    Read from the stored records only."""
+    Read from the stored records only. Admin's desk (src/desk/reads.py) draws this same read."""
     from control import config
 
     market_health = market_store.job_health()
@@ -693,32 +697,30 @@ async def system(request: Request) -> JSONResponse:
         kept = control_worm.verify(con)
     accounts = people_auth.accounts()
     families = {a["id"]: people_store.families_of(a["id"]) for a in accounts if a["role"] == "rm"}
-    return JSONResponse(
-        {
-            "jobs": jobs,
-            "feeds": [{"id": k, **v} for k, v in (news.get("sources") or {}).items()],
-            "news_at": news.get("at"),
-            "agents": view_ops.agent_status(),
-            "agent_runs": views_store.run_health(),
-            "evals_waiting": [{"id": v["id"], "kind": v["kind"]} for v in pending],
-            "config_waiting": [
-                {"kind": k["kind"], "label": k["label"], "id": k["pending"]["id"]}
-                for k in config.overview()
-                if k.get("pending")
-            ],
-            "chain": chain,
-            "worm": kept,
-            "availability": control_uptime.month(),
-            "loads": loads,
-            "inbox": inbox_store.recent(),
-            "agent_queue": agent_queue.waiting(),
-            "zone_syncs": zone_sync.recent(5),
-            "alerts": control_alerts.recent(30),
-            "log": control_log.recent(30, "warning"),
-            "people": [{**a, "families": families.get(a["id"])} for a in accounts if a["role"] != "client"],
-            "clients": sum(1 for a in accounts if a["role"] == "client"),
-        }
-    )
+    return {
+        "jobs": jobs,
+        "feeds": [{"id": k, **v} for k, v in (news.get("sources") or {}).items()],
+        "news_at": news.get("at"),
+        "agents": view_ops.agent_status(),
+        "agent_runs": views_store.run_health(),
+        "evals_waiting": [{"id": v["id"], "kind": v["kind"]} for v in pending],
+        "config_waiting": [
+            {"kind": k["kind"], "label": k["label"], "id": k["pending"]["id"]}
+            for k in config.overview()
+            if k.get("pending")
+        ],
+        "chain": chain,
+        "worm": kept,
+        "availability": control_uptime.month(),
+        "loads": loads,
+        "inbox": inbox_store.recent(),
+        "agent_queue": agent_queue.waiting(),
+        "zone_syncs": zone_sync.recent(5),
+        "alerts": control_alerts.recent(30),
+        "log": control_log.recent(30, "warning"),
+        "people": [{**a, "families": families.get(a["id"])} for a in accounts if a["role"] != "client"],
+        "clients": sum(1 for a in accounts if a["role"] == "client"),
+    }
 
 
 async def market(request: Request) -> JSONResponse:

@@ -82,6 +82,26 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
   (`hom_nay`), proposals (`de_xuat`) and contacts (`lien_he`, `ghi_lien_he`).
 - **Unchanged:** every RM page and write (decide a proposal, record a contact, recommend to a specialist).
 
+### Admin — Vận hành (SCR-ADM-02, built in M3, 2026-10-18)
+
+- **Rail:** Vận hành · Hệ thống · Dữ liệu thị trường · Cấu hình · Agent · Nhật ký · Bộ nhớ at the foot. All six pages
+  at their addresses.
+- **The map:** four lanes left to right — Nguồn (news feeds, market jobs, the AI zone), Lưu trữ (the schedule, the
+  audit chain with its write-once copy, availability), AI (the agents with runs and failures, the queue and the
+  evaluations waiting), Con người (accounts, configuration waiting). Each node green / amber / red / grey from its
+  last record (grey: never run), its error as a tooltip; a node picked lists its parts in Thông tin (each feed, each
+  market job by Hệ thống's name, each agent) and opens its page.
+- **One read:** the desk draws Hệ thống's own composition (`app.web.system_read`, factored out of `GET /api/system`
+  unchanged), so the two never disagree; the alerts are the bell's for Admin.
+- **Panels:** Cảnh báo (open and acknowledged; acknowledging stays in the bell), Việc đang lỗi, Cấu hình chờ duyệt (who
+  proposed, two-person), Người dùng và vai trò (counts by role, accounts without a password; the RM assignment opens on
+  Cấu hình), Chuỗi nhật ký (check, rows, write-once segments, head).
+- **Users and roles (Q-25):** shown, not edited — the product has no account or password form on purpose; OWN-MR-04
+  stays partly met until the owner answers.
+- **Assistant:** Admin's own suggestions; `van_hanh` (what is not green, alerts, failing jobs, configuration),
+  `chuoi_nhat_ky` and `cau_hinh_cho_duyet` (also Compliance's) beside `canh_bao_he_thong` and `da_xem_canh_bao`.
+  Steps light the map's nodes and panels.
+
 ## API and data
 
 `GET /api/desk` → `{role, as_of, …the role's sections}`; see [api_reference.md](../architecture/api_reference.md).
@@ -101,7 +121,10 @@ queue opens a view with its approval, the docked assistant lights the desk, no o
 dark, the Customer's workspace after it). RM (M2): the same files — the menu and the ten client pages kept, each
 RM's book is their families alone (rm01 C01/C04/C05, rm03 C03), the call list is Hôm nay's, proposals the queue's
 (not the RM's own notes), net worth the run's, the assistant's numbers the book's; every old RM address as a sheet,
-a family's page opened from the book sets the client picker, the assistant lights the book, phone and dark.
+a family's page opened from the book sets the client picker, the assistant lights the book, phone and dark. Admin
+(M3): the desk is Hệ thống's read (chain, configuration, people), a failing feed and a broken chain turn their nodes
+red and the assistant names them, the chain and configuration tools read what their pages read; every Admin address
+as a sheet, a node opens its page, the assistant lights the chain, no other role reaches the map, phone.
 
 ## Limitations
 

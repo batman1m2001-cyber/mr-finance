@@ -83,6 +83,10 @@ def test_the_rm_keeps_every_page_it_had():
     assert re.findall(r'id: "([a-z-]+)"', block) == pages + ["duyet"]
 
 
+def test_admin_keeps_every_page_it_had():
+    assert menu("admin") == ["ban", "he-thong", "du-lieu", "cau-hinh", "agent", "nhat-ky", "bo-nho"]
+
+
 def test_the_cio_keeps_every_page_it_had():
     # the CIO's menu before the desk (6e735dd), page for page: the desk is added, nothing removed (OWN-MR-02)
     before = ["hop-tin", "nhan-dinh", "phoi-nhiem", "ap-dung", "do-thi", "nghien-cuu", "ban-tin", "chinh-sach"]
@@ -119,6 +123,7 @@ def test_with_sign_in_the_session_says_whose_desk_and_the_query_cannot_change_it
     rm = client.get("/api/desk?role=cio", headers=as_("rm01")).json()
     assert rm["role"] == "rm" and sorted(f["id"] for f in rm["families"]) == ["C01", "C04", "C05"]
     assert [f["id"] for f in client.get("/api/desk", headers=as_("rm03")).json()["families"]] == ["C03"]
+    assert client.get("/api/desk?role=cio", headers=as_("admin")).json()["role"] == "admin"
     for who in ("rm01", "compliance", "admin", "sp_global"):  # no desk yet, or their own: never the CIO's
         r = client.get("/api/desk?role=cio", headers=as_(who))
         assert r.status_code == 403 or r.json()["role"] != "cio", who
@@ -207,8 +212,9 @@ def test_the_cio_assistant_says_the_desks_numbers():
     assert exp["data"]["expected_3m"] == run["totals"]["expected_3m"] and run["id"] in exp["text"]
 
 
-DESK_TOOLS = {"ban_quyet_dinh": "cio", "phoi_nhiem": "cio", "lan_ap_dung": "cio", "do_chinh_xac": "cio",
-              "so_khach_hang": "rm"}  # fmt: skip
+DESK_TOOLS = {"ban_quyet_dinh": ("cio",), "phoi_nhiem": ("cio",), "lan_ap_dung": ("cio",), "do_chinh_xac": ("cio",),
+              "so_khach_hang": ("rm",), "van_hanh": ("admin",), "chuoi_nhat_ky": ("admin", "compliance"),
+              "cau_hinh_cho_duyet": ("admin", "compliance")}  # fmt: skip
 
 
 @pytest.mark.parametrize("name", sorted(DESK_TOOLS))
@@ -216,9 +222,9 @@ def test_a_desk_tool_is_its_roles_alone_and_opens_its_desk(name):
     from assistant.stream import NODES
     from assistant.tools import PAGES
 
-    t, role = registry.REGISTRY[name], DESK_TOOLS[name]
-    assert t.roles == (role,) and not t.write
-    assert PAGES[t.page][1][role].startswith(f"#/{role}") and NODES[name]
+    t = registry.REGISTRY[name]
+    assert t.roles == DESK_TOOLS[name] and not t.write
+    assert all(PAGES[t.page][1][r].startswith(f"#/{r}") for r in t.roles) and NODES[name]
 
 
 def test_the_rm_assistant_says_the_books_numbers():
@@ -241,3 +247,62 @@ def test_the_agents_beneath_the_desk_are_untouched():
     assert graph.cio_agent_flow and graph.decide_flow
     d = desk_reads.desk("cio", {"id": "cio", "role": "cio"})
     assert {"mode", "models"} <= set(d["agents"])
+
+
+# -- Admin · Vận hành (M3) -------------------------------------------------------------------------------------------
+
+
+def test_the_admin_desk_is_he_thongs_own_read():
+    from app.web import system_read
+    from control import config
+
+    config.propose("thresholds", {**config.data("thresholds"), "pre_review_pct": -0.07}, "cio2", "thử")
+    s, d = system_read(), desk_reads.desk("admin", {"id": "admin", "role": "admin"})
+    node = {n["id"]: n for n in d["nodes"]}
+    lanes = ["sources", "store", "ai", "people"]  # left to right: where data comes from to who works on it
+    assert [n["lane"] for n in d["nodes"]] == sorted((n["lane"] for n in d["nodes"]), key=lanes.index)
+    assert (
+        node["chain"]["value"] == f"{s['chain']['count']} dòng" and node["chain"]["state"] == "ok" and d["chain"]["ok"]
+    )
+    assert [c["id"] for c in d["config"]] == [c["id"] for c in s["config_waiting"]] and len(d["config"]) == 1
+    assert d["config"][0]["by"] == "cio2" and node["config"]["state"] == "warn"
+    assert sum(d["roles"].values()) == len(s["people"]) and d["clients"] == s["clients"]
+    assert d["failing"] == [] and all(n["state"] in ("ok", "warn", "idle", "bad") for n in d["nodes"])
+    assert all(n["route"].startswith("#/admin/") for n in d["nodes"])
+
+
+def test_a_failing_feed_and_a_broken_chain_turn_their_nodes_red(monkeypatch):
+    from app import web
+
+    real = web.system_read
+
+    def broken():
+        s = real()
+        s["feeds"] = [{"id": "vnexpress_kd", "error": "HTTP 503", "accepted": 0}, {"id": "fed", "error": None}]
+        s["chain"] = {**s["chain"], "ok": False, "broken_at": 7, "reason": "băm không khớp"}
+        return s
+
+    monkeypatch.setattr(web, "system_read", broken)
+    node = {n["id"]: n for n in desk_reads.desk("admin", None)["nodes"]}
+    assert (
+        node["feeds"]["state"] == "bad"
+        and "HTTP 503" in node["feeds"]["error"]
+        and node["feeds"]["value"] == "1/2 nguồn"
+    )
+    assert node["chain"]["state"] == "bad" and node["chain"]["error"] == "băm không khớp"
+    said = asyncio.run(execute(registry.REGISTRY["van_hanh"], ctx("admin"), {}))
+    assert said["data"]["off"] >= 2 and "node:feeds" in said["focus"] and "HTTP 503" in said["text"]
+
+
+def test_the_chain_and_the_configuration_tools_read_what_their_pages_read():
+    from control import audit, config, db
+
+    with db.tx() as con:
+        count = audit.verify(con)["count"]
+    for role in ("admin", "compliance"):
+        got = asyncio.run(execute(registry.REGISTRY["chuoi_nhat_ky"], ctx(role), {}))
+        assert got["data"]["ok"] and got["data"]["count"] >= count
+    assert asyncio.run(execute(registry.REGISTRY["cau_hinh_cho_duyet"], ctx("admin"), {}))["data"]["waiting"] == 0
+    config.propose("thresholds", {**config.data("thresholds"), "pre_review_pct": -0.07}, "cio2", "thử")
+    got = asyncio.run(execute(registry.REGISTRY["cau_hinh_cho_duyet"], ctx("compliance"), {}))
+    assert got["data"]["waiting"] == 1 and "cio2" in got["text"]

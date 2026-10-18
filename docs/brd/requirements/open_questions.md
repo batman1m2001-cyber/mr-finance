@@ -153,6 +153,8 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
   passwords on the public demo (a visitor could lock others out; SCR-ADM-01, `scripts/set_password.py`).
 - **Interpretation (ours):** the Admin desk shows people and roles and opens the assignment; no account or password
   form is added (it would be a new capability and a demo risk). Owner: product.
+- **Applied (M3, 2026-10-18):** SCR-ADM-02 shows people by role and accounts without a password, links the RM
+  assignment on Cấu hình; still no account form. OWN-MR-04 partly met until answered.
 
 ### Q-26 — How much of a family a specialist sees
 - **Fact:** BRD-RULE-ROLE-05 says the specialist approves recommendations for assigned families; it says nothing on what

@@ -2,6 +2,12 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Multi-role UX M3: Admin works at “Vận hành” (experiment): Hệ thống's own read drawn as a map (sources →
+  storage → AI → people, each node coloured by its last record), alerts, failing jobs, configuration waiting, people
+  and roles (shown, not edited: Q-25), the chain; Admin's assistant with `van_hanh`, `chuoi_nhat_ky`,
+  `cau_hinh_cho_duyet`. `GET /api/system` unchanged (factored into `system_read`). — FEAT-41 §Admin, screens/admin.md
+  SCR-ADM-02, screen inventory, ux/role_desks.md (Admin built), matrix OWN-MR-04 (partly) and notes, api_reference,
+  architecture/assistant.md, assets
 - 2026-10-18 — Multi-role UX M2: the RM works at “Sổ khách hàng” (experiment): the RM's families as a relationship
   map by how soon they need the RM, sized by net worth; Hôm nay's calls, goal tasks, proposals, contacts; a family's
   pages open with the client picker set; the RM's own assistant with `so_khach_hang`. Badges now styled on desks;

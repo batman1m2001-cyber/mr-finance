@@ -52,6 +52,11 @@ NODES: Dict[str, List[str]] = {
     "de_xuat": ["proposals"],
     "lien_he": ["contacts"],
     "ghi_lien_he": ["contacts"],
+    # Admin's operations map; the chain and configuration (Compliance's desk too)
+    "van_hanh": ["ops", "alerts", "jobs"],
+    "canh_bao_he_thong": ["alerts"],
+    "chuoi_nhat_ky": ["chain", "node:chain"],
+    "cau_hinh_cho_duyet": ["config", "node:config"],
 }
 
 

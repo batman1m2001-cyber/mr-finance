@@ -34,7 +34,7 @@ const START = {
   cio: ["Có gì chờ tôi duyệt?", "Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
   compliance: ["Có bao nhiêu tin bị giữ?", "Mở tin bị giữ"],
   specialist: ["Khuyến nghị nào đang chờ tôi duyệt?"],
-  admin: ["Có cảnh báo hệ thống nào?", "Mở trang Hệ thống"],
+  admin: ["Hệ thống có gì bất thường?", "Chuỗi nhật ký còn nguyên không?", "Có cảnh báo hệ thống nào?", "Cấu hình nào chờ duyệt?"],
 };
 // what each role's own assistant is for (FEAT-41): the line before the first question, and the box's hint
 const INTRO = {

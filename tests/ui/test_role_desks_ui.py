@@ -208,3 +208,62 @@ def test_no_other_role_reaches_the_rm_book_and_the_rm_on_a_phone(open_page):
         assert not q.problems(), (theme, q.problems())
         q.go("#/rm/khach-hang/tac-dong")
         assert q.page.is_visible("#ws-sheet") and not q.problems(), (theme, q.problems())
+
+
+# -- Admin · Vận hành (M3) -----------------------------------------------------------------------------------------
+
+
+def test_admin_works_at_the_operations_map_and_every_page_is_a_sheet(open_page):
+    p = open_page()
+    p.go("#/admin")
+    p.page.wait_for_selector(".desk-admin .ad-node")
+    lanes = p.page.eval_on_selector_all(".ad-lane-t", "hs => hs.map(h => h.textContent)")
+    assert [x.lower() for x in lanes] == ["nguồn", "lưu trữ", "ai", "con người"]
+    assert p.page.locator(".ad-node").count() == 10 and p.page.locator("#ws-pane-a #cp-q").count() == 1
+    p.page.click('[data-n="chain"]')
+    p.page.wait_for_selector("#ws-pane-i:not([hidden]) a.btn")
+    assert "Chuỗi nhật ký" in p.page.inner_text("#ws-pane-i")
+    p.page.click("#ws-pane-i a.btn")
+    p.page.wait_for_function("location.hash === '#/admin/nhat-ky' && !document.querySelector('#ws-sheet').hidden")
+    seen = routes("admin")
+    assert len(seen) == 6
+    for r in seen:
+        p.go(r)
+        assert p.page.is_visible("#ws-sheet"), r
+        assert p.page.locator(".ws-tool[aria-current]").count() == 1, r
+        assert not p.problems(), (r, p.problems())
+
+
+def test_the_admin_assistant_lights_the_map(open_page):
+    script = [[0, {"type": "start"}],
+              [50, {**STEP, "tool": "chuoi_nhat_ky", "phase": "start", "nodes": ["chain", "node:chain"]}],
+              [700, {**STEP, "tool": "chuoi_nhat_ky", "phase": "end", "ok": True, "ms": 600}],
+              [1200, {"type": "answer", "assistant": {"status": "ok", "mode": "model", "text": "Chuỗi nguyên vẹn.",
+                                                      "steps": []}}]]  # fmt: skip
+    p = open_page(theme="dark")
+    p.ctx.add_init_script(TIMED)
+    p.ctx.add_init_script(f"window.__script = {json.dumps(script)};")
+    p.go("#/admin")
+    p.page.wait_for_selector(".desk-admin .ad-node")
+    assert "Hệ thống có gì bất thường?" in p.page.inner_text("#ws-pane-a")
+    p.page.fill("#cp-q", "Chuỗi nhật ký còn nguyên không?")
+    p.page.press("#cp-q", "Enter")
+    p.page.wait_for_selector('[data-node="node:chain"].act', timeout=4000)
+    p.page.wait_for_selector('[data-node="chain"].lit', timeout=6000)
+    assert p.page.evaluate("window.__body.role") == "admin" and not p.problems()
+
+
+def test_no_other_role_reaches_the_operations_map_and_admin_on_a_phone(open_page):
+    p = open_page()
+    for role in ("cio", "rm", "compliance", "specialist"):
+        p.as_role(role)
+        p.page.evaluate("location.hash = '#/admin'")
+        p.page.wait_for_timeout(400)
+        assert p.page.locator(".desk-admin").count() == 0, role
+    p.errors.clear()
+    q = open_page(size="phone", theme="dark")
+    q.go("#/admin")
+    q.page.wait_for_selector(".desk-admin .ad-node")
+    assert not q.problems(), q.problems()
+    q.go("#/admin/he-thong")
+    assert q.page.is_visible("#ws-sheet") and not q.problems(), q.problems()

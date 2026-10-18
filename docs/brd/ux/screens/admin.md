@@ -37,3 +37,23 @@ Cấu hình ([SCR-CIO-09](cio.md#scr-cio-09--cấu-hình-versioned-configuration
   - A link to "Phân công RM" in Cấu hình, where Admin changes the assignment.
 
 Not here, on purpose: setting or resetting a password. On the public demo anyone can sign in as Admin, so a password form would let a visitor lock others out. Passwords are set with `scripts/set_password.py`.
+
+## SCR-ADM-02 — Vận hành (Admin desk)
+
+| | |
+|---|---|
+| Route | `#/admin`, `#/admin/ban`; every other Admin address opens its page as a sheet over the desk |
+| Feature | [FEAT-41](../../features/FEAT-41-role-desks.md) (and the pages it gathers: FEAT-11, 12, 14, 15, 19, 35, 36) |
+| Requirements | OWN-MR-01, OWN-MR-04 (partly, Q-25), OWN-MR-06, OWN-MR-07, OWN-MR-10; BRD-RULE-ROLE-04, BRD-NFR-12 |
+| Data | `GET /api/desk` — Hệ thống's read (`GET /api/system`) and the bell's alerts for Admin |
+| Screenshots | [desktop](../../assets/current_ui/SCR-ADM-02_desktop-light.jpg) · [a node picked, dark](../../assets/current_ui/SCR-ADM-02-pick_desktop-dark.jpg) · [phone, dark](../../assets/current_ui/SCR-ADM-02_phone-dark.jpg) |
+
+**Centre.** Header “Quản trị · Vận hành” with “<n> nút lỗi · <a> cảnh báo đang mở · <j> việc lỗi · <c> cấu hình chờ
+duyệt” and a pill for the chain. The map: four lanes (Nguồn → Lưu trữ → AI → Con người) of node buttons, each with a
+coloured dot, its label, its value (“11/11 nguồn”, “613 dòng”, “Mô hình thật”) and a note (“lấy gần nhất 1 ngày
+trước”); a phone shows two lanes per row. Below: **Cảnh báo**, **Việc đang lỗi**, **Cấu hình chờ duyệt**, **Người dùng
+và vai trò**, **Chuỗi nhật ký**.
+
+**Thông tin (a node picked).** Its state and value, the note and the error, its parts with their own states, and
+“Mở <page>”.
+
