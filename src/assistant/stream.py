@@ -45,6 +45,8 @@ NODES: Dict[str, List[str]] = {
     "chay_agent_cio": ["agents", "stage:views"],
     "phan_bien_lai": ["agents", "stage:views"],
     "chay_viec_nen": ["jobs"],
+    "tai_khoan": ["people"],
+    "yeu_cau_tai_khoan": ["people"],
     "ban_quyet_dinh": ["decide", "stage:views", "stage:runs"],
     "phoi_nhiem": ["exposure", "stage:families"],
     "lan_ap_dung": ["stage:runs"],

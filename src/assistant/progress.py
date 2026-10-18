@@ -43,6 +43,8 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "chay_agent_cio": ("Đang chuẩn bị chạy Agent CIO để bạn xác nhận", "Đã xử lý Agent CIO"),
     "phan_bien_lai": ("Đang chuẩn bị chạy lại Agent Phản biện để bạn xác nhận", "Đã xử lý Agent Phản biện"),
     "chay_viec_nen": ("Đang chuẩn bị chạy việc nền để bạn xác nhận", "Đã xử lý việc nền"),
+    "tai_khoan": ("Đang xem các tài khoản", "Đã xem các tài khoản"),
+    "yeu_cau_tai_khoan": ("Đang chuẩn bị yêu cầu tài khoản để bạn xác nhận", "Đã xử lý yêu cầu tài khoản"),
     "da_xem_canh_bao": ("Đang chuẩn bị đánh dấu cảnh báo để bạn xác nhận", "Đã xử lý cảnh báo"),
     "nho_lai": ("Đang xem những điều bạn nhờ ghi nhớ", "Đã xem bộ nhớ"),
     "ghi_nho": ("Đang chuẩn bị ghi nhớ để bạn xác nhận", "Đã xử lý việc ghi nhớ"),

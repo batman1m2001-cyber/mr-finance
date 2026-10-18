@@ -1,0 +1,21 @@
+{
+ "tag": "u4c",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.508676,
+ "conversations": [
+  {
+   "id": "adm-lim-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003476,
+   "seconds": 5.9,
+   "tokens": 31473
+  }
+ ],
+ "passed": 1,
+ "of": 1,
+ "turns": 3,
+ "turns_failed": 0
+}

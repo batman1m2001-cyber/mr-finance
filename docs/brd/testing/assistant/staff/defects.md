@@ -56,6 +56,13 @@ Each fixed defect has a regression test in `tests/test_staff_stress.py`, named a
 | G6 | The server's refusal (one `error` event) read as “no answer” | Read as `refused`; a refusal where none is expected fails the turn |
 | G7 | “21:51”, the time the tool reported, flagged as an invented number | By hand (review.json) |
 
+## Found after the owner's backlog (2026-10-19)
+
+| # | Sev | What | Fixed in |
+|---|---|---|---|
+| S2-15 | S2 | adm-act-02 (`runs/u4`): “Chạy ngay việc kiểm tra chuỗi nhật ký” answered with the chain read (`chuoi_nhat_ky`), no job run and no Xác nhận | The two tools' descriptions: the read says it only reads, the job says “chạy ngay” is its; `runs/u4b` passes |
+| S3-16 | S3 | adm-lim-01 (`runs/u4`): after the account request, “the approver gets a code to hand to you” — the code is for the new person | The tool's answer names the person; `runs/u4c` passes |
+
 ## Observation (a product rule, not a defect of the assistant)
 
 A customer's own proposal (tuition) approved by the RM goes on to the family's specialist (BRD-RULE-WF-08 applied to

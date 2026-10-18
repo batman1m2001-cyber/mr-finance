@@ -1,0 +1,41 @@
+{
+ "tag": "u4b",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.505167,
+ "conversations": [
+  {
+   "id": "cmp-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002452,
+   "seconds": 6.9,
+   "tokens": 21564
+  },
+  {
+   "id": "adm-desk-01",
+   "category": "desk",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003439,
+   "seconds": 6.8,
+   "tokens": 32465
+  },
+  {
+   "id": "adm-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": true,
+   "failed": [],
+   "cost": 0.002376,
+   "seconds": 3.3,
+   "tokens": 22629
+  }
+ ],
+ "passed": 3,
+ "of": 3,
+ "turns": 6,
+ "turns_failed": 0
+}

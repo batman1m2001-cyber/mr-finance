@@ -59,6 +59,10 @@ def user(user_id: str) -> Dict[str, str]:
     u = users().get(str(user_id or ""))
     if u is None:
         raise Forbidden(f"người dùng {user_id!r} không có trong demo")
+    from people import accounts
+
+    if accounts.disabled(str(user_id)):
+        raise Forbidden(f"Tài khoản {u['name']} đang bị khoá")
     return {"id": str(user_id), **u}
 
 

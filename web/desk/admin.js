@@ -57,10 +57,11 @@ export function render(box, d, api) {
           <span class="pill warn">Chờ duyệt</span></a>`).join("") || `<p class="small muted">Không cấu hình nào chờ duyệt.</p>`}
           ${d.evals.length ? `<p class="small mt-xs">${d.evals.length} đề xuất lời nhắc hay mô hình chờ bộ đánh giá.</p>` : ""}</div></section>
       <section class="panel" data-node="people" aria-labelledby="ad-ppl"><div class="sechead"><h2 class="h3" id="ad-ppl">Người dùng và vai trò</h2>
-        <a class="small" href="#/admin/he-thong">Hệ thống →</a></div>
+        <a class="small" href="#/admin/tai-khoan">Tài khoản và vai trò →</a></div>
         <dl class="dk-kv">${Object.entries(d.roles).map(([r, n]) => `<dt>${esc(ROLE[r] || r)}</dt><dd class="num">${n}</dd>`).join("")}
-          <dt>Khách hàng</dt><dd class="num">${d.clients}</dd><dt>Chưa đặt mật khẩu</dt><dd class="num">${d.no_password}</dd></dl>
-        <p class="small muted mt-xs">Tài khoản và vai trò đọc từ bảng người dùng; ứng dụng không có biểu mẫu tạo hay đổi tài khoản (Q-25).
+          <dt>Khách hàng</dt><dd class="num">${d.clients}</dd><dt>Chưa đặt mật khẩu</dt><dd class="num">${d.no_password}</dd>
+          <dt>Yêu cầu tài khoản chờ duyệt</dt><dd class="num">${d.account_requests || 0}</dd></dl>
+        <p class="small muted mt-xs">Thêm tài khoản, đổi vai trò, khoá, mở lại, đặt lại mật khẩu: một Quản trị đề xuất, một Quản trị khác duyệt (Q-25).
           Phân công RM cho khách hàng là một cấu hình hai người duyệt: <a href="#/admin/cau-hinh">Cấu hình →</a></p></section>
       <section class="panel dk-wide" data-node="chain" aria-labelledby="ad-chain"><div class="sechead"><h2 class="h3" id="ad-chain">Chuỗi nhật ký</h2>
         <a class="small" href="#/admin/nhat-ky">Nhật ký →</a></div>

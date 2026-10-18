@@ -51,6 +51,7 @@ PAGES = {  # page key → (label, route per role); the router may name a key, ne
     "ap-dung": ("Lần áp dụng", {"cio": "#/cio/ap-dung"}),
     "do-chinh-xac": ("Độ chính xác", {"cio": "#/cio/mo-hinh/do-chinh-xac"}),
     "agent": ("Agent", {r: f"#/{r}/agent" for r in ("cio", "compliance", "admin")}),
+    "tai-khoan": ("Tài khoản và vai trò", {"admin": "#/admin/tai-khoan"}),
     "viec-nen": ("Việc nền", {r: f"#/{r}/viec-nen" for r in ("cio", "compliance", "admin")}),
     "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "compliance", "admin", "specialist")}),
     # every staff page of the menu (web/shell.js): Compliance asked to publish research and, with no research page

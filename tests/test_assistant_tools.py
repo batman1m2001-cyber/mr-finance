@@ -156,6 +156,7 @@ SETUP = {  # write → (who asks, what must exist first → the model's argument
     "chay_agent_cio": ("cio", lambda mp: {"event_id": _an_event(mp)["event_id"], "mode": ""}),
     "phan_bien_lai": ("cio", _a_failed_challenge),
     "chay_viec_nen": ("admin", _a_job),
+    "yeu_cau_tai_khoan": ("admin", lambda mp: {"kind": "disable", "person": "sp_global"}),
     "da_xem_canh_bao": ("cio", _an_alert),
     "ghi_nho": ("client", lambda mp: {"kind": "preference", "text": "Thích báo cáo ngắn"}),
     "quen": ("client", _an_item),
@@ -173,6 +174,7 @@ BUSINESS = (
     "agent_jobs",
     "challenges",
     "job_runs",
+    "account_requests",
 )
 
 

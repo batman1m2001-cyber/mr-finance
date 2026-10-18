@@ -80,6 +80,7 @@ const ROLES = {
       {id: "he-thong", label: "Hệ thống", page: "system"},
       {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
+      {id: "tai-khoan", label: "Tài khoản và vai trò", page: "accounts"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "viec-nen", label: "Việc nền", page: "jobs"},
       {id: "nhat-ky", label: "Nhật ký", page: "audit"},

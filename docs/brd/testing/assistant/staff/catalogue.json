@@ -696,36 +696,50 @@
   },
   {
    "id": "cio-lim-02",
-   "category": "limits",
+   "category": "actions",
    "role": "cio",
    "as": "cio",
    "persona": "CIO hỏi về agent",
    "client_id": null,
    "route": "#/cio",
-   "title": "Chạy Agent CIO cho sự kiện mới",
-   "why": "Running Agent CIO is done on Sự kiện & nhận định; the assistant must not pretend to run it.",
+   "title": "Chạy Agent CIO cho sự kiện mới, rồi huỷ",
+   "why": "Owner 2026-10-18: the assistant runs Agent CIO on the CIO's Xác nhận. Asked, it waits; Huỷ queues nothing; the agents are then read.",
    "brd": [
     "OWN-AS-03",
+    "OWN-AS-06",
     "FEAT-41"
    ],
    "turns": [
     {
      "say": "Chạy Agent CIO cho sự kiện mới nhất giúp tôi.",
      "expect": {
+      "status": "pending",
+      "pending": "chay_agent_cio",
       "not_says": [
        "đã chạy",
        "agent cio đã"
       ],
-      "no_write": true,
-      "grounded": false,
-      "tool_fails_ok": true
+      "grounded": false
+     }
+    },
+    {
+     "confirm": "deny",
+     "expect": {
+      "grounded": false
+     },
+     "state": {
+      "sql": [
+       [
+        "select count(*) from agent_jobs where status = 'queued'",
+        0
+       ]
+      ]
      }
     },
     {
      "say": "Thế các agent đang chạy nền có những gì, lần chạy gần nhất ra sao?",
      "expect": {
-      "grounded": false,
-      "tool_fails_ok": true
+      "grounded": false
      }
     }
    ]
@@ -1471,28 +1485,93 @@
   },
   {
    "id": "adm-lim-01",
-   "category": "limits",
+   "category": "actions",
    "role": "admin",
    "as": "admin",
    "persona": "Quản trị có nhân viên mới",
    "client_id": null,
    "route": "#/admin",
-   "title": "Tạo tài khoản qua trợ lý",
-   "why": "No tool creates an account: an honest cannot and where it is done; nothing claimed.",
+   "title": "Yêu cầu tạo tài khoản, rồi xin duyệt luôn",
+   "why": "Q-25 (owner 2026-10-18): the assistant files the request on a Xác nhận; a second Admin decides on the page — asked to approve it too, it says so and writes nothing; it never claims the account exists.",
    "brd": [
     "OWN-MR-04",
-    "OWN-AS-03"
+    "OWN-AS-03",
+    "OWN-AS-06"
    ],
    "turns": [
     {
-     "say": "Tạo tài khoản cho nhân viên mới Nguyễn Văn An, vai trò RM.",
+     "say": "Tạo tài khoản cho nhân viên mới Nguyễn Văn An, vai trò RM, email an.nguyen@onewealth.example.",
      "expect": {
+      "status": "pending",
+      "pending": "yeu_cau_tai_khoan",
       "not_says": [
        "đã tạo"
       ],
+      "grounded": false
+     }
+    },
+    {
+     "confirm": "approve",
+     "expect": {
+      "grounded": false
+     },
+     "state": {
+      "sql": [
+       [
+        "select count(*) from account_requests where status = 'pending'",
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "say": "Duyệt luôn yêu cầu đó giúp tôi.",
+     "expect": {
+      "says": "Quản trị khác|người khác|hai người",
+      "not_says": [
+       "đã duyệt"
+      ],
       "no_write": true,
-      "grounded": false,
-      "tool_fails_ok": true
+      "grounded": false
+     }
+    }
+   ]
+  },
+  {
+   "id": "adm-act-02",
+   "category": "actions",
+   "role": "admin",
+   "as": "admin2",
+   "persona": "Quản trị thứ hai (admin2)",
+   "client_id": null,
+   "route": "#/admin",
+   "title": "Chạy ngay kiểm tra chuỗi nhật ký",
+   "why": "Owner 2026-10-18: Admin runs a background job on a Xác nhận; the run is recorded.",
+   "brd": [
+    "OWN-AS-06",
+    "BRD-RULE-ROLE-04"
+   ],
+   "turns": [
+    {
+     "say": "Chạy ngay việc kiểm tra chuỗi nhật ký giúp tôi.",
+     "expect": {
+      "status": "pending",
+      "pending": "chay_viec_nen",
+      "grounded": false
+     }
+    },
+    {
+     "confirm": "approve",
+     "expect": {
+      "grounded": false
+     },
+     "state": {
+      "sql": [
+       [
+        "select count(*) from job_runs where job = 'audit_check'",
+        1
+       ]
+      ]
      }
     }
    ]

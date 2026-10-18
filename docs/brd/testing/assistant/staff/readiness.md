@@ -69,10 +69,15 @@ customer's was. This page is the assessment for the five staff roles (RM, CIO, E
     defects.md);
   - the confirm-gated agent controls and the jobs view: built after this test (owner, 2026-10-18;
     docs/OWNER_BACKLOG_1018_PLAN.md A). cio-lim-02 now expects the Xác nhận, and adm-act-02 runs a job.
+  - Admin's users and roles (Q-25): built after this test (owner, 2026-10-18; plan U). adm-lim-01 now files the
+    account request on a Xác nhận and refuses to approve it (a second Admin does, on the page).
+- **Rerun of the changed conversations (2026-10-19, `runs/u4`, `u4b`, `u4c`):** cio-lim-02, adm-lim-01 and adm-act-02
+  pass on the real model, with adm-desk-01 and cmp-desk-01 as a check on the chain read. Two defects found and
+  fixed on the way: S2-15 and S3-16 (defects.md).
 
 ## Spend
 
-US$3 cap. **US$0.4858 spent in all**, from each answer frame's own usage (model and tools):
+US$3 cap. **US$0.5087 spent in all**, from each answer frame's own usage (model and tools):
 
 | Run | US$ |
 |---|---|
@@ -82,4 +87,5 @@ US$3 cap. **US$0.4858 spent in all**, from each answer frame's own usage (model 
 | U3 browser passes and adm-rep-01 | 0.0562 |
 | Final run | 0.1548 |
 | `final-s3` | 0.0104 |
+| `u4`, `u4b`, `u4c` (owner backlog A and U) | 0.0229 |
 | All dead-provider runs | 0 |

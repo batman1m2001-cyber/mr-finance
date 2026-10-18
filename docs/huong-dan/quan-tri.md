@@ -5,7 +5,7 @@ Các trang của Quản trị (`#/admin/…`).
 ## Vận hành — #/admin
 
 Trang đầu của Quản trị: hệ thống như một bản đồ (nguồn → lưu trữ → AI → người dùng), mỗi phần xanh, vàng hay đỏ theo
-lần ghi nhận gần nhất; cảnh báo, việc lỗi, cấu hình chờ duyệt, người dùng theo vai trò, chuỗi nhật ký. Cấu hình do
+lần ghi nhận gần nhất; cảnh báo, việc lỗi, cấu hình chờ duyệt, người dùng theo vai trò (nút Người dùng mở Tài khoản và vai trò), chuỗi nhật ký. Cấu hình do
 vai trò khác sở hữu (ngưỡng của CIO, chứng nhận chuyên gia của Tuân thủ) thì vai trò đó duyệt. Quản trị không xem tài
 sản hay danh mục của khách.
 
@@ -35,6 +35,16 @@ Như trang Dữ liệu thị trường của CIO: nguồn và lịch lấy, yế
 Như trang Cấu hình của CIO. Quản trị duyệt các loại của mình: Nguồn tin (danh sách trắng), Nguồn dữ liệu thị trường,
 Bảng mã chứng khoán, Phân công RM, Chế độ chạy AI, AI với dữ liệu khách hàng (mô hình có được đọc dữ liệu khách hay
 không), Lời nhắc của agent và Mô hình AI của agent.
+
+## Tài khoản và vai trò — #/admin/tai-khoan
+
+Mọi tài khoản nhân viên theo vai trò, tài khoản đã khoá và các yêu cầu. Quản trị **thêm tài khoản**, **đổi vai trò**,
+**khoá**, **mở lại** hay **đặt lại mật khẩu**; mỗi thay đổi là một yêu cầu, một Quản trị khác bấm **Duyệt** (hay **Từ
+chối** kèm lý do), người đề xuất có thể **Rút**; mọi bước ghi vào nhật ký. Khi duyệt thêm tài khoản hay đặt lại mật
+khẩu, người duyệt thấy **mã dùng một lần** đúng một lần (hết hạn sau 24 giờ) để trao cho nhân viên; nhân viên đặt mật
+khẩu ở trang đăng nhập › Có mã một lần?. Không đổi được tài khoản của chính mình, Quản trị cuối cùng, RM còn phụ trách
+gia đình (chuyển gia đình ở Cấu hình › Phân công RM trước), tài khoản khách hàng; khi bật tài khoản demo, các tài khoản
+demo giữ nguyên. Trợ lý gửi yêu cầu khi Quản trị bấm Xác nhận, không duyệt.
 
 ## Agent — #/admin/agent
 

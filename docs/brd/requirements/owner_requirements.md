@@ -20,7 +20,7 @@ role" ([Q-24](open_questions.md#q-24--which-roles-the-multi-role-request-covers)
 | OWN-MR-01 | Every staff role works in a purpose-built experience in the Customer workspace's frame (a rail, a centre, the dock with the assistant and an inspector, pages as sheets), its centre designed for the role's responsibilities rather than a copy of the Customer's graph | intro; §2 "not a template to copy blindly"; §4 "do not force every role into the same graph" | documented |
 | OWN-MR-02 | CIO: market intelligence, portfolio-wide insight, risk exposure, scenario analysis, significant events and decision support, from existing features | §2 CIO | documented |
 | OWN-MR-03 | RM: customer relationships, assigned portfolios, financial profiles, relevant news, customer needs and follow-up actions, from existing features | §2 RM | documented |
-| OWN-MR-04 | Admin: users and roles, configuration, integrations, operational health and auditability, from existing features | §2 Admin | needs_clarification ([Q-25](open_questions.md#q-25--admins-user-and-role-management)) |
+| OWN-MR-04 | Admin: users and roles, configuration, integrations, operational health and auditability, from existing features | §2 Admin | documented |
 | OWN-MR-05 | Expert: specialist analysis, financial interpretation, relevant evidence and the expert workflow, from existing features | §2 Expert | documented |
 | OWN-MR-06 | Every original feature, rule, workflow and integration stays available to its authorised users; nothing is silently deleted, replaced or stubbed | §3; §5 | documented |
 | OWN-MR-07 | Access stays enforced by the existing authorisation model; tests verify role isolation | §3; §5 | documented |

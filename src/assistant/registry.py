@@ -54,6 +54,8 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "chay_agent_cio": "Chạy Agent CIO",
     "phan_bien_lai": "Chạy lại Agent Phản biện",
     "chay_viec_nen": "Chạy việc nền",
+    "tai_khoan": "Tài khoản và vai trò",
+    "yeu_cau_tai_khoan": "Yêu cầu tài khoản",
     "da_xem_canh_bao": "Đã xem cảnh báo",
     "nho_lai": "Bộ nhớ",
     "ghi_nho": "Ghi nhớ",

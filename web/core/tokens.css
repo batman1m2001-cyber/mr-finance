@@ -788,6 +788,12 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .cp-meta { margin-top: 6px; font-size: 11px; color: var(--muted); display: grid; gap: 1px; }
 .cp-st { font-size: 11.5px; color: var(--muted); width: 100%; }
 
+/* ── Tài khoản và vai trò (web/pages/accounts.js) ──────────────────────────── */
+.item.acc-req { grid-template-columns: minmax(0, 1fr); }
+.acc-ctl { padding: 7px 10px; border: 1px solid var(--hair); border-radius: var(--radius-s); background: var(--surface);
+  color: var(--ink); font: inherit; font-size: 13px; min-width: 0; max-width: 100%; }
+.acc-why { flex: 1 1 200px; }
+
 /* ── sign-in (web/pages/signin.js) ─────────────────────────────────────────── */
 body.signed-out .shell-nav, body.signed-out #search, body.signed-out #client-pick, body.signed-out #scope-wrap,
 body.signed-out .bellwrap, body.signed-out #reset { display: none !important; }

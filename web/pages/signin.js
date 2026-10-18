@@ -1,6 +1,7 @@
 /* Đăng nhập (BRD-RULE-SEC-01): every person signs in with their own account; the app then shows only their role's
    pages and only the families they may see. With MF_DEMO_ACCOUNTS on, the demo's accounts are listed below the
-   form and open with one click; a bank deployment turns that off (and signs in through SSO). */
+   form and open with one click; a bank deployment turns that off (and signs in through SSO). “Có mã một lần?” sets a
+   password with the one-time code Admin hands over (Q-25, POST /api/auth/redeem). */
 import {esc, get, post} from "../core/core.js";
 import {icon} from "../core/icons.js";
 
@@ -27,6 +28,12 @@ export async function render(box, ctx) {
         <label class="fld"><span>Mật khẩu</span>
           <input name="password" type="password" autocomplete="current-password" required maxlength="200"></label>
         <div class="row"><button type="submit" class="btn primary">Đăng nhập</button><span class="small bad-text" id="signin-err" role="alert"></span></div>
+        <details class="signin-code" id="signin-code"><summary class="small">Có mã một lần?</summary><div class="stack mt">
+          <div class="small muted">Quản trị trao mã khi tạo tài khoản hay đặt lại mật khẩu (dùng một lần, 24 giờ). Đặt mật khẩu mới bằng mã đó.</div>
+          <label class="fld"><span>Mã một lần</span><input name="code" autocomplete="one-time-code" maxlength="20"></label>
+          <label class="fld"><span>Mật khẩu mới (ít nhất 8 ký tự)</span><input name="new_password" type="password" autocomplete="new-password" maxlength="200"></label>
+          <div class="row"><button type="button" class="btn" id="signin-redeem">Đặt mật khẩu và đăng nhập</button></div>
+        </div></details>
       </form>
       ${accounts.length ? `
       <section class="card signin-demo" aria-labelledby="demo-h">
@@ -52,6 +59,14 @@ export async function render(box, ctx) {
     const f = new FormData(e.target);
     try {
       await post("/api/auth/login", {login: f.get("login"), password: f.get("password")});
+      ctx.signedIn();
+    } catch (x) { err.textContent = x.message; }
+  };
+  box.querySelector("#signin-redeem").onclick = async () => {
+    err.textContent = "";
+    const f = new FormData(box.querySelector("#signin-form"));
+    try {
+      await post("/api/auth/redeem", {login: f.get("login"), code: f.get("code"), password: f.get("new_password")});
       ctx.signedIn();
     } catch (x) { err.textContent = x.message; }
   };

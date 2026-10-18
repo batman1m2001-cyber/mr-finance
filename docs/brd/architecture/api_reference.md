@@ -47,6 +47,8 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | `/api/policy/summarise` | policy_summarise → `policy_summarise_flow` | `document_id, by, mode?` (verified documents only; 409 with why otherwise) | Compliance | FEAT-16 |
 | `/api/newsletters/act` | newsletter_act → `newsletter_act_flow` | `newsletter_id, action (edit\|submit\|withdraw: CIO; approve\|return: Compliance, ≠ author), by, note?, changes? {title, intro, headings, distribution, conflict}` | CIO, Compliance | FEAT-17 |
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
+| `/api/accounts/request` | account_request → `account_request_flow` | `kind` (add, role, disable, enable, reset), `by`, `person_id`, `full_name`, `email`, `role`, `title`, `note` | Admin; refused in words: one's own account, the last enabled Admin, an RM with families, a customer, a demo persona while the demo accounts are on, a login taken; 409 while a request on that account waits; audited | FEAT-41 (SCR-ADM-03) |
+| `/api/accounts/decide` | account_decide → `account_decide_flow` | `request_id`, `action` (approve, reject, withdraw), `by`, `note` | another Admin approves (not the proposer, not the subject) or rejects (a reason); the proposer withdraws; re-checked on approval; an approved add or reset answers `code` and `code_expires` once; audited | FEAT-41 (SCR-ADM-03) |
 | `/api/jobs/run` | job_run → `job_run_flow` | `job, by` | Admin; a job of `control/jobs.py` RUNNABLE; 409 while that job runs (one at a time); answers the run's row, running; it runs in the server's loop | FEAT-41 (SCR-SH-02) |
 | `/api/system/alerts/ack` | alert_ack → `alert_ack_flow` | `alert_id, by, note?` | a role the alert's kind is for (CIO, Compliance, Admin); 409 if not open | FEAT-36 |
 | `/api/market/load` | market_load_ask → `market_load_ask_flow` | `by, since? (YYYY-MM-DD, from 2015-01-01; default 2020-01-01)` | Admin | FEAT-12 (SCR-ADM-01) |
@@ -72,6 +74,7 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `GET /api/auth/me` | — | `user` (id, name, role, title, `family` for a customer, `families` for an RM) or null; `auth` (sign-in on); `demo_accounts` |
 | `POST /api/auth/login` | `login` (e-mail or id), `password` | `user`, and the session cookie; 401 with one answer for any failure |
 | `POST /api/auth/demo` | `id` | as login, for a listed demo account; 403 unless `MF_DEMO_ACCOUNTS=on` |
+| `POST /api/auth/redeem` | `login`, `code`, `password` | sets the password with a one-time code from Admin (Q-25; 8 characters or more; the code is spent), then as login; 401 with one answer for a wrong, used or expired code |
 | `POST /api/auth/logout` | — | clears the cookie |
 | `GET /api/auth/accounts` | — | the demo accounts (id, name, role, title, login), empty unless `MF_DEMO_ACCOUNTS=on` |
 
@@ -108,6 +111,7 @@ answers 403 with the reason, not signed in 401, a bad value 400 (operonx 1.27 `h
 | `/api/market` | — | staff: the market jobs (cadence, last run, last success, last error), each series' coverage, last value, source and 120-day tail, each factor's provenance | FEAT-35 |
 | `/api/market/series` | `id, from?` | staff: one stored or computed (DXY, SJC_GAP) series' points | FEAT-35 |
 | `/api/system/alerts` | `role?` (sign-in off) | CIO, Compliance, Admin: the open and acknowledged alerts of the kinds the role looks after (the bell) | FEAT-36 |
+| `/api/accounts` | — | Admin: every staff account (role, login, title, an RM's families, disabled, password set, a code waiting, demo, protected), the last 40 account requests, whether the demo's personas are protected, the kinds and the roles | FEAT-41 (SCR-ADM-03) |
 | `/api/jobs` | — | CIO, Admin, Compliance: the agents (mode, budget, each agent's runs in 7 days, the last 20 Agent CIO requests, the events the CIO may run it on, the views whose challenger failed), each job with its clock, last run and whether it may run by hand, the last 20 manual runs | FEAT-41 (SCR-SH-02) |
 | `/api/system` | — | Admin: jobs and how each last went, news feeds, agent runs (7 days) and runs queued, audit chain check, history loads, the inbox's packages and the last zone syncs, the last 30 alerts and the central log's last 30 warnings and errors, configuration waiting, staff accounts with an RM's families | FEAT-12 (SCR-ADM-01) |
 | `/api/accuracy` | — | staff: the model walked forward over history (per horizon and factor: observations, share inside P10–P90, verdict, direction hit rate; KPI-03), the approved views' forecasts summarised and listed with their scores | FEAT-18 |

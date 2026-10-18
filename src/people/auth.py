@@ -141,6 +141,8 @@ def reset() -> None:
     """Demo reset: the accounts go back to their seeds (the people are re-seeded first)."""
     with _db(write=True) as con:
         con.execute("delete from accounts")
+        con.execute("delete from account_flags")
+        con.execute("delete from account_requests")
         _ensure(con)
 
 
@@ -199,12 +201,18 @@ def _account_person(person_id: str) -> Optional[Dict[str, Any]]:
     _seeded()
     with _db() as con:
         row = con.execute("select 1 from accounts where person_id = ?", (person_id,)).fetchone()
-    if row is None:
+    if row is None or _disabled(person_id):  # disabled by Admin (Q-25): its sessions end at the next request
         return None
     p = store.person(person_id)
     if p is None:
         return None
     return _viewer(p)
+
+
+def _disabled(person_id: str) -> bool:
+    from people import accounts
+
+    return accounts.disabled(person_id)
 
 
 def _viewer(p: Dict[str, Any]) -> Dict[str, Any]:
@@ -228,7 +236,7 @@ def login(login_id: str, password: str) -> Optional[str]:
             "select person_id, password from accounts where login = ? or lower(person_id) = ?", (key, key)
         ).fetchone()
     ok = row is not None and check_password(password or "", row["password"])
-    if not ok:
+    if not ok or _disabled(row["person_id"]):
         return None
     with _db(write=True) as con:
         con.execute("update accounts set last_login = ? where person_id = ?", (time.time(), row["person_id"]))

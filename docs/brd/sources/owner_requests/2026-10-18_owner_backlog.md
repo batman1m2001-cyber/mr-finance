@@ -18,4 +18,4 @@ What each became, and where it is recorded:
 |---|---|---|---|
 | The fold on a large screen | OWN-GW-30 | [OWNER_BACKLOG_1018_PLAN.md](../../../OWNER_BACKLOG_1018_PLAN.md) F | the fold is decided on the 1440×900 canvas's area |
 | The CIO's background agents: a page, and the assistant controlling them | OWN-MR-02, OWN-MR-04, OWN-AS-06 | A | Việc nền (SCR-SH-02); `chay_agent_cio`, `phan_bien_lai`, `chay_viec_nen` on a Xác nhận |
-| Admin's users and roles | OWN-MR-04 ([Q-25](../../requirements/open_questions.md#q-25--admins-user-and-role-management)) | U | (phase U, in progress) |
+| Admin's users and roles | OWN-MR-04 ([Q-25](../../requirements/open_questions.md#q-25--admins-user-and-role-management)) | U | Tài khoản và vai trò (SCR-ADM-03); two Admins, one-time codes |

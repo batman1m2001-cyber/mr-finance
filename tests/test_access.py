@@ -79,11 +79,13 @@ READS = {
     "/api/audit/verify": {"compliance", "admin"},
     "/api/audit/export": {"compliance", "admin"},
     "/api/system": {"admin"},
+    "/api/accounts": {"admin"},  # Tài khoản và vai trò (Q-25)
     "/api/jobs": DESK,  # Việc nền: Admin runs the jobs, the CIO the agents, Compliance reads
     "/api/system/alerts": DESK,  # the bell: each role its kinds of alert
     "/api/rm/today": {"rm01", "rm03"},
 }
 OPEN = {"/healthz", "/api/auth/me", "/api/auth/accounts", "/api/auth/login", "/api/auth/demo", "/api/auth/logout"}
+OPEN |= {"/api/auth/redeem"}  # a one-time code sets the password (Q-25): the person is not signed in yet
 OPEN |= {"/api/inbox"}  # the AI zone's door: signed (MF_INBOX_KEY), not signed in; answers an id only
 DEMO = {"/api/reset"}  # anyone signed in starts the public demo over
 
@@ -141,6 +143,12 @@ def actions(vid, item):
         ("/api/market/load", {"by": "BY", "since": "2026-01-01"}, {"admin"}),
         ("/api/system/alerts/ack", {"alert_id": "AL-0", "by": "BY"}, DESK),
         ("/api/jobs/run", {"job": "audit_check", "by": "BY"}, {"admin"}),
+        (
+            "/api/accounts/request",
+            {"kind": "add", "full_name": "Mai Anh", "email": "mai.anh@x.example", "role": "rm", "by": "BY"},
+            {"admin"},
+        ),
+        ("/api/accounts/decide", {"request_id": "TK-999999", "action": "withdraw", "by": "BY"}, {"admin"}),
     ]
 
 

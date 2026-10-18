@@ -110,6 +110,7 @@ from measure.graph import accuracy_flow
 from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
+from people.graph import account_decide_flow, account_request_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, recommend_flow, review_flow, specialist_flow
@@ -423,6 +424,20 @@ APP = Application(
             http("POST", "/api/system/alerts/ack", port=PORT),
             graph=alert_ack_flow,
             description="POST {alert_id, by, note?}: “Đã xem” on an alert, by a role it is for (NFR-12).",
+        ),
+        Service(
+            "account_request",
+            http("POST", "/api/accounts/request", port=PORT),
+            graph=account_request_flow,
+            description="POST {kind: add|role|disable|enable|reset, by, person_id?, full_name?, email?, role?, title?, "
+            "note?}: one Admin asks for a change to a staff account (Q-25); another Admin decides.",
+        ),
+        Service(
+            "account_decide",
+            http("POST", "/api/accounts/decide", port=PORT),
+            graph=account_decide_flow,
+            description="POST {request_id, action: approve|reject|withdraw, by, note?}: a second Admin approves or "
+            "rejects (a reason), the proposer withdraws; an approved add or reset answers a one-time code once.",
         ),
         Service(
             "job_run",

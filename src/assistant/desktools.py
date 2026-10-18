@@ -525,7 +525,8 @@ CATALOGUE: Dict[str, Tool] = {
         ),
         Tool(
             "chuoi_nhat_ky",
-            "kiểm tra chuỗi nhật ký kiểm toán ngay bây giờ: nguyên vẹn hay gãy ở đâu, số dòng, bản chỉ ghi một lần",
+            "đọc tình trạng chuỗi nhật ký kiểm toán ngay bây giờ: nguyên vẹn hay gãy ở đâu, số dòng, bản chỉ ghi một "
+            "lần (chỉ đọc; Quản trị bảo “chạy ngay việc” kiểm tra chuỗi thì là chay_viec_nen)",
             ("admin", "compliance"),
             chain,
             page="nhat-ky",

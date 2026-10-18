@@ -1059,7 +1059,10 @@ async def auth_accounts(request: Request) -> JSONResponse:
     """The demo accounts the sign-in page lists, only while MF_DEMO_ACCOUNTS is on."""
     if not people_auth.demo_accounts_on():
         return JSONResponse({"accounts": []})
-    rows = [a for a in people_auth.accounts()]
+    from people import accounts
+
+    off = accounts.disabled_ids()
+    rows = [a for a in people_auth.accounts() if a["id"] not in off]
     return JSONResponse(
         {"accounts": [{k: a[k] for k in ("id", "name", "role", "title", "member_of", "login")} for a in rows]}
     )
@@ -1096,6 +1099,36 @@ async def auth_demo(request: Request) -> JSONResponse:
     return _cookie(request, JSONResponse({"user": v}), token)
 
 
+async def auth_redeem(request: Request) -> JSONResponse:
+    """A one-time code from Admin (Q-25): the person sets their password with it and is signed in. The same answer
+    for an unknown login and a wrong, used or expired code."""
+    import asyncio
+
+    from people import accounts
+
+    body = await _json(request)
+    try:
+        pid = accounts.redeem(
+            str(body.get("login") or ""), str(body.get("code") or ""), str(body.get("password") or "")
+        )
+    except accounts.AccountError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+    if pid is None:
+        await asyncio.sleep(0.4)
+        return JSONResponse({"error": "Mã không đúng, đã dùng hoặc đã hết hạn"}, status_code=401)
+    token = people_auth.issue(pid)
+    v = people_auth.verify(token)
+    _audit_sign_in(pid, "code")
+    return _cookie(request, JSONResponse({"user": v}), token)
+
+
+async def accounts_page(request: Request) -> JSONResponse:
+    """Tài khoản và vai trò (Admin; Q-25): src/people/accounts.py ``read``."""
+    from people import accounts
+
+    return JSONResponse(accounts.read())
+
+
 async def auth_logout(request: Request) -> JSONResponse:
     response = JSONResponse({"signed_out": True})
     response.delete_cookie(people_auth.COOKIE, path="/")
@@ -1125,6 +1158,7 @@ ROUTE_ROLES = {
     "/api/market": ("cio", "admin"),
     "/api/audit": ("compliance", "admin"),
     "/api/system": ("admin",),
+    "/api/accounts": ("admin",),  # Tài khoản và vai trò (Q-25)
     "/api/jobs": OVERSIGHT,  # Việc nền: agents and jobs; Admin runs jobs, the CIO the agents
     "/api/system/alerts": OVERSIGHT,  # the bell: each role its kinds of alert
     "/api/newsletters": ("cio", "compliance"),  # the CIO writes, Compliance approves (FR-801)
@@ -1206,6 +1240,8 @@ app = Starlette(
         Route("/api/auth/login", auth_login, methods=["POST"]),
         Route("/api/auth/demo", auth_demo, methods=["POST"]),
         Route("/api/auth/logout", auth_logout, methods=["POST"]),
+        Route("/api/auth/redeem", auth_redeem, methods=["POST"]),
+        Route("/api/accounts", accounts_page),
         Route("/healthz", healthz),
         Route("/api/clients", clients),
         Route("/api/scenarios", scenarios),

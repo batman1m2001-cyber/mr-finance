@@ -157,6 +157,17 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
   form is added (it would be a new capability and a demo risk). Owner: product.
 - **Applied (M3, 2026-10-18):** SCR-ADM-02 shows people by role and accounts without a password, links the RM
   assignment on Cấu hình; still no account form. OWN-MR-04 partly met until answered.
+- **Owner's answer (2026-10-18):** “do it, add the feature you think it's best for it”.
+- **Applied (U, 2026-10-18; [OWNER_BACKLOG_1018_PLAN.md](../../OWNER_BACKLOG_1018_PLAN.md)):** SCR-ADM-03 Tài khoản
+  và vai trò. Admin adds a staff account, changes a role, disables or enables an account, or resets a password; each
+  is a request one Admin files and a second Admin approves (the proposer cannot, nor can the subject), every step in
+  the audit chain. No password is ever typed by Admin: an approved add or reset shows a one-time code once (24 hours,
+  kept only as a hash), which the person redeems on the sign-in page to set their own. Disabling ends a live session
+  at its next request; a role change is read at the next request. Guards: never one's own account, never the last
+  enabled Admin, never an RM who still has families (move them first on Cấu hình › Phân công RM, two-person), never
+  a customer's account (they follow the family's record), and the demo's own personas stay as they are while
+  `MF_DEMO_ACCOUNTS` is on (so the public demo cannot be locked). The assistant files the same requests on a Xác
+  nhận (`yeu_cau_tai_khoan`) and never approves. OWN-MR-04 met.
 
 ### Q-26 — How much of a family a specialist sees
 - **Fact:** BRD-RULE-ROLE-05 says the specialist approves recommendations for assigned families; it says nothing on what

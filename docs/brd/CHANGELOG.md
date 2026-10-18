@@ -2,6 +2,8 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — Tài khoản và vai trò (owner's answer to Q-25: “do it”): Admin adds a staff account, changes a role, disables, enables or resets a password; one Admin files, a second approves, every step audited; an approved add or reset shows a one-time code once, redeemed on the sign-in page (`POST /api/auth/redeem`); disabling ends a live session at its next request; guards for one's own account, the last Admin, an RM with families, the demo's personas; the assistant files on a Xác nhận (`yeu_cau_tai_khoan`). OWN-MR-04 met. — open_questions.md Q-25, owner_requirements.md, requirements_traceability.md, screens/admin.md SCR-ADM-03, screens/shared.md SCR-SH-01, screen_inventory.md, role_desks.md, api_reference.md, FEAT-41, docs/MULTI_ROLE_UX_REPORT.md, testing/assistant/staff/*, docs/huong-dan/quan-tri.md
+
 - 2026-10-18 — Việc nền (owner: “can our assistant control them?”): one page for the agents and the background jobs (CIO, Admin, Compliance; SCR-SH-02); the CIO runs Agent CIO and re-runs a failed challenger, Admin runs a job now (`POST /api/jobs/run`, one at a time, recorded, audited, alerted); the assistant does each on a Xác nhận (`chay_agent_cio`, `phan_bien_lai`, `chay_viec_nen`). — screens/shared.md, screen_inventory.md, role_desks.md, api_reference.md, sources/owner_requests/2026-10-18_owner_backlog.md, testing/assistant/staff/readiness.md, docs/huong-dan/*
 
 - 2026-10-18 — The workspace fold is the same on every screen from 1440×900 up (owner: “4 mục tiêu khác” showed flat on a large screen): the fold is decided on the 1440×900 canvas's area, then drawn at the real size. — requirements_traceability.md OWN-GW-30, docs/OWNER_BACKLOG_1018_PLAN.md

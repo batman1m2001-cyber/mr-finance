@@ -48,6 +48,11 @@ create table if not exists accounts (
   person_id text primary key, login text not null unique, password text, created real not null,
   last_login real);
 create table if not exists settings (key text primary key, value text not null);
+create table if not exists account_flags (
+  person_id text primary key, disabled integer not null default 0, code text, code_exp real);
+create table if not exists account_requests (
+  id text primary key, kind text not null, person_id text, status text not null, created real not null,
+  data text not null);  -- Admin's users and roles (Q-25): src/people/accounts.py
 """
 
 

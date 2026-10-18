@@ -609,6 +609,117 @@ STATUS_VIEW = {
 }
 
 
+# -- Admin's users and roles (Q-25): read, and a request filed on a Xác nhận; a second Admin decides on the page
+
+
+async def accounts_read(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from people import accounts
+
+    d = accounts.read()
+    by_role: Dict[str, List[str]] = {}
+    for p in d["people"]:
+        by_role.setdefault(d["roles"].get(p["role"], p["role"]), []).append(
+            p["name"] + (" (đã khoá)" if p["disabled"] else "") + (" (demo)" if p["protected"] else "")
+        )
+    waiting = [r for r in d["requests"] if r["status"] == "pending"]
+
+    def said(r):
+        what = f"{r['name']}" + (f", {r.get('role_label')}" if r["kind"] in ("add", "role") else "")
+        return f"{r['id']} {r['label']}: {what}, {r['by']} đề xuất"
+
+    text = (
+        f"{len(d['people'])} tài khoản nhân viên — "
+        + "; ".join(f"{k}: {', '.join(v)}" for k, v in by_role.items())
+        + ". "
+        + (
+            f"Yêu cầu chờ Quản trị thứ hai duyệt: {'; '.join(said(r) for r in waiting)}. "
+            if waiting
+            else "Không yêu cầu nào chờ. "
+        )
+        + ("Tài khoản demo được giữ nguyên khi bật tài khoản demo. " if d["demo_protected"] else "")
+        + "Duyệt hay từ chối ở trang Tài khoản và vai trò, bởi một Quản trị khác người đề xuất."
+    )
+    return {
+        "text": text,
+        "data": {"people": len(d["people"]), "waiting": [r["id"] for r in waiting]},
+        "focus": ["people"],
+        "sources": ["Tài khoản và vai trò"],
+    }
+
+
+def _staff_named(who: str) -> Dict[str, Any]:
+    from copilot.scrub import fold
+    from people import accounts
+
+    key = fold(str(who or "")).strip()
+    people = [p for p in accounts.read()["people"]]
+    hit = [p for p in people if key in (p["id"].lower(), p["login"].lower())] or [
+        p for p in people if key and key in fold(p["name"])
+    ]
+    if len(hit) != 1:
+        names = ", ".join(f"{p['name']} ({p['id']})" for p in hit[:5])
+        raise ToolFailed(f"Không xác định được một tài khoản cho “{who}”" + (f": {names}" if names else ""))
+    return hit[0]
+
+
+def plan_account(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from control import roles
+    from people import accounts, store
+
+    kind = str(args.get("kind") or "")
+    if kind not in accounts.KINDS:
+        raise ToolFailed(f"Loại yêu cầu là một trong {', '.join(accounts.KINDS)}")
+    out = {"kind": kind, "note": str(args.get("note") or "").strip()[:300]}
+    role = str(args.get("role") or "")
+    if kind == "add":
+        out.update(name=args.get("name") or "", email=args.get("email") or "", role=role, title=args.get("title") or "")
+        with store._db() as con:
+            try:
+                clean = accounts._check(con, "add", out, ctx.user)
+            except accounts.AccountError as exc:
+                raise ToolFailed(str(exc)) from None
+        said = (
+            f"Gửi yêu cầu thêm tài khoản {clean['name']} ({clean['email']}), vai trò {roles.ROLE_LABELS[clean['role']]}"
+        )
+    else:
+        p = _staff_named(args.get("person") or "")
+        out.update(person_id=p["id"], role=role)
+        with store._db() as con:
+            try:
+                accounts._check(con, kind, out, ctx.user)
+            except accounts.AccountError as exc:
+                raise ToolFailed(str(exc)) from None
+        what = {"role": f"đổi vai trò của {p['name']} sang {roles.ROLE_LABELS.get(role, role)}",
+                "disable": f"khoá tài khoản {p['name']}", "enable": f"mở lại tài khoản {p['name']}",
+                "reset": f"đặt lại mật khẩu của {p['name']}"}[kind]  # fmt: skip
+        said = f"Gửi yêu cầu {what}"
+    return {"summary": f"{said} (một Quản trị khác duyệt ở trang Tài khoản và vai trò)?", "args": out}
+
+
+async def account_request(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
+    from people.graph import account_request_flow
+
+    keys = ("kind", "person_id", "email", "role", "title", "note")
+    body = {k: args.get(k) or "" for k in keys}
+    r = (await _graph(account_request_flow, by=ctx.user, full_name=args.get("name") or "", **body))["request"]
+    return {
+        "text": f"Đã gửi yêu cầu {r['id']} ({r['label']}): chờ một Quản trị khác duyệt ở trang Tài khoản và vai trò."
+        + (
+            f" Khi duyệt, Quản trị duyệt nhận mã dùng một lần để trao tận tay {r.get('name') or 'nhân viên đó'}."
+            if r["kind"] in ("add", "reset")
+            else ""
+        ),
+        "data": {"id": r["id"], "kind": r["kind"]},
+    }
+
+
+def verify_account(ctx: Ctx, out: Dict[str, Any]):
+    from people import accounts
+
+    r = accounts.get(out["data"]["id"])
+    return True if r["status"] == "pending" and r["by"] == ctx.user else f"yêu cầu đang ở {r['status']}"
+
+
 ITEM = Param(str, "mã đề xuất, lấy từ công cụ de_xuat")
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
@@ -737,7 +848,7 @@ CATALOGUE: Dict[str, Tool] = {
         Tool(
             "chay_viec_nen",
             "Quản trị chạy ngay một việc nền (lấy tin, dữ liệu thị trường, quét chính sách, kiểm tra chuỗi nhật ký, "
-            "đồng bộ vùng AI, chấm độ chính xác)",
+            "đồng bộ vùng AI, chấm độ chính xác) khi được bảo “chạy ngay”, “chạy việc …”: lần chạy được ghi lại",
             ("admin",),
             job_run,
             write=True,
@@ -745,6 +856,36 @@ CATALOGUE: Dict[str, Tool] = {
             page="viec-nen",
             plan=plan_job,
             verify=verify_job,
+        ),
+        Tool(
+            "tai_khoan",
+            "Quản trị xem các tài khoản nhân viên theo vai trò, tài khoản đã khoá và các yêu cầu tài khoản đang chờ "
+            "Quản trị thứ hai duyệt",
+            ("admin",),
+            accounts_read,
+            page="tai-khoan",
+        ),
+        Tool(
+            "yeu_cau_tai_khoan",
+            "Quản trị gửi yêu cầu về tài khoản nhân viên (kind add: thêm tài khoản, role: đổi vai trò, disable: khoá, "
+            "enable: mở lại, reset: đặt lại mật khẩu); một Quản trị khác duyệt ở trang, trợ lý không duyệt",
+            ("admin",),
+            account_request,
+            write=True,
+            args={
+                "kind": ["add", "role", "disable", "enable", "reset"],
+                "role": ["", "rm", "cio", "compliance", "admin", "specialist"],
+            },  # fmt: skip
+            params={
+                "person": Param(str, "tên, email hay mã của nhân viên (không dùng khi thêm tài khoản)", ""),
+                "name": Param(str, "họ tên, khi thêm tài khoản", ""),
+                "email": Param(str, "email làm tên đăng nhập, khi thêm tài khoản", ""),
+                "title": Param(str, "chức danh, khi thêm tài khoản", ""),
+                "note": Param(str, "ghi chú cho người duyệt", ""),
+            },
+            page="tai-khoan",
+            plan=plan_account,
+            verify=verify_account,
         ),
         Tool(
             "da_xem_canh_bao",

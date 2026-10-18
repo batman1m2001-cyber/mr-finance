@@ -1,0 +1,55 @@
+{
+ "tag": "u4",
+ "base": "http://127.0.0.1:8041",
+ "spent_total": 0.496873,
+ "conversations": [
+  {
+   "id": "cio-lim-02",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.006038,
+   "seconds": 10.1,
+   "tokens": 56567
+  },
+  {
+   "id": "adm-lim-01",
+   "category": "actions",
+   "turns": 3,
+   "ok": true,
+   "failed": [],
+   "cost": 0.003459,
+   "seconds": 5.9,
+   "tokens": 31172
+  },
+  {
+   "id": "adm-act-02",
+   "category": "actions",
+   "turns": 2,
+   "ok": false,
+   "failed": [
+    [
+     1,
+     [
+      "status ok (want pending)",
+      "no confirmation asked for chay_viec_nen (waits [])"
+     ]
+    ],
+    [
+     2,
+     [
+      "nothing_to_confirm: "
+     ]
+    ]
+   ],
+   "cost": 0.001576,
+   "seconds": 3.3,
+   "tokens": 14987
+  }
+ ],
+ "passed": 2,
+ "of": 3,
+ "turns": 8,
+ "turns_failed": 2
+}

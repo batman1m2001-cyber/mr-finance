@@ -55,6 +55,7 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-AD
 | Hệ thống `he-thong` | SCR-ADM-01 | FEAT-12, 19, 36 | BRD-RULE-ROLE-04, NFR-12 | Hệ thống | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
 | Dữ liệu thị trường `du-lieu` | SCR-CIO-11 | FEAT-35 | BRD-RULE-ENG-11 | Dữ liệu thị trường | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
 | Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701, RULE-SEC-05 | Cấu hình | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
+| Tài khoản và vai trò `tai-khoan` | SCR-ADM-03 | FEAT-41, 12 | OWN-MR-04 (Q-25), BRD-RULE-SEC-01 | Tài khoản | built — `tests/ui/test_accounts_ui.py` |
 | Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | Agent & việc nền | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
 | Việc nền `viec-nen` | SCR-SH-02 | FEAT-41, 15 | OWN-MR-04, OWN-AS-06, BRD-RULE-ROLE-04 | Agent & việc nền | built — `tests/ui/test_jobs_page_ui.py` |
 | Nhật ký `nhat-ky` | SCR-CMP-03 | FEAT-11 | BRD-BR-12, FR-702 | Nhật ký | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |

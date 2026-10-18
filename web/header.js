@@ -80,7 +80,8 @@ export function mount(shell) {
     if (k === key) return;
     key = k;
     try {
-      if (role === "client" || role === "rm") {
+      if ((role === "client" || role === "rm") && !client) items = [];  // a new RM, no family assigned yet (Q-25)
+      else if (role === "client" || role === "rm") {
         const f = (await post("/api/feed", {client_id: client, scope, role})).feed;
         const where = role === "client" ? {impact: "#/client/tin/thi-truong", detail: "#/client/tong-quan/chi-tiet", flow: "#/client/tong-quan/toan-canh"}
           : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/toan-canh"};

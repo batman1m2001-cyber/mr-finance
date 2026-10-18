@@ -44,7 +44,7 @@ Not here, on purpose: setting or resetting a password. On the public demo anyone
 |---|---|
 | Route | `#/admin`, `#/admin/ban`; every other Admin address opens its page as a sheet over the desk |
 | Feature | [FEAT-41](../../features/FEAT-41-role-desks.md) (and the pages it gathers: FEAT-11, 12, 14, 15, 19, 35, 36) |
-| Requirements | OWN-MR-01, OWN-MR-04 (partly, Q-25), OWN-MR-06, OWN-MR-07, OWN-MR-10; BRD-RULE-ROLE-04, BRD-NFR-12 |
+| Requirements | OWN-MR-01, OWN-MR-04, OWN-MR-06, OWN-MR-07, OWN-MR-10; BRD-RULE-ROLE-04, BRD-NFR-12 |
 | Data | `GET /api/desk` — Hệ thống's read (`GET /api/system`) and the bell's alerts for Admin |
 | Screenshots | [desktop](../../assets/current_ui/SCR-ADM-02_desktop-light.jpg) · [a node picked, dark](../../assets/current_ui/SCR-ADM-02-pick_desktop-dark.jpg) · [phone, dark](../../assets/current_ui/SCR-ADM-02_phone-dark.jpg) |
 
@@ -57,3 +57,32 @@ và vai trò**, **Chuỗi nhật ký**.
 **Thông tin (a node picked).** Its state and value, the note and the error, its parts with their own states, and
 “Mở <page>”.
 
+---
+
+## SCR-ADM-03 — Tài khoản và vai trò (users and roles)
+
+| | |
+|---|---|
+| Route | `#/admin/tai-khoan` (a sheet over the desk; the Người dùng node and the rail's “Tài khoản” open it) |
+| Feature | [FEAT-41](../../features/FEAT-41-role-desks.md), [FEAT-12](../../features/FEAT-12-roles-and-separation-of-duties.md) |
+| Requirements | OWN-MR-04 ([Q-25](../../requirements/open_questions.md#q-25--admins-user-and-role-management), answered 2026-10-18); BRD-RULE-ROLE-04, BRD-RULE-SEC-01, BRD-BR-12 |
+| Data | `GET /api/accounts`; `POST /api/accounts/request`, `POST /api/accounts/decide`; the code: `POST /api/auth/redeem` (SCR-SH-01) |
+| Screenshots | [desktop, the second Admin after approving: the code](../../assets/current_ui/SCR-ADM-03_desktop-dark.jpg) · [phone, a request waiting](../../assets/current_ui/SCR-ADM-03_phone-dark.jpg) |
+
+Header “Quản trị · Tài khoản và vai trò” with “<n> tài khoản nhân viên · <k> đã khoá · <w> yêu cầu chờ duyệt” and the
+rule in one sentence: one Admin files, another approves, every step in the audit chain; customers' accounts follow
+their family's record and are not managed here. While `MF_DEMO_ACCOUNTS` is on, a note says the demo's own accounts
+are kept as they are (an account added here may change).
+
+- **Yêu cầu.** Each request: its state (Chờ Quản trị thứ hai, Đã duyệt, Đã từ chối, Đã rút), what it asks, its id, who
+  filed it and the note, who decided and why. To the proposer: “Chờ một Quản trị khác duyệt” and **Rút**. To another
+  Admin: a reason box, **Duyệt** and **Từ chối** (a reason of 5 characters or more). An approved add or reset shows
+  **Mã dùng một lần** once, to hand to the person (not by e-mail); it is never shown again or kept in clear.
+- **Thêm tài khoản nhân viên.** Name, e-mail (the login), role, title, a note for the approver → **Gửi yêu cầu**. A new
+  RM gets families on Cấu hình › Phân công RM (two-person).
+- **Tài khoản.** Every staff account by role: login, title, an RM's families (and the link to the assignment), Đang
+  mở / Đã khoá, Chờ đặt mật khẩu, demo. Per account: **Đổi vai trò…**, **Khoá** / **Mở lại**, **Đặt lại mật khẩu** —
+  not on one's own account, a demo persona while the demo accounts are on, or one with a request waiting.
+
+Refused in words: one's own account, the last enabled Admin, an RM who still has families, a customer's account, a
+login already taken, a second request on the same account. A phone reads every row as a list, no sideways scroll.

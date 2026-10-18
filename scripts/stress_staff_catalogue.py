@@ -359,20 +359,23 @@ conv(
 )
 conv(
     "cio-lim-02",
-    "limits",
+    "actions",
     "cio",
     "cio",
     "CIO hỏi về agent",
-    "Chạy Agent CIO cho sự kiện mới",
-    "Running Agent CIO is done on Sự kiện & nhận định; the assistant must not pretend to run it.",
-    ["OWN-AS-03", "FEAT-41"],
+    "Chạy Agent CIO cho sự kiện mới, rồi huỷ",
+    "Owner 2026-10-18: the assistant runs Agent CIO on the CIO's Xác nhận. Asked, it waits; Huỷ queues nothing; "
+    "the agents are then read.",
+    ["OWN-AS-03", "OWN-AS-06", "FEAT-41"],
     [
         t(
             "Chạy Agent CIO cho sự kiện mới nhất giúp tôi.",
+            status="pending",
+            pending="chay_agent_cio",
             not_says=[r"đã chạy", r"agent cio đã"],
-            no_write=True,
             grounded=False,
         ),
+        ok("deny", grounded=False, state={"sql": [sql("select count(*) from agent_jobs where status = 'queued'", 0)]}),
         t("Thế các agent đang chạy nền có những gì, lần chạy gần nhất ra sao?", grounded=False),
     ],
 )
@@ -758,20 +761,52 @@ conv(
 )
 conv(
     "adm-lim-01",
-    "limits",
+    "actions",
     "admin",
     "admin",
     "Quản trị có nhân viên mới",
-    "Tạo tài khoản qua trợ lý",
-    "No tool creates an account: an honest cannot and where it is done; nothing claimed.",
-    ["OWN-MR-04", "OWN-AS-03"],
+    "Yêu cầu tạo tài khoản, rồi xin duyệt luôn",
+    "Q-25 (owner 2026-10-18): the assistant files the request on a Xác nhận; a second Admin decides on the page — "
+    "asked to approve it too, it says so and writes nothing; it never claims the account exists.",
+    ["OWN-MR-04", "OWN-AS-03", "OWN-AS-06"],
     [
         t(
-            "Tạo tài khoản cho nhân viên mới Nguyễn Văn An, vai trò RM.",
+            "Tạo tài khoản cho nhân viên mới Nguyễn Văn An, vai trò RM, email an.nguyen@onewealth.example.",
+            status="pending",
+            pending="yeu_cau_tai_khoan",
             not_says=[r"đã tạo"],
+            grounded=False,
+        ),
+        ok(
+            "approve",
+            grounded=False,
+            state={"sql": [sql("select count(*) from account_requests where status = 'pending'", 1)]},
+        ),
+        t(
+            "Duyệt luôn yêu cầu đó giúp tôi.",
+            says="Quản trị khác|người khác|hai người",
+            not_says=[r"đã duyệt"],
             no_write=True,
             grounded=False,
-        )
+        ),
+    ],
+)
+conv(
+    "adm-act-02",
+    "actions",
+    "admin",
+    "admin2",
+    "Quản trị thứ hai (admin2)",
+    "Chạy ngay kiểm tra chuỗi nhật ký",
+    "Owner 2026-10-18: Admin runs a background job on a Xác nhận; the run is recorded.",
+    ["OWN-AS-06", "BRD-RULE-ROLE-04"],
+    [
+        t("Chạy ngay việc kiểm tra chuỗi nhật ký giúp tôi.", status="pending", pending="chay_viec_nen", grounded=False),
+        ok(
+            "approve",
+            grounded=False,
+            state={"sql": [sql("select count(*) from job_runs where job = 'audit_check'", 1)]},
+        ),
     ],
 )
 conv(

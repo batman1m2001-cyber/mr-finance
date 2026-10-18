@@ -96,8 +96,10 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
 - **Panels:** Cảnh báo (open and acknowledged; acknowledging stays in the bell), Việc đang lỗi, Cấu hình chờ duyệt (who
   proposed, two-person), Người dùng và vai trò (counts by role, accounts without a password; the RM assignment opens on
   Cấu hình), Chuỗi nhật ký (check, rows, write-once segments, head).
-- **Users and roles (Q-25):** shown, not edited — the product has no account or password form on purpose; OWN-MR-04
-  stays partly met until the owner answers.
+- **Users and roles (Q-25, answered 2026-10-18):** Tài khoản và vai trò (SCR-ADM-03, `#/admin/tai-khoan`) — add an
+  account, change a role, disable, enable, reset a password; one Admin files, a second approves, every step audited;
+  an approved add or reset shows a one-time code once, redeemed on the sign-in page. The Người dùng node opens it and
+  turns amber while a request waits. OWN-MR-04 met.
 - **Assistant:** Admin's own suggestions; `van_hanh` (what is not green, alerts, failing jobs, configuration),
   `chuoi_nhat_ky` and `cau_hinh_cho_duyet` (also Compliance's) beside `canh_bao_he_thong` and `da_xem_canh_bao`.
   Steps light the map's nodes and panels.

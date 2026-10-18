@@ -340,6 +340,9 @@ def admin(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     up = s["availability"]
     pending = {k["pending"]["id"]: k for k in config.overview() if k.get("pending")}
     people = s["people"]
+    from people import accounts as people_accounts
+
+    waiting_accounts = sum(1 for r in people_accounts.requests() if r["status"] == "pending")
     roles_n: Dict[str, int] = {}
     for p in people:
         roles_n[p["role"]] = roles_n.get(p["role"], 0) + 1
@@ -389,8 +392,10 @@ def admin(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         node("queue", "ai", "Hàng đợi", f"{s['agent_queue']} yêu cầu",
              _state(True, warn=bool(s["agent_queue"] or s["evals_waiting"])), "#/admin/agent", "Agent",
              note=f"{len(s['evals_waiting'])} chờ bộ đánh giá"),
-        node("people", "people", "Người dùng", f"{len(people)} nhân viên", "ok", "#/admin/he-thong", "Hệ thống",
-             note=f"{s['clients']} khách hàng"),
+        node("people", "people", "Người dùng", f"{len(people)} nhân viên", _state(True, warn=bool(waiting_accounts)),
+             "#/admin/tai-khoan", "Tài khoản và vai trò",
+             note=f"{s['clients']} khách hàng"
+             + (f" · {waiting_accounts} yêu cầu chờ duyệt" if waiting_accounts else "")),
         node("config", "people", "Cấu hình", f"{len(s['config_waiting'])} chờ duyệt",
              _state(True, warn=bool(s["config_waiting"])), "#/admin/cau-hinh", "Cấu hình",
              items=[{"title": c["label"], "sub": c["id"]} for c in s["config_waiting"]]),
@@ -423,6 +428,7 @@ def admin(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         "roles": roles_n,
         "clients": s["clients"],
         "no_password": sum(1 for p in people if not p.get("has_password")),
+        "account_requests": waiting_accounts,
         "chain": s["chain"],
         "worm": s["worm"],
     }
