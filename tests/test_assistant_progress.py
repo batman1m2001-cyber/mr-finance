@@ -21,6 +21,7 @@ def test_a_detail_comes_from_the_products_names_never_from_what_was_typed():
         "done": "Đã xem tiền vào, tiền ra tháng 09/2026",
         "failed": "Không thực hiện được: xem tiền vào, tiền ra tháng 09/2026",
     }
+    assert progress.says("dong_tien", {"month": "9"})["done"] == "Đã xem tiền vào, tiền ra tháng 09"  # the month alone
     assert progress.says("dong_tien", {"month": "2026-13"})["doing"] == "Đang xem tiền vào, tiền ra trong tháng"
     assert progress.says("kich_ban", {"scenario": "lai_suat"})["doing"].endswith(": “Lãi suất tăng 2%”")
     both = progress.says("so_sanh_kich_ban", {"scenarios": ["co_phieu", "lai_suat", "co_phieu"]})["done"]

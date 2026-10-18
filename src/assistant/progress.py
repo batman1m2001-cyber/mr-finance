@@ -53,7 +53,7 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "theo_doi_cua_toi": ("Đang xem các việc bạn đang theo dõi", "Đã xem việc theo dõi"),
     "huy_theo_doi": ("Đang chuẩn bị huỷ theo dõi để bạn xác nhận", "Đã xử lý việc huỷ theo dõi"),
 }
-MONTH = re.compile(r"(\d{4})-(0[1-9]|1[0-2])")
+MONTH = re.compile(r"(?:(\d{4})-)?(0?[1-9]|1[0-2])")  # “2026-09”, or the month alone (“09”: the latest with data)
 
 
 def _titles(words: List[Any]) -> List[str]:
@@ -67,7 +67,7 @@ def _titles(words: List[Any]) -> List[str]:
 def _detail(tool: str, args: Dict[str, Any]) -> Optional[str]:
     """The one detail a sentence may carry, from the product's own names only."""
     if tool == "dong_tien" and isinstance(args.get("month"), str) and (m := MONTH.fullmatch(args["month"])):
-        return f"tháng {m.group(2)}/{m.group(1)}"
+        return f"tháng {int(m.group(2)):02d}" + (f"/{m.group(1)}" if m.group(1) else "")
     if tool == "kich_ban":
         t = _titles([args.get("scenario")])
         return f"“{t[0]}”" if t else None

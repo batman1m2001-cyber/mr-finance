@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — "Dòng tiền tháng 9?" reads September 2026 (experiment). The model was not told the year: it asked for
+  2025-09, outside the data (2025-10…2026-09), and the step failed. The prompt now carries today's date, and the cash
+  -flow tool asks for the month alone unless a year is said (the latest such month with data). Real model: "tháng 9",
+  "tháng 11" (2025-11) and "tháng 3 năm nay" all read. — src/assistant/turn.py, src/assistant/tools.py,
+  src/assistant/progress.py, tests/test_assistant_stress.py
 - 2026-10-18 — The Assistant panel says what it is doing while it works (owner: "display the progress… a message
   with clear semantic, concise… but don't be insecure", experiment).
   - A turn in flight is a short list. In order:

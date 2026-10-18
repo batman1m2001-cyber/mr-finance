@@ -641,7 +641,16 @@ CATALOGUE: Dict[str, Tool] = {
             "tiền vào, tiền ra, còn lại trong một tháng, khoản chi lớn nhất",
             ("client", "rm"),
             money_flow,
-            params={"month": Param(str, "tháng cần xem, dạng YYYY-MM; để trống: tháng gần nhất có dữ liệu", "")},
+            # the month alone unless a year was said: “tháng 9” is the latest September with data (a model asked for
+            # last year's, 2026-10-18)
+            params={
+                "month": Param(
+                    str,
+                    "tháng cần xem, dạng MM; dạng YYYY-MM chỉ khi người dùng nói rõ năm; để trống: "
+                    "tháng gần nhất có dữ liệu",
+                    "",
+                )
+            },
             page="toan-canh",
             follow=["Có gì cần chú ý?", "Mục tiêu của tôi thế nào?"],
         ),

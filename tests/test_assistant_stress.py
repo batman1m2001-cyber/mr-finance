@@ -378,6 +378,20 @@ def test_d25_the_cash_flow_names_every_spending_group_and_income_source():
     assert "Nguồn tiền vào: " in out["text"]
 
 
+def test_a_month_without_a_year_is_the_latest_one_with_data_and_the_model_knows_today():
+    """“Dòng tiền tháng 9?” (progress list, 2026-10-18): the model asked for 2025-09 (it was not told the year) and the
+    step failed; the data runs 2025-10…2026-09. It is told today's date, and to send the month alone."""
+    from operonx_agents import RunContext
+
+    from assistant.turn import instructions
+
+    assert run(registry.REGISTRY["dong_tien"].run(ctx(), {"month": "09"}))["as_of"] == "2026-09"
+    assert run(registry.REGISTRY["dong_tien"].run(ctx(), {"month": "11"}))["as_of"] == "2025-11"  # not the future
+    assert "dạng MM;" in registry.REGISTRY["dong_tien"].params["month"].description
+    today = __import__("datetime").date.today().strftime("%d/%m/%Y")
+    assert f"Hôm nay: {today}." in instructions(RunContext(deps=ctx()))
+
+
 def test_d26_a_role_is_offered_only_the_pages_it_can_open():
     """D26: a customer asking how fresh the data is was offered to open “Hệ thống”, an administrator's page."""
     import typing

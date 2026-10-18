@@ -17,6 +17,7 @@ import asyncio
 import json
 import re
 import time
+from datetime import date
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
@@ -107,7 +108,7 @@ Quy tắc:
   vai trò đó ở phiên này.
 - Phần đầu cuộc trò chuyện có thể đã được tóm tắt: hỏi về một lượt cũ (câu đầu tiên, con số lúc đó) mà bản tóm tắt
   không ghi rõ thì gọi doc_lai_phien để đọc lại, không đoán.
-Đang ở trang: {page}.{graph}{remembered}"""
+Hôm nay: {today}. Đang ở trang: {page}.{graph}{remembered}"""
 FACTS_MODEL = (
     "Mọi con số, tên, ngày phải lấy từ kết quả công cụ hoặc từ lời người dùng. Cần cộng, trừ, nhân, chia, phần "
     "trăm, lãi kép thì gọi công cụ tinh, không tính nhẩm, và ghi công thức để người dùng kiểm lại. "
@@ -166,6 +167,7 @@ def instructions(rctx: RunContext) -> str:
     return RULES.format(
         who=ROLE_NAMES.get(ctx.role, ctx.role),
         facts=FACTS_MODEL if ctx.reads else FACTS_TEMPLATE,
+        today=date.today().strftime("%d/%m/%Y"),  # “tháng 9” is this year's: without it, a model guessed last year's
         page=router.page_path(ctx.route) or "—",
         graph=graph_line(ctx),
         remembered=REMEMBERED.format(items="\n".join(f"- {t}" for t in ctx.remembered))
