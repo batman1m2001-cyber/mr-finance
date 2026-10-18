@@ -145,6 +145,8 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
   It also has Compliance (BRD-RULE-ROLE-03), which the request does not name, while its completion criterion says
   "every role has a coherent, role-appropriate UX".
 - **Interpretation (ours):** Expert = `specialist`; Compliance gets a desk too, last (plan M5). Owner: product.
+- **Answered (owner, 2026-10-18):** "yes, expert is the specialist, and yes, compliance also need refine". Both
+  applied: the Expert's desk (SCR-SP-02) and Compliance's (SCR-CMP-06).
 
 ### Q-25 — Admin's "user and role management"
 - **Fact:** the request lists "user and role management" for Admin. BRD-RULE-ROLE-04 gives Admin news sources, data
@@ -165,3 +167,8 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 - **Applied (M4, 2026-10-18):** SCR-SP-02 reads the picture through `POST /api/dashboard` and `/api/goals` (family
   scope), which already answer a specialist for an assigned family only; the assistant's `ho_so_khach` refuses any
   other family. Nothing new is opened to the role.
+- **Owner's question (2026-10-18): "what does the original BRD describe?"** The BRD defines the specialist only by
+  what they decide, never by what they read: ROLE-05 ("approves action recommendations for assigned families"),
+  CONTENT-01 flow 3, SCOPE-02 (no single-ticker recommendation straight to a client), WF-08. SEC-01 ("least privilege
+  by role and assigned families") is the only rule on reading. The reading above follows SEC-01. Still open for
+  Compliance to widen or narrow.

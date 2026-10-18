@@ -93,10 +93,10 @@ with fake models.
 
 | # | What | Status | Who decides |
 |---|---|---|---|
-| Q-24 | The request names CIO, RM, Admin and Expert. We read Expert as `specialist` and gave Compliance a desk too. | Applied, our reading | Product |
+| Q-24 | The request names CIO, RM, Admin and Expert. We read Expert as `specialist` and gave Compliance a desk too. | Answered by the owner (2026-10-18): as read | — |
 | Q-25 | Admin's "users and roles": the product has no account or password form, on purpose. The desk shows people by role and accounts without a password, and links the RM assignment (a two-person configuration). OWN-MR-04 stays **partial**. | Open | Owner |
 | Q-26 | What a specialist sees of a family. Only what they could already read for an assigned family (overview, goals), through the existing reads. | Applied, our reading | Compliance |
-| — | The floating assistant panel is now shown on no role's home: every role's assistant is docked. The code is kept, since the request forbids silent removal. | Kept | Owner: remove it or keep it |
+| — | The floating assistant panel was shown on no role's home: every role's assistant is docked. | Removed on the owner's word (2026-10-18): the button, its open/close and its styles | — |
 | — | `#/rm` used to open Hôm nay; it now opens the book, and Hôm nay is `#/rm/hom-nay`. Old bookmarks to `#/rm` land on the book. | By design | — |
 | — | With sign-in off (a developer's machine), the Expert desk reads as the role's demo user (`?user=`), as Duyệt khuyến nghị does. With sign-in on, the session decides. | By design | — |
 

@@ -14,7 +14,7 @@ def test_sign_in_with_the_form_and_with_a_demo_account_then_sign_out(browser, ba
         page.on("pageerror", lambda e, errors=errors: errors.append(str(e)))
         page.goto(f"{base_url}/#/cio")
         page.wait_for_selector("#signin-form")
-        assert page.is_hidden("#nav a") and page.is_hidden(".cp-fab")  # nothing of the app before sign-in
+        assert page.is_hidden("#nav a") and page.is_hidden(".cp-panel")  # nothing of the app before sign-in
         assert page.locator(".demo-acc").count() >= 10
         page.fill("[name=login]", "huy.tran@tcbwealth.example")
         page.fill("[name=password]", "sai-mat-khau")

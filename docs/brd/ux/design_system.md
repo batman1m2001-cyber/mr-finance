@@ -86,7 +86,7 @@ driven by [`web/motion.js`](../../../web/motion.js) and `web/copilot.js`.
 - **Only `transform` and `opacity`** (checked by `tests/test_living_interface.py`); no library, no JS loop.
 - **Tokens**: `--dur-1` 160 ms (a control answers), `--dur-2` 240 ms (something enters), `--hold` 2.6 s (a mark
   stays), `--ease-out` `cubic-bezier(.2, .8, .2, 1)`.
-- **Classes**: `data-state` on `.cp-fab` / `.cp-panel` (idle, busy, ok, error, pending); `.cp-in` (enter);
+- **Classes**: `data-state` on `.cp-panel` (idle, busy, ok, error, pending); `.cp-in` (enter);
   `.cp-dots` (thinking); `.mf-focus` (ring) and `svg.mf-dim` (dim the other marks); `.mf-lit` with `--i` (graph
   path, one column per 70 ms); `html[data-hidden]` pauses all animation.
 - **Colours** reuse the status tokens: `--good` ready/ok, `--accent` working, `--critical` error, `--warning`

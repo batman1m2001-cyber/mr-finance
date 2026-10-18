@@ -56,7 +56,7 @@ def test_the_cio_works_at_its_desk_and_every_page_is_a_sheet(open_page):
     p = open_page()
     p.go("#/cio")
     p.page.wait_for_selector(".desk-cio .dk-stage")
-    assert p.page.is_hidden("#nav") and p.page.is_hidden(".cp-fab")  # the rail and the docked assistant instead
+    assert p.page.is_hidden("#nav") and p.page.locator(".cp-fab").count() == 0  # the rail and the docked assistant
     assert p.page.locator(".dk-stage").count() == 6
     assert p.page.get_attribute('[data-tool="ban"]', "aria-current") is not None
     assert p.page.locator("#ws-pane-a #cp-q").count() == 1  # the CIO's assistant, docked

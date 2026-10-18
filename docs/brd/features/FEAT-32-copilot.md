@@ -35,9 +35,10 @@
   marks its page element), `bars` or `chain`. Every call — answered, refused, unknown or confirmed — is one row in the
   audit chain (`copilot.ask`: the demo user, the tool, the status, the router and the question as the router saw it,
   scrubbed); the answer names its `audit_seq`.
-- **Panel** (`web/copilot.js`): floating button, side panel (full width on phones), page context, progress,
-  confirm / cancel, Esc closes; the conversation is kept in `sessionStorage` per role for this tab only.
-- **States and evidence highlight** ([FEAT-33](FEAT-33-living-interface.md), 2026-10-16): the button and panel show
+- **Panel** (`web/copilot.js`): page context, progress, confirm / cancel. Docked in every role's Trợ lý tab since
+  2026-10-18 (the floating button and its Esc-to-close are removed, owner's word); conversations live on the server
+  (FEAT-37).
+- **States and evidence highlight** ([FEAT-33](FEAT-33-living-interface.md), 2026-10-16): the panel shows
   idle / busy / ok / error / pending from the request itself; an ok answer carries `focus`, the keys of the page
   elements it was read from, which the page marks for 2.6 s (“Chỉ trên trang” shows them again).
 

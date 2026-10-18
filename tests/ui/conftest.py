@@ -180,9 +180,7 @@ class Page:
         self.page.wait_for_timeout(150)
 
     def panel(self):
-        """Open the assistant: the floating button for staff; the Customer's panel is docked in the workspace."""
-        if self.page.is_hidden(".cp-panel"):
-            self.page.click(".cp-fab")
+        """The assistant: docked in every role's dock (the floating button is gone, owner 2026-10-18)."""
         self.page.wait_for_selector("#cp-q")
 
     def problems(self):

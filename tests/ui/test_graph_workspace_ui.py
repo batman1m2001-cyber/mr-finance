@@ -48,7 +48,7 @@ def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
     p = open_page()
     p.go("#/client")
     p.page.wait_for_selector(".wnode.k-family")
-    assert p.page.is_hidden("#nav") and p.page.is_hidden(".cp-fab")  # the toolbar and the dock instead
+    assert p.page.is_hidden("#nav") and p.page.locator(".cp-fab").count() == 0  # the toolbar and the dock instead
     mark(p)
     shown = {}
     for lens in ("tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro", "tong-quan"):

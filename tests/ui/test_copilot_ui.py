@@ -16,13 +16,13 @@ def ask(p, q):
 
 def test_an_answer_marks_what_it_read_and_the_states_follow(open_page):
     p = open_page()
-    p.go("#/rm/khach-hang/toan-canh")  # the floating panel: staff (the Customer's is docked, test_graph_workspace_ui)
+    p.go("#/rm/khach-hang/toan-canh")  # the RM's docked panel, over a sheet of the desk
     ask(p, "Tài sản của khách này thế nào?")
     assert p.page.inner_text("#cp-ctx").startswith("Đang xem: Toàn cảnh · RM")  # the page's context
     marked = p.page.eval_on_selector_all(".mf-focus", "es => es.map(e => e.dataset.focus)")
     assert sorted(marked) == ["kpi:liquidity", "kpi:net_worth", "kpi:risk"]
-    assert p.page.get_attribute(".cp-fab", "data-state") == "ok"
-    p.page.wait_for_function("document.querySelector('.cp-fab').dataset.state === 'idle'")  # after 1.6 s
+    assert p.page.get_attribute(".cp-panel", "data-state") == "ok"
+    p.page.wait_for_function("document.querySelector('.cp-panel').dataset.state === 'idle'")  # after 1.6 s
     p.page.wait_for_function("!document.querySelector('.mf-focus')")  # marks clear themselves
     c = open_page()  # a Customer may not approve: refused, said as one (the docked panel, the same states)
     c.go("#/client")
@@ -97,7 +97,7 @@ def test_the_assistant_asks_before_a_write_and_shows_its_steps(open_page, monkey
         p.go("#/rm/khach-hang/toan-canh")
         a = ask(p, "Hôm nay gọi ai, rồi ghi lại cuộc gọi với khách này")
         assert "Ghi một cuộc gọi với gia đình" in a.inner_text() and contacts.recent() == []
-        assert p.page.get_attribute(".cp-fab", "data-state") == "pending"
+        assert p.page.get_attribute(".cp-panel", "data-state") == "pending"
         assert p.page.inner_text("#cp-router") == "mô hình scripted-model"
         n = p.page.locator("#cp-msgs .cp-bot").count()
         a.locator("[data-ok]").click()

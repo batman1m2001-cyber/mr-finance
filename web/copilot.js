@@ -1,4 +1,4 @@
-/* OneWealth Copilot (kit K5): a floating button and a side panel on every page, the assistant's front end
+/* OneWealth Copilot (kit K5): the assistant's front end, docked in every role's Trợ lý tab
    (ASSISTANT_PLAN A2). It sends the message, the page's route, the role and the picked client to
    POST /api/assistant: the role's tools in as many steps as the question needs, writes waiting for “Xác nhận”
    (the run parks on the server; the answer resumes it). Each answer says how it was written (mode): the model
@@ -12,12 +12,13 @@
    by day; rename, archive, restore, delete). A turn still running after a refresh shows what has run and is
    followed until it ends. Nothing is kept in the browser.
 
-   Living Interface (B-01): the button and panel show the request's real state (data-state: idle, busy while
+   Living Interface (B-01): the panel shows the request's real state (data-state: idle, busy while
    the request is in flight, ok, error, pending a confirmation), and an answer marks the page elements it
    was read from (its `focus` keys) on this page, or on the evidence page once it opens.
 
-   Docked (FEAT-40, OWN-GW-03): in the Customer's workspace the panel lives in the dock's Trợ lý tab, always open,
-   no floating button; dock(host, {onEvent}) moves it there and undock() gives it back to the page corner. Docked, a
+   Docked (FEAT-40, FEAT-41, OWN-GW-03): the panel lives in the dock's Trợ lý tab of the Customer's workspace and of
+   every staff desk, always open; the floating button is gone (owner, 2026-10-18). dock(host, {onEvent}) moves the
+   panel there; undock() hides it again (no route without a dock, signed out). Docked, a
    question goes to POST /api/assistant/stream: each real event of the turn (a tool starting and ending, the model's
    words, a write waiting) shows in the panel as it happens and goes to onEvent, which the graph draws (OWN-GW-06…10);
    a stream that breaks is said, never papered over. */
@@ -126,16 +127,11 @@ function meta(m) {
 }
 
 export function mount() {
-  const btn = document.createElement("button");
-  btn.type = "button"; btn.className = "cp-fab"; btn.setAttribute("aria-haspopup", "dialog");
-  btn.innerHTML = `<span class="cp-glyph" aria-hidden="true"><i class="cp-star">${icon("sparkles", {size: 24})}</i><i class="cp-tick">${icon("check", {size: 24})}</i></span><span class="sr-only">Hỏi OneWealth</span>`;
-  btn.title = "Hỏi OneWealth (Copilot)";
   const panel = document.createElement("aside");
   panel.className = "cp-panel"; panel.hidden = true;
-  panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "OneWealth Copilot");
+  panel.setAttribute("role", "region"); panel.setAttribute("aria-label", "OneWealth Copilot");
   panel.innerHTML = `<header class="cp-head"><span class="cp-dot" id="cp-dot" aria-hidden="true"></span><b>OneWealth Copilot</b><span class="sr-only" id="cp-state">Sẵn sàng</span><span class="badge assumed" id="cp-router">trợ lý</span>
-      <span class="cp-tools"><button type="button" class="linkbtn" id="cp-hist" title="Các cuộc trò chuyện" aria-pressed="false">${icon("history", {size: 18})}<span class="sr-only">Các cuộc trò chuyện</span></button>
-      <button type="button" class="linkbtn" id="cp-close" aria-label="Đóng">✕</button></span></header>
+      <span class="cp-tools"><button type="button" class="linkbtn" id="cp-hist" title="Các cuộc trò chuyện" aria-pressed="false">${icon("history", {size: 18})}<span class="sr-only">Các cuộc trò chuyện</span></button></span></header>
     <div class="cp-sess" id="cp-sess"><div class="cp-sess-main" id="cp-sess-main"></div>
       <button type="button" class="cp-new" id="cp-new" title="Bắt đầu cuộc trò chuyện mới: bộ nhớ của bạn vẫn giữ, các cuộc trước vẫn còn">${icon("plus", {size: 16})}<span>Trò chuyện mới</span></button></div>
     <div class="cp-ctx small muted" id="cp-ctx"></div>
@@ -144,18 +140,17 @@ export function mount() {
     <form class="cp-form" id="cp-form"><input id="cp-q" autocomplete="off" maxlength="2000" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
       <button type="submit" class="btn sm">Gửi</button></form>
     <div class="cp-foot small muted" id="cp-foot">Trợ lý chỉ dùng các chức năng sẵn có của ứng dụng; việc ghi luôn chờ bạn xác nhận. Không phải khuyến nghị đầu tư.</div>`;
-  document.body.append(btn, panel);
+  document.body.append(panel);
   dropOld();
-  let msgs = [], role = null, busy = false, shown = 0, settle = null, later = null;
+  let msgs = [], role = null, busy = false, shown = 0, settle = null;
   let cid = null, resumed = false, listing = null;  // the conversation on screen; the history list when it shows
   let sess = null, poll = 0;  // the session on screen as the server names it; the timer following a running turn
   let docked = false, live = null, run = null;  // run: the turn in flight, as its events tell it
-  const covers = () => !docked && !panel.hidden && matchMedia("(max-width: 560px)").matches;  // phone: the panel hides the page
 
-  // one state for the button and the panel, set only by what the request did
+  // the panel's state, set only by what the request did
   const setState = (st) => {
     clearTimeout(settle);
-    btn.dataset.state = panel.dataset.state = st;
+    panel.dataset.state = st;
     $("#cp-dot", panel).title = $("#cp-state", panel).textContent = STATE[st];
     if (st === "ok") settle = setTimeout(() => setState("idle"), 1600);  // the tick shows once, then rest
   };
@@ -163,8 +158,7 @@ export function mount() {
   // the answer's evidence on this page now, or on its evidence page once that renders
   const show = (m) => {
     const n = m.focus && m.focus.length ? present(m.focus) : 0;
-    if (n && covers()) later = m.focus;  // marked when the panel closes
-    else if (n) focus(m.focus);
+    if (n) focus(m.focus);
     return n;
   };
 
@@ -210,7 +204,7 @@ export function mount() {
     if (busy) box.insertAdjacentHTML("beforeend", `<div class="cp-bot cp-in cp-think" data-busy>${liveHtml()}</div>`);
     box.scrollTop = box.scrollHeight;
     for (const li of box.querySelectorAll("[data-mark]")) li.onclick = () => { if (present([li.dataset.mark])) focus([li.dataset.mark]); };
-    for (const b of box.querySelectorAll("[data-here]")) b.onclick = () => { show(msgs[b.dataset.here]); if (covers()) close(); };
+    for (const b of box.querySelectorAll("[data-here]")) b.onclick = () => show(msgs[b.dataset.here]);
     for (const a of box.querySelectorAll("[data-ev]")) a.onclick = () => after(msgs[a.dataset.ev].focus);
     for (const b of box.querySelectorAll("[data-ok]")) b.onclick = () => confirmIt(Number(b.dataset.ok));
     for (const b of box.querySelectorAll("[data-no]")) b.onclick = () => declineIt(Number(b.dataset.no));
@@ -435,7 +429,6 @@ export function mount() {
     const q = $("#cp-hq", panel);
     q.oninput = () => { listing.q = q.value; drawRows(); };
     for (const b of box.querySelectorAll("[data-view]")) b.onclick = () => { listing.view = b.dataset.view; draw(); };
-    for (const a of box.querySelectorAll("[data-memory]")) a.onclick = () => { if (covers()) close(); };  // phone: the page shows
   };
   const drawRows = () => {
     const arch = listing.view === "archived";
@@ -507,17 +500,10 @@ export function mount() {
   window.addEventListener("mf:open-conversation", (e) => {
     if (busy) return;
     drawCtx(); resumed = true;
-    if (panel.hidden) { panel.hidden = false; btn.setAttribute("aria-expanded", "true"); }
     openConv(e.detail.id);
   });
   $("#cp-hist", panel).onclick = () => { if (listing) { listing = null; draw(); } else showList(); };
 
-  const open = () => { drawCtx(); draw(); drawSess(); sugg(); panel.hidden = false; btn.setAttribute("aria-expanded", "true"); $("#cp-q", panel).focus(); resume(); };
-  const close = () => { if (docked) return; panel.hidden = true; btn.setAttribute("aria-expanded", "false"); if (btn.dataset.state === "error") setState("idle"); btn.focus();
-    if (later) { const k = later; later = null; focus(k); } };
-  btn.onclick = () => (panel.hidden ? open() : close());
-  $("#cp-close", panel).onclick = close;
-  panel.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
   $("#cp-form", panel).onsubmit = (e) => { e.preventDefault(); send($("#cp-q", panel).value); };
   window.addEventListener("hashchange", () => { if (!panel.hidden) setTimeout(drawCtx); });  // after the route names its view
   let watched = false;
@@ -526,9 +512,8 @@ export function mount() {
     dock(host, hooks) {
       if (docked) return;
       docked = true; live = hooks || null;
-      panel.classList.add("cp-docked"); panel.setAttribute("role", "region");
+      panel.classList.add("cp-docked");
       host.appendChild(panel);
-      btn.hidden = true;
       if (!watched) {  // the lens or the sheet changes without a route change, or after it: name what is on screen (D30)
         watched = true;
         const redraw = new MutationObserver(() => { if (docked) drawCtx(); });
@@ -541,9 +526,9 @@ export function mount() {
     undock() {
       if (!docked) return;
       docked = false; live = null;
-      panel.classList.remove("cp-docked"); panel.setAttribute("role", "dialog");
+      panel.classList.remove("cp-docked");
       document.body.appendChild(panel);
-      panel.hidden = true; btn.hidden = false; btn.setAttribute("aria-expanded", "false");
+      panel.hidden = true;
     },
   };
 }

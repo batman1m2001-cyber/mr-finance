@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-18 — The floating Copilot button is gone (owner): the assistant is docked in every role's Trợ lý tab, its
+  open/close mode and styles removed; Q-24 answered by the owner; Q-26 records what the BRD says of a specialist. —
+  open_questions.md Q-24, Q-26; ux/design_system.md; docs/MULTI_ROLE_UX_REPORT.md §6
+
 - 2026-10-18 — Multi-role UX M6 close-out: staff desks in the IA (`#/rm` is the book; Hôm nay at `#/rm/hom-nay`),
   journey J7, the regression record, seven real-model turns (US$0.0103), the final report; OWN-MR-08, 09, 11, 12
   verified (OWN-MR-04 stays partly met, Q-25). — information_architecture.md, user_journeys.md,
