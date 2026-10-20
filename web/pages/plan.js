@@ -60,7 +60,7 @@ export async function render(box, ctx) {
   }
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Kế hoạch</div><h1 class="h1">Wealth Planning Advisor</h1>
+    <div class="pagehead"><div><div class="eyebrow">Kế hoạch · <span lang="en">Wealth Planning Advisor</span></div><h1 class="h1">Kế hoạch tài chính</h1>
       <p class="lede">Tư vấn kế hoạch tài chính theo mốc đời · mô phỏng trên chính tài sản của bạn</p></div></div>
     <div id="mini"></div><div id="reg"></div>
     <div class="plangrid mt"><div class="panel" id="list"></div><div id="panel"></div></div>`;
@@ -95,7 +95,7 @@ export async function render(box, ctx) {
     const ahd = {total_in: vnd(aheadIn), total_out: vnd(aheadOut)};
     const tile = (k, v, s) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
     $("#mini", box).innerHTML = `<div class="panel">
-      <h3>Wealth view <span class="hint">tóm tắt tài sản · so với mục tiêu đã đặt · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></h3>
+      <h3>Bức tranh tài sản <span class="hint">so với mục tiêu đã đặt · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></h3>
       ${sc ? `<div class="notice row"><span class="pill ai">${sc.kind === "stress" ? "Stress test" : "Kịch bản"}</span><span>Số liệu bên dưới là <b>sau</b> kịch bản <b data-explains>${esc(sc.title)}</b></span>
         <button type="button" class="linkbtn" id="scen-off" style="margin-left:auto">Về hiện trạng</button></div>` : ""}
       <div class="kpis mt">

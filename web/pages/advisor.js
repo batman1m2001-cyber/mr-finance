@@ -55,11 +55,11 @@ export async function render(box, ctx) {
 
   box.innerHTML = `${staff ? internal() : ""}
     <div class="pagehead"><div><div class="eyebrow">${staff ? "Khách hàng" : "Chuyên gia"}</div>
-      <h1 class="h1">${staff ? "Duyệt đề xuất" : "Relationship specialist"}</h1>
+      <h1 class="h1">${staff ? "Duyệt đề xuất" : "Chuyên viên của bạn"}</h1>
       <p class="lede">${staff ? "Phương án khách hàng gửi từ Kế hoạch, chờ RM duyệt" : "Chuyên viên quan hệ khách hàng phụ trách bạn"}</p></div></div>
     ${team}
-    <div class="sechead mt"><h2 class="h2">Approval queue</h2><span class="small muted">Hàng chờ chuyên gia duyệt · <b>${pending.length}</b> đang chờ ·
-      mọi khuyến nghị từ Wealth Planning Advisor đều là mô phỏng cho đến khi chuyên gia duyệt</span></div>
+    <div class="sechead mt"><h2 class="h2">Hàng chờ duyệt</h2><span class="small muted">Hàng chờ chuyên gia duyệt · <b>${pending.length}</b> đang chờ ·
+      mọi khuyến nghị từ Kế hoạch tài chính đều là mô phỏng cho đến khi chuyên gia duyệt</span></div>
     ${staff ? `<p class="small mt-xs">${approvers.length ? `Sau khi RM duyệt, chuyên gia có chứng chỉ duyệt tiếp: <b>${approvers.map(a => esc(a.name)).join(", ")}</b> (BRD-RULE-WF-08).`
       : `Gia đình chưa có chuyên gia có chứng chỉ: RM duyệt một mình, như BRD cho phép (“nếu có”).`}</p>` : ""}
     <div class="cards2">${pending.map(item).join("") || `<div class="panel muted">Không có đề xuất nào đang chờ.</div>`}</div>

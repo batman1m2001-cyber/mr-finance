@@ -161,10 +161,11 @@ export function heat(box, cols, rows, opts = {}) {
   const maxAbs = Math.max(1e-9, ...rows.flatMap(r => cols.map(c => Math.abs(r.values[c] || 0))));
   // opts.metric: the cells' “cách tính” (opts.inputs(row, col) its inputs)
   const cell = (v, r, c) => {
-    if (!v) return `<td class="cell muted">·</td>`;
+    if (!v || Math.abs(v) < 5e-5) return `<td class="cell muted">·</td>`;  // under 0,005 %: nothing to read, not “−0%”
     const a = Math.min(1, Math.abs(v) / maxAbs);
     const color = v < 0 ? "var(--down)" : "var(--up)";
-    const text = opts.metric ? n(pct(v, true, 1), opts.metric, opts.inputs ? opts.inputs(r, c) : null) : pct(v, true, 1);
+    const d = Math.abs(v) < 0.01 ? 2 : 1;  // under 1 %, two decimals: “−0,18%”, never “−0%”
+    const text = opts.metric ? n(pct(v, true, d), opts.metric, opts.inputs ? opts.inputs(r, c) : null) : pct(v, true, d);
     return `<td class="cell" style="background:color-mix(in srgb, ${color} ${Math.round(8 + a * 52)}%, transparent)" title="${esc(pct(v, true, 2))}">${text}</td>`;
   };
   box.innerHTML = `<div class="scrollx"><table class="table heat"><thead><tr><th>${esc(opts.corner || "")}</th>${cols.map(c => `<th class="r" title="${esc(opts.colTitle ? opts.colTitle(c) : c)}">${esc(opts.colLabel ? opts.colLabel(c) : c)}</th>`).join("")}</tr></thead>
@@ -284,11 +285,28 @@ export function sankey(box, f, opts = {}) {
       "stroke-width": 2.2, "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true"}, svg);
     ic.innerHTML = iconPaths(name);
   };
+  // a name: one line, or two broken between words (narrow: “Chi tiêu” / “sinh hoạt”), never half a word
+  const lines = (s, max, rows) => {
+    const cut = (t) => {  // whole words and “…”
+      if (t.length <= max) return t;
+      const c = t.slice(0, max - 1), sp = t[max - 1] === " " ? c.length : c.lastIndexOf(" ");
+      return (sp > 0 ? c.slice(0, sp) : c) + "…";
+    };
+    if (s.length <= max || rows < 2 || !s.includes(" ")) return [cut(s)];
+    let best = null;  // the break that makes the longer line shortest
+    for (let i = s.indexOf(" "); i > 0; i = s.indexOf(" ", i + 1)) {
+      const a = s.slice(0, i), b = s.slice(i + 1);
+      if (a.length <= max && (!best || Math.max(a.length, b.length) < Math.max(best[0].length, best[1].length))) best = [a, b];
+    }
+    return best ? [best[0], cut(best[1])] : [cut(s)];
+  };
   const label = (x, y, anchor, b) => {
-    const t = el("text", {x, y, "text-anchor": anchor, class: "lbl"}, svg);
-    const max = narrow ? 12 : 22;
-    t.textContent = b.label.length > max ? b.label.slice(0, max - 1) + "…" : b.label;
-    const v = el("text", {x, y: y + 15, "text-anchor": anchor, class: "val"}, svg);
+    const ls = lines(b.label, narrow ? 13 : 22, narrow ? 2 : 1), up = (ls.length - 1) * 13;
+    const t = el("text", {x, y: y - up / 2, "text-anchor": anchor, class: "lbl"}, svg);
+    if (ls.length > 1) for (const [i, s] of ls.entries()) el("tspan", {x, dy: i ? 13 : 0}, t).textContent = s;
+    else t.textContent = ls[0];
+    if (ls.join(" ").replace(/…$/, "") !== b.label) t.setAttribute("data-full", b.label);
+    const v = el("text", {x, y: y + 15 + up / 2, "text-anchor": anchor, class: "val"}, svg);
     v.textContent = fmt(b.amount);
     howOn(v, b.rows ? "flow.band" : "flow.left", b.rows ? {rows: String(b.rows.length)} : {total_in: vnd(f.total_in), total_out: vnd(f.total_out)});
   };

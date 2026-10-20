@@ -32,6 +32,8 @@ def test_two_admins_add_an_account_and_its_code_signs_the_person_in(open_page, s
     assert len(code) == 10
     assert not p.problems()
 
+    if page.is_visible("#me-open"):  # a phone: the name row is a popover behind the initials
+        page.click("#me-open")
     page.click(".me button")  # sign out
     page.wait_for_selector("#signin-form")
     page.click("#signin-code summary")

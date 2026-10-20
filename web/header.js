@@ -66,6 +66,12 @@ export function mount(shell) {
     e.preventDefault(); open(hits[Number(a.dataset.i)]);
   });
   document.addEventListener("click", (e) => { if (!box.contains(e.target)) close(); });
+  // a phone: the box is behind a search button (tokens.css .qopen); it opens focused, and closes when left empty
+  const top = $(".shell-top"), qOpen = $("#q-open");
+  const shown = (on) => { top.classList.toggle("q-shown", on); qOpen.setAttribute("aria-expanded", String(on)); };
+  qOpen.onclick = () => { const on = !top.classList.contains("q-shown"); shown(on); if (on) input.focus(); };
+  input.addEventListener("blur", () => setTimeout(() => { if (!input.value.trim() && pop.hidden) shown(false); }, 150));
+  window.addEventListener("hashchange", () => shown(false));
   document.addEventListener("keydown", (e) => {
     if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); input.focus(); }
   });
@@ -95,8 +101,8 @@ export function mount(shell) {
         const alerts = al.map(a => ({title: a.title, sub: `${a.label}${a.count > 1 ? ` · ${a.count} lần` : ""}`, tone: SEV[a.severity],
           route: (WHERE[role] || {})[a.kind] || `#/${role}`, alert: a.id}));
         let rest = [], total = 0;
-        if (role === "cio") {
-          const n = (await get("/api/news/inbox?limit=200")).items;
+        if (role === "cio") {  // the high-relevance new news, as the desk counts them (“100 liên quan cao”), not all 800
+          const n = (await get("/api/news/inbox?relevance=high&limit=1000")).items;
           rest = n.slice(0, 8).map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio/hop-tin"}));
           total = n.length;
         } else if (role === "compliance") {
@@ -116,7 +122,7 @@ export function mount(shell) {
       if (fu.length) { const total = items.total; items = [...fu, ...items]; if (total != null) items.total = total + fu.length; }
     } catch (_) { /* the bell without them */ }
     const count = items.total != null ? items.total : items.length;
-    bell.dataset.count = count ? String(Math.min(count, 99)) : "";
+    bell.dataset.count = count ? (count > 99 ? "99+" : String(count)) : "";
     bell.setAttribute("aria-label", count ? `Thông báo: ${count}` : "Thông báo: không có");
     if (!bpop.hidden) drawBell();
   };
@@ -126,7 +132,7 @@ export function mount(shell) {
     cio: {news_feed: "#/cio/hop-tin", market_job: "#/cio/mo-hinh/du-lieu", agent: "#/cio/nhan-dinh", inbox: "#/cio/nhan-dinh"},
     compliance: {audit_chain: "#/compliance/nhat-ky"},
   };
-  const TITLE = {client: "Điều đáng chú ý", rm: "Điều đáng chú ý · khách đang chọn", cio: "Cảnh báo và tin mới trong hộp tin",
+  const TITLE = {client: "Điều đáng chú ý", rm: "Điều đáng chú ý · khách đang chọn", cio: "Cảnh báo và tin liên quan cao trong hộp tin",
     compliance: "Cảnh báo và tin đang bị giữ", admin: "Cảnh báo hệ thống", specialist: "Khuyến nghị chờ bạn duyệt"};
   const drawBell = () => {
     bpop.innerHTML = `<div class="pop-head">${TITLE[shell.role()]}</div>${items.length ? items.map((i, n) =>

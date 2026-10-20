@@ -17,9 +17,9 @@ const GROUP_ICON = {"Bất động sản": "home", "Cổ phiếu": "stock", "Ti�
   "Cổ phần DN": "business", "Trái phiếu": "bond", "Tài sản số": "crypto", "Bảo hiểm": "shield"};
 const STATUS = {ok: ["good", "An toàn"], near: ["warn", "Gần ngưỡng"], over: ["bad", "Vượt ngưỡng"], low: ["warn", "Thấp"], critical: ["bad", "Rất thấp"]};
 const TIERS = [
-  {n: 1, title: "Our Wealth at Techcombank", vi: "Tài sản tại hệ sinh thái Techcombank", color: "var(--s1)", icon: "bank"},
-  {n: 2, title: "Custody around the world", vi: "Tài sản lưu ký bên ngoài", color: "var(--s7)", icon: "link"},
-  {n: 3, title: "Self-managed", vi: "Tài sản bạn tự quản lý", color: "var(--s4)", icon: "user"},
+  {n: 1, title: "Our Wealth at Techcombank", vi: "Tại hệ sinh thái Techcombank", color: "var(--s1)", icon: "bank"},
+  {n: 2, title: "Custody around the world", vi: "Lưu ký bên ngoài", color: "var(--s7)", icon: "link"},
+  {n: 3, title: "Self-managed", vi: "Bạn tự quản lý", color: "var(--s4)", icon: "user"},
 ];
 const PAST = 6;
 const SEV = {high: "Cao", medium: "Trung bình", low: "Thấp"};
@@ -105,7 +105,7 @@ export async function render(box, ctx) {
       <div class="tiers">${tiers.map(t => `<div class="tier${open === t.n ? " on" : ""}">
         <button type="button" class="tierhead" data-tier="${t.n}" aria-expanded="${open === t.n}">
           <span class="ic-chip sm" style="--tone:${t.color}">${icon(t.icon, {size: 13})}</span>
-          <span class="pop-t"><b>${esc(t.title)}</b><small>${esc(t.vi)} · ${t.on}/${t.src.length} nguồn đã kết nối</small></span>
+          <span class="pop-t"><b>${esc(t.vi)}</b><small><span lang="en">${esc(t.title)}</span> · ${t.on}/${t.src.length} nguồn đã kết nối</small></span>
           <span class="tv"><b>${n(share(t.value), "tier.value", {assets: vnd(nw.assets)})}</b><small class="muted">${n(vnd(t.value), "tier.value", {assets: vnd(nw.assets)})}</small></span>
           <span aria-hidden="true">${icon("chevron", {size: 14})}</span></button>
         ${open === t.n ? `<div class="tierlist">${t.src.map(s => `<div class="srcrow">

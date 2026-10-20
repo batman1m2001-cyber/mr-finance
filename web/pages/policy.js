@@ -61,7 +61,7 @@ export async function render(box, ctx) {
       <p class="lede">Chính sách, vĩ mô và hạ tầng đang làm tài sản ròng ${rep.scope === "family" ? "gia đình" : "của bạn"} tăng hay giảm bao nhiêu</p></div></div>
     <div class="cols">
       <div class="panel c12" data-focus="policy:check">
-        <h3>Wealth check <span class="hint">chênh lệch mục tiêu và hiệu quả so với benchmark</span></h3>
+        <h3>Kiểm tra tài sản <span class="hint">chênh lệch mục tiêu và hiệu quả so với benchmark</span></h3>
         <div class="kpis three">
           <div class="kpi"><div class="k">Lợi nhuận từ đầu năm</div><div class="v">${how(pct(pf.ytd_return, true), "perf.ytd_return")}</div>
             <div class="s ${behind ? "down" : "up"}">${behind ? "▼ kém" : "▲ hơn"} ${esc(pf.benchmark_name)} ${how(pct(Math.abs(pf.vs_benchmark)), "perf.vs_benchmark", {mine: pct(pf.ytd_return, true), bench: pct(pf.benchmark_ytd, true)})} <span class="muted">(${esc(pf.benchmark_name)} ${how(pct(pf.benchmark_ytd, true), "perf.benchmark_ytd", {benchmark: pf.benchmark_name})})</span></div></div>
@@ -70,7 +70,7 @@ export async function render(box, ctx) {
           <div class="kpi"><div class="k">Việc nên làm trước</div>
             ${acts.length ? `<ol class="ul">${acts.slice(0, 3).map(a => `<li>${a}</li>`).join("")}</ol>` : `<p class="muted">Không có việc gấp.</p>`}</div>
         </div>
-        <a class="btn sm mt" href="${planHref}">Mở Wealth Planning Advisor ${icon("arrow", {size: 14})}</a>
+        <a class="btn sm mt" href="${planHref}">Mở Kế hoạch tài chính ${icon("arrow", {size: 14})}</a>
       </div>
       <div class="panel c12" id="impact"></div>
       <div class="c12" id="views"></div>

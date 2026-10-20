@@ -80,7 +80,7 @@ export async function render(box, ctx) {
     : n.value == null ? "" : ["event", "alert"].includes(n.kind) ? vnd(n.value, true) : vnd(Math.abs(n.value)));
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Tổng quan</div><h1 class="h1">Financial Intelligence Graph</h1>
+    <div class="pagehead"><div><div class="eyebrow">Tổng quan · <span lang="en">Financial Intelligence Graph</span></div><h1 class="h1">Bản đồ tài chính</h1>
       <p class="lede">Tài sản, mục tiêu, rủi ro, chính sách và tin tức quanh ${staff ? esc(byId.ME.label) : "bạn"} · số liệu ngày ${esc(g.as_of)}</p></div></div>
     <div class="cols">
       <div class="panel c8 mapwrap">

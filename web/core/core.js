@@ -147,6 +147,7 @@ export function vnd(a, signed) {
   const x = Math.abs(a);
   if (x >= TY) return sign + vn(x / TY, x < 10 * TY ? 2 : 1) + " tỷ";
   if (x >= TR) return sign + vn(x / TR, x >= 100 * TR ? 0 : 1) + " triệu";
+  if (x >= 1e3) return sign + vn(x / 1e3, x >= 1e5 ? 0 : 1) + " nghìn";  // as src/wealth/money.py: “192 nghìn”
   return sign + vn(x, 0) + " đ";
 }
 export function pct(x, signed, digits) {
@@ -155,6 +156,13 @@ export function pct(x, signed, digits) {
   return sign + vn(Math.abs(x) * 100, digits == null ? 1 : digits) + "%";
 }
 export function num(x, d) { return x == null ? "—" : (x < 0 ? "−" : "") + vn(Math.abs(x), d == null ? 0 : d); }
+// a name cut to k characters at a word boundary, with “…”; never half a word (the full name goes in a title)
+export function words(s, k) {
+  s = String(s || "");
+  if (s.length <= k) return s;
+  const c = s.slice(0, k - 1), sp = s[k - 1] === " " ? c.length : c.lastIndexOf(" ");
+  return (sp > 0 ? c.slice(0, sp) : c).replace(/[\s,.;:(–-]+$/, "") + "…";
+}
 export function when(ts) {
   if (!ts) return "—";
   const d = new Date(ts * 1000);

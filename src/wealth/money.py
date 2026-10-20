@@ -4,6 +4,7 @@ from __future__ import annotations
 
 TY = 1_000_000_000
 TR = 1_000_000
+NG = 1_000
 
 
 def _vn(x: float, digits: int) -> str:
@@ -12,13 +13,16 @@ def _vn(x: float, digits: int) -> str:
 
 
 def vnd(amount: float, signed: bool = False) -> str:
-    """``45_200_000_000`` → ``45,2 tỷ``; ``850_000_000`` → ``850 triệu``."""
+    """``45_200_000_000`` → ``45,2 tỷ``; ``850_000_000`` → ``850 triệu``; ``191_547`` → ``192 nghìn`` (the same
+    words at every size, never a six-digit đồng figure beside tỷ); under 1.000, ``850 đ``."""
     sign = "+" if signed and amount > 0 else "-" if amount < 0 else ""
     a = abs(amount)
     if a >= TY:
         body = f"{_vn(a / TY, 2 if a < 10 * TY else 1)} tỷ"
     elif a >= TR:
         body = f"{_vn(a / TR, 0 if a >= 100 * TR else 1)} triệu"
+    elif a >= NG:
+        body = f"{_vn(a / NG, 0 if a >= 100 * NG else 1)} nghìn"
     else:
         body = f"{_vn(a, 0)} đ"
     return sign + body

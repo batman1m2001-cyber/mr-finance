@@ -3,7 +3,7 @@
    the lens looks at first. Built from the overview page's side panel (map.js). */
 import {formulaOf, n as how, esc, pct, signClass, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
-import {LOOK, certaintyOf, figureOf, howOf, srcText} from "./graph.js?v=20261018q1";
+import {LOOK, certaintyOf, figureOf, howOf, srcText} from "./graph.js?v=20261020u1";
 import {SHEETS} from "./lenses.js?v=20261018p3";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);

@@ -14,6 +14,7 @@ uv run operonx run statement_reading  # the statement-reading eval (needs MF_AI=
 
 | Date | Commit | Command | Result |
 |---|---|---|---|
+| 2026-10-20 | UX fixes (`ux/fixes-1020`) | `pytest -q tests -m "not ui"`; `pytest -q tests/ui` | **986 passed, 1 skipped** in 759 s; **115 passed, 3 failed** in 1053 s — the three sign-out tests clicked `.me button`, which on a phone is now inside the initials popover (and on desktop met the new theme button first); the theme button moved after Đăng xuất, the tests open the popover on a phone, rerun: 3 passed. Plus the 134-shot crawl (0 errors, see docs/UX_FIXES_1020_PLAN.md) |
 | 2026-10-18 | multi-role M6 (`ux/multi-role`) | `pytest -q tests --ignore=tests/ui`; `pytest -q tests/ui` | **878 passed, 1 skipped** in 644 s; **111 passed** in 889 s — the close-out run; plus seven real-model assistant turns, one per desk tool family, US$0.0103 (see docs/MULTI_ROLE_UX_REPORT.md) |
 | 2026-10-18 | multi-role M5 (9dbcdc5) | same | **867 passed, 1 skipped** in 620 s; **111 passed** in 889 s (+ Compliance: 3 API, 3 browser; every desk tool signed in inside a served turn, 11) |
 | 2026-10-18 | multi-role M4 (2bfb7ac) | same | **855 passed, 1 skipped** in 612 s; **107 passed, 1 failed** in 894 s — `test_pages.py::test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it` clicked the desk's decision bar under the sheet; fixed (the desk inert under a sheet, the test scoped to the page) and rerun: 23 passed |

@@ -5,7 +5,7 @@
    Admin runs one now (POST /api/jobs/run). Lần chạy tay: who ran what. Compliance reads it without buttons. The
    assistant does the same writes on a Xác nhận. Rows are lists (.item), so a phone reads them as they are. */
 import {ago, esc, get, post, toast} from "../core/core.js";
-import {JOB} from "./system.js?v=20261018q1";
+import {JOB} from "./system.js?v=20261020u1";
 
 const MODE = {live: "Mô hình thật", mock: "Mô phỏng", inbox: "Hộp chờ (vùng AI)"};
 const AGENT = {cio: "Agent CIO", challenger: "Agent Phản biện", policy: "Agent Chính sách", newsletter: "Bản tin"};

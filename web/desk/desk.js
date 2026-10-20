@@ -112,7 +112,14 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
     tools[(i + (e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : tools.length - 1)) % tools.length].focus();
   });
   const fit = () => root.style.setProperty("--ws-top", `${Math.round(($(".shell-top") || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom)}px`);
-  const onResize = () => { fit(); frame.resize(); };
+  // the tab strip scrolls: a fade on the side that has more tabs (tokens.css .dk-tabs.more-l / .more-r)
+  const edges = () => {
+    const s = $("#dk-tabs", root);
+    s.classList.toggle("more-l", s.scrollLeft > 1);
+    s.classList.toggle("more-r", s.scrollLeft + s.clientWidth < s.scrollWidth - 1);
+  };
+  $("#dk-tabs", root).addEventListener("scroll", edges, {passive: true});
+  const onResize = () => { fit(); frame.resize(); edges(); };
   window.addEventListener("resize", onResize);
   fit();
   setTimeout(fit, 600);
@@ -150,7 +157,11 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
       const here = group ? group.pages.find(p => p.key === key) : null;
       $("#ws-sheet-t", root).textContent = here ? here.label : label(navId);
       const tabs = group && group.pages.length > 1 ? group.pages : [];
-      $("#dk-tabs", root).innerHTML = tabs.map(p => `<a href="${p.href}"${p.key === key ? ' aria-current="page"' : ""}>${esc(p.label)}</a>`).join("");
+      const strip = $("#dk-tabs", root);
+      strip.innerHTML = tabs.map(p => `<a href="${p.href}"${p.key === key ? ' aria-current="page"' : ""}>${esc(p.label)}</a>`).join("");
+      const cur = strip.querySelector("[aria-current]");  // the page you are on is in view, not scrolled off
+      if (cur) strip.scrollLeft = cur.offsetLeft - strip.offsetLeft - (strip.clientWidth - cur.offsetWidth) / 2;
+      edges();
     },
     /* the desk's read again (a page changed something the desk counts) */
     refresh() { if (!sheet) load(true); },

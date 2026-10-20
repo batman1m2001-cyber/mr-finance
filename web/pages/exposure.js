@@ -1,6 +1,6 @@
 /* CIO · Phơi nhiễm toàn bộ khách (BR-13): for the latest effective run, every family's expected
    3-month change by factor (% of net worth), the total by factor, and the ranking. */
-import {empty, esc, get, n as how, pct, signClass, vnd} from "../core/core.js";
+import {empty, esc, get, n as how, pct, signClass, vnd, words} from "../core/core.js";
 import {diverging, heat} from "../charts/charts.js";
 
 export async function render(box, ctx) {
@@ -29,7 +29,7 @@ export async function render(box, ctx) {
     </div>`;
   diverging(box.querySelector("#total"), used.map(f => ({label: names[f] || f, value: ex.total[f]})), {label: "Tổng theo yếu tố", metric: "impact.by_factor"});
   heat(box.querySelector("#heat"), used, ex.rows.map(r => ({label: r.name, values: r.pct})),
-    {corner: "Gia đình", metric: "impact.by_factor", inputs: (r, f) => ({part: names[f] || f, family: r.label, exact: pct(r.values[f], true, 3)}), colLabel: (f) => (names[f] || f).replace(/^(Chênh lệch|Lợi suất|Lãi suất|Giá) /, "").slice(0, 14), colTitle: (f) => names[f] || f});
+    {corner: "Gia đình", metric: "impact.by_factor", inputs: (r, f) => ({part: names[f] || f, family: r.label, exact: pct(r.values[f], true, 3)}), colLabel: (f) => words((names[f] || f).replace(/^(Chênh lệch|Lợi suất|Lãi suất|Giá) /, "").replace(/^./, (c) => c.toUpperCase()), 16), colTitle: (f) => names[f] || f});
   const sel = box.querySelector("#pick");
   if (sel) sel.onchange = () => ctx.go(ctx.href("phoi-nhiem", sel.value));
 }

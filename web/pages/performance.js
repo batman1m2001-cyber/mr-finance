@@ -8,7 +8,7 @@ import {icon} from "../core/icons.js?v=20261016r1";
 import {columns, lines, sparkline} from "../charts/money.js?v=20261016r4";
 
 export const OUTCOME = {right: ["good", "Đúng"], wrong: ["bad", "Sai"], missed: ["warn", "Bỏ lỡ"], avoided: ["", "Không làm · đúng"], open: ["ai", "Đang theo dõi"]};
-const AGENT_NAME = {news: "AI News Reader", impact: "AI Impact Assessor", planner: "AI Planning Advisor", chat: "AI Client Chat"};
+const AGENT_NAME = {news: "AI đọc tin", impact: "AI đánh giá tác động", planner: "AI tư vấn kế hoạch", chat: "AI trò chuyện với khách"};
 const AGENT_ICON = {news: "news", impact: "zap", planner: "target", chat: "bot"};
 export const ENG = [["minutes", "Phút đọc / tuần", "phút / tuần"], ["days", "Ngày đọc / tháng", "ngày / tháng"]];
 export const eng = {view: "minutes"};  // shared by both pages for this page's life
@@ -25,13 +25,13 @@ export function tiles(sm, newsSub) {
     ${kpi("stock", "var(--good)", "Tiền mang lại", how(vnd(sm.gained, true), "advisory.value", {count: String(sm.right)}), "từ các khuyến nghị đúng", "up")}
     ${kpi("down", "var(--critical)", "Sai, thiệt hại", how(vnd(sm.lost, true), "advisory.value", {count: String(sm.wrong)}), `${sm.wrong} khuyến nghị sai`, "down")}
     ${kpi("clock", "var(--warning)", "Hành động bỏ lỡ", sm.missed, `khách hàng không thực hiện · đã có thể thêm ${how(vnd(sm.missed_value), "advisory.value", {count: String(sm.missed)})}`)}
-    ${kpi("news", "var(--warning)", "Tin quan trọng bị miss", sm.missed_news, newsSub)}
+    ${kpi("news", "var(--warning)", "Tin quan trọng bị bỏ sót", sm.missed_news, newsSub)}
   </div>`;
 }
 
 // the AI pipeline: one card per AI, in order; sub(g) is what goes under its line
 export function pipeline(agents, hint, sub) {
-  return `<div class="panel mt"><h3>AI pipeline <span class="hint">${hint}</span></h3>
+  return `<div class="panel mt"><h3>Chuỗi AI <span class="hint">${hint}</span></h3>
     <div class="pipe">${agents.map((g, i) => `<div class="agent">
       <div class="row tight one"><span class="ic-chip sm">${icon(AGENT_ICON[g.id] || "bot", {size: 14})}</span>
         <div><b>${i + 1}. ${esc(g.name)}</b><div class="small muted">${esc(g.name_vi)}</div></div><span class="score">${how(String(g.score), "advisory.agent_metric")}</span></div>
@@ -82,7 +82,7 @@ export async function render(box, ctx) {
   const drift = last.tolerance - first.tolerance, over = last.tolerance - last.capacity;
 
   box.innerHTML = `${internal()}
-    <div class="pagehead"><div><div class="eyebrow">Khách hàng</div><h1 class="h1">Advisory performance</h1>
+    <div class="pagehead"><div><div class="eyebrow">Khách hàng · <span lang="en">Advisory performance</span></div><h1 class="h1">Hiệu quả tư vấn</h1>
       <p class="lede">Hiệu quả tư vấn và AI cho khách hàng ${esc(me.name || client)} · 12 tháng</p></div>
       <a class="btn sm" href="#/rm/hieu-qua">Tất cả khách hàng ${icon("arrow", {size: 14})}</a></div>
     ${tiles(t.summary, `đã có tín hiệu sớm · tác động ${how(vnd(t.summary.missed_news_value, true), "advisory.missed_news")}`)}

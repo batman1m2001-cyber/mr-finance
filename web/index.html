@@ -6,7 +6,7 @@
 <title>OneWealth</title>
 <meta name="description" content="Bức tranh toàn cảnh tài sản của khách hàng, và tin tức đang tác động tới nó.">
 <script>let t = null; try { t = localStorage.getItem("mf.theme"); } catch (_) {} document.documentElement.dataset.theme = t === "light" ? "light" : "dark";</script>
-<link rel="stylesheet" href="core/tokens.css?v=20261018q1">
+<link rel="stylesheet" href="core/tokens.css?v=20261020u1">
 </head>
 <body>
 <header class="shell-top">
@@ -21,6 +21,8 @@
         role="combobox" aria-expanded="false" aria-controls="q-results" aria-autocomplete="list"><kbd aria-hidden="true">/</kbd>
       <div id="q-results" class="pop" role="listbox" aria-label="Kết quả tìm kiếm" hidden></div>
     </div>
+    <button type="button" id="q-open" class="iconbtn qopen" aria-label="Tìm kiếm" aria-controls="search" aria-expanded="false">
+      <svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button>
     <label class="pick" id="client-pick">
       <span class="sr">Khách hàng</span>
       <select id="client"></select>
@@ -40,6 +42,7 @@
       <div id="bell-pop" class="pop right" hidden></div>
     </div>
     <button type="button" id="theme" class="iconbtn" title="Đổi giao diện sáng / tối" aria-label="Đổi giao diện sáng / tối">◐</button>
+    <button type="button" id="me-open" class="iconbtn meopen" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false" aria-controls="whoami" hidden></button>
   </div>
   <div class="shell-nav">
     <nav class="nav" id="nav" aria-label="Trang"></nav>
@@ -55,6 +58,6 @@
 <footer class="foot">Dữ liệu khách hàng và giá là mô phỏng; tin tức và chuỗi thị trường lấy từ nguồn công khai; trang Mô hình ghi rõ tham số nào ước lượng, tham số nào giả định.
   Nội dung không phải khuyến nghị đầu tư. Mỗi người đăng nhập bằng tài khoản của mình; tài khoản demo chỉ mở trên bản demo công khai.
   <button type="button" id="reset" class="linkbtn">Làm lại demo</button></footer>
-<script type="module" src="shell.js?v=20261018q1"></script>
+<script type="module" src="shell.js?v=20261020u1"></script>
 </body>
 </html>

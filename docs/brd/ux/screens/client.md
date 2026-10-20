@@ -85,7 +85,7 @@ what was recorded and the table grows; collapse a class.
 | Data | `POST /api/goals`, `POST /api/scenario`, `GET /api/scenarios`, `POST /api/review/propose`, `GET /api/review` |
 | Screenshot | [desktop](../../assets/current_ui/SCR-CL-03_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CL-03_phone-light.jpg) |
 
-**Layout.** “Wealth view” KPI strip (total net worth, portfolio P&L, goals funded, 12-month net cash flow), cash-flow
+**Layout.** “Bức tranh tài sản” (Wealth view until 2026-10-20) KPI strip (total net worth, portfolio P&L, goals funded, 12-month net cash flow), cash-flow
 chart and need-vs-have bars per goal, the monthly saving needed; then **Life goals** list (grouped: family &
 children, wealth building, retirement & transfer, risk reserve, decisions & stress tests) beside the selected
 item: status, goal status (need / have / gap), performance tracking (this month vs expected, start of year / last
@@ -98,7 +98,7 @@ queue (→ SCR-CL-07).
 **Notes.** The regulation note of the goal branch is not shown on these goal cards (Q-20).
 
 
-**Since 2026-10-16 (FR-603, Q-20).** “Lưu ý quy định cho mục tiêu” sits under the Wealth view: each released
+**Since 2026-10-16 (FR-603, Q-20).** “Lưu ý quy định cho mục tiêu” sits under Bức tranh tài sản: each released
 regulation note that applies to a goal, with its level and milestone (the client sees only notes with a client
 message).
 
@@ -189,7 +189,7 @@ a footnote with what stays unallocated (BR-08); runs stored before F10 show the 
 | Data | `POST /api/alerts`, `GET /api/views`, `POST /api/goals` |
 | Screenshot | [desktop](../../assets/current_ui/SCR-CL-06_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CL-06_phone-light.jpg) |
 
-**Layout.** “Wealth check” (YTD return vs benchmark, goals tracked, required actions, link to the planning
+**Layout.** “Kiểm tra tài sản” (Wealth check until 2026-10-20; YTD return vs benchmark, goals tracked, required actions, link to the planning
 advisor); **Tác động lên tài sản ròng** (diverging bars per policy, filter all / risks / opportunities, the formula);
 **House views** (8 mock research-house views matched to holdings, 2 shown + “Xem thêm”); the mock-data and
 legal-status notes; **Policy headlines** — one card per policy with level, legal status, the impact (with
@@ -215,7 +215,7 @@ probability), holding × sensitivity × probability, the holdings touched, the s
 | Screenshot | [desktop](../../assets/current_ui/SCR-CL-07_desktop-light.jpg) |
 
 **Layout.** The relationship specialist's card (name, title, phone, e-mail, office, hours — all mock, said so);
-the **Approval queue** (“Hàng chờ chuyên gia duyệt · n đang chờ”): each proposal with its actions and summary and,
+the **Hàng chờ duyệt** (Approval queue until 2026-10-20; “Hàng chờ chuyên gia duyệt · n đang chờ”): each proposal with its actions and summary and,
 while pending, “Đang chờ chuyên gia duyệt”; decided items with their badge and note. Read-only: the RM decides on
 [SCR-RM-06](rm.md#scr-rm-06--duyệt-đề-xuất-approval-queue) (DEF-02 fixed 2026-10-15).
 

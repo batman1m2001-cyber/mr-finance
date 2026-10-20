@@ -15,7 +15,7 @@
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261017r2";
+import {mount as mountHeader} from "./header.js?v=20261020u1";
 import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261018p3";
 import {DESKS} from "./desk/roles.js?v=20261018q1";
 
@@ -187,7 +187,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261018q1");
+  dkLoad ||= import("./desk/desk.js?v=20261020u1");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});
@@ -224,12 +224,20 @@ function drawChrome(rt) {
   $("#client-pick").hidden = !pick || (state.me && state.me.role === "client");
   scopeSwitch(pick);
   if (state.me) {
-    $("#whoami").innerHTML = `<span class="me"><b>${esc(state.me.name)}</b><span class="me-title">· ${esc(state.me.title || r.label)}</span>
+    $("#whoami").innerHTML = `<span class="me"><b>${esc(state.me.name)}</b><span class="me-title">${esc(state.me.title || r.label)}</span>
       <a class="linkbtn" href="#/${rt.role}/bo-nho"${rt.nav.id === "bo-nho" ? ' aria-current="page"' : ""}>Bộ nhớ</a>
-      <button type="button" class="linkbtn" id="signout">Đăng xuất</button></span>`;
+      <button type="button" class="linkbtn" id="signout">Đăng xuất</button>
+      <button type="button" class="linkbtn me-theme" id="me-theme">Giao diện sáng / tối</button></span>`;
     $("#signout").onclick = signOut;
+    $("#me-theme").onclick = theme;
+    // a phone: the name row is a popover behind the initials (tokens.css .meopen)
+    const words = String(state.me.name || "").trim().split(/\s+/).filter(Boolean);
+    $("#me-open").textContent = words.length > 1 ? words[0][0] + words[words.length - 1][0] : (words[0] || "?").slice(0, 2);
+    $("#me-open").title = state.me.name;
+    $("#me-open").hidden = false;
     return;
   }
+  $("#me-open").hidden = true;
   const u = r.user && state.users[r.user];
   $("#whoami").innerHTML = u ? `Đang dùng: <b>${esc(u.name)}</b> · ${esc(u.title)} <span class="badge assumed" title="Không phải cơ chế bảo mật">demo</span>` : "";
 }
@@ -289,7 +297,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261018q1`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261020u1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
@@ -454,6 +462,12 @@ async function start() {
   state.me = me.user || null;
   if (state.me && ROLES[state.me.role]) ROLES[state.me.role].user = state.me.id;
   $("#theme").onclick = theme;
+  const meOpen = $("#me-open"), top = $(".shell-top");
+  const meShow = (on) => { top.classList.toggle("me-shown", on); meOpen.setAttribute("aria-expanded", String(on)); };
+  meOpen.onclick = (e) => { e.stopPropagation(); meShow(!top.classList.contains("me-shown")); };
+  document.addEventListener("click", (e) => { if (!e.target.closest("#whoami")) meShow(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") meShow(false); });
+  window.addEventListener("hashchange", () => meShow(false));
   if (state.auth && !state.me) { $("#reset").hidden = true; signInPage(); return; }
   $("#reset").onclick = reset;
   $("#roles").addEventListener("click", (e) => {

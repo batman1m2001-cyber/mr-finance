@@ -36,7 +36,15 @@ const mk = (tag, attrs, parent) => {
   if (parent) parent.appendChild(el);
   return el;
 };
-const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
+// a label that is too long keeps its first clause when that fits (“Tập trung Đất nền Long Thành, Đồng Nai” → “… Long
+// Thành”), else whole words and “…”; never half a word. The tooltip and the inspector keep the full name.
+const short = (s, k) => {
+  if (s.length <= k) return s;
+  const clause = s.split(/\s*(?:[,(;:]|\s[–-]\s)/)[0].trim();
+  if (clause.length >= 8 && clause.length <= k) return clause;
+  const cut = s.slice(0, k - 1), sp = s[k - 1] === " " ? cut.length : cut.lastIndexOf(" ");
+  return (sp >= k * 0.5 ? cut.slice(0, sp) : cut).replace(/[\s,.;:(–-]+$/, "") + "…";
+};
 
 // the focus keys a node answers to (FEAT-33): what the assistant's tools name
 export function keysOf(n) {

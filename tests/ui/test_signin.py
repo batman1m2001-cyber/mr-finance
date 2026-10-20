@@ -24,6 +24,8 @@ def test_sign_in_with_the_form_and_with_a_demo_account_then_sign_out(browser, ba
         page.click("#signin-form [type=submit]")
         page.wait_for_function("location.hash.startsWith('#/cio') && document.querySelector('#nav a')")
         assert "Trần Quang Huy" in page.inner_text(".me")
+        if page.is_visible("#me-open"):  # a phone: the name row is a popover behind the initials
+            page.click("#me-open")
         page.click(".me button")
         page.wait_for_selector("#signin-form")
         page.click(".demo-acc[data-acc=C01]")

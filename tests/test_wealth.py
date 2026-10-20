@@ -7,6 +7,8 @@ def test_money_reads_like_a_vietnamese_reader_says_it():
     assert vnd(2_440_000_000) == "2,44 tỷ"
     assert vnd(850 * TR) == "850 triệu"
     assert vnd(-1_500 * TR, signed=True) == "-1,5 tỷ"
+    # under a million, in nghìn: a headline never reads “+191.547 đ” beside figures in tỷ (UX_FIXES_1020_PLAN S3)
+    assert vnd(191_547, signed=True) == "+192 nghìn" and vnd(-12_400) == "-12,4 nghìn" and vnd(850) == "850 đ"
     assert pct(0.031, signed=True) == "+3,1%"
     assert months_text(14) == "14 tháng" and months_text(360) == "30 năm"
 

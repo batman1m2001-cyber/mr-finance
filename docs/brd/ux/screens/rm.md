@@ -92,7 +92,7 @@ engine).
 | Screenshot | [desktop](../../assets/current_ui/SCR-RM-04_desktop-light.jpg), [phone](../../assets/current_ui/SCR-RM-04_phone-light.jpg) |
 
 **Layout.** “NỘI BỘ” banner (staff only). KPI tiles (recommendations, hit rate, money gained, losses, missed
-actions, missed news); **AI pipeline** (four AI stages with a 0–100 score, a 12-month sparkline and stage counts);
+actions, missed news); **Chuỗi AI** (AI pipeline until 2026-10-20; four AI stages with a 0–100 score, a 12-month sparkline and stage counts);
 **Nhật ký khuyến nghị**; **Tin quan trọng bị bỏ lỡ**; news-reading engagement; risk appetite over time. All mock,
 said at the bottom (“Dữ liệu giả định cho demo …”).
 

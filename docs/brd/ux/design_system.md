@@ -43,8 +43,15 @@ until the user toggles it (◐, stored as `mf.theme`).
 
 Row 1: logo and “OneWealth / Financial Intelligence for a Better Tomorrow”, the search box (“/”), the client picker,
 the Cá nhân / Gia đình switch, the bell with its count, the theme toggle. Row 2: the role's tabs, and on the right
-“Xem với vai trò” with the demo role switcher. Below 760 px the header scrolls away instead of staying pinned, the
-tagline hides, search takes its own row ([FEAT-34](../features/FEAT-34-header-search-and-notifications.md)).
+“Xem với vai trò” with the demo role switcher. Below 760 px the header scrolls away instead of staying pinned and the
+tagline hides ([FEAT-34](../features/FEAT-34-header-search-and-notifications.md)). Since 2026-10-20 a phone's header
+is one row from 360 px (two for the RM, whose Cá nhân / Gia đình goes under the client picker): search sits behind a
+search button and opens full width, focused; the name row (name, title, Bộ nhớ, Đăng xuất, the theme switch) is a
+popover behind the person's initials. The page starts about 76 px higher than before ([UX_FIXES_1020_PLAN.md](../../UX_FIXES_1020_PLAN.md)).
+
+A sheet's header (a desk's page over the desk) keeps the back link, the title and ✕ on one line: the title takes an
+ellipsis before anything wraps, and the group's tabs take only the room left, scrolling with a fade on the side that
+has more, the current tab scrolled into view.
 
 ## Components
 

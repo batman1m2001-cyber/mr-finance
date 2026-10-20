@@ -25,6 +25,8 @@ export const JOB = {  // what each job does (also the Admin desk's names, desk/a
   accuracy_score: "Chấm độ chính xác các dự báo đã đến hạn (FEAT-18)",
   market_backfill: "Lịch sử mọi chuỗi từ 2020 (chạy bằng dòng lệnh)",
   statement_reading: "Đánh giá việc đọc sao kê (chạy bằng dòng lệnh)",
+  assistant_retention: "Xoá các cuộc trò chuyện quá hạn lưu và các mục ghi nhớ đã hết hạn của trợ lý (A4)",
+  assistant_consolidate: "Tóm các cuộc trò chuyện đã ngừng 15 phút vào bộ nhớ của từng người (A6)",
 };
 const ALERT = {open: ["bad", "Đang mở"], acked: ["warn", "Đã xem"], resolved: ["good", "Đã hết"]};
 const MODE = {live: "Mô hình thật", mock: "Mô phỏng", inbox: "Hộp chờ (vùng AI)"};

@@ -59,8 +59,9 @@ export async function render(box, ctx) {
       <section class="panel c6" aria-labelledby="doc-h">
         <div class="sechead"><h2 class="h2" id="doc-h">Tài liệu của bạn</h2><span class="small muted"><b>${d.materials.length}</b> tệp</span></div>
         <p class="small muted">Thêm tài liệu để hỏi trợ lý về nó (Word, PDF, Excel, PowerPoint, văn bản; tối đa 5 MB). ${ctx.role === "client" ? "Chỉ bạn và RM phụ trách bạn đọc được." : "Chỉ bạn đọc được."} Tệp được tìm ngay trên máy chủ OneWealth, không gửi sang dịch vụ khác để xử lý; trợ lý chỉ đọc đoạn khớp câu hỏi.</p>
-        <form class="row mt-xs" id="doc-add"><input type="file" id="doc-file" accept=".txt,.md,.html,.htm,.docx,.pptx,.xlsx,.pdf" aria-label="Chọn tài liệu" style="flex:1;min-width:0">
-          <button type="submit" class="btn sm">Thêm</button></form>
+        <form class="row mt-xs" id="doc-add"><label class="btn sm"><input type="file" id="doc-file" accept=".txt,.md,.html,.htm,.docx,.pptx,.xlsx,.pdf" aria-label="Chọn tài liệu" hidden>Chọn tệp…</label>
+          <span class="small muted" id="doc-name" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chưa chọn tệp</span>
+          <button type="submit" class="btn sm primary">Thêm</button></form>
         ${d.materials.length ? `<ul class="mem-list mt">${d.materials.map(doc).join("")}</ul>` : `<p class="muted mt">Chưa có tài liệu nào.</p>`}
       </section>
     </div>`;
@@ -101,6 +102,10 @@ export async function render(box, ctx) {
     if (!confirm("Xoá tài liệu này? Không lấy lại được.")) return;
     try { await mem("material_delete", {key: b.dataset.deldoc}); toast("Đã xoá"); } catch (e) { toast(e.message); }
     again();
+  };
+  box.querySelector("#doc-file").onchange = (e) => {  // the styled picker says which file it holds
+    const f = e.target.files[0];
+    box.querySelector("#doc-name").textContent = f ? f.name : "Chưa chọn tệp";
   };
   box.querySelector("#doc-add").onsubmit = async (e) => {
     e.preventDefault();

@@ -267,8 +267,12 @@ main#main { max-width: 1320px; padding: 20px 24px 40px; }
 .table tr.click { cursor: pointer; } .table tr.click:hover td { background: var(--surface-2); }
 .scrollx { overflow-x: auto; }
 .list { display: grid; gap: 2px; }
-.item { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; padding: 12px 10px;
+.item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 10px;
   border-radius: 10px; }
+@media (max-width: 560px) {  /* a phone: the status goes under the text, which keeps the width */
+  .item { grid-template-columns: auto minmax(0, 1fr); row-gap: 6px; }
+  .item > :nth-child(3):last-child { grid-column: 2; justify-self: start; }
+}
 .item:hover { background: var(--surface-2); }
 .item .t { font-weight: 600; }
 .item .m { font-size: 12px; color: var(--muted); }
@@ -364,10 +368,11 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .kpi .k { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
 .kpi .v { font-size: 26px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 2px 0; white-space: nowrap; }
 .kpi .s { font-size: 12.5px; color: var(--ink-2); }
-.pcard { display: grid; gap: 10px; align-content: start; }
+.pcard { display: grid; gap: 10px; align-content: start; container-type: inline-size; }
 .pc-head { display: flex; align-items: center; gap: 8px; }
-.pc-body { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
-.pc-main { min-width: 0; }
+/* the figure and its chart side by side while the text keeps 140 px; a narrower card puts the chart under it */
+.pc-body { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; }
+.pc-main { min-width: 0; flex: 1 1 140px; }
 .pc-viz { flex: none; }
 .pc-foot { font-size: 12px; color: var(--muted); border-top: 1px solid var(--hair); padding-top: 10px; }
 .contrib { display: grid; gap: 5px; margin-top: 6px; }
@@ -375,12 +380,17 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .crow b { font-size: 12px; text-align: right; }
 .cbar { height: 6px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
 .cbar i { display: block; height: 100%; border-radius: 999px; }
+@container (max-width: 300px) {  /* a narrow card (four in a row beside the dock): name and amount, the bar under them */
+  .crow { grid-template-columns: 9px minmax(0, 1fr) auto; row-gap: 3px; }
+  .crow > span:nth-child(2) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .crow .cbar { grid-column: 2 / 4; grid-row: 2; }
+}
 @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .kpis { grid-template-columns: minmax(0, 1fr); } .kpi .v { font-size: 22px; } }
 .ratios { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
 .ratio { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; min-width: 0; }
 .ratio .k { font-size: 12px; color: var(--muted); }
-.ratio b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ratio b { font-size: 15px; overflow-wrap: anywhere; }  /* “Trả nợ vay · 38 tr” wraps, it is not cut */
 @media (max-width: 560px) { .ratios { grid-template-columns: minmax(0, 1fr); } }
 .wmap2 { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
 .wmap2 #donut { flex: none; margin: 0 auto; }
@@ -494,7 +504,8 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 @media (max-width: 560px) { .cp-panel { right: 8px; left: 8px; width: auto; top: 8px; bottom: 76px; } }
 /* "Nội bộ" stamp on staff screens (RULE-SEC-03) */
 .internal { display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--ink-2); margin: 0 0 12px; }
-.internal .badge { background: var(--surface-3); color: var(--ink); border-radius: 6px; padding: 1px 8px; font-weight: 700; font-size: 11.5px; }
+.internal .badge { background: var(--surface-3); color: var(--ink); border-radius: 6px; padding: 1px 8px; font-weight: 700; font-size: 11.5px; flex: none; }
+@media (max-width: 760px) { .internal { font-size: 11.5px; line-height: 1.35; margin-bottom: 10px; } }  /* a phone: one line, not two */
 /* Living Interface (backlog B-01). Motion only for a real change, and only transform and opacity:
    the request in flight (busy), its outcome (ok, error, pending a confirmation), something entering, and the
    evidence an answer was read from (marked for --hold, set from web/motion.js). Nothing moves at rest.
@@ -640,7 +651,12 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .h2 { font-size: 20px; font-weight: 750; margin: 10px 0 4px; letter-spacing: -.01em; }
 .ul { margin: 4px 0 10px; padding-left: 18px; font-size: 13.5px; }
 .loading { opacity: .55; transition: opacity var(--dur-1); }
-@media (max-width: 560px) { #page .table { display: block; overflow-x: auto; } }
+@media (max-width: 560px) {
+  #page .table { display: block; overflow-x: auto; }
+  /* a heading keeps its words on one line (“Lần lấy được gần nhất”, not a word a line): the table scrolls instead */
+  #page .table th { white-space: nowrap; }
+  #page .table td { min-width: 4.5em; }
+}
 /* R3: Khẩu vị rủi ro, Chi phí chính sách, Chuyên gia / Duyệt đề xuất, Hiệu quả tư vấn */
 .row.tight { gap: 8px; }
 .row.one { flex-wrap: nowrap; }
@@ -821,13 +837,50 @@ body.signed-out .bellwrap, body.signed-out #reset { display: none !important; }
 .demo-acc:hover, .demo-acc:focus-visible { border-color: var(--accent); }
 .me { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .me b { color: var(--ink-2); font-weight: 650; }
+.me .me-title::before { content: "· "; }
 @media (max-width: 760px) {
   .signin { grid-template-columns: minmax(0, 1fr); margin: 8px 0; }
   .me .me-title { display: none; }
 }
 .rolebox[hidden] { display: none !important; }
+/* a phone's header is one row (two with the RM's client picker): search behind a button, the name row behind the
+   initials, the theme switch inside that popover — the page starts about 80 px higher (docs/UX_FIXES_1020_PLAN.md P) */
+.qopen, .meopen, .me .me-theme { display: none; }
 @media (max-width: 760px) {
-  .whoami:has(.me) { display: inline-flex; margin-left: auto; padding: 4px 0; }
+  .shell-top { position: relative; z-index: 25; }  /* still scrolls away; its popovers stay over the page's sheets */
+  .shell-bar { gap: 6px; padding: 8px 12px; }
+  .shell-bar .iconbtn { width: 36px; height: 36px; }
+  .shell-bar .seg button { padding: 6px 9px; font-size: 13px; }
+  .shell-bar .brand { order: 0; margin-right: 2px; }
+  .shell-bar .pick { order: 1; }
+  .shell-bar #scope-wrap { order: 2; }
+  .shell-bar:has(#client-pick:not([hidden])) #scope-wrap { order: 9; }  /* the RM: the scope under the picker */
+  .qopen { display: inline-flex; align-items: center; justify-content: center; order: 3; margin-left: auto; }
+  .shell-bar .bellwrap { order: 4; }
+  .shell-bar #theme { order: 5; }
+  .meopen:not([hidden]) { display: inline-flex; align-items: center; justify-content: center; order: 6; font: 700 12px/1 var(--font);
+    background: var(--accent-soft); color: var(--ink); letter-spacing: .02em; }
+  .shell-bar:has(.meopen:not([hidden])) #theme { display: none; }
+  .search { display: none; }
+  .shell-top.q-shown .search { display: flex; }
+  .shell-top.q-shown .qopen { color: var(--accent); border-color: var(--accent); }
+  .whoami:has(.me) { display: none; }
+  .shell-top.me-shown .whoami:has(.me) { display: block; position: fixed; top: 56px; right: 12px; z-index: 30; min-width: 220px;
+    max-width: calc(100vw - 24px); padding: 12px 14px; border: 1px solid var(--hair); border-radius: 14px; background: var(--surface);
+    box-shadow: 0 12px 32px rgba(10, 6, 30, .35); }
+  .shell-top.me-shown .me { display: grid; gap: 10px; margin: 0; white-space: normal; justify-items: start; }
+  .shell-top.me-shown .me .me-title { display: block; margin-top: -6px; }
+  .shell-top.me-shown .me .me-title::before { content: none; }
+  .shell-top.me-shown .me .me-theme { display: inline; }
+}
+@media (max-width: 380px) {  /* 375 px phones keep the one row */
+  .shell-bar { gap: 4px; }
+  .shell-bar .seg button { padding: 6px 7px; }
+}
+@media (max-width: 370px) {  /* and 360 px ones */
+  .shell-bar .logo { width: 30px; height: 30px; }
+  .shell-bar .iconbtn { width: 34px; height: 34px; }
+  .shell-bar .seg button { padding: 6px 6px; font-size: 12.5px; }
 }
 
 /* Dữ liệu thị trường (F1): the 120-day line beside each series */
@@ -1104,9 +1157,10 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-sheet[hidden] { display: none; }
 .ws-sheet-h { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--hair);
   background: color-mix(in srgb, var(--surface) 92%, transparent); }
-.ws-sheet-h .linkbtn { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600; }
+.ws-sheet-h .linkbtn { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600; flex: none; white-space: nowrap; }
 .ws-sheet-h .linkbtn .ic { transform: rotate(90deg); }
-.ws-sheet-h b { font-size: 15px; }
+/* the title keeps one line: it gives way (ellipsis) only when the back link, the title and ✕ cannot fit */
+.ws-sheet-h b { font-size: 15px; flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ws-sheet-h .iconbtn { margin-left: auto; width: 32px; height: 32px; cursor: pointer; color: var(--ink); }
 .ws-sheet-b { flex: 1; min-height: 0; overflow: auto; padding: 18px 20px 32px; }
 /* the dock: Trợ lý · Thông tin */
@@ -1309,7 +1363,12 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .dk-bar-t i.neg { background: var(--down); } .dk-bar-t i.pos { background: var(--up); }
 .dk-kv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; margin: 8px 0 0; font-size: 13px; }
 .dk-kv dt { color: var(--ink-2); } .dk-kv dd { margin: 0; text-align: right; }
-.dk-tabs { display: flex; gap: 4px; overflow-x: auto; min-width: 0; }
+/* the tabs take the room left (basis 0: they never squeeze the title) and scroll; a fade marks a side with more */
+.dk-tabs { display: flex; gap: 4px; overflow-x: auto; min-width: 0; flex: 1 1 0; scrollbar-width: none; }
+.dk-tabs::-webkit-scrollbar { display: none; }
+.dk-tabs.more-r { mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+.dk-tabs.more-l { mask-image: linear-gradient(to left, #000 calc(100% - 32px), transparent); }
+.dk-tabs.more-l.more-r { mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent); }
 .dk-tabs a { padding: 5px 10px; border-radius: 8px; text-decoration: none; color: var(--ink-2); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .dk-tabs a[aria-current] { background: var(--accent-soft); color: var(--accent); }
 .desk .ws-sheet-h .iconbtn { flex: none; }
@@ -1393,6 +1452,7 @@ button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-al
   .dk-grid { grid-template-columns: minmax(0, 1fr); }
   .ws.sheeted .dk-body { display: none; }
   .desk .ws-sheet-h { flex-wrap: wrap; padding: 8px 14px; }
+  .desk .ws-sheet-h b { flex: 1 1 0; }  /* basis 0: the line holds back · title · ✕, the title takes an ellipsis */
   .dk-tabs { order: 5; flex-basis: 100%; }
   .rk-l { font-size: 15px; } .rk-me text { font-size: 14px; } .rk-n text { font-size: 12px; }
   .ad-map { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }

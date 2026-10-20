@@ -24,7 +24,7 @@ is, and the money coming in and going out over the next 12–36 months.
   transactions (salary monthly, school fees by term; a card balance paid once), maturities, coupons,
   instalments, known dated events; large payments flagged.
 - The page also shows the source groups (“Our Wealth at Techcombank”, “Custody around the world”,
-  “Self-managed”: tiers mapped to titles in `web/pages/detail.js`) and a “Headline News” card from the policy alerts
+  “Self-managed”: tiers mapped to titles in `web/pages/detail.js`; since 2026-10-20 the Vietnamese name leads — “Tại hệ sinh thái Techcombank”, “Lưu ký bên ngoài”, “Bạn tự quản lý” — and the English one is the small line) and a “Headline News” card from the policy alerts
   (FEAT-25).
 
 ## Implementation
