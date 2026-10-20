@@ -211,17 +211,19 @@ def concentration(holdings: list, net_worth: dict) -> dict:
     return {"concentration": {"rows": rows, "warnings": warnings}}
 
 
-@op
-def liquidity(holdings: list, profile: dict) -> dict:
-    """Money that can be had within days — cash, deposits, money-market and bond funds,
-    government bonds — as months of the client's spending."""
-    keep = [
-        h
-        for h in _assets(holdings)
-        if h["class"] in LIQUID
+def is_liquid(h: Dict[str, Any]) -> bool:
+    """Money that can be had within days: cash, deposits, money-market and bond funds, government bonds."""
+    return h["kind"] == "asset" and (
+        h["class"] in LIQUID
         or (h["class"] == "fund" and h["liquid"])
         or (h["class"] == "bond" and h["detail"].get("bond_kind") == "government")
-    ]
+    )
+
+
+@op
+def liquidity(holdings: list, profile: dict) -> dict:
+    """Money that can be had within days (:func:`is_liquid`) as months of the client's spending."""
+    keep = [h for h in holdings if is_liquid(h)]
     liquid = sum(h["value"] for h in keep)
     spend = profile["spending_monthly"] or 1
     months = liquid / spend

@@ -90,8 +90,9 @@ def build(
     alerts: list,
     followed: Optional[list] = None,  # None does not bind across ops: the persona's defaults
     flows: Optional[dict] = None,
+    changes: Optional[dict] = None,  # src/timeline changes: node id → {day, month, year}
 ) -> dict:
-    """Nodes and edges of the overview, each edge with its sources."""
+    """Nodes and edges of the overview, each edge with its sources; a money node with its ``change``."""
     nodes: Dict[str, Dict[str, Any]] = {}
     edges: Dict[tuple, Dict[str, Any]] = {}
 
@@ -146,6 +147,7 @@ def build(
             source=h["source"],
             owner=h.get("owner_name"),
             family=_family(h.get("owner_name")),
+            liability=h["kind"] == "liability",
         )
         if h["kind"] == "liability":
             edge(cid, me, ("holding", h["key"]), "khoản nợ", h["value"])
@@ -417,6 +419,10 @@ def build(
             continue
         scn = node(f"SC:{sid}", "scenario", sc["title"], ref=sid, detail=sc["question"], value=None)
         edge(me, scn, ("scenario", sid), "nếu xảy ra")
+
+    for nid, c in (changes or {}).items():  # what an edge to it says (NODE_TIMELINE_PLAN D1, D3)
+        if nid in nodes:
+            nodes[nid]["change"] = c
 
     for e in edges.values():
         kinds = {nodes[e["from"]]["kind"], nodes[e["to"]]["kind"]}

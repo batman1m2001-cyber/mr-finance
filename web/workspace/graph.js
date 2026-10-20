@@ -28,6 +28,16 @@ const SRC = {holding: "khoản", risk: "rủi ro", goal: "mục tiêu", alert: "
 const CERTAIN = {event: "estimate", alert: "estimate", scenario: "hypothetical"};
 export const certaintyOf = (e, byId) => e.certainty || CERTAIN[(byId[e.to] || {}).kind] || CERTAIN[(byId[e.from] || {}).kind] || "actual";
 const MAX_COMETS = 8;  // at once (4 elements each), OWN-GW-19
+// a spoke's change (docs/NODE_TIMELINE_PLAN.md D1–D7): over the period picked, on the spokes that hold money
+export const UNIT_WORD = {day: "so với hôm qua", month: "so với tháng trước", year: "so với cùng kỳ năm trước"};
+const FLOW_WORD = {day: "ngày gần nhất có giao dịch", month: "trong tháng", year: "12 tháng gần nhất"};
+const MONEY_KINDS = new Set(["class", "liquidity", "flow"]);
+export const changeOf = (n, unit) => (n && n.change && n.change[unit] != null ? n.change[unit] : null);
+// the colour of a change: a smaller debt is good, money out is money out
+export const changeTone = (n, v) => (!v ? "flat" : (n.kind === "flow" || n.kind === "category") ? (n.side === "out" ? "out" : "up")
+  : (n.liability ? v < 0 : v > 0) ? "up" : "down");
+export const changeText = (v) => (v === 0 ? "±0" : vnd(v, true));
+export const changeWord = (n, unit) => ((n.kind === "flow" || n.kind === "category") ? FLOW_WORD[unit] : UNIT_WORD[unit]);
 const ME_R = 62;  // “My Wealth”: the anchor's disc
 
 const mk = (tag, attrs, parent) => {
@@ -109,6 +119,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const edgeLayer = mk("g", {class: "ws-edges"}, world);
   const fxLayer = mk("g", {class: "ws-fx", "aria-hidden": "true"}, world);
   const nodeLayer = mk("g", {class: "ws-nodes"}, world);
+  const moneyLayer = mk("g", {class: "ws-money", "aria-hidden": "true"}, world);  // a spoke's change (NODE_TIMELINE_PLAN T3)
   host.appendChild(svg);
   // money in motion on its own layer over the graph, same viewBox and pan/zoom: a moving dash then repaints that layer
   // alone, not the edges, nodes and labels under it (measured: 40% less CPU for the same sparks)
@@ -119,6 +130,9 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   const els = new Map();  // node id → its <g>, kept across draws
   let W = 1000, H = 640, pos = {}, edgeTimer = 0, narrow = false, hoverId = null, derived = [], layoutRun = 0;
   const hotEdges = new Map();  // "from>to" → "hot" | "bad": a relation a pulse runs along, drawn while it matters
+  // the period a spoke's change is over (D2): day, month or year, kept for the tab
+  let unit = "month";
+  try { unit = UNIT_WORD[sessionStorage.getItem("mf.ws.unit")] ? sessionStorage.getItem("mf.ws.unit") : "month"; } catch (_) { /* private mode */ }
 
   // ── view state (OWN-GW-15): three layers ──────────────────────────────────────────────────────────
   // a class opens to its holdings on demand, where the lens shows holdings; money in or out to its categories, where the
@@ -736,6 +750,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     // the edges follow the nodes: faded while they move, drawn again where they arrive
     clearTimeout(edgeTimer);
     if (moved && !reduced()) {
+      moneyLayer.replaceChildren();  // drawn again with the edges, where the nodes arrive
       edgeLayer.classList.add("moving");
       edgeTimer = setTimeout(() => { drawEdges(lit); edgeLayer.classList.remove("moving"); }, 420);
     } else { edgeLayer.classList.remove("moving"); drawEdges(lit); }  // a draw inside a move's fade ends the fade too
@@ -809,7 +824,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const len = Math.hypot(b[0] - a[0], b[1] - a[1]), m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
       const c = pick([0.07, -0.07, 0].map(k => { const q = [m[0] - uy * k * len, m[1] + ux * k * len]; return {q, pts: bez([a, q, b])}; }), ends);
       const [p0, p1] = e.from === "ME" ? [a, b] : [b, a];
-      r = {d: `M${xy(p0)} Q${xy(c.q)} ${xy(p1)}`};
+      r = {d: `M${xy(p0)} Q${xy(c.q)} ${xy(p1)}`, bz: [a, c.q, b]};  // centre → node: where its change sits (D7)
     } else if ((byId[e.to].kind === "holding" && byId[e.from].kind === "class") || (!!e.parent && [byId[e.from].kind, byId[e.to].kind].includes("category"))) {
       // a holding or category hangs off its parent's outer side (either way round: a category of money in flows into it)
       const [ux, uy] = unit(B.x - A.x, B.y - A.y), rA = discR(byId[e.from]) + 2, rB = discR(byId[e.to]) + 2;
@@ -968,6 +983,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
         const [f0, t0] = q.dataset.e.split(">");
         q.classList.toggle("faint", !isOn(lit, f0, t0));
       }
+      drawMoney(lit);
       flowState();
       return;
     }
@@ -1022,12 +1038,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       const sum = e.derived ? ` · tổng hợp từ ${e.derived} liên kết` : "";
       const paid = e.repaid ? `<br>trả trong tháng: ${vnd(e.repaid)}` : "";
       const rate = e.monthly != null && e.monthly !== Math.abs(e.value) ? ` · ~${vnd(e.monthly)}/tháng` : "";
+      const farN = spoke(e) ? moneyNode(byId[e.from === "ME" ? e.to : e.from]) : null, dv = farN ? changeOf(farN, unit) : null;
+      const moved = dv == null ? "" : `<br>${changeText(dv)} ${changeWord(farN, unit)}${farN.kind === "flow" ? "" : " · lịch sử mô phỏng"}`;
       // a wide, invisible stroke over it (F9): a click or Enter picks the edge; Thông tin shows where it comes from
       const hit = mk("path", {d, class: "whit", "data-e": key, tabindex: "0", role: "button", "aria-pressed": String(st.edge === key),
-        "aria-label": `Liên kết ${byId[e.from].label} → ${byId[e.to].label}: ${e.label}`}, edgeLayer);
+        "aria-label": `Liên kết ${byId[e.from].label} → ${byId[e.to].label}: ${e.label}${dv == null ? "" : `, ${changeText(dv)} ${changeWord(farN, unit)}`}`}, edgeLayer);
       hit.addEventListener("click", () => selectEdge(key));
       hit.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); selectEdge(key); } });
-      hover(hit, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${rate}${paid}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
+      hover(hit, `${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}<br>${esc(e.label)}${e.value == null ? "" : " · " + vnd(e.value, cert !== "actual")}${rate}${paid}${moved}<br><span class="muted">${word} · ${srcText(e)}${sum}</span>`);
     }
     budget(queue);
     for (const q of queue) {  // in order: the main income first, so the beat is set before the out-flows take it
@@ -1048,7 +1066,70 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       band.style.animationDuration = `${BEAT}s`;
       band.style.animationDelay = `${(beat.at - BEAT).toFixed(3)}s`;
     }
+    drawMoney(lit);
     flowState();
+  }
+
+  // ── a spoke's change (NODE_TIMELINE_PLAN T3): a pill on the outer part of the spoke, signed, coloured by what it does
+  // to net worth; left out where it would cover a disc, a label or another pill
+  // a node's change, or a folded group of classes' (its members summed; a group of debts is a debt)
+  function moneyNode(n) {
+    if (MONEY_KINDS.has(n.kind)) return changeOf(n, unit) == null ? null : n;
+    if (n.kind !== "group" || n.of !== "class") return null;
+    const ms = n.members.map(id => byId[id]).filter(m => m && changeOf(m, unit) != null);
+    if (!ms.length) return null;
+    return {kind: "class", liability: ms.every(m => m.liability), change: {[unit]: ms.reduce((t, m) => t + changeOf(m, unit), 0)}};
+  }
+  // an estimate's spoke (the owner, 2026-10-20): its own figure, grey — the stress loss, a news item's or a policy item's
+  // impact, an active scenario's effect, a goal's monthly saving; not over a period (there is no history behind it)
+  function estimateOf(e, far) {
+    if (!far || e.value == null) return null;
+    if (far.kind === "risk") return far.id === "RK:drawdown" ? vnd(e.value, true) : null;  // concentration, reserve: a level, not a move
+    if (far.kind === "goal" || (far.kind === "group" && far.of === "goal")) return `${vnd(Math.abs(e.value))}/tháng`;
+    if (["event", "alert", "scenario"].includes(far.kind) || (far.kind === "group" && ["event", "alert"].includes(far.of))) return vnd(e.value, true);
+    return null;
+  }
+  function drawMoney(lit) {
+    moneyLayer.replaceChildren();
+    const {discs, boxes} = obstaclesNow(), px = fontSizes().fig, placed = [];
+    const meets = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
+    // a pill reads as its own spoke's only if no other spoke runs through it
+    const shown = shownEdges().filter(spoke), lines = new Map();
+    for (const e of shown) {
+      const r = route(e);
+      if (r.bz) lines.set(e, Array.from({length: 25}, (_, k) => { const t = k / 24, u = 1 - t; return [0, 1].map(i => u * u * r.bz[0][i] + 2 * u * t * r.bz[1][i] + t * t * r.bz[2][i]); }));
+    }
+    const inside = (box, [x, y]) => x > box[0] - 2 && x < box[2] + 2 && y > box[1] - 2 && y < box[3] + 2;
+    const clear = (box, own) => !discs.some(d => Math.hypot(Math.max(box[0], Math.min(d.x, box[2])) - d.x, Math.max(box[1], Math.min(d.y, box[3])) - d.y) < d.r)
+      && !boxes.some(o => meets(box, o.b)) && !placed.some(b => meets(box, b))
+      && ![...lines].some(([e, ps]) => e !== own && ps.some(pt => inside(box, pt)));
+    for (const e of shown) {
+      const far = byId[e.from === "ME" ? e.to : e.from], mn = far && moneyNode(far), est = mn ? null : estimateOf(e, far);
+      if ((!mn && est == null) || !pos[far.id]) continue;
+      const v = mn ? changeOf(mn, unit) : null, r = route(e);
+      if (!r.bz) continue;
+      // a few places along the spoke: on it, or beside it where the money's sparks run along the line
+      const text = mn ? changeText(v) : est, w = textW(text, px, 650) + 12, h = Math.round(px + 7), [a, q, b] = r.bz;
+      let box = null, x = 0, y = 0;
+      for (const t of [0.62, 0.74, 0.84, 0.5, 0.4]) {
+        const u = 1 - t, P = [0, 1].map(i => u * u * a[i] + 2 * u * t * q[i] + t * t * b[i]);
+        const T = [0, 1].map(i => 2 * u * (q[i] - a[i]) + 2 * t * (b[i] - q[i])), L = Math.hypot(T[0], T[1]) || 1;
+        const N = [-T[1] / L, T[0] / L], off = Math.abs(N[0]) * w / 2 + Math.abs(N[1]) * h / 2 + 3;  // the box's half-depth along the normal
+        // on the line where no money runs along it (an ownership spoke has no sparks), else beside it, above first
+        for (const sd of !e.dir && !e.repaid ? [0, 1, -1] : N[1] <= 0 ? [1, -1] : [-1, 1]) {
+          const cx = P[0] + N[0] * off * sd, cy = P[1] + N[1] * off * sd, bx = [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2];
+          if (clear(bx, e)) { box = bx; x = cx; y = cy; break; }
+        }
+        if (box) break;
+      }
+      if (!box) continue;
+      placed.push(box);
+      const tone = mn ? changeTone(mn.kind === "class" ? mn : far, v) : "est";
+      const el = mk("g", {class: `wmoney m-${tone}${isOn(lit, e.from, e.to) ? "" : " faint"}`, "data-e": `${e.from}>${e.to}`,
+        transform: `translate(${x.toFixed(1)},${y.toFixed(1)})`}, moneyLayer);
+      mk("rect", {x: (-w / 2).toFixed(1), y: (-h / 2).toFixed(1), width: w.toFixed(1), height: h, rx: h / 2}, el);
+      mk("text", {"text-anchor": "middle", dy: "0.35em"}, el).textContent = text;
+    }
   }
   // a money edge or a flow node pointed at or picked: the core leans toward that flow (OWN-GW-24)
   function flowState() {
@@ -1337,6 +1418,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       draw({moved: !first});
     },
     redraw: () => draw(),
+    unit: () => unit,
+    /* the period the spokes' changes are over: day, month or year (D2) */
+    setUnit(u) {
+      if (!UNIT_WORD[u] || u === unit) return;
+      unit = u;
+      try { sessionStorage.setItem("mf.ws.unit", u); } catch (_) { /* private mode */ }
+      if (g && lens) { drawn = ""; drawEdges(litSet()); }
+    },
     hold(on) { held = on; if (!on && heldSize) { heldSize = false; if (g && lens) draw(); } },
     /* the active stress tests combined (POST /api/scenario/combine, F6): each scenario's own part on its node, and its
        hypothetical edges — to the classes it moves (by sign) and to the spending its yearly cost adds (÷ 12). Net

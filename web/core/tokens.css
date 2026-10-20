@@ -1082,6 +1082,15 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-svg .num-svg { cursor: help; }
 .ws-edges { transition: opacity var(--dur-2) var(--ease-out); }
 .ws-edges.moving { opacity: 0; }
+/* a spoke's change (NODE_TIMELINE_PLAN T3): a pill on the outer part of the spoke; the text has the colour */
+.ws-money { pointer-events: none; }
+.ws-svg .wmoney rect { fill: var(--surface); stroke: var(--hair); stroke-width: 1; }
+.ws-svg .wmoney text { fill: var(--ink-2); font-size: 11px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.ws-svg .wmoney.m-up text { fill: var(--up); } .ws-svg .wmoney.m-down text { fill: var(--down); }
+.ws-svg .wmoney.m-out text { fill: var(--out); }
+.ws-svg .wmoney.m-est { opacity: .78; } .ws-svg .wmoney.m-est rect { fill: var(--surface-2); stroke: var(--axis); stroke-dasharray: 3 2; }
+.ws-svg .wmoney.m-est text { fill: var(--muted); font-weight: 600; }
+.ws-svg .wmoney.faint { opacity: .28; }
 /* silk (OWN-GW-16, 18): hairlines, solid / dashed / dotted by certainty; a read path glows, a failed one is red */
 /* a static edge is a quiet line: what moves on it, and the core, carry the light (docs/brd/testing/panel_and_flows_report.md) */
 .wedge { fill: none; stroke: var(--tone); stroke-opacity: .3; stroke-linecap: round; transition: opacity var(--dur-2) var(--ease-out); }
@@ -1194,6 +1203,13 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-pane[hidden] { display: none; }
 .ws-ins { display: block; padding: 14px 16px 20px; }
 .ws-ins h3 { font-size: 13.5px; margin: 14px 0 8px; }
+/* Diễn biến (NODE_TIMELINE_PLAN T4): the heading and its Ngày · Tháng · Năm on one line, the chart under them */
+.ws-tl { margin-top: 6px; }
+.ws-tl-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.ws-tl-head h3 { margin: 14px 0 6px; }
+.ws-tl-chart { margin: 8px 0 4px; min-height: 150px; }
+.ws-tl .table { font-size: 12px; } .ws-tl .table td, .ws-tl .table th { padding: 5px 8px; }
+#ws-tl-table { max-height: 260px; overflow-y: auto; }
 .ws-ins-sheets { margin-top: 14px; display: grid; gap: 6px; }
 .ws-ins .btn { border: 1px solid var(--axis); background: var(--surface); color: var(--ink); padding: 6px 12px; border-radius: 9px; font: inherit;
   font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
@@ -1265,9 +1281,10 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-head { padding: 10px 14px 0; flex-direction: column; gap: 6px; }
   .ws-center { grid-template-rows: auto auto auto auto; }
   .ws-list { max-height: 70dvh; }
-  .ws-head { order: 0; } .ws-ctl { order: 1; position: static; justify-content: flex-end; padding: 6px 12px 0; }
+  .ws-head { order: 0; } .ws-ctl { order: 1; position: static; justify-content: flex-end; flex-wrap: wrap; padding: 6px 12px 0; }
   .ws-canvas, .ws-list { order: 2; } .ws-strip { order: 3; }
   .ws-svg .wlbl { font-size: 14px; } .ws-svg .wfig { font-size: 12.5px; } .ws-svg .wme-v { font-size: 21px; }
+  .ws-svg .wmoney text { font-size: 12.5px; }
   .ws-strip-b { grid-auto-columns: minmax(200px, 78%); }
   /* a phone: the sheet takes the graph's place in the page (the graph stays mounted, hidden) and the dock stays below */
   .ws-sheet { position: static; animation: none; }

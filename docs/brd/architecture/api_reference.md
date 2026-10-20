@@ -16,6 +16,7 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 |---|---|---|---|---|
 | `/api/dashboard` | dashboard → `dashboard_flow` | `client_id, scope?, months?` | — | FEAT-21 |
 | `/api/flows` | flows → `flows_flow` | `client_id, scope?, month? (YYYY-MM)` | — | FEAT-29 |
+| `/api/timeline` | timeline → `timeline_flow` | `client_id, scope?, node (ME, CL:…, HD:…, LQ:reserve, FL:in\|out, FC:…), unit? (day\|month\|year)` | the family (people.auth) | FEAT-40 (simulated history, NODE_TIMELINE_PLAN) |
 | `/api/feed` | feed → `feed_flow` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 (each item has a stable `key`, FEAT-33) |
 | `/api/overview` | overview → `overview_flow` | `client_id, scope?, role? (client\|rm), goals? (ids followed)` | — (client: event types, classes for news) | FEAT-30 (R4) |
 | `/api/search` | search → `search_flow` | `q, role, client_id?, scope?` | role decides the kinds; the client sees type labels only | FEAT-34 |

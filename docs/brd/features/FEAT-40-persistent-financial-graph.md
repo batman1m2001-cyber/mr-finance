@@ -283,6 +283,35 @@ model: what really moved, what the CIO's assumptions estimate, and what the pers
 - **An active scenario's read pulses along its edges.** When a tool reads an active scenario, it pulses along
   that scenario's three largest hypothetical edges, then home, hollow.
 
+### Money on the edges and a node's timeline (owner, 2026-10-20)
+
+Plan and decisions: [NODE_TIMELINE_PLAN.md](../../NODE_TIMELINE_PLAN.md).
+
+- **A spoke says its change, signed.** “Bạn” ↔ an asset class, a debt, Thanh khoản dự phòng, Thu nhập / Chi tiêu:
+  a pill on the outer part of the spoke (“+177 triệu”). It sits on the line where no money runs along it, else
+  beside it (the sparks never cross its text). It is left out where it would cover a disc, a label, another pill or
+  another spoke. A folded group of classes sums its members.
+- **Ngày · Tháng · Năm** in the graph's controls (Tháng first, kept for the tab): since yesterday, since the same day
+  last month (today's value − `prev_value`, the change Tổng quan shows) or since the same day last year. Money in or
+  out: the latest day with rows, the flow's month, the twelve months to it.
+- **The colour is what it does to net worth.** Up is green and down is red; a smaller debt is green; money out wears
+  `--out`.
+- **An estimate's spoke shows its own figure in grey**, with a dashed outline (owner, 2026-10-20):
+  - the stress loss (“Sụt giảm ước tính”), a news item's and a policy item's impact, an active scenario's effect;
+  - a goal's monthly saving.
+  It does not follow the period: there is no history behind it. Concentration and the reserve risk are levels, not
+  moves, and have none.
+- **Diễn biến in Thông tin.** A picked money node (Bạn, a class, a holding, the reserve, money in or out, a
+  category) shows the period's change in words, then a chart on one time axis:
+  - a level: its value as a line, the period's change as bars below (two panels, never two scales);
+  - money in or out: its sums as bars.
+  Under the chart: the range in words, and the numbers as a table (“Xem bảng số”). Its Ngày · Tháng · Năm is the
+  graph's.
+- **The history is simulated and says so** (“mô phỏng” on the chart, in the tooltip, in the note). It is generated
+  by `scripts/make_history.py` into `data/history/`, from January 2021, and ends at today's figures through the
+  month-ago and 1 January anchors. Stocks, gold and crypto follow the real stored prices, corrected to the demo's.
+  A holding added in the app since is flat at its month-ago value.
+
 ## Feature map — every BRD feature and its graph form (OWN-GW-33, 50)
 
 The Customer's graph is one model. Each BRD feature draws something on it, feeds what it draws, or stays a staff

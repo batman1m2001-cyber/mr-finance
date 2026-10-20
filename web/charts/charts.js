@@ -110,6 +110,75 @@ export function fan(box, horizons, opts = {}) {
   box.appendChild(legend);
 }
 
+// ── a node's money over time (NODE_TIMELINE_PLAN T4): two panels on one time axis, never two scales on one ──────
+// a level (net worth, a class, a holding): its value as a line over a soft area, and below it the period's change as
+// bars around zero, coloured by what it does to net worth (a smaller debt is good); money in or out: its sums as bars.
+// One crosshair over both panels; the hover says the period, the value and the change.
+export function timeline(box, t, opts = {}) {
+  const pts = t.points, flow = t.kind === "flow";
+  const width = Math.max(260, box.clientWidth || 320), narrow = width < 380;
+  const pad = {l: narrow ? 50 : 58, r: 8, t: 8};
+  const topH = flow ? 0 : 128, gap = flow ? 0 : 24, barH = flow ? 132 : 62, axisH = 20;
+  const height = pad.t + topH + gap + barH + axisH;
+  const n = pts.length, cw = (width - pad.l - pad.r) / n;
+  const cx = (i) => pad.l + cw * (i + 0.5);
+  const svg = el("svg", {class: "viz tl", viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": opts.label || "Diễn biến theo thời gian"});
+  const grid = el("g", {class: "grid"}, svg);
+  const axis = (lo, hi, y0, h) => {
+    if (lo === hi) { lo -= 1; hi += 1; }
+    const step = niceStep(hi - lo), a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step;
+    const y = (v) => y0 + ((b - v) * h) / (b - a);
+    for (let v = a; v <= b + step / 2; v += step * (b - a > 3 * step ? 2 : 1)) {
+      el("line", {x1: pad.l, x2: width - pad.r, y1: y(v), y2: y(v), class: Math.abs(v) < step / 2 ? "zero" : null}, grid);
+      el("text", {x: pad.l - 6, y: y(v) + 4, "text-anchor": "end", "data-axis": ""}, svg).textContent = v === 0 ? "0" : vnd(v, v < 0);
+    }
+    return y;
+  };
+  const tone = (v) => (flow ? (t.node.includes("out") ? "var(--out)" : "var(--in)") : !v ? "var(--axis)"
+    : (t.liability ? v < 0 : v > 0) ? "var(--up)" : "var(--down)");
+  // the level: a line over a soft area
+  let yTop = null;
+  if (!flow) {
+    const vs = pts.map(p => p.value);
+    yTop = axis(Math.min(...vs), Math.max(...vs), pad.t, topH);
+    const line = pts.map((p, i) => `${i ? "L" : "M"}${cx(i).toFixed(1)},${yTop(p.value).toFixed(1)}`).join("");
+    el("path", {d: `${line}L${cx(n - 1).toFixed(1)},${pad.t + topH}L${cx(0).toFixed(1)},${pad.t + topH}Z`, fill: "var(--band-2)", stroke: "none"}, svg);
+    el("path", {d: line, fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round"}, svg);
+  }
+  // the bars: the change of each period (a level), or its sum (money in or out)
+  const bv = pts.map(p => (flow ? p.value : p.change || 0));
+  const y0 = pad.t + topH + gap;
+  const yBar = axis(Math.min(0, ...bv), Math.max(0, ...bv), y0, barH);
+  if (!flow) el("text", {x: pad.l, y: y0 - 8, class: "lbl"}, svg).textContent = opts.versus ? `Thay đổi ${opts.versus}` : "Thay đổi";
+  const bw = Math.max(1, cw - (cw > 6 ? 2 : 1));
+  pts.forEach((p, i) => {
+    const v = bv[i], top = Math.min(yBar(v), yBar(0)), h = Math.max(v ? 1 : 0, Math.abs(yBar(v) - yBar(0)));
+    if (h) el("rect", {x: (cx(i) - bw / 2).toFixed(1), y: top.toFixed(1), width: bw.toFixed(1), height: h.toFixed(1), rx: Math.min(2, bw / 2), fill: tone(v)}, svg);
+  });
+  // the time axis: first, middle and last periods
+  const yAx = height - 6;
+  for (const i of [...new Set([0, Math.floor((n - 1) / 2), n - 1])]) {
+    el("text", {x: cx(i), y: yAx, "text-anchor": i === 0 ? "start" : i === n - 1 ? "end" : "middle"}, svg).textContent = pts[i].label;
+  }
+  // one crosshair over both panels, and a hit strip per period
+  const cross = el("line", {y1: pad.t, y2: y0 + barH, stroke: "var(--axis)", "stroke-width": 1, visibility: "hidden"}, svg);
+  const dot = flow ? null : el("circle", {r: 4, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden"}, svg);
+  pts.forEach((p, i) => {
+    const hit = el("rect", {x: (cx(i) - cw / 2).toFixed(1), y: pad.t, width: cw.toFixed(2), height: y0 + barH - pad.t, fill: "transparent"}, svg);
+    const on = () => {
+      cross.setAttribute("x1", cx(i)); cross.setAttribute("x2", cx(i)); cross.setAttribute("visibility", "visible");
+      if (dot) { dot.setAttribute("cx", cx(i)); dot.setAttribute("cy", yTop(p.value)); dot.setAttribute("visibility", "visible"); }
+    };
+    hit.addEventListener("mouseenter", on);
+    hit.addEventListener("touchstart", on, {passive: true});
+    hit.addEventListener("mouseleave", () => { cross.setAttribute("visibility", "hidden"); if (dot) dot.setAttribute("visibility", "hidden"); });
+    hover(hit, flow ? `<b>${esc(p.label)}</b><br>${vnd(p.value, true)}`
+      : `<b>${esc(p.label)}</b><br>${vnd(p.value)}<br>${p.change === 0 ? "không đổi" : vnd(p.change, true)} ${esc(opts.versus || "so với kỳ trước")}`);
+  });
+  box.innerHTML = "";
+  box.appendChild(svg);
+}
+
 // ── diverging bars: contributions that add up to a total ─────────────────────
 export function diverging(box, rows, opts = {}) {
   // rows: [{label, value, color?, title?}] — sorted by |value| here

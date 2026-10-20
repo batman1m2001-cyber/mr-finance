@@ -96,6 +96,7 @@ def actions(vid, item):
         ("/api/dashboard", {"client_id": "C01"}, FAMILY),
         ("/api/overview", {"client_id": "C01", "role": "AS"}, FAMILY),
         ("/api/flows", {"client_id": "C01"}, FAMILY),
+        ("/api/timeline", {"client_id": "C01", "node": "ME"}, FAMILY),
         ("/api/feed", {"client_id": "C01", "role": "AS"}, FAMILY),
         ("/api/alerts", {"client_id": "C01"}, FAMILY),
         ("/api/goals", {"client_id": "C01"}, FAMILY),

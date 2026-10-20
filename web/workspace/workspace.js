@@ -6,11 +6,13 @@
 import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {createGraph} from "./graph.js?v=20261020u1";
+import {UNIT_WORD, createGraph} from "./graph.js?v=20261020t1";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261018p3";
+import {render as inspect} from "./inspector.js?v=20261020t1";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261018p3";
 import {mount as mountStrip} from "./strip.js?v=20261018p3";
+
+const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
 
 export function mount(main, {client, scope, go, page}) {
   const root = document.createElement("div");
@@ -28,6 +30,7 @@ export function mount(main, {client, scope, go, page}) {
       <div class="ws-canvas" id="ws-canvas"></div>
       <div class="ws-list" id="ws-list" hidden></div>
       <div class="ws-ctl" role="toolbar" aria-label="Điều khiển đồ thị">
+        <div class="seg" role="group" aria-label="Thay đổi trên các cạnh: so với hôm qua, tháng trước hay năm trước" id="ws-unit">${UNITS.map(([u, l]) => `<button type="button" data-u="${u}" aria-pressed="false" title="${esc(UNIT_WORD[u])}">${l}</button>`).join("")}</div>
         <div class="seg" role="group" aria-label="Cách xem"><button type="button" data-v="graph" aria-pressed="true">Đồ thị</button><button type="button" data-v="list" aria-pressed="false">Danh sách</button></div>
         <button type="button" class="iconbtn" data-z="in" aria-label="Phóng to">+</button>
         <button type="button" class="iconbtn" data-z="out" aria-label="Thu nhỏ">−</button>
@@ -79,6 +82,7 @@ export function mount(main, {client, scope, go, page}) {
   const frame = dockFrame(root, {canvas: $("#ws-canvas", root), hold: (on) => graph.hold(on), redraw: () => graph.redraw()});
 
   const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), edge: graph.selectedEdge(), kindLabel, openSheet,
+    timeline: {client: client(), scope: scope(), unit: graph.unit(), setUnit: (u) => setUnit(u)},
     scenario: {on: (id) => active().ids.includes(id), params: (id) => (active().params || {})[id] || null, set: setActive}});
 
   // what the assistant is told the person is looking at (F10): the lens, the pick, the active scenarios
@@ -138,6 +142,13 @@ export function mount(main, {client, scope, go, page}) {
     b.onclick = () => (b.dataset.z === "in" ? graph.zoom(1.2) : b.dataset.z === "out" ? graph.zoom(1 / 1.2) : b.dataset.z === "focus" ? graph.focus() : graph.fit());
   }
   for (const b of root.querySelectorAll("[data-v]")) b.onclick = () => setView(b.dataset.v);
+  const setUnit = (u) => {
+    graph.setUnit(u);
+    for (const b of root.querySelectorAll("[data-u]")) b.setAttribute("aria-pressed", String(b.dataset.u === graph.unit()));
+    drawInspector();
+  };
+  for (const b of root.querySelectorAll("[data-u]")) b.onclick = () => setUnit(b.dataset.u);
+  for (const b of root.querySelectorAll("[data-u]")) b.setAttribute("aria-pressed", String(b.dataset.u === graph.unit()));
   const setView = (v) => {
     view = v;
     for (const b of root.querySelectorAll("[data-v]")) b.setAttribute("aria-pressed", String(b.dataset.v === v));

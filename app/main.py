@@ -2,6 +2,7 @@
 
 POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──► the dashboard
 POST /api/flows     {client_id, scope?, month?} ──► flows_flow ──► a month's money in → out, with the rows
+POST /api/timeline  {client_id, scope?, node, unit?} ──► timeline_flow ──► a graph node's money by day, month, year
 POST /api/feed      {client_id, scope?, role?} ──► feed_flow ──► what matters now, why, and its evidence
 POST /api/feed/open {client_id, key} ──► feed_open_flow ──► the client opened a high-level item (KPI-07)
 POST /api/rm/contacts {family_id, channel, signal?, note?, by} ──► contact_flow ──► an RM's contact (KPI-06)
@@ -119,6 +120,7 @@ from scenarios.graph import combine_flow, goals_flow, scenario_flow
 from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
+from timeline.graph import timeline_flow
 from views.graph import agent_eval_flow, agent_queue_flow, agent_worker_flow, decide_flow
 from zone.graph import zone_sync_flow
 
@@ -149,6 +151,12 @@ APP = Application(
             http("POST", "/api/overview", port=PORT),
             graph=overview_flow,
             description="POST {client_id, scope, role: client|rm, goals}: the overview graph around one client.",
+        ),
+        Service(
+            "timeline",
+            http("POST", "/api/timeline", port=PORT),
+            graph=timeline_flow,
+            description="POST {client_id, scope, node, unit: day|month|year}: a node's money over time (simulated).",
         ),
         Service(
             "flows",

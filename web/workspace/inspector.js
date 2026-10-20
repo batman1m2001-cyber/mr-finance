@@ -1,9 +1,10 @@
 /* Thông tin — the workspace's inspector (FEAT-40, OWN-GW-03): the selected node's figures with their “Cách tính”,
    its links with the records they were read from, and the sheets that show it in full; with nothing selected, what
    the lens looks at first. Built from the overview page's side panel (map.js). */
-import {formulaOf, n as how, esc, pct, signClass, vnd} from "../core/core.js";
+import {formulaOf, n as how, esc, pct, post, signClass, vnd} from "../core/core.js";
+import {timeline as drawTimeline} from "../charts/charts.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
-import {LOOK, certaintyOf, figureOf, howOf, srcText} from "./graph.js?v=20261020u1";
+import {LOOK, UNIT_WORD, certaintyOf, changeOf, changeText, changeTone, changeWord, figureOf, howOf, srcText} from "./graph.js?v=20261020t1";
 import {SHEETS} from "./lenses.js?v=20261018p3";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
@@ -20,8 +21,15 @@ const CUSTOM = [["real_estate", "Bất động sản", -50, 50], ["stock", "Cổ
   ["rate", "Lãi vay thả nổi tăng (điểm %)", 0, 5], ["income", "Thu nhập hằng tháng", -50, 50]];
 const SRC_WORD = {holding: "Khoản", risk: "Rủi ro", goal: "Mục tiêu", alert: "Chính sách", run: "Lần áp dụng tin", txn: "Giao dịch tháng", scenario: "Kịch bản"};
 const GOAL_WORD = {on_track: "Đúng tiến độ", at_risk: "Cần chú ý", off_track: "Chậm tiến độ"};
+// a node's money over time (NODE_TIMELINE_PLAN T4): the kinds that hold or move money, each fetched once per unit
+const MONEY = new Set(["family", "class", "holding", "liquidity", "flow", "category"]);
+const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];
+const RANGE = {day: "90 ngày gần nhất", month: "từng tháng từ 2021", year: "từng năm từ 2021"};
+const STEP = {day: "so với hôm trước", month: "so với tháng trước", year: "so với năm trước"};
+const TONE = {up: "up", down: "down", out: "down", flat: ""};
+const timelines = new Map();  // client|scope|node|unit → the promise of its points
 
-export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scenario}) {
+export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scenario, timeline}) {
   const n = node;
   if (!n && edge) { drawEdge(edge); wire(); return; }
   const sheetBtns = (ids) => ids.map(id => `<button type="button" class="btn sm" data-sheet="${id}">${esc(SHEETS[id].label)} ${icon("arrow", {size: 14})}</button>`).join("");
@@ -82,6 +90,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
         ${n.kind === "scenario" && scenario && n.ref !== "custom" ? `<button type="button" class="btn sm ${n.active ? "" : "primary"}" id="ws-run" aria-pressed="${!!n.active}">${n.active ? "Tắt kịch bản" : "Bật kịch bản"}</button>` : ""}
         ${n.kind === "event" ? `<button type="button" class="btn sm primary" data-sheet="do-thi" data-param="${esc(n.ref)}" data-focus-key="event:${esc(n.ref)}">Xem đường đi của tin ${icon("arrow", {size: 14})}</button>`
           : sheet ? `<button type="button" class="btn sm" data-sheet="${sheet}">Mở ${esc(SHEETS[sheet].label)} ${icon("arrow", {size: 14})}</button>` : ""}</div>
+      ${MONEY.has(n.kind) && timeline ? timelineBlock(n) : ""}
       ${n.kind === "scenario" && scenario && n.ref === "custom" ? customForm(n) : ""}
       ${n.kind === "scenario" && n.active ? trace(n) : ""}
       <h3 class="mt">Liên kết <span class="hint">${es.length}</span></h3>
@@ -92,6 +101,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
     el.querySelector("#ws-clear").onclick = () => graph.select(null);
     const open = el.querySelector("#ws-open");
     if (open) open.onclick = () => graph.toggle(n.id);
+    if (MONEY.has(n.kind) && timeline) loadTimeline(n);
     const run = el.querySelector("#ws-run");
     if (run) run.onclick = () => { run.disabled = true; scenario.set(n.ref, !n.active); };
     const form = el.querySelector("#ws-what");
@@ -112,6 +122,41 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
     }
   }
   wire();
+
+  // ── Diễn biến (T4): the change over the period picked, the chart, and its numbers as a table
+  function timelineBlock(n) {
+    const u = timeline.unit, v = changeOf(n, u);
+    const say = v == null ? "" : `<p class="small mt-xs">${{day: "Hôm nay", month: "Tháng này", year: "Năm nay"}[u]}: <b class="${TONE[changeTone(n, v)]}">${changeText(v)}</b> ${esc(changeWord(n, u))}</p>`;
+    return `<section class="ws-tl" aria-labelledby="ws-tl-h">
+      <div class="ws-tl-head"><h3 id="ws-tl-h">Diễn biến <span class="pill" title="Lịch sử trước hôm nay là dữ liệu mô phỏng cho bản demo">mô phỏng</span></h3>
+        <div class="seg" role="group" aria-label="Bước thời gian">${UNITS.map(([k, l]) => `<button type="button" data-tl="${k}" aria-pressed="${k === u}" title="${esc(UNIT_WORD[k])}">${l}</button>`).join("")}</div></div>
+      ${say}
+      <div class="ws-tl-chart" id="ws-tl-chart" aria-busy="true"><div class="skeleton" style="height:150px"></div></div>
+      <p class="small muted" id="ws-tl-range"></p>
+      <details class="more"><summary>Xem bảng số</summary><div class="scrollx" id="ws-tl-table"></div></details></section>`;
+  }
+  function loadTimeline(n) {
+    const {client, scope, unit: u} = timeline, key = `${client}|${scope}|${n.id}|${u}`;
+    for (const b of el.querySelectorAll("[data-tl]")) b.onclick = () => timeline.setUnit(b.dataset.tl);
+    if (!timelines.has(key)) {
+      const p = post("/api/timeline", {client_id: client, scope, node: n.id, unit: u}).then(r => r.timeline);
+      p.catch(() => timelines.delete(key));  // a failure is tried again next time
+      timelines.set(key, p);
+    }
+    const box = el.querySelector("#ws-tl-chart");
+    timelines.get(key).then(t => {
+      if (!box.isConnected) return;  // another pick drew the pane since
+      box.removeAttribute("aria-busy");
+      const ps = t.points, a = ps[0], z = ps[ps.length - 1];
+      const flow = t.kind === "flow", total = ps.reduce((x, p) => x + p.value, 0);
+      drawTimeline(box, t, {label: `${t.label}: ${RANGE[u]}`, versus: STEP[u]});
+      el.querySelector("#ws-tl-range").innerHTML = flow
+        ? `${esc(RANGE[u][0].toUpperCase() + RANGE[u].slice(1))}: tổng <b>${vnd(total, true)}</b> · ${esc(t.note)}`
+        : `${esc(a.label)} → ${esc(z.label)}: ${vnd(a.value)} → <b>${vnd(z.value)}</b> (<span class="${signClass((t.liability ? -1 : 1) * (z.value - a.value))}">${vnd(z.value - a.value, true)}</span>) · ${esc(t.note)}`;
+      el.querySelector("#ws-tl-table").innerHTML = `<table class="table small"><thead><tr><th>Kỳ</th><th class="r">${flow ? "Số tiền" : "Giá trị"}</th>${flow ? "" : `<th class="r">Thay đổi</th>`}</tr></thead><tbody>
+        ${[...ps].reverse().map(p => `<tr><td>${esc(p.label)}</td><td class="r">${vnd(p.value, flow)}</td>${flow ? "" : `<td class="r">${changeText(p.change)}</td>`}</tr>`).join("")}</tbody></table>`;
+    }).catch(e => { if (box.isConnected) { box.removeAttribute("aria-busy"); box.innerHTML = `<p class="small muted" role="alert">Không tải được diễn biến: ${esc(e.message || "")}</p>`; } });
+  }
 
   function wire() {
     for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => graph.select(b.dataset.n);
@@ -147,6 +192,9 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
       e.repaid && `trả trong tháng <b>${how(vnd(e.repaid), "transaction.amount")}</b>`,
     ].filter(Boolean).join(" · ");
     const once = e.monthly == null && e.value != null ? " · một lần, không phải hằng tháng" : "";
+    // a spoke to money (T3): its change over the period picked, as the edge shows it
+    const dv = (A.id === "ME" || B.id === "ME") && timeline && ["class", "liquidity", "flow"].includes(far.kind) ? changeOf(far, timeline.unit) : null;
+    const moved = dv == null ? "" : `Thay đổi <b class="${TONE[changeTone(far, dv)]}">${changeText(dv)}</b> ${esc(changeWord(far, timeline.unit))}${far.kind === "flow" ? "" : " · lịch sử mô phỏng"}`;
     const flowWords = !e.dir ? "Quan hệ: không có tiền chuyển"
       : cert === "actual" ? `Tiền đi: ${esc(src.label)} → ${esc(dst.label)}${once}`
         : `Chiều của dòng: ${esc(src.label)} → ${esc(dst.label)} · ${CERT_WORD[cert]}, không phải giao dịch${once}`;
@@ -175,6 +223,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
         <button type="button" class="linkbtn small" id="ws-clear" style="margin-left:auto">Bỏ chọn</button></div>
       <p class="small mt-xs">${esc(e.label)}${e.derived ? ` · tổng hợp từ ${e.derived} liên kết` : ""}</p>
       ${amount ? `<p class="small mt-xs">${amount}</p>` : ""}
+      ${moved ? `<p class="small mt-xs">${moved}</p>` : ""}
       <p class="small mt-xs">${flowWords}</p>
       <dl class="ws-edge">
         <dt>Nguồn</dt><dd>${records || `<span class="small muted">Không có bản ghi</span>`}${more}</dd>
