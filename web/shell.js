@@ -65,7 +65,8 @@ const ROLES = {
       {id: "chinh-sach", label: "Chính sách", page: "radar"},
       {id: "mo-hinh", label: "Mô hình", sub: [
         {id: "tham-so", label: "Tham số", page: "model"}, {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
-        {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"}]},
+        {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"},
+        {id: "thu-nghiem", label: "Thử nghiệm agent tin tức", page: "trial"}]},  // BUSINESS_FEEDBACK_1021_PLAN B1
       {id: "do-luong", label: "Đo lường", page: "measure"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "viec-nen", label: "Việc nền", page: "jobs"},

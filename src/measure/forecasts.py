@@ -88,25 +88,10 @@ def score(today: Optional[str] = None, data: Optional[Dict[str, realised.Series]
     now = time.time()
     updates = []
     for f in due:
-        s = data.get(f["factor"])
-        x = s.move(f["origin"], f["due"]) if s and s.last and s.last >= f["due"] else None
-        if x is None:
-            late = (date.fromisoformat(today) - date.fromisoformat(f["due"])).days > GIVE_UP_DAYS
-            if s is None or late:
-                f.update(result="no_data")
-                out["no_data"] += 1
-            else:
-                out["waiting"] += 1
-                continue
-        else:
-            exp = f["expected"]
-            f.update(
-                result="scored",
-                realised=round(x, 6),
-                inside=f["p10"] <= x <= f["p90"],
-                direction_hit=None if exp == 0 or x == 0 else (exp > 0) == (x > 0),
-            )
-            out["scored"] += 1
+        got = judge(f, data, today)
+        out[got] += 1
+        if got == "waiting":
+            continue
         data_only = {
             k: v
             for k, v in f.items()
@@ -116,6 +101,27 @@ def score(today: Optional[str] = None, data: Optional[Dict[str, realised.Series]
     with db.tx() as con:
         con.executemany("update forecasts set scored = ?, data = ? where id = ?", updates)
     return out
+
+
+def judge(f: Dict[str, Any], data: Dict[str, realised.Series], today: str) -> str:
+    """One due forecast against the realised move: "scored" (``realised``, ``inside``, ``direction_hit`` set on
+    it), "no_data" (no series, or none 30 days after the due day) or "waiting". Also the trial's shadow forecasts'."""
+    s = data.get(f["factor"])
+    x = s.move(f["origin"], f["due"]) if s and s.last and s.last >= f["due"] else None
+    if x is None:
+        late = (date.fromisoformat(today) - date.fromisoformat(f["due"])).days > GIVE_UP_DAYS
+        if s is None or late:
+            f.update(result="no_data")
+            return "no_data"
+        return "waiting"
+    exp = f["expected"]
+    f.update(
+        result="scored",
+        realised=round(x, 6),
+        inside=f["p10"] <= x <= f["p90"],
+        direction_hit=None if exp == 0 or x == 0 else (exp > 0) == (x > 0),
+    )
+    return "scored"
 
 
 def all_rows() -> List[Dict[str, Any]]:

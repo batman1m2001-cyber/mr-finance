@@ -908,6 +908,16 @@ async def model_estimate_preview(request: Request) -> JSONResponse:
     return JSONResponse({"report": est["report"], "validation": val, "in_force": base["version"]})
 
 
+async def trial(request: Request) -> JSONResponse:
+    """The news agents' trial (BUSINESS_FEEDBACK_1021_PLAN B1): collection, recall, the agents' runs and their
+    shadow forecasts scored."""
+    import asyncio
+
+    from trial import report
+
+    return JSONResponse(await asyncio.to_thread(report.summary))
+
+
 async def accuracy(request: Request) -> JSONResponse:
     """FEAT-18: the model walked forward over history, and every approved view's forecasts scored as their horizons
     pass (BR-15, KPI-03/04, MEAS-01/02)."""
@@ -1153,6 +1163,7 @@ ROUTE_ROLES = {
     "/api/runs": OVERSIGHT,  # an RM reads a family's runs through /api/families/…/impact, post-checked only
     "/api/config": OVERSIGHT,
     "/api/accuracy": OVERSIGHT,
+    "/api/trial": OVERSIGHT,
     "/api/measure": OVERSIGHT,
     "/api/research": ("cio", "compliance"),  # unreleased research (FR-203)
     "/api/market": ("cio", "admin"),
@@ -1284,6 +1295,7 @@ app = Starlette(
         Route("/api/policy/{document_id}", policy_one),
         Route("/api/inbox", inbox_receive, methods=["POST"]),
         Route("/api/accuracy", accuracy),
+        Route("/api/trial", trial),
         Route("/api/measure", measure_reports),
         Route("/api/market/series", market_series),
         Route("/api/research", research_list),
