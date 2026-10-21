@@ -71,8 +71,8 @@ private struct Hero: View {
                  : "\(items.count) sự kiện đang có hiệu lực · \(Fmt.pct(nw > 0 ? total / nw : 0, signed: true, digits: 2)) tài sản ròng")
                 .font(.subheadline).foregroundStyle(Theme.ink2)
             Label("AI hỗ trợ · CIO duyệt", systemImage: "checkmark.seal")
-                .font(.footnote.weight(.semibold)).foregroundStyle(Theme.accent)
-                .padding(.horizontal, 10).padding(.vertical, 4).background(Theme.accentSoft, in: Capsule())
+                .font(.footnote.weight(.semibold)).foregroundStyle(Theme.ink2)
+                .padding(.horizontal, 10).padding(.vertical, 4).background(Theme.surface2, in: Capsule())
             Text("Kỳ vọng = trung bình theo xác suất các kịch bản CIO duyệt."
                  + (items.first?.priceDate.map { " Giá ngày \(Fmt.day($0))." } ?? "")
                  + (responsible.map { " \($0)." } ?? ""))
@@ -187,10 +187,10 @@ private struct RangeBar: View {
             let x = { (v: Double) in g.size.width * (v - lo) / span }
             ZStack(alignment: .leading) {
                 Capsule().fill(Theme.surface2).frame(height: 8)
-                Capsule().fill(Theme.accent.opacity(0.35)).frame(width: max(4, x(band.p90) - x(band.p10)), height: 8)
+                Capsule().fill(Theme.series.opacity(0.3)).frame(width: max(4, x(band.p90) - x(band.p10)), height: 8)
                     .offset(x: x(band.p10))
                 Rectangle().fill(Theme.ink2).frame(width: 1, height: 16).offset(x: x(0))
-                Circle().fill(Theme.accent).frame(width: 12, height: 12).offset(x: x(band.expected) - 6)
+                Circle().fill(Theme.series).frame(width: 12, height: 12).offset(x: x(band.expected) - 6)
             }
             .frame(maxHeight: .infinity)
         }

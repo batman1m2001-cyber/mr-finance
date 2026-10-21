@@ -1,20 +1,25 @@
 import SwiftUI
 import UIKit
 
-/// The website's colours (web/core/tokens.css), light and dark.
+/// The Techcombank-ecosystem look: black, white and greys, the brand red only on what is pressed or picked (buttons,
+/// the selected tab, the client's own words). Figures never wear the red: a series is grey (`series`), a gain green,
+/// a loss or a breach orange-red (`critical`), so a loss never reads as a button and a button never as a loss.
 enum Theme {
-    static let plane = dyn(0xf6f6fb, 0x16132b)
-    static let surface = dyn(0xffffff, 0x211c3b)
-    static let surface2 = dyn(0xf5f4fa, 0x2a2549)
-    static let ink = dyn(0x1c1a2e, 0xecebf4)
-    static let ink2 = dyn(0x4a4763, 0xc3c0d6)
-    static let muted = dyn(0x6e6a86, 0x9a97b0)
-    static let hair = dyn(0xe6e4ef, 0x332d57)
-    static let accent = dyn(0x5b47d6, 0xb3a7ff)
-    static let accentSoft = dyn(0xece9fd, 0x2f2858)
-    static let good = dyn(0x0f7a3d, 0x5fd38d)
-    static let warning = dyn(0xb37400, 0xf5c45e)
-    static let critical = dyn(0xc0332b, 0xff8a7a)
+    static let plane = dyn(0xf4f4f5, 0x0e0e10)
+    static let surface = dyn(0xffffff, 0x1a1a1d)
+    static let surface2 = dyn(0xf0f0f2, 0x26262a)
+    static let ink = dyn(0x141414, 0xf2f2f3)
+    static let ink2 = dyn(0x4a4a4f, 0xc7c7cc)
+    static let muted = dyn(0x6f6f76, 0x8e8e95)
+    static let hair = dyn(0xe4e4e7, 0x2e2e33)
+    static let accent = dyn(0xe31b23, 0xff4d55)
+    static let accentSoft = dyn(0xfdeced, 0x3a1517)
+    static let series = dyn(0x3d3d42, 0xc9c9ce)
+    static let good = dyn(0x0f7a3d, 0x4cc38a)
+    static let warning = dyn(0xa16207, 0xf5c45e)
+    static let critical = dyn(0xc2410c, 0xff8a4c)
+    static let brandRed = Color(red: 227 / 255, green: 27 / 255, blue: 35 / 255)
+    static let brandBlack = Color(red: 20 / 255, green: 20 / 255, blue: 20 / 255)
 
     static func status(_ s: Status) -> Color {
         switch s { case .good: good; case .warn: warning; case .bad: critical }

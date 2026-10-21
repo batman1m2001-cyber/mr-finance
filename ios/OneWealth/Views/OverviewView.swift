@@ -103,7 +103,7 @@ private struct MonthCard: View {
                             .cornerRadius(4)
                     }
                 }
-                .chartForegroundStyleScale(["Tiền vào": Theme.good, "Tiền ra": Theme.accent])
+                .chartForegroundStyleScale(["Tiền vào": Theme.good, "Tiền ra": Theme.series])
                 .chartYAxis {
                     AxisMarks(position: .leading) { v in
                         AxisGridLine().foregroundStyle(Theme.hair)
@@ -137,7 +137,7 @@ private struct AllocationCard: View {
                     GeometryReader { g in
                         Capsule().fill(Theme.surface2)
                             .overlay(alignment: .leading) {
-                                Capsule().fill(Theme.accent).frame(width: max(4, g.size.width * s.share))
+                                Capsule().fill(Theme.series).frame(width: max(4, g.size.width * s.share))
                             }
                     }
                     .frame(height: 6)

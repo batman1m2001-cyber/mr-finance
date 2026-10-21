@@ -10,8 +10,7 @@ struct SignInView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Image(systemName: "leaf.circle.fill")
-                        .font(.system(size: 48)).foregroundStyle(Theme.accent).accessibilityHidden(true)
+                    Logo().frame(width: 56, height: 56)
                     Text("OneWealth").font(.largeTitle.bold()).foregroundStyle(Theme.ink)
                     Text("Toàn bộ tài sản và dòng tiền của gia đình bạn, ở một nơi.")
                         .font(.body).foregroundStyle(Theme.ink2)
@@ -77,5 +76,21 @@ struct SignInView: View {
     private func initials(_ name: String) -> String {
         let w = name.split(separator: " ")
         return ((w.dropLast().first.map { String($0.prefix(1)) } ?? "") + (w.last.map { String($0.prefix(1)) } ?? "")).uppercased()
+    }
+}
+
+/// The OneWealth mark, as the app icon: a red ring and a white dot on black (our own mark, not the bank's logo).
+struct Logo: View {
+    var body: some View {
+        GeometryReader { g in
+            let w = g.size.width
+            ZStack {
+                RoundedRectangle(cornerRadius: w * 0.225, style: .continuous).fill(Theme.brandBlack)
+                Circle().strokeBorder(Theme.brandRed, lineWidth: w * 54 / 512).frame(width: w * 330 / 512)
+                Circle().fill(.white).frame(width: w * 88 / 512)
+            }
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .accessibilityHidden(true)
     }
 }

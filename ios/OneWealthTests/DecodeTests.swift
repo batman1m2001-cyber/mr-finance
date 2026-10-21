@@ -34,7 +34,8 @@ final class DecodeTests: XCTestCase {
         XCTAssertEqual(d.items.count, 2)
         XCTAssertTrue(d.items.allSatisfy(\.effective))
         XCTAssertNotNil(d.items.first?.horizons["3m"])
-        XCTAssertEqual(d.effectiveExpected3m ?? 0, d.items.reduce(0) { $0 + ($1.horizons["3m"]?.expected ?? 0) }, accuracy: 2)
+        // the server's effective_expected_3m for this answer: 191 547 đ
+        XCTAssertEqual(d.items.filter(\.effective).reduce(0) { $0 + ($1.horizons["3m"]?.expected ?? 0) }, 191_547, accuracy: 2)
         // every asset class the server sends has a Vietnamese name, however the decoder spelled the key
         for i in d.items { for k in i.byClass.keys { XCTAssertNotEqual(classLabel(k), k, k) } }
     }

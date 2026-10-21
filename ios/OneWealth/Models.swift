@@ -178,8 +178,9 @@ struct FlowRow: Codable, Hashable {
 // MARK: Tin tức — GET /api/families/<id>/impact?role=client: what the CIO-approved news does to the family
 
 struct Impact: Codable {
+    /// the total of the effective items is summed from them (the server's `effective_expected_3m` does not survive
+    /// `.convertFromSnakeCase`: "3m" becomes "3M")
     let items: [ImpactItem]
-    let effectiveExpected3m: Double?
     let effectiveCount: Int?
     let labels: ImpactLabels?
 }

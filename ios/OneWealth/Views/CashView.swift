@@ -70,7 +70,7 @@ private struct NetChart: View {
                     .cornerRadius(3)
                 RuleMark(y: .value("0", 0)).foregroundStyle(Theme.ink2).lineStyle(StrokeStyle(lineWidth: 1))
             }
-            .chartForegroundStyleScale(["Đã có": Theme.accent, "Dự kiến": Theme.accent.opacity(0.4)])
+            .chartForegroundStyleScale(["Đã có": Theme.series, "Dự kiến": Theme.series.opacity(0.35)])
             .chartXAxis {
                 AxisMarks(values: bars.enumerated().filter { $0.offset % 3 == 0 }.map(\.element.month)) { v in
                     AxisValueLabel { if let m = v.as(String.self) { Text(Fmt.month(m, short: true)) } }
