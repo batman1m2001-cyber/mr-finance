@@ -51,9 +51,9 @@ def mem(action, role="client", client_id="C01", **kw):
 
 def test_the_guide_answers_from_the_role_pages_with_the_page_to_open():
     out = tool("huong_dan", ctx("client"), q="quỹ khẩn cấp của tôi đủ dùng bao lâu")
-    assert "Toàn cảnh" in out["text"] and "6 tháng" in out["text"]
-    assert out["evidence"] == {"label": "Toàn cảnh", "route": "#/client/tong-quan/toan-canh"}
-    assert out["sources"][0] == "Hướng dẫn sử dụng · Toàn cảnh"
+    assert "Bảng số liệu" in out["text"] and "6 tháng" in out["text"]  # the client's dashboard (UX_TOOLBAR_PLAN T4)
+    assert out["evidence"] == {"label": "Bảng số liệu", "route": "#/client/tong-quan/chi-tiet"}
+    assert out["sources"][0] == "Hướng dẫn sử dụng · Bảng số liệu"
     cio = tool("huong_dan", ctx("cio"), q="gộp tin thành sự kiện")
     routes = [p["route"] for p in cio["data"]["passages"] if p["route"]]
     assert routes and all(r.startswith("#/cio/") for r in routes)  # the CIO's pages, never a client's

@@ -35,11 +35,14 @@ def client_pages():
 
 
 def test_every_customer_page_has_an_entry_point():
-    # OWN-GW-13: no capability is lost — each page of the old menu opens as a sheet; the map page is the graph itself
+    # OWN-GW-13: no capability is lost — each page of the old menu opens as a sheet; the map page is the graph itself,
+    # Toàn cảnh and Chi tiết are the Bảng số liệu (UX_TOOLBAR_PLAN T3+T4); Bộ nhớ is opened from the header (T2)
     sheets = lenses("Object.values(L.SHEETS).map(s => s.page)")
-    assert client_pages() - {"map"} == set(sheets)
+    assert client_pages() - {"map", "pulse", "detail"} == set(sheets)
+    board = lenses('[L.resolve(["tong-quan", "toan-canh"]), L.resolve(["tong-quan", "chi-tiet"])]')
+    assert [b["part"] for b in board] == ["month", "nw"] and not any(b["sheet"] for b in board)
     toolbar = lenses("L.TOOLBAR.map(t => t.id)")
-    assert toolbar == ["tong-quan", "tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro", "chuyen-gia", "bo-nho"]
+    assert toolbar == ["tong-quan", "tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro", "chuyen-gia"]
 
 
 def test_old_addresses_open_their_page_over_its_lens():
@@ -70,7 +73,7 @@ def test_every_route_the_server_builds_for_a_customer_resolves():
     got = lenses(f"{json.dumps(parts)}.map(p => L.resolve(p))")
     for route, r, part in zip(sorted(routes), got, parts):
         lens = part[0] == "xem" and r["lens"] == part[1]  # a lens of its own (the assistant's mo_trang, D20)
-        assert r["sheet"] or lens or route.endswith(("/ban-do", "/tong-quan")), (route, r)
+        assert r["sheet"] or r.get("part") or lens or route.endswith(("/ban-do", "/tong-quan")), (route, r)
 
 
 def test_the_workspace_is_served_and_follows_the_motion_rules():

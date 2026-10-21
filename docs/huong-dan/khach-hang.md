@@ -22,25 +22,34 @@ vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch b�
   thấy nó chạm tới lớp tài sản và mục tiêu nào. Bật kịch bản không đổi số liệu đã lưu.
 - **Trợ lý** (thẻ Trợ lý cạnh ô Thông tin) biết bạn đang ở góc nhìn nào và đang chọn gì: hỏi “mục này là gì?” là hỏi
   về mục đang chọn. Các mục trợ lý đang đọc sáng lên trên đồ thị.
-- Các trang chi tiết (Toàn cảnh, Tài sản, Kế hoạch, …) mở thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như
-  cũ.
+- **Ô Thông tin khi chưa chọn gì**: ở Tổng quan là **Điều đáng chú ý** (tin, mục tiêu, ngưỡng và thay đổi có thể ảnh
+  hưởng tới bạn, quan trọng trước, kèm lý do và nguồn); ở các góc nhìn khác là danh sách các mục của góc nhìn đó.
+- **Trang của góc nhìn**: dưới tiêu đề là nút mở các trang riêng (Tài sản, Kế hoạch, Khẩu vị rủi ro, Tác động thị
+  trường, Đồ thị tác động, Chi phí chính sách) và nút mở phần số liệu của góc nhìn trong Bảng số liệu. Trang riêng mở
+  thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như cũ.
+- **Cách xem**: Đồ thị, Danh sách, hoặc **Bảng số liệu** (xem dưới).
+- **Tổng quan nhanh** (dải thẻ dưới đồ thị): tài sản ròng, dòng tiền tháng, phân bổ, rủi ro, thanh khoản dự phòng. Bấm
+  một thẻ để mở góc nhìn của nó, ngay tại phần số liệu đó trong Bảng số liệu.
 
-## Toàn cảnh — #/client/tong-quan/toan-canh
+## Bảng số liệu — #/client/tong-quan/chi-tiet
 
-Mở từ góc nhìn Tổng quan của đồ thị (tấm phủ “Toàn cảnh”): trong một màn hình, bạn có bao nhiêu và thay đổi thế nào,
-tháng trước tiền vào ra bao nhiêu, quỹ dự phòng đủ bao lâu, rủi ro ra sao, tiền nằm ở đâu.
+Nút **Bảng số liệu** ở Cách xem. Mọi con số ở một chỗ, thay cho hai trang Toàn cảnh và Chi tiết trước đây (địa
+chỉ cũ `#/client/tong-quan/toan-canh` và `#/client/tong-quan/chi-tiet` mở bảng này). Theo thứ tự:
 
-- **Bốn thẻ nhịp tài chính**: tài sản ròng và các nhóm tài sản làm nó thay đổi nhiều nhất trong tháng; dòng tiền tháng
-  (vào, ra, phần để dành) với sáu tháng gần nhất; thanh khoản dự phòng tính bằng số tháng chi tiêu (vòng tròn, mốc an
-  toàn 6 tháng); mức lỗ khi thị trường căng thẳng so với ngưỡng bạn chấp nhận.
-- **Dòng tiền của bạn**: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức…) sang các nhóm chi và phần
-  còn lại; ba tỷ lệ (tỷ lệ để dành, tiền ra trên tiền vào, nhóm chi lớn nhất) và bảng chi tiết. Bấm một dải để làm nổi
-  nó.
-- **Phân bổ tài sản**: biểu đồ tròn theo nhóm tài sản, tổng ở giữa; bấm một nhóm để xem các khoản trong nhóm.
-- **Điều đáng chú ý**: tin và sự kiện có thể ảnh hưởng tới tài sản của bạn, mức độ, tác động 3 tháng, lý do và nguồn.
-- **Mục tiêu tài chính**: các mục tiêu đang theo dõi, trạng thái, số cần, hạn và khoảng thiếu.
+- **Dòng tiền**: 6 tháng qua và dự báo 12/24/36 tháng, các khoản phải trả lớn và các khoản định kỳ tìm thấy trong giao
+  dịch.
+- **Phân bổ tài sản** với lãi / lỗ từng nhóm so với giá vốn, và **lãi / lỗ danh mục** (đã chốt, chưa chốt, lợi nhuận
+  từ đầu năm so với VN-Index).
+- **Tiền vào và ra trong tháng**: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức…) sang các nhóm chi và
+  phần còn lại; ba tỷ lệ (tỷ lệ để dành, tiền ra trên tiền vào, nhóm chi lớn nhất) và bảng chi tiết. Bấm một dải để
+  xem các giao dịch tạo nên nó. Tháng không có giao dịch hiện “Không có giao dịch trong tháng này.”
+- **Tài sản ròng** (tài sản, nợ, ngày số liệu, các thành viên được tính) và tài sản theo nguồn dữ liệu.
+- **Rủi ro**: mức sụt giảm chấp nhận so với ước tính khi căng thẳng, cảnh báo tập trung.
+- **Thanh khoản dự phòng** (quỹ khẩn cấp): tiền và tài sản rút được ngay, đủ chi bao nhiêu tháng so với mốc an toàn 6
+  tháng.
+- **Chính sách và dự án** nổi bật. Chưa làm bài kiểm tra rủi ro thì ngưỡng lấy theo hồ sơ.
 
-Tháng không có giao dịch hiện “Không có giao dịch trong tháng này.”
+Mục tiêu đang theo dõi ở góc nhìn Mục tiêu & kịch bản và trang Kế hoạch.
 
 ## Bản đồ tài chính — #/client/tong-quan/ban-do
 
@@ -48,13 +57,6 @@ Bức tranh toàn bộ dưới dạng đồ thị: bạn ở giữa, xung quanh 
 tin tức. Bật tắt từng loại bằng các nút phía trên (nguồn dữ liệu và chính sách tắt sẵn). Bấm một nút để xem số liệu và
 các liên kết của nó; nhóm tài sản mở ra các khoản bằng nhấp đúp hoặc “Mở rộng”. Đường nét đứt là tin “có thể ảnh
 hưởng”. **Mở trang** đưa tới trang chi tiết. Trên điện thoại trang mở ở dạng danh sách.
-
-## Chi tiết — #/client/tong-quan/chi-tiet
-
-Bảng tổng quan đầy đủ: tài sản ròng (tài sản, nợ, ngày số liệu) và tài sản theo nguồn dữ liệu; phân bổ tài sản; lãi /
-lỗ danh mục (đã thực hiện, chưa thực hiện, lợi nhuận từ đầu năm so với VN-Index); rủi ro (mức sụt giảm chấp nhận so
-với ước tính khi căng thẳng, cảnh báo tập trung); thanh khoản dự phòng; dòng tiền 6 tháng qua và dự báo 12/24/36
-tháng với các khoản chi lớn; các tin chính sách nổi bật. Chưa làm bài kiểm tra rủi ro thì ngưỡng lấy theo hồ sơ.
 
 ## Tài sản — #/client/tai-san
 
@@ -82,7 +84,7 @@ tháng), số cần so với số có cho từng mục tiêu và số tiền c�
 
 Bài kiểm tra khẩu vị rủi ro: bấm “Bắt đầu”, trả lời 8–12 câu tình huống (câu sau tùy câu trước, có thanh tiến độ và
 nút “← Câu trước”). Kết quả: mức chịu đựng rủi ro và khả năng chịu rủi ro trên năm mức, câu giải thích khi hai mức
-khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở trang Chi tiết.
+khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở phần Rủi ro của Bảng số liệu.
 
 ## Tác động thị trường — #/client/tin/thi-truong
 

@@ -5,16 +5,17 @@ import {formulaOf, n as how, esc, pct, post, signClass, vnd} from "../core/core.
 import {timeline as drawTimeline} from "../charts/charts.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {LOOK, UNIT_WORD, certaintyOf, changeOf, changeText, changeTone, changeWord, figureOf, howOf, srcText} from "./graph.js?v=20261020t1";
-import {SHEETS} from "./lenses.js?v=20261021t2";
+import {PARTS, SHEETS} from "./lenses.js?v=20261021t3";
+import {drawFeed} from "./feed.js?v=20261021t3";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
 const titled = {event: "data-quote", alert: "data-explains"};  // a news event's title is the outlets' words
 const nameOf = (n, text) => (n.id === "RK:drawdown" ? how(text, "risk.current") : titled[n.kind] ? `<span ${titled[n.kind]}>${text}</span>` : text);
 const fig = (n, text) => (n.kind === "source" || !text ? text : how(text, ...howOf(n)));
 const CERT_WORD = {actual: "thực tế", estimate: "ước tính", hypothetical: "giả định"};
-// which sheet shows a kind in full
-const SHEET_OF = {category: "toan-canh", family: "chi-tiet", class: "tai-san", holding: "tai-san", source: "tai-san", goal: "ke-hoach", scenario: "ke-hoach",
-  risk: "chi-tiet", liquidity: "chi-tiet", alert: "chinh-sach", event: "do-thi", flow: "toan-canh"};
+// which page shows a kind in full, or which section of the Bảng số liệu (UX_TOOLBAR_PLAN T3+T4)
+const SHEET_OF = {class: "tai-san", holding: "tai-san", source: "tai-san", goal: "ke-hoach", scenario: "ke-hoach", alert: "chinh-sach", event: "do-thi"};
+const PART_OF = {category: "month", flow: "month", family: "nw", risk: "risk", liquidity: "liq"};
 
 // the person's own what-if (F5, scenarios._sim.CUSTOM_LIMITS): each input a percentage, within the server's bounds
 const CUSTOM = [["real_estate", "Bất động sản", -50, 50], ["stock", "Cổ phiếu và quỹ cổ phiếu", -50, 50], ["gold", "Vàng", -50, 50],
@@ -29,7 +30,7 @@ const STEP = {day: "so với hôm trước", month: "so với tháng trước", 
 const TONE = {up: "up", down: "down", out: "down", flat: ""};
 const timelines = new Map();  // client|scope|node|unit → the promise of its points
 
-export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scenario, timeline, page}) {
+export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board, feed, client, scenario, timeline, page}) {
   const n = node;
   if (!n && !edge && page) {  // a page of its own is open (Chuyên gia, Bộ nhớ): nothing of the lens to say beside it
     el.innerHTML = `<div class="ws-ins-lens"><h3>${esc(page)}</h3><p class="small muted">Thông tin hiện số liệu, liên kết và nguồn của một nút trên đồ thị.
@@ -37,12 +38,17 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
     return;
   }
   if (!n && edge) { drawEdge(edge); wire(); return; }
-  const sheetBtns = (ids) => ids.map(id => `<button type="button" class="btn sm" data-sheet="${id}">${esc(SHEETS[id].label)} ${icon("arrow", {size: 14})}</button>`).join("");
   if (!n) {
     const g = graph.data();
     if (!g) { el.innerHTML = ""; return; }
     let body = "";
-    if (lens.id === "tin" || lens.id === "tong-quan") {
+    if (lens.id === "tong-quan") {  // what Toàn cảnh led with: the feed, the most important first (T4)
+      el.innerHTML = `<div class="ws-ins-lens"><div id="ws-feed"></div>
+        <p class="small muted">Bấm một nút trên đồ thị để xem số liệu, liên kết và nguồn của nó.</p></div>`;
+      drawFeed(el.querySelector("#ws-feed"), feed, {client, board});
+      return;
+    }
+    if (lens.id === "tin") {
       const moving = g.nodes.filter(x => ["event", "alert"].includes(x.kind)).sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
       body = `<h3>Tin tức & chính sách <span class="hint">theo mức tác động</span></h3>${list(moving)}`;
     } else {
@@ -51,8 +57,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
       body = `<h3>${esc(lens.label)} <span class="hint">${rows.length}</span></h3>${lens.id === "muc-tieu" ? goalsTotal(g) : ""}${list(rows)}`;
     }
     el.innerHTML = `<div class="ws-ins-lens">${body}
-      <p class="small muted">Bấm một nút trên đồ thị để xem số liệu, liên kết và nguồn của nó.</p>
-      <div class="ws-ins-sheets"><div class="small muted">Xem đầy đủ</div><div class="row tight">${sheetBtns(lens.sheets)}</div></div></div>`;
+      <p class="small muted">Bấm một nút trên đồ thị để xem số liệu, liên kết và nguồn của nó.</p></div>`;
   } else {
     const es = graph.links(n.id);
     const g = graph.data();
@@ -85,7 +90,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
     ].filter(Boolean);
     const look = (n.kind === "flow" || n.kind === "category") && n.side === "out" ? ["var(--out)", "cart"] : LOOK[n.kind] || LOOK.class;
     const kindTone = look[0];
-    const sheet = SHEET_OF[n.kind];
+    const sheet = SHEET_OF[n.kind], part = PART_OF[n.kind];
     el.innerHTML = `<div class="row tight"><span class="ic-chip" style="--tone:${kindTone}">${icon(n.kind === "class" ? CLASS_ICON[n.ref] || "layers" : look[1], {size: 16})}</span>
         <div><div class="small muted">${esc(kindLabel(n.kind))}</div><b>${nameOf(n, esc(n.label))}</b></div>
         <button type="button" class="linkbtn small" id="ws-clear" style="margin-left:auto">Bỏ chọn</button></div>
@@ -94,7 +99,8 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
         ${kids ? `<button type="button" class="btn sm" id="ws-open">${graph.isOpen(n.id) ? "Thu gọn" : `Mở rộng ${kids} ${kid === "category" ? "khoản thu chi" : "khoản"}`}</button>` : ""}
         ${n.kind === "scenario" && scenario && n.ref !== "custom" ? `<button type="button" class="btn sm ${n.active ? "" : "primary"}" id="ws-run" aria-pressed="${!!n.active}">${n.active ? "Tắt kịch bản" : "Bật kịch bản"}</button>` : ""}
         ${n.kind === "event" ? `<button type="button" class="btn sm primary" data-sheet="do-thi" data-param="${esc(n.ref)}" data-focus-key="event:${esc(n.ref)}">Xem đường đi của tin ${icon("arrow", {size: 14})}</button>`
-          : sheet ? `<button type="button" class="btn sm" data-sheet="${sheet}">Mở ${esc(SHEETS[sheet].label)} ${icon("arrow", {size: 14})}</button>` : ""}</div>
+          : sheet ? `<button type="button" class="btn sm" data-sheet="${sheet}">Mở ${esc(SHEETS[sheet].label)} ${icon("arrow", {size: 14})}</button>`
+          : part && board ? `<button type="button" class="btn sm" data-board="${part}"${n.month ? ` data-month="${esc(n.month)}"` : ""}>Xem ${esc(PARTS[part].toLowerCase())} trong Bảng số liệu ${icon("arrow", {size: 14})}</button>` : ""}</div>
       ${MONEY.has(n.kind) && timeline ? timelineBlock(n) : ""}
       ${n.kind === "scenario" && scenario && n.ref === "custom" ? customForm(n) : ""}
       ${n.kind === "scenario" && n.active ? trace(n) : ""}
@@ -166,6 +172,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
   function wire() {
     for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => graph.select(b.dataset.n);
     for (const b of el.querySelectorAll("[data-sheet]")) b.onclick = () => openSheet(b.dataset.sheet, b.dataset.param || null, b.dataset.focusKey ? [b.dataset.focusKey] : null);
+    for (const b of el.querySelectorAll("[data-board]")) b.onclick = () => board(b.dataset.board, b.dataset.month || null);
   }
 
   // ── an edge picked (UNIFIED_FLOWS_PLAN F9, OWN-GW-46): what it joins and says, its amount and monthly rate, its

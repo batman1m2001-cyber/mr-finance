@@ -1,44 +1,43 @@
-/* The workspace's “Dòng tiền & phân bổ” view (owner, 2026-10-21): the cash flow over time and the allocation with
-   profit against cost, where the graph is — the two blocks the business reads first, one click from the overview
-   (the view switch, or the strip's cash-flow and allocation cards). The drawing is Chi tiết's (charts/panels.js); the
-   horizon (12/24/36 months) is Chi tiết's too, remembered for the session. */
-import {$, esc, post} from "../core/core.js";
-import {cashBody, drawAlloc, drawCash} from "../charts/panels.js?v=20261021m1";
-
-const store = (k, v) => { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (_) { /* private mode */ } return null; };
+/* The workspace's “Bảng số liệu” (UX_TOOLBAR_PLAN T3+T4): the client's dashboard where the graph is — Chi tiết's
+   blocks led by what the business reads first (cash flow over time, allocation with profit against cost, the
+   portfolio's profit and loss), then the month's money in and out (Toàn cảnh's), net worth with its tiers, risk,
+   the reserve and the policy items. It replaces the client's Toàn cảnh and Chi tiết sheets; the drawing is
+   pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
+import {esc} from "../core/core.js";
+import {render} from "../pages/detail.js?v=20261021t3";
+import {href} from "./lenses.js?v=20261021t3";
 
 export function mount(el, {client, scope}) {
-  let key = null, d = null;
+  let key = null, board = {}, loading = null;
 
-  function draw() {
-    const months = Number(store("mf.detail.months")) || 12;
-    el.innerHTML = `<div class="cols">
-      <div class="panel c12" id="ws-cash">${cashBody(d.cashflow, months)}</div>
-      <div class="panel c12"><h3>Phân bổ tài sản <span class="hint">lãi/lỗ: % so với giá vốn · giá ngày ${esc(d.as_of)}</span></h3><div id="ws-alloc"></div></div>
-    </div>`;
-    drawAlloc($("#ws-alloc", el), d);
-    drawCash(el, d.cashflow);
-    for (const b of el.querySelectorAll("[data-months]")) b.onclick = () => { store("mf.detail.months", b.dataset.months); key = null; load(); };
-  }
-
-  async function load() {
-    const months = Number(store("mf.detail.months")) || 12;
-    const k = `${client()}|${scope()}|${months}`;
-    if (k === key && d) { draw(); return; }
+  function load() {
+    const k = `${client()}|${scope()}`;
+    if (k === key && loading) return loading;
     key = k;
+    board = {};
     el.innerHTML = `<div class="small muted">Đang tải…</div>`;
-    try {
-      const {dashboard} = await post("/api/dashboard", {client_id: client(), scope: scope(), months});
-      if (k !== key) return;
-      d = dashboard;
-      draw();
-    } catch (e) { key = null; el.innerHTML = `<div class="small muted">Không tải được số liệu: ${esc(e.message)}</div>`; }
+    const ctx = {client, scope, role: "client", href, board, go: () => { key = null; return load(); }};  // a horizon button: drawn again
+    loading = render(el, ctx).catch((e) => { key = null; loading = null; el.innerHTML = `<div class="small muted">Không tải được số liệu: ${esc(e.message)}</div>`; });
+    return loading;
   }
 
   return {
     load,
+    /* a section (cash, alloc, pnl, month, nw, risk, liq) at the top of the view (the view scrolls; on a phone, the page) */
+    at(part, smooth) {
+      const s = part && el.querySelector(`#d-${part}`);
+      if (!s) return;
+      const behavior = smooth ? "smooth" : "auto";
+      if (el.scrollHeight > el.clientHeight + 1) el.scrollTo({top: el.scrollTop + s.getBoundingClientRect().top - el.getBoundingClientRect().top - 8, behavior});
+      else {  // a phone: the page scrolls, under the header
+        const top = document.querySelector(".shell-top");
+        scrollTo({top: scrollY + s.getBoundingClientRect().top - Math.max(0, top ? top.getBoundingClientRect().bottom : 0) - 8, behavior});
+      }
+    },
+    /* the month's flows at a month (a feed item's “Xem dòng tiền”) */
+    month(m) { return board.month ? board.month.pick(m) : null; },
     /* the chart again at the width it is shown at */
-    resize() { if (d && !el.hidden) drawCash(el, d.cashflow); },
-    reset() { key = null; },
+    resize() { if (board.redraw && !el.hidden) board.redraw(); },
+    reset() { key = null; loading = null; },
   };
 }

@@ -1,5 +1,5 @@
 [
- {"q": "quỹ khẩn cấp của tôi đủ dùng bao lâu thì xem ở đâu?", "role": "client", "want": "Toàn cảnh"},
+ {"q": "quỹ khẩn cấp của tôi đủ dùng bao lâu thì xem ở đâu?", "role": "client", "want": "Bảng số liệu"},
  {"q": "lam sao de tai sao ke chung khoan len", "role": "client", "want": "Tài sản"},
  {"q": "Tôi muốn khai thêm một căn hộ tôi đang sở hữu", "role": "client", "want": "Tài sản"},
  {"q": "Bài test khẩu vị rủi ro có bao nhiêu câu?", "role": "client", "want": "Khẩu vị rủi ro"},

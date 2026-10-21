@@ -111,7 +111,7 @@ def test_everything_pauses_off_screen_and_under_a_sheet(open_page):
     p.page.wait_for_selector(".wspark")
     p.page.wait_for_timeout(200)
     assert p.page.evaluate(PLAYING) > 0
-    p.go("#/client/tong-quan/toan-canh")  # a sheet over the graph
+    p.go("#/client/tai-san")  # a sheet over the graph
     p.page.wait_for_function("document.querySelector('.ws-svg').classList.contains('asleep')")
     assert p.page.evaluate(PLAYING) == 0
     p.go("#/client/xem/tong-quan")
