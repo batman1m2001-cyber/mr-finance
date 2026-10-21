@@ -252,9 +252,9 @@ async function route() {
   howAudience.staff = rt.role !== "client";
   state.route = rt;
   localStore("mf.role", rt.role);
-  // the client's calmer look (B3.3): light unless the person chose dark; the staff's desks as they were
+  // light for everyone unless the person chose dark (index.html sets it before the first paint); B3.3's calmer type
+  // stays the client's
   document.body.dataset.role = rt.role;
-  if (!localStore("mf.theme")) document.documentElement.dataset.theme = rt.role === "client" ? "light" : "dark";
   drawChrome(rt);
   if (header) header.refresh();
   let target = rt.sub || rt.nav;

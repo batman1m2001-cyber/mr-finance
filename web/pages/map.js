@@ -177,8 +177,8 @@ export async function render(box, ctx) {
     const svg = mk("svg", {class: "viz mapsvg", viewBox: `0 0 ${W} ${H}`, role: "group", "aria-label": "Bản đồ tài chính"});
     const defs = mk("defs", {}, svg);
     const grad = mk("radialGradient", {id: "m-me"}, defs);
-    mk("stop", {offset: "0", "stop-color": "#8b76ff"}, grad);
-    mk("stop", {offset: "1", "stop-color": "#4a36c4"}, grad);
+    mk("stop", {offset: "0", "stop-color": "#3a3a40"}, grad);
+    mk("stop", {offset: "1", "stop-color": "#141414"}, grad);
     for (const e of es) {
       const a = pos[e.from], b = pos[e.to];
       if (!a || !b) continue;

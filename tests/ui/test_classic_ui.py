@@ -113,7 +113,7 @@ def test_the_assistant_is_closed_until_asked_and_kept(open_page):
     assert not p.problems() and not phone.problems()
 
 
-def test_the_client_looks_calmer_the_staff_unchanged(open_page):
+def test_the_client_looks_calmer_everyone_opens_light(open_page):
     p = open_page(theme=None)
     p.go("#/client/tai-san")
     look = p.page.evaluate("""() => ({theme: document.documentElement.dataset.theme,
@@ -122,5 +122,5 @@ def test_the_client_looks_calmer_the_staff_unchanged(open_page):
     assert look == {"theme": "light", "body": "16px", "table": "15px", "glow": "none"}, look
     p.go("#/cio")
     look = p.page.evaluate("[document.documentElement.dataset.theme, getComputedStyle(document.body).fontSize]")
-    assert look == ["dark", "14px"], look
+    assert look == ["light", "14px"], look  # light for the staff too (2026-10-21); their type as it was
     assert not p.problems()

@@ -142,7 +142,7 @@ class Page:
         self.ctx = browser.new_context(
             viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None, color_scheme=theme or "light"
         )
-        # the app opens dark unless the person chose light (mf.theme), whatever the system's scheme: say which
+        # the app opens light unless the person chose dark (mf.theme), whatever the system's scheme: say which
         # (None: the person chose nothing, the client's light default, B3.3)
         if theme:
             self.ctx.add_init_script(f"try {{ localStorage.setItem('mf.theme', '{theme}'); }} catch (_) {{}}")
