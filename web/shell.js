@@ -167,7 +167,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261021t8");
+  wsLoad ||= import("./workspace/workspace.js?v=20261021t9");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -298,7 +298,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261021t8`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261021t9`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

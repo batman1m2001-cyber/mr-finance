@@ -45,7 +45,8 @@ function replay(r, d) {
   return `<section class="panel mt"><h3>Chạy lại tháng 7/2026 <span class="hint">${HL[horizon]} · ${r.runs.drafts} bản nháp từ ${r.days.length} buổi sáng ${day(r.replay.first)} – ${day(r.replay.last)}</span></h3>
     <p class="small">Tin tháng 7 của bốn báo (VnEconomy, VnExpress, CafeF, Vietstock) được chạy lại từng buổi sáng qua đúng các bước của thử nghiệm, rồi chấm với diễn biến thị trường đến nay — câu trả lời nhanh cho kỳ 3 tháng.
       Hai mô hình chỉ biết đến khoảng tháng 6/2026 và không biết kết quả tháng 7–9; agent chỉ đọc tin và danh mục yếu tố, không có số liệu thị trường.
-      Một lần đọc đầu, chưa phải bằng chứng: ${r.runs.drafts} sự kiện trong ba tuần của một mùa hè.</p>
+      Một lần đọc đầu, chưa phải bằng chứng: ${r.runs.drafts} sự kiện trong ba tuần của một mùa hè.
+      <b>Các dự báo không độc lập:</b> mọi dự báo tháng 7 được chấm trên cùng một diễn biến (VN-Index giảm từ tháng 7 đến tháng 10), nên tỷ lệ đúng của VN-Index là một lần đoán đúng một xu hướng.</p>
     ${accTable([accRow("<b>Tất cả</b>", a),
       ...Object.entries(d.segments).map(([k, l]) => accRow(esc(l), a.by_segment[k])),
       ...(vn ? [accRow("<b>VN-Index</b>", vn)] : [])])}

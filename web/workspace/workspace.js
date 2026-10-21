@@ -10,7 +10,7 @@ import {UNIT_WORD, createGraph} from "./graph.js?v=20261021t6";
 import {dockFrame} from "./dock.js?v=20261018m0";
 import {render as inspect} from "./inspector.js?v=20261021t6";
 import {LENS, PARTS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t6";
-import {mount as mountMoney} from "./money.js?v=20261021t8";
+import {mount as mountMoney} from "./money.js?v=20261021t9";
 import {mount as mountStrip} from "./strip.js?v=20261021t3";
 
 const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
