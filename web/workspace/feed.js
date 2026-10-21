@@ -1,11 +1,11 @@
 /* “Điều đáng chú ý” in Thông tin on the Tổng quan lens (UX_TOOLBAR_PLAN T4): the client's feed (POST /api/feed), the
    most important first, each with why and where it comes from — what Toàn cảnh showed, now beside the graph instead of
-   a list Tin & sự kiện already has. A high item's evidence opened is recorded (BRD-KPI-07), as Toàn cảnh did. */
+   a list Tin tức already has. A high item's evidence opened is recorded (BRD-KPI-07), as Toàn cảnh did. */
 import {n, esc, post, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 
 const SEV = {high: ["bad", "Cần xem"], medium: ["warn", "Đáng chú ý"], info: ["", "Thông tin"]};
-const TYPE = {impact: ["Tin tác động", "news", "var(--s1)"], goal: ["Mục tiêu", "target", "var(--s3)"], risk: ["Ngưỡng", "alert", "var(--warning)"],
+const TYPE = {impact: ["Tác động tin", "news", "var(--s1)"], goal: ["Mục tiêu", "target", "var(--s3)"], risk: ["Ngưỡng", "alert", "var(--warning)"],
   change: ["Thay đổi", "activity", "var(--s7)"]};
 const KIND = {run: "Lần áp dụng", regulation: "Ghi chú quy định", goal: "Mục tiêu", dashboard: "Tổng quan", transactions: "Giao dịch"};
 const PART = {risk: "rủi ro", liquidity: "thanh khoản", net_worth: "tài sản ròng"};

@@ -14,7 +14,7 @@ export const LENSES = [
     kinds: ["family", "flow", "category", "liquidity", "class"], sheets: [], part: "cash"},
   {id: "muc-tieu", label: "Mục tiêu & kịch bản", short: "Mục tiêu", icon: "target", tip: "Mục tiêu và kịch bản giả định", sub: "Mục tiêu của bạn và các kịch bản giả định",
     kinds: ["family", "goal", "scenario"], sheets: ["ke-hoach"]},
-  {id: "tin", label: "Tin & sự kiện", short: "Tin tức", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động", sub: "Tin tức, sự kiện và chính sách có thể tác động tới tài sản của bạn",
+  {id: "tin", label: "Tin tức", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động", sub: "Tin tức, sự kiện và chính sách có thể tác động tới tài sản của bạn",
     kinds: ["family", "event", "alert", "class"], sheets: ["thi-truong", "do-thi", "chinh-sach"]},
   {id: "rui-ro", label: "Rủi ro", icon: "alert", tip: "Rủi ro: mức lỗ khi căng thẳng, tập trung, dự phòng", sub: "Mức lỗ khi thị trường xấu, mức tập trung và tiền dự phòng",
     kinds: ["family", "risk", "liquidity", "class"], sheets: ["khau-vi"], part: "risk"},
@@ -25,8 +25,8 @@ export const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 export const SHEETS = {
   "tai-san": {page: "holdings", label: "Tài sản", route: "#/client/tai-san", lens: "tai-san", nav: ["tai-san"]},
   "ke-hoach": {page: "plan", label: "Kế hoạch", route: "#/client/muc-tieu/ke-hoach", lens: "muc-tieu", nav: ["muc-tieu", "ke-hoach"]},
-  "khau-vi": {page: "risktest", label: "Khẩu vị rủi ro", route: "#/client/muc-tieu/khau-vi", lens: "rui-ro", nav: ["muc-tieu", "khau-vi"]},
-  "thi-truong": {page: "impact", label: "Tác động thị trường", route: "#/client/tin/thi-truong", lens: "tin", nav: ["tin", "thi-truong"]},
+  "khau-vi": {page: "risktest", label: "Khẩu vị rủi ro", route: "#/client/rui-ro/khau-vi", lens: "rui-ro", nav: ["rui-ro", "khau-vi"]},
+  "thi-truong": {page: "impact", label: "Tác động tin", route: "#/client/tin/thi-truong", lens: "tin", nav: ["tin", "thi-truong"]},
   "do-thi": {page: "graph", label: "Đồ thị tác động", route: "#/client/tin/do-thi", lens: "tin", nav: ["tin", "do-thi"]},
   "chinh-sach": {page: "policy", label: "Chi phí chính sách", route: "#/client/tin/chinh-sach", lens: "tin", nav: ["tin", "chinh-sach"]},
   "chuyen-gia": {page: "advisor", label: "Chuyên gia", route: "#/client/chuyen-gia", lens: null, nav: ["chuyen-gia"]},
@@ -47,7 +47,7 @@ const BOARD = {"tong-quan/toan-canh": "month", "tong-quan/chi-tiet": "nw"};
 // the old addresses: [first, second] → sheet id; a bare first segment with subpages opens its first one
 const OLD = {
   "tai-san": "tai-san",
-  "muc-tieu": "ke-hoach", "muc-tieu/ke-hoach": "ke-hoach", "muc-tieu/khau-vi": "khau-vi",
+  "muc-tieu": "ke-hoach", "muc-tieu/ke-hoach": "ke-hoach", "muc-tieu/khau-vi": "khau-vi", "rui-ro": "khau-vi", "rui-ro/khau-vi": "khau-vi",
   "tin": "thi-truong", "tin/thi-truong": "thi-truong", "tin/do-thi": "do-thi", "tin/chinh-sach": "chinh-sach",
   "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
 };

@@ -192,7 +192,7 @@ export async function render(box, ctx) {
     ? {impact: ctx.href("khach-hang", "tac-dong"), graph: ctx.href("khach-hang", "do-thi"), detail: ctx.href("khach-hang", "tong-quan")}
     : {impact: ctx.href("tin", "thi-truong"), graph: ctx.href("tin", "do-thi"), detail: ctx.href("tong-quan", "chi-tiet")};
   const SEV = {high: ["bad", "Cần xem"], medium: ["warn", "Đáng chú ý"], info: ["", "Thông tin"]};
-  const TYPE = {impact: ["Tin tác động", "news", "var(--s1)"], goal: ["Mục tiêu", "target", "var(--s3)"], risk: ["Ngưỡng", "alert", "var(--warning)"],
+  const TYPE = {impact: ["Tác động tin", "news", "var(--s1)"], goal: ["Mục tiêu", "target", "var(--s3)"], risk: ["Ngưỡng", "alert", "var(--warning)"],
     change: ["Thay đổi", "activity", "var(--s7)"]};
   const KIND = {run: "Lần áp dụng", regulation: "Ghi chú quy định", goal: "Mục tiêu", dashboard: "Tổng quan", transactions: "Giao dịch"};
   const PART = {risk: "rủi ro", liquidity: "thanh khoản", net_worth: "tài sản ròng"};

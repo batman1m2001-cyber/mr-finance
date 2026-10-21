@@ -12,7 +12,7 @@ import {icon} from "../core/icons.js?v=20261016r1";
 
 const RING = {3: 92, 2: 124, 1: 150, 0: 170};  // how far from the RM: sooner is nearer
 const TONE = {3: "bad", 2: "warn", 1: "human", 0: ""};
-const PAGES = [["khach-hang/tac-dong", "Tác động tin"], ["khach-hang/toan-canh", "Toàn cảnh"], ["khach-hang/tong-quan", "Chi tiết"],
+const PAGES = [["khach-hang/tac-dong", "Tác động tin"], ["khach-hang/toan-canh", "Toàn cảnh"], ["khach-hang/tong-quan", "Chi tiết tài sản"],
   ["khach-hang/tai-san", "Tài sản"], ["khach-hang/ke-hoach", "Kế hoạch"]];
 
 /* the drawing's frame: wide on a desk, taller on a phone (the dots keep a size a finger can pick) */

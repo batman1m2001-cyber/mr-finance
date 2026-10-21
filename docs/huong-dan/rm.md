@@ -29,7 +29,7 @@ Trang đầu tiên của RM: buổi sáng cần xem gia đình nào trước, th
 
 ## Tác động tin — #/rm/khach-hang/tac-dong
 
-Như trang Tác động thị trường của khách hàng, thêm phần dành cho RM: tiêu đề tin thay vì loại sự kiện; các lần áp dụng
+Như trang Tác động tin của khách hàng, thêm phần dành cho RM: tiêu đề tin thay vì loại sự kiện; các lần áp dụng
 đã thay thế hay đã thu hồi; **Cách tính** cho từng sự kiện (ngăn bên phải: con số, vị thế góp phần nhiều nhất, các
 kịch bản Agent CIO soạn và CIO duyệt, tin nguồn, ảnh chụp dữ liệu); đóng góp theo yếu tố và theo từng vị thế; tác động
 của sự kiện lên từng mục tiêu có hạn (Đạt / Theo dõi / Thiếu); mục tiêu suy ra cần RM xác nhận và mẫu **Khai dòng tiền

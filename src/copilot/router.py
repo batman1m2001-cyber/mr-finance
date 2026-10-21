@@ -73,7 +73,7 @@ COMMAND = r"(duyet|tu choi|lay tin|cap nhat tin|tai tin|danh dau|ghi lien he|gui
 PAGE_WORDS = {
     "toan-canh": "toan canh",
     "ban-do": "ban do",
-    "chi-tiet": "chi tiet",
+    "chi-tiet": "chi tiet|bang so lieu",  # the client's Bảng số liệu (UX_TOOLBAR_PLAN T4)
     "tai-san": "tai san",
     "ke-hoach": "ke hoach",
     "do-thi": "do thi",
@@ -120,7 +120,8 @@ def keyword(scrubbed: str, route: str, role: Optional[str] = None) -> Dict[str, 
                 return {"tool": None, "args": {}}
             args: Dict[str, Any] = {}
             if tool == "mo_trang":
-                args["page"] = next((k for k, w in PAGE_WORDS.items() if w in q.split("mo", 1)[-1]), None)
+                said = q.split("mo", 1)[-1]
+                args["page"] = next((k for k, w in PAGE_WORDS.items() if any(x in said for x in w.split("|"))), None)
             if tool == "duyet_de_xuat":
                 args["decision"] = "rejected" if "tu choi" in q else "approved"
             if tool == "kich_ban":

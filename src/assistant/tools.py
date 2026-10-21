@@ -8,7 +8,7 @@ from __future__ import annotations
 import ast
 import operator
 import re
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 from apply import reads
 from assistant.base import Ctx, Param, Tool, ToolFailed, run_graph
@@ -16,17 +16,26 @@ from news import store as news_store
 from wealth import store as wealth_store
 
 USER = {"client": None, "rm": "rm01", "cio": "cio", "compliance": "compliance"}
-PAGES = {  # page key → (label, route per role); the router may name a key, never a route
+PAGES = {  # page key → (label, or label per role; route per role); the router may name a key, never a route
     # the customer's graph workspace, by lens (D20: “bật trên đồ thị” opened the old impact graph)
     "do-thi-tai-chinh": ("Đồ thị tài chính", {"client": "#/client/xem/tong-quan"}),
     "do-thi-tai-san": ("Đồ thị · Tài sản", {"client": "#/client/xem/tai-san"}),
     "do-thi-dong-tien": ("Đồ thị · Dòng tiền", {"client": "#/client/xem/dong-tien"}),
     "do-thi-muc-tieu": ("Đồ thị · Mục tiêu & kịch bản", {"client": "#/client/xem/muc-tieu"}),
-    "do-thi-tin": ("Đồ thị · Tin & sự kiện", {"client": "#/client/xem/tin"}),
+    "do-thi-tin": ("Đồ thị · Tin tức", {"client": "#/client/xem/tin"}),
     "do-thi-rui-ro": ("Đồ thị · Rủi ro", {"client": "#/client/xem/rui-ro"}),
-    "toan-canh": ("Toàn cảnh", {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/toan-canh"}),
-    "ban-do": ("Bản đồ tài chính", {"client": "#/client/tong-quan/ban-do", "rm": "#/rm/khach-hang/ban-do"}),
-    "chi-tiet": ("Chi tiết tài sản", {"client": "#/client/tong-quan/chi-tiet", "rm": "#/rm/khach-hang/tong-quan"}),
+    "toan-canh": (
+        {"client": "Bảng số liệu", "rm": "Toàn cảnh"},
+        {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/toan-canh"},
+    ),
+    "ban-do": (
+        {"client": "Đồ thị tài chính", "rm": "Bản đồ tài chính"},
+        {"client": "#/client/tong-quan/ban-do", "rm": "#/rm/khach-hang/ban-do"},
+    ),
+    "chi-tiet": (
+        {"client": "Bảng số liệu", "rm": "Chi tiết tài sản"},
+        {"client": "#/client/tong-quan/chi-tiet", "rm": "#/rm/khach-hang/tong-quan"},
+    ),
     "tai-san": ("Tài sản", {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"}),
     "ke-hoach": ("Kế hoạch", {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"}),
     "tac-dong": ("Tác động tin", {"client": "#/client/tin/thi-truong", "rm": "#/rm/khach-hang/tac-dong"}),
@@ -540,12 +549,21 @@ async def held(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def page_of(key: Optional[str], role: str) -> Optional[Tuple[str, str]]:
+    """A page key → (its name, its route) for this role; None when the role has no such page."""
+    label, routes = PAGES.get(key or "", (None, {}))
+    if role not in routes:
+        return None
+    return (label.get(role) or next(iter(label.values())) if isinstance(label, dict) else label), routes[role]
+
+
 async def navigate(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     page = args.get("page")
-    if page not in PAGES or ctx.role not in PAGES[page][1]:
+    got = page_of(page, ctx.role)
+    if not got:
         raise ToolFailed("Không có trang này cho vai trò hiện tại")
-    label, routes = PAGES[page]
-    return {"text": f"Mở trang {label}.", "navigate": routes[ctx.role], "data": {"page": page}}
+    label, route = got
+    return {"text": f"Mở trang {label}.", "navigate": route, "data": {"page": page}}
 
 
 # -- write tools (confirm first) ---------------------------------------------------------------

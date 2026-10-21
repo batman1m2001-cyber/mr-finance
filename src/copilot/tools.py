@@ -3,7 +3,7 @@ staff desks' reads (FEAT-41), so the keyword fallback answers each role's own qu
 
 from assistant.base import Ctx, Tool, ToolFailed, allowed  # noqa: F401 - the Copilot's names
 from assistant.registry import REGISTRY
-from assistant.tools import PAGES, USER, _vnd  # noqa: F401
+from assistant.tools import PAGES, USER, _vnd, page_of  # noqa: F401
 
 COPILOT = (
     "tong_quan",

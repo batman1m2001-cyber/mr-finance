@@ -57,7 +57,7 @@ export async function render(box, ctx) {
   if (first && first.goal.actions[0]) acts.push(`${esc(first.title)}: <span data-explains>${esc(first.goal.actions[0].text)}</span>`);
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Tin tác động</div><h1 class="h1">Chi phí chính sách</h1>
+    <div class="pagehead"><div><div class="eyebrow">Tin tức</div><h1 class="h1">Chi phí chính sách</h1>
       <p class="lede">Chính sách, vĩ mô và hạ tầng đang làm tài sản ròng ${rep.scope === "family" ? "gia đình" : "của bạn"} tăng hay giảm bao nhiêu</p></div></div>
     <div class="cols">
       <div class="panel c12" data-focus="policy:check">

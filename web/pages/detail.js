@@ -124,14 +124,14 @@ ${(ctx.board ? ["cash", "alloc", "pnl", "month", "hero", "risk", "liq"] : ["hero
   const drawCash = () => cashInto(box, cf);
 
   // the top policy and project items by the brief's own rules (ADR-0007, Q-03): labelled as such, not as news impact,
-  // which is the engine's and lives on Tác động thị trường; all of them on Chi phí chính sách
+  // which is the engine's and lives on Tác động tin; all of them on Chi phí chính sách
   const drawNews = () => {
     const el = $("#news", box);
     if (al.error) { el.innerHTML = `<h3>Chính sách và dự án</h3><p class="small down">Không tải được: ${esc(al.error)}</p>`; return; }
     const rep = al.report, top = rep.alerts.slice(0, 3);
     const marketHref = staff ? ctx.href("khach-hang", "tac-dong") : ctx.href("tin", "thi-truong");
     el.innerHTML = `<h3>Chính sách và dự án <span class="hint">${rep.risks} rủi ro · ${rep.opportunities} cơ hội</span><a class="small" style="margin-left:auto" href="${policyHref}">Xem tất cả ${rep.alerts.length} mục →</a></h3>
-      <p class="small muted">Ước tính theo quy tắc riêng của từng chính sách (thuế, phí, vùng dự án), không phải bộ máy kịch bản. Tác động của tin thị trường: <a href="${marketHref}">Tác động thị trường</a>.</p>
+      <p class="small muted">Ước tính theo quy tắc riêng của từng chính sách (thuế, phí, vùng dự án), không phải bộ máy kịch bản. Tác động của tin thị trường: <a href="${marketHref}">Tác động tin</a>.</p>
       <div class="list">${top.map(a => `<div class="item"><span class="ic-chip" style="--tone:${a.opportunity ? "var(--good)" : "var(--critical)"}">${icon(a.opportunity ? "stock" : "down")}</span>
         <div><div class="t">${esc(a.title)}</div><div class="row tight mt-xs"><span class="pill ${a.opportunity ? "good" : "bad"}">${a.opportunity ? "Cơ hội" : "Rủi ro"} · ${SEV[a.severity].toLowerCase()}</span></div>
           <div class="m mt-xs" data-explains>${esc(a.message)}</div></div>
