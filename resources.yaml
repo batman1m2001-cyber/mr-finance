@@ -12,16 +12,18 @@ llm:assistant:
 
 # The CIO agent and the challenger (BRD §8): two different models, so their mistakes do not line
 # up. Unset or equal, agent runs are mock (keywords, no model) and say so.
+# The news agents (CIO, challenger) have their own endpoint: in the trial, the Claude Code bridge
+# (scripts/claude_bridge.py, BUSINESS_FEEDBACK_1021_PLAN B1.0); they never see client data (BR-11).
 llm:cio:
   api_type: openai
-  api_key: ${LLM_API_KEY:not-set}
-  base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
+  api_key: ${LLM_AGENT_API_KEY:not-set}
+  base_url: ${LLM_AGENT_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL_CIO:not-set}
 
 llm:challenger:
   api_type: openai
-  api_key: ${LLM_API_KEY:not-set}
-  base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
+  api_key: ${LLM_AGENT_API_KEY:not-set}
+  base_url: ${LLM_AGENT_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL_CHALLENGER:not-set}
 
 # The Copilot's router (redesign kit K5, ADR-0012): sees only the scrubbed question, the page and the tool
