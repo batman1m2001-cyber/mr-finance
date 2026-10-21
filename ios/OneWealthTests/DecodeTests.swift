@@ -22,6 +22,23 @@ final class DecodeTests: XCTestCase {
         XCTAssertEqual(d.holdings.first?.cls, "real_estate")
     }
 
+    func testFlows() throws {
+        let f = try fixture("flows", as: FlowsReply.self).flows
+        XCTAssertEqual(f.month, "2026-09")
+        XCTAssertEqual(f.outflow.count, 3)
+        XCTAssertEqual(f.totalIn - f.totalOut, f.left, accuracy: 1)
+    }
+
+    func testImpact() throws {
+        let d = try fixture("impact", as: Impact.self)
+        XCTAssertEqual(d.items.count, 2)
+        XCTAssertTrue(d.items.allSatisfy(\.effective))
+        XCTAssertNotNil(d.items.first?.horizons["3m"])
+        XCTAssertEqual(d.effectiveExpected3m ?? 0, d.items.reduce(0) { $0 + ($1.horizons["3m"]?.expected ?? 0) }, accuracy: 2)
+        // every asset class the server sends has a Vietnamese name, however the decoder spelled the key
+        for i in d.items { for k in i.byClass.keys { XCTAssertNotEqual(classLabel(k), k, k) } }
+    }
+
     func testSignIn() throws {
         XCTAssertEqual(try fixture("me", as: Me.self).user?.family, "C01")
         let clients = try fixture("accounts", as: Accounts.self).accounts.filter { $0.role == "client" }

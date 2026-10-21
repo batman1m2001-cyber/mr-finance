@@ -37,29 +37,14 @@ struct MainTabs: View {
         TabView(selection: $model.tab) {
             OverviewView()
                 .tabItem { Label("Tổng quan", systemImage: "house") }.tag(AppModel.Tab.overview)
-            Soon(title: "Tài sản", icon: "chart.pie")
+            AssetsView()
                 .tabItem { Label("Tài sản", systemImage: "chart.pie") }.tag(AppModel.Tab.assets)
-            Soon(title: "Dòng tiền", icon: "arrow.left.arrow.right")
+            CashView()
                 .tabItem { Label("Dòng tiền", systemImage: "arrow.left.arrow.right") }.tag(AppModel.Tab.cash)
-            Soon(title: "Tin tức", icon: "newspaper")
+            NewsView()
                 .tabItem { Label("Tin tức", systemImage: "newspaper") }.tag(AppModel.Tab.news)
-            Soon(title: "Trợ lý", icon: "bubble.left.and.bubble.right")
+            AssistantView()
                 .tabItem { Label("Trợ lý", systemImage: "bubble.left.and.bubble.right") }.tag(AppModel.Tab.assistant)
-        }
-    }
-}
-
-/// A tab not built yet (docs/IOS_APP_PLAN.md I2, I3).
-struct Soon: View {
-    let title: String
-    let icon: String
-
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(title, systemImage: icon, description: Text("Màn hình này có trong bản tiếp theo."))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Theme.plane)
-                .navigationTitle(title)
         }
     }
 }

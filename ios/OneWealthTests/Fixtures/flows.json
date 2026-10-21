@@ -1,0 +1,142 @@
+{
+ "flows": {
+  "client_id": "C01",
+  "scope": "personal",
+  "month": "2026-09",
+  "months": [
+   "2025-10",
+   "2025-11",
+   "2025-12",
+   "2026-01",
+   "2026-02",
+   "2026-03",
+   "2026-04",
+   "2026-05",
+   "2026-06",
+   "2026-07",
+   "2026-08",
+   "2026-09"
+  ],
+  "members": [
+   "Nguyễn Minh Khoa"
+  ],
+  "inflow": [
+   {
+    "category": "salary",
+    "label": "Lương",
+    "amount": 120430000.0,
+    "rows": [
+     {
+      "date": "2026-09-05",
+      "amount": 120430000.0,
+      "direction": "in",
+      "desc": "LUONG CONG TY CONG NGHE TECHVN T9/2026",
+      "category": "salary",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     }
+    ]
+   }
+  ],
+  "outflow": [
+   {
+    "category": "loan",
+    "label": "Trả nợ vay",
+    "amount": 38000000.0,
+    "rows": [
+     {
+      "date": "2026-09-20",
+      "amount": 38000000.0,
+      "direction": "out",
+      "desc": "TRA NO VAY THE CHAP 1902xxxx",
+      "category": "loan",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     }
+    ]
+   },
+   {
+    "category": "card",
+    "label": "Thanh toán thẻ",
+    "amount": 34770000.0,
+    "rows": [
+     {
+      "date": "2026-09-25",
+      "amount": 34770000.0,
+      "direction": "out",
+      "desc": "THANH TOAN DU NO THE TIN DUNG",
+      "category": "card",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     }
+    ]
+   },
+   {
+    "category": "living",
+    "label": "Chi tiêu sinh hoạt",
+    "amount": 17623000.0,
+    "rows": [
+     {
+      "date": "2026-09-04",
+      "amount": 3309000.0,
+      "direction": "out",
+      "desc": "THANH TOAN THE HIGHLANDS",
+      "category": "living",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     },
+     {
+      "date": "2026-09-10",
+      "amount": 2549000.0,
+      "direction": "out",
+      "desc": "THANH TOAN THE CGV",
+      "category": "living",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     },
+     {
+      "date": "2026-09-13",
+      "amount": 3456000.0,
+      "direction": "out",
+      "desc": "THANH TOAN THE CGV",
+      "category": "living",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     },
+     {
+      "date": "2026-09-16",
+      "amount": 3694000.0,
+      "direction": "out",
+      "desc": "THANH TOAN THE CIRCLE K",
+      "category": "living",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     },
+     {
+      "date": "2026-09-17",
+      "amount": 1552000.0,
+      "direction": "out",
+      "desc": "THANH TOAN THE SHOPEE",
+      "category": "living",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     },
+     {
+      "date": "2026-09-27",
+      "amount": 3063000.0,
+      "direction": "out",
+      "desc": "THANH TOAN THE HIGHLANDS",
+      "category": "living",
+      "owner": "C01",
+      "owner_name": "Nguyễn Minh Khoa"
+     }
+    ]
+   }
+  ],
+  "total_in": 120430000.0,
+  "total_out": 90393000.0,
+  "left": 30037000.0,
+  "rows": 9,
+  "source": "giao dịch tài khoản Techcombank"
+ }
+}

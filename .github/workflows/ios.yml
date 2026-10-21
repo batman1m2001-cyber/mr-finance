@@ -56,20 +56,31 @@ jobs:
           mkdir -p shots
           xcrun simctl install "$UDID" "$APP"
           xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3 || true
-          shot() {  # shot <name> [VAR=value ...]: a fresh launch with those settings, then the screen once it has loaded
-            name=$1; shift
+          shot() {  # shot <name> <seconds> [VAR=value ...]: a fresh launch with those settings, then the screen once loaded
+            name=$1; wait=$2; shift 2
             xcrun simctl terminate "$UDID" "$ID" 2>/dev/null || true
             env "$@" xcrun simctl launch "$UDID" "$ID"
-            sleep 15
+            sleep "$wait"
             xcrun simctl io "$UDID" screenshot "shots/$name.png"
           }
+          C=SIMCTL_CHILD_
           for mode in light dark; do
             xcrun simctl ui "$UDID" appearance "$mode"
-            shot "1-signin-$mode" SIMCTL_CHILD_MF_SIGNOUT=1
-            shot "2-overview-$mode" SIMCTL_CHILD_MF_DEMO=C01 SIMCTL_CHILD_MF_SCREEN=overview
-            shot "3-overview-lower-$mode" SIMCTL_CHILD_MF_DEMO=C01 SIMCTL_CHILD_MF_SCREEN=overview SIMCTL_CHILD_MF_SCROLL=allocation
-            shot "4-overview-risk-$mode" SIMCTL_CHILD_MF_DEMO=C01 SIMCTL_CHILD_MF_SCREEN=overview SIMCTL_CHILD_MF_SCROLL=risk
+            shot "01-signin-$mode" 12 ${C}MF_SIGNOUT=1
+            shot "02-overview-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview
+            shot "03-overview-lower-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview ${C}MF_SCROLL=allocation
+            shot "04-overview-risk-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview ${C}MF_SCROLL=risk
+            shot "05-assets-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=assets
+            shot "06-cash-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash
+            shot "07-cash-month-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash ${C}MF_SCROLL=month
+            shot "08-cash-large-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash ${C}MF_SCROLL=large
+            shot "09-news-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=news
+            shot "10-news-classes-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=news ${C}MF_SCROLL=classes
+            shot "11-assistant-$mode" 10 ${C}MF_DEMO=C01 ${C}MF_SCREEN=assistant
           done
+          # one real question to the assistant (one model call a run), light only
+          xcrun simctl ui "$UDID" appearance light
+          shot "12-assistant-answer-light" 45 ${C}MF_DEMO=C01 ${C}MF_SCREEN=assistant "${C}MF_ASK=Tài sản của tôi thế nào?"
           ls -la shots
           (cd build/Build/Products/Debug-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/ios/OneWealth-simulator.zip" OneWealth.app)
 

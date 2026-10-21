@@ -21,15 +21,8 @@ struct OverviewView: View {
                         }
                         .padding(.horizontal, 16).padding(.vertical, 8)
                         .task { try? await Task.sleep(for: .milliseconds(400)); screenshotScroll(proxy) }
-                    } else if let e = model.error {
-                        ContentUnavailableView {
-                            Label("Chưa tải được", systemImage: "wifi.exclamationmark")
-                        } description: { Text(e) } actions: {
-                            Button("Thử lại") { Task { await model.refresh() } }.buttonStyle(.borderedProminent)
-                        }
-                        .padding(.top, 80)
                     } else {
-                        ProgressView().controlSize(.large).padding(.top, 120)
+                        Loading(error: model.error) { await model.refresh() }
                     }
                 }
                 .background(Theme.plane)
@@ -38,13 +31,6 @@ struct OverviewView: View {
                 .toolbar { ToolbarItem(placement: .topBarTrailing) { AccountMenu() } }
             }
         }
-    }
-
-    /// The CI screenshots of the lower cards (docs/IOS_APP_PLAN.md): MF_SCROLL=<card id>.
-    private func screenshotScroll(_ proxy: ScrollViewProxy) {
-        #if targetEnvironment(simulator)
-        if let id = ProcessInfo.processInfo.environment["MF_SCROLL"] { proxy.scrollTo(id, anchor: .top) }
-        #endif
     }
 }
 

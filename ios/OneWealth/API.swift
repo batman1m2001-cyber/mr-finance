@@ -38,7 +38,10 @@ final class API {
     }
 
     private func send<T: Decodable>(_ path: String, method: String, body: Data?) async throws -> T {
-        var req = URLRequest(url: server.appendingPathComponent(path))
+        guard let url = URL(string: path, relativeTo: server)?.absoluteURL else {
+            throw APIError(status: 0, message: "Địa chỉ không hợp lệ: \(path)")
+        }
+        var req = URLRequest(url: url)
         req.httpMethod = method
         req.setValue("application/json", forHTTPHeaderField: "Accept")
         if let body {
@@ -86,6 +89,26 @@ final class API {
 
     func dashboard(_ client: String) async throws -> Dashboard {
         (try await post("api/dashboard", ["client_id": client, "scope": "personal", "months": 12]) as DashboardReply).dashboard
+    }
+
+    func flows(_ client: String) async throws -> Flows {
+        (try await post("api/flows", ["client_id": client, "scope": "personal"]) as FlowsReply).flows
+    }
+
+    func impact(_ client: String) async throws -> Impact {
+        let id = client.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? client
+        return try await get("api/families/\(id)/impact?role=client")
+    }
+
+    /// One turn: a question, or the answers to what the last turn waits for (`approvals`: wait id → "approve" | "deny").
+    func ask(_ client: String, message: String?, conversation: String?, turn: String? = nil,
+             approvals: [String: String]? = nil) async throws -> AssistantTurn {
+        var body: [String: Any] = ["role": "client", "client_id": client, "scope": "personal", "route": "#/client/tong-quan"]
+        if let message { body["message"] = message }
+        if let conversation { body["conversation_id"] = conversation }
+        if let turn { body["turn_id"] = turn }
+        if let approvals { body["approvals"] = approvals }
+        return (try await post("api/assistant", body) as AssistantReply).assistant
     }
 }
 
