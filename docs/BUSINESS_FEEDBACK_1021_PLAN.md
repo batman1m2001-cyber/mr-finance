@@ -34,31 +34,44 @@ views).
    never says buy or sell (it is not advice to the client).
 4. **Segments do not match the business's.** No broker views are collected at all; half the news has no type.
 
-**Work.**
+**What the backtest already says (2026-10-21, `measure/backtest.py`, walk-forward 2022-01 → 2026-10).** The
+engine's 3-month direction is right 72 % of the time (54 month-ends; target 70 %): VN-Index 72 %, VN rates 92 %, VN
+government bonds 85 %, gold 68 %; Brent 46 % and foreign flows 39 % are worse than chance. At 1 week it is 57 %. It
+assumes the agent read the news right: it scores the engine, not the agent. Short horizons are mostly noise, so the
+daily right / wrong is an early signal, not the accuracy.
 
-- **B1.1 Agent-only daily run** (the `demo_walkthrough.py` flow as a daily job, 08:30): ingest, group the day's news
-  into events by type automatically, run the CIO agent and the challenger on each, and **record every draft's
-  forecasts as the agent's own** ("shadow", before any human edit), whether or not a person approves it. Shadow
-  forecasts never reach a client screen. Approved views keep being scored as today, so "the agent alone" and "the
-  agent plus the CIO" are measured side by side.
-- **B1.2 Short horizons for the trial:** 1 day and 3 days beside 1 week (`HORIZON_DAYS`), the same bands scaled from
-  the factor model. Scored daily against the market series the jobs already load at 15:45 / 16:00 / 17:30.
-- **B1.3 Buy / sell, defined for the report only:** a forecast's direction on an asset class read as *tăng → mua /
-  nắm giữ, giảm → bán / giảm tỷ trọng*; right when the realised move has the same sign over the horizon. Internal; the
-  client still sees impact, not advice.
-- **B1.4 Segments:** macro (monetary, fx, credit, commodity, geopolitics), policy (regulation), sector (equity,
-  real estate, gold, crypto), broker views (new). Unclassified news gets a type from the same words plus the source's
-  section (Vietstock "Vĩ mô" → macro). Broker views: add the domestic brokers' public daily-commentary feeds where one
-  exists (checked per broker, licence noted); international broker research is behind paywalls: only public summaries.
-- **B1.5 The daily report:** one page and one JSON per day, from 10-22 to 10-31: collected (by segment, source),
-  recall against the reference, events, forecasts made, scored right / wrong (direction and band) by segment and
-  horizon, buy / sell hit rate, speed (news → inbox, agent run, news → forecast), and the model cost.
+**No person in the loop for the check.** The CIO's approval guards what reaches a client; measuring the agent needs
+the agent alone (an edit by the CIO would mix the two). Every forecast of the trial is a *shadow* forecast: recorded
+and scored, never applied, never on a client's screen (BRD KPI-05 untouched). The daily run approves nothing.
 
-**Gate.** The 10-22 run completes on its own at 08:30 and its report is readable that morning; every number links to
-its records; cost per day stays under the cap.
+**Work** (in this order).
 
-**Cost.** One live event run took ~154k tokens (R6). At 5–8 events a day that is ~1M tokens a day; the cap is
-yours to set (see the decisions below).
+- **B1.0 The models through Claude Code.** `scripts/claude_bridge.py`: a local OpenAI-compatible endpoint
+  (`/v1/chat/completions`) that answers each call with headless `claude -p` on the owner's subscription: no tools,
+  an empty working directory, a scrubbed environment, the model asked for (Haiku 5.5, Sonnet 5.5, Opus 5.5), the
+  reply's model and token counts as the app expects. Only `llm:cio` and `llm:challenger` point at it
+  (`LLM_AGENT_BASE_URL` in `resources.yaml`); the assistant keeps its own. The agent's code does not change.
+  CIO agent on Sonnet 5.5, challenger on Opus 5.5. The bridge runs on 127.0.0.1, which the barrier counts as inside
+  the bank: harmless for the news agents (they never see client data) and said in the bridge so nobody points a client
+  step at it. Gate: one event's agent + challenger run through it, time and tokens recorded.
+- **B1.1 Agent-only daily run, 08:30 every day to 10-31** (a `Job` in `app/main.py`, the `demo_walkthrough.py` flow
+  without the approval): ingest, the day's news grouped into events by type (the newest four per type, as the script
+  does), the CIO agent and the challenger on each, and each draft's forecasts recorded as shadow forecasts.
+- **B1.2 Horizons for the trial:** shadow forecasts at 3 days, 1 week and 3 months (1 day is dropped: noise). The
+  scoring job already scores what is due against the market series the jobs load each afternoon.
+- **B1.3 Buy / sell, for the report only:** the direction on an asset class read as *tăng → mua / nắm giữ, giảm →
+  bán / giảm tỷ trọng*; right when the realised move has the same sign. The client still sees impact, not advice.
+- **B1.4 Segments:** macro (monetary, fx, credit, commodity, geopolitics), policy (regulation), sector (equity, real
+  estate, gold, crypto); untyped news gets a type from its words and its source's section (Vietstock "Vĩ mô" →
+  macro). Broker views wait for the owner's answer on sources.
+- **B1.5 The 3-month replay:** news from 2026-07-01 to 07-21 (after the models' knowledge cutoff, so they cannot
+  remember the outcome), taken from the outlets' archives, 20–30 events; the agent run with the market as it was that
+  day; each 3-month forecast scored against what happened by 10-21. A first read, not proof (said on the page).
+- **B1.6 The report:** one page for the business (and a JSON per day): collected by segment and source, recall
+  against the reference, events and forecasts made, scored right / wrong by segment and horizon, buy / sell hit
+  rate, speed (news → inbox, agent run, news → forecast), the backtest and the replay, subscription use per day.
+
+**Gate.** 10-22 08:30 runs on its own and its report is readable that morning; every number links to its records.
 
 ## B2 · A phone app
 
@@ -167,8 +180,8 @@ say that the demo differs.
   are; the UI suite and `test_how` must pass unchanged in what they check.
 - **B4: backlog.** The owner takes it later.
 
+- **No person in the loop for the trial;** the daily run approves nothing (shadow forecasts only).
+
 ## Still open
 
-1. May the daily run approve its own views (new events on the demo clients' screens each day), or only record the
-   shadow forecasts?
-2. Broker views: may we collect the domestic brokers' public commentary pages (terms of use differ per broker)?
+1. Broker views: may we collect the domestic brokers' public commentary pages (terms of use differ per broker)?
