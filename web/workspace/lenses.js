@@ -4,17 +4,17 @@
    so the server's links (citations, search, the bell) need no change. */
 
 export const LENSES = [
-  {id: "tong-quan", label: "Tổng quan", icon: "map", tip: "Tổng quan: toàn bộ bức tranh tài chính",
+  {id: "tong-quan", label: "Tổng quan", icon: "map", tip: "Tổng quan: toàn bộ bức tranh tài chính", sub: "Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn",
     kinds: ["family", "class", "flow", "liquidity", "goal", "risk", "event"], sheets: ["toan-canh", "chi-tiet"]},
-  {id: "tai-san", label: "Tài sản", icon: "wallet", tip: "Tài sản: từng khoản và nguồn dữ liệu",
+  {id: "tai-san", label: "Tài sản", icon: "wallet", tip: "Tài sản: từng khoản và nguồn dữ liệu", sub: "Từng loại tài sản, khoản nợ và nguồn dữ liệu của chúng",
     kinds: ["family", "class", "holding", "source"], sheets: ["tai-san"]},
-  {id: "dong-tien", label: "Dòng tiền", icon: "flow", tip: "Dòng tiền: thu nhập, chi tiêu, thanh khoản",
+  {id: "dong-tien", label: "Dòng tiền", icon: "flow", tip: "Dòng tiền: thu nhập, chi tiêu, thanh khoản", sub: "Thu nhập và chi tiêu của tháng, và tiền dự phòng",
     kinds: ["family", "flow", "category", "liquidity", "class"], sheets: ["toan-canh"]},
-  {id: "muc-tieu", label: "Mục tiêu & kịch bản", icon: "target", tip: "Mục tiêu và kịch bản giả định",
+  {id: "muc-tieu", label: "Mục tiêu & kịch bản", icon: "target", tip: "Mục tiêu và kịch bản giả định", sub: "Mục tiêu của bạn và các kịch bản giả định",
     kinds: ["family", "goal", "scenario"], sheets: ["ke-hoach"]},
-  {id: "tin", label: "Tin & sự kiện", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động",
+  {id: "tin", label: "Tin & sự kiện", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động", sub: "Tin tức, sự kiện và chính sách có thể tác động tới tài sản của bạn",
     kinds: ["family", "event", "alert", "class"], sheets: ["thi-truong", "do-thi", "chinh-sach"]},
-  {id: "rui-ro", label: "Rủi ro", icon: "alert", tip: "Rủi ro: mức lỗ khi căng thẳng, tập trung, dự phòng",
+  {id: "rui-ro", label: "Rủi ro", icon: "alert", tip: "Rủi ro: mức lỗ khi căng thẳng, tập trung, dự phòng", sub: "Mức lỗ khi thị trường xấu, mức tập trung và tiền dự phòng",
     kinds: ["family", "risk", "liquidity", "class"], sheets: ["khau-vi", "chi-tiet"]},
 ];
 export const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));

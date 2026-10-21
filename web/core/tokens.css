@@ -374,6 +374,7 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .pc-body { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; }
 .pc-main { min-width: 0; flex: 1 1 140px; }
 .pc-viz { flex: none; }
+.pc-viz .gauge { width: 72px; }  /* a shrink-wrapped box: the track needs a width of its own */
 .pc-foot { font-size: 12px; color: var(--muted); border-top: 1px solid var(--hair); padding-top: 10px; }
 .contrib { display: grid; gap: 5px; margin-top: 6px; }
 .crow { display: grid; grid-template-columns: 9px minmax(0, 1fr) 54px auto; gap: 8px; align-items: center; cursor: pointer; color: var(--ink-2); }
@@ -985,7 +986,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   font-size: 12.5px; font-weight: 600; box-shadow: 0 6px 20px var(--ring); z-index: 30;
   transition: opacity var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out); }
 .ws-tool:hover::after, .ws-tool:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
-.ws-center { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; overflow: hidden;
+.ws-center { position: relative; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; min-width: 0; overflow: hidden;
   background: radial-gradient(ellipse at 50% 45%, var(--plane-glow), var(--plane) 70%); }
 .ws-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 14px 20px 0; }
 .ws-title { margin: 0; font-size: 19px; letter-spacing: -.01em; }
@@ -997,13 +998,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-legend .c-pulse::before { width: 7px; height: 7px; border: 0; border-radius: 50%; background: var(--pulse); box-shadow: -6px 0 0 -1.5px color-mix(in srgb, var(--pulse) 50%, transparent), 0 0 6px var(--pulse); margin-left: 6px; }
 .ws-canvas { position: relative; min-height: 0; }
 .ws-canvas[hidden], .ws-list[hidden], .ws-cashview[hidden] { display: none; }
-/* the “Dòng tiền & phân bổ” view scrolls, so the controls take their own row above it instead of floating over it */
 .ws-cashview { min-height: 0; overflow: auto; padding: 8px 20px 16px; }
-.ws[data-view="money"] .ws-center { grid-template-rows: auto auto minmax(0, 1fr) auto; }
-.ws[data-view="money"] .ws-head { order: 0; }
-.ws[data-view="money"] .ws-ctl { position: static; order: 1; justify-content: flex-end; padding: 8px 20px 0; }
-.ws[data-view="money"] .ws-cashview { order: 2; }
-.ws[data-view="money"] .ws-strip { order: 3; }
 .ws-cashview .panel { background: var(--surface); }
 .ws[data-view="money"] .ws-ctl :is([data-z], #ws-unit) { display: none; }
 .ws[data-view="money"] .ws-legend { display: none; }
@@ -1011,7 +1006,9 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-svg:active { cursor: grabbing; }
 .ws-svg:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .ws-list { min-height: 0; overflow: auto; padding: 12px 20px; }
-.ws-ctl { position: absolute; top: 70px; right: 16px; display: flex; gap: 6px; align-items: center; z-index: 3; }
+/* the controls: their own row under the head (floating over the graph, they hid its top labels) */
+.ws-ctl { display: flex; gap: 6px; align-items: center; justify-content: flex-end; padding: 8px 20px 0; z-index: 3; }
+.ws-head { order: 0; } .ws-ctl { order: 1; } :is(.ws-canvas, .ws-list, .ws-cashview) { order: 2; } .ws-strip { order: 3; }
 .ws-ctl .seg button { padding: 5px 11px; border: 0; border-radius: 999px; background: none; color: var(--ink-2); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
 .ws-ctl .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(23, 18, 58, .12); }
 .ws-ctl .iconbtn { width: 32px; height: 32px; font-size: 16px; display: grid; place-items: center; cursor: pointer; color: var(--ink); }

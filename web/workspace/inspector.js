@@ -5,7 +5,7 @@ import {formulaOf, n as how, esc, pct, post, signClass, vnd} from "../core/core.
 import {timeline as drawTimeline} from "../charts/charts.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {LOOK, UNIT_WORD, certaintyOf, changeOf, changeText, changeTone, changeWord, figureOf, howOf, srcText} from "./graph.js?v=20261020t1";
-import {SHEETS} from "./lenses.js?v=20261018p3";
+import {SHEETS} from "./lenses.js?v=20261021t1";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
 const titled = {event: "data-quote", alert: "data-explains"};  // a news event's title is the outlets' words
@@ -29,8 +29,13 @@ const STEP = {day: "so với hôm trước", month: "so với tháng trước", 
 const TONE = {up: "up", down: "down", out: "down", flat: ""};
 const timelines = new Map();  // client|scope|node|unit → the promise of its points
 
-export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scenario, timeline}) {
+export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scenario, timeline, page}) {
   const n = node;
+  if (!n && !edge && page) {  // a page of its own is open (Chuyên gia, Bộ nhớ): nothing of the lens to say beside it
+    el.innerHTML = `<div class="ws-ins-lens"><h3>${esc(page)}</h3><p class="small muted">Thông tin hiện số liệu, liên kết và nguồn của một nút trên đồ thị.
+      Đóng trang ${esc(page)} để quay về đồ thị.</p></div>`;
+    return;
+  }
   if (!n && edge) { drawEdge(edge); wire(); return; }
   const sheetBtns = (ids) => ids.map(id => `<button type="button" class="btn sm" data-sheet="${id}">${esc(SHEETS[id].label)} ${icon("arrow", {size: 14})}</button>`).join("");
   if (!n) {
@@ -305,7 +310,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, scena
   function list(rows) {
     return `<div class="mlist">${rows.map(x => `<button type="button" class="mrow" data-n="${esc(x.id)}">
       <span class="ic-chip sm" style="--tone:${(LOOK[x.kind] || LOOK.class)[0]}">${icon((LOOK[x.kind] || LOOK.class)[1], {size: 13})}</span>
-      <span><b>${nameOf(x, esc(short(x.label, 70)))}</b><span class="small muted">${esc(x.kind === "event" ? "Tin tức · CIO duyệt" : x.status_label || kindLabel(x.kind))}</span></span>
+      <span><b>${nameOf(x, esc(short(x.label, 70)))}</b><span class="small muted">${esc(x.kind === "event" ? "Tin tức · CIO duyệt" : x.status_label || (x.liability ? "Nợ" : kindLabel(x.kind)))}</span></span>
       <span class="num ${["event", "alert", "scenario"].includes(x.kind) ? signClass(x.value) : ""}">${esc(figureOf(x))}</span></button>`).join("") || `<p class="muted small">Chưa có mục nào.</p>`}</div>`;
   }
 }

@@ -55,22 +55,28 @@ graph (as the new view already does); a subtitle per lens; Thông tin follows th
 **T2 · Toolbar with names (S).** A short label under each icon, always visible (the rail grows ~16 px). Lenses on
 top, then a divider, then Chuyên gia. Bộ nhớ leaves the toolbar (header and assistant panel keep it).
 
-**T3 · Each lens opens its content (M).** The view switch becomes per lens: **Đồ thị | Bảng**. The Bảng of each lens is
-its page, in the centre, no sheet: Tổng quan → net worth and the strip's KPIs in full; Tài sản → the holdings
-table; Dòng tiền → the cash-flow view; Mục tiêu → Kế hoạch; Tin → Tác động thị trường; Rủi ro → risk and reserve.
-"Xem đầy đủ" goes away.
-
-**T4 · One place per number (M).** With T3, Toàn cảnh and Chi tiết have no job of their own: their blocks move into
-the lenses' Bảng, and their addresses open the matching lens (search, citations and the bell keep working). Toàn
-cảnh's month sankey goes to Dòng tiền → Bảng. The strip stays the one summary.
+**T3 + T4 · One dashboard, one click from every lens (M)** (refined 2026-10-21, after reading Toàn cảnh and Chi tiết).
+The "Dòng tiền & phân bổ" view becomes the client's one dashboard, **Bảng số liệu**, in the centre beside the graph:
+cash flow over time and allocation first (the business's ask), then Chi tiết's blocks (net worth and its sources,
+portfolio profit/loss, risk, reserve, policy) and the two things only Toàn cảnh had: the month's money in and out by
+category (its sankey and month picker) and "Điều đáng chú ý". Toàn cảnh's goals and allocation bars are already in
+Kế hoạch and the dashboard, so they are not copied. Toàn cảnh and Chi tiết stop being pages: their addresses open the
+dashboard (search, citations, the bell and the assistant's page links keep working). Each lens jumps the dashboard to
+its own section (Dòng tiền → cash flow, Tài sản → allocation, Rủi ro → risk), and the lens's other full pages (Tài
+sản, Kế hoạch, Tác động thị trường, Khẩu vị rủi ro) are buttons in the controls row, not at the bottom of Thông tin.
+Tổng quan's Thông tin shows "Điều đáng chú ý" instead of repeating Tin's list (finding 3).
 
 **T5 · One name per thing (S).** Toolbar, menu, sheet title and the assistant's page names use the same words; Khẩu
 vị rủi ro under Rủi ro everywhere.
 
+**T6 · Groups you can see on the graph (S–M).** The ring already places nodes by kind in a fixed order (assets upper
+left, debts right, money in left and out right, news and policy together; `RING`/`HOME` in `graph.js`), but nothing
+shows where one group ends: a gap between groups and a faint group tag ("Chính sách · 6").
+
 Gate for every step: desktop and phone screenshots, the UI suite (`tests/ui`), `test_how` (every figure keeps its
 "Cách tính"), no console errors.
 
-## Open for the owner
+## Decided by the owner (2026-10-21)
 
-- T4 retires two pages (Toàn cảnh, Chi tiết) as separate screens. Their content is kept, not deleted.
-- Bộ nhớ out of the toolbar (T2).
+- T4 retires Toàn cảnh and Chi tiết as separate screens; their content is kept.
+- Bộ nhớ leaves the client toolbar (T2).
