@@ -16,21 +16,21 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261021t3";
-import {DESKS} from "./desk/roles.js?v=20261021t2";
+import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261021t5";
+import {DESKS} from "./desk/roles.js?v=20261021t5";
 
 const ROLES = {
   client: {
     label: "Khách hàng", user: null, clientPick: true,
     nav: [
       {id: "tong-quan", label: "Tổng quan", sub: [
-        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "ban-do", label: "Bản đồ tài chính", page: "map"},
-        {id: "chi-tiet", label: "Chi tiết", page: "detail"}]},
+        {id: "toan-canh", label: "Bảng số liệu", page: "pulse"}, {id: "ban-do", label: "Đồ thị tài chính", page: "map"},
+        {id: "chi-tiet", label: "Bảng số liệu", page: "detail"}]},  // both open the workspace's Bảng số liệu (T4)
       {id: "tai-san", label: "Tài sản", page: "holdings"},
-      {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [
-        {id: "ke-hoach", label: "Kế hoạch", page: "plan"}, {id: "khau-vi", label: "Khẩu vị rủi ro", page: "risktest"}]},
-      {id: "tin", label: "Tin tác động", sub: [
-        {id: "thi-truong", label: "Tác động thị trường", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}]},
+      {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [{id: "ke-hoach", label: "Kế hoạch", page: "plan"}]},
+      {id: "rui-ro", label: "Rủi ro", sub: [{id: "khau-vi", label: "Khẩu vị rủi ro", page: "risktest"}]},
+      {id: "tin", label: "Tin tức", sub: [
+        {id: "thi-truong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}]},
       {id: "chuyen-gia", label: "Chuyên gia", page: "advisor"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
@@ -43,7 +43,7 @@ const ROLES = {
       {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
         {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
         {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "ban-do", label: "Bản đồ tài chính", page: "map"},
-        {id: "tong-quan", label: "Chi tiết", page: "detail"},
+        {id: "tong-quan", label: "Chi tiết tài sản", page: "detail"},
         {id: "tai-san", label: "Tài sản", page: "holdings"}, {id: "ke-hoach", label: "Kế hoạch", page: "plan"},
         {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "performance"},
         {id: "duyet", label: "Duyệt đề xuất", page: "advisor"}]},
@@ -166,7 +166,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261021t3");
+  wsLoad ||= import("./workspace/workspace.js?v=20261021t5");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -187,7 +187,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261021t2");
+  dkLoad ||= import("./desk/desk.js?v=20261021t5");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});
@@ -297,7 +297,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261021t3`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261021t5`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

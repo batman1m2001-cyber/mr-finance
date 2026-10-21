@@ -160,7 +160,7 @@ REMEMBERED = """
 
 
 LENS_NAMES = {"tong-quan": "Tổng quan", "tai-san": "Tài sản", "dong-tien": "Dòng tiền",
-              "muc-tieu": "Mục tiêu & kịch bản", "tin": "Tin & sự kiện", "rui-ro": "Rủi ro"}  # fmt: skip
+              "muc-tieu": "Mục tiêu & kịch bản", "tin": "Tin tức", "rui-ro": "Rủi ro"}  # fmt: skip
 KIND_NAMES = {"family": "tài sản ròng", "class": "lớp tài sản", "holding": "khoản", "flow": "dòng tiền tháng",
               "category": "khoản thu chi", "goal": "mục tiêu", "event": "tin", "alert": "chính sách", "risk": "rủi ro",
               "liquidity": "thanh khoản", "scenario": "kịch bản", "source": "nguồn dữ liệu", "group": "nhóm",
@@ -392,12 +392,11 @@ def steps_of(res, ctx: Ctx, fresh: bool) -> List[Dict[str, Any]]:
             else:
                 why = re.sub(r"^.*?failed: (?:\w+: )?", "", content.split(":", 1)[-1].strip(), count=1, flags=re.S)
                 step["text"] = "Không thực hiện được: " + why[:300]  # the reason, not the runner's wrapping
-        page = tool and registry.tools.PAGES.get(tool.page or "")
-        link = page and page[1].get(ctx.role)
+        page = tool and registry.tools.page_of(tool.page, ctx.role)
         if got is not None and got.get("evidence"):  # the page the result itself names (the guide's section)
             step["evidence"] = got["evidence"]
-        elif link:
-            step["evidence"] = {"label": page[0], "route": link}
+        elif page:
+            step["evidence"] = {"label": page[0], "route": page[1]}
         out.append(step)
     return out
 

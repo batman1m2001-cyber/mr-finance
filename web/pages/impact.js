@@ -1,4 +1,4 @@
-/* Tin tác động: what the approved news does to this family — one hero number, the band over time,
+/* Tác động tin: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
 import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
@@ -35,7 +35,7 @@ export async function render(box, ctx) {
   box.innerHTML = `${staff ? internal() : ""}
     <div class="cols">
       <div class="panel hero-panel c5">
-        <div class="eyebrow">Tin tác động · 3 tháng tới</div>
+        <div class="eyebrow">Tác động tin · 3 tháng tới</div>
         <div class="hero ${signClass(total)}" style="margin-top:10px">${how(vnd(total, true), "impact.expected_3m", {event: `${effective.length} sự kiện đang hiệu lực`})}</div>
         <div class="takeaway">${effective.length ? `${effective.length} sự kiện đang có hiệu lực${topClass ? `; chủ yếu qua <b>${esc(ASSET_CLASS[topClass[0]] || topClass[0])}</b> (${how(vnd(topClass[1], true), "impact.by_class", {part: ASSET_CLASS[topClass[0]] || topClass[0]})})` : ""}.` : "Chưa có sự kiện nào đang hiệu lực."}</div>
         <div class="row" style="margin-top:12px">

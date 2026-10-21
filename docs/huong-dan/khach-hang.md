@@ -5,13 +5,14 @@ Các trang của khách hàng (`#/client/…`). RM cũng thấy phần lớn cá
 
 ## Đồ thị tài chính (màn hình chính) — #/client/xem/tong-quan
 
-Màn hình chính của khách hàng là một đồ thị luôn hiện. **Vòng tròn lớn ở giữa là bạn**: con số trong vòng là tài sản
+Màn hình chính của khách hàng là một đồ thị luôn hiện (địa chỉ cũ Bản đồ tài chính, `#/client/tong-quan/ban-do`,
+cũng mở nó): bức tranh toàn bộ tài chính dưới dạng sơ đồ. **Vòng tròn lớn ở giữa là bạn**: con số trong vòng là tài sản
 ròng (tổng tài sản trừ nợ). Ở chế độ **Gia đình** vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một
 khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền
 vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách.
 
 - **Góc nhìn** (thanh công cụ): Tổng quan, Tài sản (`#/client/xem/tai-san`), Dòng tiền (`…/dong-tien`), Mục tiêu &
-  kịch bản (`…/muc-tieu`), Tin & sự kiện (`…/tin`), Rủi ro (`…/rui-ro`). Mỗi góc nhìn làm nổi các loại liên quan; đồ
+  kịch bản (`…/muc-tieu`), Tin tức (`…/tin`), Rủi ro (`…/rui-ro`). Mỗi góc nhìn làm nổi các loại liên quan; đồ
   thị không đổi chỗ.
 - **Đường nối**: nét liền là tiền và các khoản thực tế đã ghi nhận (càng dày càng nhiều tiền); **nét đứt là ước
   tính** (tin, chính sách, rủi ro: “có thể ảnh hưởng”); **chấm chấm là giả định** (kịch bản, nhãn “giả định”, “nếu
@@ -24,8 +25,8 @@ vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch b�
   về mục đang chọn. Các mục trợ lý đang đọc sáng lên trên đồ thị.
 - **Ô Thông tin khi chưa chọn gì**: ở Tổng quan là **Điều đáng chú ý** (tin, mục tiêu, ngưỡng và thay đổi có thể ảnh
   hưởng tới bạn, quan trọng trước, kèm lý do và nguồn); ở các góc nhìn khác là danh sách các mục của góc nhìn đó.
-- **Trang của góc nhìn**: dưới tiêu đề là nút mở các trang riêng (Tài sản, Kế hoạch, Khẩu vị rủi ro, Tác động thị
-  trường, Đồ thị tác động, Chi phí chính sách) và nút mở phần số liệu của góc nhìn trong Bảng số liệu. Trang riêng mở
+- **Trang của góc nhìn**: dưới tiêu đề là nút mở các trang riêng (Tài sản, Kế hoạch, Khẩu vị rủi ro ở Rủi ro, Tác
+  động tin, Đồ thị tác động, Chi phí chính sách) và nút mở phần số liệu của góc nhìn trong Bảng số liệu. Trang riêng mở
   thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như cũ.
 - **Cách xem**: Đồ thị, Danh sách, hoặc **Bảng số liệu** (xem dưới).
 - **Tổng quan nhanh** (dải thẻ dưới đồ thị): tài sản ròng, dòng tiền tháng, phân bổ, rủi ro, thanh khoản dự phòng. Bấm
@@ -51,13 +52,6 @@ chỉ cũ `#/client/tong-quan/toan-canh` và `#/client/tong-quan/chi-tiet` mở 
 
 Mục tiêu đang theo dõi ở góc nhìn Mục tiêu & kịch bản và trang Kế hoạch.
 
-## Bản đồ tài chính — #/client/tong-quan/ban-do
-
-Bức tranh toàn bộ dưới dạng đồ thị: bạn ở giữa, xung quanh là tài sản, nguồn dữ liệu, mục tiêu, rủi ro, chính sách và
-tin tức. Bật tắt từng loại bằng các nút phía trên (nguồn dữ liệu và chính sách tắt sẵn). Bấm một nút để xem số liệu và
-các liên kết của nó; nhóm tài sản mở ra các khoản bằng nhấp đúp hoặc “Mở rộng”. Đường nét đứt là tin “có thể ảnh
-hưởng”. **Mở trang** đưa tới trang chi tiết. Trên điện thoại trang mở ở dạng danh sách.
-
 ## Tài sản — #/client/tai-san
 
 Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: **Đã xác thực** (từ ngân hàng), **Từ sao
@@ -80,13 +74,13 @@ tháng), số cần so với số có cho từng mục tiêu và số tiền c�
 - **Gửi chuyên gia duyệt**: gửi một việc hay phương án tới RM; theo dõi ở trang Chuyên gia.
 - **Lưu ý quy định cho mục tiêu**: quy định mới có liên quan tới mục tiêu của bạn, mức độ và mốc cần chuẩn bị.
 
-## Khẩu vị rủi ro — #/client/muc-tieu/khau-vi
+## Khẩu vị rủi ro — #/client/rui-ro/khau-vi
 
 Bài kiểm tra khẩu vị rủi ro: bấm “Bắt đầu”, trả lời 8–12 câu tình huống (câu sau tùy câu trước, có thanh tiến độ và
 nút “← Câu trước”). Kết quả: mức chịu đựng rủi ro và khả năng chịu rủi ro trên năm mức, câu giải thích khi hai mức
 khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở phần Rủi ro của Bảng số liệu.
 
-## Tác động thị trường — #/client/tin/thi-truong
+## Tác động tin — #/client/tin/thi-truong
 
 Sau khi CIO duyệt một nhận định về tin thị trường và hậu kiểm đạt, trang này cho biết tài sản của bạn có thể thay đổi
 bao nhiêu trong 3 tháng tới, dải dao động rộng hay hẹp và đến từ đâu — theo nhóm tài sản, không nêu mã cổ phiếu, không

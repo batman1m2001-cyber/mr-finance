@@ -12,7 +12,7 @@ from assistant.registry import plan as plan_of
 from control import audit, db, roles
 from copilot import router
 from copilot.scrub import scrub
-from copilot.tools import PAGES, TOOLS, USER, Ctx, ToolFailed, allowed
+from copilot.tools import TOOLS, USER, Ctx, ToolFailed, allowed, page_of
 from people import auth
 
 HELP = {
@@ -147,8 +147,8 @@ async def run_tool(tool, args, confirmed, role, client_id, scope, question, foll
         return {"status": "failed", "text": str(exc), "tool": t.name}
     except (ToolFailed, ValueError, KeyError) as exc:
         return {"status": "failed", "text": f"Không thực hiện được: {exc}", "tool": t.name}
-    page = PAGES.get(t.page or "")
-    link = page and page[1].get(role)
+    page = page_of(t.page, role)
+    link = page and page[1]
     return {
         "status": "ok",
         "text": out["text"],
