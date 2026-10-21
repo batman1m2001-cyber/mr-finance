@@ -60,7 +60,7 @@ def record(view: Dict[str, Any], trial: Dict[str, Any]) -> int:
     branches = schema.to_engine(cur["scenarios"]["branches"], cur["scenarios"]["priced_in"])
     bands = factor_bands(branches, m)
     paths = {b["id"]: factor_bands([{**b, "probability": 1.0}], m) for b in branches}
-    origin = origin_of(view["created"])
+    origin = trial.get("origin") or origin_of(view["created"])  # the replay (B1.5) gives the day it plays
     now = time.time()
     rows = []
     for h, by_factor in bands.items():

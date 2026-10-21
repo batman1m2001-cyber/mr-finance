@@ -37,6 +37,23 @@ function accTable(rows) {
     <th class="num">Đúng hướng</th><th class="num">Trong dải P10–P90</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
 }
 
+// B1.5: July 2026's news played back morning by morning, each draft's forecasts scored against what happened by now
+function replay(r, d) {
+  if (!r) return "";
+  const a = r.accuracy[horizon], sc = (r.scenarios || {})[horizon], calls = r.calls[horizon] || [];
+  const vn = a.by_factor.find(f => f.id === "VNINDEX");
+  return `<section class="panel mt"><h3>Chạy lại tháng 7/2026 <span class="hint">${HL[horizon]} · ${r.runs.drafts} bản nháp từ ${r.days.length} buổi sáng ${day(r.replay.first)} – ${day(r.replay.last)}</span></h3>
+    <p class="small">Tin tháng 7 của bốn báo (VnEconomy, VnExpress, CafeF, Vietstock) được chạy lại từng buổi sáng qua đúng các bước của thử nghiệm, rồi chấm với diễn biến thị trường đến nay — câu trả lời nhanh cho kỳ 3 tháng.
+      Hai mô hình chỉ biết đến khoảng tháng 6/2026 và không biết kết quả tháng 7–9; agent chỉ đọc tin và danh mục yếu tố, không có số liệu thị trường.
+      Một lần đọc đầu, chưa phải bằng chứng: ${r.runs.drafts} sự kiện trong ba tuần của một mùa hè.</p>
+    ${accTable([accRow("<b>Tất cả</b>", a),
+      ...Object.entries(d.segments).map(([k, l]) => accRow(esc(l), a.by_segment[k])),
+      ...(vn ? [accRow("<b>VN-Index</b>", vn)] : [])])}
+    <p class="small mt-xs">Mua · bán · giữ: ${calls.map(x => `${esc(x.label)} ${share(x.share, x.n)}`).join(" · ")}.
+      Kịch bản: ${sc && sc.judged ? `thị trường đi theo kịch bản agent cho là khả năng cao nhất ${sc.main_taken}/${sc.judged} lần (${pct(sc.share, false, 0)})` : "chưa đủ yếu tố đã chấm"}.</p>
+  </section>`;
+}
+
 function paint(box, d) {
   const c = d.collection, r = d.recall, runs = d.runs, a = d.accuracy[horizon];
   const perDay = Object.values(c.per_day || {});
@@ -56,6 +73,8 @@ function paint(box, d) {
       ${kpi("Sự kiện · bản nháp", `${runs.events} · ${runs.drafts}`, runs.errors.length ? `<span class="bad-text">${runs.errors.length} lần lỗi</span>` : "không lần nào lỗi")}
       ${kpi("Agent mỗi sự kiện", secs(runs.agent_s_p50), `trung vị · lâu nhất ${secs(runs.agent_s_max)} · tin vào hộp sau ${c.ingest_lag_min_p50 == null ? "—" : `${Math.round(c.ingest_lag_min_p50)} phút`}`)}
     </div>
+
+    ${replay(d.replay, d)}
 
     <section class="panel mt"><h3>Dự báo bóng đúng bao nhiêu <span class="hint">${HL[horizon]}${a.next_due ? ` · hạn chấm gần nhất ${day(a.next_due)}` : ""}</span></h3>
       ${a.uncalibrated ? `<p class="small warn-text">Kỳ 3 ngày không phải kỳ hạn của mô hình: dùng tỷ lệ thể hiện của kỳ 1 tuần, chưa hiệu chỉnh. Ở kỳ ngắn, biến động thị trường phần lớn là nhiễu.</p>` : ""}

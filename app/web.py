@@ -915,7 +915,13 @@ async def trial(request: Request) -> JSONResponse:
 
     from trial import report
 
-    return JSONResponse(await asyncio.to_thread(report.summary))
+    out = await asyncio.to_thread(report.summary)
+    replay = ROOT / "out" / "trial" / "replay.json"  # B1.5: July 2026 played back (scripts/replay_july.py)
+    if replay.exists():
+        r = json.loads(replay.read_text(encoding="utf-8"))
+        keep = ("replay", "at", "days", "runs", "accuracy", "calls", "scenarios", "events")
+        out["replay"] = {k: r.get(k) for k in keep}
+    return JSONResponse(out)
 
 
 async def accuracy(request: Request) -> JSONResponse:

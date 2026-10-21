@@ -86,7 +86,20 @@ and scored, never applied, never on a client's screen (BRD KPI-05 untouched). Th
   - Buy/sell readings for VN-Index, gold, Bitcoin and USD: "mua"/"bán" when the expected move exceeds a quarter
     of a typical move, else "giữ".
   - Scenarios: the one whose path matched the most scored factors, against the most likely one.
-- **B1.5 replay: next.**
+- **B1.5 replay done (scripts/replay_july.py, out/trial/replay.json, shown on the page and in the business
+  dashboard https://claude.ai/artifact/4gcoQefYhmEWkfn5FQbUfg).**
+  - Input: 3,060 Google News items from VnEconomy, VnExpress, CafeF and Vietstock for 1–20/7. 12 mornings gave
+    23 events and 22 drafts, plus 1 agent error. Mondays 13/7 and 20/7 made no event, because the replay takes 24 h
+    of news and the weekend is thin.
+  - Results at 3 months:
+    - direction right 58% (154/264), inside P10–P90 75%;
+    - VN-Index 86% (19/22), against the backtest's 72%;
+    - the main scenario happened 32% of the time (7/22).
+  - Results at 3 days and 1 week: 56% and 55% overall; VN-Index 73% and 86%.
+  - Not independent: every July forecast meets the same July→October fall, so VN-Index 19/22 is one correct
+    call on one move. Said on both pages.
+  - Fairness probe: both models say their data ends about June 2026 and know no July–September outcome. Claude
+    Code still passes today's date to the model.
 
 ## B2 · A phone app
 
