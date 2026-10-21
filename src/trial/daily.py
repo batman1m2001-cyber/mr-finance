@@ -48,14 +48,16 @@ def days() -> Dict[str, List[Dict[str, Any]]]:
     return out
 
 
-def candidates(now: float) -> List[Dict[str, Any]]:
+def candidates(now: float, since: Optional[float] = None) -> List[Dict[str, Any]]:
     """The news not yet in an event since the last run (the day before, the first time), not held, of medium or
-    high relevance, newest first."""
-    with db.tx() as con:
-        last = con.execute("select max(created) from trial_events").fetchone()[0]
-    since = max(last or now - WINDOW_S, now - MAX_WINDOW_S)
+    high relevance, newest first — published before ``now`` (the replay plays a past morning)."""
+    if since is None:
+        with db.tx() as con:
+            last = con.execute("select max(created) from trial_events").fetchone()[0]
+        since = max(last or now - WINDOW_S, now - MAX_WINDOW_S)
     items = news_store.inbox(status="new", since=since, limit=2000)
-    return [i for i in items if not i["held"] and i.get("relevance") in ("high", "medium")][:MAX_NEWS]
+    keep = [i for i in items if not i["held"] and i.get("relevance") in ("high", "medium")]
+    return [i for i in keep if (i.get("published") or i["ingested"]) <= now][:MAX_NEWS]
 
 
 SYSTEM = (

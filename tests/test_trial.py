@@ -9,7 +9,7 @@ from datetime import date, datetime, timedelta
 import pytest
 from test_views import AGENT, NOW, news
 
-from control import roles
+from control import db, roles
 from control.roles import TRIAL_ACTOR
 from events import store as events
 from measure import realised
@@ -99,3 +99,17 @@ def test_the_report_scores_the_shadow_forecasts_the_readings_and_the_scenarios(m
 
 def test_the_trial_actor_acts_only_outside_a_request():
     assert roles.user(TRIAL_ACTOR)["role"] == "cio"
+
+
+def test_a_replayed_morning_keeps_the_close_before_it_and_its_news_window(morning):
+    ids = news("NHNN giữ nguyên lãi suất điều hành", "Lãi suất liên ngân hàng giảm")
+    assert {i["id"] for i in daily.candidates(NOW + 60, since=NOW - 3600)} == set(ids)
+    assert daily.candidates(NOW - 3600, since=NOW - 7200) == []  # published after that morning: not seen
+    asyncio.run(daily.run(now=NOW + 3600))
+    [t] = daily.days()[DAY]
+    view = vstore.get(t["view_id"])
+    with db.tx() as con:
+        con.execute("delete from shadow_forecasts")
+    assert shadow.record(view, {**t, "origin": "2026-07-06"})
+    assert {r["origin"] for r in shadow.rows()} == {"2026-07-06"}
+    assert next(r for r in shadow.rows() if r["horizon"] == "3m")["due"] == "2026-10-05"
