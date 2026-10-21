@@ -996,7 +996,17 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-legend .c-estimate::before { border-top-style: dashed; } .ws-legend .c-hypothetical::before { border-top-style: dotted; }
 .ws-legend .c-pulse::before { width: 7px; height: 7px; border: 0; border-radius: 50%; background: var(--pulse); box-shadow: -6px 0 0 -1.5px color-mix(in srgb, var(--pulse) 50%, transparent), 0 0 6px var(--pulse); margin-left: 6px; }
 .ws-canvas { position: relative; min-height: 0; }
-.ws-canvas[hidden], .ws-list[hidden] { display: none; }
+.ws-canvas[hidden], .ws-list[hidden], .ws-cashview[hidden] { display: none; }
+/* the “Dòng tiền & phân bổ” view scrolls, so the controls take their own row above it instead of floating over it */
+.ws-cashview { min-height: 0; overflow: auto; padding: 8px 20px 16px; }
+.ws[data-view="money"] .ws-center { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.ws[data-view="money"] .ws-head { order: 0; }
+.ws[data-view="money"] .ws-ctl { position: static; order: 1; justify-content: flex-end; padding: 8px 20px 0; }
+.ws[data-view="money"] .ws-cashview { order: 2; }
+.ws[data-view="money"] .ws-strip { order: 3; }
+.ws-cashview .panel { background: var(--surface); }
+.ws[data-view="money"] .ws-ctl :is([data-z], #ws-unit) { display: none; }
+.ws[data-view="money"] .ws-legend { display: none; }
 .ws-svg { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; user-select: none; }
 .ws-svg:active { cursor: grabbing; }
 .ws-svg:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
@@ -1281,15 +1291,16 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-head { padding: 10px 14px 0; flex-direction: column; gap: 6px; }
   .ws-center { grid-template-rows: auto auto auto auto; }
   .ws-list { max-height: 70dvh; }
+  .ws-cashview { padding: 8px 12px 12px; }
   .ws-head { order: 0; } .ws-ctl { order: 1; position: static; justify-content: flex-end; flex-wrap: wrap; padding: 6px 12px 0; }
-  .ws-canvas, .ws-list { order: 2; } .ws-strip { order: 3; }
+  .ws-canvas, .ws-list, .ws-cashview { order: 2; } .ws-strip { order: 3; }
   .ws-svg .wlbl { font-size: 14px; } .ws-svg .wfig { font-size: 12.5px; } .ws-svg .wme-v { font-size: 21px; }
   .ws-svg .wmoney text { font-size: 12.5px; }
   .ws-strip-b { grid-auto-columns: minmax(200px, 78%); }
   /* a phone: the sheet takes the graph's place in the page (the graph stays mounted, hidden) and the dock stays below */
   .ws-sheet { position: static; animation: none; }
   .ws-sheet-b { overflow: visible; padding: 14px 14px 24px; }
-  .ws.sheeted .ws-canvas, .ws.sheeted .ws-list, .ws.sheeted .ws-ctl, .ws.sheeted .ws-strip, .ws.sheeted .ws-head { display: none; }
+  .ws.sheeted .ws-canvas, .ws.sheeted .ws-list, .ws.sheeted .ws-cashview, .ws.sheeted .ws-ctl, .ws.sheeted .ws-strip, .ws.sheeted .ws-head { display: none; }
   .ws-dock { border-left: 0; border-top: 1px solid var(--hair); height: 78dvh; }
   .ws.folded .ws-pane, .ws.folded .ws-tabs [role="tab"] { display: revert; }
   .ws-fold, .ws-split, .ws-dockreset { display: none; }

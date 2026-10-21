@@ -92,9 +92,18 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     assert "không cộng vào tài sản ròng" in p.page.inner_text("#ws-pane-i")
     assert p.page.text_content('.wnode[data-n="SC:vni_30"] .wfig').startswith("nếu xảy ra −")
     assert p.page.text_content(".wme-v") == me  # a scenario never changes the actual net worth
-    # the strip: the Toàn cảnh cards; a card focuses its lens; folding is remembered
+    # the strip: the Toàn cảnh cards; a card focuses its lens, but the cash-flow and allocation cards open the
+    # “Dòng tiền & phân bổ” view (owner, 2026-10-21); folding is remembered
     assert p.page.locator(".scard").count() == 5
-    p.page.click('.scard[data-lens="dong-tien"] .pc-head')
+    p.page.click('.scard[data-money="cash"] .pc-head')
+    p.page.wait_for_selector("#ws-cashview #cash svg")
+    assert p.page.is_hidden("#ws-canvas") and p.page.get_attribute('#ws-view [data-v="money"]', "aria-pressed") == "true"
+    assert "Lãi/lỗ" in p.page.inner_text("#ws-alloc")
+    p.page.click('#ws-cashview [data-months="24"]')
+    p.page.wait_for_selector('#ws-cashview [data-months="24"][aria-pressed="true"]')
+    p.page.click('#ws-view [data-v="graph"]')
+    assert p.page.is_visible("#ws-canvas") and p.page.is_hidden("#ws-cashview")
+    p.page.click('.scard[data-focus="kpi:liquidity"] .pc-head')
     p.page.wait_for_function("location.hash === '#/client/xem/dong-tien'")
     p.page.click("#ws-strip-fold")
     assert p.page.is_hidden("#ws-strip-b")
