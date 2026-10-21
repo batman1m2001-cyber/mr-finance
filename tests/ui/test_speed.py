@@ -64,12 +64,12 @@ def test_the_scope_switch_says_whose_assets_and_hides_for_one_person(open_page):
     assert not p.problems()
 
 
-def test_the_app_opens_dark_unless_light_was_chosen(browser, base_url):
-    ctx = browser.new_context(color_scheme="light")
+def test_the_app_opens_light_unless_dark_was_chosen(browser, base_url):
+    ctx = browser.new_context(color_scheme="dark")  # whatever the system's scheme (2026-10-21: light for everyone)
     page = ctx.new_page()
     page.goto(base_url + "/")
-    assert page.evaluate("document.documentElement.dataset.theme") == "dark"
-    page.evaluate("localStorage.setItem('mf.theme', 'light')")
-    page.reload()
     assert page.evaluate("document.documentElement.dataset.theme") == "light"
+    page.evaluate("localStorage.setItem('mf.theme', 'dark')")
+    page.reload()
+    assert page.evaluate("document.documentElement.dataset.theme") == "dark"
     ctx.close()

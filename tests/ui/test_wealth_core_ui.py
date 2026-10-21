@@ -1,7 +1,7 @@
 """The central wealth core (OWN-GW-20…25, GRAPH_CORE_LAYOUT_PLAN.md §3): its ports light when a spark reaches the rim
 (income) or leaves it (spending, repayments), read off the animations' own clocks; the out-flows leave on the income's
 beat; its states follow the real events (selected, a tool running, the answer streaming, a flow picked); nothing of it
-moves under reduced motion; the net worth keeps ≥ 7:1 contrast against the core behind it, whatever the light does."""
+moves under reduced motion; the net worth keeps ≥ 7:1 contrast against the gold core behind it, whatever the light does."""
 
 import io
 
@@ -91,10 +91,10 @@ def test_the_core_answers_selection_the_assistant_and_a_flow(open_page):
       .map(a => a.animationName + ' ' + a.effect.getTiming().duration)"""
     assert p.page.evaluate(aura) == ["ws-breathe 7000"]  # idle: the slow breath
     assert p.page.evaluate(OPACITY, ".wme-sel") == 0
-    p.page.click(".wnode.k-family .wme-l")  # selected: the accent ring, the aura still
+    p.page.click(".wnode.k-family .wcore.me", position={"x": 62, "y": 22})  # the coin above its figure  # selected: the accent ring, the aura still
     p.page.wait_for_function("+getComputedStyle(document.querySelector('.wme-sel')).opacity > .9")
     assert p.page.evaluate(aura) == []
-    p.page.click(".wnode.k-family .wme-l")
+    p.page.click(".wnode.k-family .wcore.me", position={"x": 62, "y": 22})  # the coin above its figure
     p.page.click("#ws-tab-a")
     p.page.fill("#cp-q", "Tài sản ròng của tôi?")
     p.page.press("#cp-q", "Enter")  # a tool running: the rim takes the data colour and breathes faster
@@ -153,12 +153,15 @@ def test_the_net_worth_stays_readable_whatever_the_light(open_page, theme):
     p.go("#/client/xem/tong-quan")
     p.page.wait_for_selector(".wnode.k-family .wme-v")
     box = p.page.locator(".wme-v").bounding_box()
+    fill = p.page.evaluate("getComputedStyle(document.querySelector('.ws-svg .wme-v')).fill")  # the gold coin's dark ink
+    ink = luminance([int(x) for x in fill[fill.index("(") + 1 : fill.index(")")].split(",")[:3]])
     p.page.add_style_tag(content=".ws-svg .wme-v { opacity: 0 !important; }")  # the background behind the figure
-    worst = 0
-    for _ in range(8):  # through a beat and the breath: the brightest the core gets behind the figure
+    contrast = 99.0
+    for _ in range(8):  # through a beat and the breath: the closest the core gets to the figure's own colour
         shot = Image.open(io.BytesIO(p.page.screenshot(clip=box))).convert("RGB")
         raw = shot.tobytes()
-        worst = max(worst, max(luminance(raw[i : i + 3]) for i in range(0, len(raw), 3)))
+        for i in range(0, len(raw), 3):
+            a, b = sorted((ink, luminance(raw[i : i + 3])))
+            contrast = min(contrast, (b + 0.05) / (a + 0.05))
         p.page.wait_for_timeout(140)
-    contrast = (1.0 + 0.05) / (worst + 0.05)
     assert contrast >= 7, f"{theme}: {contrast:.1f}:1"

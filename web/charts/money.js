@@ -143,8 +143,8 @@ export function sparkline(values, label, w = 132, h = 32) {
   const x = (i) => 2 + (w - 4) * i / Math.max(1, values.length - 1);
   const y = (v) => h - 3 - (h - 6) * (v - lo) / span;
   const s = svg("svg", {viewBox: `0 0 ${w} ${h}`, width: w, height: h, class: "mini", role: "img", "aria-label": label});
-  svg("polyline", {points: values.map((v, i) => `${x(i)},${y(v)}`).join(" "), fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round"}, s);
-  svg("circle", {cx: x(values.length - 1), cy: y(values[values.length - 1]), r: 3, fill: "var(--accent)"}, s);
+  svg("polyline", {points: values.map((v, i) => `${x(i)},${y(v)}`).join(" "), fill: "none", stroke: "var(--series)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round"}, s);
+  svg("circle", {cx: x(values.length - 1), cy: y(values[values.length - 1]), r: 3, fill: "var(--series)"}, s);
   return s;
 }
 

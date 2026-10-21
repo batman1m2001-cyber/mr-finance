@@ -6,7 +6,7 @@ import {esc} from "../core/core.js";
 const f = (x) => Math.round(x * 100) / 100;
 
 /* Bars for a short series, the last one in the accent (e.g. income per month). values: numbers ≥ 0. */
-export function sparkBars(values, {w = 96, h = 32, color = "var(--accent)", label = ""} = {}) {
+export function sparkBars(values, {w = 96, h = 32, color = "var(--series)", label = ""} = {}) {
   const n = values.length;
   if (!n) return "";
   const max = Math.max(...values, 1), gap = 2, bw = (w - gap * (n - 1)) / n;
@@ -19,7 +19,7 @@ export function sparkBars(values, {w = 96, h = 32, color = "var(--accent)", labe
 
 /* A ring for one share (0…1), with the share written in the middle. */
 // how: the text's “cách tính” attributes (core.nAttrs), BRD-NFR-11
-export function ring(frac, {size = 56, stroke = 7, color = "var(--accent)", text = null, label = "", how = ""} = {}) {
+export function ring(frac, {size = 56, stroke = 7, color = "var(--series)", text = null, label = "", how = ""} = {}) {
   const r = (size - stroke) / 2, c = 2 * Math.PI * r, x = Math.max(0, Math.min(1, frac || 0));
   const t = text == null ? `${Math.round(x * 100)}%` : text;
   return `<svg class="mini" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label)}">
@@ -54,13 +54,13 @@ export function donut(parts, {size = 176, stroke = 24, center = "", sub = "", la
    the limit, coloured by the status the server decided. */
 export function gauge(value, limit, {status = "ok", max = null, label = ""} = {}) {
   const top = max || Math.max(value, limit) * 1.25 || 1;
-  const color = {ok: "var(--good)", near: "var(--warning)", over: "var(--critical)"}[status] || "var(--accent)";
+  const color = {ok: "var(--good)", near: "var(--warning)", over: "var(--critical)"}[status] || "var(--series)";
   return `<div class="gauge" role="img" aria-label="${esc(label)}"><div class="bar-track"><i style="width:${f(Math.min(1, value / top) * 100)}%;background:${color}"></i></div>
     <span class="gauge-tick" style="left:${f(Math.min(1, limit / top) * 100)}%"></span></div>`;
 }
 
 /* A progress bar for a share (0…1). */
-export function progress(frac, {color = "var(--accent)", label = ""} = {}) {
+export function progress(frac, {color = "var(--series)", label = ""} = {}) {
   const x = Math.max(0, Math.min(1, frac || 0));
   return `<div class="bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(x * 100)}" aria-label="${esc(label)}"><i style="width:${f(x * 100)}%;background:${color}"></i></div>`;
 }

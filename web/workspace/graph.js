@@ -114,6 +114,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   grad("radialGradient", "ws-inner", {r: "50%"}, [["0", "c-glow"], ["1", "c-glow0"]]);
   grad("radialGradient", "ws-spec", {r: "50%"}, [["0", "c-spec"], ["1", "c-spec0"]]);
   grad("radialGradient", "ws-face", {cy: "46%", r: "52%"}, [["0", "c-face"], ["1", "c-face2"]]);
+  // the gold coin's metal: a rim that catches the light twice, a bevel sunk into the field, a glint that sweeps across
+  grad("linearGradient", "ws-gold-rim", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "g-hi"], ["0.22", "g-mid"], ["0.42", "g-hi"], ["0.68", "g-deep"], ["0.86", "g-mid"], ["1", "g-hi"]]);
+  grad("linearGradient", "ws-gold-bevel", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "g-deep"], ["0.5", "g-mid"], ["1", "g-hi"]]);
+  grad("linearGradient", "ws-glint", {x1: 0, y1: 0, x2: 1, y2: 0}, [["0", "g-glint0"], ["0.5", "g-glint"], ["1", "g-glint0"]]);
   mk("circle", {r: ME_R - 1}, mk("clipPath", {id: "ws-core-clip"}, defs));
   const world = mk("g", {class: "ws-world"}, svg);
   const edgeLayer = mk("g", {class: "ws-edges"}, world);
@@ -588,24 +592,29 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       mk("ellipse", {cy: r * 0.48, rx: r * 0.82, ry: r * 0.44, class: "wme-inner", fill: "url(#ws-inner)"}, glass);
       mk("g", {class: "wme-bandhost"}, glass);  // the light a payment sends across (drawEdges, on the sparks' clock)
       mk("ellipse", {cy: -r * 0.56, rx: r * 0.62, ry: r * 0.3, class: "wme-spec", fill: "url(#ws-spec)"}, glass);
+      const sweep = mk("g", {class: "wme-glint"}, glass);  // a glint across the coin now and then (none under reduced motion)
+      mk("rect", {x: -r * 0.18, y: -r * 1.3, width: r * 0.36, height: r * 2.6, fill: "url(#ws-glint)", transform: "rotate(28)"}, sweep);
       const rim = mk("g", {"aria-hidden": "true"}, el);
-      mk("circle", {r: r - 6, class: "wme-ticks"}, rim);
+      mk("circle", {r: r - 3.5, class: "wme-rimband", stroke: "url(#ws-gold-rim)"}, rim);  // the raised rim
+      mk("circle", {r: r - 0.6, class: "wme-reed"}, rim);  // its milled edge
+      mk("circle", {r: r - 7.5, class: "wme-bevel", stroke: "url(#ws-gold-bevel)"}, rim);  // where the rim meets the field
+      mk("circle", {r: r - 12, class: "wme-ticks"}, rim);  // a ring of beads, as on a coin
       mk("circle", {r: r + 1.5, class: "wme-bezel", stroke: "url(#ws-bezel)"}, rim);
       mk("circle", {r: r + 1.5, class: "wme-act"}, rim);
       mk("circle", {r: r + 5.5, class: "wme-sel"}, rim);
       mk("g", {class: "wme-ports"}, rim);  // where each money edge meets the rim (drawEdges)
       mk("g", {class: "wme-ripples"}, rim);
       mk("circle", {r: r * 0.86, class: "wme-face", fill: "url(#ws-face)", "aria-hidden": "true"}, el);  // a soft dark vignette under the figures
-      // four short lines, each narrower than the disc at its height (a 128 px line crossed the border)
-      const t1 = mk("text", {y: -22, "text-anchor": "middle", class: "wme-l"}, el); t1.textContent = staffLabel || "Tài sản ròng";
-      const t2 = mk("text", {y: 4, "text-anchor": "middle", class: "wme-v num-svg", "data-metric": "net_worth", tabindex: "0", role: "button",
+      // the coin carries its value only, struck in: the figure over a light copy of itself a pixel lower (the lit lower
+      // edge of a cut), drawn smaller when a longer figure would cross the ring of beads (r − 12); what it is and its
+      // parts are in its name and its panel
+      el.setAttribute("aria-label", `${staffLabel || "Tài sản ròng"} ${vnd(n.value)}: tài sản ${vnd(n.assets)}, nợ ${vnd(n.liabilities)}`);
+      const hl = mk("text", {x: 0.6, y: 9.8, "text-anchor": "middle", class: "wme-hl wme-v-hl", "aria-hidden": "true"}, el);
+      const t2 = mk("text", {y: 9, "text-anchor": "middle", class: "wme-v num-svg", "data-metric": "net_worth", tabindex: "0", role: "button",
         "data-in": JSON.stringify(howOf(n)[1])}, el);
-      t2.textContent = vnd(n.value);
-      mk("line", {x1: -26, x2: 26, y1: 15, y2: 15, class: "wme-rule"}, el);
-      const t3 = mk("text", {y: 30, "text-anchor": "middle", class: "wme-s"}, el);
-      t3.textContent = `tài sản ${vnd(n.assets)}`;
-      const t4 = mk("text", {y: 44, "text-anchor": "middle", class: "wme-s"}, el);
-      t4.textContent = `nợ ${vnd(n.liabilities)}`;
+      hl.textContent = t2.textContent = vnd(n.value);
+      const room = 84, w = t2.getBBox ? t2.getBBox().width : 0;
+      if (w > room) t2.style.fontSize = hl.style.fontSize = `${(parseFloat(getComputedStyle(t2).fontSize) * room / w).toFixed(1)}px`;
     } else if (n.kind === "group") {  // “+n”: what the ring folded, opened on a click
       mk("text", {y: 5, "text-anchor": "middle", class: "wcount"}, el).textContent = n.close ? "−" : `+${n.members.length}`;
       mk("text", {class: "wlbl"}, el);
