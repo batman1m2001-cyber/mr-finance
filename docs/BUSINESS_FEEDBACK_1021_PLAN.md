@@ -210,6 +210,16 @@ say that the demo differs.
 
 - **No person in the loop for the trial;** the daily run approves nothing (shadow forecasts only).
 
+## Backlog (owner, 2026-10-21)
+
+- **Replay a rising market.** July's 19/22 on VN-Index is one call on one fall; a replay of a period when the market
+  rose tests whether the agents call an upturn (about an hour of the subscription, scripts/replay_july.py with
+  other dates).
+- **Why the expected moves are small.** The buy/sell readings are mostly "giữ" while the market moved well past
+  that range (VN-Index 3 months: 5/22 right; Bitcoin and USD 0/22): look at the factor model's sizes and the
+  mixture of branches, not only the agents.
+- **B4, the technical document.**
+
 ## Still open
 
 1. Broker views: may we collect the domestic brokers' public commentary pages (terms of use differ per broker)?
