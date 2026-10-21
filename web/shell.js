@@ -16,8 +16,8 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261021t1";
-import {DESKS} from "./desk/roles.js?v=20261018q1";
+import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261021t2";
+import {DESKS} from "./desk/roles.js?v=20261021t2";
 
 const ROLES = {
   client: {
@@ -166,7 +166,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261021t1");
+  wsLoad ||= import("./workspace/workspace.js?v=20261021t2");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -187,7 +187,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261020u1");
+  dkLoad ||= import("./desk/desk.js?v=20261021t2");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});

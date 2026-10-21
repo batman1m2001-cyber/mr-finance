@@ -9,7 +9,7 @@ import {$, esc, get} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {dockFrame} from "../workspace/dock.js?v=20261018m0";
-import {DESKS} from "./roles.js?v=20261018q1";
+import {DESKS} from "./roles.js?v=20261021t2";
 
 export function mount(main, {role, nav, go, client = () => null, setClient = () => {}, user = () => null}) {
   const cfg = DESKS[role];
@@ -23,7 +23,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
   const tool = (g, cls = "") => {
     const first = g.desk ? `#/${role}` : (g.pages[0] || {}).href;
     return `<a class="ws-tool${cls}" href="${first}" data-tool="${esc(g.id)}" aria-label="${esc(g.label)}" data-tip="${esc(g.tip || g.label)}">
-      ${icon(g.icon, {size: 20})}<span class="ws-tool-l">${esc(g.label)}</span></a>`;
+      ${icon(g.icon, {size: 20})}<span class="ws-tool-l">${esc(g.short || g.label)}</span></a>`;
   };
   const root = document.createElement("div");
   root.className = `ws desk desk-${role}`;

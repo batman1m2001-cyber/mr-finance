@@ -968,19 +968,22 @@ body.ws-on .foot { margin-top: 0; }
    not the thousands of graph nodes under it (an inherited one restyled them all, every frame: ~150 ms a frame) */
 @property --dock-pick { syntax: "*"; inherits: false; }
 @property --dock-w { syntax: "*"; inherits: false; }
-.ws { --bar-w: 64px; --dock-def: 384px; --dock-w: var(--dock-pick, var(--dock-def)); display: grid; grid-template-columns: var(--bar-w) minmax(0, 1fr) var(--dock-w);
+.ws { --bar-w: 72px; --dock-def: 384px; --dock-w: var(--dock-pick, var(--dock-def)); display: grid; grid-template-columns: var(--bar-w) minmax(0, 1fr) var(--dock-w);
   height: calc(100dvh - var(--ws-top, 112px)); min-height: 560px; border-top: 1px solid var(--hair); }
 .ws.folded { --dock-w: 48px; }
-.ws-bar { position: relative; z-index: 6; display: flex; flex-direction: column; gap: 4px; padding: 10px 8px; background: var(--surface);
+.ws-bar { position: relative; z-index: 6; display: flex; flex-direction: column; gap: 4px; padding: 10px 6px; background: var(--surface);
   border-right: 1px solid var(--hair); }
-.ws-tool { position: relative; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; color: var(--ink-2); text-decoration: none; }
+/* a rail item: the icon and its name under it, always shown (UX_TOOLBAR_PLAN T2: names only on hover were missed) */
+.ws-tool { position: relative; display: grid; justify-items: center; align-content: center; gap: 3px; width: 60px; min-height: 52px; padding: 6px 2px;
+  border-radius: 12px; color: var(--ink-2); text-decoration: none; }
 .ws-tool:nth-child(7) { margin-top: auto; }
 .ws-tool:hover { background: var(--surface-2); color: var(--ink); }
 button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .ws-ask { display: none; }
 .ws-tool[aria-current] { background: var(--accent-soft); color: var(--accent); }
-.ws-tool[aria-current]::before { content: ""; position: absolute; left: -8px; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); }
-.ws-tool-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ws-tool[aria-current]::before { content: ""; position: absolute; left: -6px; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); }
+.ws-tool-l { font-size: 10.5px; font-weight: 600; line-height: 1.15; text-align: center; max-width: 56px; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ws-tool::after { content: attr(data-tip); position: absolute; left: calc(100% + 12px); top: 50%; transform: translate(-4px, -50%); opacity: 0;
   pointer-events: none; white-space: nowrap; background: var(--ink); color: var(--surface); padding: 6px 10px; border-radius: 8px;
   font-size: 12.5px; font-weight: 600; box-shadow: 0 6px 20px var(--ring); z-index: 30;
@@ -1283,6 +1286,8 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-ask { display: grid; color: var(--accent); }
   .ws-tool[aria-current]::before { left: 10px; right: 10px; top: auto; bottom: -6px; width: auto; height: 3px; border-radius: 3px 3px 0 0; }
   .ws-tool::after { display: none; }
+  .ws-tool { min-height: 0; padding: 0; gap: 0; }
+  .ws-tool-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }  /* a phone: the rail is a row of icons */
   .ws-center { height: auto; min-height: 0; }
   .ws-canvas { height: min(140vw, 600px); }
   .ws-head { padding: 10px 14px 0; flex-direction: column; gap: 6px; }
