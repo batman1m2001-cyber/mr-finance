@@ -211,11 +211,10 @@ struct GoldCoin: View {
         GeometryReader { g in
             let w = min(g.size.width, g.size.height), r = w / 2
             ZStack {
-                Circle().fill(RadialGradient(colors: [Self.mid.opacity(0.35), .clear], center: .center,
-                                             startRadius: r * 0.9, endRadius: r * 1.25))
-                    .frame(width: w * 1.25, height: w * 1.25)  // the glow around it
-                Circle().fill(RadialGradient(colors: [Self.hi, Self.mid, Self.deep], center: UnitPoint(x: 0.5, y: 0.2),
-                                             startRadius: 0, endRadius: r * 1.45))
+                Circle().fill(RadialGradient(stops: [.init(color: Self.hi, location: 0), .init(color: Self.mid, location: 0.55),
+                                                     .init(color: Self.deep, location: 1)],
+                                             center: UnitPoint(x: 0.5, y: 0.34), startRadius: 0, endRadius: r * 1.44))
+                    .shadow(color: Self.mid.opacity(0.45), radius: w * 0.08)  // the glow around it, as the website's aura
                 Circle().fill(RadialGradient(colors: [Color(red: 1, green: 240 / 255, blue: 191 / 255).opacity(0.62), .clear],
                                              center: UnitPoint(x: 0.5, y: 0.46), startRadius: 0, endRadius: r * 0.9))
                 Circle().strokeBorder(LinearGradient(stops: [.init(color: Self.hi, location: 0), .init(color: Self.mid, location: 0.22),
