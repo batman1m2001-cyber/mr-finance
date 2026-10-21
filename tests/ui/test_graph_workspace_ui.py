@@ -92,19 +92,29 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     assert "không cộng vào tài sản ròng" in p.page.inner_text("#ws-pane-i")
     assert p.page.text_content('.wnode[data-n="SC:vni_30"] .wfig').startswith("nếu xảy ra −")
     assert p.page.text_content(".wme-v") == me  # a scenario never changes the actual net worth
-    # the strip: the Toàn cảnh cards; a card focuses its lens, but the cash-flow and allocation cards open the
-    # “Dòng tiền & phân bổ” view (owner, 2026-10-21); folding is remembered
+    # the strip: the Toàn cảnh cards; a card opens its lens at its section of the Bảng số liệu, the client's
+    # dashboard (UX_TOOLBAR_PLAN T3+T4): cash flow first, allocation with profit and loss, the month's flows; folding
+    # is remembered
     assert p.page.locator(".scard").count() == 5
-    p.page.click('.scard[data-money="cash"] .pc-head')
-    p.page.wait_for_selector("#ws-cashview #cash svg")
+    p.page.click('.scard[data-part="month"] .pc-head')
+    p.page.wait_for_selector("#ws-cashview #d-month .sankey")
     assert p.page.is_hidden("#ws-canvas") and p.page.get_attribute('#ws-view [data-v="money"]', "aria-pressed") == "true"
-    assert "Lãi/lỗ" in p.page.inner_text("#ws-alloc")
+    assert p.page.eval_on_selector_all("#ws-cashview .cols > .panel", "ps => ps.map(p => p.id).slice(0, 4)") == ["d-cash", "d-alloc", "d-pnl", "d-month"]
+    assert "Lãi/lỗ" in p.page.inner_text("#d-alloc") and p.page.is_visible("#ws-cashview #cash svg")
+    p.page.wait_for_function("location.hash === '#/client/xem/dong-tien'")
     p.page.click('#ws-cashview [data-months="24"]')
     p.page.wait_for_selector('#ws-cashview [data-months="24"][aria-pressed="true"]')
     p.page.click('#ws-view [data-v="graph"]')
     assert p.page.is_visible("#ws-canvas") and p.page.is_hidden("#ws-cashview")
-    p.page.click('.scard[data-focus="kpi:liquidity"] .pc-head')
-    p.page.wait_for_function("location.hash === '#/client/xem/dong-tien'")
+    p.page.click('.scard[data-focus="kpi:risk"] .pc-head')
+    p.page.wait_for_function("location.hash === '#/client/xem/rui-ro'")
+    p.page.wait_for_function(  # the risk section at the top of the view
+        "Math.abs(document.querySelector('#d-risk').getBoundingClientRect().top - document.querySelector('#ws-cashview').getBoundingClientRect().top) < 30")
+    p.page.click('#ws-view [data-v="graph"]')
+    # Toàn cảnh's and Chi tiết's old addresses open it too, never a sheet
+    p.go("#/client/tong-quan/chi-tiet")
+    assert p.page.is_hidden("#ws-sheet") and p.page.is_visible("#ws-cashview #d-nw")
+    p.page.click('#ws-view [data-v="graph"]')
     p.page.click("#ws-strip-fold")
     assert p.page.is_hidden("#ws-strip-b")
     p.go("#/client/xem/tong-quan")
@@ -304,7 +314,7 @@ def test_money_runs_the_way_it_goes_and_only_where_it_really_moved(open_page):
     assert float(b.rstrip("px")) != float(got["a"].rstrip("px"))  # it moves
     assert not p.problems()
     q = open_page(reduced=True)
-    q.go("#/client/tong-quan/toan-canh")
+    q.go("#/client/xem/tong-quan")
     q.page.wait_for_selector(".wedge")
     still = "[...document.querySelectorAll('.wspark')].every(s => getComputedStyle(s).display === 'none')"
     assert q.page.evaluate(still)

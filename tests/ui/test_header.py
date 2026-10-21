@@ -31,10 +31,11 @@ def test_search_opens_a_holding_a_page_and_a_client(open_page):
 def test_the_bell_counts_the_feed_and_opens_the_evidence(open_page):
     in_thread(approved, *MARKET)
     p = open_page()
-    p.go("#/client/tong-quan/toan-canh")
+    p.go("#/client/xem/tong-quan")  # the feed: Tổng quan's Thông tin (UX_TOOLBAR_PLAN T4)
     p.page.wait_for_function("document.querySelector('#bell').dataset.count")
+    p.page.wait_for_selector("#ws-feed .feed-item", state="attached")
     count = int(p.page.get_attribute("#bell", "data-count"))
-    assert count == p.page.locator("#feed .feed-item").count() > 0
+    assert count == p.page.locator("#ws-feed .feed-item").count() > 0
     p.page.click("#bell")
     assert p.page.locator("#bell-pop .pop-item").count() == count
     p.page.locator("#bell-pop .pop-item").first.click()

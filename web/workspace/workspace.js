@@ -1,5 +1,5 @@
 /* The Customer's workspace (FEAT-40, ADR-0035, OWN-GW-01…05): one page — the toolbar of lenses on the left, the graph
-   in the centre (or its list, or the “Dòng tiền & phân bổ” view), the dock (Trợ lý · Thông tin) on the right, the strip
+   in the centre (or its list, or the Bảng số liệu: the client's dashboard), the dock (Trợ lý · Thông tin) on the right, the strip
    of overview cards at the bottom. The shell mounts it once for the client and hands it each route; a route changes the lens and opens or closes a sheet (an
    existing page module, drawn by the shell into #page, which lives inside the sheet). Nothing here re-renders the
    graph on navigation. */
@@ -8,10 +8,10 @@ import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {UNIT_WORD, createGraph} from "./graph.js?v=20261020t1";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261021t1";
-import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t2";
-import {mount as mountMoney} from "./money.js?v=20261021m1";
-import {mount as mountStrip} from "./strip.js?v=20261021m1";
+import {render as inspect} from "./inspector.js?v=20261021t3";
+import {LENS, PARTS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t3";
+import {mount as mountMoney} from "./money.js?v=20261021t3";
+import {mount as mountStrip} from "./strip.js?v=20261021t3";
 
 const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
 
@@ -25,6 +25,7 @@ export function mount(main, {client, scope, go, page}) {
     <section class="ws-center" aria-label="Đồ thị tài chính">
       <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Tổng quan tài chính</h1>
         <p class="ws-sub small muted" id="ws-sub"></p>
+        <div class="ws-pages" id="ws-pages"></div>
         <div class="ws-scn" id="ws-scn" role="region" aria-label="Kịch bản đang bật" aria-live="polite" hidden></div></div>
         <div class="ws-legend small" aria-label="Chú giải"><span class="lg c-actual">Thực tế</span><span class="lg c-estimate">Ước tính · tác động</span><span class="lg c-hypothetical">Giả định</span><span class="lg c-pulse" title="Xung sáng chạy khi trợ lý đọc dữ liệu theo đường đó; không phải một giao dịch">Xung sáng: trợ lý đọc dữ liệu, không phải giao dịch</span></div>
       </div>
@@ -33,7 +34,7 @@ export function mount(main, {client, scope, go, page}) {
       <div class="ws-cashview" id="ws-cashview" hidden></div>
       <div class="ws-ctl" role="toolbar" aria-label="Điều khiển đồ thị">
         <div class="seg" role="group" aria-label="Thay đổi trên các cạnh: so với hôm qua, tháng trước hay năm trước" id="ws-unit">${UNITS.map(([u, l]) => `<button type="button" data-u="${u}" aria-pressed="false" title="${esc(UNIT_WORD[u])}">${l}</button>`).join("")}</div>
-        <div class="seg" role="group" aria-label="Cách xem" id="ws-view"><button type="button" data-v="graph" aria-pressed="true">Đồ thị</button><button type="button" data-v="list" aria-pressed="false">Danh sách</button><button type="button" data-v="money" aria-pressed="false">Dòng tiền &amp; phân bổ</button></div>
+        <div class="seg" role="group" aria-label="Cách xem" id="ws-view"><button type="button" data-v="graph" aria-pressed="true">Đồ thị</button><button type="button" data-v="list" aria-pressed="false">Danh sách</button><button type="button" data-v="money" aria-pressed="false">Bảng số liệu</button></div>
         <button type="button" class="iconbtn" data-z="in" aria-label="Phóng to">+</button>
         <button type="button" class="iconbtn" data-z="out" aria-label="Thu nhỏ">−</button>
         <button type="button" class="iconbtn" data-z="focus" aria-label="Tập trung vào mục đang chọn (f)" title="Tập trung (f)" disabled>${icon("target", {size: 15})}</button>
@@ -61,11 +62,16 @@ export function mount(main, {client, scope, go, page}) {
   $("#ws-sheet-b", root).appendChild($("#page"));
 
   const kindLabel = (k) => ((graph.data() || {kinds: []}).kinds.find(x => x.kind === k) || {label: k}).label;
-  let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph", asOf = null;
+  let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph", asOf = null, feed = null;
   const drawSub = () => { $("#ws-sub", root).textContent = `${lens.sub}${asOf ? ` · số liệu ngày ${asOf}` : ""}`; };
   const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n || graph.selectedEdge()) tab("i"); $("[data-z=focus]", root).disabled = !n; }});
   const money = mountMoney($("#ws-cashview", root), {client, scope});
-  const strip = mountStrip($("#ws-strip", root), {client, scope, lens: (id) => go(lensRoute(id)), money: (part) => { if (sheet) go(lensRoute(lens.id)); setView("money", part); }});
+  // the Bảng số liệu at a section (and the month's flows at a month): from a strip card, the inspector, the feed
+  const board = (part, month, lensId) => {
+    if (sheet || lensId && lensId !== lens.id) go(lensRoute(lensId || lens.id));
+    return setView("money", part).then(() => (month ? money.month(month) : null));
+  };
+  const strip = mountStrip($("#ws-strip", root), {client, scope, board: (part, id) => board(part, null, id)});
 
   // ── the dock ──────────────────────────────────────────────────────────────────────────────────────
   const tab = (which) => {
@@ -85,7 +91,7 @@ export function mount(main, {client, scope, go, page}) {
   $("#ws-tab-i", root).onclick = () => tab("i");
   const frame = dockFrame(root, {canvas: $("#ws-canvas", root), hold: (on) => graph.hold(on), redraw: () => graph.redraw()});
 
-  const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), edge: graph.selectedEdge(), kindLabel, openSheet,
+  const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), edge: graph.selectedEdge(), kindLabel, openSheet, board, feed, client,
     page: sheet && !SHEETS[sheet].lens ? SHEETS[sheet].label : null,
     timeline: {client: client(), scope: scope(), unit: graph.unit(), setUnit: (u) => setUnit(u)},
     scenario: {on: (id) => active().ids.includes(id), params: (id) => (active().params || {})[id] || null, set: setActive}});
@@ -163,11 +169,11 @@ export function mount(main, {client, scope, go, page}) {
     $("#ws-cashview", root).hidden = v !== "money";
     graph.sleep("view", v !== "graph");  // the graph out of sight: its motion stops
     if (v === "list") drawList();
-    if (v === "money") money.load().then(() => {  // a strip card: its panel at the top of the view (the view scrolls, not the page)
-      const box = $("#ws-cashview", root), el = part && $(`#ws-${part}`, root);
-      if (el) box.scrollTo({top: box.scrollTop + el.closest(".panel").getBoundingClientRect().top - box.getBoundingClientRect().top - 8, behavior: reduced() ? "auto" : "smooth"});
-    });
     try { sessionStorage.setItem("mf.ws.view", v); } catch (_) { /* private mode */ }
+    for (const b of root.querySelectorAll("#ws-pages [data-part]")) b.hidden = v === "money";
+    if (v !== "money") return Promise.resolve();
+    // a section asked for: at the top of the view (the view scrolls, not the page)
+    return money.load().then(() => { money.resize(); money.at(part, !reduced()); });
   };
   const drawList = () => {
     const g = graph.data();
@@ -196,6 +202,9 @@ export function mount(main, {client, scope, go, page}) {
       drawInspector();
       strip.load();
       if (view === "money") money.load();
+      feed = null;  // Tổng quan's Thông tin: what Toàn cảnh led with (T4)
+      post("/api/feed", {client_id: client(), scope: scope(), role: "client"}).then((r) => r.feed, (e) => ({error: e.message}))
+        .then((f) => { if (k === key) { feed = f; drawInspector(); } });
     })().catch((e) => { key = null; $("#ws-sub", root).textContent = `Không tải được đồ thị: ${e.message}`; });
     return loading;
   }
@@ -206,10 +215,21 @@ export function mount(main, {client, scope, go, page}) {
     for (const a of root.querySelectorAll("[data-tool]")) a.toggleAttribute("aria-current", a.dataset.tool === (sheet && !SHEETS[sheet].lens ? sheet : lens.id));
     $("#ws-title", root).textContent = lens.id === "tong-quan" ? "Tổng quan tài chính" : lens.label;
     if (asOf) drawSub();
+    drawPages();
     graph.setLens(lens);
     strip.focus(lens.id);
     drawInspector();
     if (view === "list") drawList();
+  }
+
+  // the lens's own pages, and its numbers in the Bảng số liệu, under its title: where “Xem đầy đủ” was (T3)
+  function drawPages() {
+    const el = $("#ws-pages", root);
+    const pages = lens.sheets.map(id => `<a class="btn sm" href="${SHEETS[id].route}">${esc(SHEETS[id].label)} ${icon("arrow", {size: 13})}</a>`);
+    if (lens.part && lens.id !== "tong-quan") pages.push(`<button type="button" class="btn sm" data-part="${lens.part}"${view === "money" ? " hidden" : ""}>${esc(PARTS[lens.part])} trong Bảng số liệu ${icon("arrow", {size: 13})}</button>`);
+    el.innerHTML = pages.join("");
+    el.hidden = !pages.length;  // (the numbers' button hides while the Bảng số liệu is shown)
+    for (const b of el.querySelectorAll("[data-part]")) b.onclick = () => board(b.dataset.part);
   }
 
   function openSheet(id, param, focusKeys) {
@@ -291,6 +311,7 @@ export function mount(main, {client, scope, go, page}) {
       sheet = r.sheet;
       if (r.lens) setLens(r.lens);
       else setLens(lens.id);
+      if (r.part) await setView("money", r.part);  // Toàn cảnh's and Chi tiết's addresses: the dashboard (T4)
       const el = $("#ws-sheet", root);
       el.hidden = !sheet;
       root.classList.toggle("sheeted", !!sheet);

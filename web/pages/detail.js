@@ -2,12 +2,14 @@
    the pre-redesign page is here: net worth with the members it counts, assets by the three tiers of sources (each
    opening onto its sources), allocation with profit against cost, portfolio profit and loss against the
    benchmark, risk against the accepted drawdown with concentration warnings, the liquidity reserve, cash flow
-   (six months past, 12/24/36 ahead) with large payments and recurring items, and the top news by impact. */
+   (six months past, 12/24/36 ahead) with large payments and recurring items, and the top news by impact. The client's
+   workspace draws it as its dashboard (ctx.board, UX_TOOLBAR_PLAN T3+T4): money first, and the month's flows. */
 import {internal, n, nAttrs, $, esc, pct, post, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {gauge} from "../charts/mini.js?v=20261016r2";
 import {monthsText} from "../charts/money.js?v=20261016r4";
 import {cashBody, drawAlloc as allocInto, drawCash as cashInto} from "../charts/panels.js?v=20261021m1";
+import {monthFlows} from "../charts/month.js?v=20261021t3";
 
 const STATUS = {ok: ["good", "An toàn"], near: ["warn", "Gần ngưỡng"], over: ["bad", "Vượt ngưỡng"], low: ["warn", "Thấp"], critical: ["bad", "Rất thấp"]};
 const TIERS = [
@@ -22,9 +24,10 @@ const store = (k, v) => { try { if (v === undefined) return sessionStorage.getIt
 export async function render(box, ctx) {
   const client = ctx.client(), scope = ctx.scope(), staff = ctx.role !== "client";
   const months = Number(store("mf.detail.months")) || 12;
-  const [{dashboard: d}, al] = await Promise.all([
+  const [{dashboard: d}, al, fl] = await Promise.all([
     post("/api/dashboard", {client_id: client, scope, months}),
     post("/api/alerts", {client_id: client, scope}).catch((e) => ({error: e.message})),
+    ctx.board ? post("/api/flows", {client_id: client, scope}).catch((e) => ({error: e.message})) : null,
   ]);
   const nw = d.net_worth, pf = d.performance, rk = d.risk, lq = d.liquidity, cf = d.cashflow;
   const up = nw.month_change >= 0;
@@ -34,9 +37,10 @@ export async function render(box, ctx) {
   const who = d.members.map(m => `<span class="chip">${esc(m.name)} · ${esc(m.relation)}</span>`).join("")
     + d.waiting.map(m => `<span class="chip" title="Chưa đồng ý chia sẻ dữ liệu">${esc(m.name)} · chưa đồng ý chia sẻ</span>`).join("");
 
-  box.innerHTML = `${staff ? internal() : ""}
-    <div class="cols">
-      <div class="panel c12 nwhero">
+  // the blocks; the client's dashboard (ctx.board, the workspace's Bảng số liệu) leads with what the business reads
+  // first — cash flow over time, allocation, profit and loss — and adds the month's money in and out (Toàn cảnh's)
+  const B = {
+    hero: `      <div class="panel c12 nwhero" id="d-nw">
         <div>
           <div class="pc-head"><span class="ic-chip sm" style="--tone:var(--accent)">${icon("wallet", {size: 14})}</span><span class="k">Tài sản ròng · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></div>
           <div class="hero-v">${n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</div>
@@ -46,8 +50,10 @@ export async function render(box, ctx) {
         </div>
         <div id="srcmix"></div>
       </div>
-      <div class="panel c6"><h3>Phân bổ tài sản <span class="hint">lãi/lỗ: % so với giá vốn</span></h3><div id="alloc"></div></div>
-      <div class="panel c6"><h3>Lãi / lỗ danh mục <span class="hint">cổ phiếu, quỹ, trái phiếu</span></h3>
+    `,
+    alloc: `      <div class="panel c6" id="d-alloc"><h3>Phân bổ tài sản <span class="hint">lãi/lỗ: % so với giá vốn</span></h3><div id="alloc"></div></div>
+    `,
+    pnl: `      <div class="panel c6" id="d-pnl"><h3>Lãi / lỗ danh mục <span class="hint">cổ phiếu, quỹ, trái phiếu</span></h3>
         <div class="kv"><span>Đã chốt (từ đầu năm)</span><b class="${pf.realized_ytd >= 0 ? "up" : "down"}">${n(vnd(pf.realized_ytd, true), "perf.realized_ytd")}</b></div>
         <div class="kv"><span>Chưa chốt</span><b>${n(vnd(pf.unrealized, true), "perf.unrealized", {cost: vnd(pf.invested_cost)})} <span class="muted">(${n(pct(pf.unrealized_pct, true), "perf.unrealized", {cost: vnd(pf.invested_cost)})})</span></b></div>
         <div class="kv"><span>Lợi nhuận từ đầu năm</span><b>${n(pct(pf.ytd_return, true), "perf.ytd_return")}</b></div>
@@ -56,7 +62,8 @@ export async function render(box, ctx) {
           ${pf.by_class.map(c => `<tr><td>${esc(c.label)}</td><td class="r">${n(vnd(c.value), "class.value")}</td><td class="r"><span class="${c.pnl >= 0 ? "up" : "down"}">${n(vnd(c.pnl, true), "perf.class", {value: vnd(c.value), cost: vnd(c.cost)})}</span> <span class="muted small">${n(pct(c.return, true), "perf.class", {value: vnd(c.value), cost: vnd(c.cost)})}</span></td></tr>`).join("")}
         </tbody></table>` : ""}
       </div>
-      <div class="panel c6"><h3>Rủi ro</h3>
+    `,
+    risk: `      <div class="panel c6" id="d-risk"><h3>Rủi ro</h3>
         ${d.profile.risk_profile ? `<div class="kv"><span>Hồ sơ rủi ro (bài test)</span><b>${esc(d.profile.risk_profile)} · ${esc(d.profile.risk_persona)}</b></div>` : `<p class="small muted" style="margin:0 0 8px">Chưa làm bài test rủi ro: ngưỡng lấy theo hồ sơ.</p>`}
         <div class="kv"><span>Ngưỡng sụt giảm chấp nhận</span><b>${n(pct(rk.limit, false, 0), "risk.limit")}</b></div>
         <div class="kv"><span>Mức sụt giảm ước tính khi thị trường xấu</span><b>${n(pct(rk.current), "risk.current", {loss: vnd(rk.stress_loss), net_worth: vnd(nw.value)})}</b></div>
@@ -64,14 +71,23 @@ export async function render(box, ctx) {
         <div class="mt-xs">${pill(rk.status)} <span class="muted small">mất ${n(vnd(rk.stress_loss), "risk.loss")} trong kịch bản xấu</span></div>
         ${d.concentration.warnings.length ? `<ul class="warns">${d.concentration.warnings.map(w => `<li>${icon("alert", {size: 14})}<span data-explains>Tập trung: ${esc(w)}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản nào tập trung quá ngưỡng.</p>`}
       </div>
-      <div class="panel c6"><h3>Thanh khoản dự phòng</h3>
+    `,
+    liq: `      <div class="panel c6" id="d-liq"><h3>Thanh khoản dự phòng</h3>
         <div class="row spread"><span>${n(vnd(lq.value), "liquidity.value", {count: String(lq.items.length)})} tiền và tài sản rút được ngay</span><b>đủ chi ${n(monthsText(lq.months), "liquidity.months", {value: vnd(lq.value), spending: vnd(lq.spending_monthly)})} ${pill(lq.status)}</b></div>
         ${gauge(Math.min(lq.months, Math.max(12, Math.min(lq.months, 36))), 6, {status: lq.status === "ok" ? "ok" : lq.status === "low" ? "near" : "over", max: Math.max(12, Math.min(lq.months, 36)), label: `Đủ chi ${monthsText(lq.months)}, mốc an toàn 6 tháng`})}
         <div class="small muted">Chi tiêu ${n(vnd(lq.spending_monthly), "spending.monthly")}/tháng · mốc an toàn: 6 tháng</div>
       </div>
-      <div class="panel c12">
+    `,
+    cash: `      <div class="panel c12" id="d-cash">
         ${cashBody(cf, months)}
       </div>
+    `,
+    month: `<div class="panel c12" id="d-month"></div>`,
+  };
+
+  box.innerHTML = `${staff ? internal() : ""}
+    <div class="cols">
+${(ctx.board ? ["cash", "alloc", "pnl", "month", "hero", "risk", "liq"] : ["hero", "alloc", "pnl", "risk", "liq", "cash"]).map(k => B[k]).join("")}
       <div class="panel c12" id="news"></div>
     </div>`;
 
@@ -123,7 +139,13 @@ export async function render(box, ctx) {
   };
 
   drawTiers(); drawAlloc(); drawCash(); drawNews();
+  if (ctx.board) {
+    const el = $("#d-month", box);
+    if (fl && fl.flows) ctx.board.month = monthFlows(el, {client, scope, first: fl.flows});
+    else el.innerHTML = `<h3>Tiền vào và ra trong tháng</h3><p class="small muted">Không tải được: ${esc((fl || {}).error || "")}</p>`;
+  }
   for (const b of box.querySelectorAll("[data-months]")) b.onclick = () => { store("mf.detail.months", b.dataset.months); ctx.go(location.hash); };
+  if (ctx.board) { ctx.board.redraw = drawCash; return; }  // the dashboard is drawn again in place: its view redraws it
   // a chart drawn at the width it is shown at: again after a resize
   let t = null;
   const again = () => { clearTimeout(t); t = setTimeout(() => { if (box.isConnected) drawCash(); else removeEventListener("resize", again); }, 150); };

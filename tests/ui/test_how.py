@@ -1,6 +1,7 @@
 """BRD-NFR-11 in the browser (BRD_REMAINING_PLAN G1): every money or percent figure on every route of every role
 opens its “cách tính”. A figure outside a ``data-metric`` fails, except a client's own quoted words or a headline
 (``data-quote``), a chart axis tick (``data-axis``) and the text of an explanation itself (``data-explains``).
+The client's Bảng số liệu (the workspace's dashboard, outside #page) is scanned as well whenever it is shown.
 Besides each route as it opens, the states a click reveals: a group of Toàn cảnh, a flow band and a month, the map
 as a list and with a node picked, a source tier, decisions and stress tests on Kế hoạch, the opportunities filter.
 Every metric a page names is in the catalogue, and opening one shows its formula."""
@@ -14,27 +15,30 @@ SCAN = r"""() => {
     'input,textarea,select,option,script,style,[hidden]';
   const re = /[+−-]?\d[\d.,]*\s?(?:đ(?!\p{L})|triệu|tỷ|%|tr(?!\p{L}))/gu;
   const out = [];
-  const w = document.createTreeWalker(document.querySelector('#page'), NodeFilter.SHOW_TEXT);
-  let n;
-  while ((n = w.nextNode())) {
-    const el = n.parentElement;
-    if (!el || el.closest(SKIP)) continue;
-    if (!el.offsetParent && el.tagName !== 'text' && el.tagName !== 'tspan') continue;
-    const m = n.textContent.match(re);
-    if (m) out.push(m.join(' | ') + '  ⟵  ' + n.textContent.trim().slice(0, 70));
+  for (const root of document.querySelectorAll('#page, #ws-cashview')) {
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = w.nextNode())) {
+      const el = n.parentElement;
+      if (!el || el.closest(SKIP)) continue;
+      if (!el.offsetParent && el.tagName !== 'text' && el.tagName !== 'tspan') continue;
+      const m = n.textContent.match(re);
+      if (m) out.push(m.join(' | ') + '  ⟵  ' + n.textContent.trim().slice(0, 70));
+    }
   }
   return out;
 }"""
-METRICS = "() => [...new Set([...document.querySelectorAll('#page [data-metric]')].map(e => e.dataset.metric))]"
+METRICS = "() => [...new Set([...document.querySelectorAll('#page [data-metric], #ws-cashview:not([hidden]) [data-metric]')].map(e => e.dataset.metric))]"
 CLICK = (
     "(el) => el.dispatchEvent(new MouseEvent('click', {bubbles: true}))"  # on the element itself, not a figure in it
 )
 
 # route → the clicks (selector, how many of its matches) whose results are scanned too
 STATES = {
-    "/tong-quan/toan-canh": [(".crow[data-g]", 2), ("[data-cat]", 1), ("[data-month]", 1)],
+    # the client's Toàn cảnh and Chi tiết addresses open the Bảng số liệu (UX_TOOLBAR_PLAN T3+T4)
+    "/tong-quan/toan-canh": [("#d-month .sankey .band", 1), ("#d-month [data-cat]", 1)],
     "/tong-quan/ban-do": [('[data-v="list"]', 1), ("[data-n]", 2), ('[data-v="graph"]', 1), ("[data-n]", 1)],
-    "/tong-quan/chi-tiet": [("[data-tier]", 1)],
+    "/tong-quan/chi-tiet": [("#ws-cashview [data-tier]", 1)],
     "/khach-hang/toan-canh": [(".crow[data-g]", 1)],
     "/khach-hang/ban-do": [('[data-v="list"]', 1), ("[data-n]", 1)],
     "/muc-tieu/ke-hoach": [("[data-sim]", 99)],
@@ -89,8 +93,8 @@ def test_every_figure_on_every_route_has_its_formula(open_page, base_url):
 
 def test_a_figure_opens_its_formula_by_click_and_by_keyboard(open_page):
     p = open_page("phone")
-    p.go("#/client/tong-quan/toan-canh")
-    p.page.locator("#page [data-metric]").first.click()
+    p.go("#/client/tong-quan/toan-canh")  # the Bảng số liệu
+    p.page.locator("#ws-cashview [data-metric]").first.click()
     drawer = p.page.locator(".drawer")
     drawer.locator("h4", has_text="Công thức").wait_for()
     assert "chưa có cách tính" not in drawer.inner_text()
