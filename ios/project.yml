@@ -10,7 +10,8 @@ settings:
     SWIFT_VERSION: "5.0"
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
-    CODE_SIGNING_ALLOWED: "NO"
+    # signing: CI builds pass CODE_SIGNING_ALLOWED=NO; on a Mac, Xcode signs with the Apple ID picked under Signing
+    CODE_SIGN_STYLE: Automatic
 targets:
   OneWealth:
     type: application

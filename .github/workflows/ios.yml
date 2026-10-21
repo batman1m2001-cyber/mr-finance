@@ -1,6 +1,7 @@
 # The iPhone app (docs/IOS_APP_PLAN.md): built and tested for the iOS Simulator on a macOS runner, then opened in an
 # iPhone simulator once per screen, signed in as the demo client, and photographed light and dark. The run's artifacts:
-# the screenshots, and the zipped simulator app (for Appetize). No signing, no Apple account.
+# the screenshots, the zipped simulator app, and an unsigned iPhone build (OneWealth-unsigned.ipa) that Sideloadly or
+# AltStore signs with a free Apple ID to install on a real phone. No signing here, no Apple account.
 name: iOS
 on:
   push:
@@ -83,6 +84,25 @@ jobs:
           shot "12-assistant-answer-light" 45 ${C}MF_THEME=light ${C}MF_DEMO=C01 ${C}MF_SCREEN=assistant "${C}MF_ASK=Tài sản của tôi thế nào?"
           ls -la shots
           (cd build/Build/Products/Debug-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/ios/OneWealth-simulator.zip" OneWealth.app)
+
+      - name: iPhone build (unsigned .ipa)
+        run: |
+          set -o pipefail
+          xcodebuild -project OneWealth.xcodeproj -scheme OneWealth -configuration Release -sdk iphoneos \
+            -destination "generic/platform=iOS" -derivedDataPath build-device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build 2>&1 | tee device.log | grep -E "error:|BUILD" || true
+          grep -q "BUILD SUCCEEDED" device.log
+          mkdir -p ipa/Payload
+          cp -R build-device/Build/Products/Release-iphoneos/OneWealth.app ipa/Payload/
+          (cd ipa && zip -qr "$GITHUB_WORKSPACE/ios/OneWealth-unsigned.ipa" Payload)
+          ls -la OneWealth-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iphone-ipa
+          path: ios/OneWealth-unsigned.ipa
+          if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v4
         if: always()
