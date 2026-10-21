@@ -121,6 +121,7 @@ from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
 from timeline.graph import timeline_flow
+from trial.graph import trial_daily_flow, trial_score_flow
 from views.graph import agent_eval_flow, agent_queue_flow, agent_worker_flow, decide_flow
 from zone.graph import zone_sync_flow
 
@@ -610,6 +611,24 @@ APP = Application(
             schedule=schedule(at="18:30", port=PORT),
             timeout=600,
             description="18:30 daily, after the market jobs: approved views' forecasts kept and scored (FEAT-18).",
+        ),
+        # the news agents' trial (BUSINESS_FEEDBACK_1021_PLAN B1, src/trial): the agents on their own each morning,
+        # nothing approved; their drafts' shadow forecasts kept and scored, the report in out/trial/<day>.json
+        Job(
+            "trial_daily",
+            graph=trial_daily_flow,
+            schedule=schedule(at="08:30", port=PORT),
+            timeout=3600,
+            description="08:30 daily until MF_TRIAL_UNTIL: the news since the last run grouped into events by the CIO "
+            "model, the CIO agent and the challenger on each, as agent:trial (B1.1).",
+        ),
+        Job(
+            "trial_score",
+            graph=trial_score_flow,
+            schedule=schedule(every="15m", port=PORT),
+            timeout=600,
+            description="Every 15 minutes: the trial's drafts' shadow forecasts kept, the due ones scored, the report "
+            "written (B1.2-B1.6).",
         ),
         # history on demand: `operonx run market_backfill [--set since=2020-01-01]`
         Job(

@@ -73,6 +73,21 @@ and scored, never applied, never on a client's screen (BRD KPI-05 untouched). Th
 
 **Gate.** 10-22 08:30 runs on its own and its report is readable that morning; every number links to its records.
 
+**Progress (2026-10-21).**
+- **B1.0 done (8f80f23).** CIO on Sonnet 5.5, challenger on Opus 5.5 through the bridge. The gate event
+  EV-2026-0004 → VW-0004-v1 ran live in 58 s: 6 calls, ~35k tokens, US$0.23 notional, no errors.
+- **B1.1–B1.4 and B1.6 built (src/trial, `trial_daily` 08:30 and `trial_score` every 15 min, CIO › Mô hình ›
+  Thử nghiệm agent tin tức, GET /api/trial, out/trial/<day>.json).** Changes from the plan:
+  - The day's events are grouped by the CIO model (one call, ~15k tokens, 9 s), not by event type. The gate
+    event, grouped by type, put unrelated news together, and the challenger flagged it.
+  - Events and drafts are made as `agent:trial`, not the CIO.
+  - Shadow forecasts are kept apart from FEAT-18's (`shadow_forecasts`), from the close before the run.
+  - The 3-day horizon reuses the 1-week realisation and is labelled uncalibrated.
+  - Buy/sell readings for VN-Index, gold, Bitcoin and USD: "mua"/"bán" when the expected move exceeds a quarter
+    of a typical move, else "giữ".
+  - Scenarios: the one whose path matched the most scored factors, against the most likely one.
+- **B1.5 replay: next.**
+
 ## B2 · A phone app
 
 **Asked.** Should there be an app, downloaded as a file and unzipped rather than through Google Play (review takes

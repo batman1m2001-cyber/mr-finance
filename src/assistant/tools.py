@@ -59,6 +59,7 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "phoi-nhiem": ("Phơi nhiễm", {"cio": "#/cio/phoi-nhiem"}),
     "ap-dung": ("Lần áp dụng", {"cio": "#/cio/ap-dung"}),
     "do-chinh-xac": ("Độ chính xác", {"cio": "#/cio/mo-hinh/do-chinh-xac"}),
+    "thu-nghiem": ("Thử nghiệm agent tin tức", {"cio": "#/cio/mo-hinh/thu-nghiem"}),  # BUSINESS_FEEDBACK_1021 B1
     "agent": ("Agent", {r: f"#/{r}/agent" for r in ("cio", "compliance", "admin")}),
     "tai-khoan": ("Tài khoản và vai trò", {"admin": "#/admin/tai-khoan"}),
     "viec-nen": ("Việc nền", {r: f"#/{r}/viec-nen" for r in ("cio", "compliance", "admin")}),

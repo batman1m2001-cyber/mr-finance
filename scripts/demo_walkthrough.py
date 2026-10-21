@@ -16,6 +16,7 @@ It never edits a view. A step that fails is printed and the next event goes on.
 from __future__ import annotations
 
 import argparse
+import http.cookiejar
 import json
 import sys
 import time
@@ -25,13 +26,14 @@ from collections import defaultdict
 
 BY = "cio"
 WHO = "kịch bản demo tự động (scripts/demo_walkthrough.py)"
+OPENER = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))  # the sign-in
 
 
 def call(base: str, path: str, body: dict | None = None, timeout: float = 600) -> dict:
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request(base + path, data=data, headers={"content-type": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+        with OPENER.open(req, timeout=timeout) as r:
             out = json.load(r)
     except urllib.error.HTTPError as exc:
         raise RuntimeError(f"{path}: {exc.code} {exc.read().decode()[:300]}") from None
@@ -72,6 +74,7 @@ def main() -> int:
     a = ap.parse_args()
     base = a.base.rstrip("/")
 
+    call(base, "/api/auth/demo", {"id": BY})  # the API needs a signed-in person: the CIO's demo account
     status = call(base, "/api/agents")
     m, b = status["models"], status["budget"]
     print(f"Agent: chế độ {status.get('mode')} · CIO {m.get('cio')} · phản biện {m.get('challenger')}")

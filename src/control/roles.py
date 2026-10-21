@@ -24,6 +24,9 @@ def users() -> Dict[str, Dict[str, str]]:
 
 
 ZONE_ACTOR = "agent:zone"  # who acts in the AI zone (app/zone.py): its jobs only, and only there
+# who acts in the news agents' trial (src/trial, BUSINESS_FEEDBACK_1021_PLAN B1): its scheduled jobs only, never a
+# request; its events and drafts say so, and it approves nothing (its forecasts are shadow ones)
+TRIAL_ACTOR = "agent:trial"
 
 
 ROLE_LABELS = {
@@ -50,6 +53,8 @@ def user(user_id: str) -> Dict[str, str]:
 
     if in_zone() and user_id == ZONE_ACTOR and not auth.checking():
         return {"id": ZONE_ACTOR, "name": "Agent vùng AI", "role": "cio", "title": "Vùng AI (F-D7)"}
+    if user_id == TRIAL_ACTOR and not auth.checking():
+        return {"id": TRIAL_ACTOR, "name": "Thử nghiệm agent tin tức", "role": "cio", "title": "Thử nghiệm B1"}
     if auth.checking():
         me = auth.signed_in()
         if me is None:

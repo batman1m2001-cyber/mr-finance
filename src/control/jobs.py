@@ -35,6 +35,9 @@ RUNNABLE = {
     "inbox_import": "Nhập gói từ vùng AI",
     "zone_sync": "Gửi danh mục cho vùng AI",
     "accuracy_score": "Chấm độ chính xác",
+    # the news agents' trial (BUSINESS_FEEDBACK_1021_PLAN B1): the morning runs once a day whoever asks
+    "trial_daily": "Thử nghiệm agent tin tức: buổi sáng",
+    "trial_score": "Thử nghiệm agent tin tức: chấm dự báo bóng",
 }
 
 _JOBS: Dict[str, Any] = {}  # name → operonx Job, from app/main.py
