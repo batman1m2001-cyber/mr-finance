@@ -66,21 +66,21 @@ jobs:
           C=SIMCTL_CHILD_
           for mode in light dark; do
             xcrun simctl ui "$UDID" appearance "$mode"
-            shot "01-signin-$mode" 12 ${C}MF_SIGNOUT=1
-            shot "02-overview-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview
-            shot "03-overview-lower-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview ${C}MF_SCROLL=allocation
-            shot "04-overview-risk-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview ${C}MF_SCROLL=risk
-            shot "05-assets-$mode" 12 ${C}MF_DEMO=C01 ${C}MF_SCREEN=assets
-            shot "06-cash-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash
-            shot "07-cash-month-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash ${C}MF_SCROLL=month
-            shot "08-cash-large-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash ${C}MF_SCROLL=large
-            shot "09-news-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=news
-            shot "10-news-classes-$mode" 14 ${C}MF_DEMO=C01 ${C}MF_SCREEN=news ${C}MF_SCROLL=classes
-            shot "11-assistant-$mode" 10 ${C}MF_DEMO=C01 ${C}MF_SCREEN=assistant
+            shot "01-signin-$mode" 12 ${C}MF_THEME=$mode ${C}MF_SIGNOUT=1
+            shot "02-overview-$mode" 12 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview
+            shot "03-overview-lower-$mode" 12 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview ${C}MF_SCROLL=allocation
+            shot "04-overview-risk-$mode" 12 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=overview ${C}MF_SCROLL=risk
+            shot "05-assets-$mode" 12 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=assets
+            shot "06-cash-$mode" 14 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash
+            shot "07-cash-month-$mode" 14 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash ${C}MF_SCROLL=month
+            shot "08-cash-large-$mode" 14 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=cash ${C}MF_SCROLL=large
+            shot "09-news-$mode" 14 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=news
+            shot "10-news-classes-$mode" 14 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=news ${C}MF_SCROLL=classes
+            shot "11-assistant-$mode" 10 ${C}MF_THEME=$mode ${C}MF_DEMO=C01 ${C}MF_SCREEN=assistant
           done
           # one real question to the assistant (one model call a run), light only
           xcrun simctl ui "$UDID" appearance light
-          shot "12-assistant-answer-light" 45 ${C}MF_DEMO=C01 ${C}MF_SCREEN=assistant "${C}MF_ASK=Tài sản của tôi thế nào?"
+          shot "12-assistant-answer-light" 45 ${C}MF_THEME=light ${C}MF_DEMO=C01 ${C}MF_SCREEN=assistant "${C}MF_ASK=Tài sản của tôi thế nào?"
           ls -la shots
           (cd build/Build/Products/Debug-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/ios/OneWealth-simulator.zip" OneWealth.app)
 

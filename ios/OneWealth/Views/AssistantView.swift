@@ -96,7 +96,7 @@ private struct Bubble: View {
         if m.mine {
             HStack {
                 Spacer(minLength: 48)
-                Text(m.text).foregroundStyle(.white)
+                Text(m.text).foregroundStyle(Theme.accentInk)
                     .padding(.horizontal, 14).padding(.vertical, 10)
                     .background(Theme.accent, in: RoundedRectangle(cornerRadius: 18))
             }
@@ -115,7 +115,7 @@ private struct Bubble: View {
                 }
                 if m.waiting {
                     HStack(spacing: 8) {
-                        Button("Xác nhận") { Task { await model.answer(m, approve: true) } }.buttonStyle(.borderedProminent)
+                        Button("Xác nhận") { Task { await model.answer(m, approve: true) } }.buttonStyle(PrimaryButton())
                         Button("Huỷ") { Task { await model.answer(m, approve: false) } }.buttonStyle(.bordered)
                     }
                     .controlSize(.large)
@@ -175,9 +175,10 @@ private struct Suggestions: View {
             FlowLayout(spacing: 8) {
                 ForEach(items.prefix(5), id: \.self) { q in
                     Button { pick(q) } label: {
-                        Text(q).font(.subheadline).foregroundStyle(Theme.accent)
+                        Text(q).font(.subheadline).foregroundStyle(Theme.ink)
                             .padding(.horizontal, 12).padding(.vertical, 8)
-                            .background(Theme.accentSoft, in: Capsule())
+                            .background(Theme.surface, in: Capsule())
+                            .overlay(Capsule().stroke(Theme.hair, lineWidth: 1))
                     }
                     .buttonStyle(.plain)
                 }

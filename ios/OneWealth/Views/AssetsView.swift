@@ -106,7 +106,7 @@ struct Loading: View {
             ContentUnavailableView {
                 Label("Chưa tải được", systemImage: "wifi.exclamationmark")
             } description: { Text(error) } actions: {
-                Button("Thử lại") { Task { await retry() } }.buttonStyle(.borderedProminent)
+                Button("Thử lại") { Task { await retry() } }.buttonStyle(PrimaryButton())
             }
             .padding(.top, 80)
         } else {

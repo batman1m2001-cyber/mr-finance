@@ -36,12 +36,16 @@ struct OverviewView: View {
 
 struct AccountMenu: View {
     @Environment(AppModel.self) private var model
+    @AppStorage("theme") private var theme = "light"
 
     var body: some View {
         Menu {
             if let u = model.user {
                 Text(u.name)
                 if let t = u.title { Text(t) }
+            }
+            Toggle(isOn: Binding(get: { theme == "dark" }, set: { theme = $0 ? "dark" : "light" })) {
+                Label("Giao diện tối", systemImage: "moon")
             }
             Button(role: .destructive) { Task { await model.logout() } } label: {
                 Label("Đăng xuất", systemImage: "rectangle.portrait.and.arrow.right")
@@ -62,7 +66,8 @@ private struct NetWorthCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Tài sản ròng của \(d.profile.name)").font(.subheadline).foregroundStyle(Theme.ink2)
                 Text(Fmt.vnd(nw.value)).font(.system(size: 40, weight: .bold, design: .rounded))
-                    .foregroundStyle(Theme.ink).monospacedDigit()
+                    .foregroundStyle(Theme.navy).monospacedDigit()
+                Capsule().fill(Theme.gold).frame(width: 44, height: 3).accessibilityHidden(true)
                 if let ch = nw.monthChange {
                     HStack(spacing: 6) {
                         Image(systemName: ch >= 0 ? "arrow.up.right" : "arrow.down.right")

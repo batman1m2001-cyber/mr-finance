@@ -3,12 +3,15 @@ import SwiftUI
 @main
 struct OneWealthApp: App {
     @State private var model = AppModel()
+    /// light for everyone unless the person picks dark (the account menu), as the website
+    @AppStorage("theme") private var theme = ProcessInfo.processInfo.environment["MF_THEME"] ?? "light"
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environment(model)
                 .tint(Theme.accent)
+                .preferredColorScheme(theme == "dark" ? .dark : .light)
                 .task { await model.start() }
         }
     }

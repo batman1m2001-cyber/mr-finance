@@ -28,9 +28,9 @@ struct SignInView: View {
                     Button {
                         Task { await model.login(login, password) }
                     } label: {
-                        Text("Đăng nhập").font(.headline).frame(maxWidth: .infinity, minHeight: 44)
+                        Text("Đăng nhập").frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(PrimaryButton())
                     .disabled(login.isEmpty || password.isEmpty || model.loading)
                 }
 
@@ -48,7 +48,7 @@ struct SignInView: View {
                             } label: {
                                 HStack(spacing: 12) {
                                     Text(initials(a.name))
-                                        .font(.subheadline.bold()).foregroundStyle(Theme.accent)
+                                        .font(.subheadline.bold()).foregroundStyle(Theme.ink)
                                         .frame(width: 40, height: 40).background(Theme.accentSoft, in: Circle())
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(a.name).font(.body.weight(.semibold)).foregroundStyle(Theme.ink)
