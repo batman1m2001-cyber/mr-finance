@@ -153,7 +153,7 @@ a { color: var(--accent); }
 .scopetip .tipbody b { color: var(--ink); font-weight: 650; }
 #bell { position: relative; display: grid; place-items: center; }
 #bell[data-count]:not([data-count=""])::after { content: attr(data-count); position: absolute; top: -4px; right: -4px; min-width: 17px;
-  height: 17px; padding: 0 4px; border-radius: 999px; background: var(--critical); color: #fff; font: 700 10.5px/17px var(--font);
+  height: 17px; padding: 0 4px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: 700 10.5px/17px var(--font);
   text-align: center; border: 2px solid var(--surface); }
 .shell-nav { display: flex; align-items: center; gap: 12px; padding: 0 24px; max-width: 1320px; margin: 0 auto; flex-wrap: wrap; }
 .rolebox { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 4px 0; }
@@ -937,6 +937,9 @@ body.signed-out .bellwrap, body.signed-out #reset { display: none !important; }
   width: 100%; padding: 8px 10px; text-align: left; border: 1px solid var(--hair); border-radius: 12px; background: var(--surface);
   color: var(--ink); font: inherit; cursor: pointer; transition: opacity var(--dur-2) var(--ease-out); }
 .eco-node .ic-chip { --tone: inherit; }
+/* a narrow column (the assistant's panel open beside the map): the state goes under the name, so the name keeps whole words */
+.eco-col { container-type: inline-size; }
+@container (max-width: 270px) { .eco-node { grid-template-columns: auto minmax(0, 1fr); row-gap: 4px; } .eco-node > .pill { grid-column: 2; justify-self: start; } }
 .eco-node:hover, .eco-node:focus-visible { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--band); }
 .eco-node.dim { opacity: .38; }
 .eco-t { display: grid; gap: 1px; min-width: 0; }
