@@ -6,10 +6,10 @@
 import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
-import {UNIT_WORD, createGraph} from "./graph.js?v=20261020t1";
+import {UNIT_WORD, createGraph} from "./graph.js?v=20261021t6";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261021t5";
-import {LENS, PARTS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t5";
+import {render as inspect} from "./inspector.js?v=20261021t6";
+import {LENS, PARTS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t6";
 import {mount as mountMoney} from "./money.js?v=20261021t5";
 import {mount as mountStrip} from "./strip.js?v=20261021t3";
 

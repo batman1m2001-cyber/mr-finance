@@ -17,8 +17,13 @@ vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch b�
 - **Đường nối**: nét liền là tiền và các khoản thực tế đã ghi nhận (càng dày càng nhiều tiền); **nét đứt là ước
   tính** (tin, chính sách, rủi ro: “có thể ảnh hưởng”); **chấm chấm là giả định** (kịch bản, nhãn “giả định”, “nếu
   xảy ra”). Ước tính và giả định không bao giờ được cộng vào tài sản ròng. Chú thích ở góc đồ thị nhắc lại ba loại.
+- **Nhóm trên vòng**: các mục cùng loại nằm liền nhau, nối bằng một sợi mờ cùng màu; chỗ sợi đứt là sang nhóm khác.
+  Tên nhóm và số mục (“Tài sản · 7”) hiện ở khoảng trống giữa hai mục khi đủ chỗ.
 - **Bấm một nút hoặc một đường** để xem ở ô Thông tin: số tiền, mỗi tháng, mức chắc chắn, từ bản ghi nào. Trong góc
   nhìn Tài sản, chọn một lớp tài sản để mở các khoản của nó.
+- **Nguồn dữ liệu** không nằm trên vòng: chọn một lớp tài sản, ô Thông tin ghi “Nguồn: TCBS · 4 khoản …”; bấm tên
+  nguồn để xem các khoản lấy từ nguồn đó. Ở góc nhìn Tài sản, khi chưa chọn gì, ô Thông tin liệt kê mọi nguồn và nguồn
+  nào đã kết nối.
 - **Kịch bản**: bật ở góc nhìn Mục tiêu & kịch bản. Kịch bản đang bật có một đường giả định về phía bạn; chọn nó để
   thấy nó chạm tới lớp tài sản và mục tiêu nào. Bật kịch bản không đổi số liệu đã lưu.
 - **Trợ lý** (thẻ Trợ lý cạnh ô Thông tin) biết bạn đang ở góc nhìn nào và đang chọn gì: hỏi “mục này là gì?” là hỏi

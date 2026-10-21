@@ -117,6 +117,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   mk("circle", {r: ME_R - 1}, mk("clipPath", {id: "ws-core-clip"}, defs));
   const world = mk("g", {class: "ws-world"}, svg);
   const edgeLayer = mk("g", {class: "ws-edges"}, world);
+  const tagLayer = mk("g", {class: "ws-tags", "aria-hidden": "true"}, world);  // each group's arc and name (T6)
   const fxLayer = mk("g", {class: "ws-fx", "aria-hidden": "true"}, world);
   const nodeLayer = mk("g", {class: "ws-nodes"}, world);
   const moneyLayer = mk("g", {class: "ws-money", "aria-hidden": "true"}, world);  // a spoke's change (NODE_TIMELINE_PLAN T3)
@@ -180,7 +181,8 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // disc; its label sits outside the ring, so no spoke crosses a label. A slot is the room the node and its label take
   // along the ring at their place, in pixels; the ellipse is the largest that keeps every label on the canvas. When the
   // slots need more ring than there is, the smallest items of the most crowded group fold into one group node.
-  const RING = ["flow_out", "risk", "alert", "event", "scenario", "goal", "liquidity", "source", "flow_in", "asset", "debt"];
+  // a data source is not on it: where a number comes from is told beside the number, in Thông tin (UX_TOOLBAR_PLAN T6)
+  const RING = ["flow_out", "risk", "alert", "event", "scenario", "goal", "liquidity", "flow_in", "asset", "debt"];
   const HOME = {flow_out: 0, risk: 26, alert: 50, event: 74, scenario: 98, goal: 126, liquidity: 156, source: 112, flow_in: 180, asset: 255, debt: 322};
   const NEVER_FOLD = new Set(["flow_out", "flow_in", "liquidity"]);
   // which group folds first when the ring is short: news, policy and sources first, the assets last (OWN-GW-27)
@@ -188,6 +190,10 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // … and a lens's own subject folds last there: the news on Tin, the goals on Mục tiêu (OWN-GW-27)
   const SUBJECT = {"tin": ["event", "alert"], "muc-tieu": ["goal", "scenario"], "rui-ro": ["risk"], "tai-san": ["asset", "debt"], "dong-tien": ["liquidity"]};
   const foldWeight = (key) => (FOLD_FIRST[key] || 0.5) * ((SUBJECT[lens.id] || []).includes(key) ? 0.15 : 1);
+  // a group's tag on the ring (T6): where one kind ends and the next begins
+  const GROUP_TAG = {flow_out: "Tiền ra", risk: "Rủi ro", alert: "Chính sách", event: "Tin tức", scenario: "Kịch bản", goal: "Mục tiêu",
+    liquidity: "Thanh khoản", flow_in: "Tiền vào", asset: "Tài sản", debt: "Nợ"};
+  const GROUP_GAP = 1.8;  // the room between two groups, in gaps between two members
   const GROUP_WORD = {risk: "rủi ro", alert: "chính sách", event: "tin tức", scenario: "kịch bản", goal: "mục tiêu", source: "nguồn dữ liệu", asset: "lớp tài sản", debt: "khoản nợ"};
   const SUMMABLE = new Set(["event", "alert", "asset", "debt", "risk"]);
   const groupOf = (n) => (n.kind === "flow" ? `flow_${n.side === "out" ? "out" : "in"}` : n.kind === "class" ? (n.liability ? "debt" : "asset") : n.kind === "group" ? n.group : n.kind);
@@ -359,7 +365,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     const minR = ME_R + 70;
     const bump = new Float64Array(n);  // extra room asked for after a box overlapped, per pair (i, i+1)
     const gapBase = narrow ? 7 : 8;
-    const gw = items.map((it, i) => (groupOf(it) !== groupOf(items[(i + 1) % n]) ? 1.8 : 1));
+    const gw = items.map((it, i) => (groupOf(it) !== groupOf(items[(i + 1) % n]) ? GROUP_GAP : 1));
     // start from the last try's angles where the item was there, else between its neighbours, else evenly
     let phis = items.map((it, i) => (warm && warm.phi[it.id] != null ? warm.phi[it.id] : null));
     if (phis.every(v => v == null)) phis = items.map((_, i) => 2 * Math.PI * i / n);
@@ -751,9 +757,54 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     clearTimeout(edgeTimer);
     if (moved && !reduced()) {
       moneyLayer.replaceChildren();  // drawn again with the edges, where the nodes arrive
+      tagLayer.replaceChildren();
       edgeLayer.classList.add("moving");
-      edgeTimer = setTimeout(() => { drawEdges(lit); edgeLayer.classList.remove("moving"); }, 420);
-    } else { edgeLayer.classList.remove("moving"); drawEdges(lit); }  // a draw inside a move's fade ends the fade too
+      edgeTimer = setTimeout(() => { drawEdges(lit); drawTags(); edgeLayer.classList.remove("moving"); }, 420);
+    } else { edgeLayer.classList.remove("moving"); drawEdges(lit); drawTags(); }  // a draw inside a move's fade ends the fade too
+  }
+
+  // each group of two or more on the ring (T6): a faint string along the ring through its members, broken where the
+  // next kind begins, and its name and count in the widest gap between two of them where it clears every disc and
+  // label (else no name: the string alone shows the group). On the ring line, not inside it: the spokes' amounts sit
+  // half way to the centre, and an arc there crossed them (tried, 2026-10-21)
+  function drawTags() {
+    tagLayer.replaceChildren();
+    if (!ring) return;
+    const cx = W / 2, cy = H / 2, by = new Map();
+    for (const n of g.nodes.concat(groupNodes)) {
+      const q = pos[n.id];
+      if (!q || !q.ring || !visible(n) || n.close) continue;
+      const k = groupOf(n);
+      if (!GROUP_TAG[k]) continue;
+      if (!by.has(k)) by.set(k, []);
+      by.get(k).push({t: ((q.a * Math.PI / 180) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI), count: n.kind === "group" ? n.members.length : 1});
+    }
+    const at = (t) => { const [x, y] = ringAt(t, ring.rx, ring.ry); return [cx + x, cy + y]; };
+    const {discs, boxes} = obstaclesNow();
+    const clear = (b) => !boxes.some(o => b[0] < o.b[2] && b[2] > o.b[0] && b[1] < o.b[3] && b[3] > o.b[1])
+      && !discs.some(d => Math.hypot(Math.max(b[0], Math.min(d.x, b[2])) - d.x, Math.max(b[1], Math.min(d.y, b[3])) - d.y) < d.r);
+    for (const [k, list] of by) {
+      if (list.length < 2) continue;  // one node names itself
+      // in ring order, starting after the widest gap: a group never wraps the wrong way round
+      const ts = list.map(x => x.t).sort((a, b) => a - b);
+      let cut = 0, wide = -1;
+      ts.forEach((t, i) => { const gap = ((ts[(i + 1) % ts.length] - t) + 2 * Math.PI) % (2 * Math.PI) || 2 * Math.PI; if (gap > wide) { wide = gap; cut = (i + 1) % ts.length; } });
+      const run = ts.slice(cut).concat(ts.slice(0, cut).map(t => t + 2 * Math.PI));
+      const a0 = run[0], a1 = run[run.length - 1], steps = Math.max(8, Math.ceil((a1 - a0) * 48));
+      const pts = Array.from({length: steps + 1}, (_, i) => at(a0 + (a1 - a0) * i / steps));
+      const tone = (LOOK[k === "asset" || k === "debt" ? "class" : k.startsWith("flow_") ? "flow" : k] || LOOK.class)[0];
+      mk("path", {class: "ws-garc", d: "M" + pts.map(p => p.map(v => v.toFixed(1)).join(" ")).join("L"), style: `--tone:${tone}`}, tagLayer);
+      const text = `${GROUP_TAG[k]} · ${list.reduce((t, x) => t + x.count, 0)}`;
+      const w = text.length * 6.6 + 8, h = 14;
+      const gaps = run.slice(1).map((t, i) => ({mid: (run[i] + t) / 2, len: Math.hypot(...at(t).map((v, j) => v - at(run[i])[j]))})).sort((p, q) => q.len - p.len);
+      for (const gp of gaps) {
+        const [x, y] = at(gp.mid);
+        if (!clear([x - w / 2, y - h / 2, x + w / 2, y + h / 2])) continue;
+        const txt = mk("text", {class: "ws-gtag", x: x.toFixed(1), y: y.toFixed(1), "text-anchor": "middle", "dominant-baseline": "central"}, tagLayer);
+        txt.textContent = text;
+        break;
+      }
+    }
   }
 
   function litSet() {

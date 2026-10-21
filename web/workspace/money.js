@@ -5,7 +5,7 @@
    pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
 import {esc} from "../core/core.js";
 import {render} from "../pages/detail.js?v=20261021t5";
-import {href} from "./lenses.js?v=20261021t5";
+import {href} from "./lenses.js?v=20261021t6";
 
 export function mount(el, {client, scope}) {
   let key = null, board = {}, loading = null;
