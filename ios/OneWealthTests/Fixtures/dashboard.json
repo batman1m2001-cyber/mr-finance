@@ -1,0 +1,1978 @@
+{
+ "dashboard": {
+  "client_id": "C01",
+  "scope": "personal",
+  "as_of": "2026-10-09",
+  "members": [
+   {
+    "id": "C01",
+    "name": "Nguyễn Minh Khoa",
+    "relation": "Chủ tài khoản"
+   }
+  ],
+  "waiting": [],
+  "profile": {
+   "client_id": "C01",
+   "name": "Nguyễn Minh Khoa",
+   "age": 42,
+   "occupation": "Giám đốc công nghệ",
+   "segment": "Priority",
+   "persona_hint": "Chuyên gia",
+   "income_monthly": 120000000,
+   "spending_monthly": 115000000,
+   "benchmark": "VNINDEX",
+   "drawdown_limit": 0.08,
+   "risk_persona": "Chuyên gia",
+   "risk_profile": "Thận trọng",
+   "dependents": [
+    {
+     "name": "Nguyễn Minh An",
+     "relation": "Con",
+     "birth_year": 2012
+    },
+    {
+     "name": "Nguyễn Minh Châu",
+     "relation": "Con",
+     "birth_year": 2016
+    }
+   ],
+   "events": [
+    {
+     "date": "2027-03-15",
+     "direction": "out",
+     "amount": 1800000000,
+     "label": "Học phí du học (Úc) – Minh An",
+     "category": "school",
+     "owner": "C01"
+    },
+    {
+     "date": "2027-03-31",
+     "direction": "out",
+     "amount": 85000000,
+     "label": "Quyết toán thuế TNCN 2026",
+     "category": "tax",
+     "owner": "C01"
+    }
+   ]
+  },
+  "sources": [
+   {
+    "source": "techcombank",
+    "label": "Techcombank",
+    "tier": 1,
+    "what": "Tiền gửi, thẻ, khoản vay, giao dịch",
+    "count": 4,
+    "assets": 3180000000,
+    "liabilities": 2445000000,
+    "trust": [
+     "Đã xác thực"
+    ],
+    "status": "connected"
+   },
+   {
+    "source": "tcbs",
+    "label": "TCBS",
+    "tier": 1,
+    "what": "Cổ phiếu, trái phiếu, lãi lỗ",
+    "count": 6,
+    "assets": 5528000000,
+    "liabilities": 0,
+    "trust": [
+     "Đã xác thực"
+    ],
+    "status": "connected"
+   },
+   {
+    "source": "techcom_capital",
+    "label": "Techcom Capital",
+    "tier": 1,
+    "what": "Chứng chỉ quỹ",
+    "count": 2,
+    "assets": 1620000000,
+    "liabilities": 0,
+    "trust": [
+     "Đã xác thực"
+    ],
+    "status": "connected"
+   },
+   {
+    "source": "onehousing",
+    "label": "OneHousing",
+    "tier": 1,
+    "what": "Định giá bất động sản",
+    "count": 1,
+    "assets": 14400000000,
+    "liabilities": 0,
+    "trust": [
+     "Đã xác thực"
+    ],
+    "status": "connected"
+   },
+   {
+    "source": "open_api",
+    "label": "Open API (ngân hàng / CTCK khác)",
+    "tier": 2,
+    "what": "Số dư, danh mục",
+    "count": 1,
+    "assets": 420000000,
+    "liabilities": 0,
+    "trust": [
+     "Đã xác thực"
+    ],
+    "status": "connected"
+   },
+   {
+    "source": "statement",
+    "label": "Sao kê tải lên",
+    "tier": 2,
+    "what": "Đọc sao kê PDF / Excel",
+    "count": 3,
+    "assets": 1023000000,
+    "liabilities": 0,
+    "trust": [
+     "Từ sao kê"
+    ],
+    "status": "connected"
+   },
+   {
+    "source": "declared",
+    "label": "Bạn tự khai",
+    "tier": 3,
+    "what": "Vàng, BĐS ngoài hệ thống, cổ phần, bảo hiểm",
+    "count": 4,
+    "assets": 19800000000,
+    "liabilities": 0,
+    "trust": [
+     "Bạn tự khai"
+    ],
+    "status": "connected"
+   }
+  ],
+  "holdings": [
+   {
+    "key": "C01:onehousing:OH-TD-01",
+    "owner": "C01",
+    "source": "onehousing",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "real_estate",
+    "name": "Căn hộ Thảo Điền",
+    "value": 14400000000,
+    "prev_value": 14160000000,
+    "ytd_value": null,
+    "cost": 8000000000,
+    "liquid": false,
+    "stress": 0.1,
+    "detail": {
+     "area": "thao_dien",
+     "area_name": "Thảo Điền, TP. Thủ Đức",
+     "city": "TP.HCM",
+     "property_type": "Căn hộ",
+     "sqm": 120,
+     "purchase_year": 2019,
+     "rental_monthly": 0,
+     "use": "Ở",
+     "months_to_sell": 6
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:declared:asset-2661551b",
+    "owner": "C01",
+    "source": "declared",
+    "tier": 3,
+    "trust": "declared",
+    "kind": "asset",
+    "class": "real_estate",
+    "name": "Đất Long Thành (tự khai)",
+    "value": 9000000000,
+    "prev_value": 8750000000,
+    "ytd_value": null,
+    "cost": 3000000000,
+    "liquid": false,
+    "stress": 0.1,
+    "detail": {
+     "area": "long_thanh",
+     "area_name": "Đất nền Long Thành, Đồng Nai",
+     "city": "Đồng Nai",
+     "sqm": 500.0,
+     "purchase_year": 2019,
+     "rental_monthly": 0,
+     "months_to_sell": 18
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:declared:asset-810f5796",
+    "owner": "C01",
+    "source": "declared",
+    "tier": 3,
+    "trust": "declared",
+    "kind": "asset",
+    "class": "real_estate",
+    "name": "Đất Long Thành (tự khai)",
+    "value": 9000000000,
+    "prev_value": 8750000000,
+    "ytd_value": null,
+    "cost": 3000000000,
+    "liquid": false,
+    "stress": 0.1,
+    "detail": {
+     "area": "long_thanh",
+     "area_name": "Đất nền Long Thành, Đồng Nai",
+     "city": "Đồng Nai",
+     "sqm": 500.0,
+     "purchase_year": 2019,
+     "rental_monthly": 0,
+     "months_to_sell": 18
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:techcombank:1902-TD-01",
+    "owner": "C01",
+    "source": "techcombank",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "deposit",
+    "name": "Tiền gửi 12 tháng",
+    "value": 2500000000,
+    "prev_value": 2500000000,
+    "ytd_value": null,
+    "cost": null,
+    "liquid": true,
+    "stress": 0.0,
+    "detail": {
+     "account_type": "TD",
+     "rate": 0.052,
+     "opened": "2025-12-20",
+     "maturity": "2026-12-20"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:tcbs:stock:FPT",
+    "owner": "C01",
+    "source": "tcbs",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "stock",
+    "name": "Cổ phiếu FPT",
+    "value": 1920000000,
+    "prev_value": 1830000000,
+    "ytd_value": 1770000000,
+    "cost": 1425000000,
+    "liquid": true,
+    "stress": 0.2625,
+    "detail": {
+     "ticker": "FPT",
+     "qty": 15000,
+     "price": 128000,
+     "avg_price": 95000,
+     "bought": "2023-03-14",
+     "sector": "Công nghệ",
+     "issuer": "FPT",
+     "beta": 1.05
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:declared:D-GOLD-01",
+    "owner": "C01",
+    "source": "declared",
+    "tier": 3,
+    "trust": "declared",
+    "kind": "asset",
+    "class": "gold",
+    "name": "Vàng miếng SJC",
+    "value": 1500000000,
+    "prev_value": 1460000000,
+    "ytd_value": 1200000000,
+    "cost": null,
+    "liquid": true,
+    "stress": 0.1,
+    "detail": {
+     "qty": 10,
+     "unit": "lượng",
+     "price": 150000000
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:tcbs:stock:TCB",
+    "owner": "C01",
+    "source": "tcbs",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "stock",
+    "name": "Cổ phiếu TCB",
+    "value": 1060000000,
+    "prev_value": 1032000000,
+    "ytd_value": 920000000,
+    "cost": 840000000,
+    "liquid": true,
+    "stress": 0.2875,
+    "detail": {
+     "ticker": "TCB",
+     "qty": 40000,
+     "price": 26500,
+     "avg_price": 21000,
+     "bought": "2024-06-05",
+     "sector": "Ngân hàng",
+     "issuer": "Techcombank",
+     "beta": 1.15
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:tcbs:bond:TCB12401",
+    "owner": "C01",
+    "source": "tcbs",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "bond",
+    "name": "Trái phiếu TCB12401 (Techcombank)",
+    "value": 1012000000,
+    "prev_value": 1012000000,
+    "ytd_value": null,
+    "cost": 1000000000,
+    "liquid": false,
+    "stress": 0.08,
+    "detail": {
+     "code": "TCB12401",
+     "qty": 10000,
+     "par": 100000,
+     "price": 101200,
+     "avg_price": 100000,
+     "bought": "2025-01-08",
+     "issuer": "Techcombank",
+     "sector": "Ngân hàng",
+     "bond_kind": "bank",
+     "coupon": 0.065,
+     "coupon_months": [
+      5,
+      11
+     ],
+     "maturity": "2029-05-20",
+     "duration": 2.4
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:techcom_capital:fund:TCBF",
+    "owner": "C01",
+    "source": "techcom_capital",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "fund",
+    "name": "Quỹ trái phiếu TCBF",
+    "value": 1000000000,
+    "prev_value": 996000000,
+    "ytd_value": 972000000,
+    "cost": 940000000,
+    "liquid": true,
+    "stress": 0.05,
+    "detail": {
+     "code": "TCBF",
+     "units": 40000,
+     "nav": 25000,
+     "avg_nav": 23500,
+     "bought": "2024-09-10",
+     "fund_type": "bond"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:techcombank:1902-CASA-01",
+    "owner": "C01",
+    "source": "techcombank",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "cash",
+    "name": "Tài khoản thanh toán",
+    "value": 680000000,
+    "prev_value": 680000000,
+    "ytd_value": null,
+    "cost": null,
+    "liquid": true,
+    "stress": 0.0,
+    "detail": {
+     "account_type": "CASA",
+     "rate": null,
+     "opened": null,
+     "maturity": null
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:techcom_capital:fund:TCEF",
+    "owner": "C01",
+    "source": "techcom_capital",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "fund",
+    "name": "Quỹ cổ phiếu TCEF",
+    "value": 620000000,
+    "prev_value": 600000000,
+    "ytd_value": 570000000,
+    "cost": 540000000,
+    "liquid": false,
+    "stress": 0.3,
+    "detail": {
+     "code": "TCEF",
+     "units": 20000,
+     "nav": 31000,
+     "avg_nav": 27000,
+     "bought": "2025-04-02",
+     "fund_type": "equity"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:tcbs:stock:HPG",
+    "owner": "C01",
+    "source": "tcbs",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "stock",
+    "name": "Cổ phiếu HPG",
+    "value": 550000000,
+    "prev_value": 520000000,
+    "ytd_value": 510000000,
+    "cost": 480000000,
+    "liquid": true,
+    "stress": 0.325,
+    "detail": {
+     "ticker": "HPG",
+     "qty": 20000,
+     "price": 27500,
+     "avg_price": 24000,
+     "bought": "2025-02-18",
+     "sector": "Thép",
+     "issuer": "Hòa Phát",
+     "beta": 1.3
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:tcbs:stock:VNM",
+    "owner": "C01",
+    "source": "tcbs",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "stock",
+    "name": "Cổ phiếu VNM",
+    "value": 496000000,
+    "prev_value": 508000000,
+    "ytd_value": 528000000,
+    "cost": 560000000,
+    "liquid": true,
+    "stress": 0.15,
+    "detail": {
+     "ticker": "VNM",
+     "qty": 8000,
+     "price": 62000,
+     "avg_price": 70000,
+     "bought": "2022-11-21",
+     "sector": "Tiêu dùng",
+     "issuer": "Vinamilk",
+     "beta": 0.6
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:statement:vps:stock:SSI",
+    "owner": "C01",
+    "source": "statement",
+    "tier": 2,
+    "trust": "statement",
+    "kind": "asset",
+    "class": "stock",
+    "name": "Cổ phiếu SSI (VPS)",
+    "value": 495000000,
+    "prev_value": 472500000,
+    "ytd_value": 420000000,
+    "cost": 375000000,
+    "liquid": true,
+    "stress": 0.375,
+    "detail": {
+     "ticker": "SSI",
+     "qty": 15000.0,
+     "price": 33000,
+     "avg_price": 25000.0,
+     "bought": null,
+     "sector": "Chứng khoán",
+     "issuer": "SSI",
+     "beta": 1.5,
+     "institution": "VPS",
+     "file": "vps_C01.csv"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:tcbs:bond:SMR12501",
+    "owner": "C01",
+    "source": "tcbs",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "bond",
+    "name": "Trái phiếu SMR12501 (BĐS Sao Mai (mock))",
+    "value": 490000000,
+    "prev_value": 490000000,
+    "ytd_value": null,
+    "cost": 500000000,
+    "liquid": false,
+    "stress": 0.15,
+    "detail": {
+     "code": "SMR12501",
+     "qty": 5000,
+     "par": 100000,
+     "price": 98000,
+     "avg_price": 100000,
+     "bought": "2025-07-22",
+     "issuer": "BĐS Sao Mai (mock)",
+     "sector": "Bất động sản",
+     "bond_kind": "corporate",
+     "coupon": 0.105,
+     "coupon_months": [
+      3,
+      9
+     ],
+     "maturity": "2027-09-15",
+     "duration": 1.0
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:open_api:VPBank:VPB-001",
+    "owner": "C01",
+    "source": "open_api",
+    "tier": 2,
+    "trust": "verified",
+    "kind": "asset",
+    "class": "cash",
+    "name": "Tài khoản VPBank",
+    "value": 420000000,
+    "prev_value": 420000000,
+    "ytd_value": null,
+    "cost": null,
+    "liquid": true,
+    "stress": 0.0,
+    "detail": {
+     "institution": "VPBank",
+     "account_type": "CASA"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:statement:vps:stock:MWG",
+    "owner": "C01",
+    "source": "statement",
+    "tier": 2,
+    "trust": "statement",
+    "kind": "asset",
+    "class": "stock",
+    "name": "Cổ phiếu MWG (VPS)",
+    "value": 408000000,
+    "prev_value": 390000000,
+    "ytd_value": 348000000,
+    "cost": 312000000,
+    "liquid": true,
+    "stress": 0.3,
+    "detail": {
+     "ticker": "MWG",
+     "qty": 6000.0,
+     "price": 68000,
+     "avg_price": 52000.0,
+     "bought": null,
+     "sector": "Bán lẻ",
+     "issuer": "Thế Giới Di Động",
+     "beta": 1.2,
+     "institution": "VPS",
+     "file": "vps_C01.csv"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:declared:D-INS-01",
+    "owner": "C01",
+    "source": "declared",
+    "tier": 3,
+    "trust": "declared",
+    "kind": "asset",
+    "class": "insurance",
+    "name": "Bảo hiểm nhân thọ (liên kết chung)",
+    "value": 300000000,
+    "prev_value": 300000000,
+    "ytd_value": null,
+    "cost": null,
+    "liquid": false,
+    "stress": 0.0,
+    "detail": {
+     "sector": null,
+     "premium_annual": 60000000,
+     "premium_month": 3
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:statement:vps:cash:2",
+    "owner": "C01",
+    "source": "statement",
+    "tier": 2,
+    "trust": "statement",
+    "kind": "asset",
+    "class": "cash",
+    "name": "Tiền (VPS)",
+    "value": 120000000,
+    "prev_value": 120000000,
+    "ytd_value": null,
+    "cost": null,
+    "liquid": true,
+    "stress": 0.0,
+    "detail": {
+     "rate": null,
+     "maturity": null,
+     "opened": null,
+     "institution": "VPS",
+     "file": "vps_C01.csv"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:techcombank:LN-HOME-01",
+    "owner": "C01",
+    "source": "techcombank",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "liability",
+    "class": "loan",
+    "name": "Vay mua nhà Thảo Điền",
+    "value": 2400000000,
+    "prev_value": 2400000000,
+    "ytd_value": null,
+    "cost": null,
+    "liquid": false,
+    "stress": 0.0,
+    "detail": {
+     "rate": 0.092,
+     "rate_type": "floating",
+     "monthly_payment": 38000000,
+     "end": "2034-06-20",
+     "collateral": "OH-TD-01"
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   },
+   {
+    "key": "C01:techcombank:VISA-SIG-01",
+    "owner": "C01",
+    "source": "techcombank",
+    "tier": 1,
+    "trust": "verified",
+    "kind": "liability",
+    "class": "card",
+    "name": "Dư nợ thẻ Visa Signature",
+    "value": 45000000,
+    "prev_value": 45000000,
+    "ytd_value": null,
+    "cost": null,
+    "liquid": false,
+    "stress": 0.0,
+    "detail": {
+     "limit": 300000000
+    },
+    "owner_name": "Nguyễn Minh Khoa"
+   }
+  ],
+  "net_worth": {
+   "value": 43526000000,
+   "assets": 45971000000,
+   "liabilities": 2445000000,
+   "prev_value": 42545500000,
+   "month_change": 980500000,
+   "month_change_pct": 0.023045915549235525,
+   "trust_mix": [
+    {
+     "trust": "verified",
+     "label": "Đã xác thực",
+     "value": 25148000000.0,
+     "share": 0.5470405255487155
+    },
+    {
+     "trust": "declared",
+     "label": "Bạn tự khai",
+     "value": 19800000000.0,
+     "share": 0.43070631485066674
+    },
+    {
+     "trust": "statement",
+     "label": "Từ sao kê",
+     "value": 1023000000.0,
+     "share": 0.02225315960061778
+    }
+   ],
+   "confidence": 0.824
+  },
+  "allocation": [
+   {
+    "group": "Bất động sản",
+    "value": 32400000000.0,
+    "share": 0.7047921515738182,
+    "pnl": 18400000000.0,
+    "return": 1.3142857142857143
+   },
+   {
+    "group": "Cổ phiếu",
+    "value": 4929000000.0,
+    "share": 0.10721976898479477,
+    "pnl": 937000000.0,
+    "return": 0.2347194388777555
+   },
+   {
+    "group": "Tiền & tiền gửi",
+    "value": 3720000000.0,
+    "share": 0.08092058036588284,
+    "pnl": null,
+    "return": null
+   },
+   {
+    "group": "Chứng chỉ quỹ",
+    "value": 1620000000.0,
+    "share": 0.035239607578690914,
+    "pnl": 140000000.0,
+    "return": 0.0945945945945946
+   },
+   {
+    "group": "Trái phiếu",
+    "value": 1502000000.0,
+    "share": 0.03267277196493441,
+    "pnl": 2000000.0,
+    "return": 0.0013333333333333333
+   },
+   {
+    "group": "Vàng",
+    "value": 1500000000.0,
+    "share": 0.03262926627656566,
+    "pnl": null,
+    "return": null
+   },
+   {
+    "group": "Bảo hiểm",
+    "value": 300000000.0,
+    "share": 0.0065258532553131325,
+    "pnl": null,
+    "return": null
+   }
+  ],
+  "performance": {
+   "realized_ytd": 320000000,
+   "unrealized": 1079000000,
+   "invested_cost": 6972000000,
+   "unrealized_pct": 0.15476190476190477,
+   "ytd_return": 0.11204752694114396,
+   "benchmark": "VNINDEX",
+   "benchmark_name": "VN-Index",
+   "benchmark_ytd": 0.145,
+   "vs_benchmark": -0.03295247305885603,
+   "by_class": [
+    {
+     "class": "stock",
+     "label": "Cổ phiếu",
+     "value": 4929000000,
+     "cost": 3992000000,
+     "pnl": 937000000,
+     "return": 0.2347194388777555
+    },
+    {
+     "class": "fund",
+     "label": "Chứng chỉ quỹ",
+     "value": 1620000000,
+     "cost": 1480000000,
+     "pnl": 140000000,
+     "return": 0.0945945945945946
+    },
+    {
+     "class": "bond",
+     "label": "Trái phiếu",
+     "value": 1502000000,
+     "cost": 1500000000,
+     "pnl": 2000000,
+     "return": 0.0013333333333333333
+    }
+   ]
+  },
+  "risk": {
+   "limit": 0.08,
+   "current": 0.1183,
+   "stress_loss": 5150385000,
+   "status": "over",
+   "top": [
+    {
+     "name": "Căn hộ Thảo Điền",
+     "loss": 1440000000,
+     "stress": 0.1
+    },
+    {
+     "name": "Đất Long Thành (tự khai)",
+     "loss": 900000000,
+     "stress": 0.1
+    },
+    {
+     "name": "Đất Long Thành (tự khai)",
+     "loss": 900000000,
+     "stress": 0.1
+    },
+    {
+     "name": "Cổ phiếu FPT",
+     "loss": 504000000,
+     "stress": 0.2625
+    }
+   ]
+  },
+  "concentration": {
+   "rows": [
+    {
+     "kind": "area",
+     "kind_label": "Khu vực BĐS",
+     "name": "Đất nền Long Thành, Đồng Nai",
+     "value": 18000000000.0,
+     "share": 0.39155119531878796,
+     "limit": 0.35,
+     "flag": true
+    },
+    {
+     "kind": "area",
+     "kind_label": "Khu vực BĐS",
+     "name": "Thảo Điền, TP. Thủ Đức",
+     "value": 14400000000.0,
+     "share": 0.31324095625503035,
+     "limit": 0.35,
+     "flag": false
+    },
+    {
+     "kind": "issuer",
+     "kind_label": "Tổ chức phát hành",
+     "name": "Techcombank",
+     "value": 2072000000.0,
+     "share": 0.045071893150029366,
+     "limit": 0.1,
+     "flag": false
+    },
+    {
+     "kind": "issuer",
+     "kind_label": "Tổ chức phát hành",
+     "name": "FPT",
+     "value": 1920000000.0,
+     "share": 0.041765460834004044,
+     "limit": 0.1,
+     "flag": false
+    },
+    {
+     "kind": "issuer",
+     "kind_label": "Tổ chức phát hành",
+     "name": "Hòa Phát",
+     "value": 550000000.0,
+     "share": 0.01196406430140741,
+     "limit": 0.1,
+     "flag": false
+    },
+    {
+     "kind": "issuer",
+     "kind_label": "Tổ chức phát hành",
+     "name": "Vinamilk",
+     "value": 496000000.0,
+     "share": 0.010789410715451045,
+     "limit": 0.1,
+     "flag": false
+    },
+    {
+     "kind": "issuer",
+     "kind_label": "Tổ chức phát hành",
+     "name": "SSI",
+     "value": 495000000.0,
+     "share": 0.010767657871266668,
+     "limit": 0.1,
+     "flag": false
+    },
+    {
+     "kind": "issuer",
+     "kind_label": "Tổ chức phát hành",
+     "name": "BĐS Sao Mai (mock)",
+     "value": 490000000.0,
+     "share": 0.010658893650344782,
+     "limit": 0.1,
+     "flag": false
+    },
+    {
+     "kind": "issuer",
+     "kind_label": "Tổ chức phát hành",
+     "name": "Thế Giới Di Động",
+     "value": 408000000.0,
+     "share": 0.00887516042722586,
+     "limit": 0.1,
+     "flag": false
+    },
+    {
+     "kind": "sector",
+     "kind_label": "Ngành",
+     "name": "Ngân hàng",
+     "value": 2072000000.0,
+     "share": 0.045071893150029366,
+     "limit": 0.2,
+     "flag": false
+    },
+    {
+     "kind": "sector",
+     "kind_label": "Ngành",
+     "name": "Công nghệ",
+     "value": 1920000000.0,
+     "share": 0.041765460834004044,
+     "limit": 0.2,
+     "flag": false
+    },
+    {
+     "kind": "sector",
+     "kind_label": "Ngành",
+     "name": "Thép",
+     "value": 550000000.0,
+     "share": 0.01196406430140741,
+     "limit": 0.2,
+     "flag": false
+    },
+    {
+     "kind": "sector",
+     "kind_label": "Ngành",
+     "name": "Tiêu dùng",
+     "value": 496000000.0,
+     "share": 0.010789410715451045,
+     "limit": 0.2,
+     "flag": false
+    },
+    {
+     "kind": "sector",
+     "kind_label": "Ngành",
+     "name": "Chứng khoán",
+     "value": 495000000.0,
+     "share": 0.010767657871266668,
+     "limit": 0.2,
+     "flag": false
+    },
+    {
+     "kind": "sector",
+     "kind_label": "Ngành",
+     "name": "Bất động sản",
+     "value": 490000000.0,
+     "share": 0.010658893650344782,
+     "limit": 0.2,
+     "flag": false
+    },
+    {
+     "kind": "sector",
+     "kind_label": "Ngành",
+     "name": "Bán lẻ",
+     "value": 408000000.0,
+     "share": 0.00887516042722586,
+     "limit": 0.2,
+     "flag": false
+    }
+   ],
+   "warnings": [
+    "Khu vực BĐS Đất nền Long Thành, Đồng Nai: 39,2% tài sản (ngưỡng 35%)"
+   ]
+  },
+  "liquidity": {
+   "value": 4720000000,
+   "spending_monthly": 115000000,
+   "months": 41.0,
+   "status": "ok",
+   "items": [
+    {
+     "name": "Tiền gửi 12 tháng",
+     "value": 2500000000
+    },
+    {
+     "name": "Quỹ trái phiếu TCBF",
+     "value": 1000000000
+    },
+    {
+     "name": "Tài khoản thanh toán",
+     "value": 680000000
+    },
+    {
+     "name": "Tài khoản VPBank",
+     "value": 420000000
+    },
+    {
+     "name": "Tiền (VPS)",
+     "value": 120000000
+    }
+   ]
+  },
+  "cashflow": {
+   "start": "2026-11",
+   "history": [
+    {
+     "month": "2025-10",
+     "in": 120400000,
+     "out": 85034000,
+     "net": 35366000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 31750000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 15284000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2025-11",
+     "in": 120680000,
+     "out": 177528000,
+     "net": -56848000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120680000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 35270000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 14258000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2025-12",
+     "in": 120810000,
+     "out": 84861000,
+     "net": 35949000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120810000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 32600000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 14261000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-01",
+     "in": 119130000,
+     "out": 177541000,
+     "net": -58411000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 119130000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 36630000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 12911000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-02",
+     "in": 119000000,
+     "out": 84419000,
+     "net": 34581000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 119000000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 33310000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 13109000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-03",
+     "in": 120400000,
+     "out": 87652000,
+     "net": 32748000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 35590000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 14062000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-04",
+     "in": 120090000,
+     "out": 176111000,
+     "net": -56021000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120090000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 33540000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 14571000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-05",
+     "in": 120780000,
+     "out": 81124000,
+     "net": 39656000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120780000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 31740000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 11384000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-06",
+     "in": 120700000,
+     "out": 84805000,
+     "net": 35895000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120700000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 34080000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 12725000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-07",
+     "in": 119350000,
+     "out": 80985000,
+     "net": 38365000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 119350000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 30710000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 12275000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-08",
+     "in": 119910000,
+     "out": 175512000,
+     "net": -55602000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 119910000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 31990000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 15522000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    },
+    {
+     "month": "2026-09",
+     "in": 120430000,
+     "out": 90393000,
+     "net": 30037000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120430000,
+       "label": "Lương",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ vay",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 34770000,
+       "label": "Thanh toán thẻ tín dụng",
+       "kind": "actual",
+       "owner": null
+      },
+      {
+       "direction": "out",
+       "amount": 17623000,
+       "label": "Chi tiêu sinh hoạt",
+       "kind": "actual",
+       "owner": null
+      }
+     ]
+    }
+   ],
+   "current": {
+    "month": "2026-10",
+    "in": 135400000,
+    "out": 38000000,
+    "net": 97400000,
+    "items": [
+     {
+      "direction": "in",
+      "amount": 120400000,
+      "label": "Lương",
+      "kind": "recurring",
+      "owner": "C01"
+     },
+     {
+      "direction": "in",
+      "amount": 15000000,
+      "label": "Cổ tức SSI",
+      "kind": "dividend",
+      "owner": "C01"
+     },
+     {
+      "direction": "out",
+      "amount": 38000000,
+      "label": "Trả nợ: Vay mua nhà Thảo Điền",
+      "kind": "loan",
+      "owner": "C01"
+     }
+    ]
+   },
+   "months": [
+    {
+     "month": "2026-11",
+     "in": 152900000,
+     "out": 173000000,
+     "net": -20100000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 32500000,
+       "label": "Coupon TCB12401",
+       "kind": "coupon",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 45000000,
+       "label": "Thanh toán dư nợ thẻ: Visa Signature",
+       "kind": "card",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2026-12",
+     "in": 2780400000,
+     "out": 38000000,
+     "net": 2742400000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 2630000000,
+       "label": "Đáo hạn: Tiền gửi 12 tháng",
+       "kind": "maturity",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 30000000,
+       "label": "Cổ tức FPT",
+       "kind": "dividend",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-01",
+     "in": 151200000,
+     "out": 128000000,
+     "net": 23200000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 30800000,
+       "label": "Cổ tức VNM",
+       "kind": "dividend",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-02",
+     "in": 120400000,
+     "out": 38000000,
+     "net": 82400000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-03",
+     "in": 146650000,
+     "out": 1983000000,
+     "net": -1836350000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 26250000,
+       "label": "Coupon SMR12501",
+       "kind": "coupon",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 1800000000,
+       "label": "Học phí du học (Úc) – Minh An",
+       "kind": "school",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 85000000,
+       "label": "Quyết toán thuế TNCN 2026",
+       "kind": "tax",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 60000000,
+       "label": "Phí bảo hiểm: Bảo hiểm nhân thọ (liên kết chung)",
+       "kind": "insurance",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-04",
+     "in": 120400000,
+     "out": 128000000,
+     "net": -7600000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-05",
+     "in": 152900000,
+     "out": 38000000,
+     "net": 114900000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 32500000,
+       "label": "Coupon TCB12401",
+       "kind": "coupon",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-06",
+     "in": 150400000,
+     "out": 38000000,
+     "net": 112400000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 30000000,
+       "label": "Cổ tức FPT",
+       "kind": "dividend",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-07",
+     "in": 160400000,
+     "out": 38000000,
+     "net": 122400000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 40000000,
+       "label": "Cổ tức TCB",
+       "kind": "dividend",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-08",
+     "in": 151200000,
+     "out": 128000000,
+     "net": 23200000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 30800000,
+       "label": "Cổ tức VNM",
+       "kind": "dividend",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 90000000,
+       "label": "Học phí",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-09",
+     "in": 649650000,
+     "out": 38000000,
+     "net": 611650000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 500000000,
+       "label": "Đáo hạn trái phiếu SMR12501",
+       "kind": "maturity",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 26250000,
+       "label": "Coupon SMR12501",
+       "kind": "coupon",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 3000000,
+       "label": "Cổ tức MWG",
+       "kind": "dividend",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    },
+    {
+     "month": "2027-10",
+     "in": 135400000,
+     "out": 38000000,
+     "net": 97400000,
+     "items": [
+      {
+       "direction": "in",
+       "amount": 120400000,
+       "label": "Lương",
+       "kind": "recurring",
+       "owner": "C01"
+      },
+      {
+       "direction": "in",
+       "amount": 15000000,
+       "label": "Cổ tức SSI",
+       "kind": "dividend",
+       "owner": "C01"
+      },
+      {
+       "direction": "out",
+       "amount": 38000000,
+       "label": "Trả nợ: Vay mua nhà Thảo Điền",
+       "kind": "loan",
+       "owner": "C01"
+      }
+     ]
+    }
+   ],
+   "recurring": [
+    {
+     "owner": "C01",
+     "direction": "in",
+     "category": "salary",
+     "label": "Lương",
+     "desc": "LUONG CONG TY CONG NGHE TECHVN",
+     "amount": 120400000.0,
+     "cadence": "monthly",
+     "months": null,
+     "seen": 12
+    },
+    {
+     "owner": "C01",
+     "direction": "out",
+     "category": "school",
+     "label": "Học phí",
+     "desc": "HOC PHI TRUONG QUOC TE ( CON)",
+     "amount": 90000000.0,
+     "cadence": "quarterly",
+     "months": [
+      1,
+      4,
+      8,
+      11
+     ],
+     "seen": 4
+    }
+   ],
+   "large": [
+    {
+     "direction": "out",
+     "amount": 1800000000,
+     "label": "Học phí du học (Úc) – Minh An",
+     "kind": "school",
+     "owner": "C01",
+     "month": "2027-03"
+    }
+   ],
+   "total_in": 4871900000,
+   "total_out": 2806000000
+  },
+  "headline": {
+   "net_worth": "43,5 tỷ",
+   "month_change": "+2,3%",
+   "allocation": "Bất động sản 70% · Cổ phiếu 11% · Tiền & tiền gửi 8% · Chứng chỉ quỹ 4%",
+   "liquidity": "4,72 tỷ = đủ chi 3 năm",
+   "risk": "Ngưỡng 8% · hiện tại 11,8%"
+  }
+ }
+}

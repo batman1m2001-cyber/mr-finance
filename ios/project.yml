@@ -1,0 +1,50 @@
+# The OneWealth iPhone app (docs/IOS_APP_PLAN.md). XcodeGen makes OneWealth.xcodeproj from this file: `xcodegen` in ios/.
+name: OneWealth
+options:
+  bundleIdPrefix: app.onewealth
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGNING_ALLOWED: "NO"
+targets:
+  OneWealth:
+    type: application
+    platform: iOS
+    sources: [OneWealth]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.onewealth.client
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_KEY_CFBundleDisplayName: OneWealth
+        INFOPLIST_KEY_UILaunchScreen_Generation: "YES"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: "YES"
+        TARGETED_DEVICE_FAMILY: "1"
+  OneWealthTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: OneWealthTests
+        excludes: [Fixtures]
+      - path: OneWealthTests/Fixtures
+        buildPhase: resources
+    dependencies:
+      - target: OneWealth
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/OneWealth.app/OneWealth"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+schemes:
+  OneWealth:
+    build:
+      targets:
+        OneWealth: all
+        OneWealthTests: [test]
+    test:
+      targets: [OneWealthTests]

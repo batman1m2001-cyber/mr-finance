@@ -1,0 +1,11 @@
+{
+ "user": {
+  "id": "C01",
+  "name": "Nguyễn Minh Khoa",
+  "role": "client",
+  "title": "Giám đốc công nghệ",
+  "family": "C01"
+ },
+ "auth": true,
+ "demo_accounts": true
+}

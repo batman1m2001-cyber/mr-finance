@@ -1,0 +1,172 @@
+{
+ "accounts": [
+  {
+   "id": "cio",
+   "name": "Trần Quang Huy",
+   "role": "cio",
+   "title": "Giám đốc đầu tư (CIO)",
+   "member_of": null,
+   "login": "huy.tran@tcbwealth.example"
+  },
+  {
+   "id": "cio2",
+   "name": "Lê Thu Hà",
+   "role": "cio",
+   "title": "Phó giám đốc đầu tư",
+   "member_of": null,
+   "login": "ha.le@tcbwealth.example"
+  },
+  {
+   "id": "rm01",
+   "name": "Hoàng Hải Yến",
+   "role": "rm",
+   "title": "Chuyên viên quan hệ khách hàng",
+   "member_of": null,
+   "login": "yen.hoang@tcbwealth.example"
+  },
+  {
+   "id": "rm02",
+   "name": "Ngô Minh Châu",
+   "role": "rm",
+   "title": "Chuyên viên quan hệ khách hàng",
+   "member_of": null,
+   "login": "chau.ngo@tcbwealth.example"
+  },
+  {
+   "id": "rm03",
+   "name": "Trần Quốc Bảo",
+   "role": "rm",
+   "title": "Chuyên viên quan hệ khách hàng",
+   "member_of": null,
+   "login": "bao.tran@tcbwealth.example"
+  },
+  {
+   "id": "compliance",
+   "name": "Đỗ Minh Châu",
+   "role": "compliance",
+   "title": "Tuân thủ (tuyến 2)",
+   "member_of": null,
+   "login": "chau.do@tcbwealth.example"
+  },
+  {
+   "id": "compliance2",
+   "name": "Vũ Hải Nam",
+   "role": "compliance",
+   "title": "Tuân thủ (tuyến 2)",
+   "member_of": null,
+   "login": "nam.vu@tcbwealth.example"
+  },
+  {
+   "id": "admin",
+   "name": "Quản trị demo",
+   "role": "admin",
+   "title": "Quản trị",
+   "member_of": null,
+   "login": "admin@tcbwealth.example"
+  },
+  {
+   "id": "sp_real_estate",
+   "name": "Phan Đức Thịnh",
+   "role": "specialist",
+   "title": "Chuyên gia bất động sản",
+   "member_of": null,
+   "login": "thinh.phan@tcbwealth.example"
+  },
+  {
+   "id": "sp_global",
+   "name": "Lâm Bảo Ngọc",
+   "role": "specialist",
+   "title": "Chuyên gia đầu tư toàn cầu",
+   "member_of": null,
+   "login": "ngoc.lam@tcbwealth.example"
+  },
+  {
+   "id": "sp_insurance",
+   "name": "Đặng Thu Trang",
+   "role": "specialist",
+   "title": "Chuyên gia bảo hiểm",
+   "member_of": null,
+   "login": "trang.dang@tcbwealth.example"
+  },
+  {
+   "id": "sp_banking",
+   "name": "Vũ Hoàng Long",
+   "role": "specialist",
+   "title": "Chuyên gia ngân hàng",
+   "member_of": null,
+   "login": "long.vu@tcbwealth.example"
+  },
+  {
+   "id": "sp_private",
+   "name": "Trịnh Khánh Linh",
+   "role": "specialist",
+   "title": "Chuyên gia Private Banking",
+   "member_of": null,
+   "login": "linh.trinh@tcbwealth.example"
+  },
+  {
+   "id": "C01",
+   "name": "Nguyễn Minh Khoa",
+   "role": "client",
+   "title": "Giám đốc công nghệ",
+   "member_of": null,
+   "login": "c01"
+  },
+  {
+   "id": "C01S",
+   "name": "Trần Thu Hà",
+   "role": "client",
+   "title": "Kế toán trưởng",
+   "member_of": "C01",
+   "login": "c01s"
+  },
+  {
+   "id": "C02",
+   "name": "Lê Văn Phát",
+   "role": "client",
+   "title": "Chủ doanh nghiệp logistics",
+   "member_of": null,
+   "login": "c02"
+  },
+  {
+   "id": "C02S",
+   "name": "Hoàng Thị Mai",
+   "role": "client",
+   "title": "Nội trợ",
+   "member_of": "C02",
+   "login": "c02s"
+  },
+  {
+   "id": "C03",
+   "name": "Phạm Gia Huy",
+   "role": "client",
+   "title": "Đồng sáng lập startup fintech",
+   "member_of": null,
+   "login": "c03"
+  },
+  {
+   "id": "C04",
+   "name": "Đỗ Thị Hạnh",
+   "role": "client",
+   "title": "Nghỉ hưu (nguyên giảng viên)",
+   "member_of": null,
+   "login": "c04"
+  },
+  {
+   "id": "C05",
+   "name": "Vũ Ngọc Anh",
+   "role": "client",
+   "title": "Trưởng phòng marketing",
+   "member_of": null,
+   "login": "c05"
+  },
+  {
+   "id": "admin2",
+   "name": "Đỗ Minh Khôi",
+   "role": "admin",
+   "title": "Quản trị (người duyệt thứ hai)",
+   "member_of": null,
+   "login": "admin2@tcbwealth.example"
+  }
+ ]
+}

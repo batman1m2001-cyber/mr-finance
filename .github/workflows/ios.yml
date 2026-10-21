@@ -1,0 +1,95 @@
+# The iPhone app (docs/IOS_APP_PLAN.md): built and tested for the iOS Simulator on a macOS runner, then opened in an
+# iPhone simulator once per screen, signed in as the demo client, and photographed light and dark. The run's artifacts:
+# the screenshots, and the zipped simulator app (for Appetize). No signing, no Apple account.
+name: iOS
+on:
+  push:
+    branches: [app/ios]
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Project
+        run: |
+          brew install xcodegen
+          xcodegen
+          xcodebuild -version
+
+      - name: Simulator
+        id: sim
+        run: |
+          # the newest iOS runtime's first iPhone (Pro preferred): its id for every later step
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          d = json.load(sys.stdin)["devices"]
+          ios = sorted((k for k in d if ".iOS-" in k and d[k]), key=lambda k: [int(x) for x in re.findall(r"\d+", k)])
+          phones = [x for x in d[ios[-1]] if x["name"].startswith("iPhone")]
+          pro = [x for x in phones if re.fullmatch(r"iPhone \d+ Pro", x["name"])]
+          print((pro or phones)[0]["udid"])')
+          xcrun simctl list devices | grep "$UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+
+      - name: Build and test
+        run: |
+          set -o pipefail
+          xcodebuild -project OneWealth.xcodeproj -scheme OneWealth -configuration Debug \
+            -destination "id=${{ steps.sim.outputs.udid }}" -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO test 2>&1 | tee build.log | grep -E "error:|warning: .*OneWealth|Test Case|Executed|BUILD|TEST" || true
+          grep -q "TEST SUCCEEDED" build.log
+
+      - name: Screenshots
+        run: |
+          UDID=${{ steps.sim.outputs.udid }}
+          APP=build/Build/Products/Debug-iphonesimulator/OneWealth.app
+          ID=app.onewealth.client
+          mkdir -p shots
+          xcrun simctl install "$UDID" "$APP"
+          xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3 || true
+          shot() {  # shot <name> [VAR=value ...]: a fresh launch with those settings, then the screen once it has loaded
+            name=$1; shift
+            xcrun simctl terminate "$UDID" "$ID" 2>/dev/null || true
+            env "$@" xcrun simctl launch "$UDID" "$ID"
+            sleep 15
+            xcrun simctl io "$UDID" screenshot "shots/$name.png"
+          }
+          for mode in light dark; do
+            xcrun simctl ui "$UDID" appearance "$mode"
+            shot "1-signin-$mode" SIMCTL_CHILD_MF_SIGNOUT=1
+            shot "2-overview-$mode" SIMCTL_CHILD_MF_DEMO=C01 SIMCTL_CHILD_MF_SCREEN=overview
+            shot "3-overview-lower-$mode" SIMCTL_CHILD_MF_DEMO=C01 SIMCTL_CHILD_MF_SCREEN=overview SIMCTL_CHILD_MF_SCROLL=allocation
+            shot "4-overview-risk-$mode" SIMCTL_CHILD_MF_DEMO=C01 SIMCTL_CHILD_MF_SCREEN=overview SIMCTL_CHILD_MF_SCROLL=risk
+          done
+          ls -la shots
+          (cd build/Build/Products/Debug-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/ios/OneWealth-simulator.zip" OneWealth.app)
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: ios/shots/
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: simulator-app
+          path: ios/OneWealth-simulator.zip
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-log
+          path: ios/build.log
+          if-no-files-found: ignore
