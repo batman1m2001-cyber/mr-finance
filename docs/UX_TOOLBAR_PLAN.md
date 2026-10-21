@@ -80,3 +80,16 @@ Gate for every step: desktop and phone screenshots, the UI suite (`tests/ui`), `
 
 - T4 retires Toàn cảnh and Chi tiết as separate screens; their content is kept.
 - Bộ nhớ leaves the client toolbar (T2).
+- T6 also takes the data sources off the ring (owner, 2026-10-21): they had no line at rest and no amount, so they read
+  as lost; a class's sources and what came from each are told in Thông tin instead.
+
+## Done (2026-10-21)
+
+- T1 quick fixes, T2 rail labels and Bộ nhớ off the client rail, T3+T4 the Bảng số liệu (Toàn cảnh and Chi tiết
+  retired for the client, their addresses open it), T5 one name per thing (Tin tức, Tác động tin, Khẩu vị rủi ro under
+  Rủi ro, the assistant's page names by role), T6 groups on the ring.
+- T6 as built: a group's members are joined by a faint string on the ring line, broken where the next kind begins, and
+  its name and count sit in the widest gap that clears every disc and label. A first try put an arc and the name inside
+  the ring: it crossed the spokes and sat on their amounts ("Tài sản · 7" on "+24 triệu"), so it moved onto the ring
+  line. The gap between groups stays 1.8: the fold is unchanged on every lens and size except Tài sản, where removing
+  the sources unfolds everything (phone: "7 nguồn dữ liệu khác" before, nothing folded after).

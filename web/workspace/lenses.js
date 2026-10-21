@@ -9,7 +9,7 @@ export const LENSES = [
   {id: "tong-quan", label: "Tổng quan", icon: "map", tip: "Tổng quan: toàn bộ bức tranh tài chính", sub: "Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn",
     kinds: ["family", "class", "flow", "liquidity", "goal", "risk", "event"], sheets: [], part: "cash"},
   {id: "tai-san", label: "Tài sản", icon: "wallet", tip: "Tài sản: từng khoản và nguồn dữ liệu", sub: "Từng loại tài sản, khoản nợ và nguồn dữ liệu của chúng",
-    kinds: ["family", "class", "holding", "source"], sheets: ["tai-san"], part: "alloc"},
+    kinds: ["family", "class", "holding"], sheets: ["tai-san"], part: "alloc"},  // its sources: in Thông tin (T6)
   {id: "dong-tien", label: "Dòng tiền", icon: "flow", tip: "Dòng tiền: thu nhập, chi tiêu, thanh khoản", sub: "Thu nhập và chi tiêu của tháng, và tiền dự phòng",
     kinds: ["family", "flow", "category", "liquidity", "class"], sheets: [], part: "cash"},
   {id: "muc-tieu", label: "Mục tiêu & kịch bản", short: "Mục tiêu", icon: "target", tip: "Mục tiêu và kịch bản giả định", sub: "Mục tiêu của bạn và các kịch bản giả định",

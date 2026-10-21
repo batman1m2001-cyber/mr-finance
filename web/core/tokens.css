@@ -1084,6 +1084,13 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .wnode.lit .wring, .wnode.mf-focus .wring { opacity: 1; stroke: var(--accent); animation: mf-lit .5s var(--ease-out) both; }
 .wnode.kept .wring { opacity: 1; stroke: var(--accent); stroke-width: 3; }
 .ws-svg .wlbl { fill: var(--ink); font-size: 12px; font-weight: 650; }
+/* a group on the ring (UX_TOOLBAR_PLAN T6): a faint arc under its members and its name; text in text ink, the arc in the kind's colour */
+.ws-garc { fill: none; stroke: var(--tone); stroke-width: 2.5; stroke-linecap: round; opacity: .32; }
+.ws-gtag { fill: var(--muted); font-size: 10.5px; font-weight: 650; letter-spacing: .03em; text-transform: uppercase;
+  paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+.ws-edges.moving ~ .ws-tags { opacity: 0; }
+.ws-srcs { display: grid; gap: 4px; }
+.ws-srcbox { margin-top: 8px; padding: 8px 10px; border: 1px solid var(--hair); border-radius: 9px; }
 .ws-svg :is(.k-holding, .k-category) .wlbl { font-size: 11px; font-weight: 600; }
 .ws-svg .wfig { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 .ws-svg .wfig.up { fill: var(--up); } .ws-svg .wfig.down { fill: var(--down); }

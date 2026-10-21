@@ -4,8 +4,8 @@
 import {formulaOf, n as how, esc, pct, post, signClass, vnd} from "../core/core.js";
 import {timeline as drawTimeline} from "../charts/charts.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
-import {LOOK, UNIT_WORD, certaintyOf, changeOf, changeText, changeTone, changeWord, figureOf, howOf, srcText} from "./graph.js?v=20261020t1";
-import {PARTS, SHEETS} from "./lenses.js?v=20261021t5";
+import {LOOK, UNIT_WORD, certaintyOf, changeOf, changeText, changeTone, changeWord, figureOf, howOf, srcText} from "./graph.js?v=20261021t6";
+import {PARTS, SHEETS} from "./lenses.js?v=20261021t6";
 import {drawFeed} from "./feed.js?v=20261021t5";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
@@ -54,7 +54,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
     } else {
       const pick = {"tai-san": ["class"], "dong-tien": ["flow", "liquidity"], "muc-tieu": ["goal", "scenario"], "rui-ro": ["risk", "liquidity"]}[lens.id] || [];
       const rows = g.nodes.filter(x => pick.includes(x.kind));
-      body = `<h3>${esc(lens.label)} <span class="hint">${rows.length}</span></h3>${lens.id === "muc-tieu" ? goalsTotal(g) : ""}${list(rows)}`;
+      body = `<h3>${esc(lens.label)} <span class="hint">${rows.length}</span></h3>${lens.id === "muc-tieu" ? goalsTotal(g) : ""}${list(rows)}${lens.id === "tai-san" ? sourceList(g) : ""}`;
     }
     el.innerHTML = `<div class="ws-ins-lens">${body}
       <p class="small muted">Bấm một nút trên đồ thị để xem số liệu, liên kết và nguồn của nó.</p></div>`;
@@ -66,6 +66,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
     const facts = [
       n.kind === "family" && `Tài sản ròng <b>${fig(n, vnd(n.value))}</b> · tài sản ${how(vnd(n.assets), "assets.total")} · nợ ${how(vnd(n.liabilities), "liabilities.total")}`,
       n.kind === "class" && `${n.liability ? "Dư nợ" : "Giá trị"} <b>${fig(n, vnd(n.value))}</b> · ${n.count} khoản`,
+      n.kind === "class" && sourcesOf(n).length && `Nguồn: ${sourcesOf(n).map(([s, k]) => `${srcBtn(s)} · ${k} khoản`).join(" · ")}`,
       n.kind === "holding" && `Giá trị <b>${fig(n, vnd(n.value))}</b>${n.owner ? ` · ${esc(n.owner)}` : ""}`,
       n.kind === "source" && `${esc(n.what)} · ${n.count} khoản · ${esc((n.trust || []).join(", "))}`,
       n.kind === "goal" && n.pool && `<span data-explains>Nguồn ${esc(n.pool.label || n.have_label || "")}</span> ${how(vnd(n.pool.have), "goal.have")} dùng chung cho ${n.pool.goals.length} mục tiêu: tính một lần, không cộng dồn`,
@@ -94,7 +95,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
     el.innerHTML = `<div class="row tight"><span class="ic-chip" style="--tone:${kindTone}">${icon(n.kind === "class" ? CLASS_ICON[n.ref] || "layers" : look[1], {size: 16})}</span>
         <div><div class="small muted">${esc(kindLabel(n.kind))}</div><b>${nameOf(n, esc(n.label))}</b></div>
         <button type="button" class="linkbtn small" id="ws-clear" style="margin-left:auto">Bỏ chọn</button></div>
-      ${facts.map(f => `<p class="small mt-xs">${f}</p>`).join("")}
+      ${facts.map(f => `<p class="small mt-xs">${f}</p>`).join("")}${n.kind === "class" ? `<div id="ws-src"></div>` : ""}
       <div class="row tight mt">
         ${kids ? `<button type="button" class="btn sm" id="ws-open">${graph.isOpen(n.id) ? "Thu gọn" : `Mở rộng ${kids} ${kid === "category" ? "khoản thu chi" : "khoản"}`}</button>` : ""}
         ${n.kind === "scenario" && scenario && n.ref !== "custom" ? `<button type="button" class="btn sm ${n.active ? "" : "primary"}" id="ws-run" aria-pressed="${!!n.active}">${n.active ? "Tắt kịch bản" : "Bật kịch bản"}</button>` : ""}
@@ -173,6 +174,41 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
     for (const b of el.querySelectorAll("[data-n]")) b.onclick = () => graph.select(b.dataset.n);
     for (const b of el.querySelectorAll("[data-sheet]")) b.onclick = () => openSheet(b.dataset.sheet, b.dataset.param || null, b.dataset.focusKey ? [b.dataset.focusKey] : null);
     for (const b of el.querySelectorAll("[data-board]")) b.onclick = () => board(b.dataset.board, b.dataset.month || null);
+    for (const b of el.querySelectorAll("[data-src]")) b.onclick = () => {  // what came from a source, under it
+      const box = el.querySelector("#ws-src"), id = b.dataset.src;
+      if (!box) return;
+      const open_ = box.dataset.src !== id;
+      box.dataset.src = open_ ? id : "";
+      box.innerHTML = open_ ? fromSource(id) : "";
+      for (const x of el.querySelectorAll("[data-src]")) x.setAttribute("aria-expanded", String(x.dataset.src === box.dataset.src));
+    };
+  }
+
+  // ── where the data comes from (T6): the sources are not on the ring; they are told beside the numbers ────────────
+  function sourcesOf(cls) {  // [source node, holdings of this class it gave]
+    const g = graph.data(), out = new Map();
+    for (const e of g.edges) {
+      const s = graph.node(e.from);
+      if (s && s.kind === "source" && e.parent === cls.id) out.set(s, (out.get(s) || 0) + 1);
+    }
+    return [...out].sort((a, b) => b[1] - a[1]);
+  }
+  function srcBtn(s) {
+    return `<button type="button" class="linkbtn small" data-src="${esc(s.id)}" aria-expanded="false" aria-controls="ws-src">${esc(s.label)}</button>`;
+  }
+  function sourceList(g) {
+    const ss = g.nodes.filter(x => x.kind === "source");
+    if (!ss.length) return "";
+    const on = ss.filter(s => s.status === "connected").length;
+    return `<h3 class="mt">Nguồn dữ liệu <span class="hint">${ss.length} nguồn · ${on} đã kết nối</span></h3>
+      <div class="ws-srcs">${ss.map(s => `<div class="small"><span class="${s.status === "connected" ? "up" : "muted"}" aria-hidden="true">${s.status === "connected" ? "✓" : "○"}</span>
+        ${srcBtn(s)} <span class="muted">· ${s.count} khoản · ${esc(s.what || "")}</span></div>`).join("")}</div><div id="ws-src"></div>`;
+  }
+  function fromSource(id) {  // the holdings a source gave, by class
+    const g = graph.data(), s = graph.node(id);
+    const hs = g.edges.filter(e => e.from === id && String(e.to).startsWith("HD:")).map(e => graph.node(e.to)).filter(Boolean);
+    return `<div class="ws-srcbox"><b>${esc(s.label)}</b> <span class="small muted">${esc(s.what || "")} · ${esc((s.trust || []).join(", "))}</span>
+      <table class="table small mt-xs"><tbody>${hs.map(h => `<tr><td>${esc(h.label)}</td><td class="r num">${fig(h, vnd(h.value))}</td></tr>`).join("")}</tbody></table></div>`;
   }
 
   // ── an edge picked (UNIFIED_FLOWS_PLAN F9, OWN-GW-46): what it joins and says, its amount and monthly rate, its
