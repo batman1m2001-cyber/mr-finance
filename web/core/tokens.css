@@ -26,8 +26,9 @@
   --in: #2a78d6; --out: #eb6834;
   --pulse: #0d9488;  /* a pulse: data read by the assistant — never a money colour (OWN-GW-18) */
   --spark-hi: #141414; --spark-mix: 88%; --glow-o: .2;  /* a moving spark's core: its hue, deepened (light) / lit (dark) */
-  --core-hi: #8a8a92; --core-mid: #3a3a40; --core-deep: #141416; --core-face: #0e0e10; --core-aura: #8a8a92;
-  --core-ring: #6f6f76; --core-glow: #c9c9ce; --core-aura-a: .2;  /* the financial core (OWN-GW-20): a deep glass jewel in both themes */
+  --core-hi: #fff7d6; --core-mid: #e8b847; --core-deep: #9c6b10; --core-face: #fff0bf; --core-aura: #f2c14e;
+  --core-ring: #c9962a; --core-glow: #ffe28a; --core-aura-a: .3;  /* the financial core (OWN-GW-20): a polished gold coin, its figures engraved dark */
+  --core-ink: #1c1202; --core-ink-2: rgba(42, 28, 4, .78);
   --ai: #2a78d6; --ai-soft: #e6f0fc; --human: #c4561f; --human-soft: #fcebe1; --data: #6b6785;
   --t1: #184f95; --t2: #3987e5; --t3: #86b6ef;
   --band: rgba(20, 20, 20, .10); --band-2: rgba(20, 20, 20, .20);
@@ -52,8 +53,8 @@
     --up: #5fd38d; --down: #ff8a4c; --flat: #a39cd0;
     --in: #3987e5; --out: #d95926;
     --pulse: #2dd4bf; --spark-hi: #ffffff; --spark-mix: 60%; --glow-o: .26;
-    --core-hi: #9a9aa2; --core-mid: #3a3a40; --core-deep: #111113; --core-face: #0b0b0d; --core-aura: #9a9aa2;
-    --core-ring: #9a9aa2; --core-glow: #e4e4e7; --core-aura-a: .34;
+    --core-hi: #fff3c9; --core-mid: #e2ad34; --core-deep: #8a5c0a; --core-face: #ffe9a8; --core-aura: #f2c14e;
+    --core-ring: #e0b04a; --core-glow: #ffd970; --core-aura-a: .4; --core-ink: #1c1202; --core-ink-2: rgba(42, 28, 4, .8);
     --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
     --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
     --band: rgba(242, 242, 243, .12); --band-2: rgba(242, 242, 243, .24);
@@ -74,8 +75,8 @@
   --up: #5fd38d; --down: #ff8a4c; --flat: #a39cd0;
   --in: #3987e5; --out: #d95926;
   --pulse: #2dd4bf; --spark-hi: #ffffff; --spark-mix: 60%; --glow-o: .26;
-  --core-hi: #9a9aa2; --core-mid: #3a3a40; --core-deep: #111113; --core-face: #0b0b0d; --core-aura: #9a9aa2;
-  --core-ring: #9a9aa2; --core-glow: #e4e4e7; --core-aura-a: .34;
+  --core-hi: #fff3c9; --core-mid: #e2ad34; --core-deep: #8a5c0a; --core-face: #ffe9a8; --core-aura: #f2c14e;
+  --core-ring: #e0b04a; --core-glow: #ffd970; --core-aura-a: .4; --core-ink: #1c1202; --core-ink-2: rgba(42, 28, 4, .8);
   --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
   --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
   --band: rgba(242, 242, 243, .12); --band-2: rgba(242, 242, 243, .24);
@@ -1052,7 +1053,15 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   animation: ws-drift 9s cubic-bezier(.25, .6, .35, 1) infinite; }
 .wme-drift.d2 { animation-delay: -4.5s; }
 @keyframes ws-drift { 0% { transform: scale(1); opacity: 0; } 12% { opacity: .5; } 100% { transform: scale(1.3); opacity: 0; } }
-.wme-ticks { fill: none; stroke: #fff; stroke-opacity: .16; stroke-width: 1; stroke-dasharray: 1 4.6; }
+.wme-ticks { fill: none; stroke: #8a5a0c; stroke-opacity: .55; stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 0 4.4; }
+/* the gold coin (2026-10-21): the same metal in both themes */
+.ws-svg stop.g-hi { stop-color: #fff6cf; } .ws-svg stop.g-mid { stop-color: #e6b23e; } .ws-svg stop.g-deep { stop-color: #7a4e08; }
+.ws-svg stop.g-glint { stop-color: #fff; stop-opacity: .7; } .ws-svg stop.g-glint0 { stop-color: #fff; stop-opacity: 0; }
+.wme-rimband { fill: none; stroke-width: 7; }
+.wme-reed { fill: none; stroke: #6e4506; stroke-opacity: .5; stroke-width: 1.4; stroke-dasharray: .9 1.6; }
+.wme-bevel { fill: none; stroke-width: 1.6; }
+.wme-glint { animation: ws-glint 6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes ws-glint { 0% { transform: translateX(-110px); } 30%, 100% { transform: translateX(110px); } }
 .wme-bezel { fill: none; stroke-width: 1.6; }
 .wme-act, .wme-sel { fill: none; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
 .wme-act { stroke: var(--pulse); stroke-width: 2; }
@@ -1101,10 +1110,11 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 /* another family member's holding or category (F1): their initial on the rim */
 .ws-svg .wown circle { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.2; }
 .ws-svg .wown text { fill: var(--accent); font-size: 8.5px; font-weight: 800; }
-.ws-svg .wme-l { fill: rgba(255, 255, 255, .82); font-size: 12px; font-weight: 600; }
-.ws-svg .wme-v { fill: #fff; font-size: 19px; font-weight: 750; font-variant-numeric: tabular-nums; cursor: help; }
-.ws-svg .wme-s { fill: rgba(255, 255, 255, .78); font-size: 10.5px; }
-.ws-svg .wme-rule { stroke: rgba(255, 255, 255, .22); stroke-width: 1; }
+/* the coin's value, struck in: a serif in dark bronze over its lit lower edge (.wme-hl) */
+.ws-svg :is(.wme-v, .wme-hl) { font-family: Georgia, "Noto Serif", "Times New Roman", serif; }
+.ws-svg .wme-hl { fill: #fff3c4; fill-opacity: .9; pointer-events: none; }
+.ws-svg .wme-v { fill: var(--core-ink); cursor: help; }
+.ws-svg .wme-v, .ws-svg .wme-v-hl { font-size: 26px; font-weight: 700; font-variant-numeric: lining-nums tabular-nums; }
 .ws-svg .num-svg { cursor: help; }
 .ws-edges { transition: opacity var(--dur-2) var(--ease-out); }
 .ws-edges.moving { opacity: 0; }
@@ -1311,7 +1321,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-cashview { padding: 8px 12px 12px; }
   .ws-head { order: 0; } .ws-ctl { order: 1; position: static; justify-content: flex-end; flex-wrap: wrap; padding: 6px 12px 0; }
   .ws-canvas, .ws-list, .ws-cashview { order: 2; } .ws-strip { order: 3; }
-  .ws-svg .wlbl { font-size: 14px; } .ws-svg .wfig { font-size: 12.5px; } .ws-svg .wme-v { font-size: 21px; }
+  .ws-svg .wlbl { font-size: 14px; } .ws-svg .wfig { font-size: 12.5px; } .ws-svg :is(.wme-v, .wme-v-hl) { font-size: 27px; }
   .ws-svg .wmoney text { font-size: 12.5px; }
   .ws-strip-b { grid-auto-columns: minmax(200px, 78%); }
   /* a phone: the sheet takes the graph's place in the page (the graph stays mounted, hidden) and the dock stays below */
@@ -1331,6 +1341,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .wcomet { display: none; }
   .wme-aura, .wme-inner, .wport, .ws-svg.busy .wnode.k-family .wme-act, .wnode.k-family.act .wme-act { animation: none !important; }
   .wme-aura, .wme-inner { opacity: .78; } .wport { opacity: .5; }
+  .wme-glint { animation: none; transform: translateX(-110px); }
   .wme-drift, .wme-band, .wme-ripple { display: none; }
   .wnode .wburst { animation: none !important; }
   .wnode.writing .wring { opacity: .7; }
