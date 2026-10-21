@@ -153,11 +153,22 @@ say that the demo differs.
   The doc only claims what that test proves.
 - Published as the next version of the architecture artifact (Vietnamese, English terms in diagrams).
 
-## Decisions for you
+## Decided by the owner (2026-10-21)
 
-1. **The trial's daily model budget.** Suggested: US$5 a day, stop for the day when reached.
-2. **May the daily run approve its own views** (like the demo script: new events appear on the demo clients' screens
-   each day), or only record the shadow forecasts and leave approval to a person?
-3. **Broker views:** may we collect the domestic brokers' public commentary pages (terms of use differ per broker)?
+- **B1 is the priority.** Models through the owner's Claude Code subscription (headless `claude -p`, checked on this
+  server: Max plan, OAuth, no API key), not a paid API: no US$ budget, the plan's usage limits instead. A local
+  OpenAI-compatible bridge turns the app's model calls into `claude -p` calls (no tools, an empty working directory,
+  structured output), so the app's configuration changes and its code does not. Haiku 5.5 for grouping and
+  classifying, Sonnet 5.5 for the CIO agent, Opus 5.5 for the challenger (two different models, BRD §8).
+  Demo and trial only: production needs the bank's own models (`client_ai = onprem`).
+- **B2: iPhone only, a demo.** An installable web app, and a "Tải ứng dụng" button on the site that shows how
+  (iPhone cannot be prompted by a page: Share → Thêm vào màn hình chính).
+- **B3: the look and the layout only.** The routes, the data, the pages' logic and the assistant's flow stay as they
+  are; the UI suite and `test_how` must pass unchanged in what they check.
+- **B4: backlog.** The owner takes it later.
 
-Everything else above is decided in this plan.
+## Still open
+
+1. May the daily run approve its own views (new events on the demo clients' screens each day), or only record the
+   shadow forecasts?
+2. Broker views: may we collect the domestic brokers' public commentary pages (terms of use differ per broker)?
