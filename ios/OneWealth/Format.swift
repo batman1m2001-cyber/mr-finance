@@ -45,6 +45,13 @@ enum Fmt {
         return short ? "T\(m)" : "Th\(m)/\(p[0])"
     }
 
+    /// "2026-10" → "10/2026", after the word "tháng"
+    static func monthNumber(_ ym: String) -> String {
+        let p = ym.split(separator: "-")
+        guard p.count >= 2, let m = Int(p[1]) else { return ym }
+        return "\(m)/\(p[0])"
+    }
+
     /// "2026-10-09" → "09/10/2026"
     static func day(_ iso: String) -> String {
         let p = iso.prefix(10).split(separator: "-")

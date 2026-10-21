@@ -63,11 +63,10 @@ private struct NetWorthCard: View {
     var body: some View {
         let nw = d.netWorth
         Card {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(spacing: 10) {
                 Text("Tài sản ròng của \(d.profile.name)").font(.subheadline).foregroundStyle(Theme.ink2)
-                Text(Fmt.vnd(nw.value)).font(.system(size: 40, weight: .bold, design: .rounded))
-                    .foregroundStyle(Theme.navy).monospacedDigit()
-                Capsule().fill(Theme.gold).frame(width: 44, height: 3).accessibilityHidden(true)
+                GoldCoin(value: Fmt.vnd(nw.value)).frame(width: 170, height: 170)
+                    .accessibilityLabel("Tài sản ròng \(Fmt.vnd(nw.value))")
                 if let ch = nw.monthChange {
                     HStack(spacing: 6) {
                         Image(systemName: ch >= 0 ? "arrow.up.right" : "arrow.down.right")
@@ -76,6 +75,7 @@ private struct NetWorthCard: View {
                     .font(.subheadline.weight(.semibold)).foregroundStyle(Theme.signed(ch))
                 }
             }
+            .frame(maxWidth: .infinity)
             Divider()
             Row(label: "Tài sản", value: Fmt.vnd(nw.assets))
             Row(label: "Khoản nợ", value: Fmt.vnd(nw.liabilities))
@@ -191,5 +191,68 @@ private struct ReserveCard: View {
                 }
             }
         }
+    }
+}
+
+/// The net worth as the website's graph shows it: a polished gold coin — raised rim with a milled edge, a ring of
+/// beads, a glint now and then — its one figure struck in a dark bronze serif over the lit lower edge of the cut.
+struct GoldCoin: View {
+    let value: String
+    @Environment(\.accessibilityReduceMotion) private var still
+    @State private var glint = false
+
+    private static let hi = Color(red: 1, green: 246 / 255, blue: 207 / 255)
+    private static let mid = Color(red: 230 / 255, green: 178 / 255, blue: 62 / 255)
+    private static let deep = Color(red: 122 / 255, green: 78 / 255, blue: 8 / 255)
+    private static let ink = Color(red: 28 / 255, green: 18 / 255, blue: 2 / 255)
+    private static let lit = Color(red: 1, green: 243 / 255, blue: 196 / 255)
+
+    var body: some View {
+        GeometryReader { g in
+            let w = min(g.size.width, g.size.height), r = w / 2
+            ZStack {
+                Circle().fill(RadialGradient(colors: [Self.mid.opacity(0.35), .clear], center: .center,
+                                             startRadius: r * 0.9, endRadius: r * 1.25))
+                    .frame(width: w * 1.25, height: w * 1.25)  // the glow around it
+                Circle().fill(RadialGradient(colors: [Self.hi, Self.mid, Self.deep], center: UnitPoint(x: 0.5, y: 0.2),
+                                             startRadius: 0, endRadius: r * 1.45))
+                Circle().fill(RadialGradient(colors: [Color(red: 1, green: 240 / 255, blue: 191 / 255).opacity(0.62), .clear],
+                                             center: UnitPoint(x: 0.5, y: 0.46), startRadius: 0, endRadius: r * 0.9))
+                Circle().strokeBorder(LinearGradient(stops: [.init(color: Self.hi, location: 0), .init(color: Self.mid, location: 0.22),
+                                                            .init(color: Self.hi, location: 0.42), .init(color: Self.deep, location: 0.68),
+                                                            .init(color: Self.mid, location: 0.86), .init(color: Self.hi, location: 1)],
+                                                     startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: w * 0.056)
+                Circle().stroke(Self.deep.opacity(0.5), style: StrokeStyle(lineWidth: 1.4, dash: [0.9, 1.6]))
+                    .padding(0.7)  // the milled edge
+                Circle().stroke(LinearGradient(colors: [Self.deep, Self.mid, Self.hi], startPoint: .topLeading, endPoint: .bottomTrailing),
+                                lineWidth: 1.6).padding(w * 0.06)  // the bevel into the field
+                Circle().stroke(Self.deep.opacity(0.55), style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [0, w * 0.035]))
+                    .padding(w * 0.097)  // the ring of beads
+                Rectangle().fill(LinearGradient(colors: [.clear, .white.opacity(0.7), .clear], startPoint: .leading, endPoint: .trailing))
+                    .frame(width: w * 0.18, height: w * 1.4).rotationEffect(.degrees(28))
+                    .offset(x: glint ? w : -w)
+                    .mask(Circle())
+                ZStack {
+                    Text(value).foregroundStyle(Self.lit.opacity(0.9)).offset(x: 0.6, y: 0.8)
+                    Text(value).foregroundStyle(Self.ink)
+                }
+                .font(.custom("Georgia-Bold", size: w * 0.2, relativeTo: .largeTitle))
+                .monospacedDigit()
+                .lineLimit(1).minimumScaleFactor(0.5)
+                .frame(width: w * 0.7)  // inside the beads
+            }
+            .frame(width: w, height: w)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .task {  // a glint every six seconds, as the website's coin; none when the phone asks for less motion
+            guard !still else { return }
+            while !Task.isCancelled {
+                glint = false
+                try? await Task.sleep(for: .milliseconds(50))
+                withAnimation(.easeInOut(duration: 1.8)) { glint = true }
+                try? await Task.sleep(for: .seconds(6))
+            }
+        }
+        .accessibilityElement(children: .ignore)
     }
 }

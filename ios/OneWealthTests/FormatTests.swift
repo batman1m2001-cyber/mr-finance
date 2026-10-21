@@ -30,6 +30,7 @@ final class FormatTests: XCTestCase {
         XCTAssertEqual(Fmt.month("2026-10"), "Th10/2026")
         XCTAssertEqual(Fmt.month("2026-03", short: true), "T3")
         XCTAssertEqual(Fmt.day("2026-10-09"), "09/10/2026")
+        XCTAssertEqual(Fmt.monthNumber("2027-03"), "3/2027")
         XCTAssertEqual(monthsText(41), "3 năm")
         XCTAssertEqual(monthsText(7.5), "7,5 tháng")
     }

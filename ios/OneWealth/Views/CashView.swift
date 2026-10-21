@@ -87,7 +87,7 @@ private struct NetChart: View {
             .frame(height: 200)
             .accessibilityLabel("Còn lại mỗi tháng, 6 tháng qua và 12 tháng tới")
             if let low, low.net < 0 {
-                Label("Tháng \(Fmt.month(low.month)) dự kiến thiếu \(Fmt.vnd(-low.net * 1e6))", systemImage: "exclamationmark.triangle.fill")
+                Label("Tháng \(Fmt.monthNumber(low.month)) dự kiến thiếu \(Fmt.vnd(-low.net * 1e6))", systemImage: "exclamationmark.triangle.fill")
                     .font(.subheadline.weight(.semibold)).foregroundStyle(Theme.warning)
             }
             let tin = cash.months.reduce(0) { $0 + $1.inflow }, tout = cash.months.reduce(0) { $0 + $1.out }
@@ -101,7 +101,7 @@ private struct MonthFlows: View {
     let f: Flows
 
     var body: some View {
-        Card(title: "Tháng \(Fmt.month(f.month))") {
+        Card(title: "Tháng \(Fmt.monthNumber(f.month))") {
             Row(label: "Tiền vào", value: Fmt.vnd(f.totalIn), tint: Theme.good)
             Row(label: "Tiền ra", value: Fmt.vnd(f.totalOut))
             Row(label: "Còn lại", value: Fmt.vnd(f.left, signed: true), tint: Theme.signed(f.left))
