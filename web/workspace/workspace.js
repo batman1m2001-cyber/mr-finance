@@ -9,7 +9,7 @@ import {reduced} from "../motion.js?v=20261016r1";
 import {UNIT_WORD, createGraph} from "./graph.js?v=20261020t1";
 import {dockFrame} from "./dock.js?v=20261018m0";
 import {render as inspect} from "./inspector.js?v=20261021t1";
-import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t1";
+import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t2";
 import {mount as mountMoney} from "./money.js?v=20261021m1";
 import {mount as mountStrip} from "./strip.js?v=20261021m1";
 
@@ -20,7 +20,7 @@ export function mount(main, {client, scope, go, page}) {
   root.className = "ws";
   root.innerHTML = `
     <nav class="ws-bar" aria-label="Các góc nhìn">${TOOLBAR.map(t => `<a class="ws-tool" href="${t.href}" data-tool="${t.id}" aria-label="${esc(t.label)}" data-tip="${esc(t.tip)}">
-      ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.label)}</span></a>`).join("")}
+      ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.short || t.label)}</span></a>`).join("")}
       <button type="button" class="ws-tool ws-ask" aria-label="Hỏi trợ lý">${icon("sparkles", {size: 20})}<span class="ws-tool-l">Trợ lý</span></button></nav>
     <section class="ws-center" aria-label="Đồ thị tài chính">
       <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Tổng quan tài chính</h1>

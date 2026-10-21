@@ -10,9 +10,9 @@ export const LENSES = [
     kinds: ["family", "class", "holding", "source"], sheets: ["tai-san"]},
   {id: "dong-tien", label: "Dòng tiền", icon: "flow", tip: "Dòng tiền: thu nhập, chi tiêu, thanh khoản", sub: "Thu nhập và chi tiêu của tháng, và tiền dự phòng",
     kinds: ["family", "flow", "category", "liquidity", "class"], sheets: ["toan-canh"]},
-  {id: "muc-tieu", label: "Mục tiêu & kịch bản", icon: "target", tip: "Mục tiêu và kịch bản giả định", sub: "Mục tiêu của bạn và các kịch bản giả định",
+  {id: "muc-tieu", label: "Mục tiêu & kịch bản", short: "Mục tiêu", icon: "target", tip: "Mục tiêu và kịch bản giả định", sub: "Mục tiêu của bạn và các kịch bản giả định",
     kinds: ["family", "goal", "scenario"], sheets: ["ke-hoach"]},
-  {id: "tin", label: "Tin & sự kiện", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động", sub: "Tin tức, sự kiện và chính sách có thể tác động tới tài sản của bạn",
+  {id: "tin", label: "Tin & sự kiện", short: "Tin tức", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động", sub: "Tin tức, sự kiện và chính sách có thể tác động tới tài sản của bạn",
     kinds: ["family", "event", "alert", "class"], sheets: ["thi-truong", "do-thi", "chinh-sach"]},
   {id: "rui-ro", label: "Rủi ro", icon: "alert", tip: "Rủi ro: mức lỗ khi căng thẳng, tập trung, dự phòng", sub: "Mức lỗ khi thị trường xấu, mức tập trung và tiền dự phòng",
     kinds: ["family", "risk", "liquidity", "class"], sheets: ["khau-vi", "chi-tiet"]},
@@ -32,10 +32,10 @@ export const SHEETS = {
   "chuyen-gia": {page: "advisor", label: "Chuyên gia", route: "#/client/chuyen-gia", lens: null, nav: ["chuyen-gia"]},
   "bo-nho": {page: "memory", label: "Bộ nhớ", route: "#/client/bo-nho", lens: null, nav: ["bo-nho"]},
 };
-// the toolbar: the lenses, then the two dedicated views (OWN-GW-05: Experts may stay a separate view)
+// the toolbar: the lenses, then Chuyên gia (OWN-GW-05: Experts may stay a separate view). Bộ nhớ is not on it
+// (UX_TOOLBAR_PLAN T2): the header and the assistant's panel open it, and its address still works.
 export const TOOLBAR = [...LENSES.map(l => ({...l, href: lensRoute(l.id)})),
-  {id: "chuyen-gia", label: "Chuyên gia", icon: "users", tip: "Chuyên gia: liên hệ đội ngũ tư vấn", href: SHEETS["chuyen-gia"].route, sheet: true},
-  {id: "bo-nho", label: "Bộ nhớ", icon: "history", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", href: SHEETS["bo-nho"].route, sheet: true}];
+  {id: "chuyen-gia", label: "Chuyên gia", icon: "users", tip: "Chuyên gia: liên hệ đội ngũ tư vấn", href: SHEETS["chuyen-gia"].route, sheet: true}];
 
 export function lensRoute(id) { return `#/client/xem/${id}`; }
 
