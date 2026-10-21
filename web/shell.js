@@ -16,7 +16,7 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261021t6";
+import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261021b3";
 import {DESKS} from "./desk/roles.js?v=20261021t5";
 
 const ROLES = {
@@ -167,7 +167,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261021t9");
+  wsLoad ||= import("./workspace/workspace.js?v=20261021b3");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -252,6 +252,9 @@ async function route() {
   howAudience.staff = rt.role !== "client";
   state.route = rt;
   localStore("mf.role", rt.role);
+  // the client's calmer look (B3.3): light unless the person chose dark; the staff's desks as they were
+  document.body.dataset.role = rt.role;
+  if (!localStore("mf.theme")) document.documentElement.dataset.theme = rt.role === "client" ? "light" : "dark";
   drawChrome(rt);
   if (header) header.refresh();
   let target = rt.sub || rt.nav;
@@ -268,7 +271,7 @@ async function route() {
       warm(rt.role);
       return;
     }
-    target = {page: sheet.page};
+    target = {page: sheet.page, board: sheet.board};  // a part of the Bảng số liệu as its own page (Dòng tiền, B3.1)
     rt.param = sheet.param;
   } else if (DESKS[rt.role]) {
     leaveWorkspace();
@@ -298,7 +301,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261021t9`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261021b3`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
@@ -331,7 +334,7 @@ async function draw(target, rt, seq, again) {
   try {
     const mod = await page(target.page);
     if (seq !== state.seq) { keep.end(r); return null; }
-    await mod.render(box, ctx(rt));
+    await mod.render(box, target.board ? {...ctx(rt), board: {only: target.board}} : ctx(rt));
   } catch (e) {
     if (seq === state.seq) box.innerHTML = failed(e);
     // a fetch the browser cut because the document is being left is not a failure of the page

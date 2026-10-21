@@ -85,10 +85,13 @@ export async function render(box, ctx) {
     month: `<div class="panel c12" id="d-month"></div>`,
   };
 
+  // a part of it as its own page (ctx.board.only: the client's Dòng tiền, B3.1): the other blocks are drawn as always,
+  // out of sight, so every step below finds its element
+  const only = ctx.board && ctx.board.only, shown = (k) => !only || only.includes(k);
   box.innerHTML = `${staff ? internal() : ""}
     <div class="cols">
-${(ctx.board ? ["cash", "alloc", "pnl", "month", "hero", "risk", "liq"] : ["hero", "alloc", "pnl", "risk", "liq", "cash"]).map(k => B[k]).join("")}
-      <div class="panel c12" id="news"></div>
+${(ctx.board ? ["cash", "alloc", "pnl", "month", "hero", "risk", "liq"] : ["hero", "alloc", "pnl", "risk", "liq", "cash"]).map(k => (shown(k) ? B[k] : `<div hidden>${B[k]}</div>`)).join("")}
+      ${only ? `<div hidden><div class="panel c12" id="news"></div></div>` : `<div class="panel c12" id="news"></div>`}
     </div>`;
 
   // assets by the tier of their source; a tier opens onto its sources
@@ -145,7 +148,7 @@ ${(ctx.board ? ["cash", "alloc", "pnl", "month", "hero", "risk", "liq"] : ["hero
     else el.innerHTML = `<h3>Tiền vào và ra trong tháng</h3><p class="small muted">Không tải được: ${esc((fl || {}).error || "")}</p>`;
   }
   for (const b of box.querySelectorAll("[data-months]")) b.onclick = () => { store("mf.detail.months", b.dataset.months); ctx.go(location.hash); };
-  if (ctx.board) { ctx.board.redraw = drawCash; return; }  // the dashboard is drawn again in place: its view redraws it
+  if (ctx.board && !only) { ctx.board.redraw = drawCash; return; }  // the dashboard is drawn again in place: its view redraws it
   // a chart drawn at the width it is shown at: again after a resize
   let t = null;
   const again = () => { clearTimeout(t); t = setTimeout(() => { if (box.isConnected) drawCash(); else removeEventListener("resize", again); }, 150); };

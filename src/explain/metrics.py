@@ -878,6 +878,66 @@ metric(
     "src/measure/forecasts.py::score",
     view="Nhận định",
 )
+# ── the daily news-agent trial (BUSINESS_FEEDBACK_1021_PLAN B1): shadow forecasts, never applied ─────────────
+T = "src/trial/report.py::"
+metric(
+    "trial.direction",
+    "Dự báo bóng đúng hướng",
+    "Tỷ lệ = số dự báo bóng có dấu kỳ vọng trùng dấu biến động thực tế ÷ số dự báo đã chấm có hướng. Mỗi bản nháp "
+    "của agent (không ai duyệt) giữ dự báo từng yếu tố từ giá đóng cửa trước khi agent chạy; chấm khi đến hạn.",
+    T + "_accuracy",
+    horizon="Kỳ hạn",
+    n="Số lần đã chấm",
+)
+metric(
+    "trial.coverage",
+    "Dự báo bóng nằm trong dải",
+    "Tỷ lệ = số dự báo bóng có biến động thực tế nằm trong dải P10–P90 đã dự báo ÷ số dự báo đã chấm.",
+    T + "_accuracy",
+    horizon="Kỳ hạn",
+    n="Số lần đã chấm",
+)
+metric(
+    "trial.call",
+    "Mua · bán · giữ đúng",
+    "Đọc dự báo, không phải khuyến nghị: “mua” khi biến động kỳ vọng lớn hơn ¼ biến động thông thường của kỳ "
+    "(độ biến động tháng × √số tháng), “bán” khi nhỏ hơn âm mức đó, còn lại “giữ”. Đúng khi thị trường đi lên (mua), "
+    "đi xuống (bán), hoặc không đi quá mức đó (giữ). Tỷ lệ = số lần đúng ÷ số lần đã chấm.",
+    T + "calls",
+    horizon="Kỳ hạn",
+    n="Số lần đã chấm",
+)
+metric(
+    "trial.scenario",
+    "Thị trường đi theo kịch bản chính",
+    "Với mỗi bản nháp có ít nhất 3 yếu tố đã chấm có hướng: kịch bản thị trường đi theo là kịch bản có hướng trùng "
+    "với nhiều yếu tố nhất. Tỷ lệ = số lần đó là kịch bản agent cho là khả năng cao nhất ÷ số bản nháp đã chấm đủ.",
+    T + "scenarios",
+    horizon="Kỳ hạn",
+    n="Số bản nháp đã chấm",
+)
+metric(
+    "trial.typed",
+    "Tin có loại sự kiện",
+    "Tỷ lệ = số tin thu thập trong thời gian thử nghiệm có loại sự kiện (gán khi lấy tin) ÷ tổng số tin thu thập.",
+    T + "collection",
+    items="Tin thu thập",
+)
+metric(
+    "trial.recall",
+    "Tin quan trọng thu được (KPI-02)",
+    "Tin quan trọng là tin mà nguồn đối chiếu độc lập đăng từ hai báo trở lên. Tỷ lệ = số tin quan trọng ta đã thu "
+    "÷ số tin quan trọng, trong các ngày thử nghiệm.",
+    T + "recall",
+    collected="Đã thu",
+    important="Tin quan trọng",
+)
+metric(
+    "trial.recall_target",
+    "Mục tiêu tin quan trọng thu được",
+    "Một thiết lập, không phải kết quả tính: mục tiêu KPI-02 của BRD, đọc từ nguồn đối chiếu tin.",
+    "src/news/reference.py::coverage",
+)
 metric(
     "scenario.move",
     "Biến động của một yếu tố trong kịch bản",

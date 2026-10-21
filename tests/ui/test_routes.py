@@ -33,7 +33,7 @@ def test_every_route_renders_without_errors(open_page, size, theme):
     for r in seen:
         p.errors.clear()
         p.go(r)
-        if not p.page.is_visible("#cp-q"):  # docked on every role's route
+        if not (p.page.is_visible("#cp-q") or p.page.is_visible("#ws-fab")):  # docked, or its button (the client, B3.2)
             p.errors.append("no assistant")
         if p.problems():
             bad[r] = p.problems()

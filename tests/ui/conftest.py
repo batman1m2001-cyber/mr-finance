@@ -137,13 +137,22 @@ def in_thread(fn, *args):
 class Page:
     """A page that records errors and waits for the shell to say a route has rendered (`mf:page`)."""
 
-    def __init__(self, browser, base_url, size="desktop", reduced=False, theme="light"):
+    def __init__(self, browser, base_url, size="desktop", reduced=False, theme="light", dock=True):
         w, h = SIZES[size]
         self.ctx = browser.new_context(
-            viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None, color_scheme=theme
+            viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None, color_scheme=theme or "light"
         )
         # the app opens dark unless the person chose light (mf.theme), whatever the system's scheme: say which
-        self.ctx.add_init_script(f"try {{ localStorage.setItem('mf.theme', '{theme}'); }} catch (_) {{}}")
+        # (None: the person chose nothing, the client's light default, B3.3)
+        if theme:
+            self.ctx.add_init_script(f"try {{ localStorage.setItem('mf.theme', '{theme}'); }} catch (_) {{}}")
+        # the client's assistant is closed until its button opens it (B3.2), and the choice kept: these tests start
+        # where the person had opened it on a computer, unless they say otherwise (dock=False; test_classic_ui)
+        if dock:
+            self.ctx.add_init_script(
+                f"try {{ if (localStorage.getItem('mf.ws.dock.{ACCOUNTS['client']}') === null) "
+                f"localStorage.setItem('mf.ws.dock.{ACCOUNTS['client']}', 'open'); }} catch (_) {{}}"
+            )
         self.page = self.ctx.new_page()
         self.errors = []
         self.page.on("pageerror", lambda e: self.errors.append(f"pageerror: {e} @ {(e.stack or '').splitlines()[1:3]}"))
@@ -180,7 +189,9 @@ class Page:
         self.page.wait_for_timeout(150)
 
     def panel(self):
-        """The assistant: docked in every role's dock (the floating button is gone, owner 2026-10-18)."""
+        """The assistant: docked in every role's dock; the client's opens from its button when closed (B3.2)."""
+        if self.page.is_visible("#ws-fab"):
+            self.page.click("#ws-fab")
         self.page.wait_for_selector("#cp-q")
 
     def problems(self):
@@ -205,8 +216,8 @@ class Page:
 def open_page(browser, base_url):
     pages = []
 
-    def make(size="desktop", reduced=False, theme="light"):
-        pages.append(Page(browser, base_url, size, reduced, theme))
+    def make(size="desktop", reduced=False, theme="light", dock=True):
+        pages.append(Page(browser, base_url, size, reduced, theme, dock))
         return pages[-1]
 
     yield make

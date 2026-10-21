@@ -162,6 +162,37 @@ per thing (T5), the graph as a page with its groups (T6), the feed, the sources 
 
 **Effort.** Medium: routing and the bar (shell), the button (copilot.js), the look (tokens). No page is rewritten.
 
+**Design (2026-10-21, before building).** A *classic mode* of the client's workspace, not a second app: the graph,
+the dock, the Bảng số liệu and every page module stay mounted and work as today; what changes is where the bar
+leads, what a sheet looks like, and when the dock shows.
+
+| Bar | Opens (address) | Tabs on the page |
+|---|---|---|
+| Tổng quan | `#/client` = `#/client/tong-quan` → the Bảng số liệu at its top (Toàn cảnh) | Toàn cảnh · Đồ thị tài chính (`#/client/xem/tong-quan`) |
+| Tài sản | `#/client/tai-san` (holdings) | — |
+| Dòng tiền | `#/client/dong-tien`: new page, the Bảng số liệu's cash-flow blocks only (cash flow over time, the month's money in and out, the reserve), drawn by `pages/detail.js` (`ctx.board.only`) | — |
+| Mục tiêu | `#/client/muc-tieu/ke-hoach` | — |
+| Tin tức | `#/client/tin/thi-truong` | Tác động tin · Đồ thị tác động · Chi phí chính sách |
+| Rủi ro | `#/client/rui-ro/khau-vi` | — |
+| Chuyên gia | `#/client/chuyen-gia` | — |
+
+- **Every old address still opens what it opened** (`xem/<lens>` the graph at that lens, `tong-quan/toan-canh` and
+  `chi-tiet` the Bảng số liệu, `tong-quan/ban-do` the graph, the sheets' addresses their pages); only the bare
+  `#/client` changes, from the graph to Toàn cảnh (the owner's "Toàn cảnh as the home page"). A graph at another lens
+  (from a strip card, a citation, the assistant) shows that lens's section lit in the bar and a "Trên đồ thị" tab.
+- **A page is a page:** no "← Đồ thị" and no ✕ on a sheet, Escape does not close it; the section's tabs instead.
+- **The assistant (B3.2):** the dock is closed by default for the client; a floating "Hỏi trợ lý" button at the
+  bottom right opens it beside the page (a phone: over the page, full height under the header); its fold button
+  closes it. Open or closed is kept per person in this browser. Picking a node on the graph opens it at Thông tin.
+  The copilot, its stream and the graph's marks are untouched.
+- **The look (B3.3), client only** (`body[data-role="client"]`; desks unchanged): light unless the person chose dark
+  (`mf.theme` still wins); body 16 px, tables 15 px, controls ≥ 44 px; no glow behind the page or its hero figures;
+  the legend and the zoom row only on the graph. The graph itself is unchanged, sparks included: it is one page now,
+  and its tests (flows, sparks, layout) are its specification.
+- **Tests:** what each checks stays; where a test reached the graph by the bare `#/client`, the toolbar or Escape, it
+  goes to the graph's address instead, and where it typed into the dock, it opens the dock first. Each such change is
+  listed in the commit.
+
 ## B4 · The technical document
 
 **Asked.** Highlight OperonX's strengths; add a data-governance disclaimer: the AI only pulls news onto the machine and
