@@ -8,8 +8,8 @@ import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {UNIT_WORD, createGraph} from "./graph.js?v=20261020t1";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261020t1";
-import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261018p3";
+import {render as inspect} from "./inspector.js?v=20261021t1";
+import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t1";
 import {mount as mountMoney} from "./money.js?v=20261021m1";
 import {mount as mountStrip} from "./strip.js?v=20261021m1";
 
@@ -61,7 +61,8 @@ export function mount(main, {client, scope, go, page}) {
   $("#ws-sheet-b", root).appendChild($("#page"));
 
   const kindLabel = (k) => ((graph.data() || {kinds: []}).kinds.find(x => x.kind === k) || {label: k}).label;
-  let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph";
+  let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph", asOf = null;
+  const drawSub = () => { $("#ws-sub", root).textContent = `${lens.sub}${asOf ? ` · số liệu ngày ${asOf}` : ""}`; };
   const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n || graph.selectedEdge()) tab("i"); $("[data-z=focus]", root).disabled = !n; }});
   const money = mountMoney($("#ws-cashview", root), {client, scope});
   const strip = mountStrip($("#ws-strip", root), {client, scope, lens: (id) => go(lensRoute(id)), money: (part) => { if (sheet) go(lensRoute(lens.id)); setView("money", part); }});
@@ -85,6 +86,7 @@ export function mount(main, {client, scope, go, page}) {
   const frame = dockFrame(root, {canvas: $("#ws-canvas", root), hold: (on) => graph.hold(on), redraw: () => graph.redraw()});
 
   const drawInspector = () => inspect($("#ws-pane-i", root), {graph, lens, node: graph.selected(), edge: graph.selectedEdge(), kindLabel, openSheet,
+    page: sheet && !SHEETS[sheet].lens ? SHEETS[sheet].label : null,
     timeline: {client: client(), scope: scope(), unit: graph.unit(), setUnit: (u) => setUnit(u)},
     scenario: {on: (id) => active().ids.includes(id), params: (id) => (active().params || {})[id] || null, set: setActive}});
 
@@ -189,7 +191,8 @@ export function mount(main, {client, scope, go, page}) {
       graph.load(overview, k);
       graph.setLens(lens);
       recombine();
-      $("#ws-sub", root).textContent = `Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn · số liệu ngày ${overview.as_of}`;
+      asOf = overview.as_of;
+      drawSub();
       drawInspector();
       strip.load();
       if (view === "money") money.load();
@@ -202,6 +205,7 @@ export function mount(main, {client, scope, go, page}) {
     lens = next;
     for (const a of root.querySelectorAll("[data-tool]")) a.toggleAttribute("aria-current", a.dataset.tool === (sheet && !SHEETS[sheet].lens ? sheet : lens.id));
     $("#ws-title", root).textContent = lens.id === "tong-quan" ? "Tổng quan tài chính" : lens.label;
+    if (asOf) drawSub();
     graph.setLens(lens);
     strip.focus(lens.id);
     drawInspector();
