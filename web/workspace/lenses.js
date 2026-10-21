@@ -3,7 +3,9 @@
    Customer address still names its page, which opens as a sheet over the graph, with the lens that page belongs to —
    so the server's links (citations, search, the bell) need no change. A lens's pages are buttons under its title, and
    its numbers a section of the Bảng số liệu (part); Toàn cảnh and Chi tiết are that dashboard now (UX_TOOLBAR_PLAN
-   T3+T4), so their addresses open it. */
+   T3+T4), so their addresses open it.
+   The classic app (BUSINESS_FEEDBACK_1021_PLAN B3.1): the bar leads to each section's page, Toàn cảnh is the home
+   page, and the graph is one page under Tổng quan (Đồ thị tài chính); every address above still opens what it did. */
 
 export const LENSES = [
   {id: "tong-quan", label: "Tổng quan", icon: "map", tip: "Tổng quan: toàn bộ bức tranh tài chính", sub: "Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn",
@@ -29,12 +31,23 @@ export const SHEETS = {
   "thi-truong": {page: "impact", label: "Tác động tin", route: "#/client/tin/thi-truong", lens: "tin", nav: ["tin", "thi-truong"]},
   "do-thi": {page: "graph", label: "Đồ thị tác động", route: "#/client/tin/do-thi", lens: "tin", nav: ["tin", "do-thi"]},
   "chinh-sach": {page: "policy", label: "Chi phí chính sách", route: "#/client/tin/chinh-sach", lens: "tin", nav: ["tin", "chinh-sach"]},
+  "dong-tien": {page: "detail", label: "Dòng tiền", route: "#/client/dong-tien", lens: "dong-tien", nav: ["dong-tien"], board: ["cash", "month", "liq"]},
   "chuyen-gia": {page: "advisor", label: "Chuyên gia", route: "#/client/chuyen-gia", lens: null, nav: ["chuyen-gia"]},
   "bo-nho": {page: "memory", label: "Bộ nhớ", route: "#/client/bo-nho", lens: null, nav: ["bo-nho"]},
 };
-// the toolbar: the lenses, then Chuyên gia (OWN-GW-05: Experts may stay a separate view). Bộ nhớ is not on it
+// each section's page and its tabs (B3.1): [label, address, the view a graph tab opens]
+export const SECTIONS = {
+  "tong-quan": {home: "#/client/tong-quan", tabs: [["Toàn cảnh", "#/client/tong-quan", "money"], ["Đồ thị tài chính", lensRoute("tong-quan"), "graph"]]},
+  "tai-san": {home: SHEETS["tai-san"].route, tabs: [["Tài sản", SHEETS["tai-san"].route]]},
+  "dong-tien": {home: SHEETS["dong-tien"].route, tabs: [["Dòng tiền", SHEETS["dong-tien"].route]]},
+  "muc-tieu": {home: SHEETS["ke-hoach"].route, tabs: [["Kế hoạch", SHEETS["ke-hoach"].route]]},
+  "tin": {home: SHEETS["thi-truong"].route, tabs: ["thi-truong", "do-thi", "chinh-sach"].map(id => [SHEETS[id].label, SHEETS[id].route])},
+  "rui-ro": {home: SHEETS["khau-vi"].route, tabs: [["Khẩu vị rủi ro", SHEETS["khau-vi"].route]]},
+  "chuyen-gia": {home: SHEETS["chuyen-gia"].route, tabs: [["Chuyên gia", SHEETS["chuyen-gia"].route]]},
+};
+// the toolbar: the sections, then Chuyên gia (OWN-GW-05: Experts may stay a separate view). Bộ nhớ is not on it
 // (UX_TOOLBAR_PLAN T2): the header and the assistant's panel open it, and its address still works.
-export const TOOLBAR = [...LENSES.map(l => ({...l, href: lensRoute(l.id)})),
+export const TOOLBAR = [...LENSES.map(l => ({...l, href: SECTIONS[l.id].home})),
   {id: "chuyen-gia", label: "Chuyên gia", icon: "users", tip: "Chuyên gia: liên hệ đội ngũ tư vấn", href: SHEETS["chuyen-gia"].route, sheet: true}];
 
 export function lensRoute(id) { return `#/client/xem/${id}`; }
@@ -49,15 +62,17 @@ const OLD = {
   "tai-san": "tai-san",
   "muc-tieu": "ke-hoach", "muc-tieu/ke-hoach": "ke-hoach", "muc-tieu/khau-vi": "khau-vi", "rui-ro": "khau-vi", "rui-ro/khau-vi": "khau-vi",
   "tin": "thi-truong", "tin/thi-truong": "thi-truong", "tin/do-thi": "do-thi", "tin/chinh-sach": "chinh-sach",
-  "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
+  "dong-tien": "dong-tien", "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
 };
 
 /* The address's parts after the role → {lens (or null: keep the current one), sheet (or null), param}, and a
-   dashboard section to open (part) for Toàn cảnh's and Chi tiết's addresses. */
+   dashboard section to open (part) for Toàn cảnh's and Chi tiết's addresses, and the home (B3.1): the dashboard at
+   its top. */
 export function resolve(parts) {
   const [a, b, c] = parts;
   if (BOARD[`${a}/${b}`]) return {lens: "tong-quan", sheet: null, param: null, part: BOARD[`${a}/${b}`]};
-  if (!a || a === "tong-quan" && (!b || b === "ban-do")) return {lens: a ? "tong-quan" : null, sheet: null, param: null};
+  if (!a || a === "tong-quan" && !b) return {lens: "tong-quan", sheet: null, param: null, home: true};
+  if (a === "tong-quan" && b === "ban-do") return {lens: "tong-quan", sheet: null, param: null, view: "graph"};
   if (a === "xem") return {lens: LENS[b] ? b : "tong-quan", sheet: null, param: null};
   const two = b && OLD[`${a}/${b}`];
   const id = two || OLD[a];

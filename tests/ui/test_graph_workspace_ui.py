@@ -46,7 +46,7 @@ def same(p):
 
 def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
     p = open_page()
-    p.go("#/client")
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.page.wait_for_selector(".wnode.k-family")
     assert p.page.is_hidden("#nav") and p.page.locator(".cp-fab").count() == 0  # the toolbar and the dock instead
     mark(p)
@@ -74,8 +74,7 @@ def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
     p.go("#/client/tai-san")  # an old address: its page as a sheet over the Tài sản lens
     assert p.page.is_visible("#ws-sheet") and p.page.inner_text("#ws-sheet-t") == "Tài sản"
     assert p.page.locator("#ws-sheet #page .holdings, #ws-sheet #page table, #ws-sheet #page .card").count() > 0
-    p.page.keyboard.press("Escape")
-    p.page.wait_for_function("location.hash === '#/client/xem/tai-san'")
+    p.go("#/client/xem/tai-san")  # back on the graph (a page is not closed by Escape now, B3.1): the same graph
     assert p.page.is_hidden("#ws-sheet") and same(p)
     assert not p.problems()
 
@@ -114,7 +113,7 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     # Toàn cảnh's and Chi tiết's old addresses open it too, never a sheet
     p.go("#/client/tong-quan/chi-tiet")
     assert p.page.is_hidden("#ws-sheet") and p.page.is_visible("#ws-cashview #d-nw")
-    p.page.click('#ws-view [data-v="graph"]')
+    p.go("#/client/xem/tong-quan")  # the dashboard as a page has no view buttons (B3.1): the graph by its address
     p.page.click("#ws-strip-fold")
     assert p.page.is_hidden("#ws-strip-b")
     p.go("#/client/xem/tong-quan")
@@ -124,7 +123,7 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
 
 def test_the_assistant_stream_drives_the_graph(open_page):
     p = open_page()
-    p.go("#/client")
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.page.wait_for_selector(".wnode.k-family")
     p.page.evaluate(
         """() => { window.__ev = []; const f0 = window.fetch;
@@ -148,6 +147,7 @@ def test_the_assistant_stream_drives_the_graph(open_page):
 
 def test_a_broken_stream_is_said_and_marked_failed(open_page):
     p = open_page(reduced=True)
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.ctx.add_init_script(STUB_BREAK)
     p.page.reload()  # the same address: a reload, so the stub is in before the app
     p.page.wait_for_selector(".wnode.k-family")
@@ -161,23 +161,25 @@ def test_a_broken_stream_is_said_and_marked_failed(open_page):
 
 def test_keyboard_and_phone(open_page):
     p = open_page()
-    p.go("#/client")
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.page.focus('[data-tool="tong-quan"]')
     p.page.keyboard.press("ArrowDown")
     p.page.keyboard.press("Enter")
-    p.page.wait_for_function("location.hash === '#/client/xem/tai-san'")
+    p.page.wait_for_function("location.hash === '#/client/tai-san'")  # the bar leads to the section's page (B3.1)
+    p.go("#/client/xem/tai-san")
     p.page.locator(".wnode.k-class").first.focus()
     p.page.keyboard.press("Enter")
     assert p.page.get_attribute("#ws-tab-i", "aria-selected") == "true"
     phone = open_page("phone")
-    phone.go("#/client")
+    phone.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     phone.page.wait_for_selector(".wnode.k-family")
     for lens in ("tai-san", "muc-tieu", "tin", "tong-quan"):
         phone.go(f"#/client/xem/{lens}")
         assert phone.page.evaluate(CLEAR) == [0, 0], lens
     phone.page.click(".ws-ask")
     phone.page.wait_for_function("document.activeElement && document.activeElement.id === 'cp-q'")
-    phone.go("#/client/tai-san")  # a sheet on a phone takes the graph's place; the dock below stays reachable
+    phone.go("#/client/tai-san")  # a sheet on a phone takes the graph's place; the assistant stays reachable
+    phone.page.click("#ws-fab")  # its button (B3.2): the panel closed as the page opened
     phone.page.locator("#cp-q").scroll_into_view_if_needed()
     on_top = """() => { const r = document.querySelector('#cp-q').getBoundingClientRect();
                          return document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.id; }"""

@@ -64,5 +64,5 @@ def test_the_panel_names_the_lens_on_screen_after_a_reload_and_a_lens_change(ope
     p.go("#/client/xem/muc-tieu")
     p.page.wait_for_function("document.querySelector('#ws-title').textContent.startsWith('Mục tiêu')")
     p.page.wait_for_function("document.querySelector('#cp-ctx').textContent.startsWith('Đang xem: Mục tiêu')")
-    p.page.click('[data-tool="rui-ro"]')
+    p.go("#/client/xem/rui-ro")  # the bar opens Rủi ro's page now (B3.1); the lens is its address
     p.page.wait_for_function("document.querySelector('#cp-ctx').textContent.startsWith('Đang xem: Rủi ro')")

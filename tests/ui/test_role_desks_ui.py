@@ -78,7 +78,7 @@ def test_the_cio_works_at_its_desk_and_every_page_is_a_sheet(open_page):
         assert not p.problems(), (r, p.problems())
     p.go("#/cio/mo-hinh/du-lieu")
     tabs = p.page.eval_on_selector_all("#dk-tabs a", "as => as.map(a => a.getAttribute('href'))")
-    assert tabs == ["#/cio/mo-hinh/tham-so", "#/cio/mo-hinh/du-lieu", "#/cio/mo-hinh/do-chinh-xac", "#/cio/do-luong"]
+    assert tabs == ["#/cio/mo-hinh/tham-so", "#/cio/mo-hinh/du-lieu", "#/cio/mo-hinh/do-chinh-xac", "#/cio/mo-hinh/thu-nghiem", "#/cio/do-luong"]
     p.page.click("#ws-sheet-x")
     p.page.wait_for_function("document.querySelector('#ws-sheet').hidden && location.hash === '#/cio'")
     assert not p.problems()
@@ -135,7 +135,7 @@ def test_the_desk_on_a_phone_and_dark_and_the_customer_untouched(open_page):
     p = open_page()
     p.go("#/cio")
     p.page.wait_for_selector(".desk-cio")
-    p.go("#/client")
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.page.wait_for_selector(".wnode.k-family")
     assert p.page.locator(".desk").count() == 0 and p.page.locator(".ws").count() == 1
     assert p.page.is_hidden("#nav") and not p.problems()

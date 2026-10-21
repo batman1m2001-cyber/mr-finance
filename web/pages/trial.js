@@ -2,7 +2,7 @@
    own each morning, nothing approved; how much news came in, how much of the important news, how fast the agents
    were, and how often their shadow forecasts were right — overall, per segment, per factor, the buy/sell readings
    and the scenarios. GET /api/trial (written every 15 minutes to out/trial/<day>.json as well). */
-import {esc, get, pct} from "../core/core.js";
+import {esc, get, n as how, pct} from "../core/core.js";
 
 const H = [["3d", "3 ngày"], ["1w", "1 tuần"], ["3m", "3 tháng"]];
 const HL = Object.fromEntries(H);
@@ -10,7 +10,8 @@ const STATUS = {PENDING_APPROVAL: "chờ CIO", AGENT_ERROR: "agent lỗi", APPRO
 let horizon = "1w";
 
 const day = (s) => (s ? s.split("-").reverse().join("/") : "—");
-const share = (x, n) => (x == null || !n ? "—" : `${pct(x, false, 0)} <span class="muted small">(${n})</span>`);
+// a rate and how many it was counted over; it opens its “cách tính” (BRD-NFR-11)
+const share = (x, n, m) => (x == null || !n ? "—" : `${how(pct(x, false, 0), m, {horizon: HL[horizon], n: String(n)})} <span class="muted small">(${n})</span>`);
 const secs = (s) => (s == null ? "—" : s >= 90 ? `${(s / 60).toFixed(1).replace(".", ",")} phút` : `${Math.round(s)} giây`);
 const num = (x) => (x == null ? "—" : x.toLocaleString("vi-VN"));
 
@@ -29,7 +30,7 @@ export async function render(box) {
 
 function accRow(label, a) {
   return `<tr><td>${label}</td><td class="num">${a.kept}</td><td class="num">${a.n}</td>
-    <td class="num">${share(a.direction_hit, a.direction_n)}</td><td class="num">${share(a.coverage, a.n)}</td></tr>`;
+    <td class="num">${share(a.direction_hit, a.direction_n, "trial.direction")}</td><td class="num">${share(a.coverage, a.n, "trial.coverage")}</td></tr>`;
 }
 
 function accTable(rows) {
@@ -50,8 +51,8 @@ function replay(r, d) {
     ${accTable([accRow("<b>Tất cả</b>", a),
       ...Object.entries(d.segments).map(([k, l]) => accRow(esc(l), a.by_segment[k])),
       ...(vn ? [accRow("<b>VN-Index</b>", vn)] : [])])}
-    <p class="small mt-xs">Mua · bán · giữ: ${calls.map(x => `${esc(x.label)} ${share(x.share, x.n)}`).join(" · ")}.
-      Kịch bản: ${sc && sc.judged ? `thị trường đi theo kịch bản agent cho là khả năng cao nhất ${sc.main_taken}/${sc.judged} lần (${pct(sc.share, false, 0)})` : "chưa đủ yếu tố đã chấm"}.</p>
+    <p class="small mt-xs">Mua · bán · giữ: ${calls.map(x => `${esc(x.label)} ${share(x.share, x.n, "trial.call")}`).join(" · ")}.
+      Kịch bản: ${sc && sc.judged ? `thị trường đi theo kịch bản agent cho là khả năng cao nhất ${sc.main_taken}/${sc.judged} lần (${share(sc.share, sc.judged, "trial.scenario")})` : "chưa đủ yếu tố đã chấm"}.</p>
   </section>`;
 }
 
@@ -69,8 +70,8 @@ function paint(box, d) {
       <div>${seg}</div></div>
 
     <div class="kpis">
-      ${kpi("Tin thu thập", num(c.items), avg != null ? `~${num(avg)} tin/ngày · ${pct(c.items ? c.typed / c.items : 0, false, 0)} có loại sự kiện` : "chưa có tin")}
-      ${kpi("Tin quan trọng thu được", r.share != null ? pct(r.share, false, 0) : "—", `${r.collected}/${r.important} tin của nguồn đối chiếu · mục tiêu ${pct(r.target, false, 0)} (KPI-02)`)}
+      ${kpi("Tin thu thập", num(c.items), avg != null ? `~${num(avg)} tin/ngày · ${how(pct(c.items ? c.typed / c.items : 0, false, 0), "trial.typed", {items: num(c.items)})} có loại sự kiện` : "chưa có tin")}
+      ${kpi("Tin quan trọng thu được", r.share != null ? how(pct(r.share, false, 0), "trial.recall", {collected: String(r.collected), important: String(r.important)}) : "—", `${r.collected}/${r.important} tin của nguồn đối chiếu · mục tiêu ${how(pct(r.target, false, 0), "trial.recall_target")} (KPI-02)`)}
       ${kpi("Sự kiện · bản nháp", `${runs.events} · ${runs.drafts}`, runs.errors.length ? `<span class="bad-text">${runs.errors.length} lần lỗi</span>` : "không lần nào lỗi")}
       ${kpi("Agent mỗi sự kiện", secs(runs.agent_s_p50), `trung vị · lâu nhất ${secs(runs.agent_s_max)} · tin vào hộp sau ${c.ingest_lag_min_p50 == null ? "—" : `${Math.round(c.ingest_lag_min_p50)} phút`}`)}
     </div>
@@ -90,12 +91,12 @@ function paint(box, d) {
       <p class="small">“Mua” khi mức biến động kỳ vọng lớn hơn một phần tư biến động thông thường của kỳ, “bán” khi nhỏ hơn âm mức đó, còn lại “giữ”; đúng khi thị trường đi theo (giữ: đi không quá mức đó).</p>
       <div class="scrollx"><table class="table"><thead><tr><th>Tài sản</th><th class="num">Mua</th><th class="num">Bán</th><th class="num">Giữ</th><th class="num">Đã chấm</th><th class="num">Đúng</th></tr></thead><tbody>
         ${calls.map(x => `<tr><td>${esc(x.label)}</td><td class="num">${x.calls["mua"] || 0}</td><td class="num">${x.calls["bán"] || 0}</td><td class="num">${x.calls["giữ"] || 0}</td>
-          <td class="num">${x.n}</td><td class="num">${share(x.share, x.n)}</td></tr>`).join("")}
+          <td class="num">${x.n}</td><td class="num">${share(x.share, x.n, "trial.call")}</td></tr>`).join("")}
       </tbody></table></div>
     </section>
 
     <section class="panel mt"><h3>Kịch bản <span class="hint">${HL[horizon]}</span></h3>
-      <p class="small">${sc && sc.judged ? `Trong ${sc.judged} bản nháp đã chấm đủ, thị trường đi theo kịch bản agent cho là khả năng cao nhất <b>${sc.main_taken} lần</b> (${pct(sc.share, false, 0)})${sc.tied ? `; ${sc.tied} lần hai kịch bản ngang nhau` : ""}.`
+      <p class="small">${sc && sc.judged ? `Trong ${sc.judged} bản nháp đã chấm đủ, thị trường đi theo kịch bản agent cho là khả năng cao nhất <b>${sc.main_taken} lần</b> (${how(pct(sc.share, false, 0), "trial.scenario", {horizon: HL[horizon], n: String(sc.judged)})})${sc.tied ? `; ${sc.tied} lần hai kịch bản ngang nhau` : ""}.`
         : "Chưa bản nháp nào có đủ yếu tố đã chấm (cần ít nhất 3 yếu tố có hướng)."}
         Kịch bản thị trường đi theo là kịch bản có hướng trùng với nhiều yếu tố đã chấm nhất.</p>
     </section>

@@ -2,15 +2,17 @@
    in the centre (or its list, or the Bảng số liệu: the client's dashboard), the dock (Trợ lý · Thông tin) on the right, the strip
    of overview cards at the bottom. The shell mounts it once for the client and hands it each route; a route changes the lens and opens or closes a sheet (an
    existing page module, drawn by the shell into #page, which lives inside the sheet). Nothing here re-renders the
-   graph on navigation. */
+   graph on navigation.
+   The classic app (BUSINESS_FEEDBACK_1021_PLAN B3.1, B3.2): each page under its section's tabs, with no way "back to
+   the graph" (it is one of Tổng quan's tabs); the dock closed until the floating "Hỏi trợ lý" button opens it. */
 import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {UNIT_WORD, createGraph} from "./graph.js?v=20261021t6";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261021t6";
-import {LENS, PARTS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261021t6";
-import {mount as mountMoney} from "./money.js?v=20261021t9";
+import {render as inspect} from "./inspector.js?v=20261021b3";
+import {LENS, SECTIONS, SHEETS, TOOLBAR, resolve} from "./lenses.js?v=20261021b3";
+import {mount as mountMoney} from "./money.js?v=20261021b3";
 import {mount as mountStrip} from "./strip.js?v=20261021t3";
 
 const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
@@ -20,12 +22,12 @@ export function mount(main, {client, scope, go, page}) {
   root.className = "ws";
   root.innerHTML = `
     <nav class="ws-bar" aria-label="Các góc nhìn">${TOOLBAR.map(t => `<a class="ws-tool" href="${t.href}" data-tool="${t.id}" aria-label="${esc(t.label)}" data-tip="${esc(t.tip)}">
-      ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.short || t.label)}</span></a>`).join("")}
-      <button type="button" class="ws-tool ws-ask" aria-label="Hỏi trợ lý">${icon("sparkles", {size: 20})}<span class="ws-tool-l">Trợ lý</span></button></nav>
+      ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.short || t.label)}</span></a>`).join("")}</nav>
+    <button type="button" class="ws-fab ws-ask" id="ws-fab" aria-controls="ws-dock" aria-expanded="false">${icon("sparkles", {size: 18})}<span>Hỏi trợ lý</span></button>
     <section class="ws-center" aria-label="Đồ thị tài chính">
       <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Tổng quan tài chính</h1>
         <p class="ws-sub small muted" id="ws-sub"></p>
-        <div class="ws-pages" id="ws-pages"></div>
+        <nav class="ws-pages" id="ws-pages" aria-label="Các trang của mục"></nav>
         <div class="ws-scn" id="ws-scn" role="region" aria-label="Kịch bản đang bật" aria-live="polite" hidden></div></div>
         <div class="ws-legend small" aria-label="Chú giải"><span class="lg c-actual">Thực tế</span><span class="lg c-estimate">Ước tính · tác động</span><span class="lg c-hypothetical">Giả định</span><span class="lg c-pulse" title="Xung sáng chạy khi trợ lý đọc dữ liệu theo đường đó; không phải một giao dịch">Xung sáng: trợ lý đọc dữ liệu, không phải giao dịch</span></div>
       </div>
@@ -42,8 +44,7 @@ export function mount(main, {client, scope, go, page}) {
       </div>
       <div class="ws-strip" id="ws-strip"></div>
       <section class="ws-sheet" id="ws-sheet" hidden aria-labelledby="ws-sheet-t">
-        <header class="ws-sheet-h"><button type="button" class="linkbtn" id="ws-sheet-back">${icon("chevron", {size: 16})} Đồ thị</button>
-          <b id="ws-sheet-t"></b><button type="button" class="iconbtn" id="ws-sheet-x" aria-label="Đóng">✕</button></header>
+        <header class="ws-sheet-h"><b class="sr-only" id="ws-sheet-t"></b><nav class="ws-pages" id="ws-sheet-tabs" aria-label="Các trang của mục"></nav></header>
         <div class="ws-sheet-b" id="ws-sheet-b"></div>
       </section>
     </section>
@@ -53,7 +54,8 @@ export function mount(main, {client, scope, go, page}) {
       <div class="ws-tabs" role="tablist"><button type="button" role="tab" id="ws-tab-a" aria-selected="true" aria-controls="ws-pane-a">${icon("sparkles", {size: 15})} Trợ lý</button>
         <button type="button" role="tab" id="ws-tab-i" aria-selected="false" aria-controls="ws-pane-i">${icon("info", {size: 15})} Thông tin</button>
         <button type="button" class="iconbtn ws-dockreset" id="ws-dock-reset" title="Về độ rộng mặc định" aria-label="Về độ rộng mặc định của bảng" hidden>${icon("undo", {size: 15})}</button>
-        <button type="button" class="iconbtn ws-fold" id="ws-fold" aria-label="Thu gọn bảng bên" aria-expanded="true">${icon("chevron", {size: 15})}</button></div>
+        <button type="button" class="iconbtn ws-fold" id="ws-fold" aria-label="Thu gọn bảng bên" aria-expanded="true">${icon("chevron", {size: 15})}</button>
+        <button type="button" class="iconbtn ws-close" id="ws-close" aria-label="Đóng trợ lý">✕</button></div>
       <div class="ws-pane" id="ws-pane-a" role="tabpanel" aria-labelledby="ws-tab-a"></div>
       <div class="ws-pane ws-ins" id="ws-pane-i" role="tabpanel" aria-labelledby="ws-tab-i" hidden></div>
     </aside>`;
@@ -62,13 +64,14 @@ export function mount(main, {client, scope, go, page}) {
   $("#ws-sheet-b", root).appendChild($("#page"));
 
   const kindLabel = (k) => ((graph.data() || {kinds: []}).kinds.find(x => x.kind === k) || {label: k}).label;
-  let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph", asOf = null, feed = null;
+  // view: what the centre shows; graphView: what the graph's page shows (Toàn cảnh's dashboard is not its choice)
+  let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph", graphView = "graph", asOf = null, feed = null;
   const drawSub = () => { $("#ws-sub", root).textContent = `${lens.sub}${asOf ? ` · số liệu ngày ${asOf}` : ""}`; };
-  const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n || graph.selectedEdge()) tab("i"); $("[data-z=focus]", root).disabled = !n; }});
+  const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n || graph.selectedEdge()) { tab("i"); openDock(true, false); } $("[data-z=focus]", root).disabled = !n; }});
   const money = mountMoney($("#ws-cashview", root), {client, scope});
   // the Bảng số liệu at a section (and the month's flows at a month): from a strip card, the inspector, the feed
   const board = (part, month, lensId) => {
-    if (sheet || lensId && lensId !== lens.id) go(lensRoute(lensId || lens.id));
+    if (sheet || lensId && lensId !== lens.id) go(`#/client/xem/${lensId || lens.id}`);
     return setView("money", part).then(() => (month ? money.month(month) : null));
   };
   const strip = mountStrip($("#ws-strip", root), {client, scope, board: (part, id) => board(part, null, id)});
@@ -82,12 +85,24 @@ export function mount(main, {client, scope, go, page}) {
     try { sessionStorage.setItem("mf.ws.tab", which); } catch (_) { /* private mode */ }
   };
   $("#ws-tab-a", root).onclick = () => tab("a");
-  $(".ws-ask", root).onclick = () => {  // a phone: the dock is below the graph — go to it, ready to type
+  // open or closed (B3.2): kept per person in this browser; closed until asked. A phone opens it over the page from
+  // its button (over), below the page for a node picked (the graph stays usable), and always starts closed.
+  const phone = () => matchMedia("(max-width: 760px)").matches;
+  const dockKey = () => `mf.ws.dock.${client()}`;
+  function openDock(on, keep = true, over = false) {
+    root.classList.toggle("dock-off", !on);
+    root.classList.toggle("dock-over", on && over && phone());
+    $("#ws-fab", root).setAttribute("aria-expanded", String(on));
+    if (keep) try { localStorage.setItem(dockKey(), on ? "open" : "closed"); } catch (_) { /* private mode */ }
+    requestAnimationFrame(() => { frame.resize(); graph.redraw(); money.resize(); });
+  }
+  $("#ws-fab", root).onclick = () => {  // the panel beside the page (a phone: over it), ready to type
+    openDock(true, true, true);
     tab("a");
-    $(".ws-dock", root).scrollIntoView({behavior: reduced() ? "auto" : "smooth", block: "start"});
     const q = document.querySelector("#cp-q");
     if (q) q.focus({preventScroll: true});
   };
+  $("#ws-close", root).onclick = () => { openDock(false); $("#ws-fab", root).focus(); };
   $("#ws-tab-i", root).onclick = () => tab("i");
   const frame = dockFrame(root, {canvas: $("#ws-canvas", root), hold: (on) => graph.hold(on), redraw: () => graph.redraw()});
 
@@ -160,8 +175,11 @@ export function mount(main, {client, scope, go, page}) {
   };
   for (const b of root.querySelectorAll("[data-u]")) b.onclick = () => setUnit(b.dataset.u);
   for (const b of root.querySelectorAll("[data-u]")) b.setAttribute("aria-pressed", String(b.dataset.u === graph.unit()));
-  const setView = (v, part) => {
+  // keep: the graph page's own choice (its buttons, a strip card), kept for the tab; Toàn cảnh's dashboard is not
+  const setView = (v, part, keep = true) => {
     view = v;
+    if (keep) graphView = v;
+    root.classList.toggle("home", !keep && v === "money");  // Toàn cảnh: the dashboard as a page, not one of the graph's views
     root.dataset.view = v;
     for (const b of root.querySelectorAll("#ws-view [data-v]")) b.setAttribute("aria-pressed", String(b.dataset.v === v));
     $("#ws-canvas", root).hidden = v !== "graph";
@@ -169,8 +187,8 @@ export function mount(main, {client, scope, go, page}) {
     $("#ws-cashview", root).hidden = v !== "money";
     graph.sleep("view", v !== "graph");  // the graph out of sight: its motion stops
     if (v === "list") drawList();
-    try { sessionStorage.setItem("mf.ws.view", v); } catch (_) { /* private mode */ }
-    for (const b of root.querySelectorAll("#ws-pages [data-part]")) b.hidden = v === "money";
+    if (keep) try { sessionStorage.setItem("mf.ws.view", v); } catch (_) { /* private mode */ }
+    drawPages();
     if (v !== "money") return Promise.resolve();
     // a section asked for: at the top of the view (the view scrolls, not the page)
     return money.load().then(() => { money.resize(); money.at(part, !reduced()); });
@@ -222,25 +240,25 @@ export function mount(main, {client, scope, go, page}) {
     if (view === "list") drawList();
   }
 
-  // the lens's own pages, and its numbers in the Bảng số liệu, under its title: where “Xem đầy đủ” was (T3)
+  // the section's tabs (B3.1), over the graph's page and over a sheet: Tổng quan's are Toàn cảnh and Đồ thị tài chính;
+  // a graph at another lens (a strip card, a citation, the assistant) is the section's page "on the graph" for now
   function drawPages() {
-    const el = $("#ws-pages", root);
-    const pages = lens.sheets.map(id => `<a class="btn sm" href="${SHEETS[id].route}">${esc(SHEETS[id].label)} ${icon("arrow", {size: 13})}</a>`);
-    if (lens.part && lens.id !== "tong-quan") pages.push(`<button type="button" class="btn sm" data-part="${lens.part}"${view === "money" ? " hidden" : ""}>${esc(PARTS[lens.part])} trong Bảng số liệu ${icon("arrow", {size: 13})}</button>`);
-    el.innerHTML = pages.join("");
-    el.hidden = !pages.length;  // (the numbers' button hides while the Bảng số liệu is shown)
-    for (const b of el.querySelectorAll("[data-part]")) b.onclick = () => board(b.dataset.part);
+    const onGraph = !sheet, s = SECTIONS[sheet ? (SHEETS[sheet].lens || sheet) : lens.id] || {tabs: []};  // Bộ nhớ: none
+    const here = (href, v) => (sheet ? href === SHEETS[sheet].route : !!v && (v === "money") === (view === "money"));
+    const tabs = s.tabs.map(([label, href, v]) => [label, href, v || null, here(href, v)]);
+    if (onGraph && !tabs.some(t => t[3])) tabs.push([view === "money" ? "Trong Bảng số liệu" : "Trên đồ thị", `#/client/xem/${lens.id}`, null, true]);
+    for (const el of [$("#ws-pages", root), $("#ws-sheet-tabs", root)]) {
+      el.innerHTML = tabs.length > 1 ? tabs.map(([label, href, , on]) => `<a class="ws-page" href="${href}"${on ? ' aria-current="page"' : ""}>${esc(label)}</a>`).join("") : "";
+      el.hidden = tabs.length < 2;
+    }
   }
 
   function openSheet(id, param, focusKeys) {
     const s = SHEETS[id];
     go(param ? `${s.route}/${encodeURIComponent(param)}` : s.route, focusKeys || undefined);
   }
-  const closeSheet = () => go(lensRoute(lens.id));
-  $("#ws-sheet-x", root).onclick = closeSheet;
-  $("#ws-sheet-back", root).onclick = closeSheet;
-  const onKey = (e) => {  // Escape closes the sheet, unless it belongs to the Copilot, a drawer or a popup
-    if (e.key === "Escape" && sheet && !e.defaultPrevented && !e.target.closest(".ws-dock, .drawer, .pop, [role=dialog], input, textarea, select")) closeSheet();
+  const onKey = (e) => {  // Escape closes the dock opened over a phone's page (a sheet is a page now: it stays)
+    if (e.key === "Escape" && root.classList.contains("dock-over") && !e.defaultPrevented && !e.target.closest(".drawer, .pop, [role=dialog]")) openDock(false);
   };
   document.addEventListener("keydown", onKey);
 
@@ -262,6 +280,9 @@ export function mount(main, {client, scope, go, page}) {
   setTimeout(fit_, 600);  // once the header has its names (whoami, scope) and its final height
   try { tab(sessionStorage.getItem("mf.ws.tab") || "a"); } catch (_) { tab("a"); }
   try { const v = sessionStorage.getItem("mf.ws.view"); if (v === "list" || v === "money") setView(v); } catch (_) { /* private mode */ }
+  let kept = null, shown = null;
+  try { kept = localStorage.getItem(dockKey()); } catch (_) { /* private mode */ }
+  openDock(kept === "open" && !phone(), false);
 
   // ── the assistant's turn, as it happens (OWN-GW-06…10): each call answers one real event of the stream ──────────
   let lit = [];  // what the turn's steps named: kept marked when the answer completes
@@ -309,9 +330,18 @@ export function mount(main, {client, scope, go, page}) {
       const r = resolve(parts);
       await load();
       sheet = r.sheet;
+      const at = sheet || (r.part || r.home ? "home" : "graph");
+      if (at !== shown) {  // another page: at its top, as a page opens (a section asked for scrolls below)
+        if (shown && root.classList.contains("dock-over")) openDock(false, false);  // a phone: the page asked for, not the panel over it
+        shown = at;
+        $("#ws-sheet-b", root).scrollTop = 0;
+        $("#ws-cashview", root).scrollTop = 0;
+        if (phone()) scrollTo(0, 0);
+      }
       if (r.lens) setLens(r.lens);
       else setLens(lens.id);
-      if (r.part) await setView("money", r.part);  // Toàn cảnh's and Chi tiết's addresses: the dashboard (T4)
+      if (r.part || r.home) await setView("money", r.part, false);  // the home, Toàn cảnh's and Chi tiết's addresses: the dashboard (T4)
+      else if (!sheet && (r.view || graphView) !== view) await setView(r.view || graphView);  // the graph's page as it was left
       const el = $("#ws-sheet", root);
       el.hidden = !sheet;
       root.classList.toggle("sheeted", !!sheet);
@@ -319,7 +349,7 @@ export function mount(main, {client, scope, go, page}) {
       if (!sheet) return null;
       $("#ws-sheet-t", root).textContent = SHEETS[sheet].label;
       const s = SHEETS[sheet];
-      return {page: s.page, nav: s.nav, param: r.param};
+      return {page: s.page, nav: s.nav, param: r.param, board: s.board || null};
     },
     /* the scope or the client changed: new data, the same graph element */
     reload() { key = null; strip.reset(); money.reset(); return load(); },

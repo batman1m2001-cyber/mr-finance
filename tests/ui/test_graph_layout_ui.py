@@ -138,7 +138,7 @@ def test_every_lens_is_clear_idle_and_with_a_pick(open_page, size, active):
         keep = json.dumps({"ids": active, "params": {}})
         p.ctx.add_init_script(f"try {{ localStorage.setItem('mf.ws.scn.C01', {json.dumps(keep)}); }} catch (_) {{}}")
         p.page.reload()
-    p.go("#/client")
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.page.wait_for_selector(".wnode.k-family")
     if active:
         p.page.wait_for_selector(f'.wnode.live[data-n="SC:{active[-1]}"]', state="attached")
@@ -169,7 +169,7 @@ def test_every_lens_is_clear_idle_and_with_a_pick(open_page, size, active):
 def test_a_dense_graph_folds_instead_of_squeezing(open_page, size):
     p = open_page(size)
     dense(p, 3)
-    p.go("#/client")
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.page.wait_for_selector(".wnode.k-family")
     bad, folded = {}, 0
     for name in ("tong-quan", "tai-san", "tin"):
@@ -203,7 +203,7 @@ def test_a_large_screen_folds_as_the_reference_does(open_page):
     seen = {}
     for size in ("desktop", "large"):
         p = open_page(size)
-        p.go("#/client")
+        p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
         p.page.wait_for_selector(".wnode.k-family")
         lens(p, "tong-quan")
         seen[size] = p.page.evaluate(GROUPS)
@@ -245,7 +245,7 @@ def test_the_layout_holds_still(open_page):
     p = open_page()
     p.ctx.add_init_script(ANSWER)
     p.page.reload()  # the stub is installed on a new document only
-    p.go("#/client")
+    p.go("#/client/xem/tong-quan")  # the graph: a page of Tổng quan now (B3.1)
     p.page.wait_for_selector(".wnode.k-family")
     lens(p, "tong-quan")
     at = p.page.evaluate(PLACES)

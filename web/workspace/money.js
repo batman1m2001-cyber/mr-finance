@@ -4,8 +4,8 @@
    the reserve and the policy items. It replaces the client's Toàn cảnh and Chi tiết sheets; the drawing is
    pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
 import {esc} from "../core/core.js";
-import {render} from "../pages/detail.js?v=20261021t9";
-import {href} from "./lenses.js?v=20261021t6";
+import {render} from "../pages/detail.js?v=20261021b3";
+import {href} from "./lenses.js?v=20261021b3";
 
 export function mount(el, {client, scope}) {
   let key = null, board = {}, loading = null;

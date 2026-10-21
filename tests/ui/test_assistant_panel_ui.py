@@ -37,7 +37,7 @@ def test_the_divider_drags_the_dock_within_bounds_folds_it_and_keeps_it(open_pag
     assert abs(st["dock"] - 584) <= 2 and st["now"] == st["dock"] and st["reset"] and st["kept"] == str(st["dock"]), st
     assert st["box"] == max(720, st["canvas"]), st  # the graph laid out again for its new room, once
     st = drag(p, -2000)  # as wide as it goes: the graph keeps 420 px
-    assert st["dock"] == st["max"] == 720 and st["canvas"] >= 420, st  # 720 at most (1440 − 64 − 420 = 956 here)
+    assert st["dock"] == st["max"] == 720 and st["canvas"] >= 420, st  # 720 at most (1440 − 72 − 420 = 948 here)
     st = drag(p, 3000)  # past the narrow end: folded, the width asked for kept
     assert st["folded"] and st["dock"] == 48 and not st["reset"], st
     st = drag(p, -400)  # a folded dock dragged open
@@ -86,12 +86,12 @@ def test_a_narrower_window_clamps_a_kept_width_and_a_phone_has_no_divider(open_p
     p.go("#/client/xem/tong-quan")
     p.page.wait_for_selector(".wedge")
     p.page.focus("#ws-split")
-    p.page.keyboard.press("End")  # 720 at most, here 1440 − 64 − 420 = 956 → 720
+    p.page.keyboard.press("End")  # 720 at most, here 1440 − 72 − 420 = 948 → 720
     assert p.page.evaluate(DOCK)["dock"] == 720
     p.page.set_viewport_size({"width": 1100, "height": 800})
     p.page.wait_for_timeout(300)
     st = p.page.evaluate(DOCK)
-    assert st["dock"] == 1100 - 64 - 420 and st["canvas"] >= 420, st  # the graph keeps its room
+    assert st["dock"] == 1100 - 72 - 420 and st["canvas"] >= 420, st  # the graph keeps its room
     p.page.set_viewport_size({"width": 1440, "height": 900})
     p.page.wait_for_timeout(300)
     assert p.page.evaluate(DOCK)["dock"] == 720  # the width asked for, back when there is room
