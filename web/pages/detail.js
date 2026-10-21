@@ -5,23 +5,16 @@
    (six months past, 12/24/36 ahead) with large payments and recurring items, and the top news by impact. */
 import {internal, n, nAttrs, $, esc, pct, post, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
-import {hover} from "../charts/charts.js";
-import {donut, gauge} from "../charts/mini.js?v=20261016r2";
-import {cashSeries, cashflow, monthName, monthsText} from "../charts/money.js?v=20261016r4";
+import {gauge} from "../charts/mini.js?v=20261016r2";
+import {monthsText} from "../charts/money.js?v=20261016r4";
+import {cashBody, drawAlloc as allocInto, drawCash as cashInto} from "../charts/panels.js?v=20261021m1";
 
-const GROUP_COLOR = {
-  "Bất động sản": "var(--s1)", "Cổ phiếu": "var(--s2)", "Tiền & tiền gửi": "var(--s3)", "Vàng": "var(--s4)",
-  "Chứng chỉ quỹ": "var(--s5)", "Cổ phần DN": "var(--s6)", "Trái phiếu": "var(--s7)", "Tài sản số": "var(--s8)",
-};
-const GROUP_ICON = {"Bất động sản": "home", "Cổ phiếu": "stock", "Tiền & tiền gửi": "bank", "Vàng": "gold", "Chứng chỉ quỹ": "fund",
-  "Cổ phần DN": "business", "Trái phiếu": "bond", "Tài sản số": "crypto", "Bảo hiểm": "shield"};
 const STATUS = {ok: ["good", "An toàn"], near: ["warn", "Gần ngưỡng"], over: ["bad", "Vượt ngưỡng"], low: ["warn", "Thấp"], critical: ["bad", "Rất thấp"]};
 const TIERS = [
   {n: 1, title: "Our Wealth at Techcombank", vi: "Tại hệ sinh thái Techcombank", color: "var(--s1)", icon: "bank"},
   {n: 2, title: "Custody around the world", vi: "Lưu ký bên ngoài", color: "var(--s7)", icon: "link"},
   {n: 3, title: "Self-managed", vi: "Bạn tự quản lý", color: "var(--s4)", icon: "user"},
 ];
-const PAST = 6;
 const SEV = {high: "Cao", medium: "Trung bình", low: "Thấp"};
 const pill = (s) => `<span class="pill ${(STATUS[s] || [""])[0]}">${(STATUS[s] || ["", s])[1]}</span>`;
 const store = (k, v) => { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (_) { /* private mode */ } return null; };
@@ -77,16 +70,7 @@ export async function render(box, ctx) {
         <div class="small muted">Chi tiêu ${n(vnd(lq.spending_monthly), "spending.monthly")}/tháng · mốc an toàn: 6 tháng</div>
       </div>
       <div class="panel c12">
-        <h3>Dòng tiền · ${PAST} tháng qua và ${cf.months.length} tháng tới <span class="hint">dự báo ${cf.months.length} tháng tới: vào ${n(vnd(cf.total_in), "cashflow.forecast", {months: String(cf.months.length)})} · ra ${n(vnd(cf.total_out), "cashflow.forecast", {months: String(cf.months.length)})}</span>
-          <span class="seg" role="group" aria-label="Số tháng" style="margin-left:auto">${[12, 24, 36].map(n => `<button type="button" data-months="${n}" aria-pressed="${months === n}">${n} tháng</button>`).join("")}</span></h3>
-        <div class="legend"><span><i style="background:var(--in)"></i>Tiền vào</span><span><i style="background:var(--out)"></i>Tiền ra</span>
-          <span><i style="background:var(--in);opacity:.42"></i><i style="background:var(--out);opacity:.42"></i>Dự báo (màu nhạt)</span><span><b class="down">⚠</b> Khoản phải trả lớn</span></div>
-        <div id="cash" class="mt"></div>
-        <div class="cols mt">
-          <div class="c6"><div class="subhead">Khoản phải trả lớn</div>${cf.large.length ? `<ul class="warns">${cf.large.map(l => `<li>${icon("alert", {size: 14})}<span><b>${monthName(l.month)}</b> · ${esc(l.label)} · ${n(vnd(l.amount), "cashflow.large", {month: monthName(l.month)})}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản lớn nào trong ${cf.months.length} tháng tới.</p>`}</div>
-          <div class="c6"><div class="subhead">Khoản định kỳ tìm thấy trong giao dịch</div>
-            <div class="list">${cf.recurring.map(r => `<div class="kv"><span><span class="legend-dot" style="background:${r.direction === "in" ? "var(--in)" : "var(--out)"}"></span> ${esc(r.label)} <span class="muted small">· ${r.cadence === "monthly" ? "hằng tháng" : "theo kỳ"}</span></span><b>${n(`${r.direction === "in" ? "+" : "−"}${vnd(r.amount)}`, "cashflow.recurring")}</b></div>`).join("")}</div></div>
-        </div>
+        ${cashBody(cf, months)}
       </div>
       <div class="panel c12" id="news"></div>
     </div>`;
@@ -119,25 +103,9 @@ export async function render(box, ctx) {
     };
   };
 
-  // allocation: a donut and the table with profit against cost
-  const drawAlloc = () => {
-    const rows = d.allocation;
-    $("#alloc", box).innerHTML = `<div class="allocgrid"><div class="center">${donut(rows.map(a => ({key: a.group, value: a.value, color: GROUP_COLOR[a.group] || "var(--other)", label: `${a.group}: ${vnd(a.value)}, ${pct(a.share)}`})),
-        {size: 148, stroke: 20, center: vnd(rows.reduce((x, a) => x + a.value, 0)), sub: "tài sản", label: "Phân bổ tài sản", how: nAttrs("assets.total")})}</div>
-      <table class="table"><thead><tr><th>Loại tài sản</th><th class="r">Giá trị</th><th class="r">Tỷ trọng</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
-      ${rows.map(a => `<tr><td><span class="ic-chip sm" style="--tone:${GROUP_COLOR[a.group] || "var(--other)"}">${icon(GROUP_ICON[a.group] || "wallet", {size: 12})}</span> ${esc(a.group)}</td>
-        <td class="r">${n(vnd(a.value), "class.value")}</td><td class="r"><b>${n(pct(a.share, false, a.share < 0.1 ? 1 : 0), "class.share", {value: vnd(a.value), assets: vnd(nw.assets)})}</b></td>
-        <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${n(pct(a.return, true), "class.return", {pnl: vnd(a.pnl, true)})}</span>`}</td></tr>`).join("")}</tbody></table></div>`;
-    for (const s of box.querySelectorAll("#alloc .seg")) {
-      const a = rows.find(x => x.group === s.dataset.key);
-      hover(s, `<b>${esc(a.group)}</b><br>${vnd(a.value)} · ${pct(a.share)}`);
-    }
-  };
-
-  const drawCash = () => {
-    const host = $("#cash", box);
-    if (host && host.clientWidth) host.replaceChildren(cashflow(cashSeries(cf, PAST, cf.months.length), cf.large, host.clientWidth));
-  };
+  // allocation (a donut and the table with profit against cost) and the cash-flow chart: charts/panels.js
+  const drawAlloc = () => allocInto($("#alloc", box), d);
+  const drawCash = () => cashInto(box, cf);
 
   // the top policy and project items by the brief's own rules (ADR-0007, Q-03): labelled as such, not as news impact,
   // which is the engine's and lives on Tác động thị trường; all of them on Chi phí chính sách

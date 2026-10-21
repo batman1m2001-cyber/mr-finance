@@ -1,6 +1,7 @@
 /* The workspace's bottom strip (FEAT-40, OWN-GW-04): the Toàn cảnh cards, compact — net worth and its month change,
    the month's cash flow with six months, the allocation, the stress loss against the limit, the reserve. The same
-   numbers and “Cách tính” as Toàn cảnh (POST /api/dashboard, POST /api/flows); a card focuses its lens; “Thu gọn”
+   numbers and “Cách tính” as Toàn cảnh (POST /api/dashboard, POST /api/flows); a card focuses its lens, but the cash-flow and
+   allocation cards open the “Dòng tiền & phân bổ” view (owner, 2026-10-21); “Thu gọn”
    folds the strip to one line and is remembered. */
 import {n, nAttrs, CLASS_COLOR, ASSET_CLASS, $, esc, pct, post, signClass, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
@@ -10,7 +11,7 @@ const STATUS = {ok: ["good", "An toàn"], near: ["warn", "Gần ngưỡng"], ove
 const MONTH = (m) => `T${Number(m.slice(5))}/${m.slice(2, 4)}`;
 const GROUP = {cash: "deposit"};
 
-export function mount(el, {client, scope, lens}) {
+export function mount(el, {client, scope, lens, money}) {
   let key = null, data = null, folded = false;
   try { folded = localStorage.getItem("mf.ws.strip") === "folded"; } catch (_) { /* private mode */ }
   el.innerHTML = `<div class="ws-strip-h"><b>${icon("activity", {size: 14})} Tổng quan nhanh</b>
@@ -29,8 +30,8 @@ export function mount(el, {client, scope, lens}) {
   };
 
   const pill = (s) => `<span class="pill ${(STATUS[s] || [""])[0]}">${esc((STATUS[s] || ["", s])[1])}</span>`;
-  const card = (k, lensId, ic, tone, label, value, sub, viz = "") => `
-    <button type="button" class="kpi scard" data-lens="${lensId}" ${k ? `data-focus="${k}"` : ""} aria-label="${esc(label)}: mở góc nhìn">
+  const card = (k, lensId, ic, tone, label, value, sub, viz = "", part = "") => `
+    <button type="button" class="kpi scard" data-lens="${lensId}" ${k ? `data-focus="${k}"` : ""}${part ? ` data-money="${part}"` : ""} aria-label="${esc(label)}: ${part ? "xem Dòng tiền &amp; phân bổ" : "mở góc nhìn"}">
       <span class="pc-head"><span class="ic-chip sm" style="--tone:${tone}">${icon(ic, {size: 13})}</span><span class="k">${label}</span></span>
       <span class="pc-body"><span class="pc-main"><span class="v">${value}</span><span class="s">${sub}</span></span>${viz ? `<span class="pc-viz">${viz}</span>` : ""}</span></button>`;
 
@@ -57,10 +58,10 @@ export function mount(el, {client, scope, lens}) {
       card("kpi:net_worth", "tong-quan", "wallet", "var(--accent)", "Tài sản ròng", n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)}),
         `<span class="${signClass(nw.month_change)}">${nw.month_change >= 0 ? "▲" : "▼"} ${n(pct(nw.month_change_pct, true), "net_worth.month_change", chg)}</span> so với tháng trước`),
       card(`flow:${f.month}`, "dong-tien", "flow", "var(--in)", `Dòng tiền ${MONTH(f.month)}`, n(`${f.left >= 0 ? "+" : "−"}${vnd(Math.abs(f.left))}`, "flow.left", fio),
-        `vào ${n(vnd(f.total_in), "flow.in")} · ra ${n(vnd(f.total_out), "flow.out")}`, io),
+        `vào ${n(vnd(f.total_in), "flow.in")} · ra ${n(vnd(f.total_out), "flow.out")}`, io, "cash"),
       card("", "tai-san", "layers", "var(--s1)", "Phân bổ tài sản", n(vnd(assets), "assets.total"),
         top.slice(0, 2).map(([g, v]) => `${esc(gname(g))} ${pct(v / assets, false, 0)}`).join(" · "),
-        donut(top.map(([g, v]) => ({key: g, value: v, color: CLASS_COLOR[g] || "var(--other)", label: `${gname(g)}: ${vnd(v)}`})), {size: 46, stroke: 8, how: nAttrs("assets.total")})),
+        donut(top.map(([g, v]) => ({key: g, value: v, color: CLASS_COLOR[g] || "var(--other)", label: `${gname(g)}: ${vnd(v)}`})), {size: 46, stroke: 8, how: nAttrs("assets.total")}), "alloc"),
       card("kpi:risk", "rui-ro", "shield", "var(--warning)", "Rủi ro hiện tại", n(pct(rk.current), "risk.current", {loss: vnd(rk.stress_loss), net_worth: vnd(nw.value)}),
         `ngưỡng ${n(pct(rk.limit, false, 0), "risk.limit")} ${pill(rk.status)}`,
         gauge(rk.current, rk.limit, {status: rk.status, label: `Sụt giảm ước tính ${pct(rk.current)} so với ngưỡng ${pct(rk.limit, false, 0)}`})),
@@ -68,7 +69,7 @@ export function mount(el, {client, scope, lens}) {
         `đủ chi ${n(months, "liquidity.months", {value: vnd(liq.value), spending: vnd(liq.spending_monthly)})} ${pill(liq.status)}`,
         ring(share, {size: 40, color: "var(--s3)", label: `${pct(share, false, 0)} tổng tài sản`})),
     ].join("");
-    for (const b of body.querySelectorAll("[data-lens]")) b.addEventListener("click", (e) => { if (!e.target.closest("[data-metric]")) lens(b.dataset.lens); });
+    for (const b of body.querySelectorAll("[data-lens]")) b.addEventListener("click", (e) => { if (!e.target.closest("[data-metric]")) b.dataset.money ? money(b.dataset.money) : lens(b.dataset.lens); });
   }
 
   return {

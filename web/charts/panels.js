@@ -1,0 +1,53 @@
+/* The two money panels the business reads first (owner, 2026-10-21): allocation with profit against cost, and cash
+   flow — six months past and 12/24/36 ahead, with the large payments and the recurring items. One drawing for both
+   places they show: Chi tiết (pages/detail.js) and the workspace's “Dòng tiền & phân bổ” view (workspace/money.js).
+   Both take the dashboard (POST /api/dashboard, with ``months`` for the cash-flow horizon). */
+import {n, nAttrs, $, esc, pct, vnd} from "../core/core.js";
+import {icon} from "../core/icons.js?v=20261016r1";
+import {hover} from "./charts.js";
+import {donut} from "./mini.js?v=20261016r2";
+import {cashSeries, cashflow, monthName} from "./money.js?v=20261016r4";
+
+export const GROUP_COLOR = {
+  "Bất động sản": "var(--s1)", "Cổ phiếu": "var(--s2)", "Tiền & tiền gửi": "var(--s3)", "Vàng": "var(--s4)",
+  "Chứng chỉ quỹ": "var(--s5)", "Cổ phần DN": "var(--s6)", "Trái phiếu": "var(--s7)", "Tài sản số": "var(--s8)",
+};
+const GROUP_ICON = {"Bất động sản": "home", "Cổ phiếu": "stock", "Tiền & tiền gửi": "bank", "Vàng": "gold", "Chứng chỉ quỹ": "fund",
+  "Cổ phần DN": "business", "Trái phiếu": "bond", "Tài sản số": "crypto", "Bảo hiểm": "shield"};
+export const PAST = 6;
+
+/* allocation: a donut and the table with profit against cost, into ``el`` */
+export function drawAlloc(el, d) {
+  const rows = d.allocation, assets = d.net_worth.assets;
+  el.innerHTML = `<div class="allocgrid"><div class="center">${donut(rows.map(a => ({key: a.group, value: a.value, color: GROUP_COLOR[a.group] || "var(--other)", label: `${a.group}: ${vnd(a.value)}, ${pct(a.share)}`})),
+      {size: 148, stroke: 20, center: vnd(rows.reduce((x, a) => x + a.value, 0)), sub: "tài sản", label: "Phân bổ tài sản", how: nAttrs("assets.total")})}</div>
+    <table class="table"><thead><tr><th>Loại tài sản</th><th class="r">Giá trị</th><th class="r">Tỷ trọng</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
+    ${rows.map(a => `<tr><td><span class="ic-chip sm" style="--tone:${GROUP_COLOR[a.group] || "var(--other)"}">${icon(GROUP_ICON[a.group] || "wallet", {size: 12})}</span> ${esc(a.group)}</td>
+      <td class="r">${n(vnd(a.value), "class.value")}</td><td class="r"><b>${n(pct(a.share, false, a.share < 0.1 ? 1 : 0), "class.share", {value: vnd(a.value), assets: vnd(assets)})}</b></td>
+      <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${n(pct(a.return, true), "class.return", {pnl: vnd(a.pnl, true)})}</span>`}</td></tr>`).join("")}</tbody></table></div>`;
+  for (const s of el.querySelectorAll(".seg")) {
+    const a = rows.find(x => x.group === s.dataset.key);
+    if (a) hover(s, `<b>${esc(a.group)}</b><br>${vnd(a.value)} · ${pct(a.share)}`);
+  }
+}
+
+/* the cash-flow panel's inside: heading with the 12/24/36 switch, legend, the chart's host (#cash), large payments
+   and recurring items; the chart itself is drawn by drawCash once the host has its width */
+export function cashBody(cf, months) {
+  return `<h3>Dòng tiền · ${PAST} tháng qua và ${cf.months.length} tháng tới <span class="hint">dự báo ${cf.months.length} tháng tới: vào ${n(vnd(cf.total_in), "cashflow.forecast", {months: String(cf.months.length)})} · ra ${n(vnd(cf.total_out), "cashflow.forecast", {months: String(cf.months.length)})}</span>
+      <span class="seg" role="group" aria-label="Số tháng" style="margin-left:auto">${[12, 24, 36].map(m => `<button type="button" data-months="${m}" aria-pressed="${months === m}">${m} tháng</button>`).join("")}</span></h3>
+    <div class="legend"><span><i style="background:var(--in)"></i>Tiền vào</span><span><i style="background:var(--out)"></i>Tiền ra</span>
+      <span><i style="background:var(--in);opacity:.42"></i><i style="background:var(--out);opacity:.42"></i>Dự báo (màu nhạt)</span><span><b class="down">⚠</b> Khoản phải trả lớn</span></div>
+    <div id="cash" class="mt"></div>
+    <div class="cols mt">
+      <div class="c6"><div class="subhead">Khoản phải trả lớn</div>${cf.large.length ? `<ul class="warns">${cf.large.map(l => `<li>${icon("alert", {size: 14})}<span><b>${monthName(l.month)}</b> · ${esc(l.label)} · ${n(vnd(l.amount), "cashflow.large", {month: monthName(l.month)})}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản lớn nào trong ${cf.months.length} tháng tới.</p>`}</div>
+      <div class="c6"><div class="subhead">Khoản định kỳ tìm thấy trong giao dịch</div>
+        <div class="list">${cf.recurring.map(r => `<div class="kv"><span><span class="legend-dot" style="background:${r.direction === "in" ? "var(--in)" : "var(--out)"}"></span> ${esc(r.label)} <span class="muted small">· ${r.cadence === "monthly" ? "hằng tháng" : "theo kỳ"}</span></span><b>${n(`${r.direction === "in" ? "+" : "−"}${vnd(r.amount)}`, "cashflow.recurring")}</b></div>`).join("")}</div></div>
+    </div>`;
+}
+
+/* the chart, at the width its host is shown at (nothing while the host is hidden) */
+export function drawCash(box, cf) {
+  const host = $("#cash", box);
+  if (host && host.clientWidth) host.replaceChildren(cashflow(cashSeries(cf, PAST, cf.months.length), cf.large, host.clientWidth));
+}

@@ -1,6 +1,6 @@
 /* The Customer's workspace (FEAT-40, ADR-0035, OWN-GW-01…05): one page — the toolbar of lenses on the left, the graph
-   in the centre, the dock (Trợ lý · Thông tin) on the right, the strip of overview cards at the bottom. The shell
-   mounts it once for the client and hands it each route; a route changes the lens and opens or closes a sheet (an
+   in the centre (or its list, or the “Dòng tiền & phân bổ” view), the dock (Trợ lý · Thông tin) on the right, the strip
+   of overview cards at the bottom. The shell mounts it once for the client and hands it each route; a route changes the lens and opens or closes a sheet (an
    existing page module, drawn by the shell into #page, which lives inside the sheet). Nothing here re-renders the
    graph on navigation. */
 import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
@@ -10,7 +10,8 @@ import {UNIT_WORD, createGraph} from "./graph.js?v=20261020t1";
 import {dockFrame} from "./dock.js?v=20261018m0";
 import {render as inspect} from "./inspector.js?v=20261020t1";
 import {LENS, SHEETS, TOOLBAR, lensRoute, resolve} from "./lenses.js?v=20261018p3";
-import {mount as mountStrip} from "./strip.js?v=20261018p3";
+import {mount as mountMoney} from "./money.js?v=20261021m1";
+import {mount as mountStrip} from "./strip.js?v=20261021m1";
 
 const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
 
@@ -29,9 +30,10 @@ export function mount(main, {client, scope, go, page}) {
       </div>
       <div class="ws-canvas" id="ws-canvas"></div>
       <div class="ws-list" id="ws-list" hidden></div>
+      <div class="ws-cashview" id="ws-cashview" hidden></div>
       <div class="ws-ctl" role="toolbar" aria-label="Điều khiển đồ thị">
         <div class="seg" role="group" aria-label="Thay đổi trên các cạnh: so với hôm qua, tháng trước hay năm trước" id="ws-unit">${UNITS.map(([u, l]) => `<button type="button" data-u="${u}" aria-pressed="false" title="${esc(UNIT_WORD[u])}">${l}</button>`).join("")}</div>
-        <div class="seg" role="group" aria-label="Cách xem"><button type="button" data-v="graph" aria-pressed="true">Đồ thị</button><button type="button" data-v="list" aria-pressed="false">Danh sách</button></div>
+        <div class="seg" role="group" aria-label="Cách xem" id="ws-view"><button type="button" data-v="graph" aria-pressed="true">Đồ thị</button><button type="button" data-v="list" aria-pressed="false">Danh sách</button><button type="button" data-v="money" aria-pressed="false">Dòng tiền &amp; phân bổ</button></div>
         <button type="button" class="iconbtn" data-z="in" aria-label="Phóng to">+</button>
         <button type="button" class="iconbtn" data-z="out" aria-label="Thu nhỏ">−</button>
         <button type="button" class="iconbtn" data-z="focus" aria-label="Tập trung vào mục đang chọn (f)" title="Tập trung (f)" disabled>${icon("target", {size: 15})}</button>
@@ -61,7 +63,8 @@ export function mount(main, {client, scope, go, page}) {
   const kindLabel = (k) => ((graph.data() || {kinds: []}).kinds.find(x => x.kind === k) || {label: k}).label;
   let lens = LENS["tong-quan"], sheet = null, key = null, loading = null, view = "graph";
   const graph = createGraph($("#ws-canvas", root), {onSelect: (n) => { drawInspector(); if (n || graph.selectedEdge()) tab("i"); $("[data-z=focus]", root).disabled = !n; }});
-  const strip = mountStrip($("#ws-strip", root), {client, scope, lens: (id) => go(lensRoute(id))});
+  const money = mountMoney($("#ws-cashview", root), {client, scope});
+  const strip = mountStrip($("#ws-strip", root), {client, scope, lens: (id) => go(lensRoute(id)), money: (part) => { if (sheet) go(lensRoute(lens.id)); setView("money", part); }});
 
   // ── the dock ──────────────────────────────────────────────────────────────────────────────────────
   const tab = (which) => {
@@ -141,7 +144,7 @@ export function mount(main, {client, scope, go, page}) {
   for (const b of root.querySelectorAll("[data-z]")) {
     b.onclick = () => (b.dataset.z === "in" ? graph.zoom(1.2) : b.dataset.z === "out" ? graph.zoom(1 / 1.2) : b.dataset.z === "focus" ? graph.focus() : graph.fit());
   }
-  for (const b of root.querySelectorAll("[data-v]")) b.onclick = () => setView(b.dataset.v);
+  for (const b of root.querySelectorAll("#ws-view [data-v]")) b.onclick = () => setView(b.dataset.v);
   const setUnit = (u) => {
     graph.setUnit(u);
     for (const b of root.querySelectorAll("[data-u]")) b.setAttribute("aria-pressed", String(b.dataset.u === graph.unit()));
@@ -149,12 +152,20 @@ export function mount(main, {client, scope, go, page}) {
   };
   for (const b of root.querySelectorAll("[data-u]")) b.onclick = () => setUnit(b.dataset.u);
   for (const b of root.querySelectorAll("[data-u]")) b.setAttribute("aria-pressed", String(b.dataset.u === graph.unit()));
-  const setView = (v) => {
+  const setView = (v, part) => {
     view = v;
-    for (const b of root.querySelectorAll("[data-v]")) b.setAttribute("aria-pressed", String(b.dataset.v === v));
+    root.dataset.view = v;
+    for (const b of root.querySelectorAll("#ws-view [data-v]")) b.setAttribute("aria-pressed", String(b.dataset.v === v));
     $("#ws-canvas", root).hidden = v !== "graph";
     $("#ws-list", root).hidden = v !== "list";
+    $("#ws-cashview", root).hidden = v !== "money";
+    graph.sleep("view", v !== "graph");  // the graph out of sight: its motion stops
     if (v === "list") drawList();
+    if (v === "money") money.load().then(() => {  // a strip card: its panel at the top of the view (the view scrolls, not the page)
+      const box = $("#ws-cashview", root), el = part && $(`#ws-${part}`, root);
+      if (el) box.scrollTo({top: box.scrollTop + el.closest(".panel").getBoundingClientRect().top - box.getBoundingClientRect().top - 8, behavior: reduced() ? "auto" : "smooth"});
+    });
+    try { sessionStorage.setItem("mf.ws.view", v); } catch (_) { /* private mode */ }
   };
   const drawList = () => {
     const g = graph.data();
@@ -181,6 +192,7 @@ export function mount(main, {client, scope, go, page}) {
       $("#ws-sub", root).textContent = `Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn · số liệu ngày ${overview.as_of}`;
       drawInspector();
       strip.load();
+      if (view === "money") money.load();
     })().catch((e) => { key = null; $("#ws-sub", root).textContent = `Không tải được đồ thị: ${e.message}`; });
     return loading;
   }
@@ -221,10 +233,11 @@ export function mount(main, {client, scope, go, page}) {
   const fit_ = () => {
     root.style.setProperty("--ws-top", `${Math.round(($(".shell-top") || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom)}px`);
   };
-  window.addEventListener("resize", () => { fit_(); frame.resize(); });  // the graph redraws from its own ResizeObserver; a kept width still leaves the graph its room
+  window.addEventListener("resize", () => { fit_(); frame.resize(); money.resize(); });  // the graph redraws from its own ResizeObserver; a kept width still leaves the graph its room
   fit_();
   setTimeout(fit_, 600);  // once the header has its names (whoami, scope) and its final height
   try { tab(sessionStorage.getItem("mf.ws.tab") || "a"); } catch (_) { tab("a"); }
+  try { const v = sessionStorage.getItem("mf.ws.view"); if (v === "list" || v === "money") setView(v); } catch (_) { /* private mode */ }
 
   // ── the assistant's turn, as it happens (OWN-GW-06…10): each call answers one real event of the stream ──────────
   let lit = [];  // what the turn's steps named: kept marked when the answer completes
@@ -284,7 +297,7 @@ export function mount(main, {client, scope, go, page}) {
       return {page: s.page, nav: s.nav, param: r.param};
     },
     /* the scope or the client changed: new data, the same graph element */
-    reload() { key = null; strip.reset(); return load(); },
+    reload() { key = null; strip.reset(); money.reset(); return load(); },
     destroy() { document.removeEventListener("keydown", onKey); main.appendChild($("#page")); root.remove(); },  // #page back where the other roles draw
   };
 }
