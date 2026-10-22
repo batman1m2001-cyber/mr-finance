@@ -1,7 +1,7 @@
 """The central wealth core (OWN-GW-20…25, GRAPH_CORE_LAYOUT_PLAN.md §3): its ports light when a spark reaches the rim
 (income) or leaves it (spending, repayments), read off the animations' own clocks; the out-flows leave on the income's
 beat; its states follow the real events (selected, a tool running, the answer streaming, a flow picked); nothing of it
-moves under reduced motion; the net worth keeps ≥ 7:1 contrast against the gold core behind it, whatever the light does."""
+moves under reduced motion; the net worth keeps ≥ 7:1 contrast against the platinum core behind it, whatever the light does."""
 
 import io
 
@@ -153,7 +153,7 @@ def test_the_net_worth_stays_readable_whatever_the_light(open_page, theme):
     p.go("#/client/xem/tong-quan")
     p.page.wait_for_selector(".wnode.k-family .wme-v")
     box = p.page.locator(".wme-v").bounding_box()
-    fill = p.page.evaluate("getComputedStyle(document.querySelector('.ws-svg .wme-v')).fill")  # the gold coin's dark ink
+    fill = p.page.evaluate("getComputedStyle(document.querySelector('.ws-svg .wme-v')).fill")  # the platinum coin's dark ink
     ink = luminance([int(x) for x in fill[fill.index("(") + 1 : fill.index(")")].split(",")[:3]])
     p.page.add_style_tag(content=".ws-svg .wme-v { opacity: 0 !important; }")  # the background behind the figure
     contrast = 99.0

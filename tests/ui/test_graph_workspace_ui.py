@@ -187,6 +187,28 @@ def test_keyboard_and_phone(open_page):
     assert not phone.problems()  # no sideways scroll, no error
 
 
+VIEW = "document.querySelector('.ws-world').getAttribute('transform')"
+
+
+def test_the_wheel_moves_the_graph_and_ctrl_wheel_zooms_it(open_page):
+    """A wheel scrolls the view as a page would (the owner's habit: it zoomed before); Ctrl + wheel, or a trackpad's
+    pinch (a wheel with ctrlKey), zooms."""
+    p = open_page()
+    p.go("#/client/xem/tong-quan")
+    p.page.wait_for_selector(".wnode.k-family")
+    box = p.page.locator(".ws-svg").bounding_box()
+    p.page.mouse.move(box["x"] + box["width"] * 0.3, box["y"] + box["height"] * 0.3)
+    before = p.page.evaluate(VIEW)
+    p.page.mouse.wheel(0, 200)
+    p.page.wait_for_function(f"{VIEW} !== {before!r}")
+    moved = p.page.evaluate(VIEW)
+    assert moved.endswith("scale(1.000)") and moved != before  # moved, not zoomed
+    p.page.keyboard.down("Control")
+    p.page.mouse.wheel(0, -100)
+    p.page.keyboard.up("Control")
+    p.page.wait_for_function(f"{VIEW} !== {moved!r}")
+    assert p.page.evaluate(VIEW).endswith("scale(1.120)")  # one notch in
+
 TIMED = """(() => { const real = window.fetch;
   window.fetch = (url, opts) => {
     if (!String(url).includes('/api/assistant/stream')) return real(url, opts);

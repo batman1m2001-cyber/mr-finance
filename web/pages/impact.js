@@ -1,7 +1,7 @@
 /* Tác động tin: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
+import {internal, ASSET_CLASS, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
@@ -77,7 +77,8 @@ export async function render(box, ctx) {
     for (const r of box.querySelectorAll("[data-tl]")) r.classList.toggle("on", r.dataset.tl === it.run_id);
     drawGoals($("#goal-impact", box), it);
   };
-  diverging($("#by-class", box), Object.entries(classes).map(([k, v]) => ({label: ASSET_CLASS[k] || k, value: v, color: CLASS_COLOR[k]})),
+  // a gain or a loss, as its figure is written (a class colour read as a loss on the orange of Cổ phiếu)
+  diverging($("#by-class", box), Object.entries(classes).map(([k, v]) => ({label: ASSET_CLASS[k] || k, value: v})),
     {label: "Đóng góp theo nhóm tài sản"});
   $("#events", box).innerHTML = items.map(i => {
     const e = i.horizons["3m"].expected;

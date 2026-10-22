@@ -10,9 +10,9 @@ import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {UNIT_WORD, createGraph} from "./graph.js?v=20261021t6";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261021b3";
-import {LENS, SECTIONS, SHEETS, TOOLBAR, resolve} from "./lenses.js?v=20261021b3";
-import {mount as mountMoney} from "./money.js?v=20261021b3";
+import {render as inspect} from "./inspector.js?v=20261022p1";
+import {LENS, SECTIONS, SHEETS, TOOLBAR, resolve} from "./lenses.js?v=20261022p1";
+import {mount as mountMoney} from "./money.js?v=20261022p1";
 import {mount as mountStrip} from "./strip.js?v=20261021t3";
 
 const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
