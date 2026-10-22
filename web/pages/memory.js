@@ -35,7 +35,7 @@ export async function render(box, ctx) {
       ${x.status === "open" ? `<div class="row"><button type="button" class="btn sm ghostbtn" data-cancelfu="${esc(x.id)}">Huỷ</button></div>` : ""}</li>`;
 
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">Trợ lý OneWealth</div><h1 class="h1">Bộ nhớ</h1>
+    <div class="pagehead"><div><div class="eyebrow">OneWealth Copilot</div><h1 class="h1">Bộ nhớ</h1>
       <p class="lede">Những điều trợ lý ghi nhớ về bạn (bạn nhờ, hoặc trợ lý rút ra khi cuộc trò chuyện kết thúc), việc bạn nhờ theo dõi, các cuộc trò chuyện của bạn với trợ lý và tài liệu bạn thêm. Điều ghi nhớ và cuộc trò chuyện chỉ bạn thấy; bạn sửa hoặc xoá được mọi thứ ở đây. Trợ lý không ghi số tiền, số tài khoản hay thông tin của người ngoài gia đình.</p></div></div>
     <div class="cols">
       <section class="panel c6" aria-labelledby="mem-h">

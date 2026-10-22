@@ -1,4 +1,4 @@
-/* CIO · Mô hình · Thử nghiệm agent tin tức (BUSINESS_FEEDBACK_1021_PLAN B1, src/trial): the news agents run on their
+/* CIO · Mô hình · Thử nghiệm hằng ngày (BUSINESS_FEEDBACK_1021_PLAN B1, src/trial): the news agents run on their
    own each morning, nothing approved; how much news came in, how much of the important news, how fast the agents
    were, and how often their shadow forecasts were right — overall, per segment, per factor, the buy/sell readings
    and the scenarios. GET /api/trial (written every 15 minutes to out/trial/<day>.json as well). */
@@ -64,7 +64,7 @@ function paint(box, d) {
   const calls = (d.calls[horizon] || []);
   const sc = (d.scenarios || {})[horizon];
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">CIO · Mô hình</div><h1 class="h1">Thử nghiệm agent tin tức</h1>
+    <div class="pagehead"><div><div class="eyebrow">CIO · Mô hình</div><h1 class="h1">Thử nghiệm hằng ngày</h1>
       <p class="lede">Mỗi sáng 08:30 agent tự gom tin thành sự kiện, Agent CIO và Agent Phản biện chạy trên từng sự kiện; không ai duyệt.
         Dự báo của từng bản nháp được giữ làm <b>dự báo bóng</b> và chấm khi đến hạn. ${d.days.length ? `${d.days.length} buổi sáng: ${day(d.days[0])} – ${day(d.days[d.days.length - 1])}.` : "Chưa có buổi sáng nào."}</p></div>
       <div>${seg}</div></div>

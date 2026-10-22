@@ -16,7 +16,7 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261022x2";
+import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261022c1";
 import {DESKS} from "./desk/roles.js?v=20261021t5";
 
 const ROLES = {
@@ -66,7 +66,7 @@ const ROLES = {
       {id: "mo-hinh", label: "Mô hình", sub: [
         {id: "tham-so", label: "Tham số", page: "model"}, {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
         {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"},
-        {id: "thu-nghiem", label: "Thử nghiệm agent tin tức", page: "trial"}]},  // BUSINESS_FEEDBACK_1021_PLAN B1
+        {id: "thu-nghiem", label: "Thử nghiệm hằng ngày", page: "trial"}]},  // BUSINESS_FEEDBACK_1021_PLAN B1
       {id: "do-luong", label: "Đo lường", page: "measure"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "viec-nen", label: "Việc nền", page: "jobs"},
@@ -167,7 +167,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261022x2");
+  wsLoad ||= import("./workspace/workspace.js?v=20261022c1");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -301,7 +301,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022x2`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022c1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
