@@ -3,7 +3,8 @@
    opening onto its sources), allocation with profit against cost, portfolio profit and loss against the
    benchmark, risk against the accepted drawdown with concentration warnings, the liquidity reserve, cash flow
    (six months past, 12/24/36 ahead) with large payments and recurring items, and the top news by impact. The client's
-   workspace draws it as its dashboard (ctx.board, UX_TOOLBAR_PLAN T3+T4): money first, and the month's flows. */
+   workspace draws it as its dashboard (ctx.board, UX_TOOLBAR_PLAN T3+T4): the overview first, then cash flow and the
+   month's flows. */
 import {internal, n, nAttrs, $, esc, pct, post, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {gauge} from "../charts/mini.js?v=20261016r2";
@@ -37,8 +38,9 @@ export async function render(box, ctx) {
   const who = d.members.map(m => `<span class="chip">${esc(m.name)} · ${esc(m.relation)}</span>`).join("")
     + d.waiting.map(m => `<span class="chip" title="Chưa đồng ý chia sẻ dữ liệu">${esc(m.name)} · chưa đồng ý chia sẻ</span>`).join("");
 
-  // the blocks; the client's dashboard (ctx.board, the workspace's Bảng số liệu) leads with what the business reads
-  // first — cash flow over time, allocation, profit and loss — and adds the month's money in and out (Toàn cảnh's)
+  // the blocks; the client's dashboard (ctx.board, the workspace's Bảng số liệu) leads with the overview — net worth and
+  // its sources, then allocation and profit and loss — and cash flow second (business feedback 2026-10-22: "the
+  // overview must meet the eye first"), then the month's money in and out (Toàn cảnh's)
   const B = {
     hero: `      <div class="panel c12 nwhero" id="d-nw">
         <div>
@@ -90,7 +92,7 @@ export async function render(box, ctx) {
   const only = ctx.board && ctx.board.only, shown = (k) => !only || only.includes(k);
   box.innerHTML = `${staff ? internal() : ""}
     <div class="cols">
-${(ctx.board ? ["cash", "alloc", "pnl", "month", "hero", "risk", "liq"] : ["hero", "alloc", "pnl", "risk", "liq", "cash"]).map(k => (shown(k) ? B[k] : `<div hidden>${B[k]}</div>`)).join("")}
+${(ctx.board ? ["hero", "alloc", "pnl", "cash", "month", "risk", "liq"] : ["hero", "alloc", "pnl", "risk", "liq", "cash"]).map(k => (shown(k) ? B[k] : `<div hidden>${B[k]}</div>`)).join("")}
       ${only ? `<div hidden><div class="panel c12" id="news"></div></div>` : `<div class="panel c12" id="news"></div>`}
     </div>`;
 
