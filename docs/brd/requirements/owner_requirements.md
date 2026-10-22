@@ -25,6 +25,7 @@ xếp layout dọc theo bản mới": the names, not the old look.
 | OWN-WN-07 | Wealth view opens on the overview (net worth and its sources, allocation, P&L); cash flow second | item 0 | documented |
 | OWN-WN-08 | Every old client address still opens its page, under its new section | ADR-0037 §2 | documented |
 | OWN-WN-09 | The assistant and the user guide use the same names | ADR-0037 §5 | documented |
+| OWN-WN-10 | Headline News has two tabs: News and Prediction (Chi phí chính sách, renamed) first, then Đồ thị tác động; Tác động tin is no tab, its address kept for the bell's and the feed's evidence | [feedback 3](../sources/owner_requests/2026-10-22_business_feedback_3.md) | documented |
 
 ## MR — A desk for every staff role (2026-10-18, experiment)
 
