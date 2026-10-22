@@ -8,6 +8,23 @@ Shared by every client screen: the shell (role switcher, client picker, Cá nhâ
 footer disclaimer ([information architecture](../information_architecture.md#the-shell)). The RM sees SCR-CL-01,
 02, 03 and 06 inside “Khách hàng” in staff mode.
 
+**Where each screen sits now (2026-10-22, [ADR-0037](../../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md)).**
+The client's menu is the bank's four sections ([business feedback 2](../../sources/owner_requests/2026-10-22_business_feedback_2.md));
+the screens below keep their IDs, routes and content, and a client page's heading is its section and tab:
+
+| Section (rail) | Tab | Screen | Route |
+|---|---|---|---|
+| Wealth View | Wealth view | SCR-CL-01 + SCR-CL-08's month flows, one dashboard: net worth and sources, allocation, P&L, cash flow, the month, risk, reserve, policy | `#/client/tong-quan` (also `…/toan-canh`, `…/chi-tiet`, `…/ban-do`, `#/client/dong-tien` at its cash flow) |
+| Wealth View | Dữ liệu chi tiết tài sản | SCR-CL-02 | `#/client/tai-san` |
+| Wealth Planning Advisor | Wealth planning advisor | SCR-CL-03 | `#/client/muc-tieu/ke-hoach` |
+| Wealth Planning Advisor | Risk profile test | SCR-CL-04 | `#/client/rui-ro/khau-vi` |
+| Headline News | Tác động tin · Đồ thị tác động · Chi phí chính sách | SCR-CL-05, CL-09, CL-06 | `#/client/tin/…` |
+| Relationship specialist | — | SCR-CL-07 (titled “Relationship specialist”) | `#/client/chuyen-gia` |
+| — (hidden from the client) | — | SCR-CL-11, SCR-CL-12 (the graph) | only `#/client/xem/<lens>`, linked from nowhere |
+
+Chi phí chính sách's Wealth Check line reads green when ahead of VN-Index and red when behind (business item 6;
+every KPI's ahead/behind line had been grey).
+
 ---
 
 ## SCR-CL-01 — Tổng quan (overview)

@@ -7,7 +7,7 @@
 | Users | Client (Customer role). RM and the staff roles keep today's shell and pages |
 | Entry points | [SCR-CL-12](../ux/screens/client.md#scr-cl-12--không-gian-tài-chính-graph-workspace); `POST /api/overview` (extended), `POST /api/assistant/stream` (new) |
 | Plan | [docs/GRAPH_WORKSPACE_PLAN.md](../../GRAPH_WORKSPACE_PLAN.md) G0–G7; decision [ADR-0035](../decisions/ADR-0035-the-customer-workspace-is-one-persistent-graph.md) |
-| Status | see [traceability](../requirements/requirements_traceability.md) §5 |
+| Status | see [traceability](../requirements/requirements_traceability.md) §5. **2026-10-22 ([ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md)):** the graph is hidden from the client — no tab, search hit or assistant page leads to it, `#/client/tong-quan/ban-do` opens Wealth view; its own address `#/client/xem/<lens>` still opens it, linked from nowhere, and its tests stay. The workspace's frame (rail, dock, sheets) is still every client page's |
 
 ## Behaviour (target)
 

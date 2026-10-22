@@ -7,6 +7,25 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## WN — The client's menu by the bank's names (2026-10-22, business feedback 2)
+
+Source: [`2026-10-22_business_feedback_2.md`](../sources/owner_requests/2026-10-22_business_feedback_2.md) (the
+business's nine annotated screenshots, relayed by the owner); plan [`docs/WEALTH_NAMES_PLAN.md`](../../WEALTH_NAMES_PLAN.md);
+decision [ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md). "Chỉ là tên, còn sắp
+xếp layout dọc theo bản mới": the names, not the old look.
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-WN-01 | The client's vertical menu is four sections named Wealth View, Wealth Planning Advisor, Headline News, Relationship specialist | items 2, 9 | documented |
+| OWN-WN-02 | Wealth View's tabs are Wealth view and Dữ liệu chi tiết tài sản (the Tài sản page, unchanged) | items 2, 3 | documented |
+| OWN-WN-03 | No Dòng tiền menu item: it is on Wealth view (its address opens Wealth view at its cash flow) | item 4 | documented |
+| OWN-WN-04 | No Đồ thị tài chính tab: nothing a client clicks, searches or asks leads to the graph | items 1, 7 | documented |
+| OWN-WN-05 | Wealth Planning Advisor's tabs are Wealth planning advisor (Kế hoạch, unchanged) and Risk profile test (the risk test) | items 5, 8 | documented |
+| OWN-WN-06 | Tin tức is named Headline News; its Wealth Check reads green when ahead of the benchmark, red when behind, as the old one | item 6 | documented |
+| OWN-WN-07 | Wealth view opens on the overview (net worth and its sources, allocation, P&L); cash flow second | item 0 | documented |
+| OWN-WN-08 | Every old client address still opens its page, under its new section | ADR-0037 §2 | documented |
+| OWN-WN-09 | The assistant and the user guide use the same names | ADR-0037 §5 | documented |
+
 ## MR — A desk for every staff role (2026-10-18, experiment)
 
 Source: [`2026-10-18_multi_role_ux.md`](../sources/owner_requests/2026-10-18_multi_role_ux.md); plan

@@ -64,16 +64,17 @@ thu hồi”).
 
 ## J6 — The brief's five-minute demo (client, RM)
 
-`docs/DEMO.md` was written before the redesign; its section names map to today's menus as follows.
+`docs/DEMO.md` was written before the redesign; its section names map to today's menus as follows (the client's
+by the bank's four sections since 2026-10-22, ADR-0037).
 
 | DEMO.md step | Then | Now |
 |---|---|---|
-| 1 Connect the data | “Kết nối dữ liệu” | Khách hàng → **Tài sản** (SCR-CL-02) |
-| 2 The risk test | “Bài test rủi ro” | Khách hàng → Mục tiêu & kịch bản → **Khẩu vị rủi ro** (SCR-CL-04) |
-| 3 The overall dashboard | “Tổng quan” | Khách hàng → **Tổng quan** (SCR-CL-01) |
-| 4 An alert lands | “Cảnh báo” | Khách hàng → Tin tác động → **Chi phí chính sách** (SCR-CL-06) |
-| 5 A scenario | “Kịch bản” | Khách hàng → Mục tiêu & kịch bản → **Kế hoạch** (SCR-CL-03), “Gửi chuyên gia duyệt” |
-| 6 The RM approves | “RM duyệt” | RM → Khách hàng → **Duyệt đề xuất** (SCR-RM-06); the client follows it on Chuyên gia (SCR-CL-07) |
+| 1 Connect the data | “Kết nối dữ liệu” | Khách hàng → Wealth View → **Dữ liệu chi tiết tài sản** (SCR-CL-02) |
+| 2 The risk test | “Bài test rủi ro” | Khách hàng → Wealth Planning Advisor → **Risk profile test** (SCR-CL-04) |
+| 3 The overall dashboard | “Tổng quan” | Khách hàng → Wealth View → **Wealth view** (SCR-CL-01) |
+| 4 An alert lands | “Cảnh báo” | Khách hàng → Headline News → **Chi phí chính sách** (SCR-CL-06) |
+| 5 A scenario | “Kịch bản” | Khách hàng → Wealth Planning Advisor → **Wealth planning advisor** (SCR-CL-03), “Gửi chuyên gia duyệt” |
+| 6 The RM approves | “RM duyệt” | RM → Khách hàng → **Duyệt đề xuất** (SCR-RM-06); the client follows it on Relationship specialist (SCR-CL-07) |
 
 The demo's HTTP path is tested end to end (`tests/test_demo.py::test_the_five_minute_demo`); its click path is not.
 

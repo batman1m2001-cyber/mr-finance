@@ -4,7 +4,7 @@
 |---|---|
 | Type | Existing capability from PR #13 (2026-10-13); in no source document — kept by ADR-0003 |
 | Requirements | None (see Q-19). Not BRD-BR-15 |
-| Users | Client (their specialist), RM / staff (performance) |
+| Users | Client (their specialist: the **Relationship specialist** section since 2026-10-22, [ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md); was Chuyên gia), RM / staff (performance) |
 | Entry points | [SCR-CL-07 Chuyên gia](../ux/screens/client.md#scr-cl-07--chuyên-gia-specialist-team), [SCR-RM-04](../ux/screens/rm.md#scr-rm-04--hiệu-quả-tư-vấn-of-one-client), [SCR-RM-05](../ux/screens/rm.md#scr-rm-05--hiệu-quả-tư-vấn-all-clients); `GET /api/advisory?client_id=`, `GET /api/advisory/all` |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 

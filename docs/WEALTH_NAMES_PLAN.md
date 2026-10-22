@@ -53,10 +53,10 @@ names, not the old look. Sign-in is not touched.
   `docs/huong-dan/khach-hang.md`, `data/assistant_guide_questions.json`.
 - **W4 The BRD.** `docs/brd/ux/screens/client.md`, `ux/information_architecture.md`, `ux/screen_inventory.md`,
   `ux/user_journeys.md`; FEAT-40 (the graph is not a client tab), FEAT-29, FEAT-24 (the risk test's place), FEAT-21,
-  FEAT-31, FEAT-25; ADR-0040 for the decision; `requirements_traceability.md` and `CHANGELOG.md`.
+  FEAT-25, FEAT-28; ADR-0037 for the decision; `requirements_traceability.md` and `CHANGELOG.md`.
 - **W5 Tests and the gate.** The UI tests that name the old menu, a new one for the four sections and every old
   address; screenshots desktop and phone, light and dark; merge, restart :8030.
 
 **Gate.** The client's menu is the four sections with the tabs above, in both themes and on a phone; nothing a client
-can click, search or ask leads to the graph; every old address opens its page; no client screen, assistant answer or guide page uses a
-removed name; the UI and assistant tests pass (apart from the four failing on main before this).
+can click, search or ask leads to the graph; every old address opens its page; no client screen, assistant answer
+or guide page uses a removed name; the UI and assistant tests pass (apart from the four failing on main before this).

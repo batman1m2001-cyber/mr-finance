@@ -2,6 +2,21 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-22 — The client's menu by the bank's names (business feedback 2, nine items):
+  - four sections: Wealth View (Wealth view · Dữ liệu chi tiết tài sản), Wealth Planning Advisor (Wealth planning
+    advisor · Risk profile test), Headline News, Relationship specialist;
+  - Dòng tiền and Rủi ro leave the menu (on Wealth view; the risk test is Risk profile test);
+  - the graph is hidden from the client (no tab, search hit or assistant page; its own address kept, unlinked);
+  - Wealth view opens on net worth and sources, cash flow second; every old address still opens its page;
+  - the Wealth Check's ahead/behind line is green/red (every KPI's had been grey);
+  - the assistant's pages, router and the user guide use the same names. OWN-WN-01…09.
+  — ADR-0037, sources/owner_requests/2026-10-22_business_feedback_2.md, owner_requirements.md,
+  requirements_traceability.md, ux/information_architecture.md, ux/screens/client.md, ux/screen_inventory.md,
+  ux/user_journeys.md, FEAT-21, 24, 25, 28, 29, 40, docs/WEALTH_NAMES_PLAN.md, docs/huong-dan/khach-hang.md
+
+- 2026-10-22 — One checklist of the agents (owner): eight parts that call a model, one name each, the three
+  evaluations named. — docs/AGENT_CHECKLIST.md, docs/AGENT_CHECKLIST_PLAN.md
+
 - 2026-10-20 — Money on the graph's edges and a node's timeline (owner: “move the money to the edge … with +/−”, “a timeline chart … by day / month / year”, “create data for years”):
   - every money spoke shows its signed change over Ngày · Tháng · Năm (Tháng = Tổng quan's month change);
   - an estimate's spoke shows its own figure in grey (owner);
