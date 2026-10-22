@@ -24,7 +24,7 @@ export function mount(main, {client, scope, go, page}) {
     <nav class="ws-bar" aria-label="Các góc nhìn">${TOOLBAR.map(t => `<a class="ws-tool" href="${t.href}" data-tool="${t.id}" aria-label="${esc(t.label)}" data-tip="${esc(t.tip)}">
       ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.short || t.label)}</span></a>`).join("")}</nav>
     <button type="button" class="ws-fab ws-ask" id="ws-fab" aria-controls="ws-dock" aria-expanded="false">${icon("sparkles", {size: 18})}<span>Hỏi trợ lý</span></button>
-    <section class="ws-center" aria-label="Đồ thị tài chính">
+    <section class="ws-center" aria-label="Wealth View">
       <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Wealth View</h1>
         <p class="ws-sub small muted" id="ws-sub"></p>
         <nav class="ws-pages" id="ws-pages" aria-label="Các trang của mục"></nav>
@@ -241,12 +241,16 @@ export function mount(main, {client, scope, go, page}) {
   }
 
   // the section's tabs (B3.1), over the dashboard and over a sheet: Wealth View's are Wealth view and Dữ liệu chi tiết
-  // tài sản (WEALTH_NAMES_PLAN); the graph (no address opens it for the client now) would show its lens "on the graph"
+  // tài sản (WEALTH_NAMES_PLAN); the graph is in no section now (ADR-0037): its own unlinked address shows the way back
+  // and where it is, one row as before, so the graph keeps the room its layout and tests were made for
   function drawPages() {
-    const onGraph = !sheet, s = SECTIONS[sheet ? (SHEETS[sheet].lens || sheet) : lens.id] || {tabs: []};  // Bộ nhớ: none
+    const s = SECTIONS[sheet ? (SHEETS[sheet].lens || sheet) : lens.id] || {tabs: []};  // Bộ nhớ: none
     const here = (href, v) => (sheet ? href === SHEETS[sheet].route : !!v && (v === "money") === (view === "money"));
-    const tabs = s.tabs.map(([label, href, v]) => [label, href, v || null, here(href, v)]);
-    if (onGraph && !tabs.some(t => t[3])) tabs.push([view === "money" ? "Trong Bảng số liệu" : "Trên đồ thị", `#/client/xem/${lens.id}`, null, true]);
+    let tabs = s.tabs.map(([label, href, v]) => [label, href, v || null, here(href, v)]);
+    if (!tabs.some(t => t[3])) {
+      const [label, href] = (s.tabs.length ? s : SECTIONS["tong-quan"]).tabs[0];
+      tabs = [[label, href, null, false], [view === "money" ? "Trong Bảng số liệu" : "Trên đồ thị", `#/client/xem/${lens.id}`, null, true]];
+    }
     for (const el of [$("#ws-pages", root), $("#ws-sheet-tabs", root)]) {
       el.innerHTML = tabs.length > 1 ? tabs.map(([label, href, , on]) => `<a class="ws-page" href="${href}"${on ? ' aria-current="page"' : ""}>${esc(label)}</a>`).join("") : "";
       el.hidden = tabs.length < 2;

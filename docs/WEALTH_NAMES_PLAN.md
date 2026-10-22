@@ -31,7 +31,10 @@ names, not the old look. Sign-in is not touched.
   address `#/client/xem/<lens>` still opens it, linked from nowhere, so the kept code keeps its tests (seven UI test
   files drive it there) and can come back with one tab. (First written as "no address opens it"; narrowed while
   building W1 when those tests showed the code would otherwise be unreachable and untested.) The RM's Bản đồ tài
-  chính and the iPhone app are unchanged.
+  chính and the iPhone app are unchanged. On that address the graph shows one row of tabs (its section's first page, "Trên đồ thị") and keeps the 72 px rail
+  (the client's pages have a 104 px one for the bank's names): built with the wider rail, its 952 px canvas let the
+  layout re-place nodes outside the visible area, which main shows too at a 1408 px window. **Open finding**: the
+  graph's layout at that width; fix it before the graph comes back as a client tab.
 - **Every old address keeps working** (citations, search, the bell, bookmarks): `#/client/tai-san`,
   `#/client/dong-tien` (→ Wealth View at Dòng tiền), `#/client/muc-tieu/ke-hoach`, `#/client/rui-ro/khau-vi`,
   `#/client/tin/...`, `#/client/chuyen-gia`. No address is renamed.

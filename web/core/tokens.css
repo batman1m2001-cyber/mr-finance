@@ -1591,9 +1591,10 @@ body[data-role="client"] :is(#page, .ws-cashview) :is(.chip, .pill) { font-size:
 body[data-role="client"] :is(#page, .ws-cashview) .chip { background: none; }
 body[data-role="client"] .ws-title { font-size: 22px; }
 body[data-role="client"] .ws-tool-l { font-size: 12px; }
-/* the client's four sections carry the bank's long names (WEALTH_NAMES_PLAN): a wider rail, whole words, three lines */
-.ws:not(.desk) { --bar-w: 104px; }
-.ws:not(.desk) .ws-tool { width: 92px; }
+/* the client's four sections carry the bank's long names (WEALTH_NAMES_PLAN): a wider rail, whole words, three lines —
+   on the client's pages; the graph's own unlinked address keeps the 72 px rail and the graph its geometry (ADR-0037) */
+.ws:not(.desk):is(.home, .sheeted) { --bar-w: 104px; }
+.ws:not(.desk):is(.home, .sheeted) .ws-tool { width: 92px; }
 .ws:not(.desk) .ws-tool-l { max-width: 88px; overflow-wrap: normal; -webkit-line-clamp: 3; }
 body[data-role="client"] .ws-page { min-height: 44px; font-size: 15px; }
 .ws.home .ws-ctl { display: none; }

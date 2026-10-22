@@ -54,7 +54,8 @@ def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
     for lens in ("tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro", "tong-quan"):
         p.go(f"#/client/xem/{lens}")
         shown[lens] = p.page.locator(".wnode:not(.off)").count()
-        assert p.page.get_attribute(f'[data-tool="{lens}"]', "aria-current") is not None
+        if lens in ("muc-tieu", "tin", "tong-quan"):  # a lens that is one of the four sections lights it (ADR-0037)
+            assert p.page.get_attribute(f'[data-tool="{lens}"]', "aria-current") is not None
     assert same(p) and shown["tong-quan"] > shown["muc-tieu"]
     # OWN-GW-15: by default only the spokes of “My Wealth”; no node on another, no label on another
     ends = p.page.eval_on_selector_all(".ws-edges .wedge", "es => es.map(e => e.dataset.e.split('>'))")
@@ -71,8 +72,8 @@ def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
     p.page.wait_for_timeout(600)  # the nodes' move (transform transition) has ended
     assert p.page.locator(".wnode.dim").count() > 0 and p.page.evaluate(CLEAR) == [0, 0]
     p.page.click('.wnode[data-n="CL:stock"] .wcore')
-    p.go("#/client/tai-san")  # an old address: its page as a sheet over the Tài sản lens
-    assert p.page.is_visible("#ws-sheet") and p.page.inner_text("#ws-sheet-t") == "Tài sản"
+    p.go("#/client/tai-san")  # an old address: its page, Dữ liệu chi tiết tài sản (ADR-0037)
+    assert p.page.is_visible("#ws-sheet") and p.page.inner_text("#ws-sheet-t") == "Dữ liệu chi tiết tài sản"
     assert p.page.locator("#ws-sheet #page .holdings, #ws-sheet #page table, #ws-sheet #page .card").count() > 0
     p.go("#/client/xem/tai-san")  # back on the graph (a page is not closed by Escape now, B3.1): the same graph
     assert p.page.is_hidden("#ws-sheet") and same(p)
@@ -166,7 +167,7 @@ def test_keyboard_and_phone(open_page):
     p.page.focus('[data-tool="tong-quan"]')
     p.page.keyboard.press("ArrowDown")
     p.page.keyboard.press("Enter")
-    p.page.wait_for_function("location.hash === '#/client/tai-san'")  # the bar leads to the section's page (B3.1)
+    p.page.wait_for_function("location.hash === '#/client/muc-tieu/ke-hoach'")  # the next section's page (ADR-0037)
     p.go("#/client/xem/tai-san")
     p.page.locator(".wnode.k-class").first.focus()
     p.page.keyboard.press("Enter")

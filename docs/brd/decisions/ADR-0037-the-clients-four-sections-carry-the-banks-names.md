@@ -39,7 +39,10 @@ Toàn cảnh, and the graph adds nothing Toàn cảnh does not show.
 
 ## Consequences
 
-- The rail is wider for the client (104 px) so the names break between words, never inside one.
+- The rail is wider on the client's pages (104 px) so the names break between words, never inside one. The graph's
+  unlinked address keeps the 72 px rail and one row of tabs (the way back, "Trên đồ thị"), so the graph keeps the geometry its tests were written
+  for: at a 32 px narrower canvas (952 px; also a 1408 px window on main) its layout re-places some nodes outside the
+  visible area — a latent layout defect, recorded in the plan, not fixed here since no client sees the graph.
 - Business item 6 ("đổ màu như này") showed a real defect: `.kpi .s` outranked `.up`/`.down`, so every KPI line
   meant to read green (ahead) or red (behind) was grey; it is fixed for every page.
 - FEAT-40's graph workspace remains built and tested, but it is no longer what a client sees.

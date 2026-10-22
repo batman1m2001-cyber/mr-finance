@@ -149,12 +149,17 @@ export function go(hash, focus) {
   else location.hash = hash;
 }
 
-// every page of a role, for the header search: label, its parent's label, its route
+// the client's pages by their former names too: the tabs carry the bank's English names (ADR-0037), a client still types these
+const ALSO = {"#/client/tong-quan": "Tổng quan Toàn cảnh Dòng tiền", "#/client/tai-san": "Tài sản", "#/client/muc-tieu/ke-hoach": "Kế hoạch tài chính Mục tiêu",
+  "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/thi-truong": "Tin tức", "#/client/chuyen-gia": "Chuyên gia"};
+
+// every page of a role, for the header search: label, its parent's label, its route (and other names it answers to)
 function pagesFor(role) {
   if (role === "client") {  // the workspace: its four sections and their tabs (WEALTH_NAMES_PLAN)
     return TOOLBAR.flatMap(t => {
       const tabs = SECTIONS[t.id].tabs;
-      return tabs.length > 1 ? tabs.map(([label, route]) => ({label, parent: t.label, route})) : [{label: t.label, parent: "", route: t.href}];
+      return tabs.length > 1 ? tabs.map(([label, route]) => ({label, parent: t.label, route, also: ALSO[route]}))
+        : [{label: t.label, parent: "", route: t.href, also: ALSO[t.href]}];
     });
   }
   const out = [];
