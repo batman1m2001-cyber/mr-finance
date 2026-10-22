@@ -3,7 +3,7 @@ import UIKit
 
 /// The Techcombank-ecosystem look, as the website's (web/core/tokens.css): black, white and greys. The brand red is
 /// only the logo: red reads as an error, so buttons and selections are black. A gain is green, a loss or a breach
-/// orange-red with its icon and words; the net worth wears navy and gold, as the website's graph core.
+/// orange-red with its icon and words; the net worth is a platinum coin, as the website's graph core.
 enum Theme {
     static let plane = dyn(0xf4f4f5, 0x0e0e10)
     static let surface = dyn(0xffffff, 0x1a1a1d)
@@ -15,8 +15,6 @@ enum Theme {
     static let accent = dyn(0x141414, 0xf2f2f3)
     static let accentInk = dyn(0xffffff, 0x141414)
     static let accentSoft = dyn(0xececef, 0x2c2c31)
-    static let navy = dyn(0x0f1f3d, 0x2a4a80)
-    static let gold = dyn(0xb08d4f, 0xd4b77c)
     static let series = dyn(0x3d3d42, 0xc9c9ce)
     static let good = dyn(0x0f7a3d, 0x4cc38a)
     static let warning = dyn(0xa16207, 0xf5c45e)

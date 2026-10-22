@@ -65,7 +65,7 @@ private struct NetWorthCard: View {
         Card {
             VStack(spacing: 10) {
                 Text("Tài sản ròng của \(d.profile.name)").font(.subheadline).foregroundStyle(Theme.ink2)
-                GoldCoin(value: Fmt.vnd(nw.value)).frame(width: 170, height: 170)
+                PlatinumCoin(value: Fmt.vnd(nw.value)).frame(width: 170, height: 170)
                     .accessibilityLabel("Tài sản ròng \(Fmt.vnd(nw.value))")
                 if let ch = nw.monthChange {
                     HStack(spacing: 6) {
@@ -194,18 +194,18 @@ private struct ReserveCard: View {
     }
 }
 
-/// The net worth as the website's graph shows it: a polished gold coin — raised rim with a milled edge, a ring of
-/// beads, a glint now and then — its one figure struck in a dark bronze serif over the lit lower edge of the cut.
-struct GoldCoin: View {
+/// The net worth as the website's graph shows it: a polished platinum coin — raised rim with a milled edge, a ring of
+/// beads, a glint now and then — its one figure struck in a near-black serif over the lit lower edge of the cut.
+struct PlatinumCoin: View {
     let value: String
     @Environment(\.accessibilityReduceMotion) private var still
     @State private var glint = false
 
-    private static let hi = Color(red: 1, green: 246 / 255, blue: 207 / 255)
-    private static let mid = Color(red: 230 / 255, green: 178 / 255, blue: 62 / 255)
-    private static let deep = Color(red: 122 / 255, green: 78 / 255, blue: 8 / 255)
-    private static let ink = Color(red: 28 / 255, green: 18 / 255, blue: 2 / 255)
-    private static let lit = Color(red: 1, green: 243 / 255, blue: 196 / 255)
+    private static let hi = Color(red: 251 / 255, green: 252 / 255, blue: 253 / 255)
+    private static let mid = Color(red: 192 / 255, green: 197 / 255, blue: 204 / 255)
+    private static let deep = Color(red: 76 / 255, green: 82 / 255, blue: 90 / 255)
+    private static let ink = Color(red: 18 / 255, green: 20 / 255, blue: 24 / 255)
+    private static let lit = Color.white
 
     var body: some View {
         GeometryReader { g in
@@ -215,7 +215,7 @@ struct GoldCoin: View {
                                                      .init(color: Self.deep, location: 1)],
                                              center: UnitPoint(x: 0.5, y: 0.34), startRadius: 0, endRadius: r * 1.44))
                     .shadow(color: Self.mid.opacity(0.45), radius: w * 0.08)  // the glow around it, as the website's aura
-                Circle().fill(RadialGradient(colors: [Color(red: 1, green: 240 / 255, blue: 191 / 255).opacity(0.62), .clear],
+                Circle().fill(RadialGradient(colors: [Color(red: 243 / 255, green: 245 / 255, blue: 248 / 255).opacity(0.62), .clear],
                                              center: UnitPoint(x: 0.5, y: 0.46), startRadius: 0, endRadius: r * 0.9))
                 Circle().strokeBorder(LinearGradient(stops: [.init(color: Self.hi, location: 0), .init(color: Self.mid, location: 0.22),
                                                             .init(color: Self.hi, location: 0.42), .init(color: Self.deep, location: 0.68),
