@@ -95,3 +95,26 @@ def test_the_wealth_check_line_is_coloured(open_page):
     )
     assert colour == want and colour != grey
     assert not p.problems()
+
+
+RGB = "(el) => getComputedStyle(el).backgroundColor"
+LUM = """([a, b]) => { const l = c => { const v = c.match(/\\d+/g).slice(0, 3).map(x => { x /= 255;
+  return x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; });
+  return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+  const [h, o] = [l(a), l(b)].sort((x, y) => y - x); return (h + .05) / (o + .05); }"""
+
+
+def test_red_marks_the_main_action_only(open_page):
+    """Business feedback 4 ("tông màu private banking"), the owner: red and black, not painful. The red is the main
+    action (a primary button, Hỏi trợ lý, the bell's count) with white words at 4.5:1; tabs and links stay black."""
+    for theme, red in [("light", "rgb(215, 25, 32)"), ("dark", "rgb(227, 27, 35)")]:
+        p = open_page(theme=theme, dock=False)
+        p.go("#/client/tai-san")
+        btn = p.page.wait_for_selector("#page .btn.primary")
+        fab = p.page.wait_for_selector("#ws-fab")
+        assert btn.evaluate(RGB) == red and fab.evaluate(RGB) == red, theme
+        words = btn.evaluate("el => getComputedStyle(el).color")
+        assert p.page.evaluate(LUM, [words, red]) >= 4.5, theme
+        tab = p.page.wait_for_selector("#ws-sheet-tabs a[aria-current='page']")
+        assert red not in (tab.evaluate(RGB), tab.evaluate("el => getComputedStyle(el).color")), theme
+        assert not p.problems()

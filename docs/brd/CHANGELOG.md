@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-22 — The colour tone (business feedback 4, after Techcombank Private; the owner: red and black, not
+  painful): Techcombank red marks the main action only — a primary button, Hỏi trợ lý, the bell's count; the rest
+  stays black, white and greys. OWN-WN-11. — sources/owner_requests/2026-10-22_business_feedback_4.md,
+  owner_requirements.md, requirements_traceability.md, ux/design_system.md
 - 2026-10-22 — Headline News (business feedback 3): Chi phí chính sách is News and Prediction, the first tab; Đồ thị
   tác động second; Tác động tin is no tab (its address stays: the bell's and the feed's evidence). OWN-WN-10.
   — ADR-0037, sources/owner_requests/2026-10-22_business_feedback_3.md, owner_requirements.md,

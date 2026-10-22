@@ -1,9 +1,11 @@
 /* OneWealth design system: one set of tokens, two themes. Loaded after app.css, so the pages that
    came before (the legacy tabs) wear the same tokens.
 
-   The Techcombank-ecosystem look (2026-10-21): black, white and greys. The brand red is only the logo and the thin
-   mark of where you are (--brand-red): red reads as an error, so buttons, links and selections are black. Losses and
-   breaches are orange-red with their icon and words. Light for everyone unless the person picks dark.
+   The Techcombank-ecosystem look (2026-10-21): black, white and greys. The brand red is the logo and the thin mark of
+   where you are (--brand-red), and, as on Techcombank Private's pages (business, 2026-10-22), the main action
+   (--cta: a primary button, Hỏi trợ lý, the bell's count) — nothing larger: links, tabs and selections stay black,
+   and red reads as an error elsewhere. Losses and breaches are orange-red with their icon and words. Light for
+   everyone unless the person picks dark.
    Every text colour clears WCAG 4.5:1 on its surface in both themes; the categorical series are
    the validated reference palette (scratchpad dataviz check: light needs direct labels / a table,
    dark passes all checks on the indigo surface).
@@ -16,7 +18,8 @@
   --ink: #141414; --ink-2: #4a4a4f; --muted: #6f6f76;
   --hair: #e7e7ea; --axis: #d6d6db; --ring: rgba(20, 20, 20, .12);
   --accent: #141414; --accent-ink: #ffffff; --accent-soft: #ececef; --brand: #141414; --hero: #141414;
-  --brand-red: #e31b23;  /* the logo and the mark of where you are, nothing else: red reads as an error */
+  --brand-red: #e31b23;  /* the logo and the mark of where you are: red reads as an error */
+  --cta: #d71920; --cta-ink: #ffffff; --cta-hover: #b9151b;  /* the main action only (Techcombank Private's Đăng nhập) */
   --series: #3d3d42;  /* a figure's line, bar or ring */
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
   --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948; --other: #a8a69f;
@@ -48,6 +51,7 @@
     --ink: #f2f2f3; --ink-2: #c7c7cc; --muted: #9a9aa2;
     --hair: #2e2e33; --axis: #45454c; --ring: rgba(242, 242, 243, .14);
     --accent: #f2f2f3; --accent-ink: #141414; --accent-soft: #2c2c31; --brand: #f2f2f3; --hero: #f2f2f3; --series: #c9c9ce; --brand-red: #ff5c63;
+    --cta: #e31b23; --cta-ink: #ffffff; --cta-hover: #c8161d;
     --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
     --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --other: #6e6894;
     --good: #5fd38d; --warning: #f5c45e; --serious: #ff9e6b; --critical: #ff8a4c;
@@ -71,6 +75,7 @@
   --ink: #f2f2f3; --ink-2: #c7c7cc; --muted: #9a9aa2;
   --hair: #2e2e33; --axis: #45454c; --ring: rgba(242, 242, 243, .14);
   --accent: #f2f2f3; --accent-ink: #141414; --accent-soft: #2c2c31; --brand: #f2f2f3; --hero: #f2f2f3; --series: #c9c9ce; --brand-red: #ff5c63;
+    --cta: #e31b23; --cta-ink: #ffffff; --cta-hover: #c8161d;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
   --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --other: #6e6894;
   --good: #5fd38d; --warning: #f5c45e; --serious: #ff9e6b; --critical: #ff8a4c;
@@ -157,7 +162,7 @@ a { color: var(--accent); }
 .scopetip .tipbody b { color: var(--ink); font-weight: 650; }
 #bell { position: relative; display: grid; place-items: center; }
 #bell[data-count]:not([data-count=""])::after { content: attr(data-count); position: absolute; top: -4px; right: -4px; min-width: 17px;
-  height: 17px; padding: 0 4px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: 700 10.5px/17px var(--font);
+  height: 17px; padding: 0 4px; border-radius: 999px; background: var(--cta); color: var(--cta-ink); font: 700 10.5px/17px var(--font);
   text-align: center; border: 2px solid var(--surface); }
 .shell-nav { display: flex; align-items: center; gap: 12px; padding: 0 24px; max-width: 1320px; margin: 0 auto; flex-wrap: wrap; }
 .rolebox { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 4px 0; }
@@ -260,7 +265,8 @@ main#main { max-width: 1320px; padding: 20px 24px 40px; }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn { border: 1px solid var(--axis); background: var(--surface); color: var(--ink); padding: 8px 14px;
   border-radius: 999px; cursor: pointer; font-weight: 600; font: inherit; font-weight: 600; }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn:hover { border-color: var(--accent); }
-:is(#page, .ws-cashview, .drawer, .dk-center) .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+:is(#page, .ws-cashview, .drawer, .dk-center) .btn.primary { background: var(--cta); color: var(--cta-ink); border-color: var(--cta); }
+:is(#page, .ws-cashview, .drawer, .dk-center, .ws-ins) .btn.primary:not(:disabled):hover, .ws-fab:hover { background: var(--cta-hover); border-color: var(--cta-hover); }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn.danger { color: var(--critical); }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn.sm { padding: 5px 11px; font-size: 12.5px; }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn[disabled] { opacity: .5; cursor: not-allowed; }
@@ -1272,7 +1278,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 #ws-tl-table { max-height: 260px; overflow-y: auto; }
 .ws-ins .btn { border: 1px solid var(--axis); background: var(--surface); color: var(--ink); padding: 6px 12px; border-radius: 9px; font: inherit;
   font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
-.ws-ins .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.ws-ins .btn.primary { background: var(--cta); color: var(--cta-ink); border-color: var(--cta); }
 .ws-sum { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); }
 .ws-sum b { text-align: right; font-variant-numeric: tabular-nums; }
 .ws-ins .cert.c-estimate { color: var(--warning); } .ws-ins .cert.c-hypothetical { color: var(--s7); font-style: italic; }
@@ -1558,7 +1564,7 @@ button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-al
 .ws.dock-off { --dock-w: 0px; }
 .ws.dock-off .ws-dock { display: none; }
 .ws-fab { position: fixed; right: 24px; bottom: 24px; z-index: 40; display: none; align-items: center; gap: 8px; min-height: 48px;
-  padding: 0 20px; border: 0; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: inherit;
+  padding: 0 20px; border: 0; border-radius: 999px; background: var(--cta); color: var(--cta-ink); font: inherit;
   font-size: 15px; font-weight: 650; box-shadow: var(--shadow-pop); cursor: pointer; }
 .ws.dock-off .ws-fab.ws-ask { display: inline-flex; }
 .ws-close { margin-left: auto; width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer; color: var(--ink-2); font-size: 15px; }

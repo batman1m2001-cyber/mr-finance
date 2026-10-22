@@ -17,19 +17,22 @@ the code wins and this page is corrected.
 
 ## Themes
 
-Light first, as on the kit's concept board (owner, 2026-10-16; [UI redesign plan](../../UI_REDESIGN_PLAN.md) R-D1):
-a pale lavender-grey plane, white cards with a soft shadow, 16 px corners, sentence-case card titles, small tinted
-icon chips, one indigo accent. Dark (deep indigo, lavender accent) is kept from 2026-10-15. The theme follows the OS
-until the user toggles it (◐, stored as `mf.theme`).
+The Techcombank-ecosystem look (2026-10-21): black, white and greys, light for everyone unless the person picks dark
+(◐, stored as `mf.theme`). Red is Techcombank's and is used sparingly, because it reads as an error:
+- `--brand-red`: the logo and the thin mark of where you are;
+- `--cta` (business feedback 4, after Techcombank Private's pages, whose one red element is Đăng nhập; OWN-WN-11):
+  the main action only — a primary button, Hỏi trợ lý, the bell's count. White words on it clear 4.5:1 (#d71920
+  light, #e31b23 dark). Tabs, links, selections and focus stay black (`--accent`); nothing larger is red.
 
 ## Tokens (light → dark)
 
 | Group | Tokens | Use |
 |---|---|---|
-| Surfaces | `--plane` #f6f6fb, `--surface` white, `--surface-2`, `--surface-3` | page, cards, nested blocks and tracks |
+| Surfaces | `--plane` #f4f4f5, `--surface` white, `--surface-2`, `--surface-3` | page, cards, nested blocks and tracks |
 | Ink | `--ink` `--ink-2` `--muted` | text levels; every text colour ≥ 4.5:1 on its surface in both themes |
 | Lines | `--hair` (card borders), `--axis` (inputs, chart axes), `--ring` | |
-| Accent | `--accent` #5b47d6 `--accent-soft` `--brand` `--hero` | actions, current tab, hero figure; the logo and Copilot button use #7a63f0 → #4a36c4 |
+| Accent | `--accent` #141414 `--accent-soft` `--brand` `--hero` | links, current tab, selections, focus, hero figure |
+| Red | `--brand-red` #e31b23; `--cta` #d71920 `--cta-ink` `--cta-hover` | the logo and where you are; the main action (see Themes) |
 | Series | `--s1`…`--s8`, `--other` | categorical series in fixed order; asset classes have fixed colours (`CLASS_COLOR`) |
 | Status | `--good` `--warning` `--serious` `--critical` (+ `-soft`) | statuses with a label, never colour alone |
 | Money | `--up` `--down` `--flat`; `--in` `--out` | gain/loss; cash in/out |
