@@ -4,15 +4,15 @@
    existing page module, drawn by the shell into #page, which lives inside the sheet). Nothing here re-renders the
    graph on navigation.
    The classic app (BUSINESS_FEEDBACK_1021_PLAN B3.1, B3.2): each page under its section's tabs, with no way "back to
-   the graph" (it is one of Tổng quan's tabs); the dock closed until the floating "Hỏi trợ lý" button opens it. */
+   the graph" (it was one of Tổng quan's tabs; the client has none now, ADR-0037); the dock closed until the floating "Hỏi trợ lý" button opens it. */
 import {$, esc, followedIds, post, signClass, vnd, workspaceContext} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {UNIT_WORD, createGraph} from "./graph.js?v=20261021t6";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261022o1";
-import {LENS, SECTIONS, SHEETS, TOOLBAR, resolve} from "./lenses.js?v=20261022o1";
-import {mount as mountMoney} from "./money.js?v=20261022o1";
+import {render as inspect} from "./inspector.js?v=20261022w1";
+import {LENS, SECTION_NAME, SECTIONS, SHEETS, TOOLBAR, resolve} from "./lenses.js?v=20261022w1";
+import {mount as mountMoney} from "./money.js?v=20261022w1";
 import {mount as mountStrip} from "./strip.js?v=20261021t3";
 
 const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
@@ -25,7 +25,7 @@ export function mount(main, {client, scope, go, page}) {
       ${icon(t.icon, {size: 20})}<span class="ws-tool-l">${esc(t.short || t.label)}</span></a>`).join("")}</nav>
     <button type="button" class="ws-fab ws-ask" id="ws-fab" aria-controls="ws-dock" aria-expanded="false">${icon("sparkles", {size: 18})}<span>Hỏi trợ lý</span></button>
     <section class="ws-center" aria-label="Đồ thị tài chính">
-      <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Tổng quan tài chính</h1>
+      <div class="ws-head"><div><h1 class="ws-title" id="ws-title">Wealth View</h1>
         <p class="ws-sub small muted" id="ws-sub"></p>
         <nav class="ws-pages" id="ws-pages" aria-label="Các trang của mục"></nav>
         <div class="ws-scn" id="ws-scn" role="region" aria-label="Kịch bản đang bật" aria-live="polite" hidden></div></div>
@@ -231,7 +231,7 @@ export function mount(main, {client, scope, go, page}) {
     const next = LENS[id] || LENS["tong-quan"];
     lens = next;
     for (const a of root.querySelectorAll("[data-tool]")) a.toggleAttribute("aria-current", a.dataset.tool === (sheet && !SHEETS[sheet].lens ? sheet : lens.id));
-    $("#ws-title", root).textContent = lens.id === "tong-quan" ? "Tổng quan tài chính" : lens.label;
+    $("#ws-title", root).textContent = SECTION_NAME[lens.id] || lens.label;
     if (asOf) drawSub();
     drawPages();
     graph.setLens(lens);
@@ -240,8 +240,8 @@ export function mount(main, {client, scope, go, page}) {
     if (view === "list") drawList();
   }
 
-  // the section's tabs (B3.1), over the graph's page and over a sheet: Tổng quan's are Toàn cảnh and Đồ thị tài chính;
-  // a graph at another lens (a strip card, a citation, the assistant) is the section's page "on the graph" for now
+  // the section's tabs (B3.1), over the dashboard and over a sheet: Wealth View's are Wealth view and Dữ liệu chi tiết
+  // tài sản (WEALTH_NAMES_PLAN); the graph (no address opens it for the client now) would show its lens "on the graph"
   function drawPages() {
     const onGraph = !sheet, s = SECTIONS[sheet ? (SHEETS[sheet].lens || sheet) : lens.id] || {tabs: []};  // Bộ nhớ: none
     const here = (href, v) => (sheet ? href === SHEETS[sheet].route : !!v && (v === "money") === (view === "money"));

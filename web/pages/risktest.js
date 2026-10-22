@@ -94,7 +94,7 @@ export async function render(box, ctx) {
   };
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Mục tiêu & kịch bản</div><h1 class="h1">Khẩu vị rủi ro</h1>
+    <div class="pagehead"><div><div class="eyebrow">${staff ? "Khách hàng" : "Wealth Planning Advisor"}</div><h1 class="h1">Risk profile test</h1>
       <p class="lede">Bạn muốn chịu bao nhiêu rủi ro, và dữ liệu cho thấy bạn chịu được bao nhiêu</p></div></div>
     <div class="rbody"></div>`;
   draw();

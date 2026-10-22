@@ -98,7 +98,7 @@ export async function render(box, ctx) {
   let chat = keep(`mf.chat.${client}`) || [], busy = false;
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Tài sản</div><h1 class="h1">Dữ liệu chi tiết tài sản</h1>
+    <div class="pagehead"><div><div class="eyebrow">${staff ? "Tài sản" : "Wealth View"}</div><h1 class="h1">Dữ liệu chi tiết tài sản</h1>
       <p class="lede">Từng khoản tài sản và khoản nợ · thêm dữ liệu bằng sao kê hoặc chat</p></div></div>
     <div class="cols">
       <div class="panel c6" id="upload"></div>
