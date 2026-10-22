@@ -62,7 +62,8 @@ And three different things are each called "the benchmark":
 
 ## Steps
 
-- **C1 The checklist.** `src/views/catalogue.py`: the nine entries (above), the outdated Copilot entry replaced, the
+- **C1 The checklist.** `src/views/catalogue.py`: eight entries — the parts above, the helpers inside OneWealth Copilot and the
+  trial's grouping inside Agent CIO, plus Diễn giải nội bộ — the outdated Copilot entry replaced, the
   three evaluations as a list of their own with their schedule and latest result. `GET /api/agents/catalogue` keeps
   its shape, with the new fields added. `resources.yaml`: a comment per setting naming its users.
 - **C2 The guard.** A test: every file in `src/` that calls a model through a setting belongs to a checklist entry,
@@ -77,7 +78,7 @@ And three different things are each called "the benchmark":
 - **C5 The one-pager.** `docs/AGENT_CHECKLIST.md`: the checklist and the three evaluations for the business, in
   plain words; a test keeps it listing every entry.
 
-**Gate.** Every model call in `src/` is in the checklist (the C2 test); the Agent page shows all nine with their real
+**Gate.** Every model call in `src/` is in the checklist (the C2 test); the Agent page shows all eight with their real
 model and measure; no screen uses a name the checklist does not; the tests that touch these pages pass.
 
 **Not in this plan** (raised 2026-10-22, the owner decides separately): the daily trial's empty recall figure, and an
