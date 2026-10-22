@@ -19,8 +19,9 @@ TABS = "(sel) => [...document.querySelectorAll(sel + ' a')].map(a => [a.textCont
 def test_the_home_the_bar_and_the_tabs(open_page):
     p = open_page()
     p.go("#/client")
-    # the home: Toàn cảnh, the Bảng số liệu as a page (cash flow first), not one of the graph's views
+    # the home: Toàn cảnh, the Bảng số liệu as a page (the overview first, then cash flow), not one of the graph's views
     p.page.wait_for_selector("#ws-cashview #d-cash")
+    assert p.page.eval_on_selector("#ws-cashview .cols > .panel", "p => p.id") == "d-nw"  # business feedback 2026-10-22
     assert p.page.is_hidden("#ws-canvas") and p.page.is_hidden("#ws-sheet") and p.page.is_hidden(".ws-ctl")
     assert p.page.is_hidden(".ws-strip")  # its cards are in the dashboard
     assert p.page.evaluate(TABS, "#ws-pages") == [["Toàn cảnh", True], ["Đồ thị tài chính", False]]

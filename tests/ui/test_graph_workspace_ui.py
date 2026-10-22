@@ -92,13 +92,14 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     assert p.page.text_content('.wnode[data-n="SC:vni_30"] .wfig').startswith("nếu xảy ra −")
     assert p.page.text_content(".wme-v") == me  # a scenario never changes the actual net worth
     # the strip: the Toàn cảnh cards; a card opens its lens at its section of the Bảng số liệu, the client's
-    # dashboard (UX_TOOLBAR_PLAN T3+T4): cash flow first, allocation with profit and loss, the month's flows; folding
+    # dashboard (UX_TOOLBAR_PLAN T3+T4): the overview first (net worth, allocation with profit and loss), then cash flow and
+    # the month's flows; folding
     # is remembered
     assert p.page.locator(".scard").count() == 5
     p.page.click('.scard[data-part="month"] .pc-head')
     p.page.wait_for_selector("#ws-cashview #d-month .sankey")
     assert p.page.is_hidden("#ws-canvas") and p.page.get_attribute('#ws-view [data-v="money"]', "aria-pressed") == "true"
-    assert p.page.eval_on_selector_all("#ws-cashview .cols > .panel", "ps => ps.map(p => p.id).slice(0, 4)") == ["d-cash", "d-alloc", "d-pnl", "d-month"]
+    assert p.page.eval_on_selector_all("#ws-cashview .cols > .panel", "ps => ps.map(p => p.id).slice(0, 5)") == ["d-nw", "d-alloc", "d-pnl", "d-cash", "d-month"]
     assert "Lãi/lỗ" in p.page.inner_text("#d-alloc") and p.page.is_visible("#ws-cashview #cash svg")
     p.page.wait_for_function("location.hash === '#/client/xem/dong-tien'")
     p.page.click('#ws-cashview [data-months="24"]')
