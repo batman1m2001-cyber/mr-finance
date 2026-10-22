@@ -122,17 +122,18 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   grad("radialGradient", "ws-satin", {cx: 0, cy: 0, r: 1.7, gradientUnits: "userSpaceOnUse", spreadMethod: "repeat"},
     [["0", "p-sa"], ["0.5", "p-sb"], ["1", "p-sa"]]);
   grad("radialGradient", "ws-shadow", {r: "50%"}, [["0.78", "p-sh"], ["1", "p-sh0"]]);
+  grad("radialGradient", "ws-ishadow", {r: "50%"}, [["0.84", "p-is0"], ["1", "p-is"]]);  // where the field meets the rim
   grad("linearGradient", "ws-glint", {x1: 0, y1: 0, x2: 1, y2: 0}, [["0", "g-glint0"], ["0.5", "g-glint"], ["1", "g-glint0"]]);
   // the figure cut into the metal: the stroke's top-left wall in shadow, its bottom-right wall catching the light, the
   // field's lip just below it lit — offsets of the letters' own shape, no copies of the text
   const cut = mk("filter", {id: "ws-engrave", x: "-8%", y: "-20%", width: "116%", height: "140%", "color-interpolation-filters": "sRGB"}, defs);
-  cut.innerHTML = `<feOffset in="SourceAlpha" dx="0.7" dy="0.9" result="dn"/>
+  cut.innerHTML = `<feOffset in="SourceAlpha" dx="0.6" dy="0.75" result="dn"/>
     <feComposite in="SourceAlpha" in2="dn" operator="out" result="tl"/>
     <feFlood class="f-wall" result="wc"/><feComposite in="wc" in2="tl" operator="in" result="wall"/>
     <feOffset in="SourceAlpha" dx="-0.6" dy="-0.7" result="up"/>
     <feComposite in="SourceAlpha" in2="up" operator="out" result="br"/>
     <feFlood class="f-catch" result="cc"/><feComposite in="cc" in2="br" operator="in" result="catch"/>
-    <feOffset in="SourceAlpha" dx="0.5" dy="0.8" result="lo"/>
+    <feOffset in="SourceAlpha" dx="0.4" dy="0.6" result="lo"/>
     <feComposite in="lo" in2="SourceAlpha" operator="out" result="lipa"/>
     <feFlood class="f-lip" result="lc"/><feComposite in="lc" in2="lipa" operator="in" result="lip"/>
     <feMerge><feMergeNode in="lip"/><feMergeNode in="SourceGraphic"/><feMergeNode in="wall"/><feMergeNode in="catch"/></feMerge>`;
@@ -609,14 +610,16 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     if (me) {
       const glass = mk("g", {"clip-path": "url(#ws-core-clip)", "aria-hidden": "true"}, el);
       mk("circle", {r, class: "wme-satin", fill: "url(#ws-satin)"}, glass);
+      mk("circle", {r: r - 8, class: "wme-ishadow", fill: "url(#ws-ishadow)"}, glass);
       mk("ellipse", {cy: r * 0.48, rx: r * 0.82, ry: r * 0.44, class: "wme-inner", fill: "url(#ws-inner)"}, glass);
       mk("g", {class: "wme-bandhost"}, glass);  // the light a payment sends across (drawEdges, on the sparks' clock)
-      mk("ellipse", {cx: -r * 0.2, cy: -r * 0.46, rx: r * 0.58, ry: r * 0.26, class: "wme-spec", fill: "url(#ws-spec)", transform: "rotate(-24)"}, glass);
+      mk("circle", {cx: -r * 0.2, cy: -r * 0.26, r: r * 0.72, class: "wme-spec", fill: "url(#ws-spec)"}, glass);  // one broad studio light, off centre
       const sweep = mk("g", {class: "wme-glint"}, glass);  // a glint across the coin now and then (none under reduced motion)
-      mk("rect", {x: -r * 0.18, y: -r * 1.3, width: r * 0.36, height: r * 2.6, fill: "url(#ws-glint)", transform: "rotate(28)"}, sweep);
+      mk("rect", {x: -r * 0.28, y: -r * 1.3, width: r * 0.56, height: r * 2.6, fill: "url(#ws-glint)", transform: "rotate(28)"}, sweep);
       const rim = mk("g", {"aria-hidden": "true"}, el);
       mk("circle", {r: r - 3.5, class: "wme-rimband", stroke: "url(#ws-pt-rim)"}, rim);  // the raised rim
       mk("circle", {r: r - 0.6, class: "wme-reed"}, rim);  // its milled edge
+      mk("circle", {r: r - 2, class: "wme-edgehi"}, rim);  // a fine bright line inside the outer edge
       mk("circle", {r: r - 7.5, class: "wme-bevel", stroke: "url(#ws-pt-bevel)"}, rim);  // where the rim meets the field
       mk("circle", {r: r - 12, class: "wme-ticks"}, rim);  // a ring of beads, as on a coin
       mk("circle", {r: r + 1.5, class: "wme-bezel", stroke: "url(#ws-bezel)"}, rim);
@@ -631,11 +634,14 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       el.setAttribute("aria-label", `${staffLabel || "Tài sản ròng"} ${vnd(n.value)}: tài sản ${vnd(n.assets)}, nợ ${vnd(n.liabilities)}`);
       const t2 = mk("text", {y: 9, "text-anchor": "middle", class: "wme-v num-svg", "data-metric": "net_worth", tabindex: "0", role: "button",
         "data-in": JSON.stringify(howOf(n)[1])}, el);
-      const said = vnd(n.value), cutAt = said.search(/\s\S+$/);
-      if (cutAt > 0) {
-        mk("tspan", {}, t2).textContent = said.slice(0, cutAt);
-        mk("tspan", {class: "wme-unit"}, t2).textContent = said.slice(cutAt);
-      } else t2.textContent = said;
+      const said = vnd(n.value), cutAt = said.search(/\s\S+$/), figure = cutAt > 0 ? said.slice(0, cutAt) : said;
+      const comma = figure.lastIndexOf(",");  // the decimal comma drawn in close to its digits, as typeset
+      if (comma > 0) {
+        mk("tspan", {}, t2).textContent = figure.slice(0, comma);
+        mk("tspan", {dx: -0.8}, t2).textContent = ",";
+        mk("tspan", {dx: -0.3}, t2).textContent = figure.slice(comma + 1);
+      } else mk("tspan", {}, t2).textContent = figure;
+      if (cutAt > 0) mk("tspan", {class: "wme-unit"}, t2).textContent = said.slice(cutAt);
       const room = 84, w = t2.getBBox ? t2.getBBox().width : 0;
       if (w > room) t2.style.fontSize = `${(parseFloat(getComputedStyle(t2).fontSize) * room / w).toFixed(1)}px`;
     } else if (n.kind === "group") {  // “+n”: what the ring folded, opened on a click
