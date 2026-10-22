@@ -65,17 +65,27 @@ def _line(kind: str, d: Dict[str, Any]) -> str:
 def by_rules(client_id: str, message: str) -> str:
     """Read the message with the rules, record what they found, and say what was recorded."""
     found = _rules.parse(message)
-    for rec in found:
-        store.add_profile(client_id, rec["kind"], {**rec["data"], "via": "chat"})
     if not found:
         return (
             "Tôi chưa nhận ra tài sản nào trong câu này. Anh/chị có thể nói như: "
             "“Tôi có 1 căn ở Thảo Điền mua 2019 giá 8 tỷ” hoặc “Nhà tôi có 10 lượng vàng”."
         )
-    reply = "Tôi đã ghi nhận:\n" + "\n".join(f"• {_line(r['kind'], r['data'])}" for r in found)
+    known = [r for r in found if store.same_profile(client_id, r["kind"], r["data"])]  # said in an earlier turn
+    new = [r for r in found if r not in known]
+    for rec in new:
+        store.add_profile(client_id, rec["kind"], {**rec["data"], "via": "chat"})
+    lines = lambda rs: "\n".join(f"• {_line(r['kind'], r['data'])}" for r in rs)  # noqa: E731
+    reply = "\n".join(
+        part
+        for part in (
+            f"Tôi đã ghi nhận:\n{lines(new)}" if new else "",
+            f"Đã có trong hồ sơ từ trước, tôi không ghi lại:\n{lines(known)}" if known else "",
+        )
+        if part
+    )
     if any(
         r["data"].get("class") == "real_estate" and not r["data"].get("value") and not r["data"].get("sqm")
-        for r in found
+        for r in new
     ):
         reply += "\nAnh/chị cho biết thêm diện tích hoặc giá trị hiện tại để định giá chính xác hơn nhé."
     return reply

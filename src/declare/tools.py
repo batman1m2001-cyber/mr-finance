@@ -22,10 +22,12 @@ from wealth.money import TR, TY, vnd
 _WRITTEN: "OrderedDict[str, set]" = OrderedDict()
 _KEEP_RUNS = 256
 ALREADY = "Đã ghi mục này trong lượt này rồi — không ghi lại lần nữa."
+KNOWN = "Mục này đã có trong hồ sơ của khách từ trước — không ghi lại lần nữa."
 
 
 def _add(ctx: RunContext, kind: str, data: dict) -> Optional[str]:
-    """Write one declaration; ``ALREADY`` (and no write) when this run already wrote the same."""
+    """Write one declaration; ``ALREADY`` (and no write) when this run already wrote the same, ``KNOWN`` when an
+    earlier turn did."""
     if ctx.run_id:
         seen = _WRITTEN.setdefault(ctx.run_id, set())
         _WRITTEN.move_to_end(ctx.run_id)
@@ -35,6 +37,8 @@ def _add(ctx: RunContext, kind: str, data: dict) -> Optional[str]:
         if key in seen:
             return ALREADY
         seen.add(key)
+    if store.same_profile(ctx.deps, kind, data):
+        return KNOWN
     store.add_profile(ctx.deps, kind, {**data, "via": "chat"})
     return None
 
