@@ -6,8 +6,7 @@ SECTIONS = [  # rail item, its home, its tabs (label, current at the home)
     ("tong-quan", "Wealth View", "#/client/tong-quan", [["Wealth view", True], ["Dữ liệu chi tiết tài sản", False]]),
     ("muc-tieu", "Wealth Planning Advisor", "#/client/muc-tieu/ke-hoach",
      [["Wealth planning advisor", True], ["Risk profile test", False]]),
-    ("tin", "Headline News", "#/client/tin/thi-truong",
-     [["Tác động tin", True], ["Đồ thị tác động", False], ["Chi phí chính sách", False]]),
+    ("tin", "Headline News", "#/client/tin/chinh-sach", [["News and Prediction", True], ["Đồ thị tác động", False]]),
     ("chuyen-gia", "Relationship specialist", "#/client/chuyen-gia", []),
 ]  # fmt: skip
 TABS = """(sel) => [...document.querySelectorAll(sel + ' a')].filter(a => a.offsetParent)
@@ -36,7 +35,7 @@ def test_the_four_sections_their_tabs_and_headings(open_page):
         ("#/client/tai-san", "tong-quan", ["Wealth View", "Dữ liệu chi tiết tài sản"]),
         ("#/client/rui-ro/khau-vi", "muc-tieu", ["Wealth Planning Advisor", "Risk profile test"]),
         ("#/client/muc-tieu/ke-hoach", "muc-tieu", ["Wealth Planning Advisor", "Kế hoạch tài chính"]),
-        ("#/client/tin/chinh-sach", "tin", ["Headline News", "Chi phí chính sách"]),
+        ("#/client/tin/chinh-sach", "tin", ["Headline News", "News and Prediction"]),
         ("#/client/chuyen-gia", "chuyen-gia", ["", "Relationship specialist"]),
     ]:
         p.go(route)

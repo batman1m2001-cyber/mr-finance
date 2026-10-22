@@ -44,7 +44,10 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "hop-tin": ("Hộp tin", {"cio": "#/cio/hop-tin"}),
     "tin-bi-giu": ("Tin bị giữ", {"compliance": "#/compliance/giu"}),
     # since A1 (the registry's own tools)
-    "chinh-sach": ("Chi phí chính sách", {"client": "#/client/tin/chinh-sach", "rm": "#/rm/khach-hang/chinh-sach"}),
+    "chinh-sach": (
+        {"client": "News and Prediction", "rm": "Chi phí chính sách"},  # the client's tab (business, 2026-10-22)
+        {"client": "#/client/tin/chinh-sach", "rm": "#/rm/khach-hang/chinh-sach"},
+    ),
     "hang-cho": (
         {"client": "Relationship specialist", "rm": "Hàng chờ đề xuất", "specialist": "Hàng chờ đề xuất"},
         {"client": "#/client/chuyen-gia", "rm": "#/rm/khach-hang/duyet", "specialist": "#/specialist/duyet"},

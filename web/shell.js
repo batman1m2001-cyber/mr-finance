@@ -16,7 +16,7 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261022w1";
+import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261022n1";
 import {DESKS} from "./desk/roles.js?v=20261021t5";
 
 const ROLES = {
@@ -31,7 +31,8 @@ const ROLES = {
       {id: "muc-tieu", label: "Wealth Planning Advisor", sub: [{id: "ke-hoach", label: "Wealth planning advisor", page: "plan"}]},
       {id: "rui-ro", label: "Risk profile test", sub: [{id: "khau-vi", label: "Risk profile test", page: "risktest"}]},
       {id: "tin", label: "Headline News", sub: [
-        {id: "thi-truong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}]},
+        {id: "chinh-sach", label: "News and Prediction", page: "policy"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
+        {id: "thi-truong", label: "Tác động tin", page: "impact"}]},  // no tab now; the bell's and the feed's evidence opens it
       {id: "chuyen-gia", label: "Relationship specialist", page: "advisor"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
@@ -151,7 +152,7 @@ export function go(hash, focus) {
 
 // the client's pages by their former names too: the tabs carry the bank's English names (ADR-0037), a client still types these
 const ALSO = {"#/client/tong-quan": "Tổng quan Toàn cảnh Dòng tiền", "#/client/tai-san": "Tài sản", "#/client/muc-tieu/ke-hoach": "Kế hoạch tài chính Mục tiêu",
-  "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/thi-truong": "Tin tức", "#/client/chuyen-gia": "Chuyên gia"};
+  "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/chinh-sach": "Chi phí chính sách Tin tức", "#/client/chuyen-gia": "Chuyên gia"};
 
 // every page of a role, for the header search: label, its parent's label, its route (and other names it answers to)
 function pagesFor(role) {
@@ -175,7 +176,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261022w1");
+  wsLoad ||= import("./workspace/workspace.js?v=20261022n1");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -309,7 +310,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022w1`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022n1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

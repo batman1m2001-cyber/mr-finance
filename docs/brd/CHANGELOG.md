@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-22 — Headline News (business feedback 3): Chi phí chính sách is News and Prediction, the first tab; Đồ thị
+  tác động second; Tác động tin is no tab (its address stays: the bell's and the feed's evidence). OWN-WN-10.
+  — ADR-0037, sources/owner_requests/2026-10-22_business_feedback_3.md, owner_requirements.md,
+  requirements_traceability.md, ux/information_architecture.md, ux/screens/client.md, ux/screen_inventory.md, FEAT-25.
 - 2026-10-22 — The client's menu by the bank's names (business feedback 2, nine items):
   - four sections: Wealth View (Wealth view · Dữ liệu chi tiết tài sản), Wealth Planning Advisor (Wealth planning
     advisor · Risk profile test), Headline News, Relationship specialist;

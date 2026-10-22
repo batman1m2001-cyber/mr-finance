@@ -79,6 +79,7 @@ PAGE_WORDS = {
     "risk-profile": "risk profile|bai test|khau vi",
     "hang-cho": "relationship|chuyen gia|hang cho",
     "do-thi": "do thi",
+    "chinh-sach": "news and prediction|chi phi chinh sach",  # before tac-dong: the client's News and Prediction
     "tac-dong": "tac dong",
     "duyet": "duyet",
     "hom-nay": "hom nay",

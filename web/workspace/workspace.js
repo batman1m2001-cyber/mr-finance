@@ -10,9 +10,9 @@ import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {UNIT_WORD, createGraph} from "./graph.js?v=20261021t6";
 import {dockFrame} from "./dock.js?v=20261018m0";
-import {render as inspect} from "./inspector.js?v=20261022w1";
-import {LENS, SECTION_NAME, SECTIONS, SHEETS, TOOLBAR, resolve} from "./lenses.js?v=20261022w1";
-import {mount as mountMoney} from "./money.js?v=20261022w1";
+import {render as inspect} from "./inspector.js?v=20261022n1";
+import {LENS, SECTION_NAME, SECTIONS, SHEETS, TOOLBAR, resolve} from "./lenses.js?v=20261022n1";
+import {mount as mountMoney} from "./money.js?v=20261022n1";
 import {mount as mountStrip} from "./strip.js?v=20261021t3";
 
 const UNITS = [["day", "Ngày"], ["month", "Tháng"], ["year", "Năm"]];  // a spoke's change and the timeline's step (D2)
@@ -247,7 +247,7 @@ export function mount(main, {client, scope, go, page}) {
     const s = SECTIONS[sheet ? (SHEETS[sheet].lens || sheet) : lens.id] || {tabs: []};  // Bộ nhớ: none
     const here = (href, v) => (sheet ? href === SHEETS[sheet].route : !!v && (v === "money") === (view === "money"));
     let tabs = s.tabs.map(([label, href, v]) => [label, href, v || null, here(href, v)]);
-    if (!tabs.some(t => t[3])) {
+    if (!sheet && !tabs.some(t => t[3])) {  // a page that is no tab (Tác động tin) shows its section's tabs, none lit
       const [label, href] = (s.tabs.length ? s : SECTIONS["tong-quan"]).tabs[0];
       tabs = [[label, href, null, false], [view === "money" ? "Trong Bảng số liệu" : "Trên đồ thị", `#/client/xem/${lens.id}`, null, true]];
     }

@@ -7,12 +7,12 @@ larger. The staff's desks are untouched (test_role_desks_ui)."""
 HOMES = {  # the bank's four sections (business feedback 2, ADR-0037)
     "tong-quan": "#/client/tong-quan",
     "muc-tieu": "#/client/muc-tieu/ke-hoach",
-    "tin": "#/client/tin/thi-truong",
+    "tin": "#/client/tin/chinh-sach",
     "chuyen-gia": "#/client/chuyen-gia",
 }
 SHEET_TABS = {
     "muc-tieu": [["Wealth planning advisor", True], ["Risk profile test", False]],
-    "tin": [["Tác động tin", True], ["Đồ thị tác động", False], ["Chi phí chính sách", False]],
+    "tin": [["News and Prediction", True], ["Đồ thị tác động", False]],
     "chuyen-gia": [],
 }
 TABS = "(sel) => [...document.querySelectorAll(sel + ' a')].map(a => [a.textContent, a.hasAttribute('aria-current')])"
@@ -49,10 +49,12 @@ def test_the_home_the_bar_and_the_tabs(open_page):
         assert tabs == SHEET_TABS[tool], (tool, tabs)
         if not tabs:
             assert p.page.is_hidden(".ws-sheet-h"), tool
-    p.go("#/client/tin/thi-truong")
-    p.page.click("#ws-sheet-tabs a:has-text('Chi phí chính sách')")
+    p.go("#/client/tin/thi-truong")  # Tác động tin: no tab, its page (the bell's evidence), its section's tabs unlit
+    p.page.wait_for_function("!document.querySelector('#page .skeleton')")
+    assert p.page.evaluate(TABS, "#ws-sheet-tabs") == [["News and Prediction", False], ["Đồ thị tác động", False]]
+    p.page.click("#ws-sheet-tabs a:has-text('News and Prediction')")
     p.page.wait_for_function("location.hash === '#/client/tin/chinh-sach'")
-    assert p.page.evaluate(TABS, "#ws-sheet-tabs")[2] == ["Chi phí chính sách", True]
+    assert p.page.evaluate(TABS, "#ws-sheet-tabs")[0] == ["News and Prediction", True]
     p.page.keyboard.press("Escape")  # a page stays
     p.page.wait_for_timeout(200)
     assert p.page.is_visible("#ws-sheet") and p.page.evaluate("location.hash") == "#/client/tin/chinh-sach"

@@ -53,10 +53,10 @@ def test_the_menu_is_the_banks_four_sections():
     tabs = lenses("Object.fromEntries(L.TOOLBAR.map(t => [t.id, L.SECTIONS[t.id].tabs.map(x => x[0])]))")
     assert tabs == {"tong-quan": ["Wealth view", "Dữ liệu chi tiết tài sản"],
                     "muc-tieu": ["Wealth planning advisor", "Risk profile test"],
-                    "tin": ["Tác động tin", "Đồ thị tác động", "Chi phí chính sách"],
+                    "tin": ["News and Prediction", "Đồ thị tác động"],  # business, 2026-10-22
                     "chuyen-gia": ["Relationship specialist"]}  # fmt: skip
     homes = lenses("L.TOOLBAR.map(t => L.SECTIONS[t.id].home)")
-    assert homes == ["#/client/tong-quan", "#/client/muc-tieu/ke-hoach", "#/client/tin/thi-truong",
+    assert homes == ["#/client/tong-quan", "#/client/muc-tieu/ke-hoach", "#/client/tin/chinh-sach",
                      "#/client/chuyen-gia"]  # fmt: skip
     # nothing a client clicks leads to the graph: no tab names it, no tab's address is a lens of its own
     routes = lenses("Object.values(L.SECTIONS).flatMap(s => s.tabs.map(x => x[1]))")
