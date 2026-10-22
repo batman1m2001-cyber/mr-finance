@@ -1,8 +1,8 @@
 /* The workspace's “Bảng số liệu” (UX_TOOLBAR_PLAN T3+T4): the client's dashboard where the graph is — Chi tiết's
    blocks led by the overview (net worth with its tiers, allocation with profit against cost, the portfolio's profit
    and loss), then cash flow over time and the month's money in and out (Toàn cảnh's), risk, the reserve and the
-   policy items (business feedback 2026-10-22: the overview first, cash flow second). It replaces the client's Toàn cảnh and Chi tiết sheets; the drawing is
-   pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
+   policy items (business feedback 2026-10-22: the overview first, cash flow second). It replaces the client's Toàn
+   cảnh and Chi tiết sheets; the drawing is pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
 import {esc} from "../core/core.js";
 import {render} from "../pages/detail.js?v=20261022o1";
 import {href} from "./lenses.js?v=20261022o1";
