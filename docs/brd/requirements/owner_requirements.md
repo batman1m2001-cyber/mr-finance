@@ -26,6 +26,7 @@ xếp layout dọc theo bản mới": the names, not the old look.
 | OWN-WN-08 | Every old client address still opens its page, under its new section | ADR-0037 §2 | documented |
 | OWN-WN-09 | The assistant and the user guide use the same names | ADR-0037 §5 | documented |
 | OWN-WN-10 | Headline News has two tabs: News and Prediction (Chi phí chính sách, renamed) first, then Đồ thị tác động; Tác động tin is no tab, its address kept for the bell's and the feed's evidence | [feedback 3](../sources/owner_requests/2026-10-22_business_feedback_3.md) | documented |
+| OWN-WN-11 | The colour tone of Techcombank Private, red and black and not painful: black, white and greys, Techcombank red only on the main action (a primary button, Hỏi trợ lý, the bell's count) with white words at 4.5:1; tabs, links and selections stay black | [feedback 4](../sources/owner_requests/2026-10-22_business_feedback_4.md) | documented |
 
 ## MR — A desk for every staff role (2026-10-18, experiment)
 

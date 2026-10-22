@@ -16,7 +16,7 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261022n1";
+import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261022r1";
 import {DESKS} from "./desk/roles.js?v=20261021t5";
 
 const ROLES = {
@@ -176,7 +176,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261022n1");
+  wsLoad ||= import("./workspace/workspace.js?v=20261022r1");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -310,7 +310,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022n1`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022r1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
