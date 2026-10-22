@@ -71,11 +71,13 @@ DESK_RULES: Dict[str, List[Tuple[str, str]]] = {
 }
 COMMAND = r"(duyet|tu choi|lay tin|cap nhat tin|tai tin|danh dau|ghi lien he|gui)\b"
 PAGE_WORDS = {
-    "toan-canh": "toan canh",
+    "toan-canh": "toan canh|wealth view",  # the client's Wealth View (WEALTH_NAMES_PLAN)
     "ban-do": "ban do",
-    "chi-tiet": "chi tiet|bang so lieu",  # the client's Bảng số liệu (UX_TOOLBAR_PLAN T4)
-    "tai-san": "tai san",
-    "ke-hoach": "ke hoach",
+    "tai-san": "du lieu chi tiet|tai san",  # before chi-tiet: the client's Dữ liệu chi tiết tài sản
+    "chi-tiet": "chi tiet|bang so lieu",  # the client's former Bảng số liệu (T4); the RM's Chi tiết tài sản
+    "ke-hoach": "ke hoach|wealth planning|planning advisor",
+    "risk-profile": "risk profile|bai test|khau vi",
+    "hang-cho": "relationship|chuyen gia|hang cho",
     "do-thi": "do thi",
     "tac-dong": "tac dong",
     "duyet": "duyet",

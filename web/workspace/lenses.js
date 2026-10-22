@@ -6,8 +6,9 @@
    T3+T4), so their addresses open it.
    The classic app (BUSINESS_FEEDBACK_1021_PLAN B3.1): the bar leads to each section's page, Toàn cảnh is the home
    page. The bank's names (WEALTH_NAMES_PLAN, ADR-0037): four sections — Wealth View, Wealth Planning Advisor, Headline
-   News, Relationship specialist — and no graph for the client: every address that opened it opens its section's
-   page, and every older address still opens its page. The lenses stay as the graph's views (the code is kept). */
+   News, Relationship specialist — and the graph hidden from the client: no tab, search hit or assistant page leads to
+   it, and its former tab's address opens Wealth View; only its own unlinked address `#/client/xem/<lens>` still opens
+   it, so the kept code stays tested and can come back. Every older address still opens its page. */
 
 export const LENSES = [
   {id: "tong-quan", label: "Tổng quan", icon: "map", tip: "Tổng quan: toàn bộ bức tranh tài chính", sub: "Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn",
@@ -67,10 +68,8 @@ const OLD = {
   "tin": "thi-truong", "tin/thi-truong": "thi-truong", "tin/do-thi": "do-thi", "tin/chinh-sach": "chinh-sach",
   "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
 };
-// the graph's addresses (no graph for the client, ADR-0037): each lens → its section's page; Dòng tiền's own page
-// is the dashboard's cash part
-const GRAPH = {"tong-quan": {home: true}, "dong-tien": {part: "cash"}, "rui-ro": {part: "risk"},
-  "tai-san": {sheet: "tai-san"}, "muc-tieu": {sheet: "ke-hoach"}, "tin": {sheet: "thi-truong"}};
+// Dòng tiền's own page is the dashboard's cash part now (ADR-0037)
+const CASH = {lens: "tong-quan", sheet: null, param: null, part: "cash"};
 
 /* The address's parts after the role → {lens (or null: keep the current one), sheet (or null), param}, and a
    dashboard section to open (part) for Toàn cảnh's and Chi tiết's addresses, and the home (B3.1): the dashboard at
@@ -79,14 +78,14 @@ export function resolve(parts) {
   const [a, b, c] = parts;
   const home = {lens: "tong-quan", sheet: null, param: null, home: true};
   if (BOARD[`${a}/${b}`]) return {lens: "tong-quan", sheet: null, param: null, part: BOARD[`${a}/${b}`]};
-  if (!a || a === "tong-quan" && (!b || b === "ban-do")) return home;
-  const g = a === "xem" ? GRAPH[b] || GRAPH["tong-quan"] : a === "dong-tien" ? GRAPH["dong-tien"] : null;
-  if (g && g.part) return {lens: "tong-quan", sheet: null, param: null, part: g.part};
+  if (!a || a === "tong-quan" && (!b || b === "ban-do")) return home;  // ban-do: the former Đồ thị tài chính tab
+  if (a === "xem") return {lens: LENS[b] ? b : "tong-quan", sheet: null, param: null};  // the graph, unlinked (ADR-0037)
+  if (a === "dong-tien") return CASH;
   const two = b && OLD[`${a}/${b}`];
-  const id = g ? g.sheet : two || OLD[a];
+  const id = two || OLD[a];
   if (!id) return home;
   const s = SHEETS[id];
-  return {lens: s.lens, sheet: id, param: g ? null : two ? c || null : b || null};
+  return {lens: s.lens, sheet: id, param: two ? c || null : b || null};
 }
 
 /* A page module's ctx.href(nav, sub, param) inside the workspace: the same old addresses (they open sheets). */

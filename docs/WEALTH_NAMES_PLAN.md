@@ -26,11 +26,12 @@ names, not the old look. Sign-in is not touched.
   specialist"); the tabs as written ("Wealth view", "Dữ liệu chi tiết tài sản", "Wealth planning advisor", "Risk
   profile test"). Headline News keeps its three tabs (Tác động tin, Đồ thị tác động, Chi phí chính sách): only the
   name was asked.
-- **The graph is off for the client, not deleted.** No tab, and every address that opened it (`#/client/xem/<lens>`,
-  `#/client/tong-quan/ban-do`, an unknown address) opens the page of its section instead: Tổng quan, Dòng tiền and
-  Rủi ro's graphs → Wealth View (at the cash or risk part), Tài sản's → Dữ liệu chi tiết tài sản, Mục tiêu's →
-  Wealth Planning Advisor, Tin tức's → Headline News. The graph code, the RM's Bản đồ tài chính and the iPhone app
-  are unchanged.
+- **The graph is hidden from the client, not deleted.** No tab, no header-search hit, no page the assistant can open;
+  its former tab's address (`#/client/tong-quan/ban-do`) and any unknown address open Wealth View. Only its own
+  address `#/client/xem/<lens>` still opens it, linked from nowhere, so the kept code keeps its tests (seven UI test
+  files drive it there) and can come back with one tab. (First written as "no address opens it"; narrowed while
+  building W1 when those tests showed the code would otherwise be unreachable and untested.) The RM's Bản đồ tài
+  chính and the iPhone app are unchanged.
 - **Every old address keeps working** (citations, search, the bell, bookmarks): `#/client/tai-san`,
   `#/client/dong-tien` (→ Wealth View at Dòng tiền), `#/client/muc-tieu/ke-hoach`, `#/client/rui-ro/khau-vi`,
   `#/client/tin/...`, `#/client/chuyen-gia`. No address is renamed.
@@ -56,6 +57,6 @@ names, not the old look. Sign-in is not touched.
 - **W5 Tests and the gate.** The UI tests that name the old menu, a new one for the four sections and every old
   address; screenshots desktop and phone, light and dark; merge, restart :8030.
 
-**Gate.** The client's menu is the four sections with the tabs above, in both themes and on a phone; no client
-address opens the graph; every old address opens its page; no client screen, assistant answer or guide page uses a
+**Gate.** The client's menu is the four sections with the tabs above, in both themes and on a phone; nothing a client
+can click, search or ask leads to the graph; every old address opens its page; no client screen, assistant answer or guide page uses a
 removed name; the UI and assistant tests pass (apart from the four failing on main before this).
