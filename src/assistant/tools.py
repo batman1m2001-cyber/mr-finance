@@ -17,27 +17,26 @@ from wealth import store as wealth_store
 
 USER = {"client": None, "rm": "rm01", "cio": "cio", "compliance": "compliance"}
 PAGES = {  # page key → (label, or label per role; route per role); the router may name a key, never a route
-    # the customer's graph workspace, by lens (D20: “bật trên đồ thị” opened the old impact graph)
-    "do-thi-tai-chinh": ("Đồ thị tài chính", {"client": "#/client/xem/tong-quan"}),
-    "do-thi-tai-san": ("Đồ thị · Tài sản", {"client": "#/client/xem/tai-san"}),
-    "do-thi-dong-tien": ("Đồ thị · Dòng tiền", {"client": "#/client/xem/dong-tien"}),
-    "do-thi-muc-tieu": ("Đồ thị · Mục tiêu & kịch bản", {"client": "#/client/xem/muc-tieu"}),
-    "do-thi-tin": ("Đồ thị · Tin tức", {"client": "#/client/xem/tin"}),
-    "do-thi-rui-ro": ("Đồ thị · Rủi ro", {"client": "#/client/xem/rui-ro"}),
+    # the customer's four sections by the bank's names (WEALTH_NAMES_PLAN, ADR-0037): Wealth View, Wealth Planning
+    # Advisor, Headline News, Relationship specialist; the client has no graph to open now (its pages left this list)
     "toan-canh": (
-        {"client": "Bảng số liệu", "rm": "Toàn cảnh"},
+        {"client": "Wealth View", "rm": "Toàn cảnh"},
         {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/toan-canh"},
     ),
-    "ban-do": (
-        {"client": "Đồ thị tài chính", "rm": "Bản đồ tài chính"},
-        {"client": "#/client/tong-quan/ban-do", "rm": "#/rm/khach-hang/ban-do"},
-    ),
+    "ban-do": ("Bản đồ tài chính", {"rm": "#/rm/khach-hang/ban-do"}),
     "chi-tiet": (
-        {"client": "Bảng số liệu", "rm": "Chi tiết tài sản"},
+        {"client": "Wealth View", "rm": "Chi tiết tài sản"},
         {"client": "#/client/tong-quan/chi-tiet", "rm": "#/rm/khach-hang/tong-quan"},
     ),
-    "tai-san": ("Tài sản", {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"}),
-    "ke-hoach": ("Kế hoạch", {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"}),
+    "tai-san": (
+        {"client": "Dữ liệu chi tiết tài sản", "rm": "Tài sản"},
+        {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"},
+    ),
+    "ke-hoach": (
+        {"client": "Wealth Planning Advisor", "rm": "Kế hoạch"},
+        {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"},
+    ),
+    "risk-profile": ("Risk profile test", {"client": "#/client/rui-ro/khau-vi"}),
     "tac-dong": ("Tác động tin", {"client": "#/client/tin/thi-truong", "rm": "#/rm/khach-hang/tac-dong"}),
     "do-thi": ("Đồ thị tác động", {"client": "#/client/tin/do-thi", "rm": "#/rm/khach-hang/do-thi"}),
     "duyet": ("Duyệt đề xuất", {"rm": "#/rm/khach-hang/duyet"}),
@@ -47,7 +46,7 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     # since A1 (the registry's own tools)
     "chinh-sach": ("Chi phí chính sách", {"client": "#/client/tin/chinh-sach", "rm": "#/rm/khach-hang/chinh-sach"}),
     "hang-cho": (
-        "Hàng chờ đề xuất",
+        {"client": "Relationship specialist", "rm": "Hàng chờ đề xuất", "specialist": "Hàng chờ đề xuất"},
         {"client": "#/client/chuyen-gia", "rm": "#/rm/khach-hang/duyet", "specialist": "#/specialist/duyet"},
     ),
     "su-kien": ("Sự kiện & nhận định", {"cio": "#/cio/nhan-dinh"}),

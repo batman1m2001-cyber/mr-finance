@@ -60,7 +60,7 @@ export async function render(box, ctx) {
   }
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Kế hoạch · <span lang="en">Wealth Planning Advisor</span></div><h1 class="h1">Kế hoạch tài chính</h1>
+    <div class="pagehead"><div><div class="eyebrow">${staff ? "Kế hoạch" : "Wealth Planning Advisor"}</div><h1 class="h1">Kế hoạch tài chính</h1>
       <p class="lede">Tư vấn kế hoạch tài chính theo mốc đời · mô phỏng trên chính tài sản của bạn</p></div></div>
     <div id="mini"></div><div id="reg"></div>
     <div class="plangrid mt"><div class="panel" id="list"></div><div id="panel"></div></div>`;

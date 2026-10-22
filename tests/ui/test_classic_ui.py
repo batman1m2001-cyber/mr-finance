@@ -1,17 +1,19 @@
-"""The client's classic app in the browser (BUSINESS_FEEDBACK_1021_PLAN B3): Toàn cảnh is the home page, the bar leads
-to each section's page with its tabs, a page has no way "back to the graph" (the graph is a tab of Tổng quan), every
-old address still opens what it did; the assistant is closed until its button opens it, kept per person, over the
-page on a phone; the client's look is light by default and larger. The staff's desks are untouched
-(test_role_desks_ui)."""
+"""The client's classic app in the browser (BUSINESS_FEEDBACK_1021_PLAN B3, WEALTH_NAMES_PLAN): Wealth view is the
+home page, the bar's four sections lead to each section's page with its tabs, a page has no way "back to the graph"
+(the graph is hidden from the client, ADR-0037), every old address still opens its page; the assistant is closed
+until its button opens it, kept per person, over the page on a phone; the client's look is light by default and
+larger. The staff's desks are untouched (test_role_desks_ui)."""
 
-HOMES = {
+HOMES = {  # the bank's four sections (business feedback 2, ADR-0037)
     "tong-quan": "#/client/tong-quan",
-    "tai-san": "#/client/tai-san",
-    "dong-tien": "#/client/dong-tien",
     "muc-tieu": "#/client/muc-tieu/ke-hoach",
     "tin": "#/client/tin/thi-truong",
-    "rui-ro": "#/client/rui-ro/khau-vi",
     "chuyen-gia": "#/client/chuyen-gia",
+}
+SHEET_TABS = {
+    "muc-tieu": [["Wealth planning advisor", True], ["Risk profile test", False]],
+    "tin": [["Tác động tin", True], ["Đồ thị tác động", False], ["Chi phí chính sách", False]],
+    "chuyen-gia": [],
 }
 TABS = "(sel) => [...document.querySelectorAll(sel + ' a')].map(a => [a.textContent, a.hasAttribute('aria-current')])"
 
@@ -19,21 +21,21 @@ TABS = "(sel) => [...document.querySelectorAll(sel + ' a')].map(a => [a.textCont
 def test_the_home_the_bar_and_the_tabs(open_page):
     p = open_page()
     p.go("#/client")
-    # the home: Toàn cảnh, the Bảng số liệu as a page (the overview first, then cash flow), not one of the graph's views
+    # the home: Wealth view, the Bảng số liệu as a page (the overview first, then cash flow), not the graph
     p.page.wait_for_selector("#ws-cashview #d-cash")
     assert p.page.eval_on_selector("#ws-cashview .cols > .panel", "p => p.id") == "d-nw"  # business feedback 2026-10-22
     assert p.page.is_hidden("#ws-canvas") and p.page.is_hidden("#ws-sheet") and p.page.is_hidden(".ws-ctl")
     assert p.page.is_hidden(".ws-strip")  # its cards are in the dashboard
-    assert p.page.evaluate(TABS, "#ws-pages") == [["Toàn cảnh", True], ["Đồ thị tài chính", False]]
+    assert p.page.evaluate(TABS, "#ws-pages") == [["Wealth view", True], ["Dữ liệu chi tiết tài sản", False]]
     assert p.page.eval_on_selector_all(".ws-tool", "ts => ts.map(t => [t.dataset.tool, t.getAttribute('href')])") == [list(x) for x in HOMES.items()]
-    # the graph: a tab of Tổng quan, at its old address; Toàn cảnh again from its tab
-    p.page.click("#ws-pages a:has-text('Đồ thị tài chính')")
-    p.page.wait_for_selector(".wnode.k-family")
-    assert p.page.evaluate("location.hash") == "#/client/xem/tong-quan" and p.page.is_visible(".ws-ctl")
-    assert p.page.evaluate(TABS, "#ws-pages") == [["Toàn cảnh", False], ["Đồ thị tài chính", True]]
-    p.page.click("#ws-pages a:has-text('Toàn cảnh')")
+    # Wealth View's second tab: Tài sản's page, Wealth View still lit; back by its first tab
+    p.page.click("#ws-pages a:has-text('Dữ liệu chi tiết tài sản')")
+    p.page.wait_for_function("location.hash === '#/client/tai-san' && !document.querySelector('#page .skeleton')")
+    assert p.page.is_visible("#ws-sheet") and p.page.is_visible('[data-tool="tong-quan"][aria-current]')
+    assert p.page.evaluate(TABS, "#ws-sheet-tabs") == [["Wealth view", False], ["Dữ liệu chi tiết tài sản", True]]
+    p.page.click("#ws-sheet-tabs a:has-text('Wealth view')")
     p.page.wait_for_function("!document.querySelector('#ws-cashview').hidden")
-    assert p.page.is_hidden("#ws-canvas")
+    assert p.page.is_hidden("#ws-canvas") and p.page.is_hidden("#ws-sheet")
     # each section from the bar: its page, the bar's place lit, its tabs when it has more than one page
     for tool, home in HOMES.items():
         if tool == "tong-quan":
@@ -44,10 +46,9 @@ def test_the_home_the_bar_and_the_tabs(open_page):
         assert p.page.is_visible("#ws-sheet") and p.page.get_attribute(f'[data-tool="{tool}"]', "aria-current") is not None, tool
         assert p.page.locator("#ws-sheet-back, #ws-sheet-x").count() == 0, tool  # a page, not a sheet over the graph
         tabs = p.page.evaluate(TABS, "#ws-sheet-tabs")
-        if tool == "tin":
-            assert tabs == [["Tác động tin", True], ["Đồ thị tác động", False], ["Chi phí chính sách", False]]
-        else:
-            assert tabs == [] and p.page.is_hidden(".ws-sheet-h"), (tool, tabs)
+        assert tabs == SHEET_TABS[tool], (tool, tabs)
+        if not tabs:
+            assert p.page.is_hidden(".ws-sheet-h"), tool
     p.go("#/client/tin/thi-truong")
     p.page.click("#ws-sheet-tabs a:has-text('Chi phí chính sách')")
     p.page.wait_for_function("location.hash === '#/client/tin/chinh-sach'")
@@ -60,28 +61,27 @@ def test_the_home_the_bar_and_the_tabs(open_page):
 
 def test_old_addresses_open_what_they_did(open_page):
     p = open_page()
-    p.go("#/client/tong-quan/ban-do")  # Bản đồ tài chính: the graph
-    p.page.wait_for_selector(".wnode.k-family")
+    p.go("#/client/tong-quan/ban-do")  # the former Đồ thị tài chính tab: Wealth view, not the graph (ADR-0037)
+    p.page.wait_for_selector("#ws-cashview #d-nw")
+    assert p.page.is_hidden("#ws-canvas")
     p.go("#/client/tong-quan/chi-tiet")  # Chi tiết: the Bảng số liệu, at net worth
     assert p.page.is_visible("#ws-cashview #d-nw") and p.page.is_hidden("#ws-sheet")
-    p.go("#/client/xem/tai-san")  # a lens of the graph: the section lit, "on the graph" for now
+    p.go("#/client/xem/tong-quan")  # the graph's own address, linked from nowhere, still opens it
     p.page.wait_for_selector(".wnode.k-family")
-    assert p.page.get_attribute('[data-tool="tai-san"]', "aria-current") is not None
-    assert p.page.evaluate(TABS, "#ws-pages") == [["Tài sản", False], ["Trên đồ thị", True]]
-    p.go("#/client/muc-tieu/khau-vi")  # moved under Rủi ro (T5)
-    assert p.page.get_attribute('[data-tool="rui-ro"]', "aria-current") is not None
+    p.go("#/client/muc-tieu/khau-vi")  # Khẩu vị rủi ro: Risk profile test, under Wealth Planning Advisor
+    p.page.wait_for_function("!document.querySelector('#page .skeleton')")
+    assert p.page.get_attribute('[data-tool="muc-tieu"]', "aria-current") is not None
+    assert p.page.evaluate(TABS, "#ws-sheet-tabs") == [["Wealth planning advisor", False], ["Risk profile test", True]]
     assert not p.problems()
 
 
 def test_dong_tien_is_the_cash_flow_part_of_the_dashboard(open_page):
     p = open_page()
-    p.go("#/client/dong-tien")
-    p.page.wait_for_selector("#page #d-month .sankey")
-    shown = p.page.eval_on_selector_all("#page .cols .panel[id]", "ps => ps.filter(p => p.offsetParent).map(p => p.id)")
-    assert shown == ["d-cash", "d-month", "d-liq"], shown
-    p.page.click('#page [data-months="24"]')  # its horizon redraws it, on its page
-    p.page.wait_for_selector('#page [data-months="24"][aria-pressed="true"]')
-    assert p.page.evaluate("location.hash") == "#/client/dong-tien"
+    p.go("#/client/dong-tien")  # its menu item is gone: Wealth view, at its cash flow
+    p.page.wait_for_selector("#ws-cashview #d-month .sankey")
+    assert p.page.is_hidden("#ws-sheet") and p.page.get_attribute('[data-tool="tong-quan"]', "aria-current") is not None
+    at = "() => { const t = document.querySelector('#d-cash').getBoundingClientRect().top - document.querySelector('#ws-cashview').getBoundingClientRect().top; return t > -2 && t < 120; }"  # noqa: E501
+    p.page.wait_for_function(at)  # scrolled to it
     assert not p.problems()
 
 

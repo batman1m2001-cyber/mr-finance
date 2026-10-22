@@ -5,7 +5,7 @@
 | Type | Extension (redesign kit), built 2026-10-16 (plan phase K2); board look 2026-10-16 (UI redesign R2) |
 | Requirements | KIT-UX-01, KIT-UX-02, KIT-UX-03, KIT-UX-06, KIT-UX-07, OWN-UI-01; keeps BRIEF-DASH-01…07 |
 | Users | Client, RM |
-| Entry points | [SCR-CL-08](../ux/screens/client.md#scr-cl-08--toàn-cảnh-pulse-wealth-map-money-flow) — client Tổng quan → Toàn cảnh, RM Khách hàng → Toàn cảnh; `POST /api/flows` |
+| Entry points | [SCR-CL-08](../ux/screens/client.md#scr-cl-08--toàn-cảnh-pulse-wealth-map-money-flow) — client: its blocks are on Wealth View → Wealth view since 2026-10-22 ([ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md); the Wealth Map is not a client tab); RM Khách hàng → Toàn cảnh; `POST /api/flows` |
 | Plan | [docs/REDESIGN_KIT_PLAN.md](../../REDESIGN_KIT_PLAN.md) phase **K2**, decision D4 |
 | Status | see [traceability](../requirements/requirements_traceability.md) §4 |
 

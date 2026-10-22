@@ -376,6 +376,7 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .kpi .k { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
 .kpi .v { font-size: 26px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 2px 0; white-space: nowrap; }
 .kpi .s { font-size: 12.5px; color: var(--ink-2); }
+.kpi .s.up { color: var(--up); } .kpi .s.down { color: var(--down); }  /* a KPI's line that says ahead or behind (was grey: .kpi .s outranked .up) */
 .pcard { display: grid; gap: 10px; align-content: start; container-type: inline-size; }
 .pc-head { display: flex; align-items: center; gap: 8px; }
 /* the figure and its chart side by side while the text keeps 140 px; a narrower card puts the chart under it */
@@ -1590,11 +1591,16 @@ body[data-role="client"] :is(#page, .ws-cashview) :is(.chip, .pill) { font-size:
 body[data-role="client"] :is(#page, .ws-cashview) .chip { background: none; }
 body[data-role="client"] .ws-title { font-size: 22px; }
 body[data-role="client"] .ws-tool-l { font-size: 12px; }
+/* the client's four sections carry the bank's long names (WEALTH_NAMES_PLAN): a wider rail, whole words, three lines —
+   on the client's pages; the graph's own unlinked address keeps the 72 px rail and the graph its geometry (ADR-0037) */
+.ws:not(.desk):is(.home, .sheeted) { --bar-w: 104px; }
+.ws:not(.desk):is(.home, .sheeted) .ws-tool { width: 92px; }
+.ws:not(.desk) .ws-tool-l { max-width: 88px; overflow-wrap: normal; -webkit-line-clamp: 3; }
 body[data-role="client"] .ws-page { min-height: 44px; font-size: 15px; }
 .ws.home .ws-ctl { display: none; }
 @media (max-width: 760px) {  /* a phone: the client's bar keeps its words under the icons (B3.3) */
   .ws:not(.desk) .ws-bar { padding: 4px 2px; }
-  .ws:not(.desk) .ws-tool { flex: 1 1 0; width: auto; min-width: 0; height: 60px; gap: 2px; padding: 2px 0; }
+  .ws:not(.desk) .ws-tool { flex: 1 1 0; width: auto; min-width: 0; height: auto; min-height: 60px; gap: 2px; padding: 4px 2px; }
   .ws:not(.desk) .ws-tool:nth-child(7) { margin-left: 0; }
   .ws:not(.desk) .ws-tool-l { position: static; width: auto; height: auto; clip: auto; white-space: normal; max-width: 100%;
     font-size: 10.5px; line-height: 1.1; }

@@ -16,22 +16,23 @@ import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/
 import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261022o1";
+import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261022w1";
 import {DESKS} from "./desk/roles.js?v=20261021t5";
 
 const ROLES = {
   client: {
     label: "Khách hàng", user: null, clientPick: true,
     nav: [
-      {id: "tong-quan", label: "Tổng quan", sub: [
-        {id: "toan-canh", label: "Bảng số liệu", page: "pulse"}, {id: "ban-do", label: "Đồ thị tài chính", page: "map"},
-        {id: "chi-tiet", label: "Bảng số liệu", page: "detail"}]},  // both open the workspace's Bảng số liệu (T4)
-      {id: "tai-san", label: "Tài sản", page: "holdings"},
-      {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [{id: "ke-hoach", label: "Kế hoạch", page: "plan"}]},
-      {id: "rui-ro", label: "Rủi ro", sub: [{id: "khau-vi", label: "Khẩu vị rủi ro", page: "risktest"}]},
-      {id: "tin", label: "Tin tức", sub: [
+      // the client's addresses; the workspace draws them (web/workspace/lenses.js), under the bank's four names
+      {id: "tong-quan", label: "Wealth View", sub: [
+        {id: "toan-canh", label: "Wealth view", page: "pulse"}, {id: "ban-do", label: "Wealth view", page: "map"},
+        {id: "chi-tiet", label: "Wealth view", page: "detail"}]},  // all three open the dashboard (T4; the graph is off)
+      {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings"},
+      {id: "muc-tieu", label: "Wealth Planning Advisor", sub: [{id: "ke-hoach", label: "Wealth planning advisor", page: "plan"}]},
+      {id: "rui-ro", label: "Risk profile test", sub: [{id: "khau-vi", label: "Risk profile test", page: "risktest"}]},
+      {id: "tin", label: "Headline News", sub: [
         {id: "thi-truong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}]},
-      {id: "chuyen-gia", label: "Chuyên gia", page: "advisor"},
+      {id: "chuyen-gia", label: "Relationship specialist", page: "advisor"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
@@ -148,11 +149,18 @@ export function go(hash, focus) {
   else location.hash = hash;
 }
 
-// every page of a role, for the header search: label, its parent's label, its route
+// the client's pages by their former names too: the tabs carry the bank's English names (ADR-0037), a client still types these
+const ALSO = {"#/client/tong-quan": "Tổng quan Toàn cảnh Dòng tiền", "#/client/tai-san": "Tài sản", "#/client/muc-tieu/ke-hoach": "Kế hoạch tài chính Mục tiêu",
+  "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/thi-truong": "Tin tức", "#/client/chuyen-gia": "Chuyên gia"};
+
+// every page of a role, for the header search: label, its parent's label, its route (and other names it answers to)
 function pagesFor(role) {
-  if (role === "client") {  // the workspace: its lenses, then the views that open as sheets
-    return [...LENSES.map(l => ({label: l.label, parent: "Đồ thị", route: lensRoute(l.id)})),
-      ...Object.values(SHEETS).map(s => ({label: s.label, parent: s.lens ? "Xem đầy đủ" : "", route: s.route}))];
+  if (role === "client") {  // the workspace: its four sections and their tabs (WEALTH_NAMES_PLAN)
+    return TOOLBAR.flatMap(t => {
+      const tabs = SECTIONS[t.id].tabs;
+      return tabs.length > 1 ? tabs.map(([label, route]) => ({label, parent: t.label, route, also: ALSO[route]}))
+        : [{label: t.label, parent: "", route: t.href, also: ALSO[t.href]}];
+    });
   }
   const out = [];
   for (const n of ROLES[role].nav) {
@@ -167,7 +175,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261022o1");
+  wsLoad ||= import("./workspace/workspace.js?v=20261022w1");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -301,7 +309,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022o1`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261022w1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

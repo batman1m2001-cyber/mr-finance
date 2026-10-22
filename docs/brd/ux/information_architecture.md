@@ -22,21 +22,20 @@ remembered (`mf.role`).
 ## Navigation per role
 
 ```text
-Khách hàng (client)                         RM
-├── Tổng quan                               ├── Hôm nay ......................... SCR-RM-01
-│   ├── Toàn cảnh ....... SCR-CL-08         ├── Khách hàng  (client picker)
-│   ├── Bản đồ tài chính  SCR-CL-11         │   ├── Tác động tin ................ SCR-RM-02 (+ SCR-RM-03 drawer)
-│   └── Chi tiết ........ SCR-CL-01         │
-├── Tài sản ............. SCR-CL-02         │   ├── Đồ thị tác động ............. SCR-CL-09 (staff view)
-├── Mục tiêu & kịch bản                     │   ├── Toàn cảnh ................... SCR-CL-08 (staff view)
-                                            │   ├── Bản đồ tài chính ............ SCR-CL-11 (staff view)
-│   ├── Kế hoạch ........ SCR-CL-03         │   ├── Chi tiết .................... SCR-CL-01 (staff view)
-│   └── Khẩu vị rủi ro .. SCR-CL-04         │   ├── Tài sản ..................... SCR-CL-02
-├── Tin tác động                            │   ├── Kế hoạch .................... SCR-CL-03
-│   ├── Tác động thị trường SCR-CL-05       │   ├── Chi phí chính sách .......... SCR-CL-06
-│   ├── Đồ thị tác động . SCR-CL-09         │   ├── Hiệu quả tư vấn ............. SCR-RM-04
-│   └── Chi phí chính sách  SCR-CL-06       │   └── Duyệt đề xuất ............... SCR-RM-06
-└── Chuyên gia .......... SCR-CL-07         └── Hiệu quả tư vấn (all clients) ... SCR-RM-05
+Khách hàng (client) — 2026-10-22, ADR-0037            RM
+├── Wealth View                                       ├── Hôm nay ......................... SCR-RM-01
+│   ├── Wealth view ............ SCR-CL-01 (+ CL-08)  ├── Khách hàng  (client picker)
+│   └── Dữ liệu chi tiết tài sản SCR-CL-02            │   ├── Tác động tin ................ SCR-RM-02 (+ SCR-RM-03 drawer)
+├── Wealth Planning Advisor                           │   ├── Đồ thị tác động ............. SCR-CL-09 (staff view)
+│   ├── Wealth planning advisor  SCR-CL-03            │   ├── Toàn cảnh ................... SCR-CL-08 (staff view)
+│   └── Risk profile test ...... SCR-CL-04            │   ├── Bản đồ tài chính ............ SCR-CL-11 (staff view)
+├── Headline News                                     │   ├── Chi tiết .................... SCR-CL-01 (staff view)
+│   ├── Tác động tin ........... SCR-CL-05            │   ├── Tài sản ..................... SCR-CL-02
+│   ├── Đồ thị tác động ........ SCR-CL-09            │   ├── Kế hoạch .................... SCR-CL-03
+│   └── Chi phí chính sách ..... SCR-CL-06            │   ├── Chi phí chính sách .......... SCR-CL-06
+└── Relationship specialist .... SCR-CL-07            │   ├── Hiệu quả tư vấn ............. SCR-RM-04
+                                                      │   └── Duyệt đề xuất ............... SCR-RM-06
+                                                      └── Hiệu quả tư vấn (all clients) ... SCR-RM-05
 
 CIO                                         Tuân thủ (Compliance)
 ├── Hộp tin ............. SCR-CIO-01        ├── Tin bị giữ ...................... SCR-CMP-01
@@ -62,7 +61,16 @@ which supersedes ADR-0013's two generations since UI redesign R3, 2026-10-16). T
 the personal / family scope and “Làm lại demo”. The same page appears for the client and inside the RM's
 “Khách hàng” section (staff view, marked internal).
 
-### Customer, graph workspace (experiment, FEAT-40 — proposed)
+**The client's menu (business feedback 2, [ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md)).**
+Four sections in the vertical rail, named as the bank names them for the Wealth exam: Wealth View, Wealth Planning
+Advisor, Headline News, Relationship specialist. Wealth view is the dashboard (net worth and sources first, then
+allocation and P&L, then cash flow, the month's flows, risk, reserve, policy). Dòng tiền and Rủi ro are no longer
+menu items (both are on Wealth view; the risk test is Risk profile test). No address was renamed: the old ones open
+their page under its new section, `#/client/dong-tien` opens Wealth view at its cash flow, and the former Đồ thị tài
+chính tab (`#/client/tong-quan/ban-do`) opens Wealth view. The graph (SCR-CL-11, CL-12) is hidden from the client:
+only its own address `#/client/xem/<lens>` opens it, linked from nowhere.
+
+### Customer, graph workspace (experiment, FEAT-40 — built; hidden from the client since 2026-10-22, ADR-0037)
 
 ```text
 Khách hàng — one page: toolbar │ graph │ dock (Trợ lý · Thông tin) │ strip
@@ -76,8 +84,8 @@ Khách hàng — one page: toolbar │ graph │ dock (Trợ lý · Thông tin) 
 └── Bộ nhớ .............. sheet  the memory page
 ```
 
-The tree above (“Navigation per role”) stays the RM's and staff's, and `main`'s Customer navigation until the
-experiment is taken (ADR-0035).
+The tree above (“Navigation per role”) stays the RM's and staff's. The workspace below was the client's page until
+2026-10-22; it still frames every client page (rail, dock, sheets), but its graph is no longer one of them (ADR-0037).
 
 ### Staff desks (experiment, FEAT-41 — built 2026-10-18)
 

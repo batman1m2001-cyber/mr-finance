@@ -159,8 +159,9 @@ REMEMBERED = """
 {items}"""
 
 
-LENS_NAMES = {"tong-quan": "Tổng quan", "tai-san": "Tài sản", "dong-tien": "Dòng tiền",
-              "muc-tieu": "Mục tiêu & kịch bản", "tin": "Tin tức", "rui-ro": "Rủi ro"}  # fmt: skip
+# the client's sections by the bank's names (ADR-0037); the other lenses are the graph's own
+LENS_NAMES = {"tong-quan": "Wealth View", "tai-san": "Tài sản", "dong-tien": "Dòng tiền",
+              "muc-tieu": "Wealth Planning Advisor", "tin": "Headline News", "rui-ro": "Rủi ro"}  # fmt: skip
 KIND_NAMES = {"family": "tài sản ròng", "class": "lớp tài sản", "holding": "khoản", "flow": "dòng tiền tháng",
               "category": "khoản thu chi", "goal": "mục tiêu", "event": "tin", "alert": "chính sách", "risk": "rủi ro",
               "liquidity": "thanh khoản", "scenario": "kịch bản", "source": "nguồn dữ liệu", "group": "nhóm",

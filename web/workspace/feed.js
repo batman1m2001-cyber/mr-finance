@@ -7,7 +7,7 @@ import {icon} from "../core/icons.js?v=20261016r1";
 const SEV = {high: ["bad", "Cần xem"], medium: ["warn", "Đáng chú ý"], info: ["", "Thông tin"]};
 const TYPE = {impact: ["Tác động tin", "news", "var(--s1)"], goal: ["Mục tiêu", "target", "var(--s3)"], risk: ["Ngưỡng", "alert", "var(--warning)"],
   change: ["Thay đổi", "activity", "var(--s7)"]};
-const KIND = {run: "Lần áp dụng", regulation: "Ghi chú quy định", goal: "Mục tiêu", dashboard: "Tổng quan", transactions: "Giao dịch"};
+const KIND = {run: "Lần áp dụng", regulation: "Ghi chú quy định", goal: "Mục tiêu", dashboard: "Wealth View", transactions: "Giao dịch"};
 const PART = {risk: "rủi ro", liquidity: "thanh khoản", net_worth: "tài sản ròng"};
 const ROUTE = {impact: "#/client/tin/thi-truong", graph: "#/client/tin/do-thi"};
 const source = (ev) => `${KIND[ev.kind] || ev.kind} ${ev.kind === "dashboard" ? PART[ev.id] || ev.id : ev.kind === "transactions" ? `${ev.category} ${ev.month}` : ev.id}`;

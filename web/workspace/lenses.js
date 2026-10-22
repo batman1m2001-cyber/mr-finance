@@ -5,7 +5,10 @@
    its numbers a section of the Bảng số liệu (part); Toàn cảnh and Chi tiết are that dashboard now (UX_TOOLBAR_PLAN
    T3+T4), so their addresses open it.
    The classic app (BUSINESS_FEEDBACK_1021_PLAN B3.1): the bar leads to each section's page, Toàn cảnh is the home
-   page, and the graph is one page under Tổng quan (Đồ thị tài chính); every address above still opens what it did. */
+   page. The bank's names (WEALTH_NAMES_PLAN, ADR-0037): four sections — Wealth View, Wealth Planning Advisor, Headline
+   News, Relationship specialist — and the graph hidden from the client: no tab, search hit or assistant page leads to
+   it, and its former tab's address opens Wealth View; only its own unlinked address `#/client/xem/<lens>` still opens
+   it, so the kept code stays tested and can come back. Every older address still opens its page. */
 
 export const LENSES = [
   {id: "tong-quan", label: "Tổng quan", icon: "map", tip: "Tổng quan: toàn bộ bức tranh tài chính", sub: "Tài sản, dòng tiền, mục tiêu, rủi ro và tin tức quanh bạn",
@@ -25,30 +28,31 @@ export const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 
 // the dedicated views: each an existing page module, at its old address (ADR-0035 §3)
 export const SHEETS = {
-  "tai-san": {page: "holdings", label: "Tài sản", route: "#/client/tai-san", lens: "tai-san", nav: ["tai-san"]},
-  "ke-hoach": {page: "plan", label: "Kế hoạch", route: "#/client/muc-tieu/ke-hoach", lens: "muc-tieu", nav: ["muc-tieu", "ke-hoach"]},
-  "khau-vi": {page: "risktest", label: "Khẩu vị rủi ro", route: "#/client/rui-ro/khau-vi", lens: "rui-ro", nav: ["rui-ro", "khau-vi"]},
+  "tai-san": {page: "holdings", label: "Dữ liệu chi tiết tài sản", route: "#/client/tai-san", lens: "tong-quan", nav: ["tai-san"]},
+  "ke-hoach": {page: "plan", label: "Wealth planning advisor", route: "#/client/muc-tieu/ke-hoach", lens: "muc-tieu", nav: ["muc-tieu", "ke-hoach"]},
+  "khau-vi": {page: "risktest", label: "Risk profile test", route: "#/client/rui-ro/khau-vi", lens: "muc-tieu", nav: ["rui-ro", "khau-vi"]},
   "thi-truong": {page: "impact", label: "Tác động tin", route: "#/client/tin/thi-truong", lens: "tin", nav: ["tin", "thi-truong"]},
   "do-thi": {page: "graph", label: "Đồ thị tác động", route: "#/client/tin/do-thi", lens: "tin", nav: ["tin", "do-thi"]},
   "chinh-sach": {page: "policy", label: "Chi phí chính sách", route: "#/client/tin/chinh-sach", lens: "tin", nav: ["tin", "chinh-sach"]},
-  "dong-tien": {page: "detail", label: "Dòng tiền", route: "#/client/dong-tien", lens: "dong-tien", nav: ["dong-tien"], board: ["cash", "month", "liq"]},
-  "chuyen-gia": {page: "advisor", label: "Chuyên gia", route: "#/client/chuyen-gia", lens: null, nav: ["chuyen-gia"]},
+  "chuyen-gia": {page: "advisor", label: "Relationship specialist", route: "#/client/chuyen-gia", lens: null, nav: ["chuyen-gia"]},
   "bo-nho": {page: "memory", label: "Bộ nhớ", route: "#/client/bo-nho", lens: null, nav: ["bo-nho"]},
 };
-// each section's page and its tabs (B3.1): [label, address, the view a graph tab opens]
+// each section's page and its tabs (B3.1; the names: WEALTH_NAMES_PLAN): [label, address, the view a tab opens]
 export const SECTIONS = {
-  "tong-quan": {home: "#/client/tong-quan", tabs: [["Toàn cảnh", "#/client/tong-quan", "money"], ["Đồ thị tài chính", lensRoute("tong-quan"), "graph"]]},
-  "tai-san": {home: SHEETS["tai-san"].route, tabs: [["Tài sản", SHEETS["tai-san"].route]]},
-  "dong-tien": {home: SHEETS["dong-tien"].route, tabs: [["Dòng tiền", SHEETS["dong-tien"].route]]},
-  "muc-tieu": {home: SHEETS["ke-hoach"].route, tabs: [["Kế hoạch", SHEETS["ke-hoach"].route]]},
+  "tong-quan": {home: "#/client/tong-quan", tabs: [["Wealth view", "#/client/tong-quan", "money"], [SHEETS["tai-san"].label, SHEETS["tai-san"].route]]},
+  "muc-tieu": {home: SHEETS["ke-hoach"].route, tabs: ["ke-hoach", "khau-vi"].map(id => [SHEETS[id].label, SHEETS[id].route])},
   "tin": {home: SHEETS["thi-truong"].route, tabs: ["thi-truong", "do-thi", "chinh-sach"].map(id => [SHEETS[id].label, SHEETS[id].route])},
-  "rui-ro": {home: SHEETS["khau-vi"].route, tabs: [["Khẩu vị rủi ro", SHEETS["khau-vi"].route]]},
-  "chuyen-gia": {home: SHEETS["chuyen-gia"].route, tabs: [["Chuyên gia", SHEETS["chuyen-gia"].route]]},
+  "chuyen-gia": {home: SHEETS["chuyen-gia"].route, tabs: [[SHEETS["chuyen-gia"].label, SHEETS["chuyen-gia"].route]]},
 };
-// the toolbar: the sections, then Chuyên gia (OWN-GW-05: Experts may stay a separate view). Bộ nhớ is not on it
-// (UX_TOOLBAR_PLAN T2): the header and the assistant's panel open it, and its address still works.
-export const TOOLBAR = [...LENSES.map(l => ({...l, href: SECTIONS[l.id].home})),
-  {id: "chuyen-gia", label: "Chuyên gia", icon: "users", tip: "Chuyên gia: liên hệ đội ngũ tư vấn", href: SHEETS["chuyen-gia"].route, sheet: true}];
+// the toolbar: the bank's four sections (business feedback 2, 2026-10-22). Bộ nhớ is not on it (UX_TOOLBAR_PLAN T2):
+// the header and the assistant's panel open it, and its address still works.
+export const TOOLBAR = [
+  {id: "tong-quan", label: "Wealth View", icon: "map", tip: "Wealth View: tài sản ròng, phân bổ, dòng tiền và từng khoản", href: SECTIONS["tong-quan"].home},
+  {id: "muc-tieu", label: "Wealth Planning Advisor", icon: "target", tip: "Wealth Planning Advisor: kế hoạch theo mục tiêu và bài test rủi ro", href: SECTIONS["muc-tieu"].home},
+  {id: "tin", label: "Headline News", icon: "news", tip: "Headline News: tin, sự kiện và chính sách tác động tới tài sản", href: SECTIONS["tin"].home},
+  {id: "chuyen-gia", label: "Relationship specialist", icon: "users", tip: "Relationship specialist: chuyên viên phụ trách bạn", href: SECTIONS["chuyen-gia"].home, sheet: true},
+];
+export const SECTION_NAME = Object.fromEntries(TOOLBAR.map(t => [t.id, t.label]));
 
 export function lensRoute(id) { return `#/client/xem/${id}`; }
 
@@ -62,21 +66,24 @@ const OLD = {
   "tai-san": "tai-san",
   "muc-tieu": "ke-hoach", "muc-tieu/ke-hoach": "ke-hoach", "muc-tieu/khau-vi": "khau-vi", "rui-ro": "khau-vi", "rui-ro/khau-vi": "khau-vi",
   "tin": "thi-truong", "tin/thi-truong": "thi-truong", "tin/do-thi": "do-thi", "tin/chinh-sach": "chinh-sach",
-  "dong-tien": "dong-tien", "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
+  "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
 };
+// Dòng tiền's own page is the dashboard's cash part now (ADR-0037)
+const CASH = {lens: "tong-quan", sheet: null, param: null, part: "cash"};
 
 /* The address's parts after the role → {lens (or null: keep the current one), sheet (or null), param}, and a
    dashboard section to open (part) for Toàn cảnh's and Chi tiết's addresses, and the home (B3.1): the dashboard at
    its top. */
 export function resolve(parts) {
   const [a, b, c] = parts;
+  const home = {lens: "tong-quan", sheet: null, param: null, home: true};
   if (BOARD[`${a}/${b}`]) return {lens: "tong-quan", sheet: null, param: null, part: BOARD[`${a}/${b}`]};
-  if (!a || a === "tong-quan" && !b) return {lens: "tong-quan", sheet: null, param: null, home: true};
-  if (a === "tong-quan" && b === "ban-do") return {lens: "tong-quan", sheet: null, param: null, view: "graph"};
-  if (a === "xem") return {lens: LENS[b] ? b : "tong-quan", sheet: null, param: null};
+  if (!a || a === "tong-quan" && (!b || b === "ban-do")) return home;  // ban-do: the former Đồ thị tài chính tab
+  if (a === "xem") return {lens: LENS[b] ? b : "tong-quan", sheet: null, param: null};  // the graph, unlinked (ADR-0037)
+  if (a === "dong-tien") return CASH;
   const two = b && OLD[`${a}/${b}`];
   const id = two || OLD[a];
-  if (!id) return {lens: "tong-quan", sheet: null, param: null};
+  if (!id) return home;
   const s = SHEETS[id];
   return {lens: s.lens, sheet: id, param: two ? c || null : b || null};
 }

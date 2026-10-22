@@ -4,7 +4,7 @@
 |---|---|
 | Type | Existing capability (original brief, docs/PLAN.md); outside the BRD — kept by [ADR-0003](../decisions/ADR-0003-keep-the-capabilities-that-predate-the-brd.md) |
 | Requirements | BRIEF-DASH-01…07, BRIEF-DATA-04, BRIEF-DATA-05 |
-| Users | Client; RM (Khách hàng → Tổng quan) |
+| Users | Client (Wealth View → **Wealth view**, the first screen: net worth and sources first, cash flow second — business feedback 2, [ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md)); RM (Khách hàng → Chi tiết) |
 | Entry points | [SCR-CL-01 Tổng quan](../ux/screens/client.md#scr-cl-01--tổng-quan-overview); `POST /api/dashboard {client_id, scope, months}` |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 

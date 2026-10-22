@@ -50,7 +50,7 @@ def test_one_question_two_tools_and_an_answer_that_cites_them():
     assert [s["tool"] for s in a["steps"]] == ["tong_quan", "dong_tien"] and all(
         s["status"] == "ok" for s in a["steps"]
     )
-    assert a["citations"] == [{"label": "Bảng số liệu", "route": "#/client/tong-quan/toan-canh"}]  # the client's label (T5)
+    assert a["citations"] == [{"label": "Wealth View", "route": "#/client/tong-quan/toan-canh"}]  # ADR-0037
     assert a["as_of"] and a["sources"] and a["steps"][0]["card"]["kind"] == "figures"
     # the model read the tools' results (demo mode) and was told the page, not the client
     seen = json.dumps(llm.requests[-1]["messages"], ensure_ascii=False)

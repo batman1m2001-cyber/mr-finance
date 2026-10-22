@@ -3,8 +3,8 @@
 
 One entry per part that calls a language model: its one name, purpose, owner, risk, what it reads, who checks it,
 how it is measured, when it runs, the BRD's default model and the model configured now, the mode a run would use
-now, the latest run; then the three evaluations with their latest result, and open-source references. The quality figures are counted from
-what is stored (views, challenges, agent runs), for the last seven days and for all time.
+now, the latest run; then the three evaluations with their latest result, and open-source references. The quality
+figures are counted from what is stored (views, challenges, agent runs), for the last seven days and for all time.
 """
 
 from __future__ import annotations
@@ -48,7 +48,10 @@ ENTRIES: List[Dict[str, Any]] = [
         "reads": "tin của sự kiện, nghiên cứu đã phát hành, danh mục yếu tố — không dữ liệu khách",
         "checks": "Agent Phản biện, rồi CIO duyệt",
         "measured": ["daily_trial", "change_gate"],
-        "runs": "khi CIO bấm “Chạy Agent CIO” cho một sự kiện; 08:30 mỗi sáng trong thử nghiệm hằng ngày, kể cả bước gom tin",
+        "runs": (
+            "khi CIO bấm “Chạy Agent CIO” cho một sự kiện; "
+            "08:30 mỗi sáng trong thử nghiệm hằng ngày, kể cả bước gom tin"
+        ),
         "code": ["src/views/agents.py", "src/trial/daily.py"],
         "built": True,
     },
@@ -127,8 +130,13 @@ ENTRIES: List[Dict[str, Any]] = [
             "Tìm trên web với câu hỏi đã che",
             "Bộ định tuyến: chọn một công cụ khi không có mô hình gọi công cụ (dự phòng: từ khoá)",
         ],
-        "code": ["src/assistant/turn.py", "src/assistant/sessions.py", "src/assistant/consolidate.py",
-                 "src/assistant/web.py", "src/copilot/router.py"],
+        "code": [
+            "src/assistant/turn.py",
+            "src/assistant/sessions.py",
+            "src/assistant/consolidate.py",
+            "src/assistant/web.py",
+            "src/copilot/router.py",
+        ],
         "built": True,
     },
     {
@@ -195,7 +203,9 @@ EVALUATIONS: List[Dict[str, Any]] = [
         "id": "daily_trial",
         "name": "Thử nghiệm hằng ngày",
         "name_en": "Daily trial",
-        "checks": "Agent CIO và Agent Phản biện trên tin trong ngày, không người duyệt; dự báo bóng chấm theo thị trường",
+        "checks": (
+            "Agent CIO và Agent Phản biện trên tin trong ngày, không người duyệt; dự báo bóng chấm theo thị trường"
+        ),
         "when": "08:30 mỗi sáng đến 31/10/2026 (job trial_daily; chấm điểm 15 phút một lần: trial_score)",
         "page": "#/cio/mo-hinh/thu-nghiem",
     },
@@ -217,7 +227,11 @@ EVALUATIONS: List[Dict[str, Any]] = [
     },
 ]
 #: the assistant test set's last recorded run (docs/brd/testing/assistant_readiness.md): it runs by hand, not stored
-ASSISTANT_SET_LAST = {"at": 1792213200.0, "summary": "31/32 câu đạt, bảo mật 4/4, không lộ số (17/10/2026)", "passed": True}
+ASSISTANT_SET_LAST = {
+    "at": 1792213200.0,
+    "summary": "31/32 câu đạt, bảo mật 4/4, không lộ số (17/10/2026)",
+    "passed": True,
+}
 
 
 def _latest_run(agent: str) -> Optional[Dict[str, Any]]:
@@ -259,8 +273,11 @@ def _latest_gate() -> Optional[Dict[str, Any]]:
 
     done = [
         {"at": ev.get("finished"), "summary": ev.get("summary"), "passed": ev.get("passed"), "version": v["id"]}
-        for kind, k in config.KINDS.items() if k.get("eval")
-        for v in config.versions(kind) for ev in [v.get("eval") or {}] if ev.get("status") == "done"
+        for kind, k in config.KINDS.items()
+        if k.get("eval")
+        for v in config.versions(kind)
+        for ev in [v.get("eval") or {}]
+        if ev.get("status") == "done"
     ]
     return max(done, key=lambda r: r["at"] or 0, default=None)
 
@@ -275,8 +292,11 @@ def _latest_trial() -> Optional[Dict[str, Any]]:
     day = max(by_day)
     runs = by_day[day]
     errors = sum(1 for t in runs if t.get("error"))
-    return {"at": max(t["created"] for t in runs), "summary": f"{day}: {len(runs)} sự kiện, {errors} lỗi",
-            "passed": errors == 0}
+    return {
+        "at": max(t["created"] for t in runs),
+        "summary": f"{day}: {len(runs)} sự kiện, {errors} lỗi",
+        "passed": errors == 0,
+    }
 
 
 def evaluations() -> List[Dict[str, Any]]:

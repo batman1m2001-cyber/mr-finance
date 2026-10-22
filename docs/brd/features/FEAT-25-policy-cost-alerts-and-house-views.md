@@ -4,7 +4,7 @@
 |---|---|
 | Type | Existing capability (original brief, docs/PLAN.md); outside the BRD — kept by [ADR-0003](../decisions/ADR-0003-keep-the-capabilities-that-predate-the-brd.md) |
 | Requirements | BRIEF-IMPACT-01…05, BRIEF-ALERT-01, BRIEF-ALERT-02, BRIEF-DASH-07 |
-| Users | Client, RM |
+| Users | Client (Headline News → Chi phí chính sách since 2026-10-22, [ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md); its Wealth Check reads green ahead of VN-Index, red behind), RM |
 | Entry points | [SCR-CL-06 Chi phí chính sách](../ux/screens/client.md#scr-cl-06--chi-phí-chính-sách-policy-costs), the overview's “Headline News”; `POST /api/alerts {client_id, scope?}`; job `policy_sweep` 07:00; `GET /api/views` (house views) |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 

@@ -290,12 +290,15 @@ def test_d16_d17_the_overview_names_its_sources_and_what_the_stress_loss_is_made
 
 def test_d19_d20_one_way_of_address_and_the_graph_is_a_page_to_open():
     """D19: “Em chưa tạo được… anh/chị cần…” — the assistant called itself and the person “em”. D20: asked to show a
-    scenario on the graph, it opened the old impact graph: the workspace's lenses were no page it could open."""
+    scenario on the graph, it opened the old impact graph: the workspace's lenses were no page it could open. Since
+    ADR-0037 the client has no graph: the planning page is what it opens, by the bank's name."""
     from assistant import turn
+    from assistant.tools import PAGES
 
     assert "gọi người dùng là “bạn”" in turn.RULES and "không dùng “anh/chị”" in turn.RULES  # D19 again in T2
-    out = run(registry.REGISTRY["mo_trang"].run(ctx(), {"page": "do-thi-muc-tieu"}))
-    assert out["navigate"] == "#/client/xem/muc-tieu"
+    assert not [k for k, (_, r) in PAGES.items() if r.get("client", "").startswith("#/client/xem/")]
+    out = run(registry.REGISTRY["mo_trang"].run(ctx(), {"page": "ke-hoach"}))
+    assert out["navigate"] == "#/client/muc-tieu/ke-hoach" and out["text"] == "Mở trang Wealth Planning Advisor."
 
 
 def test_d21_the_proposal_options_are_named_in_vietnamese_to_the_model():

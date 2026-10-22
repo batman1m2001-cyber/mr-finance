@@ -37,7 +37,7 @@ export function mount(shell) {
   const run = async () => {
     const q = input.value.trim(), mine = ++seq;
     const role = shell.role();
-    const pages = shell.pages(role).filter(p => fold(p.label).includes(fold(q)))
+    const pages = shell.pages(role).filter(p => fold(`${p.label} ${p.also || ""}`).includes(fold(q)))
       .map(p => ({kind: "page", label: p.label, sub: p.parent || "", route: p.route}));
     hits = pages; at = -1; draw(q);
     if (q.length < 2) return;
