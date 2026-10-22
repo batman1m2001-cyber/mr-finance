@@ -114,6 +114,18 @@ def profile(client_id: str, kind: Optional[str] = None) -> List[Dict[str, Any]]:
         return [json.loads(_open("profile", r[0], "data", r[1])) for r in con.execute(q + " order by created", args)]
 
 
+def _said(d: Dict[str, Any]) -> Dict[str, Any]:
+    # what was declared, not how or when: no id, no path (chat, form), no free-text place; an empty field is no detail
+    return {k: v for k, v in d.items() if k not in ("id", "via", "location") and v not in (None, 0, "")}
+
+
+def same_profile(client_id: str, kind: str, data: Dict[str, Any]) -> Optional[str]:
+    """The id of the client's item of this kind with the same details as ``data``, or None: said again in a later turn,
+    the same land is the same land (on 2026-10-10 the demo sentence sent twice counted Đất Long Thành twice, 9 tỷ)."""
+    want = _said(data)
+    return next((d["id"] for d in profile(client_id, kind) if _said(d) == want), None)
+
+
 def created(item_id: str) -> float:
     """When a profile item was added (0 when unknown)."""
     with _db() as con:

@@ -83,6 +83,23 @@ def test_the_same_call_twice_in_one_turn_is_recorded_once(monkeypatch):
     assert [a["qty"] for a in store.profile("C05", "asset")] == [10]
 
 
+def test_the_same_thing_said_in_two_turns_is_recorded_once(monkeypatch):
+    """The demo sentence sent twice on 2026-10-10 counted Đất Long Thành twice (9 tỷ, and a concentration over its
+    limit that was not there): a later turn saying the same is answered as already recorded, by the rules and by the
+    agent's tools alike."""
+    land = "Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ"
+    say(land)
+    net = _net("C05")
+    again = say(land)
+    assert again["recorded"] == [] and "từ trước" in again["reply"] and "Long Thành" in again["reply"]
+    assert len(store.profile("C05", "asset")) == 1 and _net("C05") == net
+    monkeypatch.setenv("MF_AI", "on")
+    for _ in range(2):  # two turns, the same call
+        with scripted(assistant=ScriptedLLM(asks(("declare_gold", {"luong": 10})), says("Đã ghi."))):
+            say("Nhà tôi có 10 lượng vàng")
+    assert [a.get("qty") for a in store.profile("C05", "asset") if a["class"] == "gold"] == [10]
+
+
 def test_when_the_agent_cannot_answer_the_rules_still_record(monkeypatch):
     monkeypatch.setenv("MF_AI", "on")
 
