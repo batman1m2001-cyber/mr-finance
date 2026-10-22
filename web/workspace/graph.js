@@ -114,7 +114,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   grad("radialGradient", "ws-inner", {r: "50%"}, [["0", "c-glow"], ["1", "c-glow0"]]);
   grad("radialGradient", "ws-spec", {r: "50%"}, [["0", "c-spec"], ["1", "c-spec0"]]);
   grad("radialGradient", "ws-face", {cy: "46%", r: "52%"}, [["0", "c-face"], ["1", "c-face2"]]);
-  // the gold coin's metal: a rim that catches the light twice, a bevel sunk into the field, a glint that sweeps across
+  // the platinum coin's metal: a rim that catches the light twice, a bevel sunk into the field, a glint that sweeps across
   grad("linearGradient", "ws-gold-rim", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "g-hi"], ["0.22", "g-mid"], ["0.42", "g-hi"], ["0.68", "g-deep"], ["0.86", "g-mid"], ["1", "g-hi"]]);
   grad("linearGradient", "ws-gold-bevel", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "g-deep"], ["0.5", "g-mid"], ["1", "g-hi"]]);
   grad("linearGradient", "ws-glint", {x1: 0, y1: 0, x2: 1, y2: 0}, [["0", "g-glint0"], ["0.5", "g-glint"], ["1", "g-glint0"]]);
@@ -1249,7 +1249,22 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     }
     drag = null;
   });
-  svg.addEventListener("wheel", (ev) => { ev.preventDefault(); const [x, y] = toSvg(ev); zoom(ev.deltaY < 0 ? 1.12 : 1 / 1.12, x, y); }, {passive: false});
+  // the wheel moves the view, as a page scrolls (Shift: sideways); Ctrl/⌘ + wheel zooms, and so does a trackpad's pinch
+  // (the browser sends it as a wheel with ctrlKey) — a notch a step of 1.12, a pinch's small deltas in proportion
+  svg.addEventListener("wheel", (ev) => {
+    ev.preventDefault();
+    const line = ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? 800 : 1;
+    if (ev.ctrlKey || ev.metaKey) {
+      const [x, y] = toSvg(ev), d = ev.deltaY * line;
+      zoom(Math.abs(d) >= 50 ? (d < 0 ? 1.12 : 1 / 1.12) : Math.exp(-d * 0.01), x, y);
+      return;
+    }
+    const r = svg.getBoundingClientRect(), sx = W / r.width, sy = H / r.height;
+    let dx = ev.deltaX * line, dy = ev.deltaY * line;
+    if (ev.shiftKey && !dx) [dx, dy] = [dy, 0];
+    view().x -= dx * sx; view().y -= dy * sy;
+    applyView();
+  }, {passive: false});
   svg.addEventListener("keydown", (ev) => {
     if (!ev.ctrlKey && !ev.metaKey && !ev.altKey && (ev.key === "f" || ev.key === "0")) {  // on the canvas or a node
       if (ev.key === "0") fit(); else if (!focus()) return;

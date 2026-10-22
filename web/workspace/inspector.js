@@ -5,7 +5,7 @@ import {formulaOf, n as how, esc, pct, post, signClass, vnd} from "../core/core.
 import {timeline as drawTimeline} from "../charts/charts.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {LOOK, UNIT_WORD, certaintyOf, changeOf, changeText, changeTone, changeWord, figureOf, howOf, srcText} from "./graph.js?v=20261021t6";
-import {PARTS, SHEETS} from "./lenses.js?v=20261021s1";
+import {PARTS, SHEETS} from "./lenses.js?v=20261022p1";
 import {drawFeed} from "./feed.js?v=20261021t5";
 
 const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
