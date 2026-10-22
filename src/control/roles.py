@@ -54,7 +54,7 @@ def user(user_id: str) -> Dict[str, str]:
     if in_zone() and user_id == ZONE_ACTOR and not auth.checking():
         return {"id": ZONE_ACTOR, "name": "Agent vùng AI", "role": "cio", "title": "Vùng AI (F-D7)"}
     if user_id == TRIAL_ACTOR and not auth.checking():
-        return {"id": TRIAL_ACTOR, "name": "Thử nghiệm agent tin tức", "role": "cio", "title": "Thử nghiệm B1"}
+        return {"id": TRIAL_ACTOR, "name": "Thử nghiệm hằng ngày", "role": "cio", "title": "Thử nghiệm B1"}
     if auth.checking():
         me = auth.signed_in()
         if me is None:

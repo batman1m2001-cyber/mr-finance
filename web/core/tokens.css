@@ -916,6 +916,12 @@ body.signed-out .bellwrap, body.signed-out #reset { display: none !important; }
 /* A7: the Agent Ecosystem Map (Agent page, ADR-0033). Lines are what the code does: plain, one colour; lit with the
    part they touch. Lanes are the groups; the tone of a group is its chip, never a status. */
 .eco-panel { padding-top: 16px; }
+.ag-table td:first-child { min-width: 150px; }
+.ag-table[data-cols="6"] td:nth-child(4) { min-width: 130px; }
+.ag-card { display: grid; gap: 4px; text-align: left; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 10px;
+  background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+div.ag-card { cursor: default; }
+.ag-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .eco-bar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .eco-flow { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .eco-flow button { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 10px; border: 1px solid var(--hair); border-radius: 999px;

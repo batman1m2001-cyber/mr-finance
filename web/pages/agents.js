@@ -1,5 +1,5 @@
-/* Agent — the Agent Ecosystem Map (A7, ADR-0033; OWN-AS-20…22), then the catalogue (BRD FR-703) and AI quality
-   (RULE-MEAS-04). The map is one endpoint (GET /api/agents/map): the person, the assistant and its tools, the data,
+/* Agent — the Agent Ecosystem Map (A7, ADR-0033; OWN-AS-20…22), then the agent checklist (BRD FR-703,
+   AGENT_CHECKLIST_PLAN C3), the three evaluations and AI quality (RULE-MEAS-04). The map is one endpoint (GET /api/agents/map): the person, the assistant and its tools, the data,
    the CIO desk, the rules and the background agents; each line is something the code does (its file and symbol are
    in the drawer), each state is what the part's runs recorded. Overview first: select a part to light its lines, open
    it for what it does, its connections and its runs; a run opens its steps (ops, agent nodes or tools — never text).
@@ -42,6 +42,7 @@ export async function render(box) {
   const group = Object.fromEntries(m.groups.map(g => [g.id, g]));
   const narrow = (box.clientWidth || innerWidth) < 760;
   const counts = Object.fromEntries(Object.keys(STATE).map(s => [s, m.nodes.filter(n => n.state === s).length]));
+  const list = checklist(box, d, narrow);
   const lane = (g) => `<section class="eco-lane" style="--tone:${TONE[g]}" aria-label="${esc(group[g].label)}">
       <div class="eco-lh"><b>${esc(group[g].label)}</b><span>${esc(group[g].note)}</span></div>
       ${inGroup(g).map(n => card(n, g)).join("")}</section>`;
@@ -69,7 +70,9 @@ export async function render(box) {
         hoặc chờ điều kiện; Hoàn tất / Lỗi — lần chạy gần nhất; Chưa chạy — chưa có lần nào. Lần chạy theo lịch đọc từ bản
         ghi của job (.operonx/jobs) và vết của nó; lượt hỏi trợ lý từ nhật ký kiểm toán, không lưu câu chữ.</div>
     </div>
-    ${catalogue(d)}`;
+    ${list.html}
+    ${quality(d)}`;
+  list.wire();
 
   $$("[data-node]", box).forEach(b => {
     b.onclick = () => openNode(byId[b.dataset.node], m, byId);
@@ -201,26 +204,89 @@ async function openRun(n, runId, m, byId) {
   $("[data-back]", body).onclick = () => openNode(n, m, byId);
 }
 
-/* -- the catalogue (FR-703) and AI quality (RULE-MEAS-04), as before ------------------------------------------------ */
+/* -- the checklist (AGENT_CHECKLIST_PLAN C3, FR-703): every part that calls a model, one name each; "Của tôi" is the
+   parts the person's role owns; then the three evaluations with their latest result, and AI quality ---------------- */
 
-function catalogue(d) {
+const OWNED = {cio: "CIO", compliance: "Tuân thủ", admin: "Quản trị"};
+
+function checklist(box, d, narrow) {
+  const role = (location.hash.split("/")[1] || "").replace(/\W/g, "");
+  const mine = d.agents.filter(a => (a.owner_roles || []).includes(role));
+  const evalName = Object.fromEntries(d.evaluations.map(e => [e.id, e.name]));
+  const agentName = Object.fromEntries(d.agents.map(a => [a.id, a.name]));
+  const mode = (a) => `<span class="badge ${MODE[a.mode] ? MODE[a.mode][0] : ""}">${esc(MODE[a.mode] ? MODE[a.mode][1] : a.mode)}</span>`;
+  const measured = (a) => a.measured.length ? a.measured.map(id => esc(evalName[id])).join(", ") : `<span class="muted">chưa đo</span>`;
+  const rows = (xs) => narrow
+    ? `<div class="mlist">${xs.map(a => `<button type="button" class="ag-card" data-agent="${esc(a.id)}">
+        <span class="ag-h"><b>${esc(a.name)}</b>${mode(a)}</span><span class="small">${esc(a.purpose)}</span>
+        <span class="small muted">${esc(a.owner)} · đo bằng: ${measured(a)}</span></button>`).join("")}</div>`
+    : `<table class="table ag-table" data-cols="6"><thead><tr><th>Tên</th><th>Làm gì</th><th>Chủ sở hữu</th><th>Mô hình hiện tại</th><th>Đo bằng</th><th>Chạy khi</th></tr></thead><tbody>
+        ${xs.map(a => `<tr class="click" data-agent="${esc(a.id)}" tabindex="0"><td><b>${esc(a.name)}</b><div class="small muted">${esc(a.name_en)}</div></td>
+          <td class="small">${esc(a.purpose)}</td><td class="small">${esc(a.owner)}</td>
+          <td>${mode(a)}<div class="small muted">${esc(a.model)}</div></td><td class="small">${measured(a)}</td><td class="small muted">${esc(a.runs)}</td></tr>`).join("")}</tbody></table>`;
+  const latest = (e) => e.latest
+    ? `<span class="badge ${e.latest.passed ? "good" : "bad"}">${e.latest.passed ? "Đạt" : "Không đạt"}</span> <span class="small">${esc(e.latest.summary)}</span>`
+    : `<span class="small muted">chưa có lần chạy nào</span>`;
+  const evals = `<div class="panel"><h3>Ba cách đo <span class="hint">mỗi cách một tên; không gọi chung là "benchmark"</span></h3>
+    ${narrow ? `<div class="mlist">${d.evaluations.map(e => `<div class="ag-card"><span class="ag-h"><b>${esc(e.name)}</b></span>
+        <span class="small">${esc(e.checks)}</span><span class="small muted">${esc(e.when)}</span><span>${latest(e)}</span>
+        ${e.page ? `<a class="small" href="${esc(e.page)}">Mở trang →</a>` : ""}</div>`).join("")}</div>`
+      : `<table class="table ag-table"><thead><tr><th>Tên</th><th>Kiểm tra gì</th><th>Đo agent</th><th>Khi nào</th><th>Lần gần nhất</th></tr></thead><tbody>
+        ${d.evaluations.map(e => `<tr><td><b>${esc(e.name)}</b><div class="small muted">${esc(e.name_en)}</div>${e.page ? `<a class="small" href="${esc(e.page)}">Mở trang →</a>` : ""}</td>
+          <td class="small">${esc(e.checks)}</td><td class="small">${e.agents.map(id => esc(agentName[id] || id)).join(", ")}</td>
+          <td class="small muted">${esc(e.when)}</td><td>${latest(e)}</td></tr>`).join("")}</tbody></table>`}</div>`;
+  const html = `
+    <div class="pagehead" style="margin-top:28px"><div><div class="eyebrow">Danh sách agent</div>
+      <div class="h1">${d.agents.length} phần dùng mô hình ngôn ngữ — mỗi phần một tên</div>
+      <div class="lede small">Mọi chỗ ứng dụng gọi mô hình đều ở đây (một kiểm thử chặn chỗ mới không có tên). Chọn một dòng để
+        xem nó đọc gì, ai kiểm tra, cấu hình và mã nguồn (BRD FR-703). Phiên bản lời nhắc ${esc(d.prompt_version)}.</div></div>
+      ${mine.length ? `<div class="seg" role="group" aria-label="Lọc danh sách"><button type="button" data-mine="0" aria-pressed="true">Tất cả ${d.agents.length}</button><button type="button" data-mine="1" aria-pressed="false">Của tôi (${esc(OWNED[role] || role)}) ${mine.length}</button></div>` : ""}</div>
+    <div class="panel" data-agents>${rows(d.agents)}</div>
+    ${evals}`;
+  const wire = (root) => {
+    $$("[data-agent]", root).forEach(el => {
+      const go = () => openAgent(d.agents.find(a => a.id === el.dataset.agent), d);
+      el.onclick = go;
+      el.onkeydown = (e) => { if (e.key === "Enter") go(); };
+    });
+  };
+  return {html, wire: () => {
+    wire(box);
+    $$("[data-mine]", box).forEach(b => b.onclick = () => {
+      $$("[data-mine]", box).forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      const list = $("[data-agents]", box);
+      list.innerHTML = rows(b.dataset.mine === "1" ? mine : d.agents);
+      wire(list);
+    });
+  }};
+}
+
+function openAgent(a, d) {
+  const evalName = Object.fromEntries(d.evaluations.map(e => [e.id, e.name]));
+  const run = a.latest_run;
+  const facts = [
+    ["Làm gì", esc(a.purpose)],
+    ["Chủ sở hữu", esc(a.owner)],
+    ["Mức rủi ro", `<span class="badge ${RISK[a.risk] || ""}">${esc(a.risk)}</span> <span class="small">${esc(a.risk_why)}</span>`],
+    ["Mô hình hiện tại", `<span class="badge ${MODE[a.mode] ? MODE[a.mode][0] : ""}">${esc(MODE[a.mode] ? MODE[a.mode][1] : a.mode)}</span> ${esc(a.model)}`],
+    ["Cấu hình", (a.settings || []).map(esc).join(", ") || "— (không gọi mô hình)"],
+    ["Mô hình theo BRD", esc(a.brd_model)],
+    ["Được đọc", esc(a.reads)],
+    ["Ai kiểm tra", esc(a.checks)],
+    ["Đo bằng", a.measured.length ? a.measured.map(id => esc(evalName[id])).join(", ") : "chưa đo"],
+    ["Chạy khi", esc(a.runs)],
+    ["Lần chạy gần nhất", run ? `${esc(run.id)} · ${esc(run.subject)} · ${when(run.at)} · ${esc(run.mode)} · ${esc(run.status)}` : "—"],
+  ];
+  drawer(a.name, `<table class="table"><tbody>${facts.map(([k, v]) => `<tr><td class="muted">${k}</td><td class="small">${v}</td></tr>`).join("")}</tbody></table>
+    ${a.parts ? `<div><h4 class="eco-h">Gồm cả</h4><ul class="small">${a.parts.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+    ${a.code.length ? `<div><h4 class="eco-h">Mã nguồn</h4>${a.code.map(f => `<div class="eco-code">${esc(f)}</div>`).join("")}</div>` : ""}`);
+}
+
+function quality(d) {
   const q = d.quality;
   const fig = (k, label, f = (x) => x) => `<tr><td>${label}</td><td class="r num">${q.recent[k] == null ? "—" : f(q.recent[k])}</td><td class="r num muted">${q.all_time[k] == null ? "—" : f(q.all_time[k])}</td></tr>`;
   return `
-    <div class="pagehead" style="margin-top:28px"><div><div class="eyebrow">Danh mục agent</div>
-      <div class="h1">${d.agents.length} tác vụ dùng mô hình ngôn ngữ</div>
-      <div class="lede small">Mục đích, chủ sở hữu, mức rủi ro, mô hình, lần chạy gần nhất (BRD FR-703). Phiên bản lời nhắc ${esc(d.prompt_version)}.</div></div></div>
     <div class="cols">
-      ${d.agents.map(a => `<div class="panel c6">
-        <h3>${esc(a.name)} <span class="badge ${MODE[a.mode] ? MODE[a.mode][0] : ""}">${esc(MODE[a.mode] ? MODE[a.mode][1] : a.mode)}</span></h3>
-        <p style="margin:0 0 8px">${esc(a.purpose)}</p>
-        <table class="table"><tbody>
-          <tr><td class="muted">Chủ sở hữu</td><td>${esc(a.owner)}</td></tr>
-          <tr><td class="muted">Mức rủi ro</td><td><span class="badge ${RISK[a.risk] || ""}">${esc(a.risk)}</span> <span class="small">${esc(a.risk_why)}</span></td></tr>
-          <tr><td class="muted">Mô hình</td><td>${esc(a.model)}<div class="small muted">BRD: ${esc(a.brd_model)}${a.resource ? ` · tài nguyên ${esc(a.resource)}` : ""}</div></td></tr>
-          <tr><td class="muted">Được đọc</td><td class="small">${esc(a.reads)}</td></tr>
-          <tr><td class="muted">Lần chạy gần nhất</td><td class="small">${a.latest_run ? `${esc(a.latest_run.id)} · ${esc(a.latest_run.subject)} · ${when(a.latest_run.at)} · ${esc(a.latest_run.mode)} · ${esc(a.latest_run.status)}` : a.built ? "—" : "chưa xây (FEAT-16)"}</td></tr>
-        </tbody></table></div>`).join("")}
       <div class="panel c6"><h3>Chất lượng AI <span class="hint">${q.days} ngày qua · từ đầu</span></h3>
         <table class="table"><thead><tr><th></th><th class="r">${q.days} ngày</th><th class="r">Từ đầu</th></tr></thead><tbody>
           ${fig("decided", "Nhận định đã quyết")}${fig("edited_share", "Tỷ lệ CIO sửa kịch bản", (x) => how(pct(x, false, 0), "agent.edited_share"))}

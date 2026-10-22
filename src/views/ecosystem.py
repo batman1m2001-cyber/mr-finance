@@ -51,7 +51,7 @@ NODES: List[Dict[str, Any]] = [
     {"id": "person", "group": "person", "label": "Người dùng", "icon": "user",
      "does": "Hỏi trợ lý, xác nhận mọi việc ghi; CIO chạy Agent CIO, Tuân thủ yêu cầu tóm tắt chính sách; nhận "
              "thông báo theo dõi ở chuông."},
-    {"id": "assistant", "group": "front", "label": "Trợ lý OneWealth", "icon": "sparkles", "model": "copilot",
+    {"id": "assistant", "group": "front", "label": "OneWealth Copilot", "icon": "sparkles", "model": "copilot",
      "does": "Hiểu câu hỏi, gọi công cụ của vai trò qua nhiều bước, dừng chờ người xác nhận trước khi ghi, trả lời "
              "kèm trang, nguồn và ngày (A2).",
      "reads": "kết quả công cụ khi client_ai cho phép; nếu không, chỉ câu hỏi đã che và trạng thái công cụ"},

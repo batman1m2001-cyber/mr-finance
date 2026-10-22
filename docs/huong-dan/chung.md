@@ -23,7 +23,7 @@ chỉ có các trang của vai trò mình, mở địa chỉ trang của vai tr�
 - **Nút sáng / tối**: đổi giao diện; mặc định là giao diện tối.
 - **Bộ nhớ** (cạnh Đăng xuất): mở trang Bộ nhớ của trợ lý.
 
-## Trợ lý OneWealth (Copilot) — nút ✦ góc dưới bên phải, mọi trang
+## OneWealth Copilot (Trợ lý) — nút ✦ góc dưới bên phải, mọi trang
 
 Bấm ✦ để mở khung trợ lý. Hỏi bằng tiếng Việt về số liệu của mình, về trang đang xem hay cách làm một việc trong ứng
 dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu bạn đang ở trang nào, vai trò nào, khách hàng nào.

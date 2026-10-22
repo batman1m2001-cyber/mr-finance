@@ -8,7 +8,7 @@ import {icon} from "../core/icons.js?v=20261016r1";
 import {columns, lines, sparkline} from "../charts/money.js?v=20261016r4";
 
 export const OUTCOME = {right: ["good", "Đúng"], wrong: ["bad", "Sai"], missed: ["warn", "Bỏ lỡ"], avoided: ["", "Không làm · đúng"], open: ["ai", "Đang theo dõi"]};
-const AGENT_NAME = {news: "AI đọc tin", impact: "AI đánh giá tác động", planner: "AI tư vấn kế hoạch", chat: "AI trò chuyện với khách"};
+const AGENT_NAME = {news: "Agent CIO", impact: "Bộ máy tác động", planner: "Kế hoạch của RM", chat: "OneWealth Copilot"};  // the agent checklist's names
 const AGENT_ICON = {news: "news", impact: "zap", planner: "target", chat: "bot"};
 export const ENG = [["minutes", "Phút đọc / tuần", "phút / tuần"], ["days", "Ngày đọc / tháng", "ngày / tháng"]];
 export const eng = {view: "minutes"};  // shared by both pages for this page's life
@@ -31,7 +31,7 @@ export function tiles(sm, newsSub) {
 
 // the AI pipeline: one card per AI, in order; sub(g) is what goes under its line
 export function pipeline(agents, hint, sub) {
-  return `<div class="panel mt"><h3>Chuỗi AI <span class="hint">${hint}</span></h3>
+  return `<div class="panel mt"><h3>Chuỗi tư vấn <span class="badge warn">Dữ liệu mẫu</span> <span class="hint">${hint}</span></h3>
     <div class="pipe">${agents.map((g, i) => `<div class="agent">
       <div class="row tight one"><span class="ic-chip sm">${icon(AGENT_ICON[g.id] || "bot", {size: 14})}</span>
         <div><b>${i + 1}. ${esc(g.name)}</b><div class="small muted">${esc(g.name_vi)}</div></div><span class="score">${how(String(g.score), "advisory.agent_metric")}</span></div>
@@ -86,7 +86,7 @@ export async function render(box, ctx) {
       <p class="lede">Hiệu quả tư vấn và AI cho khách hàng ${esc(me.name || client)} · 12 tháng</p></div>
       <a class="btn sm" href="#/rm/hieu-qua">Tất cả khách hàng ${icon("arrow", {size: 14})}</a></div>
     ${tiles(t.summary, `đã có tín hiệu sớm · tác động ${how(vnd(t.summary.missed_news_value, true), "advisory.missed_news")}`)}
-    ${pipeline(t.agents, "hiệu quả từng AI · điểm 0–100 · xu hướng độ chính xác 12 tháng",
+    ${pipeline(t.agents, "điểm từng bước 0–100 · xu hướng độ chính xác 12 tháng · sinh bởi scripts/make_advisory.py",
       g => g.metrics.map(m => `<div class="kv"><span>${esc(m.label)}</span><b class="${m.tone === "bad" ? "down" : ""}">${how(esc(m.value), "advisory.agent_metric")}</b></div>`).join(""))}
     <div class="cols mt">
       <div class="panel c7"><h3>Nhật ký khuyến nghị <span class="hint">${t.advice.length} khuyến nghị</span></h3>${adviceTable(t.advice)}</div>

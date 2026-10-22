@@ -83,3 +83,13 @@ model and measure; no screen uses a name the checklist does not; the tests that 
 
 **Not in this plan** (raised 2026-10-22, the owner decides separately): the daily trial's empty recall figure, and an
 alert when the 08:30 run fails or the model bridge is down.
+
+## Status (2026-10-22)
+
+C1–C5 done on `feat/agent-checklist`. The checklist (`src/views/catalogue.py`) has 8 entries and the 3 evaluations
+with their latest result; `tests/test_catalogue.py` fails a model call in no entry (checked by dropping an entry's
+file: it fails), an entry without a name, owner or known measure, and an old name on a screen, in the user guide or
+in the advisory sample data; `docs/AGENT_CHECKLIST.md` is the one-pager. Screens: the Agent page (CIO, Tuân thủ,
+Quản trị; desktop and phone, light and dark), the RM's chain with **Dữ liệu mẫu**, the memory eyebrow, the trial
+page and its menu entry, the job and actor names. `data/advisory.json` regenerates byte-identical from
+`scripts/make_advisory.py`.

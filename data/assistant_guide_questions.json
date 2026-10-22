@@ -10,7 +10,7 @@
  {"q": "chính sách thuế mới ảnh hưởng tài sản của tôi bao nhiêu", "role": "client", "want": "Chi phí chính sách"},
  {"q": "Xem toàn bộ bức tranh tài chính dưới dạng sơ đồ", "role": "client", "want": "Đồ thị tài chính"},
  {"q": "làm sao để trợ lý quên điều nó đã nhớ về tôi", "role": "client", "want": "Bộ nhớ"},
- {"q": "Trợ lý có tự lưu thay đổi mà không hỏi tôi không?", "role": "client", "want": "Trợ lý OneWealth (Copilot)"},
+ {"q": "Trợ lý có tự lưu thay đổi mà không hỏi tôi không?", "role": "client", "want": "OneWealth Copilot (Trợ lý)"},
  {"q": "chuyển sang giao diện sáng", "role": "client", "want": "Thanh trên cùng"},
  {"q": "sáng nay nên gọi cho khách nào trước", "role": "rm", "want": "Hôm nay"},
  {"q": "duyet de xuat cua khach o dau", "role": "rm", "want": "Duyệt đề xuất"},

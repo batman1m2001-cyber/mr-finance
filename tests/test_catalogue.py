@@ -75,3 +75,19 @@ def test_the_endpoint():
     body = c.get("/api/agents/catalogue?days=30").json()
     assert body["quality"]["days"] == 30 and len(body["agents"]) == 8 and len(body["evaluations"]) == 3
     assert c.get("/api/agents/catalogue?days=x").status_code == 400
+
+
+OLD_NAMES = ("Trợ lý OneWealth", "Thử nghiệm agent tin tức", "Copilot (bộ định tuyến)", "AI News Reader", "AI Impact Assessor",
+             "AI Planning Advisor", "AI Client Chat")
+
+
+def test_the_one_pager_lists_every_entry_and_no_screen_keeps_an_old_name():
+    """AGENT_CHECKLIST_PLAN C4+C5: docs/AGENT_CHECKLIST.md names every entry and evaluation; the old names are gone."""
+    root = SRC.parent
+    page = (root / "docs" / "AGENT_CHECKLIST.md").read_text(encoding="utf-8")
+    for e in catalogue.ENTRIES + catalogue.EVALUATIONS:
+        assert f"**{e['name']}**" in page, e["name"]
+    shown = [*root.glob("web/**/*.js"), *SRC.rglob("*.py"), *root.glob("docs/huong-dan/*.md"), root / "data" / "advisory.json"]
+    for f in shown:
+        text = f.read_text(encoding="utf-8")
+        assert not [n for n in OLD_NAMES if n in text], f
