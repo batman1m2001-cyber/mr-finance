@@ -109,15 +109,33 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   // the centre's surfaces (OWN-GW-20, plan §3.1): gradients only, their colours CSS tokens on the stops (both themes)
   const grad = (tag, id, attrs, stops) => { const el = mk(tag, {id, ...attrs}, defs); for (const [o, c] of stops) mk("stop", {offset: o, class: c}, el); };
   grad("radialGradient", "ws-aura", {r: "50%"}, [["0.6", "c-aura"], ["1", "c-aura0"]]);
-  grad("radialGradient", "ws-body", {cx: "50%", cy: "34%", r: "72%", fx: "50%", fy: "20%"}, [["0", "c-hi"], ["0.55", "c-mid"], ["1", "c-deep"]]);
+  grad("radialGradient", "ws-body", {cx: "44%", cy: "36%", r: "70%", fx: "34%", fy: "24%"}, [["0", "c-hi"], ["0.5", "c-mid"], ["0.94", "c-deep"]]);
   grad("linearGradient", "ws-bezel", {x1: 0, y1: 0, x2: 0, y2: 1}, [["0", "c-rim"], ["0.5", "c-rim2"], ["1", "c-rim0"]]);
   grad("radialGradient", "ws-inner", {r: "50%"}, [["0", "c-glow"], ["1", "c-glow0"]]);
   grad("radialGradient", "ws-spec", {r: "50%"}, [["0", "c-spec"], ["1", "c-spec0"]]);
   grad("radialGradient", "ws-face", {cy: "46%", r: "52%"}, [["0", "c-face"], ["1", "c-face2"]]);
-  // the platinum coin's metal: a rim that catches the light twice, a bevel sunk into the field, a glint that sweeps across
-  grad("linearGradient", "ws-gold-rim", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "g-hi"], ["0.22", "g-mid"], ["0.42", "g-hi"], ["0.68", "g-deep"], ["0.86", "g-mid"], ["1", "g-hi"]]);
-  grad("linearGradient", "ws-gold-bevel", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "g-deep"], ["0.5", "g-mid"], ["1", "g-hi"]]);
+  // the platinum coin's metal, lit from the top left: a machined rim a shade brighter than the field, its narrow
+  // highlights where the light meets it, a chamfer into the field, a satin lathe texture, a glint now and then
+  grad("linearGradient", "ws-pt-rim", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "p-3"], ["0.1", "p-hi"], ["0.14", "p-1"], ["0.34", "p-3"],
+    ["0.5", "p-2"], ["0.63", "p-4"], ["0.75", "p-2"], ["0.86", "p-3"], ["0.9", "p-hi"], ["0.94", "p-1"], ["1", "p-2"]]);
+  grad("linearGradient", "ws-pt-bevel", {x1: 0, y1: 0, x2: 1, y2: 1}, [["0", "p-5"], ["0.5", "p-4"], ["1", "p-hi"]]);
+  grad("radialGradient", "ws-satin", {cx: 0, cy: 0, r: 1.7, gradientUnits: "userSpaceOnUse", spreadMethod: "repeat"},
+    [["0", "p-sa"], ["0.5", "p-sb"], ["1", "p-sa"]]);
+  grad("radialGradient", "ws-shadow", {r: "50%"}, [["0.78", "p-sh"], ["1", "p-sh0"]]);
   grad("linearGradient", "ws-glint", {x1: 0, y1: 0, x2: 1, y2: 0}, [["0", "g-glint0"], ["0.5", "g-glint"], ["1", "g-glint0"]]);
+  // the figure cut into the metal: the stroke's top-left wall in shadow, its bottom-right wall catching the light, the
+  // field's lip just below it lit — offsets of the letters' own shape, no copies of the text
+  const cut = mk("filter", {id: "ws-engrave", x: "-8%", y: "-20%", width: "116%", height: "140%", "color-interpolation-filters": "sRGB"}, defs);
+  cut.innerHTML = `<feOffset in="SourceAlpha" dx="0.7" dy="0.9" result="dn"/>
+    <feComposite in="SourceAlpha" in2="dn" operator="out" result="tl"/>
+    <feFlood class="f-wall" result="wc"/><feComposite in="wc" in2="tl" operator="in" result="wall"/>
+    <feOffset in="SourceAlpha" dx="-0.6" dy="-0.7" result="up"/>
+    <feComposite in="SourceAlpha" in2="up" operator="out" result="br"/>
+    <feFlood class="f-catch" result="cc"/><feComposite in="cc" in2="br" operator="in" result="catch"/>
+    <feOffset in="SourceAlpha" dx="0.5" dy="0.8" result="lo"/>
+    <feComposite in="lo" in2="SourceAlpha" operator="out" result="lipa"/>
+    <feFlood class="f-lip" result="lc"/><feComposite in="lc" in2="lipa" operator="in" result="lip"/>
+    <feMerge><feMergeNode in="lip"/><feMergeNode in="SourceGraphic"/><feMergeNode in="wall"/><feMergeNode in="catch"/></feMerge>`;
   mk("circle", {r: ME_R - 1}, mk("clipPath", {id: "ws-core-clip"}, defs));
   const world = mk("g", {class: "ws-world"}, svg);
   const edgeLayer = mk("g", {class: "ws-edges"}, world);
@@ -581,6 +599,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     if (me) {  // the financial core (OWN-GW-20…25): aura, rings, bezel, glass body, inner light, face, figures
       const back = mk("g", {class: "wme-back", "aria-hidden": "true"}, el);
       mk("circle", {r: r + 34, class: "wme-aura", fill: "url(#ws-aura)"}, back);
+      mk("circle", {cy: 4, r: r + 9, class: "wme-shadow", fill: "url(#ws-shadow)"}, back);  // it sits on the page, it does not shine
       mk("circle", {r: r + 12, class: "wme-orbit"}, back);
       mk("circle", {r: r + 21, class: "wme-orbit o2"}, back);
       mk("circle", {r: r + 3, class: "wme-drift"}, back);
@@ -589,15 +608,16 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
     mk("circle", {r, class: me ? "wcore me" : "wcore", fill: me ? "url(#ws-body)" : null}, el);
     if (me) {
       const glass = mk("g", {"clip-path": "url(#ws-core-clip)", "aria-hidden": "true"}, el);
+      mk("circle", {r, class: "wme-satin", fill: "url(#ws-satin)"}, glass);
       mk("ellipse", {cy: r * 0.48, rx: r * 0.82, ry: r * 0.44, class: "wme-inner", fill: "url(#ws-inner)"}, glass);
       mk("g", {class: "wme-bandhost"}, glass);  // the light a payment sends across (drawEdges, on the sparks' clock)
-      mk("ellipse", {cy: -r * 0.56, rx: r * 0.62, ry: r * 0.3, class: "wme-spec", fill: "url(#ws-spec)"}, glass);
+      mk("ellipse", {cx: -r * 0.2, cy: -r * 0.46, rx: r * 0.58, ry: r * 0.26, class: "wme-spec", fill: "url(#ws-spec)", transform: "rotate(-24)"}, glass);
       const sweep = mk("g", {class: "wme-glint"}, glass);  // a glint across the coin now and then (none under reduced motion)
       mk("rect", {x: -r * 0.18, y: -r * 1.3, width: r * 0.36, height: r * 2.6, fill: "url(#ws-glint)", transform: "rotate(28)"}, sweep);
       const rim = mk("g", {"aria-hidden": "true"}, el);
-      mk("circle", {r: r - 3.5, class: "wme-rimband", stroke: "url(#ws-gold-rim)"}, rim);  // the raised rim
+      mk("circle", {r: r - 3.5, class: "wme-rimband", stroke: "url(#ws-pt-rim)"}, rim);  // the raised rim
       mk("circle", {r: r - 0.6, class: "wme-reed"}, rim);  // its milled edge
-      mk("circle", {r: r - 7.5, class: "wme-bevel", stroke: "url(#ws-gold-bevel)"}, rim);  // where the rim meets the field
+      mk("circle", {r: r - 7.5, class: "wme-bevel", stroke: "url(#ws-pt-bevel)"}, rim);  // where the rim meets the field
       mk("circle", {r: r - 12, class: "wme-ticks"}, rim);  // a ring of beads, as on a coin
       mk("circle", {r: r + 1.5, class: "wme-bezel", stroke: "url(#ws-bezel)"}, rim);
       mk("circle", {r: r + 1.5, class: "wme-act"}, rim);
@@ -605,16 +625,19 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
       mk("g", {class: "wme-ports"}, rim);  // where each money edge meets the rim (drawEdges)
       mk("g", {class: "wme-ripples"}, rim);
       mk("circle", {r: r * 0.86, class: "wme-face", fill: "url(#ws-face)", "aria-hidden": "true"}, el);  // a soft dark vignette under the figures
-      // the coin carries its value only, struck in: the figure over a light copy of itself a pixel lower (the lit lower
-      // edge of a cut), drawn smaller when a longer figure would cross the ring of beads (r − 12); what it is and its
-      // parts are in its name and its panel
+      // the coin carries its value only, engraved (#ws-engrave): the figure, then its unit a size down after a narrow
+      // space, drawn smaller when a longer figure would cross the ring of beads (r − 12); what it is and its parts are in
+      // its name and its panel
       el.setAttribute("aria-label", `${staffLabel || "Tài sản ròng"} ${vnd(n.value)}: tài sản ${vnd(n.assets)}, nợ ${vnd(n.liabilities)}`);
-      const hl = mk("text", {x: 0.6, y: 9.8, "text-anchor": "middle", class: "wme-hl wme-v-hl", "aria-hidden": "true"}, el);
       const t2 = mk("text", {y: 9, "text-anchor": "middle", class: "wme-v num-svg", "data-metric": "net_worth", tabindex: "0", role: "button",
         "data-in": JSON.stringify(howOf(n)[1])}, el);
-      hl.textContent = t2.textContent = vnd(n.value);
+      const said = vnd(n.value), cutAt = said.search(/\s\S+$/);
+      if (cutAt > 0) {
+        mk("tspan", {}, t2).textContent = said.slice(0, cutAt);
+        mk("tspan", {class: "wme-unit"}, t2).textContent = said.slice(cutAt);
+      } else t2.textContent = said;
       const room = 84, w = t2.getBBox ? t2.getBBox().width : 0;
-      if (w > room) t2.style.fontSize = hl.style.fontSize = `${(parseFloat(getComputedStyle(t2).fontSize) * room / w).toFixed(1)}px`;
+      if (w > room) t2.style.fontSize = `${(parseFloat(getComputedStyle(t2).fontSize) * room / w).toFixed(1)}px`;
     } else if (n.kind === "group") {  // “+n”: what the ring folded, opened on a click
       mk("text", {y: 5, "text-anchor": "middle", class: "wcount"}, el).textContent = n.close ? "−" : `+${n.members.length}`;
       mk("text", {class: "wlbl"}, el);
