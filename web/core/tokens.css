@@ -26,9 +26,11 @@
   --in: #2a78d6; --out: #eb6834;
   --pulse: #0d9488;  /* a pulse: data read by the assistant — never a money colour (OWN-GW-18) */
   --spark-hi: #141414; --spark-mix: 88%; --glow-o: .2;  /* a moving spark's core: its hue, deepened (light) / lit (dark) */
-  --core-hi: #ffffff; --core-mid: #c6cad0; --core-deep: #646a73; --core-face: #f3f5f8; --core-aura: #d5dae1;
-  --core-ring: #9fa5ae; --core-glow: #eef2f7; --core-aura-a: .3;  /* the financial core (OWN-GW-20): a polished platinum coin, its figures engraved dark */
-  --core-ink: #121418; --core-ink-2: rgba(18, 20, 24, .78);
+  --core-hi: #eceef1; --core-mid: #c9cdd2; --core-deep: #8e949c; --core-face: #e4e7ea; --core-aura: #c9ced5;
+  --core-ring: #9ba1a9; --core-glow: #e6e9ed; --core-aura-a: .14;  /* the financial core (OWN-GW-20): solid polished platinum, its figure engraved graphite */
+  --core-ink: #1f2227; --core-ink-2: rgba(31, 34, 39, .78); --core-shadow: .2;
+  /* light: the edge a shade darker than the page can lose it in, a fine bright line inside it, a soft shadow inward */
+  --core-edge: #8e949c; --core-edge-a: .9; --core-edgehi-a: .95; --core-ishadow: .16;
   --ai: #2a78d6; --ai-soft: #e6f0fc; --human: #c4561f; --human-soft: #fcebe1; --data: #6b6785;
   --t1: #184f95; --t2: #3987e5; --t3: #86b6ef;
   --band: rgba(20, 20, 20, .10); --band-2: rgba(20, 20, 20, .20);
@@ -53,8 +55,9 @@
     --up: #5fd38d; --down: #ff8a4c; --flat: #a39cd0;
     --in: #3987e5; --out: #d95926;
     --pulse: #2dd4bf; --spark-hi: #ffffff; --spark-mix: 60%; --glow-o: .26;
-    --core-hi: #ffffff; --core-mid: #cfd3d9; --core-deep: #6e747d; --core-face: #f5f7fa; --core-aura: #d5dae1;
-    --core-ring: #b4bac3; --core-glow: #e8edf3; --core-aura-a: .4; --core-ink: #121418; --core-ink-2: rgba(18, 20, 24, .8);
+    --core-hi: #eef0f3; --core-mid: #ccd0d5; --core-deep: #8f959d; --core-face: #e6e9ec; --core-aura: #b9bfc7;
+    --core-ring: #8e959e; --core-glow: #e6e9ed; --core-aura-a: .1; --core-ink: #1f2227; --core-ink-2: rgba(31, 34, 39, .8); --core-shadow: .55;
+    --core-edge: url(#ws-bezel); --core-edge-a: 1; --core-edgehi-a: .5; --core-ishadow: .1;
     --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
     --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
     --band: rgba(242, 242, 243, .12); --band-2: rgba(242, 242, 243, .24);
@@ -75,8 +78,9 @@
   --up: #5fd38d; --down: #ff8a4c; --flat: #a39cd0;
   --in: #3987e5; --out: #d95926;
   --pulse: #2dd4bf; --spark-hi: #ffffff; --spark-mix: 60%; --glow-o: .26;
-  --core-hi: #ffffff; --core-mid: #cfd3d9; --core-deep: #6e747d; --core-face: #f5f7fa; --core-aura: #d5dae1;
-  --core-ring: #b4bac3; --core-glow: #e8edf3; --core-aura-a: .4; --core-ink: #121418; --core-ink-2: rgba(18, 20, 24, .8);
+  --core-hi: #eef0f3; --core-mid: #ccd0d5; --core-deep: #8f959d; --core-face: #e6e9ec; --core-aura: #b9bfc7;
+  --core-ring: #8e959e; --core-glow: #e6e9ed; --core-aura-a: .1; --core-ink: #1f2227; --core-ink-2: rgba(31, 34, 39, .8); --core-shadow: .55;
+    --core-edge: url(#ws-bezel); --core-edge-a: 1; --core-edgehi-a: .5; --core-ishadow: .1;
   --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
   --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
   --band: rgba(242, 242, 243, .12); --band-2: rgba(242, 242, 243, .24);
@@ -1042,10 +1046,10 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
    transform; the figures sit on their own face and never move */
 .ws-svg stop.c-aura { stop-color: var(--core-aura); stop-opacity: var(--core-aura-a, .34); } .ws-svg stop.c-aura0 { stop-color: var(--core-aura); stop-opacity: 0; }
 .ws-svg stop.c-hi { stop-color: var(--core-hi); } .ws-svg stop.c-mid { stop-color: var(--core-mid); } .ws-svg stop.c-deep { stop-color: var(--core-deep); }
-.ws-svg stop.c-rim { stop-color: #fff; stop-opacity: .85; } .ws-svg stop.c-rim2 { stop-color: var(--core-ring); stop-opacity: .45; } .ws-svg stop.c-rim0 { stop-color: var(--core-ring); stop-opacity: .08; }
-.ws-svg stop.c-glow { stop-color: var(--core-glow); stop-opacity: .5; } .ws-svg stop.c-glow0 { stop-color: var(--core-glow); stop-opacity: 0; }
-.ws-svg stop.c-spec { stop-color: #fff; stop-opacity: .3; } .ws-svg stop.c-spec0 { stop-color: #fff; stop-opacity: 0; }
-.ws-svg stop.c-face { stop-color: var(--core-face); stop-opacity: .62; } .ws-svg stop.c-face2 { stop-color: var(--core-face); stop-opacity: 0; }
+.ws-svg stop.c-rim { stop-color: #f2f4f6; stop-opacity: .6; } .ws-svg stop.c-rim2 { stop-color: var(--core-ring); stop-opacity: .45; } .ws-svg stop.c-rim0 { stop-color: var(--core-ring); stop-opacity: .08; }
+.ws-svg stop.c-glow { stop-color: var(--core-glow); stop-opacity: .14; } .ws-svg stop.c-glow0 { stop-color: var(--core-glow); stop-opacity: 0; }
+.ws-svg stop.c-spec { stop-color: #f4f6f8; stop-opacity: .26; } .ws-svg stop.c-spec0 { stop-color: #fff; stop-opacity: 0; }
+.ws-svg stop.c-face { stop-color: var(--core-face); stop-opacity: .45; } .ws-svg stop.c-face2 { stop-color: var(--core-face); stop-opacity: 0; }
 .wnode.k-family .wring { display: none; }  /* the core has its own rings */
 .wme-back, .wme-ports, .wme-ripples { pointer-events: none; }
 .wme-aura, .wme-inner { animation: ws-breathe 7s ease-in-out infinite; }
@@ -1056,16 +1060,25 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   animation: ws-drift 9s cubic-bezier(.25, .6, .35, 1) infinite; }
 .wme-drift.d2 { animation-delay: -4.5s; }
 @keyframes ws-drift { 0% { transform: scale(1); opacity: 0; } 12% { opacity: .5; } 100% { transform: scale(1.3); opacity: 0; } }
-.wme-ticks { fill: none; stroke: #4f555d; stroke-opacity: .55; stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 0 4.4; }
-/* the platinum coin (2026-10-22; gold until then): the same metal in both themes */
-.ws-svg stop.g-hi { stop-color: #fbfcfd; } .ws-svg stop.g-mid { stop-color: #c0c5cc; } .ws-svg stop.g-deep { stop-color: #4c525a; }
-.ws-svg stop.g-glint { stop-color: #fff; stop-opacity: .7; } .ws-svg stop.g-glint0 { stop-color: #fff; stop-opacity: 0; }
+.wme-ticks { fill: none; stroke: #4b5058; stroke-opacity: .42; stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 0 4.4; }
+/* the platinum coin (2026-10-22; gold until then): the same metal in both themes — pearl, pale titanium, graphite; no
+   yellow, no pure white; the rim's highlights narrow, the glint and the specular restrained */
+.ws-svg stop.p-hi { stop-color: #f3f5f7; } .ws-svg stop.p-1 { stop-color: #dcdfe3; } .ws-svg stop.p-2 { stop-color: #cbcfd4; }
+.ws-svg stop.p-3 { stop-color: #e4e7ea; } .ws-svg stop.p-4 { stop-color: #a9aeb5; } .ws-svg stop.p-5 { stop-color: #5d636b; }
+.ws-svg stop.p-sa { stop-color: #f4f6f8; stop-opacity: .045; } .ws-svg stop.p-sb { stop-color: #1d2126; stop-opacity: .03; }
+.ws-svg stop.p-sh { stop-color: #000; stop-opacity: var(--core-shadow, .2); } .ws-svg stop.p-sh0 { stop-color: #000; stop-opacity: 0; }
+.ws-svg .f-wall { flood-color: #0d0f12; flood-opacity: .42; } .ws-svg .f-catch { flood-color: #e9ecef; flood-opacity: .3; }
+.ws-svg .f-lip { flood-color: #f2f4f6; flood-opacity: .34; }
+.ws-svg stop.p-is { stop-color: #14181e; stop-opacity: var(--core-ishadow, .1); } .ws-svg stop.p-is0 { stop-color: #14181e; stop-opacity: 0; }
+.wme-shadow, .wme-satin, .wme-ishadow { pointer-events: none; }
+.wme-edgehi { fill: none; stroke: #f6f7f9; stroke-width: .7; stroke-opacity: var(--core-edgehi-a, .5); }
+.ws-svg stop.g-glint { stop-color: #f4f6f8; stop-opacity: .19; } .ws-svg stop.g-glint0 { stop-color: #fff; stop-opacity: 0; }
 .wme-rimband { fill: none; stroke-width: 7; }
-.wme-reed { fill: none; stroke: #3f454d; stroke-opacity: .5; stroke-width: 1.4; stroke-dasharray: .9 1.6; }
-.wme-bevel { fill: none; stroke-width: 1.6; }
+.wme-reed { fill: none; stroke: #3f454d; stroke-opacity: .32; stroke-width: 1.2; stroke-dasharray: .9 1.6; }
+.wme-bevel { fill: none; stroke-width: 1.2; }
 .wme-glint { animation: ws-glint 6s cubic-bezier(.4, 0, .2, 1) infinite; }
 @keyframes ws-glint { 0% { transform: translateX(-110px); } 30%, 100% { transform: translateX(110px); } }
-.wme-bezel { fill: none; stroke-width: 1.6; }
+.wme-bezel { fill: none; stroke-width: 1; stroke: var(--core-edge, url(#ws-bezel)); stroke-opacity: var(--core-edge-a, 1); }
 .wme-act, .wme-sel { fill: none; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
 .wme-act { stroke: var(--pulse); stroke-width: 2; }
 .wme-sel { stroke: var(--accent); stroke-width: 2; }
@@ -1113,11 +1126,12 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 /* another family member's holding or category (F1): their initial on the rim */
 .ws-svg .wown circle { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.2; }
 .ws-svg .wown text { fill: var(--accent); font-size: 8.5px; font-weight: 800; }
-/* the coin's value, struck in: a serif in near-black over its lit lower edge (.wme-hl) */
-.ws-svg :is(.wme-v, .wme-hl) { font-family: Georgia, "Noto Serif", "Times New Roman", serif; }
-.ws-svg .wme-hl { fill: #ffffff; fill-opacity: .9; pointer-events: none; }
-.ws-svg .wme-v { fill: var(--core-ink); cursor: help; }
-.ws-svg .wme-v, .ws-svg .wme-v-hl { font-size: 26px; font-weight: 700; font-variant-numeric: lining-nums tabular-nums; }
+/* the coin's value, engraved (#ws-engrave): a graphite serif cut into the platinum; proportional figures, so the comma
+   sits close, and the unit a size down after a narrow space */
+.ws-svg .wme-v { font-family: Georgia, "Noto Serif", "Times New Roman", serif; fill: var(--core-ink); cursor: help;
+  font-size: 26px; font-weight: 700; font-variant-numeric: lining-nums proportional-nums; letter-spacing: -.005em;
+  word-spacing: -.08em; filter: url(#ws-engrave); }
+.ws-svg .wme-v .wme-unit { font-size: .84em; }
 .ws-svg .num-svg { cursor: help; }
 .ws-edges { transition: opacity var(--dur-2) var(--ease-out); }
 .ws-edges.moving { opacity: 0; }
@@ -1324,7 +1338,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
   .ws-cashview { padding: 8px 12px 12px; }
   .ws-head { order: 0; } .ws-ctl { order: 1; position: static; justify-content: flex-end; flex-wrap: wrap; padding: 6px 12px 0; }
   .ws-canvas, .ws-list, .ws-cashview { order: 2; } .ws-strip { order: 3; }
-  .ws-svg .wlbl { font-size: 14px; } .ws-svg .wfig { font-size: 12.5px; } .ws-svg :is(.wme-v, .wme-v-hl) { font-size: 27px; }
+  .ws-svg .wlbl { font-size: 14px; } .ws-svg .wfig { font-size: 12.5px; } .ws-svg .wme-v { font-size: 27px; }
   .ws-svg .wmoney text { font-size: 12.5px; }
   .ws-strip-b { grid-auto-columns: minmax(200px, 78%); }
   /* a phone: the sheet takes the graph's place in the page (the graph stays mounted, hidden) and the dock stays below */
