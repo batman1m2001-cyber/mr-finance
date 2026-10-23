@@ -2,6 +2,14 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-23 — The test book is Private only (Q-27): a second client set converted from Santander's public data,
+  1,000 Private clients for the KPIs and 6,500 for the book, the demo's five families kept; D1's sampler written
+  (`scripts/santander_sample.py`), not yet run on the real file. Proposed. — ADR-0038, ADR-0005,
+  requirements/open_questions.md (Q-18, Q-27), decisions/README.md, docs/CLIENT_DATASET_PLAN.md
+- 2026-10-23 — The Private palette (business feedback 5): gold #c8a45d marks the main action with dark-brown words;
+  brown #59392c the ink of links, tabs and selections; light grey and sand surfaces; champagne in dark. Replaces the
+  black-and-red reading of feedback 4. OWN-WN-11. — sources/owner_requests/2026-10-23_business_feedback_5.md,
+  owner_requirements.md, requirements_traceability.md, ux/design_system.md
 - 2026-10-22 — The colour tone (business feedback 4, after Techcombank Private; the owner: red and black, not
   painful): Techcombank red marks the main action only — a primary button, Hỏi trợ lý, the bell's count; the rest
   stays black, white and greys. OWN-WN-11. — sources/owner_requests/2026-10-22_business_feedback_4.md,

@@ -104,17 +104,18 @@ LUM = """([a, b]) => { const l = c => { const v = c.match(/\\d+/g).slice(0, 3).m
   const [h, o] = [l(a), l(b)].sort((x, y) => y - x); return (h + .05) / (o + .05); }"""
 
 
-def test_red_marks_the_main_action_only(open_page):
-    """Business feedback 4 ("tông màu private banking"), the owner: red and black, not painful. The red is the main
-    action (a primary button, Hỏi trợ lý, the bell's count) with white words at 4.5:1; tabs and links stay black."""
-    for theme, red in [("light", "rgb(215, 25, 32)"), ("dark", "rgb(227, 27, 35)")]:
+def test_gold_marks_the_main_action_only(open_page):
+    """Business feedback 5 (2026-10-23, the Private palette: gold, champagne, sand, brown). Gold is the main action
+    (a primary button, Hỏi trợ lý, the bell's count) with dark words at 4.5:1; tabs and links stay brown or light."""
+    gold = "rgb(200, 164, 93)"
+    for theme in ("light", "dark"):
         p = open_page(theme=theme, dock=False)
         p.go("#/client/tai-san")
         btn = p.page.wait_for_selector("#page .btn.primary")
         fab = p.page.wait_for_selector("#ws-fab")
-        assert btn.evaluate(RGB) == red and fab.evaluate(RGB) == red, theme
+        assert btn.evaluate(RGB) == gold and fab.evaluate(RGB) == gold, theme
         words = btn.evaluate("el => getComputedStyle(el).color")
-        assert p.page.evaluate(LUM, [words, red]) >= 4.5, theme
+        assert p.page.evaluate(LUM, [words, gold]) >= 4.5, theme
         tab = p.page.wait_for_selector("#ws-sheet-tabs a[aria-current='page']")
-        assert red not in (tab.evaluate(RGB), tab.evaluate("el => getComputedStyle(el).color")), theme
+        assert gold not in (tab.evaluate(RGB), tab.evaluate("el => getComputedStyle(el).color")), theme
         assert not p.problems()

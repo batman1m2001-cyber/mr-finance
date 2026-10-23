@@ -1,10 +1,11 @@
 /* OneWealth design system: one set of tokens, two themes. Loaded after app.css, so the pages that
    came before (the legacy tabs) wear the same tokens.
 
-   The Techcombank-ecosystem look (2026-10-21): black, white and greys. The brand red is the logo and the thin mark of
-   where you are (--brand-red), and, as on Techcombank Private's pages (business, 2026-10-22), the main action
-   (--cta: a primary button, Hỏi trợ lý, the bell's count) — nothing larger: links, tabs and selections stay black,
-   and red reads as an error elsewhere. Losses and breaches are orange-red with their icon and words. Light for
+   The Techcombank Private look (business, 2026-10-23, after techcombank.com's private-banking pages): gold #c8a45d,
+   deep gold #b08d47, champagne #d4b26a, sand #e1d1bb, light grey #f1f1f1 and brown #59392c. Brown is the ink of
+   links, tabs and selections; gold is the main action (--cta: a primary button, Hỏi trợ lý, the bell's count) with
+   dark-brown words, since white on gold stays under 4.5:1; deep gold is the logo's ring and the thin mark of where
+   you are (--brand-red, the name kept). Losses and breaches are orange-red with their icon and words. Light for
    everyone unless the person picks dark.
    Every text colour clears WCAG 4.5:1 on its surface in both themes; the categorical series are
    the validated reference palette (scratchpad dataviz check: light needs direct labels / a table,
@@ -14,13 +15,13 @@
    Money: green gain, orange-red loss, grey neutral, dashed = modelled / uncertain, "—" = unavailable. */
 :root {
   color-scheme: light;
-  --plane: #f4f4f5; --plane-glow: #f4f4f5; --surface: #ffffff; --surface-2: #f2f2f4; --surface-3: #e9e9ec;
-  --ink: #141414; --ink-2: #4a4a4f; --muted: #6f6f76;
-  --hair: #e7e7ea; --axis: #d6d6db; --ring: rgba(20, 20, 20, .12);
-  --accent: #141414; --accent-ink: #ffffff; --accent-soft: #ececef; --brand: #141414; --hero: #141414;
-  --brand-red: #e31b23;  /* the logo and the mark of where you are: red reads as an error */
-  --cta: #d71920; --cta-ink: #ffffff; --cta-hover: #b9151b;  /* the main action only (Techcombank Private's Đăng nhập) */
-  --series: #3d3d42;  /* a figure's line, bar or ring */
+  --plane: #f1f1f1; --plane-glow: #f7f2e9; --surface: #ffffff; --surface-2: #f7f3ec; --surface-3: #efe6d8;
+  --ink: #241a15; --ink-2: #59392c; --muted: #6e5e54;
+  --hair: #ece3d6; --axis: #e1d1bb; --ring: rgba(89, 57, 44, .14);
+  --accent: #59392c; --accent-ink: #ffffff; --accent-soft: #f3ece0; --brand: #59392c; --hero: #59392c;
+  --brand-red: #b08d47;  /* the logo and the mark of where you are (deep gold) */
+  --cta: #c8a45d; --cta-ink: #2b1a12; --cta-hover: #b08d47;  /* the main action only: gold, dark-brown words (7:1) */
+  --series: #59392c;  /* a figure's line, bar or ring */
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
   --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948; --other: #a8a69f;
   --good: #0f7a3d; --warning: #b37400; --serious: #c4561f; --critical: #c2410c;
@@ -36,7 +37,7 @@
   --core-edge: #8e949c; --core-edge-a: .9; --core-edgehi-a: .95; --core-ishadow: .16;
   --ai: #2a78d6; --ai-soft: #e6f0fc; --human: #c4561f; --human-soft: #fcebe1; --data: #6b6785;
   --t1: #184f95; --t2: #3987e5; --t3: #86b6ef;
-  --band: rgba(20, 20, 20, .10); --band-2: rgba(20, 20, 20, .20);
+  --band: rgba(89, 57, 44, .10); --band-2: rgba(89, 57, 44, .20);
   --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 24px rgba(0, 0, 0, .05);
   --shadow-pop: 0 12px 40px rgba(0, 0, 0, .14);
   --radius: 16px; --radius-s: 10px;
@@ -47,11 +48,11 @@
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --plane: #0e0e10; --plane-glow: #1c1c20; --surface: #1a1a1d; --surface-2: #232327; --surface-3: #2c2c31;
-    --ink: #f2f2f3; --ink-2: #c7c7cc; --muted: #9a9aa2;
-    --hair: #2e2e33; --axis: #45454c; --ring: rgba(242, 242, 243, .14);
-    --accent: #f2f2f3; --accent-ink: #141414; --accent-soft: #2c2c31; --brand: #f2f2f3; --hero: #f2f2f3; --series: #c9c9ce; --brand-red: #ff5c63;
-    --cta: #e31b23; --cta-ink: #ffffff; --cta-hover: #c8161d;
+    --plane: #110d0b; --plane-glow: #221a14; --surface: #1b1612; --surface-2: #241d18; --surface-3: #2e251f;
+    --ink: #f3eee7; --ink-2: #e1d1bb; --muted: #ab9c8c;
+    --hair: #3a2f27; --axis: #54463a; --ring: rgba(225, 209, 187, .16);
+    --accent: #d4b26a; --accent-ink: #1b1612; --accent-soft: #3a2f22; --brand: #d4b26a; --hero: #d4b26a; --series: #e1d1bb; --brand-red: #d4b26a;
+    --cta: #c8a45d; --cta-ink: #2b1a12; --cta-hover: #d4b26a;
     --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
     --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --other: #6e6894;
     --good: #5fd38d; --warning: #f5c45e; --serious: #ff9e6b; --critical: #ff8a4c;
@@ -64,18 +65,18 @@
     --core-edge: url(#ws-bezel); --core-edge-a: 1; --core-edgehi-a: .5; --core-ishadow: .1;
     --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
     --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
-    --band: rgba(242, 242, 243, .12); --band-2: rgba(242, 242, 243, .24);
+    --band: rgba(225, 209, 187, .12); --band-2: rgba(225, 209, 187, .24);
     --shadow: 0 1px 0 rgba(255, 255, 255, .03) inset, 0 10px 30px rgba(0, 0, 0, .4);
   --shadow-pop: 0 16px 48px rgba(0, 0, 0, .6);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --plane: #0e0e10; --plane-glow: #1c1c20; --surface: #1a1a1d; --surface-2: #232327; --surface-3: #2c2c31;
-  --ink: #f2f2f3; --ink-2: #c7c7cc; --muted: #9a9aa2;
-  --hair: #2e2e33; --axis: #45454c; --ring: rgba(242, 242, 243, .14);
-  --accent: #f2f2f3; --accent-ink: #141414; --accent-soft: #2c2c31; --brand: #f2f2f3; --hero: #f2f2f3; --series: #c9c9ce; --brand-red: #ff5c63;
-    --cta: #e31b23; --cta-ink: #ffffff; --cta-hover: #c8161d;
+  --plane: #110d0b; --plane-glow: #221a14; --surface: #1b1612; --surface-2: #241d18; --surface-3: #2e251f;
+  --ink: #f3eee7; --ink-2: #e1d1bb; --muted: #ab9c8c;
+  --hair: #3a2f27; --axis: #54463a; --ring: rgba(225, 209, 187, .16);
+  --accent: #d4b26a; --accent-ink: #1b1612; --accent-soft: #3a2f22; --brand: #d4b26a; --hero: #d4b26a; --series: #e1d1bb; --brand-red: #d4b26a;
+    --cta: #c8a45d; --cta-ink: #2b1a12; --cta-hover: #d4b26a;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
   --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --other: #6e6894;
   --good: #5fd38d; --warning: #f5c45e; --serious: #ff9e6b; --critical: #ff8a4c;
@@ -88,7 +89,7 @@
     --core-edge: url(#ws-bezel); --core-edge-a: 1; --core-edgehi-a: .5; --core-ishadow: .1;
   --ai: #7fb2f5; --ai-soft: #22305a; --human: #ff9e6b; --human-soft: #3b2a3c; --data: #a39cd0;
   --t1: #9ec5f4; --t2: #5598e7; --t3: #256abf;
-  --band: rgba(242, 242, 243, .12); --band-2: rgba(242, 242, 243, .24);
+  --band: rgba(225, 209, 187, .12); --band-2: rgba(225, 209, 187, .24);
   --shadow: 0 1px 0 rgba(255, 255, 255, .03) inset, 0 10px 30px rgba(0, 0, 0, .4);
   --shadow-pop: 0 16px 48px rgba(0, 0, 0, .6);
 }

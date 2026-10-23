@@ -17,22 +17,23 @@ the code wins and this page is corrected.
 
 ## Themes
 
-The Techcombank-ecosystem look (2026-10-21): black, white and greys, light for everyone unless the person picks dark
-(◐, stored as `mf.theme`). Red is Techcombank's and is used sparingly, because it reads as an error:
-- `--brand-red`: the logo and the thin mark of where you are;
-- `--cta` (business feedback 4, after Techcombank Private's pages, whose one red element is Đăng nhập; OWN-WN-11):
-  the main action only — a primary button, Hỏi trợ lý, the bell's count. White words on it clear 4.5:1 (#d71920
-  light, #e31b23 dark). Tabs, links, selections and focus stay black (`--accent`); nothing larger is red.
+The Techcombank Private palette (business feedback 5, 2026-10-23; OWN-WN-11): gold #c8a45d, deep gold #b08d47,
+champagne #d4b26a, sand #e1d1bb, light grey #f1f1f1, brown #59392c. Light for everyone unless the person picks dark
+(◐, stored as `mf.theme`).
+- `--accent` brown #59392c (champagne #d4b26a in dark): links, the current tab, selections, focus, the hero figure.
+- `--cta` gold #c8a45d: the main action only — a primary button, Hỏi trợ lý, the bell's count. Its words are dark
+  brown #2b1a12 (7:1); white on gold would be 2.4:1. `--cta-hover` deep gold #b08d47 (champagne in dark).
+- `--brand-red` (the name kept): deep gold #b08d47, the thin mark of where you are; the logo's ring is gold.
 
 ## Tokens (light → dark)
 
 | Group | Tokens | Use |
 |---|---|---|
-| Surfaces | `--plane` #f4f4f5, `--surface` white, `--surface-2`, `--surface-3` | page, cards, nested blocks and tracks |
+| Surfaces | `--plane` #f1f1f1, `--surface` white, `--surface-2`, `--surface-3` | page, cards, nested blocks and tracks |
 | Ink | `--ink` `--ink-2` `--muted` | text levels; every text colour ≥ 4.5:1 on its surface in both themes |
 | Lines | `--hair` (card borders), `--axis` (inputs, chart axes), `--ring` | |
-| Accent | `--accent` #141414 `--accent-soft` `--brand` `--hero` | links, current tab, selections, focus, hero figure |
-| Red | `--brand-red` #e31b23; `--cta` #d71920 `--cta-ink` `--cta-hover` | the logo and where you are; the main action (see Themes) |
+| Accent | `--accent` #59392c `--accent-soft` `--brand` `--hero` | links, current tab, selections, focus, hero figure |
+| Gold | `--brand-red` #b08d47; `--cta` #c8a45d `--cta-ink` `--cta-hover` | the logo and where you are; the main action (see Themes) |
 | Series | `--s1`…`--s8`, `--other` | categorical series in fixed order; asset classes have fixed colours (`CLASS_COLOR`) |
 | Status | `--good` `--warning` `--serious` `--critical` (+ `-soft`) | statuses with a label, never colour alone |
 | Money | `--up` `--down` `--flat`; `--in` `--out` | gain/loss; cash in/out |
