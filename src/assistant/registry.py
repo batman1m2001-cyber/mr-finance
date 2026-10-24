@@ -68,7 +68,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "theo_doi": "Đặt theo dõi",
     "theo_doi_cua_toi": "Việc theo dõi của bạn",
     "huy_theo_doi": "Huỷ theo dõi",
-    "ban_quyet_dinh": "Bàn quyết định",
+    "ban_quyet_dinh": "Decision board",
     "phoi_nhiem": "Phơi nhiễm",
     "lan_ap_dung": "Lần áp dụng",
     "do_chinh_xac": "Độ chính xác",

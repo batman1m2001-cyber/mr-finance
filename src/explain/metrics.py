@@ -652,8 +652,8 @@ metric(
 metric(
     "impact.p10_3m",
     "Kịch bản xấu 3 tháng (P10)",
-    "P10 = mốc 10% của phân bố tác động 3 tháng (10% khả năng thấp "
-    "hơn), tính theo tài sản ròng; trong danh sách là sự kiện có P10 xấu nhất của gia đình.",
+    "P10: 1 trong 10 khả năng kết quả 3 tháng xấu hơn mức này (mốc 10% "
+    "của phân bố tác động), tính theo tài sản ròng; trong danh sách là sự kiện có P10 xấu nhất của gia đình.",
     "src/engine/scenario.py::evaluate",
     event="Sự kiện",
 )

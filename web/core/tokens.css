@@ -582,13 +582,13 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .donut:has(.seg:hover) .seg:not(:hover), .donut.picked .seg:not(.on) { opacity: .35; }
 @media (prefers-reduced-motion: reduce) { .donut .seg { transition: none; } }
 /* form controls on the new pages: one look (R1) */
-:is(#page, .ws-cashview) select, :is(#page, .ws-cashview) input:is([type="text"], [type="search"], [type="number"], [type="date"], :not([type])), :is(#page, .ws-cashview) textarea {
+:is(#page, .ws-cashview, .dk-body) select, :is(#page, .ws-cashview, .dk-body) input:is([type="text"], [type="search"], [type="number"], [type="date"], :not([type])), :is(#page, .ws-cashview, .dk-body) textarea {
   padding: 8px 12px; border: 1px solid var(--hair); border-radius: var(--radius-s); background: var(--surface); color: var(--ink);
   font: inherit; font-size: 13.5px; min-height: 36px; }
-:is(#page, .ws-cashview) select { padding-right: 30px; appearance: none; cursor: pointer;
+:is(#page, .ws-cashview, .dk-body) select { padding-right: 30px; appearance: none; cursor: pointer;
   background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6785' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center; }
-:is(#page, .ws-cashview) :is(select, input, textarea):focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--band); }
-#page input[type="checkbox"], #page input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; }
+:is(#page, .ws-cashview, .dk-body) :is(select, input, textarea):focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--band); }
+:is(#page, .dk-body) input[type="checkbox"], :is(#page, .dk-body) input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; }
 /* ── R3: the rebuilt pages (Chi tiết, Tài sản, Kế hoạch, Khẩu vị rủi ro, Chi phí chính sách, Chuyên gia, Hiệu quả) ── */
 .seg { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface-2); }
 .seg button { border: 0; background: transparent; padding: 5px 12px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 12.5px;
@@ -1423,6 +1423,22 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .dk-flow li { position: relative; min-width: 0; display: flex; }
 .dk-flow li + li::before { content: ""; position: absolute; left: -16px; top: 30px; width: 16px; border-top: 2px solid var(--axis); }
 .dk-flow li + li::after { content: ""; position: absolute; left: -7px; top: 26px; border: 5px solid transparent; border-left-color: var(--axis); }
+/* the CIO's flow (OWN-FB-08): three stages, then Gia đình → RM in their own tinted frame, "đến khách hàng" */
+.dk-flow.cio { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 2.1fr); }
+.dk-flow-client { display: block !important; padding: 6px 8px 8px; border-radius: 16px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface)); border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--hair)); }
+.dk-flow-cap { display: block; margin: 0 0 6px 4px; font-weight: 650; color: var(--accent); }
+.dk-flow-client > .dk-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
+.dk-flow.cio > li.dk-flow-client::before { top: 58px; }
+.dk-flow.cio > li.dk-flow-client::after { top: 54px; }
+.dk-filters { margin: 4px 0 8px; flex-wrap: wrap; }
+.dk-filters input { padding: 7px 10px; border: 1px solid var(--axis); border-radius: 9px; background: var(--surface); color: var(--ink); }
+.dk-more { justify-self: center; margin-top: 8px; }
+.dk-plain { font-size: 15px; line-height: 1.5; margin: 2px 0 12px; max-width: 72ch; }
+.dk-impact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 20px; }
+@media (max-width: 560px) { .dk-rank { font-size: 13px; } .table.dk-rank :is(th, td) { padding: 8px 5px; } .table.dk-rank th { white-space: normal; } .dk-rank .badge { white-space: nowrap; } }
+.dk-inbox-h { margin-bottom: 8px; }
+.dk-sub { font-size: 13.5px; font-weight: 650; margin: 0 0 6px; }
 .dk-stage { position: relative; flex: 1; display: grid; align-content: start; justify-items: start; gap: 2px; min-width: 0; text-align: left;
   padding: 12px 12px 10px; border: 1px solid var(--hair); border-radius: 14px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
 .dk-stage:hover { border-color: var(--accent); }
@@ -1530,12 +1546,18 @@ button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-al
   .ad-map { gap: 18px; }
   .dk-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .dk-flow li:nth-child(4)::before, .dk-flow li:nth-child(4)::after { display: none; }
+  .dk-flow.cio { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dk-flow.cio > li.dk-flow-client { grid-column: 1 / -1; }
+  .dk-flow.cio > li.dk-flow-client::before, .dk-flow.cio > li.dk-flow-client::after { display: none; }
+  .dk-flow-client > .dk-flow li:nth-child(2)::before, .dk-flow-client > .dk-flow li:nth-child(2)::after { display: block; }
+  .dk-impact { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 760px) {
   .dk-body { overflow: visible; padding: 12px 14px 20px; }
   .dk-head { flex-direction: column; gap: 6px; }
   .dk-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .dk-flow li::before, .dk-flow li::after { display: none; }
+  .dk-flow li::before, .dk-flow li::after { display: none !important; }
+  .dk-flow.cio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dk-grid { grid-template-columns: minmax(0, 1fr); }
   .ws.sheeted .dk-body { display: none; }
   .desk .ws-sheet-h { flex-wrap: wrap; padding: 8px 14px; }

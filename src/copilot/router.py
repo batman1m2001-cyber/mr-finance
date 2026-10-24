@@ -45,7 +45,7 @@ DESK_RULES: Dict[str, List[Tuple[str, str]]] = {
     "rm": [("so_khach_hang", r"so khach|can lam|cho (toi )?duyet|dang cho|de xuat nao|de xuat cho|khach nao")],
     "cio": [
         ("agent_nen", r"\bagent\b|chay nen|viec nen|lich chay"),
-        ("phoi_nhiem", r"phoi nhiem"),
+        ("phoi_nhiem", r"phoi nhiem|tac dong (lon nhat )?(toi|len) tai san"),
         ("lan_ap_dung", r"ap dung"),
         ("do_chinh_xac", r"chinh xac|du bao dung"),
         ("ban_quyet_dinh", r"cho toi|quyet dinh|cho duyet|dang cho|nhan dinh|dong chay"),

@@ -160,14 +160,17 @@ def _menu(role):
 
     js = (Path(__file__).resolve().parents[1] / "web" / "shell.js").read_text()
     block = js[js.index(f"\n  {role}: {{") :].split("\n  },", 1)[0]
-    out, parent = set(), None
+    out, parent, last = set(), None, None
     for line in block.splitlines():
         ids = re.findall(r'\{id: "([\w-]+)"', line)
         if line.startswith("        ") and parent:  # a sub page's line, under its parent
             out |= {f"{parent}/{x}" for x in ids}
-        elif ids:
+            continue
+        if ids:
             out |= set(ids)
-            parent = ids[0] if "sub: [" in line else None
+            last, parent = ids[0], None
+        if "sub: [" in line:  # on the item's own line, or on its next (after its ``tabs``)
+            parent = last
     return out
 
 
@@ -180,7 +183,8 @@ def test_every_staff_page_the_assistant_opens_is_in_the_menu_and_every_menu_page
     menu = _menu(role)
     opens = {r[role].split("/", 2)[2] if r[role].count("/") > 1 else "ban" for _, r in PAGES.values() if role in r}
     assert opens <= menu | {"khach-hang/" + p for p in menu}, opens - menu
-    pages = {p for p in menu if p not in ("khach-hang", "mo-hinh", "do-thi") and not p.startswith("khach-hang/")}
+    parents = {p.split("/")[0] for p in menu if "/" in p}  # a page with sub pages opens its first
+    pages = {p for p in menu if p not in parents | {"do-thi"} and not p.startswith("khach-hang/")}
     assert pages <= opens, pages - opens
 
 
@@ -198,7 +202,12 @@ def test_each_desk_read_lights_a_part_of_its_desk(role):
     )
     reads = {
         "rm": ["so_khach_hang", "hom_nay", "de_xuat", "lien_he"],
-        "cio": ["ban_quyet_dinh", "phoi_nhiem", "do_chinh_xac", "su_kien", "agent_nen"],
+        "cio": [
+            "ban_quyet_dinh",
+            "phoi_nhiem",
+            "su_kien",
+            "hop_tin",
+        ],  # the model and the agents are Admin's (OWN-FB-16)
         "specialist": ["ban_chuyen_gia", "ho_so_khach", "de_xuat"],
         "compliance": ["ban_kiem_soat", "chuoi_nhat_ky", "tin_bi_giu", "cau_hinh_cho_duyet", "canh_bao_he_thong"],
         "admin": ["van_hanh", "chuoi_nhat_ky", "cau_hinh_cho_duyet", "canh_bao_he_thong", "agent_nen"],

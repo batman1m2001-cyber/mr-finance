@@ -38,19 +38,19 @@ NODES: Dict[str, List[str]] = {
     "so_sanh_kich_ban": ["scenario"],
     "gia_dinh": ["scenario"],
     # a staff desk's elements (data-node, FEAT-41): the CIO's pipeline stages and panels
-    "hop_tin": ["stage:news"],
-    "lay_tin": ["stage:news"],
-    "su_kien": ["stage:events", "events"],
-    "danh_dau_khan": ["stage:events"],
-    "chay_agent_cio": ["agents", "stage:views"],
-    "phan_bien_lai": ["agents", "stage:views"],
+    "hop_tin": ["stage:news", "inbox"],
+    "lay_tin": ["stage:news", "inbox"],
+    "su_kien": ["stage:views", "decide"],  # OWN-FB-08: no Sự kiện stage; an event waits in Nhận định
+    "danh_dau_khan": ["stage:views", "decide"],
+    "chay_agent_cio": ["stage:views"],
+    "phan_bien_lai": ["stage:views"],
     "chay_viec_nen": ["jobs"],
     "tai_khoan": ["people"],
     "yeu_cau_tai_khoan": ["people"],
     "ban_quyet_dinh": ["decide", "stage:views", "stage:runs"],
     "phoi_nhiem": ["exposure", "stage:families"],
     "lan_ap_dung": ["stage:runs"],
-    "do_chinh_xac": ["model"],
+    "do_chinh_xac": ["model"],  # Admin's Mô hình (the CIO's Hiệu quả page reads it too)
     # the RM's book: the map, the call list, goal tasks, proposals, contacts
     "so_khach_hang": ["book", "calls", "proposals"],
     "hom_nay": ["calls", "tasks"],

@@ -24,7 +24,7 @@ TIMED = """(() => { const real = window.fetch;
         if (e.type === 'answer') c.close(); }, t); }});
     return Promise.resolve(new Response(body, {status: 200, headers: {'content-type': 'text/event-stream'}}));
   }; })();"""
-STEP = {"type": "step", "call_id": "c1", "tool": "ban_quyet_dinh", "label": "Bàn quyết định"}
+STEP = {"type": "step", "call_id": "c1", "tool": "ban_quyet_dinh", "label": "Decision board"}
 SCRIPT = [
     [0, {"type": "start"}],
     [50, {**STEP, "phase": "start", "nodes": ["decide", "stage:views", "stage:runs"]}],

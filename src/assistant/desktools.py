@@ -29,7 +29,7 @@ def _spct(x: float, digits: int = 1) -> str:
 
 
 async def cio_desk(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Bàn quyết định: what waits for the CIO, then where each stage of the pipeline stands."""
+    """Decision board: what waits for the CIO, then where each stage of the pipeline stands."""
     d = _desk(ctx, "cio")
     waits = d["decide"]
     listed = "; ".join(f"{x['title']} ({x['id']}, {x['status']})" for x in waits[:6])
@@ -41,7 +41,7 @@ async def cio_desk(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         "text": f"{head} Dòng chảy: {stages}",
         "data": {"waiting": len(waits), "stages": {s["id"]: s["count"] for s in d["pipeline"]}},
         "focus": ["decide"] + [f"stage:{s['id']}" for s in d["pipeline"] if s["waits"]],
-        "sources": ["Bàn quyết định"],
+        "sources": ["Decision board"],
     }
 
 
@@ -437,7 +437,7 @@ CATALOGUE: Dict[str, Tool] = {
             ("cio",),
             cio_desk,
             page="ban-lam-viec",
-            follow=["Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?"],
+            follow=["Tác động lớn nhất tới tài sản ở đâu?", "Lần áp dụng nào đang hiệu lực?"],
         ),
         Tool(
             "phoi_nhiem",
@@ -454,7 +454,7 @@ CATALOGUE: Dict[str, Tool] = {
             ("cio",),
             runs,
             page="ap-dung",
-            follow=["Phơi nhiễm lớn nhất ở đâu?"],
+            follow=["Tác động lớn nhất tới tài sản ở đâu?"],
         ),
         Tool(
             "do_chinh_xac",

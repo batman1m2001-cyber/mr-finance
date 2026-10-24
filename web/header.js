@@ -104,7 +104,7 @@ export function mount(shell) {
         let rest = [], total = 0;
         if (role === "cio") {  // the high-relevance new news, as the desk counts them (“100 liên quan cao”), not all 800
           const d = await get("/api/news/inbox?relevance=high&limit=8");
-          rest = d.items.map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio/hop-tin"}));
+          rest = d.items.map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio"}));
           total = d.total != null ? d.total : d.items.length;
         } else if (role === "compliance") {
           const n = (await get("/api/news/inbox?held=1")).items.filter(i => i.status !== "released");
@@ -130,7 +130,7 @@ export function mount(shell) {
   // where an alert's cause is seen, by role (Admin: Hệ thống lists them all)
   const WHERE = {
     admin: {news_feed: "#/admin/he-thong", market_job: "#/admin/du-lieu", agent: "#/admin/he-thong", audit_chain: "#/admin/nhat-ky", inbox: "#/admin/he-thong", zone_sync: "#/admin/he-thong"},
-    cio: {news_feed: "#/cio/hop-tin", market_job: "#/cio/mo-hinh/du-lieu", agent: "#/cio/nhan-dinh", inbox: "#/cio/nhan-dinh"},
+    cio: {news_feed: "#/cio", market_job: "#/cio/mo-hinh/du-lieu", agent: "#/cio/nhan-dinh", inbox: "#/cio/nhan-dinh"},
     compliance: {audit_chain: "#/compliance/nhat-ky"},
   };
   const TITLE = {client: "Điều đáng chú ý", rm: "Điều đáng chú ý · khách đang chọn", cio: "Cảnh báo và tin liên quan cao trong hộp tin",

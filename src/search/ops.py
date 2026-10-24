@@ -29,7 +29,7 @@ ROUTES = {
     "goal": {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"},
     "event": {"client": "#/client/tin/thi-truong", "rm": "#/rm/khach-hang/tac-dong", "cio": "#/cio/nhan-dinh/{id}"},
     "client": {"rm": "#/rm/khach-hang/toan-canh"},
-    "news": {"cio": "#/cio/hop-tin", "compliance": "#/compliance/giu"},
+    "news": {"cio": "#/cio", "compliance": "#/compliance/giu"},
     "research": {"cio": "#/cio/nghien-cuu", "compliance": "#/compliance/nghien-cuu"},
 }
 

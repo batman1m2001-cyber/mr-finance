@@ -21,7 +21,10 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     # Advisor, Headline News, Relationship specialist; the client has no graph to open now (its pages left this list)
     "toan-canh": (
         {"client": "Wealth View", "rm": "Wealth view"},
-        {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/tong-quan"},  # the RM's Toàn cảnh went (OWN-FB-02)
+        {
+            "client": "#/client/tong-quan/toan-canh",
+            "rm": "#/rm/khach-hang/tong-quan",
+        },  # the RM's Toàn cảnh went (OWN-FB-02)
     ),
     "ban-do": ("Wealth view", {"rm": "#/rm/khach-hang/tong-quan"}),
     "chi-tiet": (
@@ -45,7 +48,10 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "tin-bi-giu": ("Tin bị giữ", {"cio": "#/cio/giu"}),  # Compliance's duty is the CIO's (OWN-FB-18)
     # since A1 (the registry's own tools)
     "chinh-sach": (
-        {"client": "News and Prediction", "rm": "News and prediction"},  # the client's tab (2026-10-22), the RM's too (OWN-FB-03)
+        {
+            "client": "News and Prediction",
+            "rm": "News and prediction",
+        },  # the client's tab (2026-10-22), the RM's too (OWN-FB-03)
         {"client": "#/client/tin/chinh-sach", "rm": "#/rm/khach-hang/chinh-sach"},
     ),
     "hang-cho": (
@@ -74,7 +80,11 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "do-luong": ("Đo lường", {r: f"#/{r}/do-luong" for r in ("cio", "admin")}),
     "tham-so": ("Tham số mô hình", {r: f"#/{r}/mo-hinh/tham-so" for r in ("cio", "admin")}),
     "du-lieu-thi-truong": ("Dữ liệu thị trường", {"cio": "#/cio/mo-hinh/du-lieu", "admin": "#/admin/du-lieu"}),
-    "hieu-qua": ("Advisory performance", {"rm": "#/rm/hieu-qua"}),
+    "hieu-qua": (
+        {"rm": "Advisory performance", "cio": "Hiệu quả"},  # the CIO's: how many news, how often right (OWN-FB-16)
+        {"rm": "#/rm/hieu-qua/khach-hang", "cio": "#/cio/hieu-qua"},
+    ),
+    "hieu-qua-tat-ca": ("Advisory performance · Tất cả khách hàng", {"rm": "#/rm/hieu-qua/tat-ca"}),
 }
 
 

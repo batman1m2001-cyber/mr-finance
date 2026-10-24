@@ -41,7 +41,7 @@ const START = {
 const INTRO = {
   client: "Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn.",
   rm: "Hỏi về sổ khách hàng của bạn — ai cần gọi trước, đề xuất chờ duyệt, liên hệ — hay tài sản, dòng tiền, tin tác động của khách hàng đang chọn.",
-  cio: "Hỏi về việc chờ bạn quyết định, phơi nhiễm, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
+  cio: "Hỏi về việc chờ bạn quyết định, tác động tới tài sản, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
   compliance: "Hỏi về tin bị giữ, nghiên cứu và bản tin chờ duyệt, chính sách hay chuỗi nhật ký.",
   admin: "Hỏi về tình trạng hệ thống, nguồn dữ liệu, cảnh báo, cấu hình chờ duyệt hay chuỗi nhật ký.",
   specialist: "Hỏi về khuyến nghị chờ bạn duyệt và hồ sơ của gia đình được giao.",

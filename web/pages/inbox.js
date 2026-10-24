@@ -1,11 +1,11 @@
 /* CIO · Hộp tin (FR-103): the news that passed the gates, newest first. Filter, pick several, group
    them into an event, or drop them. The strip on top is feed health: each source's last fetch and
-   its items per hour over a day. */
+   its items per hour over a day. Drawn on the Decision board (ctx.embedded, OWN-FB-11): a section, not a page. */
 import {EVENT_TYPE, ago, empty, esc, get, num, post, toast, when} from "../core/core.js";
 import {spark} from "../charts/charts.js";
 
 const REL = {high: ["bad", "Liên quan cao"], medium: ["warn", "Vừa"], low: ["", "Thấp"]};
-const state = {source: "", kind: "", relevance: "", q: "", picked: new Set(), shown: 40};
+const state = {source: "", kind: "", relevance: "", q: "", picked: new Set(), shown: 20};
 
 export async function render(box, ctx) {
   // a page of rows; the total is counted by the server (it said 300 for 1,415 when it was the page's length)
@@ -17,12 +17,12 @@ export async function render(box, ctx) {
   const last = d.last_run;
   const errors = d.sources.filter(s => s.last && s.last.error);
   box.innerHTML = `
-    <div class="pagehead">
-      <div><div class="eyebrow">CIO · Hộp tin</div><div class="h1">${num(total)} tin chờ xử lý</div>
+    <div class="${ctx.embedded ? "sechead dk-inbox-h" : "pagehead"}">
+      <div>${ctx.embedded ? `<h2 class="h3" id="dk-inbox">Hộp tin · ${num(total)} tin chờ xử lý</h2>` : `<div class="eyebrow">CIO · Hộp tin</div><div class="h1">${num(total)} tin chờ xử lý</div>`}
         <div class="lede small">Lấy tin tự động mỗi 10 phút từ ${d.sources.length} nguồn công khai trong danh sách trắng. Lần gần nhất: ${last ? ago(last.at) : "chưa có"}${errors.length ? ` · <span class="down">${errors.length} nguồn lỗi</span>` : ""}.</div></div>
       <div class="row"><button type="button" class="btn" id="fetch">Lấy tin ngay</button></div>
     </div>
-    <div class="panel flat" style="margin-bottom:16px">
+    <div class="${ctx.embedded ? "" : "panel flat"}" style="margin-bottom:16px">
       <details class="more"><summary>Tình trạng nguồn tin (24 giờ)</summary>
       <div class="scrollx"><table class="table"><thead><tr><th>Nguồn</th><th>Loại</th><th>Tin/giờ</th><th class="r">Lần trước</th></tr></thead><tbody>
       ${d.sources.map(s => `<tr><td>${esc(s.outlet)} <span class="muted small">${esc(s.section)}</span></td><td>${s.kind === "intl" ? "Quốc tế" : "Trong nước"}</td>
@@ -35,7 +35,7 @@ export async function render(box, ctx) {
       <select id="f-rel" aria-label="Mức liên quan"><option value="">Mọi mức liên quan</option><option value="high" ${state.relevance === "high" ? "selected" : ""}>Cao</option><option value="medium" ${state.relevance === "medium" ? "selected" : ""}>Vừa</option><option value="low" ${state.relevance === "low" ? "selected" : ""}>Thấp</option></select>
       <input id="f-q" type="search" placeholder="Tìm trong tiêu đề" value="${esc(state.q)}" aria-label="Tìm" style="padding:7px 10px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
     </div>
-    <div class="panel" style="padding:8px 8px">
+    <div class="${ctx.embedded ? "" : "panel"}" style="padding:8px 8px">
       <div class="row spread" style="padding:6px 10px 10px">
         <span class="small muted"><span id="picked">Chọn tin để gom thành một sự kiện</span> · <span id="page-count">${num(items.length)} / ${num(total)}</span></span>
         <div class="row"><button type="button" class="btn sm" id="dismiss" disabled>Bỏ tin</button>
@@ -62,9 +62,9 @@ export async function render(box, ctx) {
     c.onchange = () => { c.checked ? state.picked.add(c.dataset.id) : state.picked.delete(c.dataset.id); pickedText(); };
   });
   const more = box.querySelector("#more");
-  if (more) more.onclick = () => { state.shown += 40; render(box, ctx); };
+  if (more) more.onclick = () => { state.shown += 20; render(box, ctx); };
   const refilter = () => {
-    state.shown = 40;
+    state.shown = 20;
     state.source = box.querySelector("#f-source").value; state.kind = box.querySelector("#f-kind").value;
     state.relevance = box.querySelector("#f-rel").value; state.q = box.querySelector("#f-q").value.trim();
     render(box, ctx);
@@ -85,7 +85,7 @@ export async function render(box, ctx) {
     try {
       const r = await post("/api/events", {news_ids: [...state.picked], by: ctx.user});
       state.picked.clear();
-      toast(`Đã lập ${r.event.id}${r.event.blocked ? " (đang bị giữ chờ Tuân thủ)" : ""}`);
+      toast(`Đã lập ${r.event.id}${r.event.blocked ? " (đang bị giữ: danh sách hạn chế)" : ""}`);
       ctx.go(ctx.href("nhan-dinh", r.event.id));
     } catch (err) { toast(err.message); }
   };

@@ -64,6 +64,7 @@ const ROLES = {
     nav: [
       {id: "ban", label: "Decision board", desk: true},  // FEAT-41: the CIO's desk (SCR-CIO-15); the inbox is on it (OWN-FB-11)
       {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events", hidden: true},  // every decision row opens one
+      {id: "giu", label: "Tin bị giữ", page: "held", hidden: true},  // OWN-FB-18: Compliance's held news is the CIO's
       {id: "phoi-nhiem", label: "Tác động danh mục", page: "exposure"},
       {id: "do-thi", label: "Đồ thị lần áp dụng", page: "graph"},
       {id: "ap-dung", label: "Lần áp dụng", page: "runs", hidden: true},  // a run waiting for review opens here
