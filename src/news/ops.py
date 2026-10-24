@@ -4,8 +4,11 @@ keep it; and the inbox actions (dismiss, the release of a held item)."""
 from __future__ import annotations
 
 import asyncio
+import ipaddress
 import json
+import socket
 import time
+import urllib.parse
 import urllib.request
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
@@ -37,6 +40,48 @@ def _get(url: str, timeout: float) -> bytes:
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 — white-listed https URLs
         return resp.read(rss.MAX_BYTES + 1)
+
+
+def _public(url: str) -> str:
+    """The host of an https ``url`` whose every address is public, or ValueError (the Nguồn tin test, N1)."""
+    u = urllib.parse.urlsplit(url)
+    if u.scheme != "https" or not u.hostname:
+        raise ValueError("chỉ thử url https")
+    try:
+        addrs = {a[4][0] for a in socket.getaddrinfo(u.hostname, u.port or 443, proto=socket.IPPROTO_TCP)}
+    except OSError as exc:
+        raise ValueError(f"không tìm thấy máy chủ {u.hostname}: {exc}") from None
+    for a in addrs:
+        ip = ipaddress.ip_address(a.split("%", 1)[0])
+        if not ip.is_global or ip.is_multicast:
+            raise ValueError(f"{u.hostname} trỏ về địa chỉ nội bộ {ip}: không thử")
+    return u.hostname
+
+
+class _Checked(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        _public(newurl)  # a redirect may not lead inside either
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def probe(url: str) -> Dict[str, Any]:
+    """Read one feed now, keep nothing: its item count and newest title, or why it failed (N1)."""
+    t0 = time.time()
+    try:
+        _public(url)
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        timeout = float(config()["gates"]["fetch_timeout_s"])
+        with urllib.request.build_opener(_Checked).open(req, timeout=timeout) as resp:
+            items = rss.parse(resp.read(rss.MAX_BYTES + 1))
+    except Exception as exc:  # noqa: BLE001 — the answer is the reason, for the Admin
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"[:300], "ms": round((time.time() - t0) * 1000)}
+    newest = max(items, key=lambda i: i.published or 0, default=None)
+    return {
+        "ok": True,
+        "items": len(items),
+        "newest": {"title": newest.title, "published": newest.published} if newest else None,
+        "ms": round((time.time() - t0) * 1000),
+    }
 
 
 @op

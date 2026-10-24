@@ -19,6 +19,7 @@ export const DESKS = {
       {id: "ban", label: "Vận hành", icon: "activity", tip: "Vận hành: bản đồ hệ thống, cảnh báo, việc lỗi, cấu hình chờ", desk: true, nav: ["ban"]},
       {id: "he-thong", label: "Hệ thống", icon: "settings", tip: "Hệ thống: lịch chạy, nguồn tin, agent, người dùng, nạp lịch sử", nav: ["he-thong"]},
       {id: "du-lieu", label: "Dữ liệu thị trường", short: "Dữ liệu", icon: "stock", tip: "Dữ liệu thị trường: nguồn, lịch lấy, chuỗi", nav: ["du-lieu"]},
+      {id: "nguon-tin", label: "Nguồn tin", icon: "news", tip: "Nguồn tin: thêm, sửa, tắt, xoá, thử; gửi đề xuất rồi duyệt", nav: ["nguon-tin"]},  // N1
       {id: "cau-hinh", label: "Cấu hình", icon: "sliders", tip: "Cấu hình theo phiên bản, hai người duyệt", nav: ["cau-hinh"]},
       {id: "tai-khoan", label: "Tài khoản", icon: "users", tip: "Tài khoản và vai trò: thêm, đổi vai trò, khoá, đặt lại mật khẩu; hai Quản trị", nav: ["tai-khoan"]},
       {id: "mo-hinh", label: "Mô hình", icon: "layers", tip: "Mô hình: tham số, độ chính xác, thử nghiệm hằng ngày, đo lường", nav: ["mo-hinh", "do-luong"]},

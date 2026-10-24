@@ -1012,6 +1012,36 @@ async def news_config(request: Request) -> JSONResponse:
     return JSONResponse({k: cfg[k] for k in ("version", "note", "gates", "sources", "restricted", "event_types")})
 
 
+
+async def news_sources(request: Request) -> JSONResponse:
+    """Nguồn tin (Admin, N1): the white list in force, the proposal waiting, each source's last 7 days."""
+    import time
+
+    from news import monitor
+
+    k = next(k for k in config.overview() if k["kind"] == "news_sources")
+    pending = k["pending"] and config.get(k["pending"]["id"])
+    keep = ("id", "version", "proposed_by", "created", "note", "data")
+    health = {h["source"]: h for h in monitor.sources(time.time() - 7 * 86400)}
+    return JSONResponse(
+        {
+            "active": {"id": k["active"]["id"], "version": k["active"]["version"]},
+            "sources": config.data("news_sources"),
+            "pending": pending and {x: pending.get(x) for x in keep},
+            "health": health,
+        }
+    )
+
+
+async def news_source_test(request: Request) -> JSONResponse:
+    """Thử một nguồn (Admin, N1): https and a public address only, the fetch's timeout and size cap, nothing kept."""
+    import asyncio
+
+    url = (request.query_params.get("url") or "").strip()
+    if not url.startswith("https://"):
+        return JSONResponse({"error": "chỉ thử url https"}, status_code=400)
+    return JSONResponse(await asyncio.to_thread(news_ops.probe, url))
+
 async def research_list(request: Request) -> JSONResponse:
     """Uploaded research and regulation notes with their status (CIO, Compliance)."""
     return JSONResponse(
@@ -1188,6 +1218,7 @@ ROUTE_ROLES = {
     "/api/agents/catalogue": OVERSIGHT,
     "/api/agents/map": OVERSIGHT,  # A7: the ecosystem map and its runs
     "/api/news": OVERSIGHT,  # the inbox and held items: an RM sees news only once applied (FR-502)
+    "/api/news/sources": ("admin",),  # Nguồn tin: the white list is Admin's (N1)
     "/api/events": OVERSIGHT,
     "/api/views/": OVERSIGHT,  # one view with its drafts and findings
     "/api/runs": OVERSIGHT,  # an RM reads a family's runs through /api/families/…/impact, post-checked only
@@ -1291,6 +1322,8 @@ app = Starlette(
         Route("/api/views", views),
         Route("/api/news/inbox", news_inbox),
         Route("/api/news/config", news_config),
+        Route("/api/news/sources", news_sources),
+        Route("/api/news/sources/test", news_source_test),
         Route("/api/model", model),
         Route("/api/model/estimate", model_estimate_preview),
         Route("/api/events", events_list),

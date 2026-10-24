@@ -229,7 +229,7 @@ def test_admin_works_at_the_operations_map_and_every_page_is_a_sheet(open_page):
     p.page.click("#ws-pane-i a.btn")
     p.page.wait_for_function("location.hash === '#/admin/nhat-ky' && !document.querySelector('#ws-sheet').hidden")
     seen = routes("admin")
-    assert len(seen) == 12  # Việc nền, Tài khoản (owner 2026-10-18); Mô hình, Đo lường from the CIO (OWN-FB-15)
+    assert len(seen) == 13  # Việc nền, Tài khoản (owner 2026-10-18); Mô hình, Đo lường from the CIO (OWN-FB-15); Nguồn tin (N1)
     for r in seen:
         p.go(r)
         assert p.page.is_visible("#ws-sheet"), r

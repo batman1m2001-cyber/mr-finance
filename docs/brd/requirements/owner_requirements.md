@@ -7,6 +7,18 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## NO — The news sources and the collection figures (2026-10-25)
+
+Source: [`2026-10-25_news_ops.md`](../sources/owner_requests/2026-10-25_news_ops.md); plan
+[`docs/NEWS_OPS_PLAN.md`](../../NEWS_OPS_PLAN.md). Extends news ingestion (FEAT-01), the versioned configuration
+(FR-701) and View A (OWN-EV-01).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-NO-01 | Admin's Nguồn tin page: each source with its last 7 days; add, edit, switch off, delete and test one (https and a public address only, nothing kept); the changes are proposed as a new version of `news_sources` and approved before the next run reads them | request 1, plan N1 | documented |
+| OWN-NO-02 | View A says each day's collection time (the runs' total, over the runs that kept it, with their count) and its first and last run | request 2, plan N2 | documented |
+| OWN-NO-03 | View A counts by collection day the news that reached a portfolio (its event has an application run the RMs see with a family whose expected 3-month change is not zero) and the families reached | request 2, plan N3 | documented |
+
 ## FB — Business feedback 6: the staff desks (2026-10-24)
 
 Source: [`2026-10-24_business_feedback_6.md`](../sources/owner_requests/2026-10-24_business_feedback_6.md); plan

@@ -163,6 +163,35 @@ def test_the_days_count_by_collection_time_never_publication_time_and_say_none_f
     assert s["full_since"] == NOW and s["last_run"]["retained"] == 1
 
 
+def test_the_days_sum_the_collection_time_and_keep_the_first_and_last_run():
+    from news import monitor, store
+
+    for at, secs in ((NOW + 100, 30.0), (NOW + 4000, 12.5)):
+        store.record_run(
+            {"at": at, "started": at, "finished": at + secs, "duration_s": secs, "added": 0, "refused": 0,
+             "duplicates": 0, "held": 0, "sources": {}}
+        )  # fmt: skip
+    store.record_run({"at": NOW + 2000, "added": 0, "refused": 0, "duplicates": 0, "held": 0, "sources": {}})  # old
+    [today] = monitor.days(1, NOW + 5000)
+    assert today["duration_s_total"] == 42.5 and today["duration_runs"] == 2 and today["runs"] == 3
+    assert today["first_run"] == NOW + 100 and today["last_run"] == NOW + 4012.5
+
+
+def test_a_news_item_reached_a_portfolio_through_an_approved_view_and_never_through_a_zero_ranking(monkeypatch):
+    from test_apply import MARKET, approved
+
+    from apply import run as apply_run
+    from news import monitor
+
+    _, run = approved(*MARKET)
+    hit = {f["family_id"] for f in run["ranking"] if f["expected_3m"]}
+    [today] = monitor.days(1, NOW + 60)
+    assert today["portfolio"] == 2 and today["portfolio_families"] == len(hit) > 0
+    flat = [{**run, "ranking": [{**f, "expected_3m": 0.0} for f in run["ranking"]]}]
+    monkeypatch.setattr(apply_run, "runs", lambda statuses=None: flat)
+    assert monitor.reached() == {} and monitor.days(1, NOW + 60)[0]["portfolio"] == 0
+
+
 # -- accuracy (§2.2–2.5) ----------------------------------------------------------------------------------------
 
 CFG = {"material_sigma": 1.0, "claim_share": 0.25}

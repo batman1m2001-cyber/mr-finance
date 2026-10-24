@@ -91,6 +91,7 @@ const ROLES = {
       {id: "ban", label: "Vận hành", desk: true},  // FEAT-41: Admin's desk (SCR-ADM-02)
       {id: "he-thong", label: "Hệ thống", page: "system"},
       {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
+      {id: "nguon-tin", label: "Nguồn tin", page: "sources"},  // N1: the white list the collection reads
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "tai-khoan", label: "Tài khoản và vai trò", page: "accounts"},
       {id: "mo-hinh", label: "Mô hình", sub: [  // OWN-FB-16: from the CIO's rail
