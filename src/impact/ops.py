@@ -31,7 +31,7 @@ def profile_of(client_id: str, members: list) -> dict:
 @op
 def score(holdings: list, profile: dict) -> dict:
     """Every factor against the client's holdings: impact = exposure × sensitivity × probability,
-    in VND and as a share of net worth, with its severity and source."""
+    in VND and as a share of net worth, with its severity and source, and split by asset class (``by_class``)."""
     mk = fixtures.market()
     assets = sum(h["value"] for h in holdings if h["kind"] == "asset")
     nw = assets - sum(h["value"] for h in holdings if h["kind"] == "liability")
@@ -52,6 +52,7 @@ def score(holdings: list, profile: dict) -> dict:
                     "exposure": round(hit["exposure"]),
                     "sensitivity": round(hit["sensitivity"], 6),
                     "impact": round(impact),
+                    "by_class": _rules.by_class(hit, holdings, impact),
                     "impact_pct": share,
                     "severity": _rules.severity(share),
                     "severity_label": SEVERITY[_rules.severity(share)],

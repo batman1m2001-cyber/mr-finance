@@ -3,7 +3,9 @@
 A rule returns hits ``{"exposure", "sensitivity", "raw", "affected", "message"}``: ``exposure`` is
 what the client holds in harm's way (VND), ``sensitivity`` how much of it moves, ``raw`` the move
 in VND (negative: a loss; for a yearly cost, one year of it), ``message`` the line the client reads.
-The alert's impact is ``raw × probability``.
+The alert's impact is ``raw × probability``. A rule whose holdings move by their own sensitivity says so with
+``weights`` (holding name → its share of ``raw``); otherwise ``by_class`` splits ``raw`` over the affected
+holdings by value (OWN-FB-17).
 """
 
 from __future__ import annotations
@@ -102,6 +104,7 @@ def sector(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
             "sensitivity": raw / exposure,
             "raw": raw,
             "affected": [h["name"] for h in rows],
+            "weights": {h["name"]: h["value"] * weight(h) for h in rows},
             "message": f"Nắm giữ {vnd(exposure)} cổ phiếu, trái phiếu ngành {f['rule']['sector']}: tác động lan sang cả ngành, "
             f"ước tính {vnd(raw, signed=True)}.",
         }
@@ -319,7 +322,7 @@ def rates(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
     bonds = _assets(hs, "bond")
     if bonds:
         exposure = sum(h["value"] for h in bonds)
-        raw = -sum(h["value"] * (h["detail"].get("duration") or 1) * move for h in bonds)
+        raw = -sum(h["value"] * (h["detail"].get("duration") or 1) * move for h in bonds)  # one class: no weights
         out.append(
             {
                 "exposure": exposure,
@@ -367,6 +370,27 @@ RULES: Dict[str, Callable[..., List[Hit]]] = {
     "rates": rates,
     "area": area,
 }
+
+
+def by_class(hit: Hit, hs: H, amount: float) -> Dict[str, int]:
+    """``amount`` (the alert's impact) split by asset class over the holdings the hit touches: by each holding's
+    weight when the rule gives one, else by value. Nothing held (a payment ahead, the salary): ``outflow`` or
+    ``income``. Rounded so the parts add up to ``round(amount)``."""
+    named = {h["name"]: h for h in hs}
+    weights: Dict[str, float] = {}
+    for name in hit["affected"]:
+        h = named.get(name)
+        if h is None:
+            continue
+        cls = h["class"]
+        weights[cls] = weights.get(cls, 0.0) + abs((hit.get("weights") or {}).get(name, h["value"]))
+    total = sum(weights.values())
+    if not total:
+        return {("income" if amount > 0 else "outflow"): round(amount)}
+    parts = {c: round(amount * w / total) for c, w in sorted(weights.items(), key=lambda kv: -kv[1])}
+    top = next(iter(parts))
+    parts[top] += round(amount) - sum(parts.values())  # the rounding lands on the largest part
+    return parts
 
 
 def severity(pct_of_net_worth: float) -> str:
