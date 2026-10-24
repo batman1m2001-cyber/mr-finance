@@ -527,8 +527,29 @@ async def rm_today(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def inbox(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    items = news_store.inbox()
-    return {"text": f"Hộp tin có {len(items)} tin mới đã qua cổng lọc.", "data": {"items": len(items)}}
+    """The inbox's counts, counted in the database (it said 200, the length of a capped list, for 1,415), and what
+    was fetched today, Vietnam time, by source: "how many news came in today" is answered without a fetch."""
+    from datetime import datetime
+
+    from control.uptime import TZ
+    from news import ops as news_ops
+
+    now = datetime.now(TZ)
+    c = news_store.counts(since=datetime(now.year, now.month, now.day, tzinfo=TZ).timestamp())
+    new, grouped = c["by_status"].get("new", 0), c["by_status"].get("grouped", 0)
+    names = {s["id"]: f"{s['outlet']} {s['section']}".strip() for s in news_ops.config()["sources"]}
+    top = sorted(c["fetched"].items(), key=lambda kv: -kv[1])
+    today = sum(c["fetched"].values())
+    each = ", ".join(f"{names.get(s, s)} {n}" for s, n in top[:5]) + (", …" if len(top) > 5 else "")
+    return {
+        "text": f"Hộp tin có {new} tin mới đã qua cổng lọc; {grouped} tin đã gom thành sự kiện. "
+        + (
+            f"Hôm nay ({now:%d/%m}) đã lấy về {today} tin: {each}."
+            if today
+            else f"Hôm nay ({now:%d/%m}) chưa lấy về tin nào."
+        ),
+        "data": {"new": new, "grouped": grouped, "fetched_today": today, "by_source": dict(top)},
+    }
 
 
 async def held(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -771,7 +792,14 @@ CATALOGUE: Dict[str, Tool] = {
             page="hom-nay",
             follow=["Có gì cần chú ý?"],
         ),
-        Tool("hop_tin", "số tin mới trong hộp tin của CIO", ("cio",), inbox, page="hop-tin", follow=["Lấy tin mới"]),
+        Tool(
+            "hop_tin",
+            "đếm tin trong hộp tin của CIO: tin mới, tin đã gom, tin lấy về hôm nay theo nguồn",
+            ("cio",),
+            inbox,
+            page="hop-tin",
+            follow=["Lấy tin mới"],
+        ),
         Tool(
             "tin_bi_giu",
             "các tin bị giữ vì danh sách hạn chế: mã, tiêu đề, nhắc tới ai, nội dung",
@@ -810,7 +838,7 @@ CATALOGUE: Dict[str, Tool] = {
         ),
         Tool(
             "lay_tin",
-            "lấy tin mới ngay từ các nguồn",
+            "lấy tin mới ngay từ các nguồn, khi người dùng bảo lấy hay cập nhật tin; đếm hay thống kê tin là hop_tin",
             ("cio",),
             fetch,
             write=True,
