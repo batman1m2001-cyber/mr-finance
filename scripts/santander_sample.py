@@ -11,7 +11,8 @@ only the needed columns:
    `--foreign` is the share of foreign or non-resident clients in each group;
 2. the 12 last snapshots (2015-06…2016-05) of the drawn clients.
 
-Writes `out/santander/sample_<n>.csv.gz` (row-level Santander data: under out/, never committed — D0) and
+Nested: every eligible client gets one seeded random key and each cell takes its clients in key order, so the
+1,000 are the first 1,000 of the 6,500 (same seed, same file). Writes `out/santander/sample_<n>.csv.gz` (row-level Santander data: under out/, never committed — D0) and
 prints the mix it reached. Same file, same arguments → the same sample.
 
     .venv/bin/python scripts/santander_sample.py ~/Downloads/train_ver2.csv.zip [--n 1000] [--n 6500]
@@ -77,16 +78,17 @@ def eligible(path: Path, min_income_pct: float) -> pd.DataFrame:
     part = part[part["renta"] >= part["renta"].quantile(UPGRADE_PCT)]
     pool = pd.concat([top, part]).drop_duplicates("ncodpers").copy()
     pool["foreign"] = (pool["indext"] == "S") | (pool["indresi"] == "N") | (pool["pais_residencia"] != "ES")
-    return pool.sort_values("ncodpers")
+    return pool.sort_values("ncodpers").reset_index(drop=True)
 
 
-def _pick(cell: pd.DataFrame, want: int, rng: np.random.Generator) -> pd.DataFrame:
-    return cell.iloc[np.sort(rng.choice(len(cell), size=min(want, len(cell)), replace=False))]
+def _pick(cell: pd.DataFrame, want: int) -> pd.DataFrame:
+    """The first `want` clients of the cell in key order: a smaller draw is a prefix of a larger one."""
+    return cell.sort_values("key").head(max(want, 0))
 
 
 def draw(pool: pd.DataFrame, n: int, upgrade: float, foreign: float, seed: int) -> pd.DataFrame:
     """A stratified draw: book group × foreign cells sized to the target mix, each a seeded random pick."""
-    rng = np.random.default_rng(seed)
+    pool = pool.assign(key=np.random.default_rng(seed).random(len(pool)))
     top, part = pool[pool["segmento"] == TOP], pool[pool["segmento"] == PART]
     n_up = round(n * upgrade)
     picked = []
@@ -96,15 +98,15 @@ def draw(pool: pd.DataFrame, n: int, upgrade: float, foreign: float, seed: int) 
         if not is_f:  # the rounding remainder goes to the larger cells
             want_priv = (n - n_up) - round((n - n_up) * foreign)
             want_up = n_up - round(n_up * foreign)
-        priv = _pick(top[top["foreign"] == is_f], want_priv, rng).assign(book="private")
+        priv = _pick(top[top["foreign"] == is_f], want_priv).assign(book="private")
         part_f = part[part["foreign"] == is_f]
         short = want_priv - len(priv)
         if short:
             print(f"  TOP foreign={is_f}: {len(priv)} of {want_priv}; {short} from PARTICULARES", file=sys.stderr)
-        fill = _pick(part_f, short, rng).assign(book="private_from_particulares")
-        up = _pick(part_f.drop(fill.index), want_up, rng).assign(book="priority_upgrade")
+        fill = _pick(part_f, short).assign(book="private_from_particulares")
+        up = _pick(part_f.drop(fill.index), want_up).assign(book="priority_upgrade")
         picked += [priv, fill, up]
-    sample = pd.concat(picked).sort_values("ncodpers")
+    sample = pd.concat(picked).drop(columns="key").sort_values("ncodpers")
     if len(sample) < n:
         print(f"  only {len(sample)} clients drawn, wanted {n}", file=sys.stderr)
     return sample

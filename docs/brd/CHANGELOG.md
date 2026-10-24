@@ -2,10 +2,15 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
-- 2026-10-23 — The test book is Private only (Q-27): a second client set converted from Santander's public data,
-  1,000 Private clients for the KPIs and 6,500 for the book, the demo's five families kept; D1's sampler written
-  (`scripts/santander_sample.py`), not yet run on the real file. Proposed. — ADR-0038, ADR-0005,
-  requirements/open_questions.md (Q-18, Q-27), decisions/README.md, docs/CLIENT_DATASET_PLAN.md
+- 2026-10-23 — The test book built (D2–D3): `scripts/make_santander_vn.py` matches the 6,500 Santander clients to
+  SCF 2022 households and writes them in the fixtures' schema; all valued by `wealth.valuation`, Σ AUM 428,000 tỷ,
+  share at TCB 35 %, 58.7 % with over half their wealth in one class; calibration in `data/calibration/`. Proposed.
+  — ADR-0038, docs/CLIENT_DATASET_PLAN.md
+- 2026-10-23 — The test book (Q-27): 6,500 Private clients, all Techcombank's, from Santander's TOP clients
+  (behaviour), matched SCF 2022 households (make-up of wealth) and the owner's totals (≥ 25 tỷ each, Σ AUM 428,000
+  tỷ); the demo's five families kept; D1's sampler run on the real file (6,500 drawn, all TOP; the first 1,000 a
+  subset). The submission's 21 tỷ-at-TCB assumption raised (TO_DISCUSS D-04). Proposed. — ADR-0038, ADR-0005,
+  requirements/open_questions.md (Q-18, Q-27), decisions/README.md, docs/CLIENT_DATASET_PLAN.md, docs/TO_DISCUSS.md
 - 2026-10-23 — The Private palette (business feedback 5): gold #c8a45d marks the main action with dark-brown words;
   brown #59392c the ink of links, tabs and selections; light grey and sand surfaces; champagne in dark. Replaces the
   black-and-red reading of feedback 4. OWN-WN-11. — sources/owner_requests/2026-10-23_business_feedback_5.md,

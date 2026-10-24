@@ -2,31 +2,36 @@
 
 **Asked.** Test data with more clients than the five hand-made families (ADR-0005), without drawing every number at
 random: take one whole foreign dataset and convert it to Vietnam, so the shape of the book — who holds what, how
-holdings change month to month, how income and segment go together — is real, and only the Vietnamese wrapping is
-ours. It must be explainable to the jury: one named source, a script, every assumption written down. It is also
-what the "Expected effectiveness and impact" criterion is measured on: KPIs computed by running the app over the
-book, with a control group, then priced in three scenarios.
+holdings change month to month, how wealth is spread — is real, and only the Vietnamese wrapping is ours. It must be
+explainable to the jury: named sources, a script, every assumption written down. It is also what the "Expected
+effectiveness and impact" criterion is measured on: KPIs computed by running the app over the book, with and without
+the app, then priced in three scenarios.
 
-**Whose book (revised 2026-10-23).** The book is **Private clients only**. The challenge is set in Private
-Banking ("a Wealth Platform … for private clients"); our submission (`nop_bai_cuoc_thi.md` §4, §5.1) sizes the
-product on **about 6,500 Private clients**, 88 % coverage ≈ 5,700, and leaves Priority to a later, reduced
-version (months 13–24). The first draft of this plan mapped Santander's PARTICULARES to Priority and drew 15 %
-Private; that was a sample-size choice with no source, and it is dropped. [ADR-0038](brd/decisions/ADR-0038-a-second-client-set-the-santander-vn-private-book.md),
-[Q-27](brd/requirements/open_questions.md).
+**Whose book.** **Private clients only, all of them Techcombank clients.** The challenge is set in Private Banking
+("a Wealth Platform … for private clients"); our submission sizes the product on about 6,500 Private clients and
+leaves Priority to a later phase. Techcombank Private requires AUM ≥ 23 tỷ or a total relationship value ≥ 25 tỷ
+(three-month average; techcombank.com, "may change by period"). The owner gives the book's size: **6,500 Private
+clients, AUM 428,000 tỷ** (≈ 65.8 tỷ each; scope and source to be confirmed, Q-27).
+[ADR-0038](brd/decisions/ADR-0038-a-second-client-set-the-santander-vn-private-book.md).
 
-## The sources
+## Four layers, one source each
 
-| Source | What it gives | What it does not | Licence |
-|---|---|---|---|
-| **Santander Product Recommendation** (Kaggle competition, 2016) — the base | ~950k real, anonymised clients of a Spanish bank, 17 monthly snapshots (2015-01…2016-05): age, sex, province, tenure, activity, foreigner and residence flags, household gross income (`renta`), segment (`01 - TOP`, `02 - PARTICULARES`, `03 - UNIVERSITARIO`), and 24 product flags (current/payroll accounts, short/medium/long deposits, funds, securities, pensions, mortgage, loans, credit card, direct debits, taxes…) | **No amounts**: a flag says the client holds a product, not how much. No transactions, no real estate, no gold | Competition rules — **check before use** (step D0) |
-| **Survey of Consumer Finances 2022** (US Federal Reserve) — the shape of amounts | Household balance sheets of the top income bands: what each asset class is worth relative to income, and how often it is held | It is the US: too few deposits, gold and property for Vietnam | Public, US government |
-| **Our submission's assumptions** — the level of amounts | ≈ 60 tỷ total wealth per Private client, ≈ 35 % of it at TCB (≈ 21 tỷ AUM), 0.8 %/yr revenue on assets, 6 %/yr attrition, 2–3 people per household (`nop_bai_cuoc_thi.md` §4, §5.8) | Marked there as "ước tính sơ bộ, cần thay bằng số thực của Private Banking" | Ours; cited as assumptions |
-| **Vietnamese calibration** (our table, cited) | How Vietnamese wealthy households differ: more property, gold and deposits, fewer funds and pensions; the city mix; the occupation mix | — | Each figure carries its source, or is marked "giả định" |
+| Layer | Source | What is real |
+|---|---|---|
+| **1. Clients and behaviour** | **Santander Product Recommendation** (Kaggle, 2016): anonymised clients of a Spanish bank, 17 monthly snapshots, 24 product flags | who holds which products, how that changes month to month, age, sex, tenure, the income rank |
+| **2. The make-up of each client's wealth** | **Survey of Consumer Finances 2022** (US Federal Reserve), public household-level extract `SCFP2022.csv`: 4,595 households × 5 implicates; it oversamples the rich — **1,694 households ≥ US$1M net worth, 682 ≥ $10M, 408 ≥ $30M** | the balance sheet of a real wealthy household: deposits, bonds, funds, stocks, retirement and insurance, home, other property, business, debts |
+| **3. The size** | **Techcombank's own figures**: ≥ 25 tỷ per client, 6,500 clients, 428,000 tỷ AUM | the floor, the count, the total |
+| **4. Vietnam** | a few cited multipliers (gold, property share, no US retirement accounts) | nothing: these are the only assumptions on the amounts, each marked "giả định" or cited |
 
-Only Santander is "taken whole". SCF, the submission's figures and the Vietnamese table are aggregates (ratios,
-shares, means), committed as small JSON files; no SCF row enters the data. The book's amounts are scaled so its
-mean total wealth and TCB share match the submission's — so the KPIs measured on the book and the Cost & Benefit
-table speak of the same clients.
+No synthetic dataset from Hugging Face or Kaggle is used: none holds real client-level wealth, and a synthetic one
+is no more explainable than ours. Spain's EFF (Banco de España; same country as Santander, rich oversample from the
+wealth tax) would fit layer 2 better; access needs an application, so SCF now, EFF if access comes in time — the
+pipeline does not change.
+
+What the SCF's rich households look like (weighted, net worth ≥ $1M): home 31 %, retirement and insurance 24 %,
+business 10 %, funds 10 %, other property 9 %, deposits 7 %, stocks 6 %, bonds 1 %. **51 % of them have more than half
+their wealth in one class** (19 % in a business, 22 % in property): the concentrated cases the KPIs look for, which
+an average allocation with noise never produces.
 
 ## How each Santander field becomes a mr-finance client
 
@@ -34,113 +39,146 @@ The target is the schema of `data/clients/*.json` (scripts/make_fixtures.py) —
 
 | Santander | mr-finance | Rule |
 |---|---|---|
-| `ncodpers` | `id` `S0001…` | stable order (by the source id), so a rerun gives the same ids |
-| `age`, `sexo` | `age`, `name` | the age as is; a Vietnamese name drawn from a name table by sex, seeded by the id |
-| `nomprov` | `city` | rank-preserving: the most frequent provinces map to the most frequent Vietnamese cities of wealthy clients (TP.HCM, Hà Nội, Đà Nẵng, Hải Phòng, Bình Dương, Đồng Nai, Cần Thơ, Khánh Hòa) |
-| `renta` | `income_monthly` | by **percentile**, not by exchange rate: the client's income rank in the sample is placed on the Vietnamese Private income curve (calibration table) |
-| `segmento` | `segment` = Private, and a **tier** | `01 - TOP` is the Private book. Within it, the tier by income rank (giả định, D2): bottom 30 % "Mới lên Private", next 55 % HNW, top 15 % UHNW. `02 - PARTICULARES` enters only as its top income decile: to fill TOP if it runs short (`book` = `private_from_particulares`, treated as Private) or, when asked, as "Priority đủ ngưỡng lên Private" (`book` = `priority_upgrade`, labelled apart). `03 - UNIVERSITARIO` dropped |
-| `indext`, `pais_residencia`, `indresi` | `nationality`, `residence` | foreign or non-resident → foreigner / Việt kiều; **7 % by default** (5–10 %), set by the sampling (D1) |
-| `antiguedad`, `fecha_alta` | `client_since` | the tenure as is, the date shifted by +10 years |
-| — (not in Santander) | `occupation` | drawn from the Vietnamese occupation table conditioned on age, income and tier (business owner, executive, professional, retired ≥ 60…) — the submission's Private client is a business owner or senior executive |
-| product flags | which `sources` exist | see below |
-| the 12 last snapshots | `MONTHS` 2025-10…2026-09 | shifted by +10 years 4 months; a product that appears or disappears between two months becomes an event (a deposit opened, a fund bought, a loan repaid) |
+| unused columns (`ind_empleado`, `conyuemp`, `canal_entrada`, `indfall`, `tipodom`, `cod_prov`, `indrel*`, `tiprel_1mes`, `ult_fec_cli_1t`, `ind_nuevo`) | — | dropped |
+| `ncodpers` | `id` `S0001…` | renumbered by the source id; **the source id is not kept** |
+| `age`, `sexo` | `age`, `name` | the age as is; a Vietnamese name drawn by sex, seeded by the id |
+| `nomprov` | `city` | **rank kept, shares rebalanced**: provinces ordered by frequency are cut to the Vietnamese city shares of wealthy clients (TP.HCM, Hà Nội, then Đà Nẵng, Hải Phòng, Bình Dương, Đồng Nai, Cần Thơ, Khánh Hòa). One-to-one would put 66 % in TP.HCM, because 66 % of the sample is in Madrid |
+| `renta` | the rank of AUM | **never converted by exchange rate**: only its rank is used (layer 3, below) |
+| `segmento` | `segment` = Private, and a tier | `01 - TOP` only. Tier by AUM at TCB: 25–50 tỷ "Mới lên Private", 50–100 HNW, 100–250 HNW cao, 250–750 VHNW, ≥ 750 UHNW |
+| `indext`, `indresi`, `pais_residencia` | `nationality`, `residence` | foreign or non-resident → foreigner / Việt kiều, 7 % (set by the sampling) |
+| `antiguedad`, `fecha_alta` | `client_since` | the tenure as is, the date +10 years |
+| — | `occupation` | by age, tier and the matched household's business share (business owner, executive, professional, retired ≥ 60) |
+| product flags | which TCB `sources` exist | table below |
+| the 12 last snapshots | `MONTHS` 2025-10…2026-09 | +10 years 4 months; a flag that changes between two months becomes an event with an amount |
 
-| Santander product | mr-finance holding |
+| Santander product (share of the 6,500 holding it, May 2016) | mr-finance holding at TCB |
 |---|---|
-| current, *particular*, *más particular*, e-account, payroll account | `techcombank.accounts` CASA; payroll → salary rows in `transactions` |
-| short / medium / long-term deposit | `techcombank.accounts` TD, 3–6 / 6–12 / 12–36 months |
-| funds | `techcom_capital.funds` (TCBF/TCEF/TCMF, by risk) |
-| securities | `tcbs.stocks` (+ `tcbs.bonds` for the cautious) from `market.json`'s tickers |
-| derivatives | `tcbs.margin` |
-| pension plan, pensions | `declared` insurance; pension income for ≥ 60 |
-| mortgage | `techcombank.loans` home loan **and** its `onehousing.properties` collateral |
-| loans | `techcombank.loans` personal |
-| credit card | `techcombank.cards` |
-| direct debits, taxes | `transactions` categories (bills, tax) |
-| junior account | a `dependents` entry |
-| guarantees | `declared` business stake |
+| current account (61 %) | `techcombank.accounts` CASA |
+| *particular*, *más particular*, e-account, savings (25 %, 16 %, 53 %, ≈ 0 %): interest-paying accounts | read as term deposits (with CASA keeping 5–25 % of the deposits). Read as CASA in the first run, they left 4,894 clients with over 5 tỷ idle; read as deposits, 535 clients hold no term deposit and 427 keep over half their AUM in CASA — the idle-cash cases, from the data |
+| payroll / pension payroll (26 % / 30 %) | salary or pension rows |
+| long-term deposit (48 %); short and medium (≈ 1 % each) | `techcombank.accounts` TD. Santander barely shows short terms, so **the tenor is drawn again** across 1–36 months (giả định), else every client would hold 12–36 months |
+| funds (19 %) | `techcom_capital.funds` |
+| securities (20 %) | `tcbs.stocks`, `tcbs.bonds` |
+| derivatives (0.2 %) | `tcbs.margin` |
+| pension plan (8 %) | insurance |
+| mortgage (2.3 %), loans (0.2 %) | `techcombank.loans`. **Few loans in Santander**: debts and property come mostly from the matched SCF household (47 % of SCF's rich have a mortgage); a TCB loan only where Santander shows one |
+| credit card (23 %) | `techcombank.cards` |
+| direct debits, taxes | `transactions` categories |
 
-**The amounts.** For each holding the client has, its value = income × the SCF ratio for that asset class in the
-client's income band × the Vietnamese multiplier for that class; then the whole book is scaled once so the mean
-total wealth is ≈ 60 tỷ and the share held at TCB ≈ 35 % (the submission's assumptions; both are arguments of the
-script, so the real figures replace them in one place); then quantised into real units (shares at the
-`market.json` price, fund units at NAV, sqm at the area's price). Property, gold and business stakes — which
-Santander cannot show — are given by the Vietnamese ownership rates for the tier. Spending, behaviour in the
-April 2026 dip, `benchmark`, `drawdown_limit` and `persona_hint` follow the same rules the hand-made clients obey
-(age, holdings, tier), written once in the script.
+## The amounts: how a client is matched to an SCF household
+
+1. **AUM at TCB.** The 6,500 are ranked by `renta`, with a little noise (income does not decide wealth; rank
+   correlation ≈ 0.7, giả định). The rank is placed on a Pareto curve with floor 25 tỷ and α ≈ 1.61 — the α that
+   gives a mean of 65.8 tỷ. Then the part above the floor is scaled so the book sums to **exactly 428,000 tỷ** and no
+   client is under 25 tỷ. Result: ≈ 67 % at 25–50 tỷ, 22 % at 50–100, 8 % at 100–250, 2 % at 250–750, 0.4 % ≥ 750;
+   median ≈ 38 tỷ; the ≈ 700 clients over 100 tỷ hold ≈ 40 % of AUM.
+2. **The share at TCB (s)** falls with wealth — the richer keep a smaller part at one bank: ≈ 45 % at 25 tỷ to ≈ 20 %
+   at ≥ 750 tỷ, book mean ≈ 35 % (giả định; the curve is a script argument). **Total wealth W = AUM ÷ s.** The KPIs
+   priced in money are rerun with s = 25 %, 35 %, 50 % to show which conclusions hold.
+3. **The match.** Each client is paired with one SCF household with net worth ≥ US$1M, nearest on:
+   - wealth rank: the client's rank of W in the book against the household's weighted rank of net worth (rank, not
+     exchange rate);
+   - age, within ±7 years;
+   - the same yes/no on what Santander shows: securities ↔ stocks, funds ↔ funds, mortgage ↔ mortgage, pension plan
+     ↔ retirement account.
+
+   One implicate of the household, chosen by the seed. A household may serve several clients (6,500 clients, 1,694
+   households); each reuse is jittered (±10 % per class) so no two clients are identical.
+4. **Vietnam.** The household's shares, with US retirement accounts (no Vietnamese equivalent) moved to deposits and
+   insurance, a gold share added, property raised — cited multipliers or "giả định" — then renormalised.
+5. **TCB and the rest.** The client's AUM is spread over the TCB products the client holds (Santander's flags), in
+   the proportions of the matched household's classes; W × each class − the TCB part is held elsewhere: other banks,
+   other brokers, property, business, gold, vehicles (if a household's financial assets are too small to hold the
+   AUM, W is raised). TCB loans where Santander shows them, other debts from the household.
+6. **Units.** Shares at `market.json` prices, fund units at NAV, m² at the area's price.
+
+Spending, the April 2026 dip, `benchmark`, `drawdown_limit` and `persona_hint` follow the hand-made clients' rules
+(age, holdings, tier), written once in the script. The households' members: Santander has none; a spouse or children
+for part of the book, marked "suy ra".
 
 ## Sizes
 
 | Set | Clients | What it is for |
 |---|---|---|
 | `demo` (ADR-0005) | 5 families, 7 people | the five-minute demo on screen; the test suite |
-| `santander_vn` (default) | **1,000** Private | the KPIs: ±3 % at 95 % on a share, every rare case present (concentration, a shortfall before a large outflow, idle CASA, a rate or policy hit), room for a control group of 500 |
-| `santander_vn --n 6500` | **6,500** Private | the whole Private book of the submission: NFR-01's scale on real-shaped clients (time, AI cost per client), and the book-wide totals |
-
-The 1,000 are the same mix as the 6,500 (no oversampling), so a KPI measured on them scales to the book without
-weights. A bigger sample does not raise the score by itself, nor fix a wrong assumption.
+| `santander_vn` | **6,500** Private | **the book**: every KPI is computed on all of it (rules are cheap: NFR-01 applied a view to 6,500 families in 167 s); with and without the app on the same clients; the book-wide totals |
+| `santander_vn`, first 1,000 | **1,000**, a subset of the 6,500 | only what calls a real model (assistant accuracy, the quality of a written insight), and quick iterations. Not a second sample: the 1,000 are the first 1,000 of the 6,500's draw order |
 
 ## Decisions
 
-- **The five hand-made families stay the demo.** `tests/` assume them (`== 5` families in test_app.py,
-  test_control_group.py; 26 test files name C01–C05). The new book is a second client set,
-  `data/datasets/santander_vn/`, chosen with `MF_CLIENTS=santander_vn` (default `demo`). The people store reads the
-  set's folder; nothing else changes.
-- **Private only.** Every client is Private (above); Priority enters only on request, labelled, for the "Priority
-  over the line" use case.
-- **One source taken whole, the rest aggregates.** Every client file's `note` says: "Dữ liệu mô phỏng: hồ sơ và sản
-  phẩm từ dữ liệu ẩn danh Santander (Kaggle 2016), quy đổi sang Việt Nam; số tiền theo tỷ lệ SCF 2022, giả định của
-  bài nộp và bảng hiệu chỉnh Việt Nam." The footer's mock-data line is kept.
-- **Deterministic.** One seed; run it again and nothing changes. The raw Santander file (~2.3 GB; the 214 MB zip is
-  read as is) is never committed — the script reads it from a path given on the command line, and the row-level
-  sample stays under `out/` (git-ignored) until D0 says otherwise.
-- **Speed.** Two passes over the raw file (chunked, only the needed columns): a minute or two each, once. The
-  conversion of the sample: seconds.
+- **The five hand-made families stay the demo.** `tests/` assume them. The new book is a second client set,
+  `data/datasets/santander_vn/`, chosen with `MF_CLIENTS=santander_vn` (default `demo`).
+- **Private only, all TCB clients.** Priority enters only on request (`--priority-upgrade`), labelled.
+- **Each layer one source.** Every client file's `note`: "Dữ liệu mô phỏng: hành vi từ dữ liệu ẩn danh Santander
+  (Kaggle 2016); cơ cấu tài sản từ hộ thật trong SCF 2022 (Fed); quy mô theo AUM Private 428.000 tỷ / 6.500 khách;
+  hiệu chỉnh Việt Nam là giả định." The footer's mock-data line is kept.
+- **Deterministic.** One seed; run it again and nothing changes. The raw Santander file and the SCF file are never
+  committed; the row-level sample stays under `out/` (git-ignored) until D0 says otherwise.
+- **With and without the app** on the same 6,500: without, an RM reviews 40 of 150 clients a quarter, chosen by the
+  product to sell (the submission's figures); with, all 150 get the app's picture and alerts. Both run on every
+  client — stronger than splitting the book in two.
 
 ## Steps
 
-- **D0 Licence.** Read the Santander competition rules. If they allow only competition use, keep the plan but commit
-  nothing row-level from Santander: commit the converted clients only (no source ids, no original values), or, if
-  even that is not allowed, fall back to Santander's aggregate co-ownership rates. Owner decides (TO_DISCUSS).
-- **D1 Sample — written.** `scripts/santander_sample.py <train_ver2.csv[.zip]>`: the clients active in 2016-05,
-  aged 25–80, income known; drawn from TOP, 7 % foreign, seeded; `--n 1000` by default, `--n 6500` for the book,
-  `--priority-upgrade 0.1` to add the labelled Priority group; TOP short → the top decile of PARTICULARES, flagged.
-  Writes the 12 last snapshots to `out/santander/sample_<n>.csv.gz` and the mix reached to `sample_<n>.json`.
-  Checked on a synthetic file of the same shape (exact counts, 7 % foreign, byte-identical rerun); **not yet run on
-  the real file** (needs the Kaggle download, after the rules are accepted).
-- **D2 Calibration.** `data/calibration/scf_ratios.json` (from the SCF 2022 summary extract, top income bands, by
-  asset class), `data/calibration/submission.json` (the 60 tỷ / 35 % / 0.8 % / 6 % / 2–3 people, cited to the
-  submission) and `data/calibration/vn.json` (income curve, tier cut-offs, city mix, occupation mix,
-  property/gold/deposit multipliers, names), each figure with its source or "giả định".
-- **D3 Convert.** `scripts/make_santander_vn.py`: sample + calibration → `data/datasets/santander_vn/clients/*.json`,
-  in the fixtures' schema, using the helpers of make_fixtures.py (salary, loan, card, living rows).
-- **D4 History and RMs.** make_history.py and make_people.py take the client set; the book is spread over the RMs at
-  ≈ 150 clients per RM (the submission's figure): 7 RMs for 1,000, 44 for 6,500.
+- **D0 Licence.** The Santander competition rules (owner). SCF: public US-government data, cited.
+- **D1 Sample — done.** `scripts/santander_sample.py <train_ver2.csv.zip>` (the zip read as is). Real run, 2026-10-23:
+  45,948 clients eligible (active, 25–80, income known; TOP and the top income decile of PARTICULARES); **6,500 drawn,
+  all from TOP, none filled**, 7.0 % foreign, 48 provinces, median age 52, 96 % with all 12 months, 64.5 % with at
+  least one product change (16,807 events); 2 min 49 s. Nested: the 1,000 are inside the 6,500.
+- **D2 Calibration — done.** `data/calibration/tcb.json` (25 tỷ floor, 6,500, 428,000 tỷ, the tier cut-offs, the
+  share-at-TCB curve), `data/calibration/vn.json` (city shares, gold, property, retirement mapping, names,
+  occupations, TD tenors, events), each figure with its source or "giả định".
+- **D3 Match and convert — done.** `scripts/make_santander_vn.py <sample> <SCFP2022.csv>`: the six steps above →
+  `data/datasets/santander_vn/clients/S0001…S6500.json` in the fixtures' schema (make_fixtures.py's helpers), plus
+  `book.json` (the book as it came out) and `subset_1000.json`; extra fields `tier`, `nationality`, `client_since`,
+  `timeline` (Santander's month-by-month changes, for D4), `provenance` (the SCF household, AUM, total wealth). Real
+  run, 2026-10-23, 12.6 s:
+  - every client valued by the app's own `wealth.valuation` without an error; AUM at TCB re-valued = **428,000 tỷ**,
+    0 đồng off per client (CASA takes the rounding); min 25 tỷ, median 38.8 tỷ, max 9,134 tỷ;
+  - share at TCB 35.0 % for the book (51.6 % at the floor, 20 % at ≥ 750 tỷ); total wealth 1.22 million tỷ;
+  - tiers 4,331 / 1,452 / 552 / 137 / 28; cities as `vn.json`; 7 % foreign;
+  - 601 SCF households used (each ≈ 11 times, jittered); **58.7 % of clients hold more than half their wealth in one
+    class** (top class: home 1,973, business 1,871, other property 1,358, deposits 1,009);
+  - book allocation by value: business 28.6 %, property 23.3 %, deposits 21.5 %, CASA 7.0 %, funds 6.5 %, stocks
+    5.4 %, gold 4.5 %, insurance 2.0 %, bonds 1.2 % — business is the SCF's richest households' (an American trait;
+    the Vietnamese property multiplier may need raising: owner);
+  - a rerun is byte-identical; the files (76 MB) are git-ignored until D0.
+  Simplifications: properties outside TP.HCM and Đồng Nai are declared at a value (market.json has no area there);
+  bonds and funds held elsewhere are declared (Open API reads only cash and stocks); no spouses yet.
+- **D4 History and RMs.** make_history.py and make_people.py take the client set; ≈ 150 clients per RM → 44 RMs.
 - **D5 Switch.** `MF_CLIENTS` in the people store's seed; `.env.example`; reset reseeds the chosen set.
-- **D6 Tests.** Every converted client passes the same checks as the hand-made ones (valuation, consolidate, risk,
-  dashboard); the book's distributions are within the calibration (all Private, tiers, foreign share, mean wealth,
-  TCB share, allocation by tier); a rerun gives byte-identical files. The existing suite is unchanged under
-  `MF_CLIENTS=demo`.
-- **D7 KPIs.** One script runs the app over the book and writes the table the submission cites: concentration risk,
-  shortfall before a large outflow, idle CASA, rate and policy alerts reached, RM preparation time, assistant
-  accuracy (`assistant_eval`, `agent_eval`) — with and without the app (`g9-control-group`), and in money in three
-  scenarios (low / base / high), each figure marked measured or assumed.
+- **D6 Tests.** Every converted client passes the hand-made clients' checks (valuation, consolidate, risk,
+  dashboard); the book: all Private, ≥ 25 tỷ each, Σ AUM = 428,000 tỷ, mean share at TCB ≈ 35 %, 7 % foreign, tiers
+  as above; a rerun is byte-identical; the suite unchanged under `MF_CLIENTS=demo`.
+- **D7 KPIs.** One script runs the app over the 6,500 (model-calling KPIs on the 1,000) and writes the table the
+  submission cites, each figure marked measured or assumed:
+  - scale: share of affected portfolios assessed per event (100 %), time for the whole book;
+  - personalisation: the spread of impact among clients with the same equity weight; precision and recall of who
+    is alerted;
+  - accuracy: direction and size of the impact against the move, on the April 2026 dip; `assistant_eval`,
+    `agent_eval`;
+  - risk found: concentration over the threshold, a shortfall before a large outflow, idle CASA, a drawdown over
+    the limit, a rate or draft-policy hit;
+  - explainability and control: share of insights with source and calculation (100 %), share of recommendations
+    reviewed by an RM (100 %), seeded bad recommendations caught by the challenger, audit trail complete (100 %);
+  - RM: clients reviewed per quarter per RM (40 → 150), preparation time;
+  - money: share of wealth at TCB, attrition, timely cross-sell — low / base / high, with s = 25 / 35 / 50 %.
 - **D8 Documents.** ADR-0038 accepted, `docs/brd/` per MAINTAINING.md, and a one-page data card
-  `data/datasets/santander_vn/README.md`: the source, every transformation, every assumption, the limits — what the
-  jury reads.
+  `data/datasets/santander_vn/README.md`: the sources, every transformation, every assumption, the limits.
 
 ## Limits (say them)
 
-- The book's structure is a Spanish bank's of 2015–16; Santander's TOP segment is its own definition of a top
-  client, not Techcombank Private's threshold. The amounts are a model, not observed.
+- The behaviour is a Spanish bank's of 2015–16; the make-up of wealth is US households' of 2022; Santander's TOP is
+  not Techcombank's threshold. Only the size is Techcombank's.
 - It tests the features and the scale, not how accurate a model is on real Vietnamese clients.
-- Households: Santander has none; spouses are not created (or a few, marked as derived).
+- Households: Santander has none; members are derived and marked.
 
 ## For the owner
 
-1. The licence (D0).
-2. ~~N for the demo book and the scale run~~ — 1,000 and 6,500 (above).
-3. ~~The mix~~ — Private only, 7 % foreign / Việt kiều; Priority only as the optional labelled group. Still open:
-   the tier cut-offs (30 / 55 / 15 % is giả định), and whether to add the Priority group.
-4. The Vietnamese calibration figures: which published sources we cite; and the real figures to replace the
-   submission's 60 tỷ / 35 % when Private Banking gives them.
+1. The Santander licence (D0).
+2. 428,000 tỷ: Private only, or Private and Priority? Its source and date, for the data card.
+3. If Private Banking can give **the Private AUM by product** (CASA, TD, bonds, funds, stocks, insurance — six
+   percentages), it replaces step 5's split at TCB.
+4. The share-at-TCB curve (≈ 35 % mean, falling with wealth) and the tier cut-offs are giả định.
+5. Our submission's §5.8 assumes 60 tỷ per client, 35 % at TCB, i.e. 21 tỷ at TCB — under the 25 tỷ floor and a third
+   of 65.8 tỷ. It needs correcting whatever happens to this plan (TO_DISCUSS).
