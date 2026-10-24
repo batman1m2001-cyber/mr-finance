@@ -5,6 +5,10 @@ can be worked out from what they kept (fetched, skipped, sources, status) is; th
 sources, relevant, groups, missing metadata) is None, never 0. A day's item counts (unique, retained, relevant,
 groups) come from the items themselves by **collection** time (``ingested``), the same for every day; publication
 time is kept apart and only used for the lag.
+
+A day's collection time (NEWS_OPS_PLAN N2) is the sum of its runs' own durations, over the runs that kept one, with
+their count beside it. A news item reached a portfolio (N3) when its event has an application run the RMs see with at
+least one family whose expected 3-month change is not zero; the count grows after the day, as views are approved.
 """
 
 from __future__ import annotations
@@ -71,6 +75,28 @@ def _items(since: float, until: float) -> List[Dict[str, Any]]:
     return [store._item(r) for r in rows]
 
 
+def reached() -> Dict[str, set]:
+    """Each news item that reached a portfolio, and the families it reached (N3)."""
+    from apply import run as apply_run
+    from control import db
+
+    fams: Dict[str, set] = defaultdict(set)
+    for r in apply_run.runs(statuses=apply_run.RM_VISIBLE):
+        hit = {f["family_id"] for f in r.get("ranking") or [] if f.get("expected_3m")}
+        if hit:
+            fams[r["event_id"]] |= hit
+    if not fams:
+        return {}
+    with db.tx() as con:
+        rows = con.execute(f"select * from events where id in ({','.join('?' * len(fams))})", list(fams)).fetchall()
+    out: Dict[str, set] = defaultdict(set)
+    for row in rows:
+        ev = db.load(row)
+        for nid in ev.get("news_ids") or []:
+            out[nid] |= fams[ev["id"]]
+    return dict(out)
+
+
 def _relevant(item: Dict[str, Any]) -> bool:
     return item.get("relevance") in ("high", "medium") and not item.get("restricted")
 
@@ -90,6 +116,7 @@ def days(n: int = 14, now: Optional[float] = None) -> List[Dict[str, Any]]:
     for r in runs(first, now + 1):
         by_run[day_of(r["at"])].append(r)
     by_item: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    reach = reached()
     for it in _items(first, now + 1):
         by_item[day_of(it["ingested"])].append(it)
     out = []
@@ -100,6 +127,8 @@ def days(n: int = 14, now: Optional[float] = None) -> List[Dict[str, Any]]:
         lag = [(i["ingested"] - i["published"]) / 60 for i in kept if i.get("published")]
         cats = Counter(segments.family_of_item(i) or "unclassified" for i in kept)
         status = Counter(r["status"] for r in rs)
+        timed = [r["duration_s"] for r in rs if r.get("duration_s") is not None]
+        hit = [reach[i["id"]] for i in kept if i["id"] in reach]
         out.append(
             {
                 "day": day,
@@ -123,7 +152,13 @@ def days(n: int = 14, now: Optional[float] = None) -> List[Dict[str, Any]]:
                     "category": cats["unclassified"],
                 },
                 "lag_min_p50": round(statistics.median(lag), 1) if lag else None,
-                "duration_s_p50": _median([r["duration_s"] for r in rs if r.get("duration_s") is not None]),
+                "duration_s_p50": _median(timed),
+                "duration_s_total": round(sum(timed), 1) if timed else None,
+                "duration_runs": len(timed),  # the runs that kept their duration (runs from 2026-10-24)
+                "first_run": min((r.get("started") or r["at"] for r in rs), default=None),
+                "last_run": max((r.get("finished") or r["at"] for r in rs), default=None),
+                "portfolio": len(hit),
+                "portfolio_families": len(set().union(*hit)) if hit else 0,
             }
         )
     return out[::-1]

@@ -19,6 +19,7 @@ const day = (s) => (s ? s.split("-").reverse().join("/") : "—");
 const share = (x, n, m) => (x == null || !n ? "—" : `${how(pct(x, false, 0), m, {horizon: HL[horizon], n: String(n)})} <span class="muted small">(${n})</span>`);
 const secs = (s) => (s == null ? "—" : s >= 90 ? `${(s / 60).toFixed(1).replace(".", ",")} phút` : `${Math.round(s)} giây`);
 const num = (x) => (x == null ? "—" : x.toLocaleString("vi-VN"));
+const hm = (t) => new Date(t * 1000).toLocaleTimeString("vi-VN", {hour: "2-digit", minute: "2-digit", timeZone: "Asia/Ho_Chi_Minh"});
 
 function kpi(label, value, sub) {
   return `<div class="kpi"><div class="k">${label}</div><div class="v">${value}</div><div class="s">${sub}</div></div>`;
@@ -81,15 +82,17 @@ function viewA(d, m) {
     </div>
 
     <section class="panel mt"><h3>Theo ngày <span class="hint">ngày thu thập (giờ Việt Nam), không phải ngày đăng</span></h3>
-      <div class="scrollx"><table class="table"><thead><tr><th>Ngày</th><th class="num">Lần lấy</th><th class="num">Lỗi</th><th class="num">Đọc</th><th class="num">Trùng</th><th class="num">Mới</th><th class="num">Giữ lại</th><th class="num">Liên quan</th>
+      <div class="scrollx"><table class="table"><thead><tr><th>Ngày</th><th class="num">Lần lấy</th><th>Từ – đến</th><th class="num">Thời gian lấy</th><th class="num">Lỗi</th><th class="num">Đọc</th><th class="num">Trùng</th><th class="num">Mới</th><th class="num">Giữ lại</th><th class="num">Liên quan</th><th class="num">Tác động danh mục</th>
         ${cats.map(([, l]) => `<th class="num">${esc(l)}</th>`).join("")}<th class="num">Thiếu giờ đăng</th><th class="num">Trễ</th></tr></thead><tbody>
-        ${m.days.map(x => `<tr><td>${day(x.day)}</td><td class="num">${x.runs}</td><td class="num">${x.runs_failed + x.runs_partial ? `<span class="bad-text">${x.runs_failed + x.runs_partial}</span>` : 0}</td>
+        ${m.days.map(x => `<tr><td>${day(x.day)}</td><td class="num">${x.runs}</td><td style="white-space:nowrap">${x.first_run ? `${hm(x.first_run)} – ${hm(x.last_run)}` : "—"}</td>
+          <td class="num">${x.duration_s_total == null ? "—" : `${how(secs(x.duration_s_total), "collect.duration", {runs: String(x.duration_runs)})}${x.duration_runs < x.runs ? ` <span class="muted small">(${x.duration_runs}/${x.runs} lần)</span>` : ""}`}</td><td class="num">${x.runs_failed + x.runs_partial ? `<span class="bad-text">${x.runs_failed + x.runs_partial}</span>` : 0}</td>
           <td class="num">${opt(x.fetched)}</td><td class="num">${opt(x.duplicates)}</td><td class="num">${x.unique}</td><td class="num">${x.retained}</td>
           <td class="num">${x.retained ? rate({value: x.relevant / x.retained, hits: x.relevant, n: x.retained}, "collect.relevant") : "—"}</td>
+          <td class="num">${how(num(x.portfolio), "collect.portfolio", {families: String(x.portfolio_families)})}${x.portfolio ? ` <span class="muted small">(${x.portfolio_families} gia đình)</span>` : ""}</td>
           ${cats.map(([k]) => `<td class="num">${x.by_category[k] || 0}</td>`).join("")}
           <td class="num">${x.missing.published}</td><td class="num">${x.lag_min_p50 == null ? "—" : `${Math.round(x.lag_min_p50)} phút`}</td></tr>`).join("")}
       </tbody></table></div>
-      <p class="footnote">Lỗi: số lần lấy có ít nhất một nguồn lỗi. “—”: lần lấy trước ${m.full_since ? when(m.full_since) : "khi có bộ đếm"} không ghi số này (không có số liệu, không phải 0). Trễ: trung vị từ lúc báo đăng đến lúc ta thu.</p>
+      <p class="footnote">Lỗi: số lần lấy có ít nhất một nguồn lỗi. “—”: lần lấy trước ${m.full_since ? when(m.full_since) : "khi có bộ đếm"} không ghi số này (không có số liệu, không phải 0). Trễ: trung vị từ lúc báo đăng đến lúc ta thu. Tác động danh mục: tin thuộc sự kiện đã áp dụng lên ít nhất một gia đình; số này tăng sau ngày thu.</p>
     </section>
 
     <section class="panel mt"><h3>Nguồn <span class="hint">${m.sources.length} nguồn · ${m.days.length} ngày</span></h3>

@@ -951,6 +951,22 @@ metric(
     n="Tin giữ lại",
 )
 metric(
+    "collect.portfolio",
+    "Tin tác động danh mục",
+    "Số tin thu trong ngày (theo giờ thu thập) thuộc một sự kiện đã có lần áp dụng RM xem được (hiệu lực, đã thay hoặc "
+    "đã rút) với ít nhất một gia đình có kỳ vọng 3 tháng khác 0. Số này tăng sau ngày thu, khi nhận định được duyệt.",
+    "src/news/monitor.py::reached",
+    families="Gia đình chạm tới",
+)
+metric(
+    "collect.duration",
+    "Thời gian lấy tin trong ngày",
+    "Tổng thời gian chạy của các lần lấy tin trong ngày, chỉ các lần có ghi thời gian (từ 24/10/2026); số lần có ghi "
+    "đứng bên cạnh.",
+    "src/news/monitor.py::days",
+    runs="Lần có ghi thời gian",
+)
+metric(
     "eval.precision",
     "Độ chính xác của agent",
     "Một biến động là một yếu tố, một kỳ hạn, từ giá đóng cửa trước một buổi sáng; nhiều bản nháp cùng nói về nó được "
