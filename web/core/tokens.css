@@ -796,6 +796,9 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .cp-fig span, .cp-fig small, .cp-li small { color: var(--muted); font-size: 11.5px; }
 .cp-fig b { font-size: 15px; font-variant-numeric: tabular-nums; }
 .cp-card .up { color: var(--up); } .cp-card .down { color: var(--down); } .cp-card .warnc { color: var(--warning); }
+.cp-how summary { cursor: pointer; } .cp-q { margin-top: 6px; display: grid; gap: 2px; }
+.cp-sql { margin: 0; padding: 6px 8px; border-radius: 8px; background: var(--surface-2); color: var(--ink-2); white-space: pre-wrap;
+  word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
 .cp-notes { margin: 0; padding-left: 16px; font-size: 12px; color: var(--ink-2); }
 .cp-p { margin: 0 0 6px; } .cp-p:last-child { margin-bottom: 0; }
 .cp-prose { margin: 0 0 6px; padding-left: 18px; } .cp-prose li { margin: 2px 0; }

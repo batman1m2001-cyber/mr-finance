@@ -134,3 +134,40 @@ def test_a_conversation_is_picked_up_on_another_device_listed_and_deleted(open_p
     q.page.click(f"[data-del='{cid}']")
     q.page.wait_for_selector("text=Chưa có cuộc trò chuyện nào.")
     assert not p.problems() and not q.problems()
+
+
+def test_an_answer_from_the_data_room_shows_how_it_counted_collapsed(open_page, monkeypatch):
+    """ASSISTANT_DATA_PLAN D4: an answer from ``truy_van`` carries “Cách tính”, closed; opened, it shows the SQL, the
+    rows shown of the total, the table and the time of the data (desktop and phone)."""
+    import re
+    import time as clock
+
+    from operonx_agents.testing import ScriptedLLM, asks, says, scripted
+
+    from news import store as news
+
+    now = clock.time()
+    news.add([
+        {"source": "cafef_ck", "url_key": f"u{i}", "title_key": f"t{i}", "published": now, "ingested": now,
+         "kind": "domestic", "status": "new", "relevance": "high", "title": f"Tin {i}", "outlet": "CafeF",
+         "label": "Trong nước", "summary": "", "restricted": []}
+        for i in range(7)
+    ])  # fmt: skip
+    monkeypatch.setenv("MF_AI", "on")
+    monkeypatch.setenv("LLM_MODEL_COPILOT", "scripted-model")
+    sql = "select count(*) from tin where trang_thai = 'new'"
+    for size in ("desktop", "phone"):
+        llm = ScriptedLLM(asks(("truy_van", {"sql": sql})), says("Có 7 tin chờ xử lý."))
+        with scripted(copilot=llm):
+            p = open_page(size)
+            p.go("#/cio/hop-tin")
+            a = ask(p, "Có bao nhiêu tin chờ xử lý?")
+        how = a.locator("details.cp-how")
+        assert how.count() == 1 and how.get_attribute("open") is None  # collapsed: no wall of SQL
+        assert how.locator("summary").inner_text() == "Cách tính" and not a.locator(".cp-sql").is_visible()
+        how.locator("summary").click()
+        assert a.locator(".cp-sql").inner_text() == sql
+        line = a.locator(".cp-q").inner_text()
+        assert re.fullmatch(re.escape(sql) + r"\n1 dòng · tin · số liệu lúc \d{4}-\d\d-\d\d \d\d:\d\d", line), line
+        assert not p.problems(), p.problems()
+        p.close()

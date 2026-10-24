@@ -126,6 +126,16 @@ function meta(m) {
   return bits || src ? `<div class="cp-meta">${bits ? `<div>${esc(bits)}</div>` : ""}${src}</div>` : "";
 }
 
+// “Cách tính” of an answer's queries (ADR-0040), collapsed: each one's SQL, its rows and when it ran
+const vnNum = (x) => Number(x || 0).toLocaleString("vi-VN");
+function how(m) {
+  const qs = (m.steps || []).filter(s => s.query && s.query.sql);
+  if (!qs.length) return "";
+  const rows = (q) => `${q.shown < q.total ? `${vnNum(q.shown)} / ` : ""}${vnNum(q.total)} dòng`;
+  return `<details class="cp-how small muted mt"><summary>Cách tính</summary>${qs.map(({query: q}) => `<div class="cp-q">
+    <pre class="cp-sql">${esc(q.sql)}</pre><div>${rows(q)} · ${esc((q.tables || []).join(", ") || "—")} · số liệu lúc ${esc(q.as_of || "—")}</div></div>`).join("")}</details>`;
+}
+
 export function mount() {
   const panel = document.createElement("aside");
   panel.className = "cp-panel"; panel.hidden = true;
@@ -191,7 +201,7 @@ export function mount() {
       ? `<div class="cp-bot cp-think" data-running><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Vẫn đang trả lời…${(m.steps || []).length ? `<div class="cp-steps small">${m.steps.map(x => `<span class="chip ${x.status === "ok" ? "" : "bad"}">${esc(x.label || x.tool)} ${STEP[x.status] || ""}</span>`).join(" ")}</div>` : ""}</div>`
       : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${m.mode === "model" ? prose(m.text) : esc(m.text)}
           ${(m.waits || []).length > 1 ? `<ul class="cp-notes">${m.waits.map(w => `<li>${esc(w.summary)}</li>`).join("")}</ul>` : ""}
-          ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) : ""}
+          ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) + how(m) : ""}
           ${(m.steps || []).length > 1 || m.status === "interrupted" || (m.steps || []).some(s => s.status !== "ok") ? `<div class="cp-steps small muted">Các bước: ${m.steps.map(s => `<span class="chip ${s.status === "ok" ? "" : "bad"}" title="${esc(s.text || "")}">${esc(s.label || s.tool)} ${STEP[s.status] || ""}</span>`).join(" ")}</div>` : ""}
           ${(m.confirm || (m.waits || []).length) && !m.done ? `<div class="row mt"><button type="button" class="btn sm" data-ok="${i}">Xác nhận</button><button type="button" class="btn sm ghostbtn" data-no="${i}">Huỷ</button></div>` : ""}
           ${(m.citations || []).length || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${(m.citations || []).filter(c => !(m.here && c.route === location.hash)).map(c => `<a class="small" data-ev="${i}" href="${esc(c.route)}">Mở ${esc(c.label)} →</a>`).join("")}</div>` : ""}

@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-24 — The data room wired in (D4): `truy_van` in the registry for the five roles with a room, with the
+  role's catalog; three queries a turn; an audit row per query; “Cách tính” (SQL, rows, table, time), closed; the
+  template with `client_ai` off; the re-count rule, and a question naming a number the last answer did not say must
+  call a tool (`tool_choice`): the rule alone did not make Haiku 5.5 count again. — OWN-DA-03, OWN-DA-05…07,
+  requirements_traceability §5
 - 2026-10-24 — The data catalog (D3): what the assistant reads before it writes SQL, per role: every table and column
   of the room with its meaning, unit and allowed values, shared rules, the pages' definitions and 12–18 examples
   each; a test fails on an undocumented column and runs every example in its room. — OWN-DA-04,
