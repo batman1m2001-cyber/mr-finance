@@ -4,6 +4,13 @@
 flexibly, dynamically answer user” → “go”).
 - **D0 done:** [ADR-0040](brd/decisions/ADR-0040-the-assistant-queries-role-scoped-read-only-views.md); OWN-DA-01…08
   in docs/brd (planned); BRD checker 0 errors.
+- **D1 done:** `news.store.count` (one where-clause with `inbox`), `control.alerts.counts`, search's `total`; the
+  inbox page, the bell, Hệ thống, the CIO desk, the alerts, search and held-news tools all say counted totals. On a
+  copy of the live data the inbox page reads “1.417 tin chờ xử lý” and “40 / 1.417” (desktop and phone). Gate:
+  `tests/test_totals.py`, 6 tests, each seeding past the old cap (310 > 300, 5,003 > 5,000, 53 > 50, 260 > 200).
+  Found beyond §2: the held-news tool read `inbox()`'s first 200; Hệ thống counted open alerts among the last 30;
+  the bell asked for 1,000 news to count them. `wealth_store.reviews` has no cap, so the queue tool's total is its
+  length (now in its data); no separate count function was needed there.
 
 ## 1. Why: the CIO chat of 2026-10-24
 

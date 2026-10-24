@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 128 | 115 | 3 | 1 | 8 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 128 | 116 | 3 | 1 | 7 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -267,7 +267,7 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
-| OWN-DA-01 | FEAT-32 | planned | D1 of docs/ASSISTANT_DATA_PLAN.md |
+| OWN-DA-01 | FEAT-32 | implemented_verified | D1: `news.store.count` shares `inbox`'s where-clause; `/api/news/inbox` returns `total` and the inbox page says “1.417 tin chờ xử lý”, “40 / 1.417” (was 300); `control.alerts.counts` for the tool, the bell and Hệ thống (was a page of 50, or the last 30); search counts every match (“6 / N kết quả”); the CIO desk's Tin stage, the held-news tool and the AI zone count in the database — `tests/test_totals.py::test_the_inbox_page_gets_a_page_of_rows_and_the_counted_total`, `tests/test_totals.py::test_count_matches_the_list_for_every_filter`, `tests/test_totals.py::test_the_cio_desk_counts_the_news_stage_past_its_old_cap_of_5000`, `tests/test_totals.py::test_search_finds_and_counts_past_5000_and_says_six_of_how_many`, `tests/test_totals.py::test_the_alerts_tool_and_the_bell_count_past_the_page_of_50`, `tests/test_totals.py::test_the_held_news_tool_says_every_held_item_not_those_on_the_first_200` |
 | OWN-DA-02 | FEAT-32 | planned | D2 |
 | OWN-DA-03 | FEAT-32 | planned | D2 |
 | OWN-DA-04 | FEAT-32 | planned | D3 |

@@ -117,17 +117,18 @@ def _item(row: sqlite3.Row) -> Dict[str, Any]:
     return d
 
 
-def inbox(
+def _filter(
     source: Optional[str] = None,
     kind: Optional[str] = None,
     status: str = "new",
     relevance: Optional[str] = None,
     since: Optional[float] = None,
-    query: Optional[str] = None,
-    limit: int = 200,
-) -> List[Dict[str, Any]]:
-    """Newest first. ``status`` "all" shows every status but refused; "refused" shows only those."""
-    where, args = [], []
+    held: Optional[bool] = None,
+) -> Tuple[str, List[Any]]:
+    """The one where-clause shared by ``inbox`` (a page of rows) and ``count`` (its total), so a page and the
+    number beside it can never disagree."""
+    where: List[str] = []
+    args: List[Any] = []
     if status == "all":
         where.append("status != 'refused'")
     else:
@@ -140,14 +141,60 @@ def inbox(
     if since:
         where.append("published >= ?")
         args.append(since)
-    sql = f"select * from news_items where {' and '.join(where)} order by published desc, seq desc"
+    if held is not None:
+        where.append("held = ?")
+        args.append(1 if held else 0)
+    return " and ".join(where), args
+
+
+def _matches(item: Dict[str, Any], q: str) -> bool:
+    return q in item["title"].lower() or q in item.get("summary", "").lower()
+
+
+def inbox(
+    source: Optional[str] = None,
+    kind: Optional[str] = None,
+    status: str = "new",
+    relevance: Optional[str] = None,
+    since: Optional[float] = None,
+    query: Optional[str] = None,
+    limit: Optional[int] = 200,
+    held: Optional[bool] = None,
+) -> List[Dict[str, Any]]:
+    """Newest first. ``status`` "all" shows every status but refused; "refused" shows only those. A page of rows:
+    its length is never a total (``count`` is); ``limit=None`` reads them all."""
+    where, args = _filter(source, kind, status, relevance, since, held)
+    sql = f"select * from news_items where {where} order by published desc, seq desc"
+    if limit is not None and not query:
+        sql += " limit ?"
+        args = [*args, int(limit)]
     with _db() as con:
         rows = con.execute(sql, args).fetchall()
     out = [_item(r) for r in rows]
     if query:
         q = query.lower()
-        out = [it for it in out if q in it["title"].lower() or q in it.get("summary", "").lower()]
-    return out[:limit]
+        out = [it for it in out if _matches(it, q)]
+    return out if limit is None else out[:limit]
+
+
+def count(
+    source: Optional[str] = None,
+    kind: Optional[str] = None,
+    status: str = "new",
+    relevance: Optional[str] = None,
+    since: Optional[float] = None,
+    query: Optional[str] = None,
+    held: Optional[bool] = None,
+) -> int:
+    """How many items ``inbox`` would return with no limit, counted in the database: the total a page and the
+    assistant both say (the inbox page said 300 for 1,415). Words are matched as ``inbox`` matches them."""
+    where, args = _filter(source, kind, status, relevance, since, held)
+    with _db() as con:
+        if not query:
+            return int(con.execute(f"select count(*) from news_items where {where}", args).fetchone()[0])
+        rows = con.execute(f"select data from news_items where {where}", args).fetchall()
+    q = query.lower()
+    return sum(1 for r in rows if _matches(json.loads(r["data"]), q))
 
 
 def get(ids: List[str]) -> List[Dict[str, Any]]:

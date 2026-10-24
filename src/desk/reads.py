@@ -52,8 +52,9 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     me = (viewer or {}).get("id") or "cio"
     names = {f.id: f.name for f in default_model().factors}
 
-    fresh = news.inbox(status="new", limit=5000)
-    high = [i for i in fresh if i.get("relevance") == "high"]
+    fresh_n = news.count(status="new")  # counted in the database: a page of rows is never the total
+    high_n = news.count(status="new", relevance="high")
+    high = news.inbox(status="new", relevance="high", limit=5)
 
     evs = events.listing()
     states = []
@@ -138,7 +139,7 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
 
     stage = lambda *a: dict(zip(("id", "label", "count", "unit", "waits", "note", "route"), a))  # noqa: E731
     pipeline = [
-        stage("news", "Tin", len(fresh), "tin mới", len(high), f"{len(high)} liên quan cao", "#/cio/hop-tin"),
+        stage("news", "Tin", fresh_n, "tin mới", high_n, f"{high_n} liên quan cao", "#/cio/hop-tin"),
         stage("events", "Sự kiện", len(evs), "sự kiện", len(no_view) + len(held),
               f"{len(no_view)} chưa có nhận định" + (f" · {len(held)} bị giữ" if held else ""), "#/cio/nhan-dinh"),
         stage("views", "Nhận định", sum(len(s["views"]) for s in states), "phiên bản", len(waiting_views),
@@ -499,7 +500,7 @@ def compliance(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     from research import store as research
 
     now = time.time()
-    items = news.inbox(status="all", limit=5000)
+    items = news.inbox(status="all", limit=None)  # every item: held and cleared are read from all of them
     held = [i for i in items if i["held"]]
     cleared = [i for i in items if i.get("cleared")]
     notes = research.listing()

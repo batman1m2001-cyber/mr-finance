@@ -319,22 +319,25 @@ async def news_inbox(request: Request) -> JSONResponse:
     q = request.query_params
     try:
         since = float(q["since"]) if q.get("since") else None
-        limit = min(int(q.get("limit") or 200), 1000)
+        limit = min(int(q.get("limit") or 200), 5000)
     except ValueError:
         return JSONResponse({"error": "since and limit are numbers"}, status_code=400)
     if q.get("held"):
-        items = [i for i in news_store.inbox(status="all", limit=5000) if i["held"]]
+        items = news_store.inbox(status="all", held=True, limit=None)
         cfg = news_ops.config()
-        return JSONResponse({"items": items, "sources": [], "last_run": None, "config_version": cfg["version"]})
-    items = news_store.inbox(
-        source=q.get("source") or None,
-        kind=q.get("kind") or None,
-        status=q.get("status") or "new",
-        relevance=q.get("relevance") or None,
-        since=since,
-        query=q.get("q") or None,
-        limit=limit,
-    )
+        return JSONResponse(
+            {"items": items, "total": len(items), "sources": [], "last_run": None, "config_version": cfg["version"]}
+        )
+    filters = {
+        "source": q.get("source") or None,
+        "kind": q.get("kind") or None,
+        "status": q.get("status") or "new",
+        "relevance": q.get("relevance") or None,
+        "since": since,
+        "query": q.get("q") or None,
+    }
+    items = news_store.inbox(**filters, limit=limit)
+    total = news_store.count(**filters)
     cfg = news_ops.config()
     last = news_store.last_run()
     hourly = news_store.counts_by_hour()
@@ -349,7 +352,9 @@ async def news_inbox(request: Request) -> JSONResponse:
         }
         for s in cfg["sources"]
     ]
-    return JSONResponse({"items": items, "sources": sources, "last_run": last, "config_version": cfg["version"]})
+    return JSONResponse(
+        {"items": items, "total": total, "sources": sources, "last_run": last, "config_version": cfg["version"]}
+    )
 
 
 async def events_list(request: Request) -> JSONResponse:
@@ -655,7 +660,7 @@ async def system_alerts(request: Request) -> JSONResponse:
 
     v = viewer(request)
     role = v["role"] if v else request.query_params.get("role", "admin")
-    return JSONResponse({"alerts": alerts.for_role(role)})
+    return JSONResponse({"alerts": alerts.for_role(role), **alerts.counts(role)})  # the page of 50, and its totals
 
 
 JOBS: list = []  # filled by app/main.py: {id, description, when: {every|at}}
@@ -790,6 +795,7 @@ def system_read() -> dict:
         "agent_queue": agent_queue.waiting(),
         "zone_syncs": zone_sync.recent(5),
         "alerts": control_alerts.recent(30),
+        "alerts_open": control_alerts.counts()["open"],  # counted, not the open ones among the last 30
         "log": control_log.recent(30, "warning"),
         "people": [{**a, "families": families.get(a["id"])} for a in accounts if a["role"] != "client"],
         "clients": sum(1 for a in accounts if a["role"] == "client"),
