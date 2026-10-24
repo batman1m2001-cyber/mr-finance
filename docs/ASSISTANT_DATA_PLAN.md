@@ -34,6 +34,16 @@ flexibly, dynamically answer user” → “go”).
       allowed for a room table's name only. That is safe because TEMP shadows unqualified names and no real table
       shares a room name (tested).
     - A recursive CTE is denied whether or not the query says `recursive`.
+- **D3 done:** `src/assistant/datacatalog.py::catalog(role)`, built from `dataroom.TABLES` (tables, column names and
+  types) and `src/assistant/catalog/`: `tables.md` (all 17 tables, 194 columns: meaning, unit, allowed values as the
+  stores write them), `rules.md` (Vietnam time, `khong_dau` search, count with `count(*)`), and `cio.md`, `rm.md`,
+  `client.md`, `compliance.md` (Admin reads Compliance's) with definitions and 18 / 14 / 13 / 12 examples. Gate:
+  `tests/test_datacatalog.py`, 10 tests: a column missing from the docs (or documented and not in the room) fails;
+  the codes in `news.STATUSES`, `views.LIFECYCLE`, `apply.run.STATUS_LABEL`, `alerts.KINDS`, `flows.LABELS` and
+  `contacts.CHANNELS` are each documented; every example runs in its role's room. On a copy of the live data every
+  example runs; the CIO's question of 2026-10-24 reads new 1,419 and grouped 64, and 57 fetched today. Changed from
+  §3.3: “bị bác” is `trang_thai = 'REJECTED'` (the code is upper case). The CIO's catalog is about 11,000
+  characters; D5 measures what it costs per turn.
 
 ## 1. Why: the CIO chat of 2026-10-24
 
