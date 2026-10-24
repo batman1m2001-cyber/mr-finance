@@ -49,6 +49,8 @@ READS = {
     "/api/agents/map/assistant": DESK,
     "/api/news/inbox": DESK,
     "/api/news/config": DESK,
+    "/api/news/sources": {"admin"},  # Nguồn tin (N1)
+    "/api/news/sources/test?url=http://x": {"admin"},  # refused as http, before any fetch
     "/api/events": DESK,
     "/api/events/EV-0000": DESK,
     "/api/views/VW-0000": DESK,

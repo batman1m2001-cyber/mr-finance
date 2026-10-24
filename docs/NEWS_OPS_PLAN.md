@@ -1,5 +1,8 @@
 # News sources and collection figures (2026-10-25) — plan
 
+**Status: done (N1–N3), 2026-10-25.** OWN-NO-01…03 implemented_verified (tests/ui/test_sources_ui.py,
+tests/test_news_sources.py, tests/test_agent_eval.py).
+
 The owner asked whether the news sources can be managed (added, removed, configured) and whether the system already
 measures what the business asked: how much news is collected each day, in how many minutes, when, from how many
 sources, how much on real estate, stocks and policy, how much of it touched a portfolio; and how accurate the impact
