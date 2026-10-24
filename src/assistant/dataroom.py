@@ -651,6 +651,15 @@ def _audit(ctx: Ctx, sql: str, res: Optional[Dict[str, Any]], ms: float, refused
         audit.append(con, actor, "assistant.query", ",".join(res["tables"]) if res and res["tables"] else "-", data)
 
 
+# On a turn that disputes a number (``turn.disputes``), said next to the count, where the model writes from: in the
+# system prompt alone, Haiku 5.5 counted again and then guessed why the person's number differed in 3 disputes of 3
+# (“có thể bạn đang nhớ số khác”, D5 eval).
+RECOUNTED = (
+    "\nNgười dùng vừa nêu một con số khác: trả lời chỉ bằng bảng, điều kiện và con số vừa đếm ở trên. Không đoán "
+    "và không kể vì sao con số của họ khác."
+)
+
+
 async def truy_van(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """The ``truy_van`` tool's run: one SELECT in the room; the rows, the total, the SQL and when. Audited, refused
     after :data:`CALLS` a turn; with ``ctx.reads`` off the text is the template, which the person reads, not the
@@ -667,8 +676,9 @@ async def truy_van(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         raise
     _audit(ctx, sql, res, 1000 * (time.perf_counter() - started))
     how = {k: res[k] for k in ("sql", "total", "shown", "tables", "as_of")}
+    said = text_of(res) + (RECOUNTED if ctx.recount else "") if ctx.reads else template(res)
     return {
-        "text": text_of(res) if ctx.reads else template(res),
+        "text": said,
         "data": {"total": res["total"], "shown": res["shown"], "columns": res["columns"], "sql": res["sql"]},
         "as_of": res["as_of"],
         "sources": [f"Truy vấn trên {', '.join(res['tables']) or 'không bảng nào'} lúc {res['as_of']}"],

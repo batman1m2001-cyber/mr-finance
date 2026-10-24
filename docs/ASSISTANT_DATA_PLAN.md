@@ -1,6 +1,6 @@
 # OneWealth — The assistant reads the data itself: plan
 
-**Status: in progress** (owner, 2026-10-24: “can you think a way to give assistant access to our db, and knowledge to
+**Status: done** (D0–D5, 2026-10-24; owner, 2026-10-24: “can you think a way to give assistant access to our db, and knowledge to
 flexibly, dynamically answer user” → “go”).
 - **D0 done:** [ADR-0040](brd/decisions/ADR-0040-the-assistant-queries-role-scoped-read-only-views.md); OWN-DA-01…08
   in docs/brd (planned); BRD checker 0 errors.
@@ -61,6 +61,45 @@ flexibly, dynamically answer user” → “go”).
   why a page could differ; D5 grades that. Cost of the replays: 8 turns, 13 requests, US$0.0209. A request with
   the CIO's catalog is about 15,000 input tokens, so a turn of four requests would pass `LIMITS.total_tokens`
   (60,000); D5 measures it.
+- **D5 done:** `data/assistant_data_eval.json` (87 conversations, 90 turns: 30 per role, the CIO's chat of
+  2026-10-24 first, one dispute per role; gold answers are SQL run in the role's room on the data at run time) and
+  `scripts/eval_assistant_data.py` (a copy of the state, the real flow, `usage.cost`; results in
+  `evals/assistant_data/results/`, not committed). Grader: `tests/test_eval_data_checker.py`, 14 tests, every
+  gold SQL run. Haiku 5.5 on a copy of the live data, all 90 turns:
+
+  | Role | Correct | p50 | p95 | US$ / turn | Input tokens / request |
+  |---|---|---|---|---|---|
+  | CIO | 29/30 → 30/30 | 3.50 s | 5.55 s | 0.00309 | 14,823 |
+  | RM | 30/30 | 3.71 s | 6.12 s | 0.00316 | 14,734 |
+  | Client | 30/30 | 4.00 s | 5.23 s | 0.00281 | 12,922 |
+  | All | 89/90 (98.9 %) → 90/90 | 3.58 s | 5.30 s | 0.00302 | 14,156 |
+
+  Gate: accuracy ≥ 90 % (each role too), p95 ≤ 6 s overall, ≤ US$0.01 a turn: passed. The 3 disputes were each
+  counted again with SQL and none guessed why. The CIO's one miss (cio-20, “Đã chấm điểm bao nhiêu dự báo?”: 20,
+  gold 26) was the catalog's: `ket_qua = 'scored'` was also documented as “đã chấm”. The catalog now says `da_cham`
+  includes `no_data`; cio-20 re-run passes (20 + 6 = 26). An RM p95 of 6.12 s is over 6 s for that role alone (one
+  8.1 s turn, rm-20); the gate is on all turns. A turn is 2.0 requests; the largest took 44,237 input tokens, so
+  `LIMITS.total_tokens` (60,000) holds. Changed, with evidence:
+  - **Totals in SQL** (`rules.md`): the pilot's client-27 summed 12 rows itself, 1,336,781,000 for the true
+    1,385,965,000, and said 111.4 M a month (gold 115.5 M). With the rule it used `avg` and was right.
+  - **No guessing why, said in the recount's tool result** (`dataroom.RECOUNTED`, appended when `ctx.recount`).
+    With the rule in the system prompt alone, even a stronger one, Haiku counted again and then guessed in 3 of 3
+    disputes (“có thể bạn đang nhớ số khác”, “có thể hai gia đình còn lại chưa nằm trong bảng”). With the line
+    next to the count: 0 of 3, twice. Pointing the person to where a missing item is added (“bạn có thể bổ sung
+    trên trang Tài sản”) is not graded a guess.
+  - **Two gold answers were wrong in the pilot** and were fixed (cio-09 asked about titles, cio-20 counts
+    `da_cham`); six questions with a tie or two readings were rewritten.
+
+  **Model (§3.6): Haiku 5.5 stays.** It passes the gate, so Sonnet is not needed for the SQL step, and Sonnet
+  cannot take it: on OpenRouter Sonnet 5.5 refuses `reasoning: {enabled: false}` (400, “Reasoning is mandatory”),
+  and with reasoning on it refuses a forced `tool_choice`, which the recount needs (D4). Measured with reasoning
+  `low` on 15 turns (5 per role, no disputes): 15/15, p95 4.93 s, US$0.0593 a turn, 6 × the gate; Haiku on the
+  same 15: 15/15, p95 5.02 s, US$0.0031. Sonnet was run on 15 turns, not 90: at US$0.06 a turn, 90 would have
+  cost about US$5.3 against the phase's US$1–2. D5's model calls: 216 turns, 433 requests, US$1.60.
+  Suite with D5: 1,252 passed, 5 failed; the 5 fail the same way on D4's merge (772556d), so none is this
+  plan's: `test_assistant_tools[yeu_cau_tai_khoan]` ×2 (a demo account), `test_security::test_sql_in_the_inputs_is_data`
+  (no table `people`), `test_zone::test_the_zones_door_takes_only_a_signed_bundle_of_the_catalogues` and
+  `test_agent_map_ui::test_the_map_draws_what_the_endpoint_says_and_opens_a_run`.
 
 ## 1. Why: the CIO chat of 2026-10-24
 

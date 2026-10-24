@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-24 — The data room's eval (D5): 90 questions, 30 per role, gold answers from the database; Haiku 5.5
+  89/90, p95 5.3 s, US$0.003 a turn; Sonnet 5.5 measured (15/15, US$0.06 a turn, no forced tool call), so Haiku
+  stays; totals computed in SQL, the recount's result says not to guess why, one catalog ambiguity fixed. —
+  OWN-DA-07, OWN-DA-08, requirements_traceability §0 and §5
 - 2026-10-24 — Measuring the news agents (owner): each ingest run's funnel, status and sources, the days by
   collection time; the scenario agents' moves scored at 3d and 1w (precision, recall, direction, coverage, event
   recall), valued in VND on the simulated book, labelled simulated; cost per model call, never 0 when missing; the

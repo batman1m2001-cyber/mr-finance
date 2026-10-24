@@ -169,7 +169,8 @@ DATA_RULE = (
 # not say is a dispute: the prompt says so, and its first model request must call a tool (``tool_choice``).
 RECOUNT = (
     "\nLượt này người dùng nêu một con số khác với câu trả lời trước: gọi truy_van đếm lại ngay trong lượt này rồi "
-    "mới trả lời, không dùng lại kết quả của lượt trước."
+    "mới trả lời, không dùng lại kết quả của lượt trước. Câu trả lời chỉ gồm bảng đã đếm, điều kiện và con số vừa đếm; "
+    "không đoán vì sao con số của người dùng khác (không viết “có thể bạn…”, “có thể do…”)."
 )
 NUMBER = re.compile(r"\d(?:[\d.,]*\d)?")
 RECOUNTING: ContextVar[bool] = ContextVar("assistant_recounting", default=False)

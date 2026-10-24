@@ -5,4 +5,6 @@ Một câu SELECT (SQLite) trên các bảng dưới đây, và chỉ các bản
   không bằng `luc*` (epoch giây).
 - Tìm theo chữ: `khong_dau(tieu_de) like '%lai suat%'` (bỏ dấu và chữ hoa ở cả hai phía).
 - Hỏi "bao nhiêu" thì đếm bằng `count(*)`, không liệt kê dòng rồi đếm. Liệt kê thì kèm `order by` và `limit`.
+- Tổng, trung bình, tỷ lệ, chênh lệch: tính ngay trong SQL (`sum`, `avg`, `round`), không lấy các dòng rồi tự cộng
+  hay chia.
 - Tiền là VND; tỷ lệ là số thập phân (0,15 là 15%).
