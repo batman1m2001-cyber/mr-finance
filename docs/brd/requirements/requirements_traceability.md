@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 136 | 131 | 3 | 1 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 154 | 131 | 3 | 1 | 18 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -267,6 +267,24 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
+| OWN-FB-01 | FEAT-41 | planned | plan F2 |
+| OWN-FB-02 | FEAT-41 | planned | plan F2 |
+| OWN-FB-03 | FEAT-41, FEAT-25 | planned | plan F2 |
+| OWN-FB-04 | FEAT-41, FEAT-26 | planned | plan F2 |
+| OWN-FB-05 | FEAT-41, FEAT-21 | planned | plan F2 |
+| OWN-FB-06 | FEAT-41 | planned | plan F2 |
+| OWN-FB-07 | FEAT-41 | planned | plan F3 |
+| OWN-FB-08 | FEAT-41 | planned | plan F3 |
+| OWN-FB-09 | FEAT-41 | planned | plan F3 |
+| OWN-FB-10 | FEAT-41 | planned | plan F3 |
+| OWN-FB-11 | FEAT-41, FEAT-01 | planned | plan F3 |
+| OWN-FB-12 | FEAT-41 | planned | plan F3 |
+| OWN-FB-13 | FEAT-41 | planned | plan F3 |
+| OWN-FB-14 | FEAT-41 | planned | plan F1, F4 |
+| OWN-FB-15 | FEAT-41 | planned | plan F4 |
+| OWN-FB-16 | FEAT-41, FEAT-18 | planned | plan F4 |
+| OWN-FB-17 | FEAT-25 | planned | plan F5 |
+| OWN-FB-18 | FEAT-12 | planned | plan F6 |
 | OWN-EV-01 | FEAT-01 | implemented_verified | `news/ops.py::run_summary` keeps the funnel, status and sources on each run; `news/monitor.py` the days and sources; View A — `tests/test_agent_eval.py::test_a_run_records_its_funnel_status_sources_and_groups`, `tests/test_agent_eval.py::test_a_second_run_counts_the_same_news_as_duplicates_once_and_none_as_new`, `tests/test_agent_eval.py::test_a_run_where_every_source_failed_is_failed`, `tests/test_agent_eval.py::test_an_old_run_reads_what_it_kept_and_none_for_the_rest`, `tests/test_agent_eval.py::test_the_days_count_by_collection_time_never_publication_time_and_say_none_for_unkept_fields` |
 | OWN-EV-02 | FEAT-18 | implemented_verified | `trial/evaluate.py` (`judge_move`, `rates`, `score` into `eval_scores` from the `trial_score` job); threshold in `data/evaluation.json` — `tests/test_agent_eval.py::test_each_verdict_from_a_claim_and_the_move`, `tests/test_agent_eval.py::test_the_materiality_threshold_comes_from_the_settings`, `tests/test_agent_eval.py::test_the_rates_carry_their_counts_and_leave_pending_out` |
 | OWN-EV-03 | FEAT-18 | implemented_verified | `trial/evaluate.py::event_recall` on the July reference set — `tests/test_agent_eval.py::test_event_recall_says_where_each_important_story_was_lost` |

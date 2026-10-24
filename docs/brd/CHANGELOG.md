@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-24 — Business feedback 6 (owner): the RM's and the CIO's desks reorganised (nested tabs, Decision board
+  with the inbox in it, plain words on impact, Mô hình and AI to Admin), the client's impact bars by asset class, and
+  no Compliance or Expert account (their duties the CIO's, four eyes kept). Planned. — owner_requirements FB,
+  requirements_traceability §5, docs/BUSINESS_FEEDBACK_6_PLAN.md
 - 2026-10-24 — The data room's eval (D5): 90 questions, 30 per role, gold answers from the database; Haiku 5.5
   89/90, p95 5.3 s, US$0.003 a turn; Sonnet 5.5 measured (15/15, US$0.06 a turn, no forced tool call), so Haiku
   stays; totals computed in SQL, the recount's result says not to guess why, one catalog ambiguity fixed. —

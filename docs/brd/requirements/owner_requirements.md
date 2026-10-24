@@ -7,6 +7,33 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## FB — Business feedback 6: the staff desks (2026-10-24)
+
+Source: [`2026-10-24_business_feedback_6.md`](../sources/owner_requests/2026-10-24_business_feedback_6.md); plan
+[`docs/BUSINESS_FEEDBACK_6_PLAN.md`](../../BUSINESS_FEEDBACK_6_PLAN.md). Amends MR (the desks, FEAT-41), WN-10 for the
+RM, and the roles of the BRD: Compliance's and the Expert's duties are the CIO's (note 18).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-FB-01 | RM · Sổ khách hàng has no drawing of the families around the RM; its cards stay, a card lists the families to pick | note 1, plan F2 | documented |
+| OWN-FB-02 | RM · Khách hàng has no tab Tác động tin, Toàn cảnh, Bản đồ tài chính or Duyệt đề xuất; their addresses open the page that replaced them, or still open for the links that lead there | notes 2 and 6, plan F2 | documented |
+| OWN-FB-03 | RM · Khách hàng: Headline news, two inner tabs News and prediction and Đồ thị tác động (was Chi phí chính sách) | note 3, plan F2 | documented |
+| OWN-FB-04 | RM · Khách hàng: Wealth planning advisor (was Kế hoạch) | note 4, plan F2 | documented |
+| OWN-FB-05 | RM · Khách hàng: Wealth view, two inner tabs Tổng quan and Dữ liệu chi tiết tài sản | note 5, plan F2 | documented |
+| OWN-FB-06 | RM: Advisory performance (was Hiệu quả tư vấn), two inner tabs Khách hàng này and Tất cả khách hàng, in the client's view and on the rail; laid out as the owner's mock (Nội bộ, six figures, the AI pipeline of four agents with arrows, the log, the news missed), its sample data marked | note 6, plan F2 | documented |
+| OWN-FB-07 | CIO: the desk is called Decision board everywhere (rail, title, heading, hint, back link, the assistant's guide) | note 7, plan F3 | documented |
+| OWN-FB-08 | CIO · Decision board: the flow has no Sự kiện stage; Gia đình and RM sit in their own tinted frame | note 8, plan F3 | documented |
+| OWN-FB-09 | CIO · Decision board: each decision row shows its impact level (cao, vừa, thấp) and its news group | note 9, plan F3 | documented |
+| OWN-FB-10 | CIO · Decision board: the decisions filter by source, domestic or international, relevance and words; 20 rows, then Xem thêm | note 10, plan F3 | documented |
+| OWN-FB-11 | CIO · Decision board holds the inbox (source health, filters, Lấy tin ngay, Bỏ tin, Gom thành sự kiện); the Tin tức group is gone, its addresses still open | note 11, plan F3 | documented |
+| OWN-FB-12 | CIO · Decision board: Tổng quan tác động tới tài sản, full width, in plain words with no raw ids, a picker of the scenario and the families ranked (Gia đình, Kỳ vọng, % tài sản ròng, P10); no Sự kiện gần đây | note 12, plan F3 | documented |
+| OWN-FB-13 | CIO · Decision board has no card Mô hình và dữ liệu or Agent dưới bàn | note 13, plan F3 | documented |
+| OWN-FB-14 | CIO · Tác động: a sheet with tabs shows no title or labelled back link above them; Tác động danh mục (was Phơi nhiễm) and Đồ thị lần áp dụng; Lần áp dụng no tab; plain words, P10 explained | note 14, plan F1, F4 | documented |
+| OWN-FB-15 | CIO · Nội dung is one tab Bài viết: the CIO writes their own news or policy article, or a letter from approved views, for Private clients only; Nghiên cứu and Chính sách no tab | note 15, plan F4 | documented |
+| OWN-FB-16 | CIO: Mô hình and AI & cấu hình move to Admin; the CIO has one plain Hiệu quả page (news collected, forecasts right and wrong, each with its count) | note 16, plan F4 | documented |
+| OWN-FB-17 | Customer · Headline News: each row of Tác động lên tài sản ròng is a bar stacked by asset class, each part named with its amount on hover, the parts adding to the row | note 17, plan F5 | documented |
+| OWN-FB-18 | No Compliance or Expert account: the roles leave the sign-in, menus and desks; their duties are the CIO's with the four-eyes rule kept (a second CIO approves); a recommendation is the RM's alone | note 18, plan F6 | documented |
+
 ## EV — Measuring the news agents (2026-10-24)
 
 Source: [`2026-10-24_agent_evaluation.md`](../sources/owner_requests/2026-10-24_agent_evaluation.md); plan
