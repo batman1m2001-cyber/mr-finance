@@ -4,7 +4,9 @@ A local OpenAI-compatible endpoint, ``POST /v1/chat/completions``, that answers 
 (``claude -p``): the system message as the session's whole system prompt, the rest as the prompt, no tools, no MCP
 servers, no settings, no session kept, an empty working directory and a clean environment (so the subscription's
 sign-in is used, never an API key). The reply carries the model asked for and the token counts, as ``call_model``
-in ``views/agents.py`` checks them. Only ``llm:cio`` and ``llm:challenger`` point here (``LLM_AGENT_BASE_URL``).
+in ``views/agents.py`` checks them, plus ``usage.cost`` (Claude Code's ``total_cost_usd``) with ``usage.cost_kind``
+"notional": the subscription bills nothing per call, so it is what the call would cost on the API, never a
+bill. Only ``llm:cio`` and ``llm:challenger`` point here (``LLM_AGENT_BASE_URL``).
 
     uv run python scripts/claude_bridge.py [--port 8091] [--parallel 2]
 
@@ -39,14 +41,15 @@ LOG = Path(__file__).resolve().parent.parent / "logs" / "claude_bridge.jsonl"
 
 
 def find_claude() -> str:
-    """The Claude Code binary: on the PATH, else the newest one the editor extension ships."""
+    """The Claude Code binary: on the PATH, else the newest one the editor extension ships. Looked up on each call:
+    an extension update removes the folder the last one was in (the trial of 2026-10-24 failed on that)."""
     found = shutil.which("claude")
     if found:
         return found
     shipped = "~/.vscode-server/extensions/anthropic.claude-code-*/resources/native-binary/claude"
     hits = sorted(glob.glob(os.path.expanduser(shipped)))
     if not hits:
-        raise SystemExit("claude not found (PATH or the VS Code extension)")
+        raise RuntimeError("claude not found (PATH or the VS Code extension)")
     return hits[-1]
 
 
@@ -75,21 +78,23 @@ def split(messages: List[Dict[str, Any]]) -> tuple[str, str]:
 
 class Bridge:
     def __init__(self, parallel: int) -> None:
-        self.claude = find_claude()
         self.gate = asyncio.Semaphore(parallel)
         self.home = os.path.expanduser("~")
 
     async def ask(self, model: str, system: str, prompt: str) -> Dict[str, Any]:
         env = {"HOME": self.home, "PATH": "/usr/local/bin:/usr/bin:/bin", "LANG": "C.UTF-8"}
-        cmd = [self.claude, "-p", "--output-format", "json", "--model", model, "--tools", "", "--setting-sources=",
+        cmd = [find_claude(), "-p", "--output-format", "json", "--model", model, "--tools", "", "--setting-sources=",
                "--strict-mcp-config", "--no-session-persistence"]
         if system:
             cmd += ["--system-prompt", system]
         async with self.gate:
             with tempfile.TemporaryDirectory(prefix="claude-bridge-") as cwd:
-                proc = await asyncio.create_subprocess_exec(
-                    *cmd, cwd=cwd, env=env, stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE, start_new_session=True)
+                try:
+                    proc = await asyncio.create_subprocess_exec(
+                        *cmd, cwd=cwd, env=env, stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
+                        stderr=asyncio.subprocess.PIPE, start_new_session=True)
+                except OSError as exc:  # the binary gone or not runnable: a logged 502, never a bare 500
+                    raise RuntimeError(f"claude -p did not start: {exc}") from None
                 try:
                     out, err = await asyncio.wait_for(proc.communicate(prompt.encode()), TIMEOUT_S)
                 except asyncio.TimeoutError:
@@ -124,14 +129,17 @@ def build(parallel: int) -> Starlette:
         kinds = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
         tokens_in = sum(int(u.get(k) or 0) for k in kinds)
         tokens_out = int(u.get("output_tokens") or 0)
-        note(asked, model, t0, {"in": tokens_in, "out": tokens_out, "usd": got.get("total_cost_usd")}, None)
+        cached = int(u.get("cache_read_input_tokens") or 0)
+        usd = got.get("total_cost_usd")
+        note(asked, model, t0, {"in": tokens_in, "out": tokens_out, "cached": cached, "usd": usd}, None)
         return JSONResponse({
             "id": f"chatcmpl-{uuid.uuid4().hex[:24]}", "object": "chat.completion", "created": int(t0),
             "model": asked,  # the name the app asked for: call_model checks the reply came from it
             "choices": [{"index": 0, "message": {"role": "assistant", "content": got.get("result") or ""},
                          "finish_reason": "stop"}],
             "usage": {"prompt_tokens": tokens_in, "completion_tokens": tokens_out,
-                      "total_tokens": tokens_in + tokens_out},
+                      "total_tokens": tokens_in + tokens_out, "prompt_tokens_details": {"cached_tokens": cached},
+                      "cost": usd, "cost_kind": "notional" if usd is not None else None},
         })
 
     async def models(_: Request) -> JSONResponse:

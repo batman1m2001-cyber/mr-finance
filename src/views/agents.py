@@ -23,6 +23,7 @@ import os
 import time
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional, Tuple
+from urllib.parse import urlparse
 
 from control import db
 from views import mock, prompts, schema
@@ -186,13 +187,28 @@ async def call_model(
         raise AgentError(f"Mô hình trả lời ({answered}) khác mô hình đã duyệt ({expected})")
     if choice.finish_reason == "length":
         raise AgentError(f"Đầu ra bị cắt ở giới hạn {max_tokens} token")
+    return choice.message.content or "", usage_meta(resp, answered or expected, llm)
+
+
+def usage_meta(resp: Any, model: str, llm: Any = None) -> Dict[str, Any]:
+    """A call's record: tokens in (cached ones included), out and cached, and its cost as the provider reported it
+    (OpenRouter's ``usage.cost``; the Claude Code bridge's ``total_cost_usd`` with ``cost_kind`` "notional", the
+    subscription bills nothing per call). No cost reported is None, never 0: the evaluation says “không có”."""
+    from operonx_agents import Usage
+
     usage = getattr(resp, "usage", None)
-    meta = {
-        "model": answered or expected,
+    u = Usage.from_completion(usage)
+    kind = getattr(usage, "cost_kind", None) or (usage.get("cost_kind") if isinstance(usage, dict) else None)
+    base = str(getattr(getattr(llm, "config", None), "base_url", "") or "")
+    return {
+        "model": model,
         "tokens_in": getattr(usage, "prompt_tokens", None),
         "tokens_out": getattr(usage, "completion_tokens", None),
+        "tokens_cached": u.cached_input_tokens if usage is not None else None,
+        "cost_usd": u.cost_usd,
+        "cost_kind": (kind or "provider") if u.cost_usd is not None else None,
+        "provider": urlparse(base).netloc or None,
     }
-    return choice.message.content or "", meta
 
 
 _LLMS: Dict[Tuple[int, str], Any] = {}
