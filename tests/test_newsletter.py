@@ -42,6 +42,21 @@ def test_only_approved_views_make_a_letter_and_only_a_cio_drafts():
         draft([])
 
 
+def test_a_cio_article_needs_a_body_goes_to_private_only_and_is_guarded():
+    """OWN-FB-15: no views, the CIO's own words; a body under 40 characters or recommendation wording is refused."""
+    with pytest.raises(BadRequest, match="40 đến 6000"):
+        draft([], body="Ngắn quá")
+    body = "Chính sách lãi suất tuần này giữ nguyên.\n\nNgân hàng Nhà nước tiếp tục bơm thanh khoản qua thị trường mở."
+    n = draft([], title="Ghi chú chính sách", body=body)
+    assert n["sections"] == [] and n["audience"] == "private" and n["mode"] == "article"
+    assert n["body"].split("\n\n")[1].startswith("Ngân hàng") and n["guard"]["ok"]
+    assert n["labels"]["ai"] == "Bài viết của CIO, không dùng AI"
+    bad = store.act(n["id"], "edit", "cio", changes={"body": body + " Khuyến nghị mua ngay cổ phiếu ngân hàng."})
+    assert not bad["guard"]["ok"]
+    with pytest.raises(BadRequest, match="cần nội dung"):
+        store.act(n["id"], "edit", "cio", changes={"body": ""})
+
+
 def test_the_template_letter_names_no_ticker_and_carries_every_label():
     vid = approved_view()
     n = draft([vid])

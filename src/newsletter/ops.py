@@ -18,9 +18,10 @@ async def draft(
     mode: str = "template",
     distribution: Optional[dict] = None,
     conflict: Optional[dict] = None,
+    body: str = "",
 ) -> dict:
-    """POST /api/newsletters: a draft from approved views."""
-    return {"newsletter": await store.draft(view_ids, by, title, mode, distribution, conflict)}
+    """POST /api/newsletters: a draft from approved views, or the CIO's own article (a body)."""
+    return {"newsletter": await store.draft(view_ids, by, title, mode, distribution, conflict, body)}
 
 
 @op

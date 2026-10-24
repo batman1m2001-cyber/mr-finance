@@ -6,9 +6,11 @@ from newsletter.ops import act, draft
 
 
 @graph
-def newsletter_draft_flow(view_ids, by, title="", mode="template", distribution=None, conflict=None):
-    """A CIO drafts a newsletter from approved views."""
-    done = draft(view_ids=view_ids, by=by, title=title, mode=mode, distribution=distribution, conflict=conflict)
+def newsletter_draft_flow(view_ids, by, title="", mode="template", distribution=None, conflict=None, body=""):
+    """A CIO drafts a newsletter from approved views, or writes an article of their own."""
+    done = draft(
+        view_ids=view_ids, by=by, title=title, mode=mode, distribution=distribution, conflict=conflict, body=body
+    )
     START >> done >> END
 
 

@@ -102,7 +102,7 @@ def template_intro(sections: List[Dict[str, Any]]) -> str:
 
 def text_of(letter: Dict[str, Any]) -> str:
     """Everything a reader sees, for the guard."""
-    parts = [letter["title"], letter["intro"]]
+    parts = [letter["title"], letter["intro"], letter.get("body", "")]
     for s in letter["sections"]:
         parts += [
             s.get("heading", s["event"]),

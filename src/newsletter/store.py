@@ -50,6 +50,12 @@ def _next_morning() -> float:
     return time.mktime((lt.tm_year, lt.tm_mon, lt.tm_mday, 8, 0, 0, 0, 0, -1))
 
 
+def _body(text: Any) -> str:
+    """The CIO's own words: paragraphs kept (blank lines between), spaces inside each folded."""
+    paras = [" ".join(p.split()) for p in str(text or "").replace("\r", "").split("\n\n")]
+    return "\n\n".join(p for p in paras if p)
+
+
 def _labels(sections: List[Dict[str, Any]], author: str, letter_conflict: Dict[str, Any]) -> Dict[str, Any]:
     who = roles.users()[author]
     coi = sorted(
@@ -59,7 +65,9 @@ def _labels(sections: List[Dict[str, Any]], author: str, letter_conflict: Dict[s
     return {
         "ai": "Có AI hỗ trợ soạn (CIO duyệt)"
         if any(s["ai"] for s in sections)
-        else "Soạn theo mẫu từ nhận định CIO duyệt",
+        else "Soạn theo mẫu từ nhận định CIO duyệt"
+        if sections
+        else "Bài viết của CIO, không dùng AI",
         "responsible": f"{who['name']} — {who['title']}",
         "time": time.strftime("%H:%M %d/%m/%Y", time.localtime()),
         "not_advice": compose.NOT_ADVICE,
@@ -115,31 +123,42 @@ async def draft(
     mode: str = "template",
     distribution: Optional[Dict[str, Any]] = None,
     conflict_: Any = None,
+    body: str = "",
 ) -> Dict[str, Any]:
-    """A CIO drafts from 1–6 approved views."""
+    """A CIO drafts from 1–6 approved views, or writes an article of their own (a body, no views: their news or a
+    policy note), which goes to Private clients only (OWN-FB-15)."""
     roles.require(by, "cio")
     ids = list(dict.fromkeys(str(v) for v in (view_ids or [])))
-    if not 1 <= len(ids) <= 6:
-        raise BadRequest("Chọn 1–6 nhận định đã duyệt")
-    if mode not in ("template", "agent"):
+    text = _body(body)
+    if len(ids) > 6 or not (ids or text):
+        raise BadRequest("Chọn 1–6 nhận định đã duyệt hoặc viết nội dung bài")
+    if text and not 40 <= len(text) <= 6000:
+        raise BadRequest("Nội dung bài từ 40 đến 6000 ký tự")
+    if not ids:
+        mode = "article"
+    elif mode not in ("template", "agent"):
         raise BadRequest("mode là template hoặc agent")
     try:
         sections = [compose.section(v) for v in ids]
     except (ValueError, KeyError) as exc:
         raise Conflict(str(exc)) from None
-    title = str(title or "").strip() or f"Bản tin thị trường {time.strftime('%d/%m/%Y')}"
+    title = str(title or "").strip() or f"{'Bản tin thị trường' if ids else 'Bài viết'} {time.strftime('%d/%m/%Y')}"
     findings: List[str] = []
-    if mode == "agent":
+    if mode == "article":
+        intro, written_by = "", by
+    elif mode == "agent":
         intro, written_by, findings = await compose.agent_intro(sections)
     else:
         intro, written_by = compose.template_intro(sections), "template"
     try:
-        coi = conflict.declare(conflict_, title, intro, *_section_text(sections), covered=_covered(sections))
+        coi = conflict.declare(conflict_, title, intro, text, *_section_text(sections), covered=_covered(sections))
     except conflict.ConflictError as exc:
         raise BadRequest(str(exc)) from None
     n = {
         "title": title[:200],
         "intro": intro,
+        "body": text,
+        "audience": "all" if ids else "private",
         "sections": sections,
         "view_ids": ids,
         "author": by,
@@ -182,6 +201,13 @@ def act(nid: str, action: str, by: str, note: str = "", changes: Optional[Dict[s
             n["title"] = str(ch["title"]).strip()[:200] or n["title"]
         if "intro" in ch:
             n["intro"], n["intro_by"] = " ".join(str(ch["intro"]).split())[:1500], by
+        if "body" in ch:
+            text = _body(ch["body"])
+            if not (text or n["sections"]):
+                raise BadRequest("Bài viết không có nhận định nào cần nội dung")
+            if text and not 40 <= len(text) <= 6000:
+                raise BadRequest("Nội dung bài từ 40 đến 6000 ký tự")
+            n["body"] = text
         if "headings" in ch:  # {view_id: text}: a section's heading, reworded by the CIO
             given = dict(ch["headings"] or {})
             for sec in n["sections"]:
@@ -190,12 +216,13 @@ def act(nid: str, action: str, by: str, note: str = "", changes: Optional[Dict[s
                     sec["heading"] = text
         if "distribution" in ch:
             n["distribution"] = _distribution(ch["distribution"])
-        if {"conflict", "title", "intro", "headings"} & set(ch):
+        if {"conflict", "title", "intro", "body", "headings"} & set(ch):
             try:
                 n["conflict"] = conflict.declare(
                     ch.get("conflict", n["conflict"]),
                     n["title"],
                     n["intro"],
+                    n.get("body", ""),
                     *_section_text(n["sections"]),
                     covered=_covered(n["sections"]),
                 )
