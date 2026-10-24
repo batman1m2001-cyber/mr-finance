@@ -44,3 +44,4 @@ supersedes the old one (the old one is marked `superseded by ADR-nnnn`, never ed
 | [ADR-0036](ADR-0036-every-staff-role-works-at-its-own-desk.md) | Every staff role works at its own desk, in the Customer workspace's frame | accepted (experiment) | 2026-10-18 |
 | [ADR-0037](ADR-0037-the-clients-four-sections-carry-the-banks-names.md) | The client's four sections carry the bank's names; the graph is hidden from the client | accepted | 2026-10-22 |
 | [ADR-0038](ADR-0038-a-second-client-set-the-santander-vn-private-book.md) | A second client set: a Private book from Santander's clients, SCF households and Techcombank's totals; the demo stays (keeps ADR-0005) | proposed | 2026-10-23 |
+| [ADR-0040](ADR-0040-the-assistant-queries-role-scoped-read-only-views.md) | The assistant queries role-scoped, read-only views with SQL (`truy_van`); totals are counts (amends `Param`'s rule for one tool) | accepted | 2026-10-24 |
