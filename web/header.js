@@ -97,21 +97,22 @@ export function mount(shell) {
         items = q.map(x => ({title: x.title, sub: x.client_name, tone: "warn", route: "#/specialist/duyet", focus: `review:${x.id}`}));
       } else {
         // staff: the alerts of the kinds the role looks after first (NFR-12), then the role's own queue
-        const al = (await get("/api/system/alerts")).alerts.filter(a => a.status === "open");
+        const sys = await get("/api/system/alerts");  // a page of alerts, and the open ones counted by the server
+        const al = sys.alerts.filter(a => a.status === "open");
         const alerts = al.map(a => ({title: a.title, sub: `${a.label}${a.count > 1 ? ` · ${a.count} lần` : ""}`, tone: SEV[a.severity],
           route: (WHERE[role] || {})[a.kind] || `#/${role}`, alert: a.id}));
         let rest = [], total = 0;
         if (role === "cio") {  // the high-relevance new news, as the desk counts them (“100 liên quan cao”), not all 800
-          const n = (await get("/api/news/inbox?relevance=high&limit=1000")).items;
-          rest = n.slice(0, 8).map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio/hop-tin"}));
-          total = n.length;
+          const d = await get("/api/news/inbox?relevance=high&limit=8");
+          rest = d.items.map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio/hop-tin"}));
+          total = d.total != null ? d.total : d.items.length;
         } else if (role === "compliance") {
           const n = (await get("/api/news/inbox?held=1")).items.filter(i => i.status !== "released");
           rest = n.slice(0, 8).map(i => ({title: i.title, sub: "Tin bị giữ", tone: "warn", route: "#/compliance/giu"}));
           total = n.length;
         }
         items = [...alerts, ...rest];
-        items.total = alerts.length + total;
+        items.total = (sys.open != null ? sys.open : alerts.length) + total;
       }
     } catch (_) { items = []; }
     try {  // the person's own follow-ups that fired (A6): first, until opened

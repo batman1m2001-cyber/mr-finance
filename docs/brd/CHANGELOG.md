@@ -2,6 +2,8 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-24 — Totals are counts (D1): the inbox page says 1.417 (was 300) and “40 / 1.417”; alerts, search,
+  the CIO desk's Tin stage and the held-news tool count in the database. — OWN-DA-01, requirements_traceability §5
 - 2026-10-24 — The assistant reads the data itself (owner): totals are counts; one tool, `truy_van`, a SQL
   `select` on role-scoped read-only views under SQLite's authorizer, with a catalog, "Cách tính", an audit entry
   and an eval gate; amends `Param`'s rule for that tool. Planned (D0). — ADR-0040, owner_requirements DA,

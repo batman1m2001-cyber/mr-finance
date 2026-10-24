@@ -93,12 +93,19 @@ async def search(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     q = str(args.get("q") or "").strip()[:100]
     if not q:
         raise ToolFailed("Cần từ khóa để tìm")
-    hits = (await _graph(search_flow, q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]["hits"]
+    found = (await _graph(search_flow, q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]
+    hits = found["hits"]
     if not hits:
-        return {"text": f"Không tìm thấy gì cho “{q}” trong những gì bạn được xem.", "data": {"hits": 0}}
+        return {"text": f"Không tìm thấy gì cho “{q}” trong những gì bạn được xem.", "data": {"hits": 0, "total": 0}}
+    total = found.get("total", len(hits))  # every match, counted; ``hits`` is at most six of each kind
+    shown = f"{len(hits)} / {total}" if total > len(hits) else str(total)
     return {
-        "text": f"{len(hits)} kết quả cho “{q}”: " + "; ".join(h["label"] for h in hits[:5]) + ".",
-        "data": {"hits": len(hits), "items": [{"label": h["label"], "route": h["route"]} for h in hits[:10]]},
+        "text": f"{shown} kết quả cho “{q}”: " + "; ".join(h["label"] for h in hits[:5]) + ".",
+        "data": {
+            "hits": len(hits),
+            "total": total,
+            "items": [{"label": h["label"], "route": h["route"]} for h in hits[:10]],
+        },
         "card": {
             "kind": "list",
             "items": [{"title": h["label"], "sub": h.get("sub") or "", "route": h["route"]} for h in hits[:8]],
@@ -135,7 +142,11 @@ async def queue(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     )
     return {
         "text": text,
-        "data": {"items": [{"id": r["id"], "title": r["title"], "status": r["status"]} for r in items[:20]]},
+        "data": {
+            "items": [{"id": r["id"], "title": r["title"], "status": r["status"]} for r in items[:20]],
+            "total": len(items),  # ``reviews`` reads every row (no cap), so its length is the total
+            "waiting": len(waiting),
+        },
         "focus": [f"review:{r['id']}" for r in waiting[:5]],
         "card": {
             "kind": "list",
@@ -194,14 +205,18 @@ async def system_alerts(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
     found = alerts.for_role(ctx.role)
     if not found:
-        return {"text": "Không có cảnh báo hệ thống nào.", "data": {"alerts": []}}
-    opened = [a for a in found if a["status"] == "open"]
-    text = f"{len(found)} cảnh báo hệ thống, {len(opened)} chưa ai xem. " + " ".join(
+        return {"text": "Không có cảnh báo hệ thống nào.", "data": {"alerts": [], "total": 0, "open": 0}}
+    n = alerts.counts(ctx.role)  # counted in the database: ``for_role`` is a page of 50
+    text = f"{n['total']} cảnh báo hệ thống, {n['open']} chưa ai xem. " + " ".join(
         f"{k + 1}) {a['label']}: {a['title']}." for k, a in enumerate(found[:3])
     )
     return {
         "text": text,
-        "data": {"alerts": [{"id": a["id"], "title": a["title"], "status": a["status"]} for a in found[:20]]},
+        "data": {
+            "alerts": [{"id": a["id"], "title": a["title"], "status": a["status"]} for a in found[:20]],
+            "total": n["total"],
+            "open": n["open"],
+        },
         "card": {
             "kind": "list",
             "items": [

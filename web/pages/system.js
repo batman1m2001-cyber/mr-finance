@@ -65,7 +65,7 @@ export async function render(box, ctx) {
     <div class="pagehead"><div><div class="eyebrow">Quản trị</div>
       <h1 class="h1">Hệ thống</h1>
       <p class="lede">${d.jobs.length} việc chạy nền${failing.length ? ` · <span class="bad-text">${failing.length} đang lỗi</span>` : " · không việc nào đang lỗi"}
-        · ${d.alerts.filter(a => a.status === "open").length ? `<span class="bad-text">${d.alerts.filter(a => a.status === "open").length} cảnh báo đang mở</span>` : "không có cảnh báo mở"}
+        · ${d.alerts_open ? `<span class="bad-text">${d.alerts_open} cảnh báo đang mở</span>` : "không có cảnh báo mở"}
         · chuỗi nhật ký ${d.chain.ok ? "toàn vẹn" : `<span class="bad-text">gãy ở dòng ${d.chain.broken_at}</span>`}.</p></div></div>
 
     <div class="cols">

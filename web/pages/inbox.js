@@ -1,22 +1,24 @@
 /* CIO · Hộp tin (FR-103): the news that passed the gates, newest first. Filter, pick several, group
    them into an event, or drop them. The strip on top is feed health: each source's last fetch and
    its items per hour over a day. */
-import {EVENT_TYPE, ago, empty, esc, get, post, toast, when} from "../core/core.js";
+import {EVENT_TYPE, ago, empty, esc, get, num, post, toast, when} from "../core/core.js";
 import {spark} from "../charts/charts.js";
 
 const REL = {high: ["bad", "Liên quan cao"], medium: ["warn", "Vừa"], low: ["", "Thấp"]};
 const state = {source: "", kind: "", relevance: "", q: "", picked: new Set(), shown: 40};
 
 export async function render(box, ctx) {
-  const params = new URLSearchParams({limit: "300"});
+  // a page of rows; the total is counted by the server (it said 300 for 1,415 when it was the page's length)
+  const params = new URLSearchParams({limit: String(state.shown)});
   for (const k of ["source", "kind", "relevance", "q"]) if (state[k]) params.set(k, state[k]);
   const d = await get(`/api/news/inbox?${params}`);
   const items = d.items;
+  const total = d.total == null ? items.length : d.total;
   const last = d.last_run;
   const errors = d.sources.filter(s => s.last && s.last.error);
   box.innerHTML = `
     <div class="pagehead">
-      <div><div class="eyebrow">CIO · Hộp tin</div><div class="h1">${items.length} tin chờ xử lý</div>
+      <div><div class="eyebrow">CIO · Hộp tin</div><div class="h1">${num(total)} tin chờ xử lý</div>
         <div class="lede small">Lấy tin tự động mỗi 10 phút từ ${d.sources.length} nguồn công khai trong danh sách trắng. Lần gần nhất: ${last ? ago(last.at) : "chưa có"}${errors.length ? ` · <span class="down">${errors.length} nguồn lỗi</span>` : ""}.</div></div>
       <div class="row"><button type="button" class="btn" id="fetch">Lấy tin ngay</button></div>
     </div>
@@ -35,18 +37,18 @@ export async function render(box, ctx) {
     </div>
     <div class="panel" style="padding:8px 8px">
       <div class="row spread" style="padding:6px 10px 10px">
-        <span class="small muted" id="picked">Chọn tin để gom thành một sự kiện</span>
+        <span class="small muted"><span id="picked">Chọn tin để gom thành một sự kiện</span> · <span id="page-count">${num(items.length)} / ${num(total)}</span></span>
         <div class="row"><button type="button" class="btn sm" id="dismiss" disabled>Bỏ tin</button>
         <button type="button" class="btn sm primary" id="group" disabled>Gom thành sự kiện</button></div>
       </div>
-      <div class="list">${items.length ? items.slice(0, state.shown).map(i => `
+      <div class="list">${items.length ? items.map(i => `
         <label class="item" style="cursor:pointer">
           <input type="checkbox" data-id="${esc(i.id)}" ${state.picked.has(i.id) ? "checked" : ""} aria-label="Chọn ${esc(i.title)}">
           <div><div class="t" data-quote>${esc(i.title)}</div>
             <div class="m">${esc(i.outlet)} · ${esc(i.label)} · ${when(i.published)}${i.event_type ? ` · ${esc(EVENT_TYPE[i.event_type] || i.event_type)}` : ""}${i.held ? ' · <span class="badge bad">bị giữ: danh sách hạn chế</span>' : ""}</div></div>
           <span class="badge ${REL[i.relevance][0]}">${REL[i.relevance][1]}</span>
         </label>`).join("") : empty("Không có tin nào khớp bộ lọc")}</div>
-      ${items.length > state.shown ? `<div class="row" style="justify-content:center;padding:10px"><button type="button" class="btn sm" id="more">Xem thêm (còn ${items.length - state.shown} tin)</button></div>` : ""}
+      ${total > items.length ? `<div class="row" style="justify-content:center;padding:10px"><button type="button" class="btn sm" id="more">Xem thêm (còn ${num(total - items.length)} tin)</button></div>` : ""}
     </div>`;
 
   const pickedText = () => {
