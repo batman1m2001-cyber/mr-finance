@@ -90,7 +90,7 @@ export function mount(shell) {
       else if (role === "client" || role === "rm") {
         const f = (await post("/api/feed", {client_id: client, scope, role})).feed;
         const where = role === "client" ? {impact: "#/client/tin/thi-truong", detail: "#/client/tong-quan/chi-tiet", flow: "#/client/tong-quan/toan-canh"}
-          : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/toan-canh"};
+          : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/tong-quan"};
         items = f.items.map(i => ({title: i.title, sub: i.why, tone: SEV[i.severity], route: where[i.link] || where.detail, focus: i.key, high: i.severity === "high"}));
       } else if (role === "specialist") {  // the action recommendations waiting for this specialist (G8)
         const q = (await get("/api/review?status=pending_specialist")).items;

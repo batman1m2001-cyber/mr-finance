@@ -733,6 +733,14 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 @media (max-width: 1100px) { .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .pipe { grid-template-columns: minmax(0, 1fr); } }
 .agent { border: 1px solid var(--hair); border-radius: 12px; padding: 12px; min-width: 0; background: var(--surface-2); }
+.agent { position: relative; }
+.ag-n { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  font-size: 12px; font-weight: 750; }
+.ag-to { position: absolute; right: -12px; top: 22px; width: 12px; display: grid; place-items: center; color: var(--muted); }
+.ag-to .ic { transform: rotate(45deg); }  /* the arrow icon points up-right: → */
+.pipe > .agent:nth-child(2n) .ag-to { display: none; }
+@media (min-width: 1101px) { .pipe > .agent:nth-child(2n) .ag-to { display: grid; } }
+@media (max-width: 560px) { .pipe > .agent .ag-to { display: none !important; } }
 .agent .score { margin-left: auto; font-size: 22px; font-weight: 750; font-variant-numeric: tabular-nums; }
 .agent .spark { margin: 8px 0 4px; }
 .agent .kv { padding: 3px 0; font-size: 12px; }
@@ -1462,29 +1470,18 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .dk-tabs a { padding: 5px 10px; border-radius: 8px; text-decoration: none; color: var(--ink-2); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .dk-tabs a[aria-current] { background: var(--accent-soft); color: var(--accent); }
 .desk .ws-sheet-h .iconbtn { flex: none; }
+/* a sheet with tabs (OWN-FB-14): the back link is its chevron, the tabs name the page; inner tabs on their own line */
+.desk.dk-tabbed .dk-back-l { display: none; }
+.dk-tabs2 { display: flex; gap: 18px; padding: 0 20px; border-bottom: 1px solid var(--hair); overflow-x: auto; scrollbar-width: none; flex: none; background: var(--plane); }
+.dk-tabs2::-webkit-scrollbar { display: none; }
+.dk-tabs2[hidden] { display: none; }
+.dk-tabs2 a { padding: 9px 2px 8px; border-bottom: 2px solid transparent; text-decoration: none; color: var(--ink-2); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.dk-tabs2 a[aria-current] { border-color: var(--accent); color: var(--accent); }
 button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
 /* the RM's book (SCR-RM-07): rings by how soon, dots by net worth */
-.rk-map { padding: 10px 12px 12px; }
-.rk-map svg { display: block; width: 100%; height: auto; max-height: 380px; }
-.rk-ring { fill: none; stroke: var(--hair); stroke-dasharray: 3 5; }
-.rk-edge { stroke: var(--axis); stroke-width: 1.2; }
-.rk-edge.l3 { stroke: var(--critical); stroke-width: 2.2; } .rk-edge.l2 { stroke: var(--warning); stroke-width: 1.8; }
-.rk-edge.l1 { stroke: var(--human); } .rk-edge.l0 { stroke-dasharray: 2 4; }
-.rk-me circle { fill: var(--accent); } .rk-me text { fill: var(--accent-ink); font-size: 13px; font-weight: 700; text-anchor: middle; }
-.rk-fam { cursor: pointer; outline: none; }
-.rk-dot { fill: var(--surface); stroke: var(--axis); stroke-width: 2.5; }
-.rk-fam.l3 .rk-dot { fill: var(--critical-soft); stroke: var(--critical); } .rk-fam.l2 .rk-dot { fill: var(--warning-soft); stroke: var(--warning); }
-.rk-fam.l1 .rk-dot { fill: var(--human-soft); stroke: var(--human); }
-.rk-halo { fill: none; stroke: var(--accent); stroke-width: 3; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
-.rk-fam:hover .rk-halo { opacity: .45; } .rk-fam.sel .rk-halo, .rk-fam:focus-visible .rk-halo { opacity: 1; }
-.dk-center .rk-fam[data-node].act .rk-halo { opacity: 1; stroke: var(--pulse); } .dk-center .rk-fam[data-node].lit .rk-halo { opacity: 1; }
-.dk-center .rk-fam[data-node]::after { display: none; }
-.rk-n circle { fill: var(--critical); } .rk-fam.l2 .rk-n circle { fill: var(--warning); } .rk-fam.l1 .rk-n circle { fill: var(--human); }
-.rk-n text { fill: #fff; font-size: 11px; font-weight: 750; text-anchor: middle; }
-.rk-l { fill: var(--ink); font-size: 15px; font-weight: 600; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
-.rk-key { margin: 4px 4px 0; line-height: 1.8; }
+.rk-end { display: flex; align-items: center; gap: 8px; flex: none; }
+.dk-row.sel { background: var(--accent-soft); }
 .rk-acts { display: flex; flex-wrap: wrap; gap: 6px; }
-@media (prefers-reduced-motion: reduce) { .rk-halo { transition: none; } }
 /* Admin's operations map (SCR-ADM-02): four lanes left to right, each node coloured by its last record */
 .ad-map { list-style: none; margin: 0 0 4px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
 .ad-lane { position: relative; display: grid; align-content: start; gap: 8px; min-width: 0; }
@@ -1544,7 +1541,8 @@ button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-al
   .desk .ws-sheet-h { flex-wrap: wrap; padding: 8px 14px; }
   .desk .ws-sheet-h b { flex: 1 1 0; }  /* basis 0: the line holds back · title · ✕, the title takes an ellipsis */
   .dk-tabs { order: 5; flex-basis: 100%; }
-  .rk-l { font-size: 15px; } .rk-me text { font-size: 14px; } .rk-n text { font-size: 12px; }
+  .desk.dk-tabbed .dk-tabs { order: 0; flex-basis: 0; }  /* no title: back · tabs · ✕ on one line */
+  .dk-tabs2 { padding: 0 14px; }
   .ad-map { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .ad-lane::before, .ad-lane::after { display: none; }
   .sp-bench { grid-template-columns: minmax(0, 1fr); }

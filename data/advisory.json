@@ -18,8 +18,8 @@
    "agents": [
     {
      "id": "news",
-     "name": "Agent CIO",
-     "name_vi": "đọc tin, lập nhận định và kịch bản",
+     "name": "AI News Reader",
+     "name_vi": "AI đọc báo, tổng hợp tin",
      "score": 80,
      "trend": [
       0.764,
@@ -57,8 +57,8 @@
     },
     {
      "id": "impact",
-     "name": "Bộ máy tác động",
-     "name_vi": "tính tác động lên danh mục — không gọi mô hình",
+     "name": "AI Impact Assessor",
+     "name_vi": "AI đánh giá tác động lên danh mục",
      "score": 77,
      "trend": [
       0.78,
@@ -96,8 +96,8 @@
     },
     {
      "id": "planner",
-     "name": "Kế hoạch của RM",
-     "name_vi": "RM lập kế hoạch và hành động",
+     "name": "AI Planning Advisor",
+     "name_vi": "AI tư vấn kế hoạch và hành động",
      "score": 72,
      "trend": [
       0.714,
@@ -135,8 +135,8 @@
     },
     {
      "id": "chat",
-     "name": "OneWealth Copilot",
-     "name_vi": "trả lời khách ở khung Trợ lý",
+     "name": "AI Client Chat",
+     "name_vi": "AI chat với khách hàng",
      "score": 83,
      "trend": [
       0.814,
@@ -357,8 +357,8 @@
    "agents": [
     {
      "id": "news",
-     "name": "Agent CIO",
-     "name_vi": "đọc tin, lập nhận định và kịch bản",
+     "name": "AI News Reader",
+     "name_vi": "AI đọc báo, tổng hợp tin",
      "score": 88,
      "trend": [
       0.82,
@@ -396,8 +396,8 @@
     },
     {
      "id": "impact",
-     "name": "Bộ máy tác động",
-     "name_vi": "tính tác động lên danh mục — không gọi mô hình",
+     "name": "AI Impact Assessor",
+     "name_vi": "AI đánh giá tác động lên danh mục",
      "score": 78,
      "trend": [
       0.738,
@@ -435,8 +435,8 @@
     },
     {
      "id": "planner",
-     "name": "Kế hoạch của RM",
-     "name_vi": "RM lập kế hoạch và hành động",
+     "name": "AI Planning Advisor",
+     "name_vi": "AI tư vấn kế hoạch và hành động",
      "score": 72,
      "trend": [
       0.716,
@@ -474,8 +474,8 @@
     },
     {
      "id": "chat",
-     "name": "OneWealth Copilot",
-     "name_vi": "trả lời khách ở khung Trợ lý",
+     "name": "AI Client Chat",
+     "name_vi": "AI chat với khách hàng",
      "score": 91,
      "trend": [
       0.814,
@@ -703,8 +703,8 @@
    "agents": [
     {
      "id": "news",
-     "name": "Agent CIO",
-     "name_vi": "đọc tin, lập nhận định và kịch bản",
+     "name": "AI News Reader",
+     "name_vi": "AI đọc báo, tổng hợp tin",
      "score": 78,
      "trend": [
       0.768,
@@ -742,8 +742,8 @@
     },
     {
      "id": "impact",
-     "name": "Bộ máy tác động",
-     "name_vi": "tính tác động lên danh mục — không gọi mô hình",
+     "name": "AI Impact Assessor",
+     "name_vi": "AI đánh giá tác động lên danh mục",
      "score": 77,
      "trend": [
       0.735,
@@ -781,8 +781,8 @@
     },
     {
      "id": "planner",
-     "name": "Kế hoạch của RM",
-     "name_vi": "RM lập kế hoạch và hành động",
+     "name": "AI Planning Advisor",
+     "name_vi": "AI tư vấn kế hoạch và hành động",
      "score": 77,
      "trend": [
       0.671,
@@ -820,8 +820,8 @@
     },
     {
      "id": "chat",
-     "name": "OneWealth Copilot",
-     "name_vi": "trả lời khách ở khung Trợ lý",
+     "name": "AI Client Chat",
+     "name_vi": "AI chat với khách hàng",
      "score": 91,
      "trend": [
       0.878,
@@ -1028,8 +1028,8 @@
    "agents": [
     {
      "id": "news",
-     "name": "Agent CIO",
-     "name_vi": "đọc tin, lập nhận định và kịch bản",
+     "name": "AI News Reader",
+     "name_vi": "AI đọc báo, tổng hợp tin",
      "score": 82,
      "trend": [
       0.78,
@@ -1067,8 +1067,8 @@
     },
     {
      "id": "impact",
-     "name": "Bộ máy tác động",
-     "name_vi": "tính tác động lên danh mục — không gọi mô hình",
+     "name": "AI Impact Assessor",
+     "name_vi": "AI đánh giá tác động lên danh mục",
      "score": 84,
      "trend": [
       0.702,
@@ -1106,8 +1106,8 @@
     },
     {
      "id": "planner",
-     "name": "Kế hoạch của RM",
-     "name_vi": "RM lập kế hoạch và hành động",
+     "name": "AI Planning Advisor",
+     "name_vi": "AI tư vấn kế hoạch và hành động",
      "score": 70,
      "trend": [
       0.711,
@@ -1145,8 +1145,8 @@
     },
     {
      "id": "chat",
-     "name": "OneWealth Copilot",
-     "name_vi": "trả lời khách ở khung Trợ lý",
+     "name": "AI Client Chat",
+     "name_vi": "AI chat với khách hàng",
      "score": 81,
      "trend": [
       0.798,
@@ -1360,8 +1360,8 @@
    "agents": [
     {
      "id": "news",
-     "name": "Agent CIO",
-     "name_vi": "đọc tin, lập nhận định và kịch bản",
+     "name": "AI News Reader",
+     "name_vi": "AI đọc báo, tổng hợp tin",
      "score": 81,
      "trend": [
       0.792,
@@ -1399,8 +1399,8 @@
     },
     {
      "id": "impact",
-     "name": "Bộ máy tác động",
-     "name_vi": "tính tác động lên danh mục — không gọi mô hình",
+     "name": "AI Impact Assessor",
+     "name_vi": "AI đánh giá tác động lên danh mục",
      "score": 75,
      "trend": [
       0.739,
@@ -1438,8 +1438,8 @@
     },
     {
      "id": "planner",
-     "name": "Kế hoạch của RM",
-     "name_vi": "RM lập kế hoạch và hành động",
+     "name": "AI Planning Advisor",
+     "name_vi": "AI tư vấn kế hoạch và hành động",
      "score": 76,
      "trend": [
       0.711,
@@ -1477,8 +1477,8 @@
     },
     {
      "id": "chat",
-     "name": "OneWealth Copilot",
-     "name_vi": "trả lời khách ở khung Trợ lý",
+     "name": "AI Client Chat",
+     "name_vi": "AI chat với khách hàng",
      "score": 85,
      "trend": [
       0.834,

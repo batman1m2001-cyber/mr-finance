@@ -42,37 +42,44 @@ const ROLES = {
     nav: [
       {id: "ban", label: "Sổ khách hàng", desk: true},  // FEAT-41: the RM's desk (SCR-RM-07)
       {id: "hom-nay", label: "Hôm nay", page: "today"},
-      {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
-        {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
-        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "ban-do", label: "Bản đồ tài chính", page: "map"},
-        {id: "tong-quan", label: "Chi tiết tài sản", page: "detail"},
-        {id: "tai-san", label: "Tài sản", page: "holdings"}, {id: "ke-hoach", label: "Kế hoạch", page: "plan"},
-        {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "performance"},
-        {id: "duyet", label: "Duyệt đề xuất", page: "advisor"}]},
-      {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "perfall"},
+      // OWN-FB-02…06: four tabs, two of them with inner tabs (web/desk/desk.js); `hidden` pages open, with no tab
+      {id: "khach-hang", label: "Khách hàng", clientPick: true,
+        tabs: {wealth: "Wealth view", plan: "Wealth planning advisor", news: "Headline news", perf: "Advisory performance"}, sub: [
+          {id: "tong-quan", label: "Tổng quan", page: "detail", tab: "wealth"},
+          {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings", tab: "wealth"},
+          {id: "ke-hoach", label: "Wealth planning advisor", page: "plan", tab: "plan"},
+          {id: "chinh-sach", label: "News and prediction", page: "policy", tab: "news"},
+          {id: "do-thi", label: "Đồ thị tác động", page: "graph", tab: "news"},
+          {id: "hieu-qua", label: "Khách hàng này", page: "performance", tab: "perf"},
+          {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall", tab: "perf"},
+          {id: "tac-dong", label: "Tác động tin", page: "impact", hidden: true},  // the desk's and the bell's evidence
+          {id: "duyet", label: "Duyệt đề xuất", page: "advisor", hidden: true}]},  // the desk's "Đề xuất chờ duyệt"
+      {id: "hieu-qua", label: "Advisory performance", clientPick: true, sub: [
+        {id: "khach-hang", label: "Khách hàng này", page: "performance"}, {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall"}]},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   cio: {
     label: "CIO", user: "cio",
     nav: [
-      {id: "ban", label: "Bàn quyết định", desk: true},  // FEAT-41: the CIO's desk (SCR-CIO-15)
-      {id: "hop-tin", label: "Hộp tin", page: "inbox"},
-      {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events"},
-      {id: "phoi-nhiem", label: "Phơi nhiễm", page: "exposure"},
-      {id: "ap-dung", label: "Lần áp dụng", page: "runs"},
+      {id: "ban", label: "Decision board", desk: true},  // FEAT-41: the CIO's desk (SCR-CIO-15); the inbox is on it (OWN-FB-11)
+      {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events", hidden: true},  // every decision row opens one
+      {id: "phoi-nhiem", label: "Tác động danh mục", page: "exposure"},
       {id: "do-thi", label: "Đồ thị lần áp dụng", page: "graph"},
-      {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
-      {id: "ban-tin", label: "Bản tin", page: "newsletter"},
-      {id: "chinh-sach", label: "Chính sách", page: "radar"},
-      {id: "mo-hinh", label: "Mô hình", sub: [
+      {id: "ap-dung", label: "Lần áp dụng", page: "runs", hidden: true},  // a run waiting for review opens here
+      {id: "ban-tin", label: "Bài viết", page: "newsletter"},  // OWN-FB-15: the CIO's articles, for Private clients
+      {id: "nghien-cuu", label: "Nghiên cứu", page: "research", hidden: true},
+      {id: "chinh-sach", label: "Chính sách", page: "radar", hidden: true},
+      {id: "hieu-qua", label: "Hiệu quả", page: "cioperf"},  // OWN-FB-16: how many news, how often right
+      // OWN-FB-16: Mô hình and AI are Admin's; the addresses stay for links already sent
+      {id: "mo-hinh", label: "Mô hình", hidden: true, sub: [
         {id: "tham-so", label: "Tham số", page: "model"}, {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
         {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"},
-        {id: "thu-nghiem", label: "Thử nghiệm hằng ngày", page: "trial"}]},  // BUSINESS_FEEDBACK_1021_PLAN B1
-      {id: "do-luong", label: "Đo lường", page: "measure"},
-      {id: "agent", label: "Agent", page: "agents"},
-      {id: "viec-nen", label: "Việc nền", page: "jobs"},
-      {id: "cau-hinh", label: "Cấu hình", page: "config"},
+        {id: "thu-nghiem", label: "Thử nghiệm hằng ngày", page: "trial"}]},
+      {id: "do-luong", label: "Đo lường", page: "measure", hidden: true},
+      {id: "agent", label: "Agent", page: "agents", hidden: true},
+      {id: "viec-nen", label: "Việc nền", page: "jobs", hidden: true},
+      {id: "cau-hinh", label: "Cấu hình", page: "config", hidden: true},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
@@ -84,33 +91,13 @@ const ROLES = {
       {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "tai-khoan", label: "Tài khoản và vai trò", page: "accounts"},
-      {id: "agent", label: "Agent", page: "agents"},
-      {id: "viec-nen", label: "Việc nền", page: "jobs"},
-      {id: "nhat-ky", label: "Nhật ký", page: "audit"},
-      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
-    ],
-  },
-  specialist: {
-    label: "Chuyên gia", user: "sp_global",
-    nav: [
-      {id: "ban", label: "Bàn chuyên gia", desk: true},  // FEAT-41: the Expert's desk (SCR-SP-02)
-      {id: "duyet", label: "Duyệt khuyến nghị", page: "specialist"},
-      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
-    ],
-  },
-  compliance: {
-    label: "Tuân thủ", user: "compliance",
-    nav: [
-      {id: "ban", label: "Bàn kiểm soát", desk: true},  // FEAT-41: Compliance's desk (SCR-CMP-06)
-      {id: "giu", label: "Tin bị giữ", page: "held"},
-      {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
-      {id: "ban-tin", label: "Bản tin", page: "newsletter"},
-      {id: "chinh-sach", label: "Chính sách", page: "radar"},
+      {id: "mo-hinh", label: "Mô hình", sub: [  // OWN-FB-16: from the CIO's rail
+        {id: "tham-so", label: "Tham số", page: "model"}, {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"},
+        {id: "thu-nghiem", label: "Thử nghiệm hằng ngày", page: "trial"}]},
       {id: "do-luong", label: "Đo lường", page: "measure"},
-      {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "viec-nen", label: "Việc nền", page: "jobs"},
-      {id: "cau-hinh", label: "Cấu hình", page: "config"},
+      {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
@@ -120,6 +107,15 @@ let leaving = false;
 window.addEventListener("pagehide", () => { leaving = true; });
 window.addEventListener("beforeunload", () => { leaving = true; });
 const pages = {};  // page name → its module (a promise)
+
+// addresses whose page moved (OWN-FB-02, -11): the address bar gets the page that took its place
+const MOVED = {"rm/khach-hang/toan-canh": "rm/khach-hang/tong-quan", "rm/khach-hang/ban-do": "rm/khach-hang/tong-quan",
+  "cio/hop-tin": "cio"};
+function moved() {
+  const path = location.hash.replace(/^#\/?/, "");
+  const from = Object.keys(MOVED).find(k => path === k || path.startsWith(`${k}/`));
+  if (from) history.replaceState(null, "", `#/${MOVED[from]}`);
+}
 
 function parse(hash) {
   const parts = (hash || "").replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
@@ -165,7 +161,8 @@ function pagesFor(role) {
   }
   const out = [];
   for (const n of ROLES[role].nav) {
-    if (n.sub) for (const s of n.sub) out.push({label: s.label, parent: n.label, route: `#/${role}/${n.id}/${s.id}`});
+    if (n.hidden && n.id !== "bo-nho") continue;  // a page with no tab is found where it is linked from, not here
+    if (n.sub) for (const s of n.sub.filter(x => !x.hidden)) out.push({label: s.label, parent: n.label, route: `#/${role}/${n.id}/${s.id}`});
     else out.push({label: n.label, parent: "", route: `#/${role}/${n.id}`});
   }
   return out;
@@ -224,7 +221,7 @@ function drawChrome(rt) {
   const sub = $("#subnav");
   if (rt.nav.sub) {
     sub.hidden = false;
-    sub.innerHTML = rt.nav.sub.map(s =>
+    sub.innerHTML = rt.nav.sub.filter(s => !s.hidden || s === rt.sub).map(s =>
       `<a href="#/${rt.role}/${rt.nav.id}/${s.id}" ${s === rt.sub ? 'aria-current="page"' : ""}>${esc(s.label)}</a>`).join("");
   } else {
     sub.hidden = true;
@@ -254,6 +251,7 @@ function drawChrome(rt) {
 
 async function route() {
   if (state.auth && !state.me) return signInPage();
+  moved();
   const rt = parse(location.hash);
   const want = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "";
   if (state.me && want !== state.me.role) { location.replace(`#/${state.me.role}`); return; }

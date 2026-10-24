@@ -57,7 +57,7 @@ export async function render(box, ctx) {
   if (first && first.goal.actions[0]) acts.push(`${esc(first.title)}: <span data-explains>${esc(first.goal.actions[0].text)}</span>`);
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">${staff ? "Tin tức" : "Headline News"}</div><h1 class="h1">${staff ? "Chi phí chính sách" : "News and Prediction"}</h1>
+    <div class="pagehead"><div><div class="eyebrow">Headline News</div><h1 class="h1">News and Prediction</h1>
       <p class="lede">Chính sách, vĩ mô và hạ tầng đang làm tài sản ròng ${rep.scope === "family" ? "gia đình" : "của bạn"} tăng hay giảm bao nhiêu</p></div></div>
     <div class="cols">
       <div class="panel c12" data-focus="policy:check">
@@ -70,7 +70,7 @@ export async function render(box, ctx) {
           <div class="kpi"><div class="k">Việc nên làm trước</div>
             ${acts.length ? `<ol class="ul">${acts.slice(0, 3).map(a => `<li>${a}</li>`).join("")}</ol>` : `<p class="muted">Không có việc gấp.</p>`}</div>
         </div>
-        <a class="btn sm mt" href="${planHref}">Mở ${staff ? "Kế hoạch tài chính" : "Wealth Planning Advisor"} ${icon("arrow", {size: 14})}</a>
+        <a class="btn sm mt" href="${planHref}">Mở Wealth Planning Advisor ${icon("arrow", {size: 14})}</a>
       </div>
       <div class="panel c12" id="impact"></div>
       <div class="c12" id="views"></div>

@@ -15,25 +15,25 @@ from assistant.base import Ctx, Param, Tool, ToolFailed, run_graph
 from news import store as news_store
 from wealth import store as wealth_store
 
-USER = {"client": None, "rm": "rm01", "cio": "cio", "compliance": "compliance"}
+USER = {"client": None, "rm": "rm01", "cio": "cio"}
 PAGES = {  # page key → (label, or label per role; route per role); the router may name a key, never a route
     # the customer's four sections by the bank's names (WEALTH_NAMES_PLAN, ADR-0037): Wealth View, Wealth Planning
     # Advisor, Headline News, Relationship specialist; the client has no graph to open now (its pages left this list)
     "toan-canh": (
-        {"client": "Wealth View", "rm": "Toàn cảnh"},
-        {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/toan-canh"},
+        {"client": "Wealth View", "rm": "Wealth view"},
+        {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/tong-quan"},  # the RM's Toàn cảnh went (OWN-FB-02)
     ),
-    "ban-do": ("Bản đồ tài chính", {"rm": "#/rm/khach-hang/ban-do"}),
+    "ban-do": ("Wealth view", {"rm": "#/rm/khach-hang/tong-quan"}),
     "chi-tiet": (
-        {"client": "Wealth View", "rm": "Chi tiết tài sản"},
+        {"client": "Wealth View", "rm": "Wealth view"},
         {"client": "#/client/tong-quan/chi-tiet", "rm": "#/rm/khach-hang/tong-quan"},
     ),
     "tai-san": (
-        {"client": "Dữ liệu chi tiết tài sản", "rm": "Tài sản"},
+        "Dữ liệu chi tiết tài sản",
         {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"},
     ),
     "ke-hoach": (
-        {"client": "Wealth Planning Advisor", "rm": "Kế hoạch"},
+        {"client": "Wealth Planning Advisor", "rm": "Wealth planning advisor"},
         {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"},
     ),
     "risk-profile": ("Risk profile test", {"client": "#/client/rui-ro/khau-vi"}),
@@ -41,40 +41,40 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "do-thi": ("Đồ thị tác động", {"client": "#/client/tin/do-thi", "rm": "#/rm/khach-hang/do-thi"}),
     "duyet": ("Duyệt đề xuất", {"rm": "#/rm/khach-hang/duyet"}),
     "hom-nay": ("Hôm nay", {"rm": "#/rm/hom-nay"}),
-    "hop-tin": ("Hộp tin", {"cio": "#/cio/hop-tin"}),
-    "tin-bi-giu": ("Tin bị giữ", {"compliance": "#/compliance/giu"}),
+    "hop-tin": ("Decision board", {"cio": "#/cio"}),  # the inbox is on the board (OWN-FB-11)
+    "tin-bi-giu": ("Tin bị giữ", {"cio": "#/cio/giu"}),  # Compliance's duty is the CIO's (OWN-FB-18)
     # since A1 (the registry's own tools)
     "chinh-sach": (
-        {"client": "News and Prediction", "rm": "Chi phí chính sách"},  # the client's tab (business, 2026-10-22)
+        {"client": "News and Prediction", "rm": "News and prediction"},  # the client's tab (2026-10-22), the RM's too (OWN-FB-03)
         {"client": "#/client/tin/chinh-sach", "rm": "#/rm/khach-hang/chinh-sach"},
     ),
     "hang-cho": (
-        {"client": "Relationship specialist", "rm": "Hàng chờ đề xuất", "specialist": "Hàng chờ đề xuất"},
-        {"client": "#/client/chuyen-gia", "rm": "#/rm/khach-hang/duyet", "specialist": "#/specialist/duyet"},
+        {"client": "Relationship specialist", "rm": "Hàng chờ đề xuất"},
+        {"client": "#/client/chuyen-gia", "rm": "#/rm/khach-hang/duyet"},
     ),
     "su-kien": ("Sự kiện & nhận định", {"cio": "#/cio/nhan-dinh"}),
     "he-thong": ("Hệ thống", {"admin": "#/admin/he-thong"}),
     # the staff desks (FEAT-41) and the pages their tools cite
-    "ban-lam-viec": ("Bàn làm việc", {r: f"#/{r}" for r in ("cio", "rm", "admin", "specialist", "compliance")}),
-    "nhat-ky": ("Nhật ký", {"admin": "#/admin/nhat-ky", "compliance": "#/compliance/nhat-ky"}),
-    "cau-hinh": ("Cấu hình", {r: f"#/{r}/cau-hinh" for r in ("cio", "compliance", "admin")}),
-    "phoi-nhiem": ("Phơi nhiễm", {"cio": "#/cio/phoi-nhiem"}),
+    "ban-lam-viec": ("Bàn làm việc", {r: f"#/{r}" for r in ("cio", "rm", "admin")}),
+    "nhat-ky": ("Nhật ký", {"admin": "#/admin/nhat-ky"}),
+    "cau-hinh": ("Cấu hình", {r: f"#/{r}/cau-hinh" for r in ("cio", "admin")}),
+    "phoi-nhiem": ("Tác động danh mục", {"cio": "#/cio/phoi-nhiem"}),
     "ap-dung": ("Lần áp dụng", {"cio": "#/cio/ap-dung"}),
-    "do-chinh-xac": ("Độ chính xác", {"cio": "#/cio/mo-hinh/do-chinh-xac"}),
-    "thu-nghiem": ("Thử nghiệm hằng ngày", {"cio": "#/cio/mo-hinh/thu-nghiem"}),  # BUSINESS_FEEDBACK_1021 B1
-    "agent": ("Agent", {r: f"#/{r}/agent" for r in ("cio", "compliance", "admin")}),
+    "do-chinh-xac": ("Độ chính xác", {r: f"#/{r}/mo-hinh/do-chinh-xac" for r in ("cio", "admin")}),
+    "thu-nghiem": ("Thử nghiệm hằng ngày", {r: f"#/{r}/mo-hinh/thu-nghiem" for r in ("cio", "admin")}),  # B1
+    "agent": ("Agent", {r: f"#/{r}/agent" for r in ("cio", "admin")}),
     "tai-khoan": ("Tài khoản và vai trò", {"admin": "#/admin/tai-khoan"}),
-    "viec-nen": ("Việc nền", {r: f"#/{r}/viec-nen" for r in ("cio", "compliance", "admin")}),
-    "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "compliance", "admin", "specialist")}),
+    "viec-nen": ("Việc nền", {r: f"#/{r}/viec-nen" for r in ("cio", "admin")}),
+    "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "admin")}),
     # every staff page of the menu (web/shell.js): Compliance asked to publish research and, with no research page
     # to open, the assistant opened the audit log instead (staff stress test, cmp-lim-02)
-    "nghien-cuu": ("Nghiên cứu", {r: f"#/{r}/nghien-cuu" for r in ("cio", "compliance")}),
-    "ban-tin": ("Bản tin", {r: f"#/{r}/ban-tin" for r in ("cio", "compliance")}),
-    "van-ban-chinh-sach": ("Chính sách", {r: f"#/{r}/chinh-sach" for r in ("cio", "compliance")}),
-    "do-luong": ("Đo lường", {r: f"#/{r}/do-luong" for r in ("cio", "compliance")}),
-    "tham-so": ("Tham số mô hình", {"cio": "#/cio/mo-hinh/tham-so"}),
+    "nghien-cuu": ("Nghiên cứu", {"cio": "#/cio/nghien-cuu"}),
+    "ban-tin": ("Bài viết", {"cio": "#/cio/ban-tin"}),  # OWN-FB-15
+    "van-ban-chinh-sach": ("Chính sách", {"cio": "#/cio/chinh-sach"}),
+    "do-luong": ("Đo lường", {r: f"#/{r}/do-luong" for r in ("cio", "admin")}),
+    "tham-so": ("Tham số mô hình", {r: f"#/{r}/mo-hinh/tham-so" for r in ("cio", "admin")}),
     "du-lieu-thi-truong": ("Dữ liệu thị trường", {"cio": "#/cio/mo-hinh/du-lieu", "admin": "#/admin/du-lieu"}),
-    "hieu-qua": ("Hiệu quả tư vấn", {"rm": "#/rm/hieu-qua"}),
+    "hieu-qua": ("Advisory performance", {"rm": "#/rm/hieu-qua"}),
 }
 
 
