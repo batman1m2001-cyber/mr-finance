@@ -229,3 +229,26 @@ def test_the_inbox_endpoint_returns_items_and_feed_health():
     vne = next(s for s in body["sources"] if s["id"] == "vnexpress_kd")
     assert vne["last"]["accepted"] == 1 and sum(vne["hourly"]) == 1 and len(vne["hourly"]) == 24
     assert TestClient(app).get("/api/news/inbox?since=abc").status_code == 400
+
+
+def test_the_assistant_counts_the_inbox_in_the_database_not_a_capped_list():
+    """CIO chat 2026-10-24: the inbox held 1,415 new items and the assistant said 200, the length of ``inbox()``'s
+    default page. 250 new and 3 grouped, 4 of them fetched today: every figure counted, today's by source."""
+    from assistant.base import Ctx
+    from assistant.tools import inbox
+
+    now, old = time.time(), time.time() - 3 * 86400
+    rows = [
+        {"source": "vnexpress_kd" if i % 2 else "cafef_ck", "url_key": f"u{i}", "title_key": f"t{i}", "published": old,
+         "ingested": now if i < 4 else old, "kind": "domestic", "status": "grouped" if i >= 250 else "new"}
+        for i in range(253)
+    ]  # fmt: skip
+    assert store.add(rows)[1] == 0 and len(store.inbox()) == 200  # the page the old count read
+    out = asyncio.run(inbox(Ctx(role="cio", client_id=None, scope="own", question=""), {}))
+    assert out["data"] == {
+        "new": 250,
+        "grouped": 3,
+        "fetched_today": 4,
+        "by_source": {"cafef_ck": 2, "vnexpress_kd": 2},
+    }
+    assert "250 tin mới" in out["text"] and "3 tin đã gom" in out["text"] and "lấy về 4 tin" in out["text"]

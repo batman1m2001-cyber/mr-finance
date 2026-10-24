@@ -167,6 +167,20 @@ def by_url_key(key: str) -> Optional[Dict[str, Any]]:
     return _item(r) if r else None
 
 
+def counts(since: Optional[float] = None) -> Dict[str, Any]:
+    """Counted in the database, never the length of a capped list (``inbox`` stops at its limit: the assistant said
+    200 for 1,415, CIO chat 2026-10-24): items by status, and those fetched since ``since`` by source."""
+    with _db() as con:
+        by_status = dict(con.execute("select status, count(*) from news_items group by status").fetchall())
+        fetched = dict(
+            con.execute(
+                "select source, count(*) from news_items where ingested >= ? and status != 'refused' group by source",
+                (since or 0,),
+            ).fetchall()
+        )
+    return {"by_status": by_status, "fetched": fetched}
+
+
 def counts_by_hour(hours: int = 24, now: Optional[float] = None) -> Dict[str, List[int]]:
     """Items published per hour per source over the last ``hours`` (oldest first): feed health."""
     now = now or time.time()

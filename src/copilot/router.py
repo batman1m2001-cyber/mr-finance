@@ -29,7 +29,7 @@ RULES: List[Tuple[Optional[str], str]] = [  # (tool, folded keywords as a regex)
         r"\b(trang|toan canh|ban do|chi tiet|tai san|ke hoach|tac dong|do thi|hop tin|hom nay|bi giu)",
     ),
     ("tin_bi_giu", r"bi giu|han che"),
-    ("hop_tin", r"hop tin"),
+    ("hop_tin", r"hop tin|bao nhieu tin|so (luong )?tin|thong ke .*tin|tin crawl|crawl"),  # a count, never a fetch
     ("hom_nay", r"hom nay|xem truoc|goi ai|gia dinh nao"),
     ("kich_ban", r"kich ban|stress|khung hoang|dong bang|lai suat tang|ty gia tang|giam manh|neu .*(giam|tang)"),
     ("dieu_tra", r"vi sao|tai sao|dieu tra|duong di|chuoi tac dong|bang cach nao"),
