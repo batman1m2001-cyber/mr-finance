@@ -60,7 +60,7 @@ function paint(box, d) {
   const tabs = `<div class="seg" role="group" aria-label="Góc xem"><button type="button" data-view="a" aria-pressed="${view === "a"}">A · Thu thập tin</button><button type="button" data-view="b" aria-pressed="${view === "b"}">B · Hiệu quả agent</button></div>`;
   const seg = `<div class="seg" role="group" aria-label="Kỳ hạn">${H.map(([k, l]) => `<button type="button" data-h="${k}" aria-pressed="${horizon === k}">${l}</button>`).join("")}</div>`;
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">CIO · Mô hình</div><h1 class="h1">Thử nghiệm hằng ngày</h1>
+    <div class="pagehead"><div><div class="eyebrow">Mô hình</div><h1 class="h1">Thử nghiệm hằng ngày</h1>
       <p class="lede">Mỗi sáng 08:30 agent tự gom tin thành sự kiện; Agent CIO và Agent Phản biện chạy trên từng sự kiện, không ai duyệt.
         ${d.days.length ? `${d.days.length} buổi sáng: ${day(d.days[0])} – ${day(d.days[d.days.length - 1])}.` : "Chưa có buổi sáng nào."}</p></div>
       <div class="row">${tabs}${view === "b" ? seg : ""}</div></div>

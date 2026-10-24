@@ -51,7 +51,7 @@ function paint(box, d) {
   const vk = (views.kpi03 || {})[horizon];
   const seg = `<div class="seg" role="group" aria-label="Kỳ hạn">${H.map(([k, l]) => `<button type="button" data-h="${k}" aria-pressed="${horizon === k}">${l}</button>`).join("")}</div>`;
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">CIO · Mô hình</div><h1 class="h1">Độ chính xác theo thời gian</h1>
+    <div class="pagehead"><div><div class="eyebrow">Mô hình</div><h1 class="h1">Độ chính xác theo thời gian</h1>
       <p class="lede">Biến động thực tế có nằm trong dải P10–P90 đã dự báo không, và hướng có đúng không — theo từng yếu tố và kỳ hạn.
         Chấp nhận ${how(`${pct(accept[0], false, 0)}–${pct(accept[1], false, 0)}`, "accuracy.threshold")} số lần nằm trong dải; cần ít nhất ${min} quan sát mới kết luận.</p></div>
       <div>${seg}</div></div>
