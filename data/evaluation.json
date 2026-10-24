@@ -1,0 +1,5 @@
+{
+  "_doc": "The agents' evaluation (docs/AGENT_EVALUATION_PLAN.md §2.3). A realised move is material when |move| >= material_sigma x a typical move at the horizon (vol_month x sqrt(months)); a claim is material when |expected| >= claim_share x the same (shadow.CALL_SHARE, the mua/ban edge). Each score keeps the values it was scored with.",
+  "material_sigma": 1.0,
+  "claim_share": 0.25
+}

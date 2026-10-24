@@ -1,11 +1,19 @@
 # OneWealth: measuring the news agents (plan)
 
-**Status: in progress.**
+**Status: done (E0–E5), 2026-10-24.**
 - **E0 done:** the bridge finds `claude` on each call, and a failed start is a logged 502. Its reply carries the
   cost (notional) and cached tokens; `call_model` keeps them (`views/agents.py::usage_meta`).
 - **E1 done:** `news/ops.py::run_summary`, `news/monitor.py`. On the live data, 2026-10-23 had 144 runs: 63,960
   fetched (each run re-reads every feed), 57,078 duplicates, 126 unique, 126 retained and 54 relevant. Runs before
   the deploy say *relevant* is unavailable.
+- **E2 done:** `trial/evaluate.py`, `eval_scores` written by `trial_score`, `trial_days` by `trial_daily`. Event
+  recall splits a story caught on another morning into `earlier_run` and `later_run`.
+- **E3 done:** `trial/finance.py`, `eval_snapshots`; the 10-22 and 10-23 books were frozen late (labelled).
+- **E4 done:** `trial/costs.py`; calls made before E0 are backfilled into `call_costs` (the runs' nodes are hashed
+  into the audit log and stay as written).
+- **E5 done:** the trial page in View A and View B, the drawer per move (`/api/trial/move/{sid}`), `eval.*`
+  metrics. Nothing is scored yet: the first 3d moves fall due 10-24 to 10-26, the 1w moves 10-28 to 10-29.
+
  Started 2026-10-24 by the owner's request “Refactor and Implement News & Portfolio Impact
 Agent Evaluation”.
 

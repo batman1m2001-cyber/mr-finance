@@ -7,6 +7,23 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## EV — Measuring the news agents (2026-10-24)
+
+Source: [`2026-10-24_agent_evaluation.md`](../sources/owner_requests/2026-10-24_agent_evaluation.md); plan
+[`docs/AGENT_EVALUATION_PLAN.md`](../../AGENT_EVALUATION_PLAN.md). Extends news ingestion (FEAT-01) and accuracy
+tracking (FEAT-18); no new agent, engine or backtest.
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-EV-01 | Each ingest run keeps its funnel (fetched, too old, duplicates, unique, retained, relevant), start, end, duration, status (ok, partial, failed) and sources; the days' trends count items by collection time, never publication time; a field an old run did not keep is unavailable, never 0 | task §1, plan E1 | documented |
+| OWN-EV-02 | The scenario agents' moves at 3d and 1w are scored against the market: precision, recall, missed, direction and error, each with its n, and coverage (due, scored, pending, failed, excluded); the materiality threshold is read from `data/evaluation.json` | task §2.1, plan E2 | documented |
+| OWN-EV-03 | Recall against independent material events: each important story of the reference set is followed to where it was lost (not grouped, not a candidate, an earlier or later run, beyond the limit) | task §2.1, plan E2 | documented |
+| OWN-EV-04 | The scored moves in VND on the simulated book, through the engine's loadings and the families' holdings frozen each morning: correct, incorrect, missed opportunity, correct negative warnings, the net, by group, each with its n; labelled simulated; a move without a snapshot is unavailable | task §2.2, plan E3 | documented |
+| OWN-EV-05 | A verdict once final is kept as scored; a draft made on or before its origin close is excluded; duplicate drafts of one move count once; a pending move is never incorrect; a failed morning or call keeps its reason | task §2.3, plan E2 | documented |
+| OWN-EV-06 | Each model call keeps its agent, run, provider, model, tokens in, out and cached, cost, latency, attempt and error; a cost not reported is None, counted apart, never 0; earlier calls are backfilled from the bridge's log only where exactly one line matches | task §4, plan E0, E4 | documented |
+| OWN-EV-07 | The trial page has View A Thu thập tin and View B Hiệu quả agent, and each move opens to its news, claim, market, verdict and VND by family; no rate without its denominator | task §3, plan E5 | documented |
+| OWN-EV-08 | No market move is read as the agents' gain or loss: every VND figure says it is simulated, "nếu gia đình làm theo toàn bộ" | task §5, plan §2.6 | documented |
+
 ## DA — The assistant reads the data itself (2026-10-24)
 
 Source: [`2026-10-24_assistant_data_access.md`](../sources/owner_requests/2026-10-24_assistant_data_access.md); plan

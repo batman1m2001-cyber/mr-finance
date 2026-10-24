@@ -67,6 +67,8 @@ READS = {
     "/api/config": DESK,
     "/api/config/CF-thresholds-v1": DESK,
     "/api/accuracy": DESK,
+    "/api/trial": DESK,
+    "/api/trial/move/ES-0000": DESK,
     "/api/measure": DESK,
     "/api/research": {"cio", "compliance"},
     "/api/newsletters": {"cio", "compliance"},

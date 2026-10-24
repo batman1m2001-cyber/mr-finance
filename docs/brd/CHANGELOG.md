@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-24 — Measuring the news agents (owner): each ingest run's funnel, status and sources, the days by
+  collection time; the scenario agents' moves scored at 3d and 1w (precision, recall, direction, coverage, event
+  recall), valued in VND on the simulated book, labelled simulated; cost per model call, never 0 when missing; the
+  trial page in View A and View B with a drill-down per move. — owner_requirements EV, requirements_traceability §5,
+  docs/AGENT_EVALUATION_PLAN.md
 - 2026-10-24 — Totals are counts (D1): the inbox page says 1.417 (was 300) and “40 / 1.417”; alerts, search,
   the CIO desk's Tin stage and the held-news tool count in the database. — OWN-DA-01, requirements_traceability §5
 - 2026-10-24 — The assistant reads the data itself (owner): totals are counts; one tool, `truy_van`, a SQL

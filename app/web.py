@@ -927,7 +927,35 @@ async def trial(request: Request) -> JSONResponse:
         r = json.loads(replay.read_text(encoding="utf-8"))
         keep = ("replay", "at", "days", "runs", "accuracy", "calls", "scenarios", "events")
         out["replay"] = {k: r.get(k) for k in keep}
+    out["evaluation"] = await asyncio.to_thread(_evaluation)
     return JSONResponse(out)
+
+
+def _evaluation() -> dict:
+    """AGENT_EVALUATION_PLAN E5: View A (collection) and View B (accuracy, simulated VND, cost) of the trial page."""
+    from news import monitor
+    from trial import costs, evaluate, finance
+
+    c = costs.summary()
+    return {
+        "collection": monitor.summary(),
+        "accuracy": evaluate.summary(),
+        "finance": finance.summary(),
+        "costs": {"agents": c["agents"], "total": c["total"]},
+        "moves": evaluate.moves(),
+    }
+
+
+async def trial_move(request: Request) -> JSONResponse:
+    """One scored move, from the news to the VND per family (AGENT_EVALUATION_PLAN E5 drill-down)."""
+    import asyncio
+
+    from trial import evaluate
+
+    got = await asyncio.to_thread(evaluate.detail, request.path_params["sid"])
+    if got is None:
+        return JSONResponse({"error": "không có dự báo này"}, status_code=404)
+    return JSONResponse(got)
 
 
 async def accuracy(request: Request) -> JSONResponse:
@@ -1308,6 +1336,7 @@ app = Starlette(
         Route("/api/inbox", inbox_receive, methods=["POST"]),
         Route("/api/accuracy", accuracy),
         Route("/api/trial", trial),
+        Route("/api/trial/move/{sid}", trial_move),
         Route("/api/measure", measure_reports),
         Route("/api/market/series", market_series),
         Route("/api/research", research_list),

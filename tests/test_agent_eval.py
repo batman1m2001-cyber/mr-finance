@@ -3,6 +3,7 @@ were right (and worth what, on the simulated book). Each test builds its own row
 
 import asyncio
 import importlib.util
+from collections import Counter
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -160,3 +161,345 @@ def test_the_days_count_by_collection_time_never_publication_time_and_say_none_f
     assert yesterday["retained"] == 0 and yesterday["runs_failed"] == 1  # an old run that tried no source
     s = monitor.summary(3, NOW + 60)
     assert s["full_since"] == NOW and s["last_run"]["retained"] == 1
+
+
+# -- accuracy (§2.2–2.5) ----------------------------------------------------------------------------------------
+
+CFG = {"material_sigma": 1.0, "claim_share": 0.25}
+ORIGIN, TODAY = "2026-10-21", "2026-10-30"  # the 1w move from the 10-22 morning is due 10-28
+
+
+class _Series:
+    """A factor's realised move: ``x`` from the origin to any day up to ``last``."""
+
+    def __init__(self, x, last="2026-10-29"):
+        self.x, self.last = x, last
+
+    def move(self, d0, d1):
+        return self.x
+
+
+def _factor(fid="VNINDEX", vol=4.0, assumed=False):
+    return SimpleNamespace(id=fid, unit="pct", vol_month=vol, assumed=assumed)
+
+
+def _draft(expected, view="VW-1", created=1792650000.0):  # 2026-10-22, the day after the origin
+    return {
+        "view_id": view,
+        "event_id": "EV-1",
+        "origin": ORIGIN,
+        "created": created,
+        "expected": expected,
+        "p10": expected - 3,
+        "p90": expected + 3,
+    }
+
+
+def _judge(drafts, x=None, ran=True, today=TODAY, factor=None, cfg=CFG, last="2026-10-29"):
+    from trial import evaluate
+
+    f = factor or _factor()
+    series = {} if x is None else {f.id: _Series(x, last)}
+    return evaluate.judge_move("2026-10-22", "1w", f, drafts, ran, series, today, cfg, 0.25)
+    # scale = 4 · √0.25 = 2: a material move is |x| ≥ 2, a material claim |e| ≥ 0.5
+
+
+def test_each_verdict_from_a_claim_and_the_move():
+    assert _judge([_draft(1.0)], x=2.5)["verdict"] == "correct"
+    wrong = _judge([_draft(1.0)], x=-2.5)
+    assert (wrong["verdict"], wrong["reason"], wrong["direction_hit"]) == ("incorrect", "wrong_direction", False)
+    small = _judge([_draft(1.0)], x=0.4)  # the move came, too small to be the call's
+    assert (small["verdict"], small["reason"], small["direction_hit"]) == ("incorrect", "not_material", True)
+    missed = _judge([_draft(0.1)], x=-3.0)  # no claim, a material move
+    assert (missed["verdict"], missed["reason"]) == ("missed", "not_predicted")
+    assert _judge([_draft(0.1)], x=0.3)["verdict"] == "quiet"
+    assert _judge([], x=3.0, ran=False)["reason"] == "no_run"  # a morning with no drafts
+    got = _judge([_draft(1.0)], x=2.5)
+    assert got["error"] == 1.5 and got["error_sd"] == 0.75 and got["inside"] and got["due"] == "2026-10-28"
+
+
+def test_a_pending_move_is_never_incorrect_and_no_data_is_failed_only_after_the_give_up_days():
+    assert _judge([_draft(1.0)], x=-2.5, today="2026-10-27")["verdict"] == "pending"  # not due
+    waiting = _judge([_draft(1.0)], x=-2.5, last="2026-10-27")  # due, the data not in yet
+    assert (waiting["verdict"], waiting["reason"]) == ("pending", "waiting")
+    gone = _judge([_draft(1.0)], x=-2.5, last="2026-10-27", today="2026-12-01")
+    assert (gone["verdict"], gone["reason"]) == ("failed", "no_data")
+    assert _judge([_draft(1.0)])["reason"] == "no_series"  # nothing to score against: excluded
+    assert _judge([_draft(1.0)], factor=_factor(assumed=True))["reason"] == "assumed"
+
+
+def test_duplicate_drafts_of_one_move_are_scored_once_and_opposite_claims_are_conflicting():
+    two = _judge([_draft(1.0, "VW-1"), _draft(2.0, "VW-2")], x=2.5)
+    assert two["verdict"] == "correct" and two["expected"] == 1.5 and len(two["drafts"]) == 2
+    both = _judge([_draft(1.0, "VW-1"), _draft(-1.0, "VW-2")], x=2.5)
+    assert (both["verdict"], both["reason"], both["claim"]) == ("excluded", "conflicting", "conflicting")
+    one_quiet = _judge([_draft(1.0, "VW-1"), _draft(-0.1, "VW-2")], x=2.5)  # a quiet draft does not conflict
+    assert one_quiet["claim"] == "up" and one_quiet["verdict"] == "correct"
+
+
+def test_a_draft_made_on_or_before_its_origin_close_is_excluded_as_a_leak():
+    leak = _judge([_draft(1.0, created=1792540000.0)], x=2.5)  # 2026-10-20, before the 10-21 close it is scored from
+    assert (leak["verdict"], leak["reason"], leak["leak"]) == ("excluded", "leak", ["VW-1"])
+
+
+def test_the_materiality_threshold_comes_from_the_settings():
+    assert _judge([_draft(0.1)], x=1.5)["verdict"] == "quiet"
+    assert _judge([_draft(0.1)], x=1.5, cfg={**CFG, "material_sigma": 0.5})["verdict"] == "missed"
+    got = _judge([_draft(0.1)], x=1.5, cfg={**CFG, "material_sigma": 0.5})
+    assert got["material_sigma"] == 0.5 and got["scale"] == 2.0  # the record keeps what it was scored with
+
+
+def test_the_rates_carry_their_counts_and_leave_pending_out():
+    from trial import evaluate
+
+    rows = [
+        {"verdict": "correct", "direction_hit": True, "error_sd": 0.5},
+        {"verdict": "incorrect", "reason": "wrong_direction", "direction_hit": False, "error_sd": 1.5},
+        {"verdict": "incorrect", "reason": "not_material", "direction_hit": True, "error_sd": 0.2},
+        {"verdict": "missed", "reason": "not_predicted", "direction_hit": False, "error_sd": 1.0},
+        {"verdict": "missed", "reason": "no_run"},
+        {"verdict": "quiet", "direction_hit": True, "error_sd": 0.1},
+        {"verdict": "pending", "reason": "not_due"},
+        {"verdict": "excluded", "reason": "conflicting"},
+    ]
+    r = evaluate.rates(rows)
+    assert r["precision"] == {"value": 0.333, "hits": 1, "n": 3}
+    assert r["recall"] == {"value": 0.333, "hits": 1, "n": 3}  # correct + wrong direction + not predicted
+    assert r["recall_all"]["n"] == 4  # and the morning that did not run
+    assert r["direction"] == {"value": 0.6, "hits": 3, "n": 5}
+    assert r["error_sd"] == {"value": 0.66, "n": 5}
+    assert r["coverage"] == {
+        "moves": 8,
+        "due": 7,
+        "scored": 6,
+        "pending": 1,
+        "failed": 0,
+        "excluded": 1,
+        "excluded_by": {"conflicting": 1},
+    }
+    empty = evaluate.rates([{"verdict": "pending", "reason": "not_due"}])
+    assert empty["precision"] == {"value": None, "hits": 0, "n": 0}  # no denominator, no rate
+
+
+def test_a_failed_grouping_call_is_recorded_on_the_morning_and_raised(monkeypatch):
+    from test_views import NOW, news
+
+    from trial import daily, evaluate
+
+    async def broken(*a, **k):
+        raise RuntimeError("InternalServerError")
+
+    monkeypatch.setattr(agents, "resolve_mode", lambda requested: "live")
+    monkeypatch.setattr(agents, "call_model", broken)
+    news("NHNN giữ nguyên lãi suất điều hành")
+    with pytest.raises(RuntimeError):
+        asyncio.run(daily.run(now=NOW + 3600))
+    day = __import__("datetime").date.fromtimestamp(NOW + 3600).isoformat()
+    note = daily.notes()[day]
+    assert note["status"] == "failed" and note["stage"] == "group" and "InternalServerError" in note["error"]
+    tomorrow = evaluate.shadow.realised.add_days(day, 1)
+    [m] = [m for m in evaluate.mornings(tomorrow) if m["day"] == day]
+    assert m["status"] == "failed" and m["drafts"] == 0
+
+
+def test_scoring_freezes_final_verdicts_and_recomputes_pending_ones(monkeypatch):
+    from control import db
+    from trial import daily, evaluate
+
+    day = "2026-10-22"
+    daily.note_day(day, status="failed", error="x")
+    monkeypatch.setattr(daily, "until", lambda: "2026-10-31")
+    flat = {f.id: _Series(0.0, "2027-03-01") for f in evaluate.shadow.model().factors}
+    evaluate.score("2026-10-26", flat)  # the 10-22 3d move came due 10-24: scored; its 1w and 3m pending
+    n = len(evaluate.shadow.model().factors)
+    mine = lambda: Counter(r["verdict"] for r in evaluate.scores(day))  # noqa: E731
+    assert mine() == {"quiet": n, "pending": 2 * n}
+    s = evaluate.get(f"{day}:3d:VNINDEX")
+    assert (s["verdict"], s["morning"], s["origin"], s["due"]) == ("quiet", "failed", "2026-10-21", "2026-10-24")
+    later = [m["status"] for m in evaluate.mornings("2026-10-26")]
+    assert later == ["failed", "no_record", "no_record", "no_record"]  # 10-26 itself is still to run
+    big = {f.id: _Series(100.0, "2027-03-01") for f in evaluate.shadow.model().factors}
+    evaluate.score("2026-10-30", big)  # the 3d verdicts stay; the 1w ones come due, missed with no run
+    assert mine() == {"quiet": n, "missed": n, "pending": n}
+    assert evaluate.get(f"{day}:1w:VNINDEX")["reason"] == "no_run"
+    with db.tx() as con:
+        assert con.execute("select count(*) from eval_scores where day = ?", (day,)).fetchone()[0] == 3 * n
+
+
+def test_event_recall_says_where_each_important_story_was_lost():
+    import json
+
+    from news import store
+    from trial import daily, evaluate
+
+    kd = _feed(
+        ("Ngân hàng Nhà nước tăng lãi suất điều hành", "https://vnexpress.net/a.html", "x", NOW - 3600),
+        ("Giá vàng SJC lập đỉnh mới", "https://vnexpress.net/b.html", "x", NOW - 1800),
+        ("Một quán cà phê mới mở", "https://vnexpress.net/c.html", "x", NOW - 1200),
+    )
+    _ingest({"vnexpress_kd": kd})
+    ids = {i["title"]: i["id"] for i in store.inbox(status="all", limit=None)}
+    rate, gold, cafe = (
+        ids["Ngân hàng Nhà nước tăng lãi suất điều hành"],
+        ids["Giá vàng SJC lập đỉnh mới"],
+        ids["Một quán cà phê mới mở"],
+    )
+    daily._keep("EV-1", "2026-10-14", {"created": NOW, "news_ids": [rate], "view_id": "VW-1"})
+    with store._db() as con:
+        for k, (nid, at) in enumerate(((rate, NOW - 3600), (gold, NOW - 1800), (cafe, NOW - 1200), (rate, NOW + 60))):
+            data = {"title": f"story {k}", "important": True, "match": {"score": 0.9, "news_id": nid}}
+            con.execute(
+                "insert into reference_stories values (?, ?, ?, ?, 1, ?)", (f"R{k}", at, at, NOW, json.dumps(data))
+            )
+    got = evaluate.event_recall()
+    assert (got["hits"], got["n"], got["value"]) == (1, 3, 0.333)  # the story after the run is not this morning's
+    assert {m["news_id"]: m["why"] for m in got["misses"]} == {gold: "not_grouped", cafe: "not_candidate"}
+
+
+# -- money (§2.6) -----------------------------------------------------------------------------------------------
+
+FAMS = {
+    "C01": {
+        "name": "A",
+        "holdings": [
+            {
+                "key": "s",
+                "owner": "a",
+                "kind": "asset",
+                "class": "stock",
+                "name": "VNM",
+                "value": 1_000_000_000,
+                "detail": {"ticker": "VNM", "beta": 1.0},
+            }
+        ],
+    },
+    "C02": {"name": "B", "holdings": []},
+}
+
+
+def _scored(verdict, x, expected=1.0, factor="VNINDEX", day="2026-10-22"):
+    return {
+        "day": day,
+        "horizon": "1w",
+        "factor": factor,
+        "verdict": verdict,
+        "realised": x,
+        "expected": expected,
+        "family": "stocks",
+    }
+
+
+def test_the_book_is_frozen_once_per_morning_and_a_late_one_says_so():
+    from trial import finance
+
+    assert asyncio.run(finance.keep("2026-10-22", families=FAMS))
+    assert not asyncio.run(finance.keep("2026-10-22", late=True, families={}))  # frozen: the first stays
+    snap = finance.snapshot("2026-10-22")
+    vn = snap["exposure"]["1w"]["C01"]["VNINDEX"]
+    assert vn == 10_000_000 and snap["late"] is False  # 1 % of VND 1 bn at beta 1, per 1 % VN-Index move
+    assert "C02" in snap["exposure"]["1w"] and snap["exposure"]["1w"]["C02"] == {}
+    asyncio.run(finance.keep("2026-10-23", late=True, families=FAMS))
+    assert finance.snapshot("2026-10-23")["late"] is True
+
+
+def test_vnd_by_hand_correct_incorrect_missed_and_a_negative_warning():
+    from trial import finance
+
+    asyncio.run(finance.keep("2026-10-22", families=FAMS))
+    rows = [
+        _scored("correct", 2.5),  # +25 m
+        _scored("correct", -3.0, expected=-1.0),  # +30 m, and it hurt the family: a negative warning
+        _scored("incorrect", -2.0),  # −20 m
+        _scored("missed", 4.0, expected=0.1),  # 40 m missed, not netted
+        _scored("quiet", 0.5, expected=0.0),
+        {**_scored("pending", None), "realised": None},  # adds nothing
+        _scored("correct", 2.5, day="2026-10-24"),  # no snapshot: unavailable, never 0
+    ]
+    t = finance.summary(rows)["horizons"]["1w"]
+    assert t["correct"] == {"vnd": 55_000_000, "n": 2}
+    assert t["incorrect"] == {"vnd": 20_000_000, "n": 1}
+    assert t["net"] == {"vnd": 35_000_000, "n": 3}
+    assert t["negative_warnings"] == {"vnd": 30_000_000, "n": 1}
+    assert t["missed_opportunity"] == {"vnd": 40_000_000, "n": 1}
+    assert t["effect"]["vnd"] == 25_000_000 - 30_000_000 - 20_000_000 + 40_000_000 + 5_000_000
+    assert (t["scored"], t["unavailable"], t["late"]) == (6, 1, 0)
+    assert t["by_family"]["stocks"]["net"]["vnd"] == 35_000_000 and t["by_family"]["policy_macro"]["net"]["n"] == 0
+    assert finance.value(rows[0], None) is None
+
+
+# -- cost per agent (§3) ----------------------------------------------------------------------------------------
+
+
+def _line(at, model="claude-sonnet-5-5", i=100, o=20, usd=0.01, error=None):
+    return {
+        "at": at,
+        "asked": f"anthropic/{model.replace('-5-5', '-5.5')}",
+        "model": model,
+        "s": 1.0,
+        "usage": {"in": i, "out": o, "usd": usd},
+        "error": error,
+    }
+
+
+def test_the_backfill_matches_exactly_one_bridge_line_or_none():
+    from trial import costs
+
+    call = {"model": "anthropic/claude-sonnet-5.5", "tokens_in": 100, "tokens_out": 20}
+    assert costs.match(call, [_line(10.0)], (0, 20))["usage"]["usd"] == 0.01
+    assert costs.match(call, [_line(10.0), _line(12.0)], (0, 20)) is None  # two the same: none
+    assert costs.match(call, [_line(30.0)], (0, 20)) is None  # outside the run
+    assert costs.match(call, [_line(10.0, model="claude-opus-5-5")], (0, 20)) is None
+    assert costs.match(call, [_line(10.0, i=101)], (0, 20)) is None
+    assert costs.match(call, [_line(10.0, error="x")], (0, 20)) is None
+    grouped = {"model": "anthropic/claude-sonnet-5.5", "tokens_in": None, "tokens": 120}  # only in + out was kept
+    assert costs.match(grouped, [_line(10.0)], (0, 20)) is not None
+
+
+def test_cost_per_agent_counts_the_calls_that_reported_one_and_never_reads_none_as_zero():
+    from trial import costs
+
+    rows = [
+        {
+            "agent": "cio",
+            "tokens_in": 10,
+            "tokens_out": 5,
+            "tokens": 15,
+            "tokens_cached": None,
+            "cost_usd": 0.02,
+            "cost_kind": "notional",
+            "ms": 1000,
+            "attempt": 1,
+            "error": None,
+            "model": "m",
+        },
+        {
+            "agent": "cio",
+            "tokens_in": 10,
+            "tokens_out": 5,
+            "tokens": 15,
+            "tokens_cached": 3,
+            "cost_usd": None,
+            "cost_kind": None,
+            "ms": 3000,
+            "attempt": 2,
+            "error": "AgentError",
+            "model": "m",
+        },
+        {
+            "agent": "challenger",
+            "tokens_in": None,
+            "tokens_out": None,
+            "tokens": None,
+            "tokens_cached": None,
+            "cost_usd": None,
+            "cost_kind": None,
+            "ms": None,
+            "attempt": 1,
+            "error": None,
+            "model": "n",
+        },
+    ]
+    a = costs.per_agent(rows)
+    assert (a["cio"]["cost_usd"], a["cio"]["n_reported"], a["cio"]["n_calls"]) == (0.02, 1, 2)
+    assert (a["cio"]["retries"], a["cio"]["errors"], a["cio"]["ms_p50"], a["cio"]["tokens"]) == (1, 1, 2000.0, 30)
+    assert a["challenger"]["cost_usd"] is None and a["challenger"]["n_tokens"] == 0  # unavailable, not 0

@@ -938,6 +938,108 @@ metric(
     "Một thiết lập, không phải kết quả tính: mục tiêu KPI-02 của BRD, đọc từ nguồn đối chiếu tin.",
     "src/news/reference.py::coverage",
 )
+# ── the agents' evaluation (AGENT_EVALUATION_PLAN E5): View A and View B of the trial page ─────────────────────
+E = "src/trial/evaluate.py::"
+F = "src/trial/finance.py::"
+metric(
+    "collect.relevant",
+    "Tin liên quan danh mục",
+    "Tỷ lệ = số tin giữ lại trong ngày (theo giờ thu thập) có mức liên quan cao hoặc vừa và không bị giữ lại ÷ số tin "
+    "giữ lại trong ngày.",
+    "src/news/monitor.py::days",
+    hits="Tin liên quan",
+    n="Tin giữ lại",
+)
+metric(
+    "eval.precision",
+    "Độ chính xác của agent",
+    "Một biến động là một yếu tố, một kỳ hạn, từ giá đóng cửa trước một buổi sáng; nhiều bản nháp cùng nói về nó được "
+    "chấm một lần. Agent “nói” khi kỳ vọng vượt ¼ biến động thường của kỳ; biến động lớn khi thị trường đi quá 1 lần "
+    "biến động thường (data/evaluation.json). Tỷ lệ = số lần nói đúng hướng và thị trường đi đủ mạnh ÷ số lần nói. "
+    "Chờ chấm, loại ra và không chấm được không tính.",
+    E + "rates",
+    hits="Đúng",
+    n="Số lần agent nói",
+)
+metric(
+    "eval.recall",
+    "Độ phủ biến động lớn",
+    "Tỷ lệ = số biến động lớn agent nói đúng ÷ số biến động lớn trong các buổi sáng agent đã chạy (đúng + sai hướng + "
+    "không nói). Buổi sáng không chạy được đếm riêng.",
+    E + "rates",
+    hits="Đúng",
+    n="Biến động lớn",
+)
+metric(
+    "eval.direction",
+    "Đúng hướng",
+    "Tỷ lệ = số biến động đã chấm có dấu kỳ vọng trùng dấu biến động thực tế ÷ số biến động đã chấm có kỳ vọng và "
+    "biến động khác 0.",
+    E + "rates",
+    hits="Đúng hướng",
+    n="Đã chấm",
+)
+metric(
+    "eval.event_recall",
+    "Tin quan trọng vào sự kiện",
+    "Tin quan trọng của nguồn đối chiếu (từ hai báo trở lên) mà ta đã thu trong khoảng của một buổi sáng. Tỷ lệ = số "
+    "tin trong số đó nằm trong một sự kiện của buổi sáng ÷ số tin đó.",
+    E + "event_recall",
+    hits="Vào sự kiện",
+    n="Tin quan trọng",
+)
+metric(
+    "eval.move",
+    "Biến động của yếu tố",
+    "Biến động của yếu tố từ giá đóng cửa trước buổi sáng (gốc) đến ngày đến hạn, theo đơn vị của yếu tố.",
+    E + "judge_move",
+    unit="Đơn vị",
+)
+metric(
+    "eval.vnd_effect",
+    "Tác động lên danh mục mô phỏng",
+    "Tác động = độ nhạy của danh mục gia đình với yếu tố (VND mỗi đơn vị, chụp buổi sáng đó, từ hệ số tải của mô hình) "
+    "× biến động thực tế. Mô phỏng, không phải lãi lỗ thật.",
+    F + "value",
+)
+metric(
+    "eval.vnd_correct",
+    "Giá trị các lần gọi đúng (mô phỏng)",
+    "Với mỗi lần agent nói đúng: |độ nhạy × biến động thực tế|, cộng qua các gia đình — nếu gia đình làm theo toàn bộ. "
+    "Không chứng minh agent gây ra lãi.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_incorrect",
+    "Thiệt của các lần gọi sai (mô phỏng)",
+    "Với mỗi lần agent nói sai: −|độ nhạy × biến động thực tế|, cộng qua các gia đình — nếu gia đình làm theo toàn bộ.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_net",
+    "Ròng mô phỏng",
+    "Ròng = giá trị các lần gọi đúng − thiệt của các lần gọi sai. Cơ hội bỏ lỡ không trừ vào ròng. Dự báo chờ chấm, "
+    "loại ra hoặc không có ảnh chụp danh mục không tính.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_warning",
+    "Cảnh báo giảm đúng (mô phỏng)",
+    "Các lần gọi đúng mà biến động làm danh mục gia đình giảm (độ nhạy × biến động < 0): giá trị của lời cảnh báo.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_missed",
+    "Cơ hội bỏ lỡ (mô phỏng)",
+    "Với mỗi biến động lớn agent không nói: |độ nhạy × biến động thực tế|, cộng qua các gia đình. Hiện bên cạnh, không "
+    "trừ vào ròng.",
+    F + "_totals",
+    n="Số lần",
+)
 metric(
     "scenario.move",
     "Biến động của một yếu tố trong kịch bản",
