@@ -7,6 +7,23 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## DA — The assistant reads the data itself (2026-10-24)
+
+Source: [`2026-10-24_assistant_data_access.md`](../sources/owner_requests/2026-10-24_assistant_data_access.md); plan
+[`docs/ASSISTANT_DATA_PLAN.md`](../../ASSISTANT_DATA_PLAN.md); decision
+[ADR-0040](../decisions/ADR-0040-the-assistant-queries-role-scoped-read-only-views.md). Extends AS (FEAT-32).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-DA-01 | A number shown or said as a total comes from a count in the database, one function shared by the page and the assistant (news, alerts, search, reviews); a page of rows says "40 / 1.415" | plan §2, D1 | documented |
+| OWN-DA-02 | The assistant has one tool, `truy_van`, that runs a SQL `select` on views built for the role and person signed in (CIO, RM, client, Compliance/Admin), never on a real table; another family's rows, held news, accounts, e-mail addresses and the audit chain's hashes are never visible | plan §3.1, D2 | documented |
+| OWN-DA-03 | The query runs read-only under SQLite's authorizer: real tables, `ATTACH`, `PRAGMA`, writes, `load_extension`, recursive CTEs and several statements are refused; 2 s per query, 200 rows with the total, 3 calls a turn | plan §3.2, D2 | documented |
+| OWN-DA-04 | A catalog per role documents every view and column (meaning, unit, allowed values), the business's definitions and example questions; an undocumented column fails a test | plan §3.3, D3 | documented |
+| OWN-DA-05 | The answer shows its SQL, row count and `as_of` under "Cách tính", collapsed; each query is audited (who, role, SQL, rows, time) | plan §3.4, D4 | documented |
+| OWN-DA-06 | With `client_ai` off the model writes the SQL but never reads the rows; a template assembles the answer | plan §3.4, D4 | documented |
+| OWN-DA-07 | When the person contradicts a number, the assistant counts again and shows how; it does not argue | plan §3.5, D4 | documented |
+| OWN-DA-08 | An eval on real models, ~30 questions per role with gold answers from the database: accuracy ≥ 90 %, p95 ≤ 6 s, ≤ US$0.01 a turn; Haiku and Sonnet measured for the SQL step and the model chosen | plan §3.6, D5 | documented |
+
 ## WN — The client's menu by the bank's names (2026-10-22, business feedback 2)
 
 Source: [`2026-10-22_business_feedback_2.md`](../sources/owner_requests/2026-10-22_business_feedback_2.md) (the

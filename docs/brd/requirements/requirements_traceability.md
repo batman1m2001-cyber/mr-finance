@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 95 | 0 | 0 | 0 | 0 | 0 | 0 | 2 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 120 | 115 | 3 | 1 | 0 | 0 | 0 | 0 | 1 |
+| Owner requests (OWN) | 128 | 115 | 3 | 1 | 8 | 0 | 0 | 0 | 1 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -267,6 +267,14 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
+| OWN-DA-01 | FEAT-32 | planned | D1 of docs/ASSISTANT_DATA_PLAN.md |
+| OWN-DA-02 | FEAT-32 | planned | D2 |
+| OWN-DA-03 | FEAT-32 | planned | D2 |
+| OWN-DA-04 | FEAT-32 | planned | D3 |
+| OWN-DA-05 | FEAT-32 | planned | D4 |
+| OWN-DA-06 | FEAT-32 | planned | D4 |
+| OWN-DA-07 | FEAT-32 | planned | D4 |
+| OWN-DA-08 | FEAT-32 | planned | D5 |
 | OWN-WN-01 | FEAT-40, FEAT-21 | implemented_verified | the rail's four sections by name, in order, with their homes — `tests/test_graph_workspace.py::test_the_menu_is_the_banks_four_sections`, `tests/ui/test_wealth_names_ui.py::test_the_four_sections_their_tabs_and_headings` |
 | OWN-WN-02 | FEAT-21, FEAT-20 | implemented_verified | Wealth View's two tabs; Dữ liệu chi tiết tài sản lights Wealth View — `tests/test_graph_workspace.py::test_the_menu_is_the_banks_four_sections`, `tests/ui/test_wealth_names_ui.py::test_the_four_sections_their_tabs_and_headings` |
 | OWN-WN-03 | FEAT-21 | implemented_verified | `#/client/dong-tien` → Wealth view at its cash part — `tests/test_graph_workspace.py::test_old_addresses_open_their_page_over_its_lens`, `tests/ui/test_wealth_names_ui.py::test_every_old_address_opens_its_page_and_none_the_graph` |

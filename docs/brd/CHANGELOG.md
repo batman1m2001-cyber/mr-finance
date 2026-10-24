@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-24 — The assistant reads the data itself (owner): totals are counts; one tool, `truy_van`, a SQL
+  `select` on role-scoped read-only views under SQLite's authorizer, with a catalog, "Cách tính", an audit entry
+  and an eval gate; amends `Param`'s rule for that tool. Planned (D0). — ADR-0040, owner_requirements DA,
+  requirements_traceability §5, docs/ASSISTANT_DATA_PLAN.md
 - 2026-10-23 — The test book built (D2–D3): `scripts/make_santander_vn.py` matches the 6,500 Santander clients to
   SCF 2022 households and writes them in the fixtures' schema; all valued by `wealth.valuation`, Σ AUM 428,000 tỷ,
   share at TCB 35 %, 58.7 % with over half their wealth in one class; calibration in `data/calibration/`. Proposed.

@@ -1,7 +1,9 @@
 # OneWealth — The assistant reads the data itself: plan
 
-**Status: proposed** (owner, 2026-10-24: “can you think a way to give assistant access to our db, and knowledge to
-flexibly, dynamically answer user” → “go”). Nothing below is built yet except the hotfix in §1.
+**Status: in progress** (owner, 2026-10-24: “can you think a way to give assistant access to our db, and knowledge to
+flexibly, dynamically answer user” → “go”).
+- **D0 done:** [ADR-0040](brd/decisions/ADR-0040-the-assistant-queries-role-scoped-read-only-views.md); OWN-DA-01…08
+  in docs/brd (planned); BRD checker 0 errors.
 
 ## 1. Why: the CIO chat of 2026-10-24
 
