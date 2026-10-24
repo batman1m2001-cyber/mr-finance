@@ -1,0 +1,47 @@
+{
+ "note": "Dữ liệu mô phỏng: hành vi từ dữ liệu ẩn danh Santander (Kaggle 2016); cơ cấu tài sản từ hộ thật trong SCF 2022 (Fed); quy mô theo AUM Private 428.000 tỷ / 6.500 khách; hiệu chỉnh Việt Nam là giả định.",
+ "clients": 6500,
+ "aum_total_ty": 428000,
+ "aum_min_ty": 25.0,
+ "aum_median_ty": 38.8,
+ "aum_max_ty": 9134,
+ "wealth_total_ty": 1222857,
+ "share_at_tcb_book": 0.35,
+ "share_at_tcb_at_floor": 0.516,
+ "tiers": {
+  "Mới lên Private": 4331,
+  "HNW": 1452,
+  "HNW cao": 552,
+  "VHNW": 137,
+  "UHNW": 28
+ },
+ "cities": {
+  "TP.HCM": 2925,
+  "Hà Nội": 2275,
+  "Bình Dương": 260,
+  "Đà Nẵng": 260,
+  "Hải Phòng": 260,
+  "Khánh Hòa": 195,
+  "Đồng Nai": 195,
+  "Cần Thơ": 130
+ },
+ "foreign_share": 0.07,
+ "scf_households_used": 601,
+ "more_than_half_in_one_class": 0.587,
+ "top_class": {
+  "home": 1973,
+  "business": 1871,
+  "other_re": 1358,
+  "deposits": 1009,
+  "funds": 169,
+  "stocks": 106,
+  "bonds": 14
+ },
+ "casa_over_half_of_aum": 427,
+ "subset_1000": 1000,
+ "inputs": {
+  "sample": "sample_6500.csv.gz",
+  "scf": "SCFP2022.csv",
+  "seed": 20261023
+ }
+}

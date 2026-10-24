@@ -1,0 +1,51 @@
+{
+ "note": "The Vietnamese wrapping of the santander_vn book (docs/CLIENT_DATASET_PLAN.md). Each table: value, source; 'giả định' = our assumption, to replace with a cited figure.",
+ "cities": {
+  "source": "giả định: where wealthy clients live; Santander's provinces keep their rank and are cut to these shares",
+  "value": [["TP.HCM", 0.45], ["Hà Nội", 0.35], ["Hải Phòng", 0.04], ["Bình Dương", 0.04], ["Đà Nẵng", 0.04], ["Đồng Nai", 0.03], ["Khánh Hòa", 0.03], ["Cần Thơ", 0.02]]
+ },
+ "scf_classes": {
+  "source": "SCF 2022 summary extract variables (federalreserve.gov/econres/scfindex.htm) grouped into the app's classes",
+  "value": {"deposits": ["LIQ", "CDS"], "bonds": ["BOND", "SAVBND"], "funds": ["NMMF", "OTHMA"], "stocks": ["STOCKS"],
+            "retirement": ["RETQLIQ"], "insurance": ["CASHLI"], "home": ["HOUSES"], "other_re": ["ORESRE", "NNRESRE"],
+            "business": ["BUS"], "dropped": ["VEHIC", "OTHFIN", "OTHNFIN"]}
+ },
+ "retirement_to": {
+  "source": "giả định: Vietnam has no 401(k)/IRA; a US household's retirement accounts are read as these Vietnamese holdings",
+  "value": {"deposits": 0.5, "insurance": 0.3, "funds": 0.2}
+ },
+ "multipliers": {
+  "source": "giả định: Vietnamese wealthy households hold more property and gold, fewer funds than US ones; shares are multiplied then renormalised",
+  "value": {"home": 1.3, "other_re": 1.5, "funds": 0.6, "deposits": 1.3}
+ },
+ "gold_share": {"source": "giả định: gold as a share of total wealth, drawn per client", "value": [0.02, 0.10]},
+ "jitter": {"source": "giả định: each reuse of an SCF household moves every class share by up to ±10 %", "value": 0.10},
+ "casa_in_deposits_with_td": {"source": "giả định: the part of TCB deposits left in CASA when the client also holds a term deposit", "value": [0.05, 0.25]},
+ "td_tenors": {
+  "source": "giả định: Santander barely shows short terms; tenors (months) and their weights, rates per year",
+  "value": [[1, 0.05, 0.035], [3, 0.10, 0.040], [6, 0.25, 0.047], [12, 0.40, 0.052], [24, 0.12, 0.054], [36, 0.08, 0.055]]
+ },
+ "income_yield": {"source": "giả định: yearly income as a share of total wealth, at the median Santander income; scaled by (income / median)^0.5", "value": 0.035},
+ "spending_of_income": {"source": "giả định", "value": [0.35, 0.75]},
+ "other_banks": {"source": "Vietnamese banks and brokers (names only)", "value": {"banks": ["Vietcombank", "BIDV", "VietinBank", "VPBank", "ACB", "MB", "HDBank", "Sacombank"], "brokers": ["SSI", "VPS", "VNDirect", "HSC", "Mirae Asset"]}},
+ "business_sectors": {"source": "giả định", "value": ["Logistics", "Bất động sản", "Sản xuất", "Thương mại", "Xây dựng", "Thực phẩm", "Công nghệ", "Y tế", "Giáo dục", "Dệt may"]},
+ "occupations": {
+  "source": "giả định: by the matched household's business share and the client's age",
+  "value": {"owner": ["Chủ doanh nghiệp", "Chủ tịch HĐQT", "Nhà sáng lập"], "executive": ["Giám đốc điều hành", "Giám đốc tài chính", "Phó tổng giám đốc"],
+            "professional": ["Bác sĩ", "Luật sư", "Kiến trúc sư", "Chuyên gia tư vấn"], "retired": ["Nghỉ hưu (nguyên chủ doanh nghiệp)", "Nghỉ hưu (nguyên giám đốc)"], "investor": ["Nhà đầu tư"]}
+ },
+ "names": {
+  "source": "common Vietnamese surnames and their rough frequencies (Wikipedia, 'Vietnamese name'); given names: our lists",
+  "value": {
+   "surnames": [["Nguyễn", 38], ["Trần", 11], ["Lê", 9.5], ["Phạm", 7], ["Hoàng", 5], ["Huỳnh", 5], ["Phan", 4.5], ["Vũ", 3.9], ["Võ", 3.9], ["Đặng", 2.1], ["Bùi", 2], ["Đỗ", 1.4], ["Hồ", 1.3], ["Ngô", 1.3], ["Dương", 1], ["Lý", 0.5]],
+   "middle_male": ["Văn", "Minh", "Quốc", "Đức", "Thành", "Hữu", "Gia", "Hoàng", "Anh", "Tuấn"],
+   "middle_female": ["Thị", "Ngọc", "Thu", "Thanh", "Minh", "Phương", "Bảo", "Kim", "Hồng", "Mai"],
+   "given_male": ["Quang", "Hùng", "Dũng", "Tuấn", "Long", "Phát", "Khoa", "Nam", "Sơn", "Trung", "Hải", "Bình", "Thắng", "Vinh", "Huy", "Toàn", "Phong", "Lâm", "Đạt", "Khải"],
+   "given_female": ["Lan", "Hương", "Hạnh", "Linh", "Trang", "Thảo", "Hà", "Mai", "Ngân", "Vy", "Anh", "Phương", "Yến", "Nhung", "Quyên", "Uyên", "Châu", "Diệp", "Hiền", "Loan"]
+  }
+ },
+ "events": {
+  "source": "giả định: yearly odds of a large outflow in the next 12–18 months, and its size as a share of total wealth",
+  "value": {"school_abroad": [0.25, [0.01, 0.03]], "business_capital": [0.30, [0.03, 0.10]], "property_deposit": [0.10, [0.03, 0.08]], "health": [0.20, [0.003, 0.01]]}
+ }
+}

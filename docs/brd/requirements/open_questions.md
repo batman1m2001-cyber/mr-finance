@@ -25,12 +25,13 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-15 | conflict | §13.1 two-person rule: sentence vs ownership table | resolved for the demo (ADR-0016) |
 | Q-16 | gap | Brief: re-asking the risk test on triggers | open |
 | Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | resolved (ADR-0020) |
-| Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005) |
+| Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005); a 1,000 / 6,500 Private book proposed (ADR-0038) |
 | Q-19 | divergence | The advisory track record is mock and could be read as BR-15 | resolved (labelled; dates fixed) |
 | Q-20 | gap | FR-603 “tab Mục tiêu”: the goal branch is not on the client's Goals/Plan tab | resolved (shown on Kế hoạch) |
 | Q-21 | divergence | The client view exists although the BRD puts client delivery in the pilot phase | resolved (ADR-0008) |
 | Q-22 | divergence | Factor-model parameters are assumed, not estimated | resolved (ADR-0004); estimation blocked |
 | Q-23 | divergence | One process instead of a separate AI zone; no signed inbox | resolved for the demo (ADR-0009) |
+| Q-27 | ambiguity | Whose book the test data is: Private only, its size and amounts | resolved (6,500 Private, ≥ 25 tỷ, Σ 428,000 tỷ; ADR-0038); licence and scope open |
 
 ---
 
@@ -119,6 +120,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-18 — Number of families
 - **Fact:** the BRD's demo has 20 mock families; here 5 clients and 2 spouses (household scope). Ranking and BR-09 work at any count. [ADR-0005](../decisions/ADR-0005-mock-clients-and-prices-public-news.md).
+- **Proposed (2026-10-23):** the demo stays; a second client set, a book of 6,500 Private clients (Santander's clients, SCF households, Techcombank's totals), for the KPIs and NFR-01 ([ADR-0038](../decisions/ADR-0038-a-second-client-set-the-santander-vn-private-book.md), [Q-27](#q-27--whose-book-the-test-data-is)).
 
 ### Q-19 — The advisory track record
 - **Fact:** “Hiệu quả tư vấn” ([SCR-RM-05](../assets/current_ui/SCR-RM-05_desktop-light.jpg)) shows recommendations, accuracy (75 %), money gained/lost, missed news and AI pipeline scores, from `data/advisory.json` (mock, labelled “Dữ liệu giả định cho demo”). Some entries are dated after the demo's date (e.g. 2026-10-24 when the data is as of 2026-10-09).
@@ -183,3 +185,22 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
   CONTENT-01 flow 3, SCOPE-02 (no single-ticker recommendation straight to a client), WF-08. SEC-01 ("least privilege
   by role and assigned families") is the only rule on reading. The reading above follows SEC-01. Still open for
   Compliance to widen or narrow.
+
+### Q-27 — Whose book the test data is
+- **Fact:** the challenge is set in Private Banking ("a Wealth Platform … for private clients"). Our submission
+  (`nop_bai_cuoc_thi.md` §4, §5.1) sizes the product on about 6,500 Private clients (88 % coverage ≈ 5,700) and
+  leaves Priority to a later, reduced version (months 13–24). The BRD's NFR-01 counts 6,500 families.
+- **Fact:** Techcombank Private requires AUM ≥ 23 tỷ or a total relationship value ≥ 25 tỷ, three-month average
+  (techcombank.com; "may change by period"). The owner (2026-10-23): 6,500 Private clients, AUM 428,000 tỷ
+  (≈ 65.8 tỷ each).
+- **Conflict:** the submission's §5.8 assumes 60 tỷ total wealth per client, 35 % at TCB — 21 tỷ at TCB, under the
+  floor and a third of 65.8 tỷ ([TO_DISCUSS D-04](../../TO_DISCUSS.md)).
+- **Fact:** the first draft of [`docs/CLIENT_DATASET_PLAN.md`](../../CLIENT_DATASET_PLAN.md) mapped Santander's
+  PARTICULARES to Priority and drew 15 % Private — a sample-size choice with no source.
+- **Resolution (2026-10-23):** the book is 6,500 Private clients, all Techcombank clients, drawn from Santander's TOP
+  (the real run found enough: 6,500 drawn, none filled); AUM ≥ 25 tỷ each, summing to 428,000 tỷ; the make-up of
+  wealth from a matched SCF household; Priority only as an optional, labelled group
+  ([ADR-0038](../decisions/ADR-0038-a-second-client-set-the-santander-vn-private-book.md)). Owner: product.
+- **Open:** the Santander competition rules (D0); whether 428,000 tỷ is Private only, and its source; the share
+  held at TCB (≈ 35 %, falling with wealth) and the tier cut-offs, giả định; the AUM by product, if Private Banking
+  can give it. Owner: product, Private Banking.
