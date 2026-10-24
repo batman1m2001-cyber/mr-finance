@@ -1,6 +1,12 @@
 # OneWealth: measuring the news agents (plan)
 
-**Status: in progress.** Started 2026-10-24 by the owner's request “Refactor and Implement News & Portfolio Impact
+**Status: in progress.**
+- **E0 done:** the bridge finds `claude` on each call, and a failed start is a logged 502. Its reply carries the
+  cost (notional) and cached tokens; `call_model` keeps them (`views/agents.py::usage_meta`).
+- **E1 done:** `news/ops.py::run_summary`, `news/monitor.py`. On the live data, 2026-10-23 had 144 runs: 63,960
+  fetched (each run re-reads every feed), 57,078 duplicates, 126 unique, 126 retained and 54 relevant. Runs before
+  the deploy say *relevant* is unavailable.
+ Started 2026-10-24 by the owner's request “Refactor and Implement News & Portfolio Impact
 Agent Evaluation”.
 
 Two questions to answer:
@@ -62,12 +68,12 @@ Status:
 
 | Group | From the event type | From the source, when there is no event type |
 |---|---|---|
-| real estate | real_estate | — |
+| real estate | real_estate | the Địa ốc section (`vneconomy_do`) |
 | stocks | equity | the stock sections (`*_ck`, `vietstock_cp`) |
 | policy/macro | monetary, fx, credit, commodity, geopolitics, regulation | the macro sections |
 | other | gold, crypto | — |
 
-Anything else is *chưa xếp*. Factors map the same way:
+Anything else is *chưa xếp* (VnExpress Kinh doanh, a mixed section, has no group of its own). Factors map the same way:
 - real estate: VN_HOUSE, RE_SPREAD;
 - stocks: VNINDEX, GLOBAL_EQ, FOREIGN_FLOW, FIN_SPREAD;
 - policy/macro: VN_RATE, VN_GOV, USDVND, US10Y, DXY;

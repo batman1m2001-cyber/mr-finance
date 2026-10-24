@@ -67,8 +67,9 @@ async def fetch(feeds: Optional[dict] = None, now: Optional[float] = None) -> di
         except Exception as exc:  # noqa: BLE001 — one dead feed must not stop the others
             return {"source": src["id"], "items": [], "error": f"{type(exc).__name__}: {exc}"[:200]}
 
+    started = time.time()
     fetched = await asyncio.gather(*(one(s) for s in sources))
-    return {"fetched": list(fetched), "at": at}
+    return {"fetched": list(fetched), "at": at, "started": started}
 
 
 @op
@@ -126,9 +127,60 @@ def screen(fetched: list, at: float) -> dict:
     return {"rows": rows, "counts": counts}
 
 
+NO_TIME = "Tin không có giờ công bố"  # rules.gate's reason
+
+
+def run_summary(
+    kept: List[Dict[str, Any]], dup: int, counts: Dict[str, Any], at: float, started: Optional[float] = None
+) -> Dict[str, Any]:
+    """The run's record (AGENT_EVALUATION_PLAN §2.1). The funnel: fetched = too old + duplicates + unique;
+    unique = refused + retained; relevant ⊆ retained, the agents' candidate rule (medium or high, not restricted).
+    ``at`` is the collection time every item gets as ``ingested``; ``started``/``finished`` the wall clock."""
+    from trial import segments
+
+    finished = time.time()
+    retained = [r for r in kept if r["status"] == "new"]
+    attempted = len(counts)
+    failed = sorted(sid for sid, c in counts.items() if c.get("error"))
+    configured = sum(1 for s in config()["sources"] if s.get("approved"))
+    fetched = sum(int(c.get("fetched") or 0) for c in counts.values())
+    skipped = sum(int(c.get("skipped") or 0) for c in counts.values())
+    by_category: Dict[str, int] = {k: 0 for k in (*segments.FAMILIES, "unclassified")}
+    for r in retained:
+        by_category[segments.family_of_item(r) or "unclassified"] += 1
+    return {
+        "at": at,
+        "started": started,
+        "finished": finished,
+        "duration_s": round(finished - started, 2) if started else None,
+        "status": "failed" if attempted == 0 or len(failed) == attempted else "partial" if failed else "ok",
+        "configured": configured,
+        "attempted": attempted,
+        "succeeded": attempted - len(failed),
+        "failed": len(failed),
+        "failed_sources": {sid: counts[sid]["error"] for sid in failed},
+        "fetched": fetched,
+        "skipped": skipped,
+        "duplicates": dup,
+        "unique": len(kept),
+        "added": len(retained),  # the inbox's new items: “retained” (the strip has read “added” since FEAT-01)
+        "retained": len(retained),
+        "refused": len(kept) - len(retained),
+        "relevant": sum(1 for r in retained if r.get("relevance") in ("high", "medium") and not r.get("restricted")),
+        "held": sum(1 for r in retained if r.get("restricted")),
+        "by_category": by_category,
+        "missing": {
+            "published": sum(1 for r in kept if r.get("refused_reason") == NO_TIME),
+            "summary": sum(1 for r in retained if not (r.get("summary") or "").strip()),
+            "category": by_category["unclassified"],
+        },
+        "sources": counts,
+    }
+
+
 @op
-def keep(rows: list, counts: dict, at: float) -> dict:
-    """The new items kept, and the run recorded for the feed-health strip."""
+def keep(rows: list, counts: dict, at: float, started: Optional[float] = None) -> dict:
+    """The new items kept, and the run recorded: the feed-health strip and the collection monitor."""
     kept, dup = store.add(rows)
     for sid, c in counts.items():  # a feed that failed raises an alert; one that answered resolves it (NFR-12)
         if c.get("error"):
@@ -136,14 +188,7 @@ def keep(rows: list, counts: dict, at: float) -> dict:
         else:
             alerts.resolve("news_feed", sid)
     added = [r["id"] for r in kept if r["status"] == "new"]
-    summary = {
-        "at": at,
-        "added": len(added),
-        "refused": len(kept) - len(added),
-        "duplicates": dup,
-        "held": sum(1 for r in kept if r["status"] == "new" and r.get("restricted")),
-        "sources": counts,
-    }
+    summary = run_summary(kept, dup, counts, at, started)
     store.record_run(summary)
     return {"ingest": {**summary, "ids": added}}
 
