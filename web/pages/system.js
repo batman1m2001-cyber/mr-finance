@@ -3,7 +3,7 @@
    the stored records (GET /api/system); the load is queued for the market_load job (POST /api/market/load). */
 import {ago, esc, get, n as how, num, pct, post, toast} from "../core/core.js";
 
-const ROLE = {cio: "CIO", rm: "RM", compliance: "Tuân thủ", admin: "Quản trị"};
+const ROLE = {cio: "CIO", rm: "RM", compliance: "Tuân thủ", admin: "Quản trị"};  // compliance: audit rows kept from before OWN-FB-18
 export const JOB = {  // what each job does (also the Admin desk's names, desk/admin.js), in the product's language (the declaration in app/main.py is for developers)
   policy_sweep: "Rà soát quy định mới cho từng khách hàng",
   news_ingest: "Lấy tin từ các nguồn trong danh sách trắng vào hộp tin (FR-101)",
@@ -18,7 +18,7 @@ export const JOB = {  // what each job does (also the Admin desk's names, desk/a
   agent_worker: "Chạy lần lượt các yêu cầu “Chạy Agent CIO” đang xếp hàng (AI-13)",
   inbox_import: "Nhập các gói từ vùng AI qua cùng các kiểm tra, hoặc từ chối kèm lý do (ZONE-03)",
   zone_sync: "Gửi vùng AI danh mục đã duyệt và nghiên cứu đã phát hành (chế độ hộp chờ)",
-  audit_check: "Kiểm tra chuỗi nhật ký kiểm toán và chép dòng mới vào đoạn chỉ-ghi-một-lần; gãy thì báo Tuân thủ và Quản trị",
+  audit_check: "Kiểm tra chuỗi nhật ký kiểm toán và chép dòng mới vào đoạn chỉ-ghi-một-lần; gãy thì báo CIO và Quản trị",
   news_reference: "Đọc nguồn đối chiếu độc lập (Google News) mỗi 2 giờ; một ngày sau, chấm tin quan trọng đã thu thập hay chưa (KPI-02)",
   heartbeat: "Ghi nhịp của máy chủ; đo mức sẵn sàng trong giờ làm việc, dưới mục tiêu thì báo Quản trị (NFR-03)",
   agent_eval: "Bộ đánh giá cố định cho đề xuất lời nhắc và mô hình AI (MEAS-07)",

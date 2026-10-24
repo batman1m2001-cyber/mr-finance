@@ -1,12 +1,12 @@
-/* Tuân thủ · Tin bị giữ (BR-04): news that names someone on the restricted list waits here; releasing
+/* CIO · Tin bị giữ (BR-04; Compliance's until OWN-FB-18): news that names someone on the restricted list waits here; releasing
    it needs a reason, kept in the audit chain. The list itself is a mock (invented names). */
 import {empty, esc, get, post, toast, when} from "../core/core.js";
 
 export async function render(box, ctx) {
   const [{items}, cfg] = await Promise.all([get("/api/news/inbox?held=1"), get("/api/news/config")]);
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">Tuân thủ · Danh sách hạn chế</div><div class="h1">${items.length} tin đang bị giữ</div>
-      <div class="lede small">Sự kiện chứa tin này không chạy được Agent CIO cho tới khi Tuân thủ cho phép.</div></div></div>
+    <div class="pagehead"><div><div class="eyebrow">CIO · Danh sách hạn chế</div><div class="h1">${items.length} tin đang bị giữ</div>
+      <div class="lede small">Sự kiện chứa tin này không chạy được Agent CIO cho tới khi một CIO cho đi tiếp.</div></div></div>
     <div class="cols">
       <div class="panel c8">${items.length ? items.map(i => `
         <div style="padding:10px 0;border-bottom:1px solid var(--hair)">

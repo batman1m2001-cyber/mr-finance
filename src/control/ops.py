@@ -22,7 +22,7 @@ def decide(version_id: str = None, action: str = None, by: str = None, note: str
 @op
 def check_chain(tick: int = None, at: str = None) -> dict:
     """The ``audit_check`` job: walk the audit chain and the write-once segments; broken raises an alert for
-    Compliance and Admin, whole again resolves it (BRD-NFR-12). When both hold, the rows added since the last
+    the CIO and Admin, whole again resolves it (BRD-NFR-12). When both hold, the rows added since the last
     segment are written to a new one (BRD-RULE-DATA-10, control/worm.py)."""
     from control import alerts, db, log, worm
     from control.audit import verify

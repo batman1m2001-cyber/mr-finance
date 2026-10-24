@@ -93,5 +93,5 @@ Chưa có tin nào được duyệt thì trang báo tác động sẽ hiện khi
 ## Relationship specialist — #/client/chuyen-gia
 
 Chuyên gia của bạn: chuyên viên quan hệ khách hàng (tên, liên hệ — dữ liệu demo) và **Hàng chờ chuyên gia duyệt**: các phương án
-bạn đã gửi từ Wealth Planning Advisor, đang chờ hay đã được duyệt / từ chối kèm ghi chú. Trang này chỉ để xem; RM và chuyên gia quyết
+bạn đã gửi từ Wealth Planning Advisor, đang chờ hay đã được duyệt / từ chối kèm ghi chú. Trang này chỉ để xem; RM quyết
 định ở trang của họ.

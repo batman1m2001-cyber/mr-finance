@@ -19,7 +19,7 @@ staff pages carry a “Nội bộ” banner.
 `web/pages/performance.js`, `web/pages/perfall.js` (were tabs `rm`, `performance`, `perfall`).
 
 ## Acceptance and tests
-`tests/test_app.py::test_the_specialist_team_and_the_advisory_record`, `::test_the_advisory_record_over_every_client`.
+`tests/test_app.py::test_the_rm_and_the_advisory_record`, `::test_the_advisory_record_over_every_client`.
 
 ## Limitations
 Everything shown is invented; the page says it is illustrative and not accuracy tracking (Q-19); no entry is

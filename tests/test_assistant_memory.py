@@ -185,8 +185,8 @@ def test_retention_deletes_old_conversations_and_stale_facts():
         con.execute("update conversations set updated = ? where id = ?", (time.time() - 400 * 86400, old))
     stale = keep("Đang thuê nhà", "fact")
     asyncio.run(memory.store().update(conv.owner(ctx()), stale, expires=time.time() - 1))
-    vid = config.propose("assistant_retention", {"archive_days": 200}, "compliance")["id"]
-    config.decide(vid, "approve", "compliance2")
+    vid = config.propose("assistant_retention", {"archive_days": 200}, "cio")["id"]
+    config.decide(vid, "approve", "cio2")
     from assistant.retention import sweep
 
     got = asyncio.run(sweep())

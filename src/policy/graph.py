@@ -7,14 +7,14 @@ from policy.ops import add, set_status, summarise, verify
 
 @graph
 def policy_add_flow(item, by):
-    """Compliance adds a policy document."""
+    """A CIO adds a policy document."""
     done = add(item=item, by=by)
     START >> done >> END
 
 
 @graph
 def policy_verify_flow(document_id, by, note=""):
-    """A second Compliance person confirms the document's source."""
+    """A second CIO confirms the document's source."""
     done = verify(document_id=document_id, by=by, note=note)
     START >> done >> END
 

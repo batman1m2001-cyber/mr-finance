@@ -8,7 +8,7 @@ Gates, in order (the first that fails decides):
 - that time is not more than ``future_minutes`` after ingestion (refused, never pulled back);
 - it is not older than ``max_age_days`` (skipped: old news is not a new event).
 
-Then an item that names someone on the restricted list is held for Compliance; the rest is
+Then an item that names someone on the restricted list is held for the CIO; the rest is
 classified: international or domestic (source, then words), the engine factors it touches, a
 relevance level, and an event type hint. Words match whole words, case-insensitive.
 """

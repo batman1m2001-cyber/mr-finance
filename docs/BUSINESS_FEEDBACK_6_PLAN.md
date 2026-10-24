@@ -1,5 +1,10 @@
 # Business feedback 6 — the staff desks (2026-10-24) — plan
 
+**Status: done (F1–F7), 2026-10-24.** OWN-FB-01…18 implemented_verified (tests/ui/test_feedback6_ui.py,
+tests/test_retired_roles.py and the rows cited in requirements_traceability.md). The gate found two faults of its own:
+a hidden menu item's pages showed as tabs on the Decision board's sheets, and the CIO's Hiệu quả failed on a bank with
+no forecast scored yet; both fixed.
+
 The owner's 18 notes on the RM's and the CIO's desks, one on the Customer's Headline News and one on the sign-in page
 ([source](brd/sources/owner_requests/2026-10-24_business_feedback_6.md), BRD `OWN-FB-01…18`). Branch
 `ux/feedback-6`, merged into `main` when every phase passes its gate, then live on :8030.

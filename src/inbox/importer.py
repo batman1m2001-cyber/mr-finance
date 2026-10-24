@@ -157,7 +157,7 @@ def _news(items: List[Dict[str, Any]], received: float) -> Dict[str, str]:
         if item.get("source") != n["source"]:
             raise Rejected(f"Tin {n['url']} thuộc nguồn {item.get('source')!r}, không phải {n['source']!r}")
         if item["held"]:
-            raise Rejected(f"Tin {item['id']} nhắc tới danh sách hạn chế: Tuân thủ xem trong Hộp tin")
+            raise Rejected(f"Tin {item['id']} nhắc tới danh sách hạn chế: CIO xem ở Tin bị giữ")
         if item["status"] not in ("new", "grouped"):
             raise Rejected(f"Tin {item['id']} đã bị bỏ hoặc bị từ chối")
         refs[n["ref"]] = item["id"]

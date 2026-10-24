@@ -54,22 +54,16 @@ NODES: Dict[str, List[str]] = {
     # the RM's book: the map, the call list, goal tasks, proposals, contacts
     "so_khach_hang": ["book", "calls", "proposals"],
     "hom_nay": ["calls", "tasks"],
-    "de_xuat": ["proposals", "queue"],  # the RM's proposals; the Expert's queue
+    "de_xuat": ["proposals", "queue"],  # the RM's proposals and queue
     "lien_he": ["contacts"],
     "ghi_lien_he": ["contacts"],
-    # Admin's operations map; the chain and configuration (Compliance's desk too)
+    # Admin's operations map; the chain and configuration (the CIO's too)
     "van_hanh": ["ops", "alerts", "jobs"],
     "agent_nen": ["agents", "jobs"],
     "canh_bao_he_thong": ["alerts"],
     "chuoi_nhat_ky": ["chain", "node:chain"],
-    "cau_hinh_cho_duyet": ["config", "node:config", "controls"],  # Compliance's desk: configuration is a control
-    # the Expert's queue and the family's picture beside it
-    "ban_chuyen_gia": ["queue"],
-    "chuyen_gia_duyet": ["queue"],
-    "ho_so_khach": ["evidence"],
-    # Compliance's controls: the chain and configuration tools light its lanes too (chain, config)
-    "ban_kiem_soat": ["controls", "queue"],
-    "tin_bi_giu": ["held", "queue"],  # Compliance's desk: held news waits in its queue (U3 lit nothing)
+    "cau_hinh_cho_duyet": ["config", "node:config"],
+    "tin_bi_giu": ["held", "decide"],  # held news waits on the CIO's board (OWN-FB-18; U3 lit nothing)
 }
 
 

@@ -100,8 +100,7 @@ def as_signed_in(monkeypatch):
     return sign
 
 
-WHO = {"cio": (None, "cio"), "rm": (None, "rm01"), "client": ("C01", "C01"), "compliance": (None, "compliance"),
-       "admin": (None, "admin")}  # fmt: skip
+WHO = {"cio": (None, "cio"), "rm": (None, "rm01"), "client": ("C01", "C01"), "admin": (None, "admin")}
 
 
 @pytest.mark.parametrize("role", dataroom.ROLES)
@@ -118,8 +117,8 @@ def test_every_example_runs_in_its_room(role, as_signed_in):
         got = dict(
             asyncio.run(query(ctx, dict(datacatalog.examples("cio"))["Hệ thống đã lấy về bao nhiêu tin?"]))["rows"]
         )
-        assert got == {"new": 10}  # 12 fetched, 2 held for Compliance
-    if role == "compliance":
+        assert got == {"new": 10}  # 12 fetched, 2 held
+    if role in ("cio", "admin"):
         assert asyncio.run(query(ctx, "select count(*) from tin_bi_giu"))["rows"] == [[2]]
     if role in ("rm", "client"):
         assert asyncio.run(query(ctx, "select count(*) from tai_san"))["rows"][0][0] > 0

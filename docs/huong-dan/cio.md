@@ -1,12 +1,14 @@
 # Hướng dẫn cho CIO
 
 Các trang của CIO (`#/cio/…`): từ tin thị trường tới nhận định được duyệt, áp dụng cho mọi gia đình, và chất lượng
-của mô hình. Việc hai người (duyệt cấu hình, mô hình) cần một CIO khác.
+của mô hình, và các chốt kiểm soát: tin bị giữ, nghiên cứu, bài viết, chính sách, nhật ký. Việc hai người (duyệt cấu
+hình, phát hành nghiên cứu, duyệt bài viết, xác nhận nguồn văn bản) cần một CIO khác: người làm không tự duyệt.
 
 ## Bàn quyết định — #/cio
 
 Trang đầu của CIO: dòng chảy từ tin tới gia đình (tin, sự kiện, nhận định, lần áp dụng, gia đình, RM), những việc
-chờ CIO quyết định, phơi nhiễm theo yếu tố, sự kiện gần đây, mô hình và các agent. Duyệt nhận định làm ở trang Sự kiện
+chờ CIO quyết định (cả tin bị giữ, nghiên cứu chờ phát hành, văn bản chờ xác nhận nguồn, bài viết chờ duyệt),
+phơi nhiễm theo yếu tố, sự kiện gần đây, mô hình và các agent. Duyệt nhận định làm ở trang Sự kiện
 & nhận định; cấu hình CIO sở hữu cần một CIO khác duyệt.
 
 ## Agent chạy nền — #/cio/agent
@@ -26,10 +28,16 @@ chạy lại Agent Phản biện khi CIO bấm Xác nhận; nó không duyệt n
 
 ## Hộp tin — #/cio/hop-tin
 
-Trang đầu tiên của CIO: “<n> tin chờ xử lý”. Tin được lấy tự động mỗi 10 phút từ các nguồn đã duyệt; **Lấy tin ngay**
+Nằm ngay trên Bàn quyết định: “<n> tin chờ xử lý”. Tin được lấy tự động mỗi 10 phút từ các nguồn đã duyệt; **Lấy tin ngay**
 để lấy liền. **Tình trạng nguồn tin (24 giờ)** cho biết lần lấy cuối và số tin mỗi giờ của từng nguồn. Lọc theo nguồn,
 trong nước / quốc tế, mức liên quan và từ khóa. Đánh dấu các tin rồi **Bỏ tin**, hoặc **Gom thành sự kiện** để tạo một
-sự kiện. Tin nhắc tới tổ chức trong danh sách hạn chế không ở đây mà bị giữ chờ Tuân thủ.
+sự kiện. Tin nhắc tới tổ chức trong danh sách hạn chế không ở đây mà bị giữ ở Tin bị giữ.
+
+## Tin bị giữ — #/cio/giu
+
+Tin nhắc tới tổ chức trong danh sách hạn chế, với nguồn, thời gian và các tên được nhắc. Nhập **Lý do cho phép** (bắt
+buộc) rồi **Cho phép**; việc này được ghi nhật ký và gỡ điều kiện duyệt *g* của các sự kiện đang bị giữ vì tin đó. Bên
+cạnh là **Danh sách hạn chế** (dữ liệu giả lập: tên, mã, tên khác).
 
 ## Sự kiện & nhận định — #/cio/nhan-dinh
 
@@ -68,21 +76,31 @@ mang thay đổi 3 tháng của gia đình. Chọn lần áp dụng khác ở ô
 
 ## Nghiên cứu — #/cio/nghien-cuu
 
-Báo cáo nghiên cứu và ghi chú quy định chờ Tuân thủ phát hành. **Nạp báo cáo mới**: loại, số, giờ phát hành, xung đột
+Báo cáo nghiên cứu và ghi chú quy định; một CIO nạp, một CIO khác phát hành. **Nạp báo cáo mới**: loại, số, giờ phát hành, xung đột
 lợi ích, tiêu đề, tóm tắt; với ghi chú quy định thêm văn bản, tình trạng, ngày hiệu lực, số tuần chuẩn bị, mục đích,
 quốc gia, giấy tờ, lời nhắn cho khách và gợi ý cho RM. Danh sách cho biết người nạp, người quyết, số mục tiêu bị ảnh
-hưởng và trạng thái. Người nạp không tự phát hành được.
+hưởng và trạng thái. Mục người khác nạp có ô ghi chú (từ 20 ký tự) và **Phát hành** / **Từ chối**; bị từ chối khi
+ghi chú quá ngắn, người nạp tự phát hành, chưa tới giờ phát hành, hoặc báo cáo nhắc tên trong danh sách hạn chế.
 
 ## Bản tin — #/cio/ban-tin
 
 Soạn bản tin từ các nhận định đã duyệt: chọn nhận định, tiêu đề, mở đầu (theo mẫu hoặc Agent CIO), giờ gửi, gửi sớm cho
 nhóm Private (số giờ và lý do), xung đột lợi ích. Mở một bản tin để xem trước như khách đọc, **Kiểm tra nội dung**,
-**Sửa**, **Gửi Tuân thủ duyệt** (khi kiểm tra đạt), **Rút bản tin** và lịch sử.
+**Sửa**, **Gửi CIO khác duyệt** (khi kiểm tra đạt), **Rút bản tin** và lịch sử. Chỉ người soạn sửa, gửi hay rút
+bài. Bài của CIO khác đang chờ thì bạn **Duyệt** hoặc **Trả lại** (ghi chú từ 10 ký tự); bài chưa qua kiểm tra nội
+dung không duyệt được.
 
 ## Chính sách — #/cio/chinh-sach
 
-Radar chính sách, chỉ đọc với CIO: các văn bản đang theo dõi, thay đổi từ lần xem trước, tình trạng và bản tóm tắt của
-Agent Chính sách. Tuân thủ thêm văn bản và cập nhật tình trạng.
+Radar chính sách: các văn bản đang theo dõi, **Mới** / **Thay đổi** từ lần xem trước, tình trạng. **Thêm văn bản**
+(địa chỉ công báo, hoặc địa chỉ chính thức kèm số, cơ quan ban hành, ngày, tình trạng và nội dung). Mở một văn bản:
+bản tóm tắt của Agent Chính sách với trích dẫn từng điều (chỉ dùng nội bộ), **Chạy Agent Chính sách** sau khi nguồn đã
+xác nhận, **Xác nhận nguồn** (một CIO khác người thêm), **Cập nhật trạng thái** và lịch sử.
+
+## Nhật ký — #/cio/nhat-ky
+
+Kết quả kiểm tra chuỗi nhật ký (nguyên vẹn, hoặc “Gãy ở dòng n” và lý do), rồi 200 dòng mới nhất: lúc, ai, việc, đối
+tượng, mã băm. **Tải JSON (kèm kiểm tra chuỗi)** và **Tải CSV**. Dòng cũ vẫn ghi vai trò lúc đó (Tuân thủ, Chuyên gia).
 
 ## Mô hình: Tham số — #/cio/mo-hinh/tham-so
 
@@ -115,8 +133,14 @@ rủi ro, mô hình, được đọc gì, lần chạy gần nhất; rồi **Ch�
 
 ## Cấu hình — #/cio/cau-hinh
 
-CIO duyệt Mô hình yếu tố, Ngưỡng cảnh báo và Giả định lợi suất; các loại khác thuộc Tuân thủ hoặc Quản trị. Mỗi loại
+CIO duyệt Mô hình yếu tố, Ngưỡng cảnh báo, Giả định lợi suất, Danh sách hạn chế, Cụm từ cấm, Đồng ý chia sẻ dữ liệu,
+Bên liên quan (xung đột lợi ích), Nhóm đối chứng và Lưu giữ hội thoại với trợ lý; các loại khác thuộc Quản trị. Mỗi loại
 cấu hình một bảng: người sở hữu, có cần hai người không, có bộ đánh giá không; phiên bản đang hiệu lực và nội
 dung tóm tắt. **Đề xuất thay đổi** (sửa JSON kèm lý do); đề xuất đang chờ hiện người đề xuất, lý do, các trường đổi và
 kết quả bộ đánh giá (với prompt và mô hình). Vai trò sở hữu thấy **Duyệt** (chỉ bấm được khi bộ đánh giá đạt) và **Từ
 chối**; người đề xuất không tự duyệt được việc hai người. Bên dưới là lịch sử các phiên bản.
+
+## Cấu hình: Lưu giữ hội thoại với trợ lý — #/cio/cau-hinh
+
+Đổi số ngày giữ cuộc trò chuyện với trợ lý sau lượt cuối (từ 30 tới 3650, mặc định 365): ở Cấu hình, bảng **Lưu giữ
+hội thoại với trợ lý**, **Đề xuất thay đổi**; một CIO khác duyệt. Việc nền lưu giữ chạy 02:30 xoá cuộc trò chuyện quá hạn.

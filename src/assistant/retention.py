@@ -1,4 +1,4 @@
-"""The assistant's retention (A4, OWN-AS-15): Compliance's ``assistant_retention`` (two-person) says how many days a
+"""The assistant's retention (A4, OWN-AS-15): the CIO's ``assistant_retention`` (two CIOs) says how many days a
 conversation is kept after its last turn (default 365); the daily ``assistant_retention`` job deletes the older
 ones — their turns, the model's side, parked runs — and the long-term items past their expiry (facts: 180 days).
 What is deleted is gone: the pages are overwritten and the log emptied (``conversations.scrub``)."""

@@ -38,7 +38,7 @@ Compliance's release. Event: `status` and `held[]`.
 
 ## Acceptance and tests
 `tests/test_news.py::test_the_inbox_filters_and_dismiss`, `::test_the_inbox_endpoint_returns_items_and_feed_health`,
-`::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it`;
+`::test_an_item_naming_the_restricted_list_is_held_until_the_cio_releases_it`;
 `tests/test_views.py::test_an_event_groups_news_and_a_restricted_mention_holds_it`.
 
 ## Limitations

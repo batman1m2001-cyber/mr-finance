@@ -14,7 +14,7 @@ from research import store as research
 
 def seed_goal_branch():
     item = research.upload(AML_DRAFT, "cio")
-    research.decide(item["id"], "release", "compliance", NOTE)
+    research.decide(item["id"], "release", "cio2", NOTE)  # not the uploader (OWN-FB-18)
     out = run(DECLARE, family_id="C01", goal_id="GL-C01-01", purpose="study_abroad", by="rm01")
     assert "$errors" not in out, out
     return item
@@ -32,10 +32,9 @@ def test_fr603_the_goal_branch_is_on_the_rm_home_the_goals_tab_the_impact_page_a
     assert reg["client_message"] in p.page.inner_text("#page")
     p.go("#/client/tin/thi-truong")
     assert reg["client_message"] in p.page.inner_text("#page")
-    for role in ("cio", "compliance"):
-        p.go(f"#/{role}/nghien-cuu")
-        text = p.page.inner_text("#page")
-        assert AML_DRAFT["title"] in text and "mục tiêu bị ảnh hưởng" in text, role
+    p.go("#/cio/nghien-cuu")
+    text = p.page.inner_text("#page")
+    assert AML_DRAFT["title"] in text and "mục tiêu bị ảnh hưởng" in text
     client_view = api(base_url, "/api/goals/regulation?family_id=C01&role=client")
     assert client_view["matches"] and not p.problems()
 

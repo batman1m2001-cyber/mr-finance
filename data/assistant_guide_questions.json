@@ -19,8 +19,8 @@
  {"q": "Vì sao nút Duyệt và áp dụng bị mờ?", "role": "cio", "want": "Nhận định"},
  {"q": "thu hoi mot lan ap dung", "role": "cio", "want": "Lần áp dụng"},
  {"q": "mô hình dự báo đúng bao nhiêu phần trăm trong quá khứ", "role": "cio", "want": "Mô hình: Độ chính xác"},
- {"q": "Cho phép một tin bị chặn vì nhắc tên công ty hạn chế", "role": "compliance", "want": "Tin bị giữ"},
- {"q": "tải nhật ký kiểm toán ra file", "role": "compliance", "want": "Nhật ký"},
- {"q": "đổi số ngày lưu cuộc trò chuyện với trợ lý", "role": "compliance", "want": "Cấu hình"},
+ {"q": "Cho phép một tin bị chặn vì nhắc tên công ty hạn chế", "role": "cio", "want": "Tin bị giữ"},
+ {"q": "tải nhật ký kiểm toán ra file", "role": "cio", "want": "Nhật ký"},
+ {"q": "đổi số ngày lưu cuộc trò chuyện với trợ lý", "role": "cio", "want": "Cấu hình"},
  {"q": "nạp lại dữ liệu thị trường từ năm 2015", "role": "admin", "want": "Hệ thống"}
 ]

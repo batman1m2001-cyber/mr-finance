@@ -5,8 +5,8 @@ features and requirements it carries, and where it is after. Nothing is removed:
 its page module, unchanged, as a sheet over the role's desk (ADR-0036 §2). **State:** `planned` until the role's
 phase is built, then `built` with its test.
 
-The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-ADM-02, SCR-SP-02 and SCR-CMP-06 in
-[screen_inventory.md](screen_inventory.md).
+The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07 and SCR-ADM-02 in
+[screen_inventory.md](screen_inventory.md); SCR-SP-02 and SCR-CMP-06 were retired by OWN-FB-18.
 
 ## CIO (`#/cio/…`) — desk "Bàn quyết định" (SCR-CIO-15)
 
@@ -61,27 +61,19 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07, SCR-AD
 | Nhật ký `nhat-ky` | SCR-CMP-03 | FEAT-11 | BRD-BR-12, FR-702 | Nhật ký | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
 | Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_admin_works_at_the_operations_map_and_every_page_is_a_sheet` |
 
-## Expert (`#/specialist/…`) — desk "Bàn chuyên gia" (SCR-SP-02)
+## Retired: Expert and Compliance (OWN-FB-18, 2026-10-24)
 
-| Page (address) | Screen | Features | Key requirements | Rail group | State |
-|---|---|---|---|---|---|
-| Duyệt khuyến nghị `duyet` | SCR-SP-01 | FEAT-27 | BRD-RULE-ROLE-05, WF-08 | Duyệt khuyến nghị | built — `tests/ui/test_role_desks_ui.py::test_the_expert_works_at_the_bench_and_every_page_is_a_sheet` |
-| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_the_expert_works_at_the_bench_and_every_page_is_a_sheet` |
+The owner removed both roles and their accounts. The desks SCR-SP-02 and SCR-CMP-06 are gone and their addresses open
+for no one (`tests/ui/test_role_desks_ui.py::test_the_retired_desks_open_for_no_one`). Each page they had is still
+served, at the CIO's address; a second CIO (cio2) is the other pair of eyes, and the approver is never the author.
 
-## Compliance (`#/compliance/…`) — desk "Bàn kiểm soát" (SCR-CMP-06)
-
-| Page (address) | Screen | Features | Key requirements | Rail group | State |
-|---|---|---|---|---|---|
-| Tin bị giữ `giu` | SCR-CMP-01 | FEAT-02 | BRD-BR-04, FR-105 | Tin bị giữ | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Nghiên cứu `nghien-cuu` | SCR-CMP-02 | FEAT-03 | BRD-BR-03, FR-202, 203 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Bản tin `ban-tin[/NL-…]` | SCR-CMP-04 | FEAT-17 | BRD-FR-801 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Chính sách `chinh-sach[/PD-…]` | SCR-CMP-05 | FEAT-16 | BRD-FR-306 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Đo lường `do-luong` | SCR-CIO-13 | FEAT-18 | BRD-RULE-MEAS-03, 05 | Đo lường | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Nhật ký `nhat-ky` | SCR-CMP-03 | FEAT-11 | BRD-BR-12, FR-702 | Nhật ký | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Agent `agent` | SCR-CIO-08 | FEAT-15 | BRD-FR-703 | AI & cấu hình | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Việc nền `viec-nen` (read only) | SCR-SH-02 | FEAT-41, 15 | OWN-MR-02 | AI & cấu hình | built — `tests/ui/test_jobs_page_ui.py` |
-| Cấu hình `cau-hinh` | SCR-CIO-09 | FEAT-14 | BRD-FR-701 | AI & cấu hình | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
-| Bộ nhớ `bo-nho` | — | FEAT-37 | OWN-AS-* | rail foot | built — `tests/ui/test_role_desks_ui.py::test_compliance_works_at_the_controls_and_every_page_is_a_sheet` |
+| Was | Now |
+|---|---|
+| Expert · Duyệt khuyến nghị `duyet` | none: the RM's approval is the last; a recommendation reaches the client at once (`tests/test_retired_roles.py`) |
+| Compliance · Tin bị giữ `giu` | CIO `#/cio/giu`, under Decision board |
+| Compliance · Nghiên cứu, Bản tin, Chính sách | CIO, Nội dung (release, letter approval and policy confirmation by a CIO other than the author) |
+| Compliance · Nhật ký `nhat-ky` | CIO `#/cio/nhat-ky`, its own rail group; Admin keeps its own |
+| Compliance · Đo lường, Agent, Việc nền, Cấu hình | CIO and Admin, as before |
 
 ## Every role: shared pieces
 

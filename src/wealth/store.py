@@ -177,9 +177,8 @@ def propose(client_id: str, kind: str, title: str, data: Dict[str, Any]) -> str:
 
 def decide(item_id: str, status: str, note: str = "", by: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """The RM's decision, once. With ``by`` (the RM deciding), the item keeps who decided and the decision goes into
-    the audit chain (``review.decide``, BRD-KPI-05); without it, as the queue did before (a test of the old records).
-    The review module decides whether an approval goes on to a specialist (``pending_specialist``)."""
-    if status not in ("approved", "rejected", "pending_specialist"):
+    the audit chain (``review.decide``, BRD-KPI-05); without it, as the queue did before (a test of the old records)."""
+    if status not in ("approved", "rejected"):
         raise ValueError(f"a decision is approved or rejected, not {status!r}")
     if by is None:
         with _db() as con:
@@ -190,7 +189,9 @@ def decide(item_id: str, status: str, note: str = "", by: Optional[str] = None) 
             if not cur.rowcount:
                 return None
         return review(item_id)
-    return move(item_id, "pending", status, by, "review.decide", {"decided_by": by}, note=note)
+    # an item queued for an expert before OWN-FB-18 waits for its RM now: the RM's approval is the last
+    was = "pending_specialist" if (review(item_id) or {}).get("status") == "pending_specialist" else "pending"
+    return move(item_id, was, status, by, "review.decide", {"decided_by": by}, note=note)
 
 
 def move(

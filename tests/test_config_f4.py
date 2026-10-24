@@ -26,7 +26,7 @@ from views import store as vstore
 def test_the_new_kinds_have_the_brd_owners_and_two_people_for_prompts_and_models():
     k = config.KINDS
     assert (k["return_assumptions"]["owner"], k["return_assumptions"]["two_person"]) == ("cio", False)
-    assert (k["forbidden_phrases"]["owner"], k["consent"]["owner"]) == ("compliance", "compliance")
+    assert (k["forbidden_phrases"]["owner"], k["consent"]["owner"]) == ("cio", "cio")
     assert all(k[x]["owner"] == "admin" and k[x]["two_person"] and k[x]["eval"] for x in ("prompts", "models"))
     with pytest.raises(roles.Forbidden):
         config.propose("prompts", prompts.default(), "cio")
@@ -62,12 +62,12 @@ def test_the_return_assumptions_in_force_drive_the_life_scenarios():
     assert before < 1_000_000_000 / 24
 
 
-def test_compliance_changes_the_forbidden_phrases_the_guard_reads():
+def test_the_cio_changes_the_forbidden_phrases_the_guard_reads():
     assert schema.forbidden_words("Đầu tư ngay kẻo lỡ") == []
     cur = config.data("forbidden_phrases")
     new = {"recommendation": cur["recommendation"] + ["đầu tư ngay"], "compliance": cur["compliance"] + ["nợ xấu"]}
-    v = config.propose("forbidden_phrases", new, "compliance")
-    config.decide(v["id"], "approve", "compliance")
+    v = config.propose("forbidden_phrases", new, "cio")
+    config.decide(v["id"], "approve", "cio")
     assert schema.forbidden_words("Đầu tư ngay kẻo lỡ") == ["đầu tư ngay"]
     assert goals.forbidden_words("Khách có nợ xấu") == ["nợ xấu"]
 
@@ -75,8 +75,8 @@ def test_compliance_changes_the_forbidden_phrases_the_guard_reads():
 def test_the_consent_configuration_decides_who_the_family_view_reads():
     assert [m["id"] for m in household(client_id="C02", scope="family")()["waiting"]] == ["C02S"]
     cur = config.data("consent")
-    v = config.propose("consent", {**cur, "require": {**cur["require"], "family_member": False}}, "compliance")
-    config.decide(v["id"], "approve", "compliance2")
+    v = config.propose("consent", {**cur, "require": {**cur["require"], "family_member": False}}, "cio")
+    config.decide(v["id"], "approve", "cio2")
     got = household(client_id="C02", scope="family")()
     assert [m["id"] for m in got["members"]] == ["C02", "C02S"] and got["waiting"] == []
 

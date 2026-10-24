@@ -55,7 +55,7 @@ def gather(event_id: str, by: str = "cio", mode: Optional[str] = None) -> dict:
     roles.require(by, "cio")
     ev = events.get(str(event_id))
     if ev["blocked"]:
-        raise ValueError(f"Sự kiện {ev['id']} đang bị giữ chờ Tuân thủ: {', '.join(ev['held'])}")
+        raise ValueError(f"Sự kiện {ev['id']} đang bị giữ chờ CIO cho đi tiếp: {', '.join(ev['held'])}")
     run_mode = agents.resolve_mode(mode)
     m = agents.models()
     view = vstore.create(ev["id"], by, run_mode, m if run_mode == "live" else {"cio": "mock", "challenger": "rules"})

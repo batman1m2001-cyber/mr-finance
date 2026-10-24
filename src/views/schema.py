@@ -35,7 +35,7 @@ REGIMES = ("normal", "stressed")
 SEVERITIES = ("critical", "medium", "low")
 
 # words a view must not use: it is market analysis, not advice to buy or sell (§8.2, F18). Version 1 of the
-# forbidden_phrases configuration (``recommendation``); Compliance changes it there.
+# forbidden_phrases configuration (``recommendation``); the CIO changes it there.
 FORBIDDEN = [
     "nên mua",
     "nên bán",
@@ -80,7 +80,7 @@ _PATTERNS: Dict[str, Any] = {}
 
 
 def phrases_pattern(which: str) -> "re.Pattern[str]":
-    """The ``forbidden_phrases`` list in force (Compliance's configuration; ``FORBIDDEN`` above is its version 1)
+    """The ``forbidden_phrases`` list in force (the CIO's configuration; ``FORBIDDEN`` above is its version 1)
     as one pattern, rebuilt when a new version comes into force."""
     from control import config
 

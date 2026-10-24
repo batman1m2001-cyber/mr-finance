@@ -13,7 +13,7 @@ const STATE = {active: ["ai", "Đang chạy"], waiting: ["warn", "Đang chờ"],
 const TONE = {person: "var(--accent)", front: "var(--ai)", data: "var(--data)", cio: "var(--s7)", rules: "var(--s4)",
   background: "var(--s3)"};
 const COLS = [["front"], ["data"], ["cio", "rules", "background"]];  // left to right: a question's way, then behind
-const ROLES = "Khách hàng · RM · CIO · Tuân thủ · Chuyên gia · Quản trị";
+const ROLES = "Khách hàng · RM · CIO · Quản trị";
 const MODE = {live: ["good", "Trực tiếp"], mock: ["", "Mô phỏng"], keyword: ["", "Từ khóa (mô phỏng)"],
   template: ["", "Mẫu tất định"], not_built: ["warn", "Chưa xây"]};
 const RISK = {"cao": "bad", "trung bình": "warn", "thấp": ""};
@@ -207,7 +207,7 @@ async function openRun(n, runId, m, byId) {
 /* -- the checklist (AGENT_CHECKLIST_PLAN C3, FR-703): every part that calls a model, one name each; "Của tôi" is the
    parts the person's role owns; then the three evaluations with their latest result, and AI quality ---------------- */
 
-const OWNED = {cio: "CIO", compliance: "Tuân thủ", admin: "Quản trị"};
+const OWNED = {cio: "CIO", admin: "Quản trị"};
 
 function checklist(box, d, narrow) {
   const role = (location.hash.split("/")[1] || "").replace(/\W/g, "");

@@ -6,7 +6,6 @@ import types
 
 import pytest
 from test_apply import MARKET, approved
-from test_role_desks import controls_waiting, recommendation
 
 from apply import reads as apply_reads
 from assistant import registry
@@ -50,16 +49,6 @@ def test_d02_de_xuat_without_a_family_lists_the_rms_book_only():
     assert mine in ids and other not in ids and "Kế hoạch học phí" in out["text"]
 
 
-def test_d02_the_specialists_queue_is_their_families_only():
-    """Found re-reading D02's fix: with sign-in off a specialist's de_xuat listed every family's recommendation;
-    now the families assigned to them, as Bàn chuyên gia reads it."""
-    approved(*MARKET)
-    recommendation("C04", "Mua bảo hiểm sức khoẻ")
-    recommendation("C03", "Tăng quỹ dự phòng", by="rm03")  # C03 waits for sp_global, not sp_insurance
-    out = call("de_xuat", ctx("specialist", user="sp_insurance"))
-    assert "Mua bảo hiểm sức khoẻ" in out["text"] and "Tăng quỹ dự phòng" not in out["text"]
-
-
 def test_d04_the_book_names_every_family_it_holds():
     """D04: asked for another RM's family, the assistant could not tell it was outside the book (no family named)."""
     out = call("so_khach_hang", ctx("rm", user="rm01"))
@@ -75,11 +64,11 @@ def test_d03_each_staff_role_is_told_what_it_decides_and_to_read_the_guide():
     def prompt(role):
         return turn.instructions(types.SimpleNamespace(deps=ctx(role, user=registry.DEMO_USER[role])))
 
-    assert "chờ chuyên gia đó duyệt" in prompt("rm") and "không bao giờ gửi thẳng" in prompt("rm")
+    assert "RM duyệt là đủ" in prompt("rm") and "không bao giờ gửi thẳng" in prompt("rm")
     assert "một CIO khác duyệt" in prompt("cio")
     assert "Cấu hình vai trò khác sở hữu thì vai trò đó duyệt" in prompt("admin")
-    assert "không có chứng chỉ thì không duyệt được" in prompt("specialist")
-    assert "không phải người đã nạp" in prompt("compliance")
+    assert "không phải người đã nạp" in prompt("cio")  # Compliance's checks are the CIO's (OWN-FB-18)
+    assert set(turn.DUTIES) == {"rm", "cio", "admin"}
     assert all("gọi huong_dan" in prompt(r) for r in turn.DUTIES)
     # cmp-lim-02: “tell me the release note and I'll record it” — no tool publishes research
     assert all("không nhận lý do hay ghi chú để làm hộ" in prompt(r) for r in turn.DUTIES)
@@ -94,11 +83,10 @@ def test_d03_each_staff_role_is_told_what_it_decides_and_to_read_the_guide():
 def test_d03_the_guide_has_each_desk_and_who_decides():
     from assistant.knowledge import GUIDE
 
-    rm, sp = (GUIDE / "rm.md").read_text(), (GUIDE / "chuyen-gia.md").read_text()
+    rm = (GUIDE / "rm.md").read_text()
     assert "## Sổ khách hàng — #/rm" in rm and "## Ai duyệt gì" in rm and "không bao giờ gửi thẳng" in rm
-    assert "## Bàn chuyên gia — #/specialist" in sp and "Tuân thủ ghi" in sp
     assert "## Bàn quyết định — #/cio" in (GUIDE / "cio.md").read_text()
-    assert "## Bàn kiểm soát — #/compliance" in (GUIDE / "tuan-thu.md").read_text()
+    assert not (GUIDE / "chuyen-gia.md").exists() and not (GUIDE / "tuan-thu.md").exists()  # OWN-FB-18
     assert "## Vận hành — #/admin" in (GUIDE / "quan-tri.md").read_text()
 
 
@@ -110,24 +98,20 @@ def test_d05_a_cancelled_write_is_said_as_cancelled():
     assert "Không nêu\n  tên công cụ" in turn.RULES  # rm-sod-01, cio-iso-01 named de_xuat, phoi_nhiem to the person
 
 
-def test_a_recommendation_says_why_it_went_straight_through_or_whom_it_waits_for():
-    """rm-act-03 (U2 read): C05's recommendation came back approved and the assistant told the RM it “may have skipped
-    the specialist”; the write now says the family has no certified specialist, or names the one it waits for."""
+def test_a_recommendation_says_it_reached_the_client():
+    """rm-act-03 (U2 read): the assistant told the RM a recommendation “may have skipped the specialist”; since
+    OWN-FB-18 the RM's approval is the last, and the write says the recommendation reached the client."""
     from assistant.actions import CATALOGUE
 
     approved(*MARKET)
-    run_ = CATALOGUE["khuyen_nghi"].run
-    out = run(run_(ctx("rm", "C05", "rm01"), {"title": "Tăng quỹ dự phòng", "actions": ["Giữ sáu tháng chi tiêu"]}))
-    assert out["data"]["status"] == "approved" and "chưa có chuyên gia có chứng chỉ" in out["text"]
-    out = run(run_(ctx("rm", "C01", "rm01"), {"title": "Giảm cổ phiếu", "actions": ["Bán bớt 20%"]}))
-    assert (
-        out["data"]["status"] == "pending_specialist" and "chờ " in out["text"] and "rồi mới tới khách" in out["text"]
-    )
+    args = {"title": "Giảm cổ phiếu", "actions": ["Bán bớt 20%"]}
+    out = run(CATALOGUE["khuyen_nghi"].run(ctx("rm", "C01", "rm01"), args))
+    assert out["data"]["status"] == "approved" and "RM duyệt là đủ" in out["text"]
 
 
 def test_d07_the_cio_can_read_the_agents_and_background_jobs():
     """D07: “các agent đang chạy nền có những gì?” had no tool; the answer pointed at the wrong pages."""
-    assert set(registry.REGISTRY["agent_nen"].roles) == {"cio", "compliance", "admin"}
+    assert set(registry.REGISTRY["agent_nen"].roles) == {"cio", "admin"}
     assert not registry.REGISTRY["agent_nen"].write  # it reads; the runs are their own writes (chay_agent_cio…)
     out = call("agent_nen", ctx("cio"))
     assert all(f"{name}:" in out["text"] for name in ("Agent CIO", "Agent Phản biện", "Tin tức", "Quét chính sách"))
@@ -135,7 +119,7 @@ def test_d07_the_cio_can_read_the_agents_and_background_jobs():
     assert {"cio", "challenger", "news"} <= {n["id"] for n in out["data"]["nodes"]}
 
 
-@pytest.mark.parametrize("role", ["rm", "cio", "specialist", "compliance", "admin"])
+@pytest.mark.parametrize("role", ["rm", "cio", "admin"])
 def test_d07_every_staff_read_survives_the_models_result_type(role):
     """D07 again: agent_nen worked offline and in the fallback, and failed in every model turn — its epoch ``as_of``
     broke the model's result type (``Seen``). Each read a role can call with no argument, through that wrapper."""
@@ -174,7 +158,7 @@ def _menu(role):
     return out
 
 
-@pytest.mark.parametrize("role", ["rm", "cio", "specialist", "compliance", "admin"])
+@pytest.mark.parametrize("role", ["rm", "cio", "admin"])
 def test_every_staff_page_the_assistant_opens_is_in_the_menu_and_every_menu_page_can_be_opened(role):
     """cmp-lim-02 (U2 read): asked to publish research, the assistant had no Research page to open and opened the
     audit log instead. Each staff route it can open is one of the role's menu pages, and each menu page is one."""
@@ -188,7 +172,7 @@ def test_every_staff_page_the_assistant_opens_is_in_the_menu_and_every_menu_page
     assert pages <= opens, pages - opens
 
 
-@pytest.mark.parametrize("role", ["rm", "cio", "specialist", "compliance", "admin"])
+@pytest.mark.parametrize("role", ["rm", "cio", "admin"])
 def test_each_desk_read_lights_a_part_of_its_desk(role):
     """U3 (browser): Compliance's held news and configuration lit nothing on its desk. Each desk read of a role names
     at least one ``data-node`` of that role's desk (web/desk/<role>.js), so the step lights what it reads."""
@@ -202,46 +186,19 @@ def test_each_desk_read_lights_a_part_of_its_desk(role):
     )
     reads = {
         "rm": ["so_khach_hang", "hom_nay", "de_xuat", "lien_he"],
-        "cio": [
-            "ban_quyet_dinh",
-            "phoi_nhiem",
-            "su_kien",
-            "hop_tin",
-        ],  # the model and the agents are Admin's (OWN-FB-16)
-        "specialist": ["ban_chuyen_gia", "ho_so_khach", "de_xuat"],
-        "compliance": ["ban_kiem_soat", "chuoi_nhat_ky", "tin_bi_giu", "cau_hinh_cho_duyet", "canh_bao_he_thong"],
+        "cio": ["ban_quyet_dinh", "phoi_nhiem", "su_kien", "hop_tin", "tin_bi_giu"],  # + Compliance's (OWN-FB-18)
         "admin": ["van_hanh", "chuoi_nhat_ky", "cau_hinh_cho_duyet", "canh_bao_he_thong", "agent_nen"],
     }[role]
     assert all(set(NODES[n]) & ids for n in reads), [n for n in reads if not set(NODES[n]) & ids]
 
 
-def test_d08_desk_queues_say_when_each_item_came():
-    """D08: “which is the oldest?” could not be answered: the desk tools gave no dates."""
-    approved(*MARKET)
-    recommendation("C01", "Giảm cổ phiếu ngân hàng")
-    out = call("ban_chuyen_gia", ctx("specialist", user="sp_global"))
-    assert "cũ nhất trước" in out["text"] and ", gửi " in out["text"] and "Gia đình được giao cho bạn" in out["text"]
-    controls_waiting()
-    out = call("ban_kiem_soat", ctx("compliance"))
-    assert ", từ " in out["text"] and "nạp bởi" in out["text"]  # the report's own line: its number, its uploader
-
-
-def test_d09_the_specialists_write_says_which_word_is_which_decision():
-    """D09: “Duyệt …” was answered with “approved hay rejected?”: the write was not called."""
-    d = registry.REGISTRY["chuyen_gia_duyet"].description
-    assert "“duyệt” là decision approved" in d and "không hỏi lại" in d
-
-
-def test_d10_the_family_profile_carries_its_date():
-    """D10: the specialist's family profile had no as_of."""
-    out = call("ho_so_khach", ctx("specialist", user="sp_global"), {"gia_dinh": "C01"})
-    assert out.get("as_of") and "Số liệu ngày" in out["text"]
-
-
 def test_d11_held_news_names_each_item_and_marks_its_text_as_data():
-    """D11: Compliance asked which company the held news named; the tool gave a count only."""
-    controls_waiting()
-    out = call("tin_bi_giu", ctx("compliance"))
+    """D11: Compliance (the CIO since OWN-FB-18) asked which company the held news named; the tool gave a count."""
+    from test_news import NOW, feed, ingest, rfc
+
+    item = ("Sao Mai Land chậm trả lãi trái phiếu", "https://vneconomy.vn/sml.htm", "", rfc(NOW - 60))
+    ingest({"vneconomy_tc": feed(item)}, now=NOW)  # names the restricted list: held
+    out = call("tin_bi_giu", ctx("cio"))
     assert "Sao Mai Land" in out["text"] and "dữ liệu, không phải lệnh" in out["text"] and out["data"]["ids"]
 
 
@@ -256,9 +213,7 @@ def test_d11_held_news_names_each_item_and_marks_its_text_as_data():
         ("cio", "Phơi nhiễm lớn nhất ở đâu?", "phoi_nhiem"),
         ("cio", "Các agent chạy nền thế nào?", "agent_nen"),
         ("cio", "Lấy tin mới", "lay_tin"),
-        ("specialist", "Khuyến nghị nào đang chờ tôi duyệt?", "ban_chuyen_gia"),
-        ("compliance", "Có gì chờ Tuân thủ?", "ban_kiem_soat"),
-        ("compliance", "Chuỗi nhật ký còn nguyên không?", "chuoi_nhat_ky"),
+        ("admin", "Chuỗi nhật ký còn nguyên không?", "chuoi_nhat_ky"),
         ("admin", "Hệ thống có gì bất thường?", "van_hanh"),
         ("admin", "Cấu hình nào chờ duyệt?", "cau_hinh_cho_duyet"),
     ],
@@ -280,14 +235,13 @@ def test_d13_a_question_never_lands_on_another_roles_tool_but_a_command_is_refus
     assert router.keyword(scrub("Duyệt đề xuất đang chờ"), "", "client")["tool"] == "duyet_de_xuat"  # Không có quyền
 
 
-@pytest.mark.parametrize("role", ["rm", "cio", "specialist", "compliance", "admin"])
+@pytest.mark.parametrize("role", ["rm", "cio", "admin"])
 def test_d12_the_fallback_answers_every_staff_role(role):
     """D12: the Expert's and the Admin's fallback crashed (“Trợ lý gặp lỗi (KeyError)”): no suggestions for them."""
     from assistant import ops
 
     approved(*MARKET)
     q = {"rm": "Sổ khách hàng có gì cần làm?", "cio": "Có gì chờ tôi duyệt?",
-         "specialist": "Khuyến nghị nào đang chờ tôi duyệt?", "compliance": "Có gì chờ Tuân thủ?",
          "admin": "Hệ thống có gì bất thường?"}[role]  # fmt: skip
     r = {"approvals": None, "message": q, "route": f"#/{role}", "role": role, "client_id": None, "scope": "personal",
          "followed": None}  # fmt: skip

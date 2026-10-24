@@ -13,11 +13,11 @@
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261024d2";
+import {mount as mountCopilot} from "./copilot.js?v=20261024f6";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261024d2";
-import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261024d2";
-import {DESKS} from "./desk/roles.js?v=20261021t5";
+import {mount as mountHeader} from "./header.js?v=20261024f6";
+import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261024f6";
+import {DESKS} from "./desk/roles.js?v=20261024f6";
 
 const ROLES = {
   client: {
@@ -81,6 +81,7 @@ const ROLES = {
       {id: "agent", label: "Agent", page: "agents", hidden: true},
       {id: "viec-nen", label: "Việc nền", page: "jobs", hidden: true},
       {id: "cau-hinh", label: "Cấu hình", page: "config", hidden: true},
+      {id: "nhat-ky", label: "Nhật ký", page: "audit"},  // OWN-FB-18: the chain, as Compliance read it
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
@@ -149,7 +150,7 @@ export function go(hash, focus) {
 
 // the client's pages by their former names too: the tabs carry the bank's English names (ADR-0037), a client still types these
 const ALSO = {"#/client/tong-quan": "Tổng quan Toàn cảnh Dòng tiền", "#/client/tai-san": "Tài sản", "#/client/muc-tieu/ke-hoach": "Kế hoạch tài chính Mục tiêu",
-  "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/chinh-sach": "Chi phí chính sách Tin tức", "#/client/chuyen-gia": "Chuyên gia"};
+  "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/chinh-sach": "Chi phí chính sách Tin tức", "#/client/chuyen-gia": "Relationship specialist"};
 
 // every page of a role, for the header search: label, its parent's label, its route (and other names it answers to)
 function pagesFor(role) {
@@ -174,7 +175,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261024d2");
+  wsLoad ||= import("./workspace/workspace.js?v=20261024f6");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -195,7 +196,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261021t5");
+  dkLoad ||= import("./desk/desk.js?v=20261024f6");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});
@@ -309,7 +310,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261024d2`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261024f6`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
@@ -457,7 +458,7 @@ function signInPage() {
   $("#whoami").innerHTML = "";
   const box = document.createElement("div");
   $("#page").replaceChildren(box);
-  import("./pages/signin.js?v=20261016r5").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
+  import("./pages/signin.js?v=20261024f6").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
     .catch(e => { box.innerHTML = failed(e); });
 }
 
@@ -493,7 +494,7 @@ async function start() {
   copilot = mountCopilot();
   await Promise.all([
     pickers(),
-    state.me && (state.me.role === "client" || state.me.role === "specialist") ? null  // the staff list: desk and RMs
+    state.me && state.me.role === "client" ? null  // the staff list: desk and RMs
       : fetch("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
   ]);
   await route();

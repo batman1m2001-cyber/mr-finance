@@ -46,7 +46,7 @@ export async function render(box, ctx) {
             <td class="small">${esc(t.note_title)}<div class="muted">${t.note_status === "issued" ? "Đã ban hành" : "Dự thảo"}</div></td>
             <td class="num">${esc(t.milestone)}</td><td class="small">${esc(t.rm_hint || "")}</td>
             <td><button type="button" class="btn sm" data-log="${esc(t.family_id)}" data-signal="${esc(t.signal)}">Ghi liên hệ</button></td></tr>`).join("")}
-        </tbody></table></div>` : empty("Không có việc nào theo mục tiêu", "Khi Tuân thủ phát hành ghi chú quy định khớp mục tiêu của khách, việc hiện ở đây.")}
+        </tbody></table></div>` : empty("Không có việc nào theo mục tiêu", "Khi CIO phát hành ghi chú quy định khớp mục tiêu của khách, việc hiện ở đây.")}
       </div>
       <div class="panel c12" id="contacts"><h3>Liên hệ khách <span class="hint">ghi mỗi lần gọi, gặp, nhắn — kèm tín hiệu khởi đầu nếu có</span></h3>
         <form id="contact-form" class="row tight" style="flex-wrap:wrap;align-items:flex-end" autocomplete="off">

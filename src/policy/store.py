@@ -1,7 +1,7 @@
 """Policy documents (``PD-0001``; the BRD's ``policy_documents``) and the radar (BRD-FR-306; F-D8).
 
-A document is added by Compliance — fetched from the Official Gazette, or pasted with an official address — and
-**verified** by a second Compliance person (never the one who added it, with a note of at least 20 characters): the
+A document is added by a CIO — fetched from the Official Gazette, or pasted with an official address — and
+**verified** by a second CIO (never the one who added it, with a note of at least 20 characters): the
 policy agent reads only verified documents, and the text's hash at verification is what its quotes are checked
 against. Each document also carries where it stands — dự thảo → lấy ý kiến → đã ban hành → có hiệu lực, or dừng —
 with a dated history; the radar lists them by their last change and marks what changed since the reader last
@@ -56,9 +56,10 @@ def _save(d: Dict[str, Any], by: str, action: str, **audit_data: Any) -> Dict[st
 
 
 def add(item: Dict[str, Any], by: str, get_url: Optional[Callable[[str], bytes]] = None) -> Dict[str, Any]:
-    """Compliance adds a document: ``{gazette_url}`` (fetched) or ``{source_url (official), title, number?, issuer?,
-    issued?, text?, status}``. A document under discussion may have no text yet; the agent waits for it."""
-    roles.require(by, "compliance")
+    """A CIO adds a document (Compliance's register before OWN-FB-18): ``{gazette_url}`` (fetched) or ``{source_url
+    (official), title, number?, issuer?, issued?, text?, status}``. A document under discussion may have no text yet;
+    the agent waits for it."""
+    roles.require(by, "cio")
     item = dict(item or {})
     status = item.get("status") or ("issued" if item.get("gazette_url") else "draft")
     if status not in STATUS:
@@ -115,8 +116,9 @@ def add(item: Dict[str, Any], by: str, get_url: Optional[Callable[[str], bytes]]
 
 
 def verify(doc_id: str, by: str, note: str) -> Dict[str, Any]:
-    """A second Compliance person confirms the text is the source's (SEC-04): the agent may read it from now on."""
-    roles.require(by, "compliance")
+    """A second CIO, not the one who added it, confirms the text is the source's (SEC-04): the agent may read it from
+    now on."""
+    roles.require(by, "cio")
     d = get(doc_id)
     note = " ".join(str(note or "").split())
     if by == d["added_by"]:
@@ -133,7 +135,7 @@ def verify(doc_id: str, by: str, note: str) -> Dict[str, Any]:
 
 def set_status(doc_id: str, status: str, by: str, note: str, date: str = "") -> Dict[str, Any]:
     """Where the document stands now, with the date it happened and why it is known."""
-    roles.require(by, "compliance")
+    roles.require(by, "cio")
     d = get(doc_id)
     note = " ".join(str(note or "").split())
     if status not in STATUS:

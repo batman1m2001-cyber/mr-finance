@@ -1,4 +1,4 @@
-"""The newsletter's served steps (FR-801): a CIO drafts; the CIO edits, submits or withdraws; Compliance approves or
+"""The newsletter's served steps (FR-801): a CIO drafts, edits, submits or withdraws; another CIO approves or
 returns."""
 
 from __future__ import annotations

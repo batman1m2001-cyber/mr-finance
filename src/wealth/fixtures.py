@@ -17,7 +17,7 @@ def market() -> Dict[str, Any]:
 
 def client(client_id: str) -> Dict[str, Any]:
     """One client's record (a copy: callers may change it), from the people table (src/people). Inside a request,
-    only to someone who may see that family (src/people/auth.py: the family, its RM, CIO, Compliance, Admin)."""
+    only to someone who may see that family (src/people/auth.py: the family, its RM, CIO, Admin)."""
     from people import auth, store
 
     auth.require_client(client_id)

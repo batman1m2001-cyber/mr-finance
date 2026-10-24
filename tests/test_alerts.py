@@ -30,7 +30,7 @@ def test_a_feed_that_fails_raises_one_alert_counts_up_and_resolves_when_it_answe
     ok(INGEST, feeds=feeds("<rss><không phải xml"), now=NOW)
     [a] = alerts.for_role("cio")
     assert (a["kind"], a["key"], a["status"], a["count"]) == ("news_feed", "vneconomy_tc", "open", 2)
-    assert alerts.for_role("compliance") == []  # each role its kinds
+    assert alerts.for_role("rm") == []  # each role its kinds
     ok(INGEST, feeds=feeds(GOOD), now=NOW)
     assert alerts.for_role("cio") == [] and alerts.recent()[0]["status"] == "resolved"
     events = [x["event"] for x in log.recent(10)]
@@ -46,17 +46,17 @@ def test_a_market_series_no_source_answers_raises_an_alert():
     assert {a["key"] for a in alerts.for_role("cio")} == {s["series"] for s in out["series"]}
 
 
-def test_a_broken_audit_chain_alerts_compliance_and_admin_and_resolves_when_whole():
+def test_a_broken_audit_chain_alerts_the_cio_and_admin_and_resolves_when_whole():
     event(*GOLD)  # a few audit rows
     run = _chain_check
-    assert run()["ok"] and alerts.for_role("compliance") == []
+    assert run()["ok"] and alerts.for_role("cio") == []
     with db.tx() as con:
         con.execute("drop trigger audit_log_no_update")  # someone with the database file edits a row
         con.execute("update audit_log set actor = 'ai-đó' where seq = 1")
     assert not run()["ok"]
-    got = alerts.for_role("compliance")
+    got = alerts.for_role("cio")
     assert {a["key"] for a in got} == {"chain", "worm"}  # the chain, and the write-once segment holding row 1
-    assert all(a["kind"] == "audit_chain" and a["severity"] == "high" for a in got) and alerts.for_role("cio") == []
+    assert all(a["kind"] == "audit_chain" and a["severity"] == "high" for a in got) and alerts.for_role("rm") == []
 
 
 def _chain_check():
@@ -70,7 +70,7 @@ def _chain_check():
 def test_acknowledging_is_for_the_roles_it_is_for_and_is_audited():
     a = alerts.raise_("agent", "cio", "Agent cio lỗi (thử)", "thử")
     with pytest.raises(roles.Forbidden):
-        alerts.ack(a["id"], "compliance")
+        alerts.ack(a["id"], "rm01")
     done = alerts.ack(a["id"], "cio", "Đã báo nhà cung cấp")
     assert done["status"] == "acked" and done["history"][-1]["by"] == "cio"
     with pytest.raises(ValueError, match="acked"):

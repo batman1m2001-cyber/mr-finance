@@ -76,8 +76,7 @@ def test_truy_van_is_offered_to_its_roles_with_their_catalog():
         assert t.spec.readonly and t.spec.approval == "never" and t.spec.params_schema["required"] == ["sql"]
         described[role] = t.spec.description
     assert "## nhan_dinh" in described["cio"] and "## nhan_dinh" not in described["rm"]
-    assert "## tin_bi_giu" in described["compliance"] and "## tin\n" not in described["compliance"]
-    assert "truy_van" not in {x.name for x in registry.agent_tools("specialist")}  # no room for the specialist
+    assert "## tin_bi_giu" in described["cio"] and "## tin_bi_giu" not in described["rm"]  # OWN-FB-18: the CIO's
     assert "ADR-0040" in base.Param.__doc__ and "truy_van" in base.Param.__doc__  # the one exception, said so
 
 
@@ -139,7 +138,7 @@ def test_with_client_ai_off_the_model_writes_the_sql_and_never_reads_the_rows(mo
 
 
 def test_the_rule_to_count_again_is_in_the_prompt_of_the_roles_with_a_room():
-    for role in ("cio", "rm", "client", "compliance", "admin", "specialist"):
+    for role in ("cio", "rm", "client", "admin"):
         text = turn.instructions(type("R", (), {"deps": ctx(role)})())
         assert (turn.DATA_RULE in text) == (role in dataroom.ROLES), role
     assert "đếm lại ngay" in turn.DATA_RULE and "không cãi" in turn.DATA_RULE and "count(*)" in turn.DATA_RULE
@@ -200,4 +199,4 @@ def test_the_panel_shows_how_it_counted_collapsed():
     assert '<details class="cp-how small muted mt"><summary>Cách tính</summary>' in js  # collapsed: no `open`
     assert "s.query && s.query.sql" in js and "meta(m) + how(m)" in js and "số liệu lúc" in js
     shell = open("web/shell.js", encoding="utf-8").read()
-    assert "./copilot.js?v=20261024d2" in shell  # the browser fetches the new panel
+    assert "./copilot.js?v=20261024f6" in shell  # the browser fetches the new panel

@@ -66,9 +66,9 @@ def viewer(request: Request):
 
 
 def _visible_clients(v) -> list:
-    if v is None or v["role"] in ("cio", "compliance", "admin"):
+    if v is None or v["role"] in ("cio", "admin"):
         return fixtures.client_ids()
-    if v["role"] in ("rm", "specialist"):
+    if v["role"] == "rm":
         return [c for c in fixtures.client_ids() if c in v.get("families", [])]
     return [v["family"]]
 
@@ -188,12 +188,7 @@ async def reviews(request: Request) -> JSONResponse:
     heads = {cid: fixtures.client(cid).get("member_of") or cid for cid in fixtures.client_ids(members=True)}
     rows = [r for r in rows if heads.get(r["client_id"], r["client_id"]) in mine]
     names = {cid: fixtures.client(cid)["name"] for cid in heads}
-    from review import specialist
-
-    # who approves after the RM, per family the person sees (G8): its certified specialists, none → the RM alone
-    approvers = {cid: specialist.approvers(cid) for cid in sorted(mine)}
     v = viewer(request)
-    me = specialist.certificate(v["id"]) if v and v["role"] == "specialist" else None
     if v and v["role"] == "client":  # an RM's recommendation reaches the client once it is approved (G8)
         rows = [r for r in rows if r["kind"] != "rm_note" or r["status"] == "approved"]
     return JSONResponse(
@@ -202,8 +197,6 @@ async def reviews(request: Request) -> JSONResponse:
                 {**r, "client_name": names.get(r["client_id"], r["client_id"]), "family_id": heads.get(r["client_id"])}
                 for r in rows
             ],
-            "approvers": approvers,
-            "certificate": me,
         }
     )
 
@@ -536,9 +529,6 @@ async def desk(request: Request) -> JSONResponse:
 
     v = viewer(request)
     role = v["role"] if v else request.query_params.get("role") or ""
-    if v is None and role == "specialist" and request.query_params.get("user"):
-        # sign-in off: the specialist the page decides as (Duyệt khuyến nghị's ``by``), as GET /api/review's page does
-        v = {"id": request.query_params["user"], "role": "specialist"}
     try:
         return JSONResponse(desk_reads.desk(role, v))
     except roles.Forbidden as exc:
@@ -1188,8 +1178,8 @@ async def auth_logout(request: Request) -> JSONResponse:
 # Who may open each read (BRD §4 roles, BRD-RULE-SEC-02; F5): the longest matching prefix decides, and a read
 # that matches none is open to everyone signed in (a family's data is then checked by people.auth.may_see). Each
 # role's pages use a subset of its row (tests/test_access.py walks every route as every role).
-STAFF = ("cio", "rm", "compliance", "admin")
-OVERSIGHT = ("cio", "compliance", "admin")  # the news-impact desk and those who check it
+STAFF = ("cio", "rm", "admin")
+OVERSIGHT = ("cio", "admin")  # the news-impact desk and those who check it
 ROUTE_ROLES = {
     "/api/advisory/all": STAFF,
     "/api/model": STAFF,
@@ -1205,20 +1195,19 @@ ROUTE_ROLES = {
     "/api/accuracy": OVERSIGHT,
     "/api/trial": OVERSIGHT,
     "/api/measure": OVERSIGHT,
-    "/api/research": ("cio", "compliance"),  # unreleased research (FR-203)
+    "/api/research": ("cio",),  # unreleased research (FR-203)
     "/api/market": ("cio", "admin"),
-    "/api/audit": ("compliance", "admin"),
+    "/api/audit": ("cio", "admin"),
     "/api/system": ("admin",),
     "/api/accounts": ("admin",),  # Tài khoản và vai trò (Q-25)
     "/api/jobs": OVERSIGHT,  # Việc nền: agents and jobs; Admin runs jobs, the CIO the agents
     "/api/system/alerts": OVERSIGHT,  # the bell: each role its kinds of alert
-    "/api/newsletters": ("cio", "compliance"),  # the CIO writes, Compliance approves (FR-801)
-    "/api/policy": ("cio", "compliance"),  # Compliance keeps the radar, the CIO reads it (FR-306)
+    "/api/newsletters": ("cio",),  # a CIO writes, another CIO approves (FR-801, OWN-FB-18)
+    "/api/policy": ("cio",),  # the CIOs keep the radar (FR-306, OWN-FB-18)
     "/api/rm/": ("rm",),
-    "/api/desk": ("cio", "rm", "compliance", "admin", "specialist"),  # each gets its own role's desk (FEAT-41)
+    "/api/desk": ("cio", "rm", "admin"),  # each gets its own role's desk (FEAT-41)
 }
-ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị",
-              "specialist": "Chuyên gia"}  # fmt: skip
+ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "admin": "Quản trị"}
 
 
 def allowed_roles(path: str):

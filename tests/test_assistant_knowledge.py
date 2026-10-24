@@ -57,8 +57,8 @@ def test_the_guide_answers_from_the_role_pages_with_the_page_to_open():
     cio = tool("huong_dan", ctx("cio"), q="gộp tin thành sự kiện")
     routes = [p["route"] for p in cio["data"]["passages"] if p["route"]]
     assert routes and all(r.startswith("#/cio/") for r in routes)  # the CIO's pages, never a client's
-    mine = tool("huong_dan", ctx("compliance"), q="làm sao để trợ lý quên điều nó nhớ")
-    assert mine["evidence"]["route"] == "#/compliance/bo-nho"  # the shared page, at the person's own address
+    mine = tool("huong_dan", ctx("admin"), q="làm sao để trợ lý quên điều nó nhớ")
+    assert mine["evidence"]["route"] == "#/admin/bo-nho"  # the shared page, at the person's own address
 
 
 def test_the_guide_is_synced_once_and_an_unchanged_file_is_skipped():

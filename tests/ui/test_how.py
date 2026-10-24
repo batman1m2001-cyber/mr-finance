@@ -50,7 +50,6 @@ DETAILS = {
     "/cio/nhan-dinh": "a.item",
     "/cio/ban-tin": "a.item",
     "/cio/chinh-sach": "a.item",
-    "/compliance/chinh-sach": "a.item",
 }
 
 

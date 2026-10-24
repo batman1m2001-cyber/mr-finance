@@ -1,7 +1,7 @@
 """The control group and the business effect (BRD-RULE-MEAS-06 “clients with versus without the tool, quarterly”;
 BRD_REMAINING_PLAN G9, G-D8).
 
-- **Who.** A share of the families (configuration ``control_group``: Compliance, two people; default 10 %), drawn
+- **Who.** A share of the families (configuration ``control_group``: the CIO, two people; default 10 %), drawn
   within each stratum (segment × assigned RM) so both groups look alike. The draw is seeded: each family's place in
   its stratum is the SHA-256 of ``seed|family``, and a stratum of ``n`` takes ``⌊share·n + u⌋`` families, ``u`` in
   [0, 1) from the SHA-256 of ``seed|stratum`` (randomised rounding: on average exactly ``share``). Anyone holding

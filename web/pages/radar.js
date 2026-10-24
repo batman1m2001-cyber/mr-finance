@@ -1,7 +1,8 @@
-/* Radar chính sách (BRD-FR-306, F-D8; F9): the policy documents Compliance tracks, where each stands and what changed
+/* Radar chính sách (BRD-FR-306, F-D8; F9): the policy documents the CIOs track, where each stands and what changed
    since the reader last looked, and the policy agent's summary of a verified document with each quote marked in the
-   document's own text. Compliance adds (from the Official Gazette, or an official page with pasted text), a second
-   Compliance person verifies the source, Compliance updates the status and runs the agent; the CIO reads.
+   document's own text. A CIO adds (from the Official Gazette, or an official page with pasted text), a second CIO
+   verifies the source (never the one who added it; OWN-FB-18 retired Compliance), a CIO updates the status and runs
+   the agent.
    GET /api/policy[?since], /api/policy/{id}; POST /api/policy, /verify, /status, /summarise. */
 import {empty, esc, get, post, toast, when} from "../core/core.js";
 
@@ -24,16 +25,16 @@ async function renderList(box, ctx) {
   const since = seen();
   const d = await get(`/api/policy?since=${since}`);
   seen(Date.now() / 1000);
-  const cmp = ctx.role === "compliance";
+  const cio = ctx.role === "cio";
   const counts = Object.entries(d.statuses).map(([k, label]) => `${badge(k, label)} ${d.counts[k]}`).join(" ");
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">${cmp ? "Tuân thủ" : "CIO"} · Radar chính sách <span class="badge warn">Đề xuất</span></div>
+    <div class="pagehead"><div><div class="eyebrow">CIO · Radar chính sách <span class="badge warn">Đề xuất</span></div>
       <div class="h1">${d.documents.length} văn bản theo dõi${since ? ` · ${d.changed} thay đổi từ lần xem trước` : ""}</div>
       <div class="lede small">Cách hiểu của chúng tôi về “radar chính sách” (BRD chưa mô tả, Q-09): văn bản chính sách đang theo dõi, trạng thái và lịch sử
         của từng văn bản, những gì đổi từ lần bạn xem trước, và bản tóm tắt của Agent Chính sách — mỗi ý kèm câu trích nguyên văn đã đối chiếu với văn bản.
         Agent chỉ đọc văn bản đã được người thứ hai xác nhận nguồn, không đọc danh mục hay dữ liệu khách hàng.</div>
       <div class="row" style="margin-top:8px;flex-wrap:wrap;gap:6px">${counts}</div></div></div>
-    ${cmp ? `<div class="panel" style="margin-bottom:16px"><details class="more" ${d.documents.length ? "" : "open"}><summary>Thêm văn bản</summary>
+    ${cio ? `<div class="panel" style="margin-bottom:16px"><details class="more" ${d.documents.length ? "" : "open"}><summary>Thêm văn bản</summary>
       <form id="add" class="cols" style="margin-top:8px">
         <label class="field c12">Từ Công báo (congbao.chinhphu.vn/van-ban/…): máy chủ tải tệp PDF đã ký và lấy chữ
           <input name="gazette_url" placeholder="https://congbao.chinhphu.vn/van-ban/…"></label>
@@ -57,7 +58,7 @@ async function renderList(box, ctx) {
           <div class="m">${esc([x.number, x.issuer, x.issued].filter(Boolean).join(" · "))} · ${x.verified ? `nguồn đã xác nhận (${esc(x.verified.by)})` : `<span class="warn-text">chưa xác nhận nguồn</span>`}
             · ${x.summary ? `có tóm tắt (${x.summary.mode === "live" ? "AI" : "mô phỏng"})` : "chưa tóm tắt"} · đổi ${when(x.changed_at)}</div>
           <div class="m">${x.history.map(h => esc(d.statuses[h.status])).join(" → ")}</div></div>
-        ${badge(x.status, x.status_label)}</a>`).join("")}</div>` : empty("Chưa có văn bản", cmp ? "Mở “Thêm văn bản”." : "Tuân thủ thêm văn bản vào radar.")}</div>`;
+        ${badge(x.status, x.status_label)}</a>`).join("")}</div>` : empty("Chưa có văn bản", cio ? "Mở “Thêm văn bản”." : "CIO thêm văn bản vào radar.")}</div>`;
 
   const form = box.querySelector("#add");
   if (!form) return;
@@ -84,7 +85,7 @@ function marked(textNorm, quotes) {
 
 async function renderOne(box, ctx, id) {
   const {document: d} = await get(`/api/policy/${encodeURIComponent(id)}`);
-  const cmp = ctx.role === "compliance", s = d.summary;
+  const cio = ctx.role === "cio", s = d.summary;
   const textNorm = (d.text || "").split(/\s+/).join(" ").trim();
   const STATUSES = {draft: "Dự thảo", consultation: "Lấy ý kiến", issued: "Đã ban hành", effective: "Có hiệu lực", dropped: "Dừng / bãi bỏ"};
   box.innerHTML = `
@@ -101,7 +102,7 @@ async function renderOne(box, ctx, id) {
               <div class="small"><button type="button" class="linkish" data-q="${k + 1}" title="Xem trong văn bản">“${esc(p.quote)}”</button></div></li>`).join("")}</ol>
             <div class="small muted">Nội bộ — không gửi khách hàng; không kết luận cho khách hàng hay danh mục nào.</div>`
             : `<p class="small muted">${d.verified ? "Chưa có tóm tắt." : "Agent chỉ tóm tắt văn bản đã xác nhận nguồn."}</p>`}
-          ${cmp && d.verified ? `<div class="row mt"><button type="button" class="btn sm primary" id="run">${s ? "Tóm tắt lại" : "Chạy Agent Chính sách"}</button></div>` : ""}</div>
+          ${cio && d.verified ? `<div class="row mt"><button type="button" class="btn sm primary" id="run">${s ? "Tóm tắt lại" : "Chạy Agent Chính sách"}</button></div>` : ""}</div>
         <div class="panel"><h3>Văn bản</h3>${textNorm ? `<div class="small muted">${new Set(d.articles.map(a => a.label)).size} điều · ${d.fetched ? `chữ lấy từ <a href="${esc(d.file_url)}" target="_blank" rel="noopener">tệp PDF đã ký trên Công báo</a> (SHA-256 ${esc(d.file_sha256.slice(0, 12))}…)` : "văn bản dán, đối chiếu với nguồn khi xác nhận"}</div>
           <div class="small" style="margin-top:8px;max-height:520px;overflow:auto;line-height:1.6">${marked(textNorm, s ? s.points.map(p => p.quote) : [])}</div>`
           : `<p class="small muted">Chưa có văn bản.</p>`}</div>
@@ -111,10 +112,10 @@ async function renderOne(box, ctx, id) {
           <div class="small"><a href="${esc(d.source_url)}" target="_blank" rel="noopener">${esc(d.source_url)}</a></div>
           <div class="small" style="margin-top:6px">Thêm bởi ${esc(d.added_by)} · ${when(d.created)}</div>
           ${d.verified ? `<div class="small" style="margin-top:6px"><span class="badge good">Đã xác nhận nguồn</span> ${esc(d.verified.by)} · ${when(d.verified.at)}<br>${esc(d.verified.note)}</div>`
-            : cmp ? `<label class="field mt">Xác nhận nguồn (người khác người thêm; từ 20 ký tự)<textarea id="vnote" rows="2"></textarea></label>
+            : cio && d.added_by !== ctx.user ? `<label class="field mt">Xác nhận nguồn (CIO khác người thêm; từ 20 ký tự)<textarea id="vnote" rows="2"></textarea></label>
               <div class="row mt"><button type="button" class="btn sm primary" id="verify">Xác nhận nguồn</button></div>`
-            : `<div class="small warn-text" style="margin-top:6px">Chưa xác nhận nguồn</div>`}</div>
-        ${cmp ? `<div class="panel"><h3>Cập nhật trạng thái</h3>
+            : `<div class="small warn-text" style="margin-top:6px">Chưa xác nhận nguồn${cio ? ": chờ một CIO khác" : ""}</div>`}</div>
+        ${cio ? `<div class="panel"><h3>Cập nhật trạng thái</h3>
           <label class="field">Trạng thái<select id="st">${Object.entries(STATUSES).filter(([k]) => k !== d.status).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></label>
           <label class="field">Ngày<input id="sdate" placeholder="dd/mm/yyyy"></label>
           <label class="field">Ghi chú (nguồn của thông tin, từ 10 ký tự)<input id="snote"></label>

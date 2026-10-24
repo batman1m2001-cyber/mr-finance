@@ -43,12 +43,12 @@ def refused(role, sql, **kw):
 def test_each_role_has_the_tables_of_the_plan():
     names = {r: {t.name for t in dataroom.tables_for(r)} for r in dataroom.ROLES}
     assert names["cio"] == {"tin", "su_kien", "nhan_dinh", "de_xuat", "tac_dong_gia_dinh", "du_bao", "viec_nen",
-                            "nguon_du_lieu"}  # fmt: skip
+                            "nguon_du_lieu", "nhat_ky", "tin_bi_giu", "canh_bao"}  # fmt: skip
     assert names["rm"] == {"tin", "su_kien", "gia_dinh", "tai_san", "lien_he", "duyet"}
     assert names["client"] == {"tin", "su_kien", "tai_san", "dong_tien", "muc_tieu"}
-    assert names["compliance"] == names["admin"] == {"nhat_ky", "tin_bi_giu", "viec_nen", "canh_bao"}
-    assert "specialist" not in dataroom.ROLES
-    assert refused("specialist", "select 1") == "Vai trò này không truy vấn dữ liệu"
+    assert names["admin"] == {"nhat_ky", "tin_bi_giu", "viec_nen", "canh_bao"}
+    assert "compliance" not in dataroom.ROLES and "specialist" not in dataroom.ROLES
+    assert refused("compliance", "select 1") == "Vai trò này không truy vấn dữ liệu"
 
 
 def test_no_real_table_shares_a_room_tables_name():
@@ -180,7 +180,7 @@ def test_khong_dau_matches_vietnamese_without_its_marks():
     assert res["rows"] == [[2]]
 
 
-def test_held_news_is_not_in_tin_and_is_in_tin_bi_giu_for_compliance():
+def test_held_news_is_not_in_tin_and_is_in_tin_bi_giu_for_the_cio():
     from events import store as events
 
     seed(5, held={2}, title="Tin")
@@ -188,10 +188,10 @@ def test_held_news_is_not_in_tin_and_is_in_tin_bi_giu_for_compliance():
     assert len(rows) == 4 and ["Tin 2"] not in rows
     for role in ("rm", "client"):
         assert ["Tin 2"] not in ask(role, "select tieu_de from tin", client="C01" if role == "client" else None)["rows"]
-    got = ask("compliance", "select tieu_de, cong_ty_han_che from tin_bi_giu")["rows"]
+    got = ask("cio", "select tieu_de, cong_ty_han_che from tin_bi_giu")["rows"]
     assert got == [["Tin 2", "VCB"]]
-    assert refused("compliance", "select * from tin").startswith("Bảng tin không có")
-    assert refused("cio", "select * from tin_bi_giu").startswith("Bảng tin_bi_giu không có")
+    assert refused("admin", "select * from tin").startswith("Bảng tin không có")
+    assert refused("rm", "select * from tin_bi_giu").startswith("Bảng tin_bi_giu không có")
     # an event holding the held item: its title is that item's; the CIO sees it blocked, an RM or a client not at all
     held_id = next(i["id"] for i in news.inbox(held=True, limit=None))
     events.create([held_id], None, "cio")
@@ -206,12 +206,12 @@ def test_the_audit_log_has_no_payloads_or_hashes_and_alerts_are_the_roles():
     seed(1)
     alerts.raise_("news_feed", "f1", "Nguồn lỗi")
     alerts.raise_("audit_chain", "c1", "Chuỗi gãy")
-    cols = ask("compliance", "select * from nhat_ky")["columns"]
+    cols = ask("cio", "select * from nhat_ky")["columns"]
     assert cols == ["so_thu_tu", "luc", "ngay", "gio", "nguoi", "hanh_dong", "doi_tuong"]
-    assert ask("compliance", "select loai from canh_bao")["rows"] == [["audit_chain"]]
+    assert sorted(r[0] for r in ask("cio", "select loai from canh_bao")["rows"]) == ["audit_chain", "news_feed"]
     assert sorted(r[0] for r in ask("admin", "select loai from canh_bao")["rows"]) == ["audit_chain", "news_feed"]
     for sql in ("select hash from nhat_ky", "select data from nhat_ky"):
-        assert refused("compliance", sql).startswith("Câu lệnh SQL lỗi: no such column")
+        assert refused("cio", sql).startswith("Câu lệnh SQL lỗi: no such column")
 
 
 @pytest.fixture

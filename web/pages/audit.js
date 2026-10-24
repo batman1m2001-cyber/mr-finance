@@ -1,4 +1,4 @@
-/* Tuân thủ · Nhật ký (FR-702): the append-only chain of every action, and its check. */
+/* Nhật ký, for the CIO and Admin (FR-702): the append-only chain of every action, and its check. */
 import {esc, get, when} from "../core/core.js";
 
 const ACTION = {
@@ -11,7 +11,7 @@ const ACTION = {
 export async function render(box) {
   const [v, {rows}] = await Promise.all([get("/api/audit/verify"), get("/api/audit?limit=200")]);
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">Tuân thủ · Nhật ký</div>
+    <div class="pagehead"><div><div class="eyebrow">Nhật ký</div>
       <div class="h1">${v.ok ? '<span class="up">✓</span> Chuỗi toàn vẹn' : '<span class="down">✕</span> Chuỗi bị gãy'} · ${v.count} dòng</div>
       <div class="row" style="margin-top:8px"><a class="btn sm" href="/api/audit/export" download>Tải JSON (kèm kiểm tra chuỗi)</a><a class="btn sm ghostbtn" href="/api/audit/export?format=csv" download>Tải CSV</a></div>
       <div class="lede small">${v.ok ? `Mỗi dòng chứa mã băm của dòng trước (${esc((v.algorithms || []).join(", ") || "sha256")}); cơ sở dữ liệu chặn sửa và xóa.` : `Gãy ở dòng ${v.broken_at}: ${esc(v.reason)}`}</div></div></div>

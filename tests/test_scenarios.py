@@ -78,17 +78,13 @@ def test_an_option_waits_for_the_rm_and_is_decided_once():
         assert item["status"] == "pending" and item["title"].startswith("Doanh nghiệp cần vốn gấp")
         queue = client.get("/api/review", params={"status": "pending"}).json()["items"]
         assert [q["id"] for q in queue] == [item["id"]] and queue[0]["client_name"] == "Lê Văn Phát"
-        for who in (None, "cio", "compliance"):  # only an RM decides
+        for who in (None, "cio", "admin"):  # only an RM decides
             denied = client.post("/api/review/decide", json={"item_id": item["id"], "decision": "approved", "by": who})
             assert denied.status_code != 200
         done = client.post(
             "/api/review/decide", json={"item_id": item["id"], "decision": "approved", "note": "OK", "by": "rm01"}
         ).json()["item"]
-        assert (done["status"], done["note"]) == ("pending_specialist", "OK")  # C02's certified specialist next (G8)
-        done = client.post(
-            "/api/review/specialist", json={"item_id": item["id"], "decision": "approved", "by": "sp_private"}
-        ).json()["item"]
-        assert done["status"] == "approved" and done["data"]["specialist_by"] == "sp_private"
+        assert (done["status"], done["note"]) == ("approved", "OK")  # the RM's approval is the last (OWN-FB-18)
         again = client.post("/api/review/decide", json={"item_id": item["id"], "decision": "rejected", "by": "rm01"})
         assert again.status_code == 500, "a decided item is not decided again"
         assert client.get("/api/scenarios").json()["scenarios"][0]["id"] == "tuition"

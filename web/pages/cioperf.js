@@ -33,7 +33,7 @@ export async function render(box, ctx) {
     return {h, right: xs.filter(f => f.direction_hit === true).length, wrong: xs.filter(f => f.direction_hit === false).length,
       open: xs.filter(f => f.result == null).length, next: xs.filter(f => f.result == null).map(f => f.due).sort()[0]};
   });
-  const hist = acc.history.kpi03;
+  const hist = (acc.history && acc.history.kpi03) || {};  // a bank with no forecast scored yet has none
 
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">CIO · 7 ngày qua</div><div class="h1">Hiệu quả</div>

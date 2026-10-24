@@ -1,13 +1,12 @@
 """Everyone the demo knows, in the state file (owner's data layer, 2026-10-16).
 
 ``people`` holds one row per person:
-- **staff**: CIO, RM, Compliance, Admin, and the specialists of the families' teams;
+- **staff**: CIO, RM and Admin (no Compliance or specialists since OWN-FB-18);
 - **clients**: each customer, and a household member (``member_of`` the family's main client);
 - **dependents**: a client's children or parents (``member_of`` that client).
 
 A client's personal record is the row's ``data``. ``client_sources`` holds what each mock source system (bank,
-broker, fund manager, housing platform, Open API) has for them. ``teams`` links a family to its RM and
-specialists.
+broker, fund manager, housing platform, Open API) has for them. ``teams`` links a family to its RM.
 
 Seeds: ``data/clients/*.json`` and ``data/people/staff.json`` (scripts/make_people.py). They are loaded into an
 empty database, and again on demo reset (:func:`reset`), and are never read at request time. A staff member added
@@ -30,7 +29,8 @@ from control import crypto
 from wealth.paths import DATA, ensure_schema, no_people_in_zone, state_path
 
 KINDS = ("staff", "client", "dependent")
-STAFF_ROLES = ("cio", "rm", "compliance", "admin", "specialist")
+STAFF_ROLES = ("cio", "rm", "admin")
+RETIRED = ("compliance", "specialist")  # roles removed by OWN-FB-18: _top_up takes them out of a database made before
 
 SCHEMA = """
 create table if not exists people (
@@ -74,7 +74,6 @@ def _seed(con: sqlite3.Connection) -> None:
             (s["id"], seq, s["role"], s["name"], s.get("email"), json.dumps(s, ensure_ascii=False)),
         )
     teams = seed["teams"]
-    specialists = [s["id"] for s in seed["staff"] if s["role"] == "specialist"]
     clients = _seed_clients()
     head = {c["id"]: c.get("member_of") or c["id"] for c in clients}
     for c in clients:
@@ -108,8 +107,6 @@ def _seed(con: sqlite3.Connection) -> None:
             )
     for cid, t in teams.items():
         con.execute("insert into teams values (?, ?, 'rm', 0, 0)", (cid, t["rm"]))
-        for pos, sid in enumerate(specialists, 1):
-            con.execute("insert into teams values (?, ?, 'specialist', ?, ?)", (cid, sid, int(sid in t["lead"]), pos))
 
 
 def _seal(text: Optional[str], person_id: str, column: str) -> Optional[str]:
@@ -134,14 +131,25 @@ _TOPPED: set = set()
 
 def _top_up(con: sqlite3.Connection) -> None:
     """Staff in the seed but not in a database seeded earlier (the second Admin, F4) are added, with an account
-    when their role has one. Nothing else in the database changes."""
+    when their role has one; staff of a retired role (Compliance, the specialists: OWN-FB-18) leave, with their
+    account and team places. The audit chain keeps their names on what they did. Nothing else changes."""
     have = {r[0] for r in con.execute("select id from people where kind = 'staff'")}
     if not have:
         return  # an empty database is seeded whole
+    marks = ",".join("?" * len(RETIRED))
+    gone = [r[0] for r in con.execute(f"select id from people where kind = 'staff' and role in ({marks})", RETIRED)]
+    if gone:
+        con.execute("begin immediate")
+        ids = ",".join("?" * len(gone))
+        for table, col in (("teams", "person_id"), ("account_flags", "person_id"), ("accounts", "person_id")):
+            con.execute(f"delete from {table} where {col} in ({ids})", gone)
+        con.execute(f"delete from people where id in ({ids})", gone)
+        con.execute("commit")
+        have -= set(gone)
     missing = [s for s in _seed_staff()["staff"] if s["id"] not in have]
     from people import auth
 
-    # staff whose role gained an account after the database was made (specialists, G8)
+    # staff whose role gained an account after the database was made
     accounts = con.execute("select 1 from accounts limit 1").fetchone() is not None
     marks = ",".join("?" * len(auth.ACCOUNT_ROLES))
     no_account = (
@@ -301,28 +309,6 @@ def assigned_rm(client_id: str) -> Optional[str]:
     return _assignment().get(row["member_of"] or str(client_id))
 
 
-def specialists_of(client_id: str) -> List[str]:
-    """The specialists assigned to a family (a household member: their family's): the team's leads for it."""
-    with _db() as con:
-        row = con.execute("select member_of from people where id = ? and kind = 'client'", (str(client_id),)).fetchone()
-        if row is None:
-            return []
-        head = row["member_of"] or str(client_id)
-        rows = con.execute(
-            "select person_id from teams where client_id = ? and role = 'specialist' and lead = 1 order by pos", (head,)
-        ).fetchall()
-    return [r[0] for r in rows]
-
-
-def families_of_specialist(person_id: str) -> List[str]:
-    """The main clients a specialist is assigned to."""
-    with _db() as con:
-        rows = con.execute(
-            "select client_id from teams where person_id = ? and role = 'specialist' and lead = 1", (str(person_id),)
-        ).fetchall()
-    return sorted(r[0] for r in rows)
-
-
 def families_of(rm_id: str) -> List[str]:
     """The main clients an RM is assigned to."""
     return sorted(f for f, rm in _assignment().items() if rm == rm_id)
@@ -353,48 +339,27 @@ def person(person_id: str) -> Optional[Dict[str, Any]]:
 
 
 def team(client_id: str) -> Optional[Dict[str, Any]]:
-    """A family's RM and specialists, the way the Chuyên gia page shows them: the specialists sit in their RM's
-    office; ``lead`` marks the ones who matter most to this family."""
+    """A family's RM, the way the client's advisor page shows them."""
     with _db() as con:
-        rows = con.execute(
-            "select t.role as link, t.lead, p.* from teams t join people p on p.id = t.person_id "
-            "where t.client_id = ? order by t.pos",
+        row = con.execute(
+            "select p.* from teams t join people p on p.id = t.person_id where t.client_id = ? and t.role = 'rm'",
             (str(client_id),),
-        ).fetchall()
-    if not rows:
+        ).fetchone()
+    if row is None:
         return None
-    rm = person(assigned_rm(client_id) or "") or next(_person(r) for r in rows if r["link"] == "rm")
-    office = rm.get("office")
-    out_rm = {
-        "id": rm["id"],
-        "role": rm.get("title_en", "Relationship manager"),
-        "role_vi": rm["title"],
-        "name": rm["name"],
-        "email": rm.get("email"),
-        "phone": rm.get("phone"),
-        "office": office,
-        "hours": rm.get("hours"),
+    rm = person(assigned_rm(client_id) or "") or _person(row)
+    return {
+        "rm": {
+            "id": rm["id"],
+            "role": rm.get("title_en", "Relationship manager"),
+            "role_vi": rm["title"],
+            "name": rm["name"],
+            "email": rm.get("email"),
+            "phone": rm.get("phone"),
+            "office": rm.get("office"),
+            "hours": rm.get("hours"),
+        }
     }
-    specialists = []
-    for r in rows:
-        if r["link"] != "specialist":
-            continue
-        p = _person(r)
-        specialists.append(
-            {
-                "id": p["specialty"],
-                "person_id": p["id"],
-                "role": p["title_en"],
-                "role_vi": p["title"],
-                "name": p["name"],
-                "email": p.get("email"),
-                "phone": p.get("phone"),
-                "covers": p.get("covers", []),
-                "office": office,
-                "lead": bool(r["lead"]),
-            }
-        )
-    return {"rm": out_rm, "specialists": specialists}
 
 
 def everyone() -> List[Dict[str, Any]]:

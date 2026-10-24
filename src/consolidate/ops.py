@@ -23,7 +23,7 @@ SCOPES = ("personal", "family")
 @op
 def household(client_id: str, scope: str = "personal") -> dict:
     """Whose assets this picture holds: the client, and in the family view every member who
-    consented (when Compliance's ``consent`` configuration asks for it). Members who did not are listed, so the
+    consented (when the ``consent`` configuration asks for it). Members who did not are listed, so the
     screen can say who is missing."""
     if scope not in SCOPES:
         raise ValueError(f"scope is one of {SCOPES}, not {scope!r}")
@@ -31,7 +31,7 @@ def household(client_id: str, scope: str = "personal") -> dict:
     members = [{"id": me["id"], "name": me["name"], "relation": "Chủ tài khoản"}]
     waiting = []
     if scope == "family":
-        needed = config.data("consent")["require"]["family_member"]  # Compliance's consent configuration
+        needed = config.data("consent")["require"]["family_member"]  # the consent configuration
         for m in me.get("household", []):
             other = fixtures.client(m["id"])
             row = {"id": m["id"], "name": other["name"], "relation": m["relation"]}

@@ -18,7 +18,7 @@ from copilot.tools import PAGES, TOOLS
 from wealth import ai
 
 RULES: List[Tuple[Optional[str], str]] = [  # (tool, folded keywords as a regex); first match wins
-    # sending something to the RM or a specialist: no tool here does it, and its “… cho RM duyệt” is not an approval
+    # sending something to the RM: no tool here does it, and its “… cho RM duyệt” is not an approval
     # (stress test D22: a customer's request to send was refused as the RM's approval)
     (None, r"\bgui\b.*\b(de xuat|phuong an|rm|chuyen gia)\b"),
     ("lay_tin", r"lay tin|cap nhat tin|tai tin"),
@@ -48,17 +48,9 @@ DESK_RULES: Dict[str, List[Tuple[str, str]]] = {
         ("phoi_nhiem", r"phoi nhiem|tac dong (lon nhat )?(toi|len) tai san"),
         ("lan_ap_dung", r"ap dung"),
         ("do_chinh_xac", r"chinh xac|du bao dung"),
+        ("chuoi_nhat_ky", r"chuoi nhat ky|nhat ky kiem toan"),
         ("ban_quyet_dinh", r"cho toi|quyet dinh|cho duyet|dang cho|nhan dinh|dong chay"),
         ("su_kien", r"su kien"),
-        ("canh_bao_he_thong", r"canh bao"),
-    ],
-    "specialist": [("ban_chuyen_gia", r"khuyen nghi|cho toi|cho duyet|dang cho|chung chi|ban chuyen gia")],
-    "compliance": [
-        ("chuoi_nhat_ky", r"chuoi|nhat ky"),
-        ("cau_hinh_cho_duyet", r"cau hinh"),
-        ("tin_bi_giu", r"bi giu|han che"),
-        ("agent_nen", r"\bagent\b|chay nen|viec nen"),
-        ("ban_kiem_soat", r"cho tuan thu|dang cho|kiem soat|cho duyet|cho toi"),
         ("canh_bao_he_thong", r"canh bao"),
     ],
     "admin": [

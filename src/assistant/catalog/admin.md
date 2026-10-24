@@ -1,5 +1,5 @@
-<!-- Compliance's (and Admin's) definitions and examples (docs/ASSISTANT_DATA_PLAN.md §3.3); every SQL runs in the
-compliance room in tests/test_datacatalog.py. -->
+<!-- Admin's definitions and examples (Compliance's until OWN-FB-18; docs/ASSISTANT_DATA_PLAN.md §3.3); every SQL runs
+in the admin room in tests/test_datacatalog.py. -->
 ## Định nghĩa
 - Tin đang bị giữ: mọi dòng của `tin_bi_giu`.
 - Cảnh báo chưa xử lý: `canh_bao.trang_thai != 'resolved'`; chưa ai xem: `trang_thai = 'open'`.

@@ -60,13 +60,8 @@ def test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it(open_page):
     p.go("#/rm/khach-hang/duyet")
     p.page.locator(".qitem input").fill("Đồng ý, gọi khách tuần sau")
     p.page.click("[data-ok]")
-    # C01 has a certified specialist: the RM's approval waits for them (G8)
-    p.page.wait_for_function("/Chờ chuyên gia có chứng chỉ duyệt/.test(document.querySelector('.qitem').textContent)")
-    p.go("#/client/chuyen-gia")
-    assert "Chờ chuyên gia có chứng chỉ duyệt" in p.page.inner_text(".qitem")
-    p.go("#/specialist/duyet")
-    p.page.click("#page [data-ok]")  # the page's, not the desk's decision bar under the sheet (FEAT-41)
-    p.page.wait_for_function("/Bạn đã xử lý/.test(document.querySelector('#page').textContent)")
+    # the RM's approval is the last (OWN-FB-18)
+    p.page.wait_for_function("/Đã xử lý/.test(document.querySelector('#page').textContent)")
     p.go("#/client/chuyen-gia")
     item = p.page.inner_text(".qitem")
     assert "Đã duyệt" in item and "Đồng ý, gọi khách tuần sau" in item
@@ -92,49 +87,13 @@ def test_the_policy_filter_keeps_one_side(open_page, base_url):
 
 def test_a_row_of_all_clients_opens_that_client(open_page):
     p = open_page()
-    p.go("#/rm/hieu-qua")
+    p.go("#/rm/hieu-qua/tat-ca")
     row = p.page.locator("tr.rowlink").nth(2)
     cid, name = row.get_attribute("data-client"), row.locator("b").inner_text()
     row.locator("b").click()  # the name: a figure in the row is its own “Cách tính” button, which does not navigate
     p.page.wait_for_function("location.hash === '#/rm/khach-hang/hieu-qua'")
     p.page.wait_for_function("(c) => document.querySelector('#client').value === c", arg=cid)
     p.page.wait_for_function("(n) => document.querySelector('.lede')?.textContent.includes(n)", arg=name)
-    assert not p.problems()
-
-
-def test_the_overview_graph_selects_expands_and_opens_pages(open_page, base_url):
-    in_thread(approved, *MARKET)
-    p = open_page()
-    p.go("#/rm/khach-hang/ban-do")  # the page view (the Customer's is the workspace graph: test_graph_workspace_ui)
-    o = api(base_url, "/api/overview", {"client_id": "C01", "role": "rm"}, who="rm01")["overview"]
-    shown = [n for n in o["nodes"] if n["kind"] in ("family", "class", "goal", "risk", "event")]
-    assert p.page.locator(".mnode").count() == len(shown)  # sources and policy items start hidden
-    p.page.click("[data-k=alert]")
-    assert p.page.locator(".mnode").count() == len(shown) + len([n for n in o["nodes"] if n["kind"] == "alert"])
-    stock = next(n for n in o["nodes"] if n["id"] == "CL:stock")
-    node = p.page.locator('.mnode[data-n="CL:stock"]')
-    node.focus()
-    p.page.keyboard.press("Enter")  # the keyboard selects as a click does
-    assert node.get_attribute("aria-pressed") == "true"
-    p.page.click("#m-open")
-    assert p.page.locator('.mnode[data-n^="HD:"]').count() == stock["count"]
-    p.page.click("#m-open")
-    assert p.page.locator('.mnode[data-n^="HD:"]').count() == 0
-    ev = next(n for n in o["nodes"] if n["kind"] == "event")
-    p.page.locator(f'.mnode[data-n="{ev["id"]}"]').click()
-    p.page.click("[data-go]")  # an event opens its path on Đồ thị tác động, selected
-    p.page.wait_for_function("location.hash === '#/rm/khach-hang/do-thi'")
-    p.page.wait_for_selector(f'[data-focus="event:{ev["ref"]}"][aria-pressed="true"]')
-    assert not p.problems()
-
-
-def test_the_overview_graph_is_a_list_on_a_phone(open_page):
-    in_thread(approved, *MARKET)
-    p = open_page("phone")
-    p.go("#/rm/khach-hang/ban-do")
-    assert p.page.locator(".mapsvg").count() == 0 and p.page.locator(".mgroup .mrow").count() > 0
-    p.page.locator(".mgroup .mrow").first.click()
-    p.page.wait_for_selector("#m-side #m-clear")
     assert not p.problems()
 
 

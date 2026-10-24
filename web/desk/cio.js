@@ -15,7 +15,8 @@ const STAGE_PAGE = {news: "Hộp tin", views: "Sự kiện & nhận định", ru
   rm: "Đồ thị lần áp dụng"};  // the page a stage's button opens
 const TO_CLIENT = new Set(["families", "rm"]);  // OWN-FB-08: their own frame
 const KIND = {view: ["sparkles", "Nhận định"], run: ["zap", "Lần áp dụng"], config: ["sliders", "Cấu hình"],
-  letter: ["mail", "Bài viết"], event: ["news", "Sự kiện"]};
+  letter: ["mail", "Bài viết"], event: ["news", "Sự kiện"], held: ["shield", "Tin bị giữ"], research: ["file", "Nghiên cứu"],
+  policy: ["scale", "Chính sách"]};  // the last three were Compliance's (OWN-FB-18)
 const LEVEL = {high: ["bad", "Tác động cao"], medium: ["warn", "Tác động vừa"], low: ["", "Tác động thấp"]};
 const SCOPE = {domestic: "Trong nước", intl: "Quốc tế", both: "Trong nước + quốc tế"};
 const PAGE = 20;
@@ -114,7 +115,7 @@ export function render(box, d, api) {
     box.querySelector("#dk-dec-n").textContent = rows.length === d.decide.length ? `${d.decide.length} việc` : `${rows.length} / ${d.decide.length} việc`;
     box.querySelector("#dk-dec").innerHTML = shown.map(row).join("")
       + (rows.length > shown.length ? `<button type="button" class="btn sm dk-more" id="dk-more">Xem thêm (còn ${rows.length - shown.length})</button>` : "")
-      || `<p class="small muted">${d.decide.length ? "Không có việc nào khớp bộ lọc." : "Không có việc nào chờ bạn: nhận định, lần áp dụng, cấu hình và bài viết đều đã xử lý."}</p>`;
+      || `<p class="small muted">${d.decide.length ? "Không có việc nào khớp bộ lọc." : "Không có việc nào chờ bạn: nhận định, lần áp dụng, cấu hình, bài viết, tin bị giữ, nghiên cứu và chính sách đều đã xử lý."}</p>`;
     const more = box.querySelector("#dk-more");
     if (more) more.onclick = () => { state.shown += PAGE; decisions(); };
   };

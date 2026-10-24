@@ -1,5 +1,5 @@
 """Header search (UI redesign R1, R-D5): one box over what the role may already open — the client's holdings and
-goals, the RM's clients, events, the CIO's news and research, Compliance's held news. Accent-insensitive; each hit
+goals, the RM's clients, events, the CIO's news, held news and research. Accent-insensitive; each hit
 says what it is and where it opens. Nothing here is new data: every hit is a record another page already shows.
 
 The client matches events only by their type label, never by the headline it may not see (BRD flow 2)."""
@@ -20,7 +20,7 @@ from research import store as research
 from views import schema
 from wealth import fixtures
 
-ROLES = ("client", "rm", "cio", "compliance")
+ROLES = ("client", "rm", "cio")
 LIMIT = 6  # per kind
 WORD = re.compile(r"[a-z0-9]+")
 CLASSES = {**schema.ASSET_CLASSES, "loan": "Khoản vay", "card": "Dư nợ thẻ"}
@@ -29,8 +29,9 @@ ROUTES = {
     "goal": {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"},
     "event": {"client": "#/client/tin/thi-truong", "rm": "#/rm/khach-hang/tac-dong", "cio": "#/cio/nhan-dinh/{id}"},
     "client": {"rm": "#/rm/khach-hang/toan-canh"},
-    "news": {"cio": "#/cio", "compliance": "#/compliance/giu"},
-    "research": {"cio": "#/cio/nghien-cuu", "compliance": "#/compliance/nghien-cuu"},
+    "news": {"cio": "#/cio"},
+    "held": {"cio": "#/cio/giu"},
+    "research": {"cio": "#/cio/nghien-cuu"},
 }
 
 
@@ -44,7 +45,7 @@ def check_request(q: str = None, role: str = None, client_id: str = None, scope:
         raise ValueError(f"vai trò {role!r} không có")
     cid = str(client_id or "")
     if cid not in fixtures.client_ids(members=True):
-        mine = auth.visible(fixtures.client_ids())  # CIO and Compliance search without a client; holdings unused then
+        mine = auth.visible(fixtures.client_ids())  # the CIO searches without a client; holdings unused then
         cid = (mine or fixtures.client_ids())[0]
     return {"q": q, "role": role, "client_id": cid, "scope": scope or "personal"}
 
@@ -107,11 +108,9 @@ def find(q: str, role: str, holdings: List[Dict[str, Any]], goals: List[Dict[str
         every = news.inbox(status="all", limit=None)
         got = _best(every, lambda x: match(x.get("title"), x.get("outlet")), found, "news")
         hits += [_hit("news", role, x["title"], x.get("outlet") or "", x["id"], n) for x, n in got]
-    if role == "compliance":
         held = news.inbox(status="all", held=True, limit=None)
-        got = _best(held, lambda x: match(x.get("title"), x.get("outlet")), found, "news")
-        hits += [_hit("news", role, x["title"], "Tin bị giữ", x["id"], n) for x, n in got]
-    if role in ("cio", "compliance"):
+        got = _best(held, lambda x: match(x.get("title"), x.get("outlet")), found, "held")
+        hits += [_hit("held", role, x["title"], "Tin bị giữ", x["id"], n) for x, n in got]
         got = _best(research.listing(), lambda r: match(r.get("title"), r.get("report_no")), found, "research")
         hits += [_hit("research", role, r["title"], r.get("report_no") or "", r["id"], n) for r, n in got]
     order = {k: i for i, k in enumerate(ROUTES)}

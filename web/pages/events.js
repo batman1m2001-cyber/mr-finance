@@ -40,9 +40,9 @@ async function renderEvent(box, ctx, id) {
     <div class="cols">
       <div class="panel c7"><h3>Tin nguồn <span class="hint">${ev.news.length} tin</span></h3>
         ${ev.news.map(n => `<div style="margin:8px 0"><a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer" data-quote>${esc(n.title)}</a>
-          <div class="small muted">${esc(n.outlet)} · ${esc(n.label)} · ${when(n.published)}${n.held ? ' · <span class="badge bad">bị giữ chờ Tuân thủ</span>' : ""}</div></div>`).join("")}</div>
+          <div class="small muted">${esc(n.outlet)} · ${esc(n.label)} · ${when(n.published)}${n.held ? ' · <span class="badge bad">bị giữ chờ CIO cho đi tiếp</span>' : ""}</div></div>`).join("")}</div>
       <div class="panel c5"><h3>Agent CIO</h3>
-        ${ev.blocked ? `<div class="notice bad">Sự kiện đang bị giữ vì tin nhắc tới tổ chức trong danh sách hạn chế. Tuân thủ cần cho phép trước khi chạy agent.</div>` : `
+        ${ev.blocked ? `<div class="notice bad">Sự kiện đang bị giữ vì tin nhắc tới tổ chức trong danh sách hạn chế. Một CIO cần cho tin đi tiếp (trang Tin bị giữ) trước khi chạy agent.</div>` : `
         <div class="small">Chế độ hiện có: ${agents.mode === "live" ? `<span class="badge ai">Trực tiếp</span> ${esc(agents.models.cio)} soạn, ${esc(agents.models.challenger)} phản biện`
           : agents.mode === "inbox" ? `<span class="badge ai">Hộp chờ</span> nhận định đến từ vùng AI, qua hộp chờ có chữ ký` : `<span class="badge">Mô phỏng</span> theo từ khóa, không gọi AI`}</div>
         ${agents.mode === "inbox" ? "" : `<div class="row" style="margin-top:12px"><button type="button" class="btn primary" id="run" ${busy ? "disabled" : ""}>${busy ? "Agent đang chạy…" : "Chạy Agent CIO"}</button></div>`}

@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from typing import Dict
 
-SIGN_IN_ROLES = ("cio", "rm", "compliance", "admin", "specialist")
+SIGN_IN_ROLES = ("cio", "rm", "admin")
 
 
 def users() -> Dict[str, Dict[str, str]]:
-    """The staff who act in the app, by id (the people table, src/people): CIO, RM, Compliance, Admin and the
-    specialists, who approve action recommendations for the families assigned to them (BRD-RULE-ROLE-05, G8)."""
+    """The staff who act in the app, by id (the people table, src/people): CIO, RM and Admin. There is no Compliance
+    or specialist user (OWN-FB-18): a second CIO is the second pair of eyes on what Compliance approved."""
     from people import store
 
     return {
@@ -29,6 +29,7 @@ ZONE_ACTOR = "agent:zone"  # who acts in the AI zone (app/zone.py): its jobs onl
 TRIAL_ACTOR = "agent:trial"
 
 
+# Compliance and the specialists keep their labels: the audit chain still names what they did before OWN-FB-18.
 ROLE_LABELS = {
     "cio": "CIO",
     "rm": "RM",
@@ -37,6 +38,7 @@ ROLE_LABELS = {
     "specialist": "Chuyên gia",
     "client": "Khách hàng",
 }
+ROLES = ("cio", "rm", "admin", "client")  # the roles that act now: what "every role" means
 
 
 class Forbidden(PermissionError):

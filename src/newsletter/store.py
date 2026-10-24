@@ -1,7 +1,9 @@
 """Newsletters, kept (``NL-0001``): DRAFT → PENDING_COMPLIANCE → APPROVED (a preview, never sent) or RETURNED (back
-to the CIO) → … ; WITHDRAWN by the CIO. The author is a CIO; Compliance approves and the approver is never the author
-(BRD-RULE-SEC-04). Distribution: Private and retail clients at the same time by default; Private earlier only with a
-written reason Compliance reads (FR-801). Every step is audited."""
+to the author) → … ; WITHDRAWN by the author. The author is a CIO; another CIO approves (the second pair of eyes
+since there is no Compliance user, OWN-FB-18): the approver is never the author (BRD-RULE-SEC-04), and only the
+author edits, submits or withdraws. The status keeps its name, PENDING_COMPLIANCE, for the letters already kept.
+Distribution: Private and retail clients at the same time by default; Private earlier only with a written reason the
+approver reads (FR-801). Every step is audited."""
 
 from __future__ import annotations
 
@@ -15,7 +17,7 @@ from newsletter import compose
 from research import conflict
 
 EDITABLE = ("DRAFT", "RETURNED")
-NEEDS = {"edit": "cio", "submit": "cio", "withdraw": "cio", "approve": "compliance", "return": "compliance"}
+NEEDS = {"edit": "cio", "submit": "cio", "withdraw": "cio", "approve": "cio", "return": "cio"}
 
 
 def _ts(text: Any) -> float:
@@ -36,7 +38,7 @@ def _distribution(given: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         raise BadRequest("private_early_hours: 0–72 giờ")
     reason = str(g.get("early_reason") or "").strip()
     if early and len(reason) < 20:
-        raise BadRequest("Cho khách Private nhận sớm hơn cần ghi căn cứ từ 20 ký tự để Tuân thủ xem (FR-801)")
+        raise BadRequest("Cho khách Private nhận sớm hơn cần ghi căn cứ từ 20 ký tự để người duyệt xem (FR-801)")
     return {
         "retail_at": at,
         "private_at": at - early * 3600,
@@ -187,12 +189,14 @@ async def draft(
 
 
 def act(nid: str, action: str, by: str, note: str = "", changes: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """edit / submit / withdraw (the CIO), approve / return (Compliance, never the author)."""
+    """edit / submit / withdraw (the author), approve / return (another CIO, never the author)."""
     if action not in NEEDS:
         raise BadRequest("action là edit, submit, approve, return hoặc withdraw")
     roles.require(by, NEEDS[action])  # who may, before whether the letter exists
     n = get(nid)
     note = str(note or "").strip()
+    if action in ("edit", "submit", "withdraw") and by != n["author"]:
+        raise roles.Forbidden("Chỉ người soạn sửa, gửi duyệt hoặc rút bài; CIO khác là người duyệt")
     if action == "edit":
         if n["status"] not in EDITABLE:
             raise Conflict(f"Chỉ sửa được bản nháp hoặc bản bị trả lại (đang {n['status']})")

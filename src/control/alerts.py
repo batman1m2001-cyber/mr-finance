@@ -16,7 +16,7 @@ KINDS: Dict[str, Dict[str, Any]] = {
     "news_feed": {"label": "Nguồn tin không lấy được", "roles": ("cio", "admin"), "severity": "medium"},
     "market_job": {"label": "Chuỗi thị trường không lấy được", "roles": ("cio", "admin"), "severity": "medium"},
     "agent": {"label": "Agent lỗi", "roles": ("cio", "admin"), "severity": "high"},
-    "audit_chain": {"label": "Chuỗi nhật ký kiểm toán gãy", "roles": ("compliance", "admin"), "severity": "high"},
+    "audit_chain": {"label": "Chuỗi nhật ký kiểm toán gãy", "roles": ("cio", "admin"), "severity": "high"},
     "inbox": {"label": "Gói từ vùng AI bị từ chối", "roles": ("cio", "admin"), "severity": "medium"},
     "zone_sync": {"label": "Không gửi được vùng AI", "roles": ("admin",), "severity": "medium"},
     "job": {"label": "Việc nền chạy tay lỗi", "roles": ("admin",), "severity": "medium"},

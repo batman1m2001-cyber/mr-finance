@@ -1,11 +1,11 @@
 /* Bài viết (BRD-FR-801, CONTENT-01 flow 1, CONTENT-02, SEC-04; F8; OWN-FB-15): the CIO writes an article of their own
    (title and body: their news or a policy note, for Private clients only), or drafts a general market letter from
-   approved views (by template, or with the CIO agent writing the opening under the content guard), Compliance approves
-   or returns it, and it is a preview: nothing is sent. Private and retail clients receive it at the same time unless
+   approved views (by template, or with the CIO agent writing the opening under the content guard); another CIO, never
+   the author, approves or returns it (OWN-FB-18 retired Compliance), and it is a preview: nothing is sent. Private and retail clients receive it at the same time unless
    the CIO records why Private should have it earlier. GET /api/newsletters[/{id}], POST /api/newsletters[/act]. */
 import {empty, esc, get, post, toast, when} from "../core/core.js";
 
-const STATUS = {DRAFT: ["", "Nháp"], RETURNED: ["warn", "Bị trả lại"], PENDING_COMPLIANCE: ["warn", "Chờ Tuân thủ duyệt"],
+const STATUS = {DRAFT: ["", "Nháp"], RETURNED: ["warn", "Bị trả lại"], PENDING_COMPLIANCE: ["warn", "Chờ CIO khác duyệt"],
   APPROVED: ["good", "Đã duyệt · xem trước"], WITHDRAWN: ["", "Đã rút"]};
 const badge = (s) => `<span class="badge ${(STATUS[s] || [""])[0]}">${esc((STATUS[s] || [, s])[1])}</span>`;
 const INTRO_BY = {template: "theo mẫu", live: "AI viết (CIO agent)", mock: "theo mẫu (AI mô phỏng)"};
@@ -26,9 +26,9 @@ async function renderList(box, ctx) {
   const cio = ctx.role === "cio";
   const waiting = d.newsletters.filter(n => n.status === "PENDING_COMPLIANCE").length;
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">${cio ? "CIO" : "Tuân thủ"} · Bài viết</div>
+    <div class="pagehead"><div><div class="eyebrow">CIO · Bài viết</div>
       <div class="h1">${d.newsletters.length} bài viết · ${waiting} chờ duyệt</div>
-      <div class="lede small">Bài của CIO, hoặc bản tin từ nhận định đã duyệt. Người duyệt khác người viết. Bản demo chỉ xem trước, không gửi thật.</div></div></div>
+      <div class="lede small">Bài của CIO, hoặc bản tin từ nhận định đã duyệt. Một CIO khác người viết duyệt. Bản demo chỉ xem trước, không gửi thật.</div></div></div>
     ${cio ? `<div class="panel" style="margin-bottom:16px"><details class="more" ${d.newsletters.length ? "" : "open"}><summary>Viết bài mới</summary>
       <form id="nl" class="cols" style="margin-top:8px">
         <label class="field c12">Tiêu đề<input name="title" placeholder="Để trống: theo ngày"></label>
@@ -40,7 +40,7 @@ async function renderList(box, ctx) {
         <label class="field c3 fromviews" hidden>Phần mở đầu<select name="mode"><option value="template">Theo mẫu</option><option value="agent">CIO agent viết (qua kiểm tra nội dung)</option></select></label>
         <label class="field c3">Gửi lúc<input name="send_at" type="datetime-local" value="${tomorrow8()}" required></label>
         <label class="field c3 fromviews" hidden>Private nhận sớm hơn (giờ)<input name="early" type="number" min="0" max="72" value="0"></label>
-        <label class="field c9 early" hidden>Căn cứ cho Private nhận sớm (từ 20 ký tự; Tuân thủ xem)<input name="early_reason"></label>
+        <label class="field c9 early" hidden>Căn cứ cho Private nhận sớm (từ 20 ký tự; người duyệt xem)<input name="early_reason"></label>
         <label class="field c3">Xung đột lợi ích<select name="related"><option value="">Không liên quan bên liên quan</option><option value="1">Có</option></select></label>
         <label class="field c3 coi" hidden>Bên liên quan<input name="parties" placeholder="TCBS"></label>
         <label class="field c6 coi" hidden>Lời công bố (từ 20 ký tự)<input name="statement"></label>
@@ -50,7 +50,7 @@ async function renderList(box, ctx) {
       <a class="item" href="${ctx.href("ban-tin", n.id)}" style="text-decoration:none;color:inherit;grid-template-columns:auto 1fr auto">
         <span class="badge mono">${esc(n.id)}</span>
         <div><div class="t">${esc(n.title)}</div><div class="m">${n.view_ids.length ? `${n.view_ids.length} nhận định` : "Bài viết · chỉ khách Private"} · soạn bởi ${esc(n.author)} · ${when(n.created)}${n.distribution.private_early_hours ? ` · <span class="warn-text">Private sớm ${n.distribution.private_early_hours} giờ</span>` : ""}</div></div>
-        ${badge(n.status)}</a>`).join("")}</div>` : empty("Chưa có bài viết", cio ? "Mở “Viết bài mới”." : "Bài CIO gửi duyệt sẽ chờ ở đây.")}</div>`;
+        ${badge(n.status)}</a>`).join("")}</div>` : empty("Chưa có bài viết", "Mở “Viết bài mới”.")}</div>`;
 
   const form = box.querySelector("#nl");
   if (!form) return;
@@ -96,7 +96,8 @@ function preview(n) {
 
 async function renderOne(box, ctx, id) {
   const {newsletter: n} = await get(`/api/newsletters/${encodeURIComponent(id)}`);
-  const cio = ctx.role === "cio", edit = cio && ["DRAFT", "RETURNED"].includes(n.status);
+  const mine = ctx.role === "cio" && n.author === ctx.user, edit = mine && ["DRAFT", "RETURNED"].includes(n.status);
+  const review = ctx.role === "cio" && !mine && n.status === "PENDING_COMPLIANCE";
   const dist = n.distribution;
   box.innerHTML = `
     <div class="pagehead"><div><a class="small" href="${ctx.href("ban-tin")}">← Bài viết</a>
@@ -120,11 +121,11 @@ async function renderOne(box, ctx, id) {
           <label class="field">Nội dung<textarea id="b" rows="8">${esc(n.body || "")}</textarea></label>
           ${n.sections.map((s, k) => `<label class="field">Tiêu đề phần ${k + 1}<input data-heading="${esc(s.view_id)}" value="${esc(s.heading || s.event)}"></label>`).join("")}
           <div class="row mt"><button type="button" class="btn sm" id="save">Lưu</button>
-            <button type="button" class="btn sm primary" id="submit" ${n.guard.ok ? "" : "disabled"}>Gửi Tuân thủ duyệt</button></div></div>` : ""}
-        ${!cio && n.status === "PENDING_COMPLIANCE" ? `<div class="panel"><h3>Tuân thủ duyệt</h3>
+            <button type="button" class="btn sm primary" id="submit" ${n.guard.ok ? "" : "disabled"}>Gửi CIO khác duyệt</button></div></div>` : ""}
+        ${review ? `<div class="panel"><h3>Duyệt (người thứ hai)</h3>
           <label class="field">Ghi chú (trả lại: từ 10 ký tự)<textarea id="note" rows="3"></textarea></label>
           <div class="row mt"><button type="button" class="btn sm primary" data-act="approve">Duyệt</button><button type="button" class="btn sm danger" data-act="return">Trả lại</button></div></div>` : ""}
-        ${cio && ["PENDING_COMPLIANCE", "APPROVED", "DRAFT", "RETURNED"].includes(n.status) ? `<div class="row"><button type="button" class="btn sm" data-act="withdraw">Rút bản tin</button></div>` : ""}
+        ${mine && ["PENDING_COMPLIANCE", "APPROVED", "DRAFT", "RETURNED"].includes(n.status) ? `<div class="row"><button type="button" class="btn sm" data-act="withdraw">Rút bản tin</button></div>` : ""}
         <div class="panel"><h3>Lịch sử</h3>${n.history.map(h => `<div class="small" style="margin:4px 0">${when(h.at)} · ${esc(h.by)} · ${badge(h.status)}${h.note ? ` · ${esc(h.note)}` : ""}</div>`).join("")}</div>
       </div>
     </div>`;

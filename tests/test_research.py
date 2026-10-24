@@ -59,16 +59,16 @@ AML_DRAFT = {
 # -- research ----------------------------------------------------------------------------------
 
 
-def test_a_report_waits_for_compliance_and_then_reaches_the_inbox():
+def test_a_report_waits_for_another_cio_and_then_reaches_the_inbox():
     assert "không được làm việc này" in str(run(UPLOAD, item=report(), by="rm01")["$errors"])
     item = run(UPLOAD, item=report(), by="cio")["item"]
     assert item["status"] == "PENDING_RELEASE"
     assert not [n for n in news_store.inbox() if n.get("research_id") == item["id"]]  # FR-203
     assert "từ 20 ký tự" in str(
-        run(RELEASE, item_id=item["id"], decision="release", by="compliance", note="ok")["$errors"]
+        run(RELEASE, item_id=item["id"], decision="release", by="cio2", note="ok")["$errors"]
     )
-    out = run(RELEASE, item_id=item["id"], decision="release", by="compliance", note=NOTE)["item"]
-    assert out["status"] == "RELEASED" and out["decided_by"] == "compliance"
+    out = run(RELEASE, item_id=item["id"], decision="release", by="cio2", note=NOTE)["item"]
+    assert out["status"] == "RELEASED" and out["decided_by"] == "cio2"
     [n] = [n for n in news_store.inbox() if n.get("research_id") == item["id"]]
     assert n["label"] == "Độc quyền" and n["published"] == item["release_at"]
 
@@ -79,16 +79,16 @@ def test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time():
         store.decide(item["id"], "release", "cio", NOTE)
     future = store.upload(report(release_at="2099-01-01T08:00:00+07:00", report_no="X2"), "cio")
     with pytest.raises(store.ResearchError, match="Chưa tới giờ phát hành"):
-        store.decide(future["id"], "release", "compliance", NOTE)
-    assert store.decide(future["id"], "release", "compliance", NOTE, now=time.time() + 10**10)["status"] == "RELEASED"
+        store.decide(future["id"], "release", "cio2", NOTE)
+    assert store.decide(future["id"], "release", "cio2", NOTE, now=time.time() + 10**10)["status"] == "RELEASED"
 
 
 def test_a_report_naming_the_restricted_list_is_not_released():
     item = store.upload(report(title="Sao Mai Land: rủi ro đáo hạn trái phiếu", report_no="X3"), "cio")
     with pytest.raises(store.ResearchError, match="danh sách hạn chế"):
-        store.decide(item["id"], "release", "compliance", NOTE)
+        store.decide(item["id"], "release", "cio2", NOTE)
     assert (
-        store.decide(item["id"], "reject", "compliance", "Nhắc tổ chức trong danh sách hạn chế")["status"] == "REJECTED"
+        store.decide(item["id"], "reject", "cio2", "Nhắc tổ chức trong danh sách hạn chế")["status"] == "REJECTED"
     )
 
 
@@ -124,7 +124,7 @@ def test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal():
     """BRD §10: Úc study in March 2027, 8 more weeks → milestone 7/12/2026; a draft → remind."""
     note = store.upload(AML_DRAFT, "cio")
     assert not matches("C01", TODAY)  # not released yet
-    store.decide(note["id"], "release", "compliance", NOTE)
+    store.decide(note["id"], "release", "cio2", NOTE)
     assert not [n for n in news_store.inbox(status="all") if n.get("research_id") == note["id"]]  # not a price event
     [m] = matches("C01", TODAY)
     assert (m["milestone"], m["level"], m["declared"]) == ("2026-12-07", "confirm_goal", False)
@@ -137,7 +137,7 @@ def test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal():
 def test_an_issued_rule_close_to_the_milestone_means_contact_now_and_late_rules_are_a_note():
     issued = {**AML_DRAFT, "report_no": "QD-2", "regulation": {**AML_DRAFT["regulation"], "status": "issued"}}
     n = store.upload(issued, "cio")
-    store.decide(n["id"], "release", "compliance", NOTE)
+    store.decide(n["id"], "release", "cio2", NOTE)
     store.declare("C01", "GL-C01-01", "study_abroad", "Úc", "rm01")
     assert matches("C01", TODAY)[0]["level"] == "contact_now"  # milestone 7/12/2026 is 53 days away
     assert (
@@ -150,7 +150,7 @@ def test_an_issued_rule_close_to_the_milestone_means_contact_now_and_late_rules_
 def test_country_limits_and_past_goals():
     other = {**AML_DRAFT, "report_no": "QD-3", "regulation": {**AML_DRAFT["regulation"], "countries": ["Anh"]}}
     n = store.upload(other, "cio")
-    store.decide(n["id"], "release", "compliance", NOTE)
+    store.decide(n["id"], "release", "cio2", NOTE)
     assert matches("C01", TODAY) == []  # Úc is not Anh
     assert (
         goals.goals_of(
@@ -164,7 +164,7 @@ def test_the_reads_and_the_rm_list():
     from app.web import app
 
     n = store.upload(AML_DRAFT, "cio")
-    store.decide(n["id"], "release", "compliance", NOTE)
+    store.decide(n["id"], "release", "cio2", NOTE)
     client = TestClient(app)
     assert client.get("/api/goals/regulation?family_id=C01&role=client").json()["matches"] == []  # nothing declared
     staff = client.get("/api/goals/regulation?family_id=C01").json()

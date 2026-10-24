@@ -7,6 +7,8 @@ tests/test_datacatalog.py runs every one in the CIO's room. -->
 - Nhận định bị bác: `nhan_dinh.trang_thai = 'REJECTED'`; đã duyệt `'APPROVED'`; chờ duyệt `'PENDING_APPROVAL'`.
 - Lần áp dụng đang dùng: `trang_thai = 'EFFECTIVE'` (ở `tac_dong_gia_dinh` là `trang_thai_lan`).
 - Tác động lên một gia đình: `ky_vong_3thang` của lần áp dụng EFFECTIVE; lớn nhất là `abs(ky_vong_3thang)` lớn nhất.
+- Tin đang bị giữ (danh sách hạn chế, chờ một CIO cho đi tiếp): mọi dòng của `tin_bi_giu`.
+- Cảnh báo chưa xử lý: `canh_bao.trang_thai != 'resolved'`.
 
 ## Ví dụ
 Hỏi: Hệ thống đã lấy về bao nhiêu tin?
@@ -80,4 +82,12 @@ select viec, nguon, chuoi, count(*) as so_lan_loi from nguon_du_lieu where ngay 
 Hỏi: Việc nền nào lỗi trong 7 ngày qua?
 ```sql
 select viec, ngay, loi from viec_nen where trang_thai = 'failed' and ngay >= date('now', '+7 hours', '-6 days') order by luc_bat_dau desc
+```
+Hỏi: Có bao nhiêu tin đang bị giữ?
+```sql
+select count(*) as so_tin from tin_bi_giu
+```
+Hỏi: Tháng này CIO duyệt bao nhiêu quyết định?
+```sql
+select count(*) as so_quyet_dinh from nhat_ky where hanh_dong = 'decision.approve' and substr(ngay, 1, 7) = strftime('%Y-%m', 'now', '+7 hours')
 ```

@@ -36,9 +36,7 @@ HELP = {
         "Các agent chạy nền thế nào?",
         "Hộp tin có bao nhiêu tin?",
     ],
-    "compliance": ["Có gì chờ Tuân thủ?", "Có bao nhiêu tin bị giữ?", "Chuỗi nhật ký còn nguyên không?"],
     # every role has its list: a role without one crashed the fallback (staff stress test D12)
-    "specialist": ["Khuyến nghị nào đang chờ tôi duyệt?", "Chứng chỉ của tôi còn hiệu lực không?"],
     "admin": ["Hệ thống có gì bất thường?", "Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
 }
 

@@ -6,7 +6,7 @@ import pytest
 from conftest import in_thread
 from test_apply import MARKET, approved
 
-ROLES = ("client", "rm", "cio", "compliance", "admin")
+ROLES = ("client", "rm", "cio", "admin")
 
 
 def routes(p):

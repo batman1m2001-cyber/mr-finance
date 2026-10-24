@@ -31,7 +31,7 @@ def dismiss_flow(ids, by="cio", note=""):
 
 @graph
 def release_flow(item_id, by, note):
-    """Compliance lets an item that names someone on the restricted list through (BR-04)."""
+    """The CIO lets an item that names someone on the restricted list through (BR-04)."""
     done = release(item_id=item_id, by=by, note=note)
     START >> done >> END
 

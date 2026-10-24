@@ -356,8 +356,8 @@ events and policy items by impact, or the selected node — figures, “Mở r�
 selection lights its links and hides the other labels. News edges are dashed (“có thể ảnh hưởng”). Phones open on
 the list.
 
-**Tests.** `tests/test_overview.py`; `tests/ui/test_pages.py::test_the_overview_graph_selects_expands_and_opens_pages`,
-`tests/ui/test_pages.py::test_the_overview_graph_is_a_list_on_a_phone`.
+**Tests.** `tests/test_overview.py`. The RM's page view of this graph (Bản đồ) was retired by OWN-FB-02 (2026-10-24)
+with its two browser tests; the Customer's graph is the workspace (`tests/ui/test_graph_workspace_ui.py`).
 
 ---
 

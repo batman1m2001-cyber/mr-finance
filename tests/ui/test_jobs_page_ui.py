@@ -36,10 +36,10 @@ def test_admin_runs_a_job_from_viec_nen(open_page, size, monkeypatch):
     assert not p.problems()
 
 
-@pytest.mark.parametrize("role", ["cio", "compliance"])
-def test_the_cio_and_compliance_read_viec_nen_without_job_buttons(open_page, role):
+@pytest.mark.parametrize("role", ["cio"])
+def test_the_cio_reads_viec_nen_without_job_buttons(open_page, role):
     p = open_page("desktop")
     p.go(f"#/{role}/viec-nen")
     assert p.page.locator("#jobs-agents").count() == 1 and p.page.locator("[data-job]").count() == 0
-    assert p.page.locator(f'#nav a[href="#/{role}/viec-nen"]').count() >= 1
+    assert p.page.locator(f'#nav a[href="#/{role}/viec-nen"]').count() == 0  # Admin's rail now (OWN-FB-15)
     assert not p.problems()

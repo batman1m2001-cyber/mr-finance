@@ -49,7 +49,6 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "gui_de_xuat": "Gửi đề xuất",
     "ghi_lien_he": "Ghi liên hệ",
     "khuyen_nghi": "Khuyến nghị",
-    "chuyen_gia_duyet": "Chuyên gia duyệt",
     "danh_dau_khan": "Đánh dấu khẩn",
     "chay_agent_cio": "Chạy Agent CIO",
     "phan_bien_lai": "Chạy lại Agent Phản biện",
@@ -75,14 +74,11 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "so_khach_hang": "Sổ khách hàng",
     "van_hanh": "Vận hành",
     "agent_nen": "Agent và việc nền",
-    "ban_kiem_soat": "Bàn kiểm soát",
-    "ban_chuyen_gia": "Bàn chuyên gia",
-    "ho_so_khach": "Hồ sơ khách",
     "chuoi_nhat_ky": "Chuỗi nhật ký",
     "cau_hinh_cho_duyet": "Cấu hình chờ duyệt",
     "truy_van": "Truy vấn dữ liệu",
 }
-DEMO_USER = {**tools.USER, "admin": "admin", "specialist": "sp_global"}  # who acts when sign-in is off
+DEMO_USER = {**tools.USER, "admin": "admin"}  # who acts when sign-in is off
 
 
 def for_role(role: str) -> List[Tool]:

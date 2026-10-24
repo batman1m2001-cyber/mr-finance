@@ -53,9 +53,7 @@ ACCOUNTS = {
     "client": "C01",
     "rm": "rm01",
     "cio": "cio",
-    "compliance": "compliance",
     "admin": "admin",
-    "specialist": "sp_global",
 }
 
 

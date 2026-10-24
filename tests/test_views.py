@@ -90,7 +90,7 @@ def test_an_event_groups_news_and_a_restricted_mention_holds_it():
     ok(
         Operon(release_flow, params={"item_id": None, "by": None, "note": None}),
         item_id=held["held"][0],
-        by="compliance",
+        by="cio",
         note="Tin công khai, không liên quan giao dịch",
     )
     assert agent(held["id"])["view"]["status"] == "PENDING_APPROVAL"
@@ -100,7 +100,7 @@ def test_only_the_cio_runs_the_agent_and_decides():
     ev = event(*GOLD)
     assert "không được làm việc này" in str(run(AGENT, event_id=ev["id"], by="rm01")["$errors"])
     view = agent(ev["id"])["view"]
-    assert "không được làm việc này" in str(decide(view["id"], "approve", by="compliance")["$errors"])
+    assert "không được làm việc này" in str(decide(view["id"], "approve", by="admin")["$errors"])
 
 
 # -- the mock agent ----------------------------------------------------------------------------
@@ -393,7 +393,7 @@ def test_the_reads():
     assert body["view"]["status"] == "PENDING_APPROVAL" and body["checks"] and body["preview"]
     assert client.get("/api/views/VW-9999-v1").status_code == 404
     status = client.get("/api/agents").json()
-    assert status["mode"] == "mock" and {u["role"] for u in status["users"]} >= {"cio", "rm", "compliance"}
+    assert status["mode"] == "mock" and {u["role"] for u in status["users"]} == {"cio", "rm", "admin"}
     client.post("/api/reset")
     assert client.get("/api/events").json()["events"] == []
 

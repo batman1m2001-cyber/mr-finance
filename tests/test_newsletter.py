@@ -37,7 +37,7 @@ def test_only_approved_views_make_a_letter_and_only_a_cio_drafts():
     with pytest.raises(Conflict, match="chưa được duyệt"):
         draft([pending])
     with pytest.raises(roles.Forbidden):
-        draft([approved_view()], by="compliance")
+        draft([approved_view()], by="rm01")
     with pytest.raises(BadRequest, match="1–6"):
         draft([])
 
@@ -73,7 +73,7 @@ def test_the_template_letter_names_no_ticker_and_carries_every_label():
     assert labels["conflicts"] == [conflict.NONE]
 
 
-def test_a_cio_edit_with_recommendation_wording_cannot_go_to_compliance():
+def test_a_cio_edit_with_recommendation_wording_cannot_go_to_review():
     n = draft([approved_view()])
     bad = store.act(n["id"], "edit", "cio", changes={"intro": "Quý khách nên mua thêm cổ phiếu ngân hàng ngay."})
     assert not bad["guard"]["ok"] and any("khuyến nghị" in f for f in bad["guard"]["findings"])
@@ -101,23 +101,23 @@ def test_private_and_retail_get_it_at_the_same_time_unless_a_reason_is_given():
     assert early["retail_at"] - early["private_at"] == 2 * 3600 and early["early_reason"]
 
 
-def test_compliance_approves_never_the_author_and_a_return_goes_back_to_the_cio():
+def test_another_cio_approves_never_the_author_and_a_return_goes_back_to_the_author():
     n = draft([approved_view()])
     with pytest.raises(roles.Forbidden):
-        store.act(n["id"], "approve", "cio")  # only Compliance
+        store.act(n["id"], "approve", "cio")  # never the author (SEC-04)
     with pytest.raises(roles.Forbidden):
-        store.act(n["id"], "submit", "compliance")
+        store.act(n["id"], "submit", "cio2")  # only the author
     with pytest.raises(Conflict, match="không chờ duyệt"):
-        store.act(n["id"], "approve", "compliance")
+        store.act(n["id"], "approve", "cio2")
     store.act(n["id"], "submit", "cio")
     with pytest.raises(BadRequest, match="10 ký tự"):
-        store.act(n["id"], "return", "compliance", note="sửa")
-    back = store.act(n["id"], "return", "compliance", note="Phần mở đầu cần nói rõ nguồn tin")
+        store.act(n["id"], "return", "cio2", note="sửa")
+    back = store.act(n["id"], "return", "cio2", note="Phần mở đầu cần nói rõ nguồn tin")
     assert back["status"] == "RETURNED"
     store.act(n["id"], "edit", "cio", changes={"intro": "Bản tin tổng hợp nhận định đã duyệt, nguồn tin công khai."})
     store.act(n["id"], "submit", "cio")
-    done = store.act(n["id"], "approve", "compliance", note="Đạt")
-    assert done["status"] == "APPROVED" and done["approved_by"] == "compliance" and done["sent"] is False
+    done = store.act(n["id"], "approve", "cio2", note="Đạt")
+    assert done["status"] == "APPROVED" and done["approved_by"] == "cio2" and done["sent"] is False
     statuses = [h["status"] for h in done["history"]]
     assert statuses == ["DRAFT", "PENDING_COMPLIANCE", "RETURNED", "RETURNED", "PENDING_COMPLIANCE", "APPROVED"]
     with db.tx() as con:
@@ -160,7 +160,7 @@ def test_the_endpoints():
         assert d["newsletters"][0]["id"] == nid and vid in [v["id"] for v in d["approved_views"]]
         assert "sections" not in d["newsletters"][0]
         assert c.get(f"/api/newsletters/{nid}").json()["newsletter"]["sections"]
-        r = c.post("/api/newsletters/act", json={"newsletter_id": nid, "action": "approve", "by": "compliance"})
+        r = c.post("/api/newsletters/act", json={"newsletter_id": nid, "action": "approve", "by": "cio2"})
         assert r.status_code == 409
         assert (
             c.post("/api/newsletters/act", json={"newsletter_id": nid, "action": "x", "by": "cio"}).status_code == 400
@@ -197,7 +197,7 @@ def test_research_naming_a_related_party_must_declare_it():
 def test_a_declared_conflict_shows_on_the_clients_impact_page_and_in_the_letter():
     statement = "Techcombank là công ty mẹ của đơn vị phát hành báo cáo"
     item = research.upload(report(conflict={"related": True, "statement": statement}), "cio")
-    research.decide(item["id"], "release", "compliance", NOTE)
+    research.decide(item["id"], "release", "cio2", NOTE)
     [n] = [n for n in news_store.inbox() if n.get("research_id") == item["id"]]
     from test_views import EVENT, ok
 

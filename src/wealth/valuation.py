@@ -271,7 +271,7 @@ def open_api(owner: str, raw: List[Dict[str, Any]], market: Dict[str, Any]) -> L
     """Other banks and brokers the client let us read (Open API, NHNN's framework)."""
     from control import config
 
-    needed = config.data("consent")["require"]["open_api"]  # Compliance's consent configuration
+    needed = config.data("consent")["require"]["open_api"]  # the consent configuration
     out = []
     for inst in raw or []:
         if needed and not inst.get("consent"):

@@ -89,32 +89,27 @@ ROLE_NAMES = {
     "client": "khách hàng",
     "rm": "chuyên viên quan hệ khách hàng (RM)",
     "cio": "giám đốc đầu tư (CIO)",
-    "compliance": "bộ phận tuân thủ",
     "admin": "quản trị hệ thống",
-    "specialist": "chuyên gia có chứng chỉ",
 }
 # what each staff role decides, and who decides around it (BRD-RULE-ROLE-01…05, SCOPE-02, WF-08, BR-03, BR-04, FR-701):
 # without it the assistant said the CIO approves a specialist's recommendation and could not state SCOPE-02 (staff
 # stress test D03). Short, one paragraph per role; the guide (huong_dan) has the pages and the steps.
 DUTIES = {
     "rm": "RM chăm sóc các gia đình được giao (chỉ sổ của mình, gia đình khác thuộc RM khác): duyệt hay từ chối đề "
-    "xuất của khách, ghi liên hệ, viết khuyến nghị hành động. Khuyến nghị và đề xuất RM đã duyệt của gia đình có "
-    "chuyên gia có chứng chỉ được giao thì chờ chuyên gia đó duyệt; gia đình không có chuyên gia thì RM duyệt là đủ. "
-    "Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho khách. RM không duyệt thay chuyên gia hay CIO. "
+    "xuất của khách, ghi liên hệ, viết khuyến nghị hành động. RM duyệt là đủ: khuyến nghị và đề xuất RM đã duyệt "
+    "tới khách ngay, không có bước chuyên gia. Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho "
+    "khách. RM không duyệt thay CIO. "
     "Ghi liên hệ là ghi việc với gia đình, không phải nhắn cho đồng nghiệp: trợ lý không nhắn tin cho ai.",
     "cio": "CIO duyệt, trả lại hoặc bác nhận định ở trang Sự kiện & nhận định (sau Agent Phản biện), xem lại lần áp "
     "dụng ở trang Áp dụng. CIO chạy Agent CIO cho một sự kiện và chạy lại Agent Phản biện khi lần trước lỗi: trợ lý "
     "làm được sau khi CIO bấm Xác nhận, hoặc CIO làm ở trang Việc nền; nhận định ra vẫn chờ CIO duyệt. Cấu hình CIO "
     "sở hữu (mô hình yếu tố, ngưỡng cảnh báo, giả định lợi suất) cần một CIO khác duyệt, người đề xuất không tự "
-    "duyệt. CIO thấy phơi nhiễm theo gia đình, không xem bảng tài sản của từng gia đình.",
-    "specialist": "Chuyên gia có chứng chỉ duyệt hoặc từ chối (từ chối phải có lý do) khuyến nghị của gia đình được "
-    "giao, khi chứng chỉ còn hiệu lực; không có chứng chỉ thì không duyệt được. Chứng chỉ do Tuân thủ ghi ở Cấu hình "
-    "(hai người duyệt), chuyên gia không tự sửa. Chỉ đọc hồ sơ gia đình được giao. Được bảo duyệt hay từ chối một "
-    "khuyến nghị: tìm mã (ban_chuyen_gia) rồi gọi chuyen_gia_duyet ngay trong lượt đó; nút xác nhận là bước hỏi lại.",
-    "compliance": "Tuân thủ cho tin bị giữ đi tiếp kèm lý do (trang Tin bị giữ); phát hành hay từ chối nghiên cứu khi "
-    "đã tới giờ phát hành và không phải người đã nạp (trang Nghiên cứu); duyệt hay trả lại bản tin; xác nhận văn bản "
-    "chính sách (người thứ hai); duyệt cấu hình Tuân thủ sở hữu (danh sách hạn chế, chứng nhận chuyên gia…). Tuân thủ "
-    "không xem bảng tài sản của khách.",
+    "duyệt. CIO cũng giữ các chốt kiểm soát, luôn với một CIO khác là người thứ hai (không bao giờ tự duyệt việc "
+    "của mình): cho tin bị giữ đi tiếp kèm lý do (trang Tin bị giữ); phát hành hay từ chối nghiên cứu khi đã "
+    "tới giờ và không phải người đã nạp (trang Nghiên cứu); duyệt hay trả lại bản tin của CIO khác (chỉ người soạn "
+    "sửa, gửi hay rút bài); thêm và xác nhận văn bản chính sách (người xác nhận khác người thêm); cấu hình danh sách "
+    "hạn chế, cụm từ cấm, đồng ý chia sẻ dữ liệu. CIO thấy phơi nhiễm theo gia đình, không xem bảng tài sản của "
+    "từng gia đình.",
     "admin": "Quản trị lo nguồn tin, nạp dữ liệu, vận hành, tình trạng hệ thống và cấu hình Quản trị sở hữu (nguồn "
     "tin, phân công RM, chế độ AI…). Quản trị chạy ngay một việc nền (lấy tin, dữ liệu thị trường, kiểm tra chuỗi "
     "nhật ký…): trợ lý làm được sau khi bấm Xác nhận, hoặc ở trang Việc nền; các agent do CIO chạy. Cấu hình vai trò "

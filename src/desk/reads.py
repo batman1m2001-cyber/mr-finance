@@ -17,8 +17,6 @@ ROUTE = {
     "cio": "#/cio",
     "rm": "#/rm",
     "admin": "#/admin",
-    "specialist": "#/specialist",
-    "compliance": "#/compliance",
 }  # each role's desk address; a page's address is its menu id under it
 
 
@@ -94,6 +92,8 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     from events import store as events
     from news import store as news
     from newsletter import store as letters
+    from policy import store as policy
+    from research import store as research
     from views import ops as view_ops
 
     me = (viewer or {}).get("id") or "cio"
@@ -141,11 +141,32 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
             decide.append({"kind": "config", "id": p["id"], "title": k["label"],
                            "status": "Chờ một CIO khác duyệt" if mine else "Chờ CIO duyệt",
                            "at": p["created"], "route": "#/cio/cau-hinh", **_signal(None)})  # fmt: skip
+    # OWN-FB-18: what waited for Compliance waits for the CIO now; a CIO never approves their own (four eyes)
     for n in letters.listing():
-        if n["status"] == "RETURNED":
-            decide.append({"kind": "letter", "id": n["id"], "title": n.get("title") or n["id"],
-                           "status": "Bị trả lại", "at": n["created"],
-                           "route": f"#/cio/ban-tin/{n['id']}", **_signal(None)})  # fmt: skip
+        if n["status"] == "RETURNED" and n.get("author") == me:
+            status = "Bị trả lại"
+        elif n["status"] == "PENDING_COMPLIANCE":
+            status = "Chờ CIO khác duyệt" if n.get("author") == me else "Chờ bạn duyệt"
+        else:
+            continue
+        decide.append({"kind": "letter", "id": n["id"], "title": n.get("title") or n["id"], "status": status,
+                       "at": n["created"], "route": f"#/cio/ban-tin/{n['id']}", **_signal(None)})  # fmt: skip
+    for i in news.inbox(status="all", held=True, limit=None):
+        decide.append({"kind": "held", "id": i["id"], "title": i["title"], "status": "Tin bị giữ",
+                       "at": i.get("published") or i.get("ingested"), "route": "#/cio/giu", **_signal(None),
+                       "outlets": [i["outlet"]] if i.get("outlet") else []})  # fmt: skip
+    for r in research.listing():
+        if r["status"] == "PENDING_RELEASE":
+            mine = r.get("uploaded_by") == me
+            decide.append({"kind": "research", "id": r["id"], "title": r["title"],
+                           "status": "Chờ CIO khác phát hành" if mine else "Chờ phát hành", "at": r["created"],
+                           "route": "#/cio/nghien-cuu", **_signal(None)})  # fmt: skip
+    for x in policy.radar()["documents"]:
+        if not x.get("verified") and x["status"] != "dropped":
+            mine = x.get("added_by") == me
+            decide.append({"kind": "policy", "id": x["id"], "title": x["title"],
+                           "status": "Chờ CIO khác xác nhận nguồn" if mine else "Chờ xác nhận nguồn",
+                           "at": x["created"], "route": f"#/cio/chinh-sach/{x['id']}", **_signal(None)})  # fmt: skip
     for s in no_view:
         ev = s["event"]
         decide.append({"kind": "event", "id": ev["id"], "title": ev["title"], "status": "Chưa có nhận định",
@@ -451,158 +472,7 @@ def admin(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     }
 
 
-def specialist(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """Bàn chuyên gia (SCR-SP-02): what Duyệt khuyến nghị reads (GET /api/review) — the recommendations an RM approved
-    for a family assigned to this specialist, whose certificate is in force, waiting for them (BRD-RULE-ROLE-05,
-    WF-08, G8); what they decided; their families. The family's picture beside a recommendation is read on the screen
-    through the reads a specialist may already make (POST /api/dashboard, /api/goals; Q-26), not composed here."""
-    from people import auth
-    from people import store as people
-    from review import specialist as sp
-    from wealth import store as reviews
-
-    v = viewer or {}
-    me = v.get("id") if v.get("role") == "specialist" else None
-    if v.get("families") is not None:
-        fams = list(v["families"])
-    elif me:
-        fams = people.families_of_specialist(me)
-    else:
-        fams = people.client_ids()
-    fams = auth.visible(sorted(fams))
-    approves = {f for f in fams if any(a["id"] == me for a in sp.approvers(f))} if me else set()
-    heads = {c: people.client(c).get("member_of") or c for c in people.client_ids(True)}
-    rows = reviews.reviews()  # newest first
-    waiting = [r for r in rows if r["status"] == "pending_specialist" and heads.get(r["client_id"]) in approves]
-    decided = [r for r in rows if me and r["data"].get("specialist_by") == me]
-
-    def item(r: Dict[str, Any]) -> Dict[str, Any]:
-        d = r["data"]
-        return {
-            "id": r["id"], "family_id": heads.get(r["client_id"], r["client_id"]), "client_id": r["client_id"],
-            "name": people.client(r["client_id"])["name"], "kind": r["kind"], "title": r["title"],
-            "actions": list((d.get("option") or {}).get("actions") or []), "rm": d.get("decided_by"),
-            "rm_note": r.get("note"), "status": r["status"], "created": r["created"], "decided": r.get("decided"),
-            "note": d.get("specialist_note"),
-        }  # fmt: skip
-
-    def family(f: str) -> Dict[str, Any]:
-        c = people.client(f)
-        return {"id": f, "name": c["name"], "segment": c.get("segment"), "approves": f in approves,
-                "waiting": sum(1 for r in waiting if heads.get(r["client_id"]) == f)}  # fmt: skip
-
-    return {
-        "role": "specialist",
-        "as_of": time.time(),
-        "me": me,
-        "certificate": sp.certificate(me) if me else None,
-        "families": [family(f) for f in fams],
-        "waiting": [item(r) for r in reversed(waiting)],  # oldest first: it has waited longest
-        "decided": [item(r) for r in decided[:8]],
-    }
-
-
-def compliance(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """Bàn kiểm soát (SCR-CMP-06): each control Compliance owns as a flow with what waits at each step — news held for
-    the restricted list → released with a reason (BR-04); research waiting → released or rejected by another person
-    after its release time (BR-03); letters waiting → approved or returned (FR-801); policy documents added → verified
-    by a second person → summarised by the policy agent (FR-306); configuration waiting (FR-701); the audit chain
-    (FR-702) — from the stores those pages read, and one queue of what waits for Compliance, oldest first."""
-    from control import alerts as control_alerts
-    from control import audit, config, db, worm
-    from news import store as news
-    from newsletter import store as letters
-    from policy import store as policy
-    from research import store as research
-
-    now = time.time()
-    items = news.inbox(status="all", limit=None)  # every item: held and cleared are read from all of them
-    held = [i for i in items if i["held"]]
-    cleared = [i for i in items if i.get("cleared")]
-    notes = research.listing()
-    r_wait = [r for r in notes if r["status"] == "PENDING_RELEASE"]
-    nls = letters.listing()
-    l_wait = [n for n in nls if n["status"] == "PENDING_COMPLIANCE"]
-    docs = policy.radar()["documents"]
-    unverified = [d for d in docs if not d.get("verified") and d["status"] != "dropped"]
-    verified = [d for d in docs if d.get("verified")]
-    summarised = [d for d in verified if d.get("summary")]
-    cfg = [k for k in config.overview() if k.get("pending")]
-    with db.tx() as con:
-        chain, copy = audit.verify(con), worm.verify(con)
-
-    def step(label, count, waits=False):
-        return {"label": label, "count": count, "waits": waits}
-
-    def item(control, id, title, sub, at, route, ready=True):
-        return {"control": control, "id": id, "title": title, "sub": sub, "at": at, "route": route, "ready": ready}
-
-    def control(id, label, rule, page, steps, rows):
-        return {"id": id, "label": label, "rule": rule, "route": f"#/compliance/{page[0]}", "page": page[1],
-                "steps": steps, "items": rows}  # fmt: skip
-
-    def research_item(r):
-        early = "" if now >= r["release_at"] else " · chưa tới giờ phát hành"
-        sub = f"{r.get('report_no') or r['kind']} · nạp bởi {r.get('uploaded_by') or '—'}{early}"
-        ready = now >= r["release_at"]
-        return item("research", r["id"], r["title"], sub, r["created"], "#/compliance/nghien-cuu", ready)
-
-    def config_item(k):
-        v = k["pending"]
-        sub = f"đề xuất bởi {v.get('proposed_by') or '—'} · {k['owner_label']} duyệt"
-        sub += " · cần người thứ hai" if k["two_person"] else ""
-        return item("config", v["id"], k["label"], sub, (v.get("history") or [{}])[0].get("at") or now,
-                    "#/compliance/cau-hinh")  # fmt: skip
-
-    def held_item(i):
-        sub = f"{i.get('outlet') or i.get('source')} · nhắc tới {', '.join(i.get('restricted') or [])}"
-        return item("held", i["id"], i["title"], sub, i.get("published") or now, "#/compliance/giu")
-
-    def letter_item(n):
-        return item("letters", n["id"], n.get("title") or n["id"], f"soạn bởi {n.get('author') or '—'}", n["created"],
-                    f"#/compliance/ban-tin/{n['id']}")  # fmt: skip
-
-    def policy_item(x):
-        sub = f"{policy.STATUS.get(x['status'], x['status'])} · thêm bởi {x.get('added_by') or '—'}"
-        return item("policy", x["id"], x["title"], sub, x["created"], f"#/compliance/chinh-sach/{x['id']}")
-
-    released = sum(r["status"] == "RELEASED" for r in notes)
-    rejected = sum(r["status"] == "REJECTED" for r in notes)
-    approved = sum(n["status"] == "APPROVED" for n in nls)
-    returned = sum(n["status"] == "RETURNED" for n in nls)
-    controls = [
-        control("held", "Tin bị giữ", "BRD-BR-04", ("giu", "Tin bị giữ"),
-                [step("Đang giữ", len(held), True), step("Đã cho phép", len(cleared))], [held_item(i) for i in held]),
-        control("research", "Nghiên cứu", "BRD-BR-03", ("nghien-cuu", "Nghiên cứu"),
-                [step("Chờ phát hành", len(r_wait), True), step("Đã phát hành", released), step("Từ chối", rejected)],
-                [research_item(r) for r in r_wait]),
-        control("letters", "Bản tin", "BRD-FR-801", ("ban-tin", "Bản tin"),
-                [step("Chờ duyệt", len(l_wait), True), step("Đã duyệt", approved), step("Bị trả lại", returned)],
-                [letter_item(n) for n in l_wait]),
-        control("policy", "Chính sách", "BRD-FR-306", ("chinh-sach", "Chính sách"),
-                [step("Chờ xác nhận", len(unverified), True), step("Đã xác nhận", len(verified)),
-                 step("Đã tóm tắt", len(summarised))], [policy_item(x) for x in unverified]),
-        control("config", "Cấu hình", "BRD-FR-701", ("cau-hinh", "Cấu hình"), [step("Chờ duyệt", len(cfg), True)],
-                [config_item(k) for k in cfg]),
-    ]  # fmt: skip
-    queue = sorted((x for c in controls for x in c["items"]), key=lambda x: x["at"])
-    return {
-        "role": "compliance",
-        "as_of": now,
-        "controls": controls,
-        "queue": queue,
-        "chain": {
-            "ok": chain["ok"],
-            "count": chain["count"],
-            "broken_at": chain.get("broken_at"),
-            "reason": chain.get("reason"),
-        },
-        "worm": copy,
-        "alerts": control_alerts.for_role("compliance"),
-    }
-
-
-BUILD = {"cio": cio, "rm": rm, "admin": admin, "specialist": specialist, "compliance": compliance}
+BUILD = {"cio": cio, "rm": rm, "admin": admin}
 
 
 def desk(role: str, viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

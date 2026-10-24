@@ -77,8 +77,8 @@ def test_the_endpoint():
     assert c.get("/api/agents/catalogue?days=x").status_code == 400
 
 
-OLD_NAMES = ("Trợ lý OneWealth", "Thử nghiệm agent tin tức", "Copilot (bộ định tuyến)", "AI News Reader", "AI Impact Assessor",
-             "AI Planning Advisor", "AI Client Chat")
+# the four "AI …" names came back on purpose: OWN-FB-06's mock draws them on Advisory performance (pages/performance.js)
+OLD_NAMES = ("Trợ lý OneWealth", "Thử nghiệm agent tin tức", "Copilot (bộ định tuyến)")
 
 
 def test_the_one_pager_lists_every_entry_and_no_screen_keeps_an_old_name():

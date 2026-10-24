@@ -42,7 +42,7 @@ export async function render(box, ctx) {
   // its sources, then allocation and profit and loss — and cash flow second (business feedback 2026-10-22: "the
   // overview must meet the eye first"), then the month's money in and out (Toàn cảnh's)
   const B = {
-    hero: `      <div class="panel c12 nwhero" id="d-nw">
+    hero: `      <div class="panel c12 nwhero" id="d-nw" data-focus="kpi:net_worth">
         <div>
           <div class="pc-head"><span class="ic-chip sm" style="--tone:var(--accent)">${icon("wallet", {size: 14})}</span><span class="k">Tài sản ròng · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></div>
           <div class="hero-v">${n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</div>
@@ -65,7 +65,7 @@ export async function render(box, ctx) {
         </tbody></table>` : ""}
       </div>
     `,
-    risk: `      <div class="panel c6" id="d-risk"><h3>Rủi ro</h3>
+    risk: `      <div class="panel c6" id="d-risk" data-focus="kpi:risk"><h3>Rủi ro</h3>
         ${d.profile.risk_profile ? `<div class="kv"><span>Hồ sơ rủi ro (bài test)</span><b>${esc(d.profile.risk_profile)} · ${esc(d.profile.risk_persona)}</b></div>` : `<p class="small muted" style="margin:0 0 8px">Chưa làm bài test rủi ro: ngưỡng lấy theo hồ sơ.</p>`}
         <div class="kv"><span>Ngưỡng sụt giảm chấp nhận</span><b>${n(pct(rk.limit, false, 0), "risk.limit")}</b></div>
         <div class="kv"><span>Mức sụt giảm ước tính khi thị trường xấu</span><b>${n(pct(rk.current), "risk.current", {loss: vnd(rk.stress_loss), net_worth: vnd(nw.value)})}</b></div>
@@ -74,7 +74,7 @@ export async function render(box, ctx) {
         ${d.concentration.warnings.length ? `<ul class="warns">${d.concentration.warnings.map(w => `<li>${icon("alert", {size: 14})}<span data-explains>Tập trung: ${esc(w)}</span></li>`).join("")}</ul>` : `<p class="small muted">Không có khoản nào tập trung quá ngưỡng.</p>`}
       </div>
     `,
-    liq: `      <div class="panel c6" id="d-liq"><h3>Thanh khoản dự phòng</h3>
+    liq: `      <div class="panel c6" id="d-liq" data-focus="kpi:liquidity"><h3>Thanh khoản dự phòng</h3>
         <div class="row spread"><span>${n(vnd(lq.value), "liquidity.value", {count: String(lq.items.length)})} tiền và tài sản rút được ngay</span><b>đủ chi ${n(monthsText(lq.months), "liquidity.months", {value: vnd(lq.value), spending: vnd(lq.spending_monthly)})} ${pill(lq.status)}</b></div>
         ${gauge(Math.min(lq.months, Math.max(12, Math.min(lq.months, 36))), 6, {status: lq.status === "ok" ? "ok" : lq.status === "low" ? "near" : "over", max: Math.max(12, Math.min(lq.months, 36)), label: `Đủ chi ${monthsText(lq.months)}, mốc an toàn 6 tháng`})}
         <div class="small muted">Chi tiêu ${n(vnd(lq.spending_monthly), "spending.monthly")}/tháng · mốc an toàn: 6 tháng</div>

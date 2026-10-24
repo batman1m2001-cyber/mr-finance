@@ -1,5 +1,5 @@
 """The ingest steps: fetch every white-listed feed, pass each item through the gates, sort it,
-keep it; and the inbox actions (dismiss, Compliance's release of a held item)."""
+keep it; and the inbox actions (dismiss, the release of a held item)."""
 
 from __future__ import annotations
 
@@ -202,8 +202,9 @@ def dismiss(ids: list, by: str = "cio", note: str = "") -> dict:
 
 @op
 def release(item_id: str, by: str, note: str) -> dict:
-    """Compliance releases a held item; the note is required, and kept with who and when."""
-    roles.require(by, "compliance")
+    """The CIO releases a held item (Compliance's step before OWN-FB-18); the note is required, and kept with who
+    and when."""
+    roles.require(by, "cio")
     if not str(note or "").strip():
         raise ValueError("Cần ghi chú lý do cho phép")
     if not store.clear_hold(str(item_id), by=str(by), note=str(note).strip()):

@@ -40,7 +40,7 @@ SECONDS = 2.0  # a query (and its count) stops after this
 CELL = 300  # characters of one text cell returned
 SQL_CHARS = 4000  # the longest SQL accepted
 VN = timezone(timedelta(hours=7))
-ROLES = ("cio", "rm", "client", "compliance", "admin")
+ROLES = ("cio", "rm", "client", "admin")
 
 # the functions a query may call (SQLite's authorizer sees each by name); no printf/format (width), randomblob or
 # zeroblob (memory), load_extension, sqlite_* (the build), and no table-valued function (json_each reads a "table")
@@ -118,7 +118,7 @@ HELD_NEWS = (
 
 
 def _events(who: Who) -> Tuple[str, Sequence[Any]]:
-    # a held event's title is a held news title: Compliance has not released it, so only the CIO (whose pages show it
+    # a held event's title is a held news title: no CIO has released it, so only the CIO (whose pages show it
     # blocked) has it; an RM or a client has the events that are not held
     keep = "" if who.role == "cio" else f" where not {HELD_NEWS}"
     return (
@@ -263,7 +263,7 @@ TABLES: Dict[str, Table] = {
     for t in [
         Table("tin", ("cio", "rm", "client"), NEWS_COLUMNS,
               f"{NEWS_SELECT} from main.news_items where status != 'refused' and held = 0"),
-        Table("tin_bi_giu", ("compliance", "admin"), NEWS_COLUMNS + [("cong_ty_han_che", "TEXT")],
+        Table("tin_bi_giu", ("cio", "admin"), NEWS_COLUMNS + [("cong_ty_han_che", "TEXT")],
               f"{NEWS_SELECT}, (select group_concat(value, ', ') from json_each(data, '$.restricted')) "
               "from main.news_items where status != 'refused' and held = 1"),
         Table("su_kien", ("cio", "rm", "client"),
@@ -298,7 +298,7 @@ TABLES: Dict[str, Table] = {
               f"select id, view_id, {_j('event_id')}, factor, horizon, origin, due, {_j('expected')}, {_j('p10')}, "
               f"{_j('p50')}, {_j('p90')}, {_j('unit')}, {_j('model')}, scored is not null, {_j('result')}, "
               f"{_j('realised')}, {_j('inside')}, {_j('direction_hit')} from main.forecasts"),
-        Table("viec_nen", ("cio", "compliance", "admin"),
+        Table("viec_nen", ("cio", "admin"),
               [("ma", "TEXT"), ("viec", "TEXT"), ("trang_thai", "TEXT"), ("nguoi_chay", "TEXT"),
                ("luc_bat_dau", "REAL"), ("ngay", "TEXT"), ("so_giay", "REAL"), ("loi", "TEXT")],
               f"select id, job, status, {_j('by')}, created, {_vn_day('created')}, {_j('seconds')}, {_j('error')} "
@@ -331,11 +331,11 @@ TABLES: Dict[str, Table] = {
               [("ma", "TEXT"), ("ten", "TEXT"), ("giai_doan", "TEXT"), ("dang_theo_doi", "INTEGER"), ("can", "REAL"),
                ("co", "REAL"), ("thieu", "REAL"), ("can_de_danh_thang", "REAL"), ("du_thang", "REAL"),
                ("han", "TEXT"), ("trang_thai", "TEXT"), ("tien_do", "REAL")], load=_goals),
-        Table("nhat_ky", ("compliance", "admin"),
+        Table("nhat_ky", ("cio", "admin"),
               [("so_thu_tu", "INTEGER"), ("luc", "REAL"), ("ngay", "TEXT"), ("gio", "TEXT"), ("nguoi", "TEXT"),
                ("hanh_dong", "TEXT"), ("doi_tuong", "TEXT")],
               f"select seq, ts, {_vn_day('ts')}, {_vn_hour('ts')}, actor, action, object from main.audit_log"),
-        Table("canh_bao", ("compliance", "admin"),
+        Table("canh_bao", ("cio", "admin"),
               [("ma", "TEXT"), ("loai", "TEXT"), ("khoa", "TEXT"), ("trang_thai", "TEXT"), ("muc_do", "TEXT"),
                ("tieu_de", "TEXT"), ("chi_tiet", "TEXT"), ("so_lan", "INTEGER"), ("luc_tao", "REAL"),
                ("ngay_tao", "TEXT"), ("luc_gan_nhat", "REAL")], _alerts),

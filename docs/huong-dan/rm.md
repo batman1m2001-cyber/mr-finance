@@ -11,10 +11,9 @@ thuộc RM khác và không mở được. Hôm nay ở `#/rm/hom-nay`.
 
 ## Ai duyệt gì — khuyến nghị và đề xuất
 
-RM duyệt hay từ chối phương án khách gửi, và viết khuyến nghị hành động cho gia đình của mình. Nếu gia đình có chuyên
-gia có chứng chỉ được giao, việc RM đã duyệt còn chờ chuyên gia đó duyệt (từ chối phải có lý do) rồi mới tới khách;
-gia đình không có chuyên gia thì RM duyệt là đủ. Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho khách,
-luôn qua chuyên gia có chứng chỉ. RM không duyệt thay chuyên gia.
+RM duyệt hay từ chối phương án khách gửi, và viết khuyến nghị hành động cho gia đình của mình. RM duyệt là đủ: không
+còn bước chuyên gia, việc RM duyệt tới khách ngay. Khuyến nghị RM tự viết không có người duyệt thứ hai, nên được tính là
+chưa có người duyệt ở BRD-KPI-05. Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho khách.
 
 ## Hôm nay — #/rm/hom-nay
 
@@ -54,5 +53,4 @@ Như trang một khách nhưng cộng cho mọi khách được giao; bảng the
 ## Duyệt đề xuất — #/rm/khach-hang/duyet
 
 Các phương án khách đã gửi từ trang Kế hoạch: việc cần làm, số liệu tóm tắt, ô ghi chú, **Duyệt** hoặc **Từ chối**.
-Chỉ RM được quyết định (máy chủ kiểm tra lại). Việc RM duyệt có thể còn cần chuyên gia có chứng chỉ duyệt trước khi tới
-khách.
+Chỉ RM được quyết định (máy chủ kiểm tra lại); việc RM duyệt tới khách ngay.

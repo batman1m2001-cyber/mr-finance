@@ -124,7 +124,7 @@ def test_news_tcb_has_not_fetched_waits_then_is_rejected_after_an_hour(inbox_mod
     assert importer.run_ready()[0]["status"] == "REJECTED"
 
 
-def test_restricted_news_is_rejected_for_compliance(inbox_mode):
+def test_restricted_news_is_rejected_for_the_cio(inbox_mode):
     ids = news("Sao Mai Land chậm trả lãi trái phiếu, tín dụng bất động sản căng")
     push(inbox_mode, package(ids))
     [done] = importer.run_ready()

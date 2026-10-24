@@ -3,7 +3,7 @@
 Generated from the room (:data:`assistant.dataroom.TABLES`: which tables a role has, their columns and types) and
 hand-written files in ``catalog/``: ``tables.md`` (what each table and column means, its unit and allowed values),
 ``rules.md`` (time and search rules every role shares) and ``<role>.md`` (the business's definitions and question →
-SQL examples). Admin reads Compliance's file: the same tables."""
+SQL examples). Admin has its own file (Compliance's until OWN-FB-18)."""
 
 import re
 from functools import lru_cache
@@ -13,7 +13,7 @@ from typing import Dict, List, Tuple
 from assistant.dataroom import TABLES, tables_for
 
 HERE = Path(__file__).parent / "catalog"
-FILE = {"cio": "cio", "rm": "rm", "client": "client", "compliance": "compliance", "admin": "compliance"}
+FILE = {"cio": "cio", "rm": "rm", "client": "client", "admin": "admin"}
 _TABLE = re.compile(r"^## (\w+)\n(.*?)(?=^## |\Z)", re.S | re.M)
 _COLUMN = re.compile(r"^- `(\w+)`: (.+)$", re.M)
 _EXAMPLE = re.compile(r"^Hỏi: (.+?)\n```sql\n(.+?)\n```", re.S | re.M)

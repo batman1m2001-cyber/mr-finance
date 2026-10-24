@@ -86,7 +86,7 @@ def test_the_alerts_tool_and_the_bell_count_past_the_page_of_50():
     first = alerts.for_role("cio")[-1]
     alerts.ack(first["id"], "cio")
     assert len(alerts.for_role("cio")) == 50
-    assert alerts.counts("cio") == {"total": 53, "open": 52} and alerts.counts("compliance") == {"total": 0, "open": 0}
+    assert alerts.counts("cio") == {"total": 53, "open": 52} and alerts.counts("rm") == {"total": 0, "open": 0}
     out = asyncio.run(system_alerts(ctx("cio"), {}))
     assert out["text"].startswith("53 cảnh báo hệ thống, 52 chưa ai xem")
     assert (out["data"]["total"], out["data"]["open"]) == (53, 52)
@@ -102,5 +102,5 @@ def test_the_held_news_tool_says_every_held_item_not_those_on_the_first_200():
     from assistant.tools import held
 
     seed(260, held=set(range(0, 260, 20)))  # 13 held, most of them older than the newest 200
-    out = asyncio.run(held(ctx("compliance"), {}))
+    out = asyncio.run(held(ctx("cio"), {}))
     assert out["data"]["items"] == 13 and out["text"].startswith("13 tin đang bị giữ")

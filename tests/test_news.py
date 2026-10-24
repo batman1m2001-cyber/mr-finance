@@ -133,7 +133,7 @@ def test_classification_by_source_then_words():
     assert calm.event_type is None and calm.factors == [] and calm.relevance == "low"  # "vững vàng" is not gold
 
 
-def test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it():
+def test_an_item_naming_the_restricted_list_is_held_until_the_cio_releases_it():
     out = ingest(
         {
             "vneconomy_tc": feed(
@@ -145,17 +145,17 @@ def test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it
     [it] = store.inbox()
     assert it["held"] and it["restricted"] == ["Sao Mai Land (mock)"]
     engine = Operon(release_flow, params={"item_id": None, "by": None, "note": None})
-    for who in ("cio", "rm01", "nobody"):  # only Compliance may release (BR-04)
+    for who in ("admin", "rm01", "nobody"):  # only the CIO may release (BR-04, OWN-FB-18)
         denied = asyncio.run(engine.run(inputs={"item_id": it["id"], "by": who, "note": "Cho qua"}))
         assert "$errors" in denied and store.inbox()[0]["held"]
-    bad = asyncio.run(engine.run(inputs={"item_id": it["id"], "by": "compliance", "note": " "}))
+    bad = asyncio.run(engine.run(inputs={"item_id": it["id"], "by": "cio", "note": " "}))
     assert "$errors" in bad  # a release needs a reason
     ok = asyncio.run(
-        engine.run(inputs={"item_id": it["id"], "by": "compliance", "note": "Tin công khai, không liên quan giao dịch"})
+        engine.run(inputs={"item_id": it["id"], "by": "cio", "note": "Tin công khai, không liên quan giao dịch"})
     )
     assert ok["released"] == it["id"]
     [it] = store.inbox()
-    assert not it["held"] and it["cleared"]["by"] == "compliance"
+    assert not it["held"] and it["cleared"]["by"] == "cio"
 
 
 # -- the run and the inbox ---------------------------------------------------------------------
@@ -205,7 +205,7 @@ def test_the_inbox_filters_and_dismiss():
     assert [i["source"] for i in store.inbox()] == ["vnexpress_kd"]
     assert store.inbox(status="dismissed")[0]["history"][0]["by"] == "cio"
     vne_id = store.inbox(source="vnexpress_kd")[0]["id"]
-    for who in ("compliance", "rm01"):  # only the CIO drops items (FR-103)
+    for who in ("admin", "rm01"):  # only the CIO drops items (FR-103)
         denied = asyncio.run(
             Operon(dismiss_flow, params={"ids": None, "by": None, "note": None}).run(
                 inputs={"ids": [vne_id], "by": who}

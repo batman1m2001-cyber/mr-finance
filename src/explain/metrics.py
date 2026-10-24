@@ -664,7 +664,7 @@ metric(
     A,
 )
 
-# ── Đo lường, Agent (CIO, Tuân thủ, Admin) ──────────────────────────────────────────────────────────────
+# ── Đo lường, Agent (CIO, Admin) ────────────────────────────────────────────────────────────────────
 R = "src/measure/reports.py::"
 metric(
     "measure.no_edit",
@@ -733,7 +733,7 @@ metric(
     "measure.control_effect",
     "Hiệu quả kinh doanh: có và không có công cụ",
     "Chênh lệch = trung bình nhóm có công cụ − trung bình nhóm đối chứng, theo quý; khoảng tin cậy 90 % = chênh lệch ± "
-    "1,645 × sai số chuẩn (Welch). Nhóm đối chứng: tỷ lệ gia đình do Tuân thủ cấu hình (mặc định 10 %), rút trong từng "
+    "1,645 × sai số chuẩn (Welch). Nhóm đối chứng: tỷ lệ gia đình do CIO cấu hình (mặc định 10 %), rút trong từng "
     "tầng (phân khúc × RM) theo seed; RM không nhận tín hiệu nào cho họ, khách vẫn được phục vụ đủ. Chỉ số: liên hệ "
     "mỗi gia đình mỗi tháng, tỷ lệ mục tiêu “Đạt” sau lần áp dụng cuối quý, khuyến nghị hành động được duyệt mỗi gia "
     "đình. Dưới hai gia đình một nhóm thì không tính khoảng.",

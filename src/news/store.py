@@ -1,7 +1,7 @@
 """News items and ingest runs, in the demo's SQLite file (data/state.db, or ``MF_STATE``).
 
 An item is kept once: by its link (http/https, trailing slash and tracking query ignored) and by
-its source + title. Refused items are kept too, with the reason, so Compliance can see what the
+its source + title. Refused items are kept too, with the reason, so the CIO can see what the
 gates stopped; they never reach the inbox. Ids read ``NW-000123``.
 """
 
@@ -265,7 +265,7 @@ def set_status(ids: List[str], status: str, by: str, note: str = "") -> int:
 
 
 def clear_hold(item_id: str, by: str, note: str) -> bool:
-    """Compliance lets a held item through (BR-04)."""
+    """The CIO lets a held item through (BR-04)."""
     with _db() as con:
         row = con.execute("select data, held from news_items where id = ?", (item_id,)).fetchone()
         if row is None or not row["held"]:

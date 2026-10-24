@@ -9,7 +9,7 @@ import {$, esc, get} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {dockFrame} from "../workspace/dock.js?v=20261018m0";
-import {DESKS} from "./roles.js?v=20261021t5";
+import {DESKS} from "./roles.js?v=20261024f6";
 
 export function mount(main, {role, nav, go, client = () => null, setClient = () => {}, user = () => null}) {
   const cfg = DESKS[role];
@@ -21,7 +21,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
     if (!n) return [];
     if (!n.sub) return [{key: id, label: n.label, href: `#/${role}/${id}`, tab: id, hidden: !!n.hidden && !g.foot}];
     return n.sub.map(s => ({key: `${id}/${s.id}`, label: s.label, href: `#/${role}/${id}/${s.id}`, tab: s.tab ? `${id}:${s.tab}` : `${id}/${s.id}`,
-      tabLabel: s.tab && n.tabs ? n.tabs[s.tab] : s.label, hidden: !!s.hidden}));
+      tabLabel: s.tab && n.tabs ? n.tabs[s.tab] : s.label, hidden: !!(s.hidden || n.hidden)}));  // a hidden item hides its pages
   });
   const tabsOf = (pages) => {  // the top tabs: one per `tab`, opening its first page
     const out = [];
@@ -100,7 +100,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
   async function load(again) {
     if (loading && !again) return loading;
     loading = (async () => {
-      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261021t5`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
+      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261024f6`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
       data = got;
       view = mod;
       mod.render($("#dk-body", root), data, api);
