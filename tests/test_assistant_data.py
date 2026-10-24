@@ -177,6 +177,9 @@ def test_the_cio_conversation_of_2026_10_24_counts_and_counts_again_showing_how(
         and turn.RECOUNT not in llm.requests[0]["messages"][0]["content"]
     )
     assert [r.get("tool_choice") for r in llm.requests] == [None, None, "required", None]
+    # the recount's result says, next to the count, not to guess why (in the prompt alone Haiku guessed 3 of 3, D5)
+    assert dataroom.RECOUNTED.strip() in json.dumps(llm.requests[3]["messages"], ensure_ascii=False)
+    assert dataroom.RECOUNTED.strip() not in read
     assert [r["data"]["sql"] for r in queries()] == [q1["sql"], q2["sql"]]
 
 

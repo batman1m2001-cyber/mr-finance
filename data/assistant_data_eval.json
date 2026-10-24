@@ -1,0 +1,1161 @@
+{
+ "note": "The data room's eval (docs/ASSISTANT_DATA_PLAN.md D5, ADR-0040): about 30 questions per role, asked of the real model by scripts/eval_assistant_data.py. Each case is one conversation; each turn has the question, the gold SQL (run in the role's own room on the same state copy before the model is asked, so the gold is what the data says that day) and what the answer must contain. want: v — the first cell; row — every cell of the first row; col:NAME:K — column NAME of the first K rows (all: every row); none — no rows or 0, said as 0 or as none. Numbers match with tỷ/triệu/nghìn read, within 1 % (counts under a million exactly); names match without diacritics. dispute: the person contradicts a number of the last answer, and the turn must count again with truy_van (§3.5). The RM is rm01 (C01, C04, C05); the client is C01.",
+ "gate": {
+  "accuracy": 0.9,
+  "accuracy_per_role": 0.9,
+  "disputes_counted_again": 1.0,
+  "seconds_p95": 6.0,
+  "cost_per_turn_usd": 0.01
+ },
+ "cases": [
+  {
+   "id": "cio-01",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Hệ thống đã lấy về bao nhiêu tin?",
+     "sql": "select sum(trang_thai = 'new'), sum(trang_thai = 'grouped') from tin",
+     "want": "row"
+    },
+    {
+     "q": "Sao lại 200? Tôi thấy 1.415 tin chờ xử lý mà.",
+     "sql": "select count(*) from tin where trang_thai = 'new'",
+     "want": "v",
+     "dispute": true
+    }
+   ]
+  },
+  {
+   "id": "cio-02",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Hôm nay lấy về bao nhiêu tin?",
+     "sql": "select count(*) from tin where ngay_lay = date('now', '+7 hours')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-03",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Hôm nay báo nào gửi về nhiều tin nhất, bao nhiêu tin?",
+     "sql": "select bao, count(*) n from tin where ngay_lay = date('now', '+7 hours') group by bao order by n desc limit 1",
+     "want": "row"
+    }
+   ]
+  },
+  {
+   "id": "cio-04",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Hộp tin còn bao nhiêu tin chờ xử lý?",
+     "sql": "select count(*) from tin where trang_thai = 'new'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-05",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có bao nhiêu tin mức liên quan cao đang chờ xử lý?",
+     "sql": "select count(*) from tin where trang_thai = 'new' and muc_lien_quan = 'high'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-06",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Bao nhiêu tin quốc tế đang chờ xử lý?",
+     "sql": "select count(*) from tin where trang_thai = 'new' and loai = 'intl'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-07",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Hôm qua hệ thống lấy về bao nhiêu tin?",
+     "sql": "select count(*) from tin where ngay_lay = date('now', '+7 hours', '-1 day')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-08",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Trong 7 ngày qua, ngày nào lấy về nhiều tin nhất?",
+     "sql": "select ngay_lay, count(*) n from tin where ngay_lay >= date('now', '+7 hours', '-6 days') group by 1 order by n desc limit 1",
+     "want": "col:n:1"
+    }
+   ]
+  },
+  {
+   "id": "cio-09",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có bao nhiêu tin đang chờ xử lý có tiêu đề nhắc đến lãi suất?",
+     "sql": "select count(*) from tin where trang_thai = 'new' and khong_dau(tieu_de) like '%lai suat%'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-10",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có tất cả bao nhiêu sự kiện?",
+     "sql": "select count(*) from su_kien",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-11",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Bao nhiêu sự kiện đang khẩn?",
+     "sql": "select count(*) from su_kien where khan = 1",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-12",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Sự kiện gom nhiều tin nhất gom bao nhiêu tin?",
+     "sql": "select max(so_tin) from su_kien",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-13",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Bao nhiêu nhận định đã được duyệt?",
+     "sql": "select count(*) from nhan_dinh where trang_thai = 'APPROVED'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-14",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có nhận định nào đang chờ duyệt không, bao nhiêu?",
+     "sql": "select count(*) from nhan_dinh where trang_thai = 'PENDING_APPROVAL'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-15",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Bao nhiêu nhận định bị bác?",
+     "sql": "select count(*) from nhan_dinh where trang_thai = 'REJECTED'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-16",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có bao nhiêu đề xuất đang hiệu lực?",
+     "sql": "select count(*) from de_xuat where trang_thai = 'EFFECTIVE'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-17",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Các đề xuất đang hiệu lực áp dụng cho tổng cộng bao nhiêu lượt gia đình?",
+     "sql": "select sum(so_gia_dinh) from de_xuat where trang_thai = 'EFFECTIVE'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-18",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có bao nhiêu gia đình chạm ngưỡng cần RM xem trước, theo các lần áp dụng đang hiệu lực?",
+     "sql": "select count(distinct ma_gia_dinh) from tac_dong_gia_dinh where cham_nguong = 1 and trang_thai_lan = 'EFFECTIVE'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-19",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Các dự báo đã chấm trúng khoảng bao nhiêu phần trăm?",
+     "sql": "select round(100.0 * avg(trong_khoang), 1) from du_bao where ket_qua = 'scored'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-20",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Đã chấm điểm bao nhiêu dự báo?",
+     "sql": "select count(*) from du_bao where da_cham = 1",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-21",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có bao nhiêu dự báo cho lãi suất (VN_RATE)?",
+     "sql": "select count(*) from du_bao where yeu_to = 'VN_RATE'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-22",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Hôm nay có bao nhiêu lần lấy số liệu thị trường bị lỗi?",
+     "sql": "select count(*) from nguon_du_lieu where ngay = date('now', '+7 hours') and loi is not null",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-23",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Trong 7 ngày qua việc nền bị lỗi bao nhiêu lần?",
+     "sql": "select count(*) from viec_nen where trang_thai = 'failed' and ngay >= date('now', '+7 hours', '-6 days')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-24",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "CIO đã bỏ bao nhiêu tin?",
+     "sql": "select count(*) from tin where trang_thai = 'dismissed'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-25",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có bao nhiêu tin từ VnExpress đang chờ xử lý?",
+     "sql": "select count(*) from tin where trang_thai = 'new' and bao like 'VnExpress%'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-26",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Tuần này (7 ngày qua) lập bao nhiêu sự kiện?",
+     "sql": "select count(*) from su_kien where ngay_lap >= date('now', '+7 hours', '-6 days')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-27",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Bao nhiêu tin chờ xử lý chưa được xếp loại sự kiện?",
+     "sql": "select count(*) from tin where trang_thai = 'new' and loai_su_kien is null",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-28",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Tháng này hệ thống lấy về bao nhiêu tin?",
+     "sql": "select count(*) from tin where substr(ngay_lay, 1, 7) = strftime('%Y-%m', 'now', '+7 hours')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "cio-29",
+   "role": "cio",
+   "client_id": null,
+   "route": "#/cio/hop-tin",
+   "turns": [
+    {
+     "q": "Có bao nhiêu sự kiện đang bị giữ?",
+     "sql": "select count(*) from su_kien where bi_giu = 1",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-01",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Sổ của tôi có bao nhiêu gia đình?",
+     "sql": "select count(*) from gia_dinh",
+     "want": "v"
+    },
+    {
+     "q": "Sai rồi, sổ tôi có 5 gia đình mà.",
+     "sql": "select count(*) from gia_dinh",
+     "want": "v",
+     "dispute": true
+    }
+   ]
+  },
+  {
+   "id": "rm-02",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình nào trong sổ có tổng tài sản lớn nhất?",
+     "sql": "select g.ten from tai_san t join gia_dinh g using (ma_gia_dinh) where t.loai = 'asset' group by g.ma_gia_dinh order by sum(t.gia_tri) desc limit 1",
+     "want": "col:ten:1"
+    }
+   ]
+  },
+  {
+   "id": "rm-03",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tổng tài sản của gia đình Đỗ Thị Hạnh là bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where ma_gia_dinh = 'C04' and loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-04",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tổng tài sản của cả sổ khách hàng của tôi là bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-05",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tổng nợ của các gia đình trong sổ là bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where loai = 'liability'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-06",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tài sản ròng của gia đình Nguyễn Minh Khoa?",
+     "sql": "select sum(case when loai = 'asset' then gia_tri else -gia_tri end) from tai_san where ma_gia_dinh = 'C01'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-07",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình nào chi tiêu vượt thu nhập?",
+     "sql": "select ten from gia_dinh where chi_tieu_thang > thu_nhap_thang",
+     "want": "col:ten:all"
+    }
+   ]
+  },
+  {
+   "id": "rm-08",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Thu nhập hàng tháng của gia đình Vũ Ngọc Anh là bao nhiêu?",
+     "sql": "select thu_nhap_thang from gia_dinh where ma_gia_dinh = 'C05'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-09",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình Nguyễn Minh Khoa có bao nhiêu khoản cổ phiếu?",
+     "sql": "select count(*) from tai_san where ma_gia_dinh = 'C01' and lop = 'stock'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-10",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Bất động sản chiếm bao nhiêu phần trăm tài sản của gia đình C01?",
+     "sql": "select round(100.0 * sum(case when lop = 'real_estate' then gia_tri else 0 end) / sum(gia_tri), 1) from tai_san where ma_gia_dinh = 'C01' and loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-11",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Bao nhiêu khoản tài sản trong sổ là khách tự khai, chưa xác minh?",
+     "sql": "select count(*) from tai_san where do_tin_cay = 'declared'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-12",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình nào có nhiều tiền gửi nhất?",
+     "sql": "select g.ten from tai_san t join gia_dinh g using (ma_gia_dinh) where t.lop = 'deposit' group by g.ma_gia_dinh order by sum(t.gia_tri) desc limit 1",
+     "want": "col:ten:1"
+    }
+   ]
+  },
+  {
+   "id": "rm-13",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tổng tiền gửi của cả sổ là bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'deposit'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-14",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Nếu thị trường sốc, gia đình C04 mất khoảng bao nhiêu?",
+     "sql": "select round(sum(gia_tri * muc_soc)) from tai_san where ma_gia_dinh = 'C04' and loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-15",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình C05 rút nhanh được bao nhiêu tiền?",
+     "sql": "select sum(gia_tri) from tai_san where ma_gia_dinh = 'C05' and loai = 'asset' and thanh_khoan = 1",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-16",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tháng này tôi đã liên hệ khách bao nhiêu lần?",
+     "sql": "select count(*) from lien_he where substr(ngay, 1, 7) = strftime('%Y-%m', 'now', '+7 hours')",
+     "want": "none"
+    }
+   ]
+  },
+  {
+   "id": "rm-17",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Có bao nhiêu yêu cầu của khách đang chờ duyệt?",
+     "sql": "select count(*) from duyet where trang_thai = 'pending_specialist'",
+     "want": "none"
+    }
+   ]
+  },
+  {
+   "id": "rm-18",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Có bao nhiêu yêu cầu của khách đã được duyệt?",
+     "sql": "select count(*) from duyet where trang_thai = 'approved'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-19",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Hôm nay có bao nhiêu tin mức liên quan cao?",
+     "sql": "select count(*) from tin where ngay_lay = date('now', '+7 hours') and muc_lien_quan = 'high'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-20",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Trong 7 ngày qua có bao nhiêu sự kiện mới?",
+     "sql": "select count(*) from su_kien where ngay_lap >= date('now', '+7 hours', '-6 days')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-21",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình nào đông người nhất trong sổ?",
+     "sql": "select ten from gia_dinh order by so_thanh_vien desc limit 1",
+     "want": "col:ten:1"
+    }
+   ]
+  },
+  {
+   "id": "rm-22",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Khách hàng lớn tuổi nhất trong sổ là ai, bao nhiêu tuổi?",
+     "sql": "select ten, tuoi from gia_dinh order by tuoi desc limit 1",
+     "want": "row"
+    }
+   ]
+  },
+  {
+   "id": "rm-23",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Khoản nợ lớn nhất của gia đình C01 là bao nhiêu?",
+     "sql": "select gia_tri from tai_san where ma_gia_dinh = 'C01' and loai = 'liability' order by gia_tri desc limit 1",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-24",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình C04 có bao nhiêu vàng (giá trị)?",
+     "sql": "select sum(gia_tri) from tai_san where ma_gia_dinh = 'C04' and lop = 'gold'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-25",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tổng giá trị trái phiếu của cả sổ?",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'bond'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-26",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình nào có thu nhập hàng tháng cao nhất?",
+     "sql": "select ten from gia_dinh order by thu_nhap_thang desc limit 1",
+     "want": "col:ten:1"
+    }
+   ]
+  },
+  {
+   "id": "rm-27",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Tổng chi tiêu hàng tháng của các gia đình trong sổ là bao nhiêu?",
+     "sql": "select sum(chi_tieu_thang) from gia_dinh",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-28",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Khoản tài sản đơn lẻ có giá trị lớn nhất trong sổ trị giá bao nhiêu?",
+     "sql": "select max(gia_tri) from tai_san where loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "rm-29",
+   "role": "rm",
+   "client_id": null,
+   "route": "#/rm/hom-nay",
+   "turns": [
+    {
+     "q": "Gia đình Vũ Ngọc Anh có bao nhiêu khoản tài sản?",
+     "sql": "select count(*) from tai_san where ma_gia_dinh = 'C05' and loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-01",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tôi có bao nhiêu tiền gửi?",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'deposit'",
+     "want": "v"
+    },
+    {
+     "q": "Không đúng, tôi nhớ là 6 tỷ cơ.",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'deposit'",
+     "want": "v",
+     "dispute": true
+    }
+   ]
+  },
+  {
+   "id": "client-02",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tổng tài sản của gia đình tôi là bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-03",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tài sản ròng của tôi là bao nhiêu?",
+     "sql": "select sum(case when loai = 'asset' then gia_tri else -gia_tri end) from tai_san",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-04",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tôi đang nợ tổng cộng bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where loai = 'liability'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-05",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Bất động sản chiếm bao nhiêu phần trăm tài sản của tôi?",
+     "sql": "select round(100.0 * sum(case when lop = 'real_estate' then gia_tri else 0 end) / sum(gia_tri), 1) from tai_san where loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-06",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tôi có bao nhiêu khoản cổ phiếu?",
+     "sql": "select count(*) from tai_san where lop = 'stock'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-07",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tổng giá trị cổ phiếu tôi đang có?",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'stock'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-08",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Khoản tài sản lớn nhất của tôi trị giá bao nhiêu?",
+     "sql": "select max(gia_tri) from tai_san where loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-09",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tháng trước tôi chi tổng cộng bao nhiêu?",
+     "sql": "select sum(so_tien) from dong_tien where chieu = 'out' and thang = strftime('%Y-%m', 'now', '+7 hours', 'start of month', '-1 month')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-10",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tháng trước tôi thu về bao nhiêu?",
+     "sql": "select sum(so_tien) from dong_tien where chieu = 'in' and thang = strftime('%Y-%m', 'now', '+7 hours', 'start of month', '-1 month')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-11",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tháng nào tôi chi nhiều nhất, bao nhiêu?",
+     "sql": "select thang, sum(so_tien) s from dong_tien where chieu = 'out' group by thang order by s desc limit 1",
+     "want": "col:s:1"
+    }
+   ]
+  },
+  {
+   "id": "client-12",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Khoản chi lớn nhất của tôi là bao nhiêu?",
+     "sql": "select max(so_tien) from dong_tien where chieu = 'out'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-13",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tháng trước tôi chi nhiều nhất cho nhóm nào?",
+     "sql": "select ten_nhom from dong_tien where chieu = 'out' and thang = strftime('%Y-%m', 'now', '+7 hours', 'start of month', '-1 month') group by ten_nhom order by sum(so_tien) desc limit 1",
+     "want": "col:ten_nhom:1"
+    }
+   ]
+  },
+  {
+   "id": "client-14",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tính đến nay tôi đã trả tổng cộng bao nhiêu học phí?",
+     "sql": "select sum(so_tien) from dong_tien where nhom = 'school'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-15",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tôi đang theo dõi bao nhiêu mục tiêu?",
+     "sql": "select count(*) from muc_tieu where dang_theo_doi = 1",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-16",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Mục tiêu nào của tôi đang có rủi ro?",
+     "sql": "select ten from muc_tieu where trang_thai in ('at_risk', 'off_track')",
+     "want": "col:ten:all"
+    }
+   ]
+  },
+  {
+   "id": "client-17",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Mục tiêu học phí cho con còn thiếu bao nhiêu?",
+     "sql": "select thieu from muc_tieu where ma = 'tuition'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-18",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Mục tiêu nghỉ hưu sớm của tôi đạt bao nhiêu phần trăm?",
+     "sql": "select round(100 * tien_do, 1) from muc_tieu where ma = 'retire_early'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-19",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Các mục tiêu đang theo dõi còn thiếu tổng cộng bao nhiêu (chỉ tính mục tiêu còn thiếu)?",
+     "sql": "select sum(thieu) from muc_tieu where dang_theo_doi = 1 and thieu > 0",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-20",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Hôm nay có bao nhiêu tin được xếp loại sự kiện vàng?",
+     "sql": "select count(*) from tin where ngay_lay = date('now', '+7 hours') and loai_su_kien = 'gold'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-21",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Trong 7 ngày qua có bao nhiêu sự kiện mới?",
+     "sql": "select count(*) from su_kien where ngay_lap >= date('now', '+7 hours', '-6 days')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-22",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "So với tháng trước, tổng tài sản của tôi tăng hay giảm bao nhiêu?",
+     "sql": "select sum(gia_tri - gia_tri_thang_truoc) from tai_san where loai = 'asset'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-23",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tôi có bao nhiêu tiền mặt?",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'cash'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-24",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Vàng của tôi trị giá bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'gold'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-25",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Các khoản bảo hiểm của tôi trị giá bao nhiêu?",
+     "sql": "select sum(gia_tri) from tai_san where lop = 'insurance'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-26",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Cổ phiếu của tôi đang lãi hay lỗ bao nhiêu so với giá vốn?",
+     "sql": "select sum(gia_tri - gia_von) from tai_san where lop = 'stock'",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-27",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Trung bình mỗi tháng tôi chi bao nhiêu?",
+     "sql": "select round(avg(s)) from (select sum(so_tien) s from dong_tien where chieu = 'out' group by thang)",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-28",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Tháng trước tôi có bao nhiêu giao dịch chi?",
+     "sql": "select count(*) from dong_tien where chieu = 'out' and thang = strftime('%Y-%m', 'now', '+7 hours', 'start of month', '-1 month')",
+     "want": "v"
+    }
+   ]
+  },
+  {
+   "id": "client-29",
+   "role": "client",
+   "client_id": "C01",
+   "route": "#/client/tong-quan/toan-canh",
+   "turns": [
+    {
+     "q": "Mỗi tháng tôi cần để dành bao nhiêu cho mục tiêu học phí?",
+     "sql": "select can_de_danh_thang from muc_tieu where ma = 'tuition'",
+     "want": "v"
+    }
+   ]
+  }
+ ]
+}

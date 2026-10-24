@@ -117,8 +117,9 @@ Dự báo từng yếu tố thị trường của một nhận định, và kế
 - `p90`: phân vị 90, theo `don_vi`
 - `don_vi`: pct (%), bp (điểm cơ bản), pp (điểm phần trăm), sd (độ lệch chuẩn)
 - `mo_hinh`: mã mô hình, như FM-EST-2026-09
-- `da_cham`: 1 khi đã chấm điểm
-- `ket_qua`: scored (đã chấm), no_data (không có số liệu thực tế); NULL khi chưa đến hạn
+- `da_cham`: 1 khi đã chấm điểm, gồm cả khi chấm mà không có số liệu thực tế (`ket_qua` = no_data)
+- `ket_qua`: scored (đã chấm và có số liệu thực tế để so), no_data (đã chấm, không có số liệu thực tế); NULL khi
+  chưa chấm
 - `thuc_te`: thay đổi thực tế, theo `don_vi`
 - `trong_khoang`: 1 khi thực tế nằm trong khoảng p10–p90
 - `dung_huong`: 1 khi đoán đúng hướng
