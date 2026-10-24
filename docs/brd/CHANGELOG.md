@@ -7,6 +7,18 @@ Newest first. One line per meaningful change: date — what — documents touche
   recall), valued in VND on the simulated book, labelled simulated; cost per model call, never 0 when missing; the
   trial page in View A and View B with a drill-down per move. — owner_requirements EV, requirements_traceability §5,
   docs/AGENT_EVALUATION_PLAN.md
+- 2026-10-24 — The data room wired in (D4): `truy_van` in the registry for the five roles with a room, with the
+  role's catalog; three queries a turn; an audit row per query; “Cách tính” (SQL, rows, table, time), closed; the
+  template with `client_ai` off; the re-count rule, and a question naming a number the last answer did not say must
+  call a tool (`tool_choice`): the rule alone did not make Haiku 5.5 count again. — OWN-DA-03, OWN-DA-05…07,
+  requirements_traceability §5
+- 2026-10-24 — The data catalog (D3): what the assistant reads before it writes SQL, per role: every table and column
+  of the room with its meaning, unit and allowed values, shared rules, the pages' definitions and 12–18 examples
+  each; a test fails on an undocumented column and runs every example in its room. — OWN-DA-04,
+  requirements_traceability §5
+- 2026-10-24 — The data room (D2): `truy_van`'s SQL runs on TEMP tables built for the role and person (copies, not
+  views: a CTE named like a view passed the authorizer as that view), read-only under the authorizer, 2 s, 200 rows
+  with the total; 54 adversarial and positive tests. — OWN-DA-02, OWN-DA-03, requirements_traceability §5
 - 2026-10-24 — Totals are counts (D1): the inbox page says 1.417 (was 300) and “40 / 1.417”; alerts, search,
   the CIO desk's Tin stage and the held-news tool count in the database. — OWN-DA-01, requirements_traceability §5
 - 2026-10-24 — The assistant reads the data itself (owner): totals are counts; one tool, `truy_van`, a SQL

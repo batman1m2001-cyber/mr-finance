@@ -11,6 +11,56 @@ flexibly, dynamically answer user” → “go”).
   Found beyond §2: the held-news tool read `inbox()`'s first 200; Hệ thống counted open alerts among the last 30;
   the bell asked for 1,000 news to count them. `wealth_store.reviews` has no cap, so the queue tool's total is its
   length (now in its data); no separate count function was needed there.
+- **D2 done:** `src/assistant/dataroom.py` (`query`, `truy_van`, not yet in the registry: D4). Gate:
+  `tests/test_dataroom.py`, 54 tests. Every adversarial case of §4 is refused, and a refusal names nothing outside
+  the room: a real table reads like a missing one. Changed from §3.1–3.2, with evidence:
+  - **TEMP tables, not TEMP views.** SQLite tells the authorizer which view a read comes from by name, and a CTE
+    named like a view gets that name. A probe on a copy of the live data showed `with tin as (select email from
+    main.people) select * from tin` reaching the authorizer as a read of `people.email` from source `tin`, so a
+    rule based on the view would leak. Instead, each query copies the room tables its SQL names (and the role
+    holds) into TEMP before the authorizer is set. The authorizer then allows reads of those tables and of nothing
+    in `main`. Building `tin` (1,481 rows) took 30 ms; a family table about 2 ms plus the served read (about
+    50–250 ms for an RM's three households).
+  - **Family data comes from the served reads**, not `json_extract` on the real tables. Those columns can be sealed
+    (`control.crypto`), and the served reads already apply `people.auth` (`desk.reads.book_of`, `auth.client_for`,
+    `auth.visible`). `tac_dong_gia_dinh` carries a family's totals per run, never its holdings.
+  - **Functions:** §3.2's list plus `upper`, `length`, `substr`, `instr`, `trim`, `replace`, `ifnull`, `iif`,
+    `nullif`, `abs`, `total`, `group_concat`, `datetime`, `julianday`, `json_array_length` and the window
+    functions. Also added is `khong_dau(text)`, which strips Vietnamese diacritics, because SQLite's `lower` only
+    folds ASCII. Excluded: `printf`/`format`, `randomblob`, `zeroblob`, `load_extension`, `sqlite_*` and
+    `json_each` (it reads as a table).
+  - **Two SQLite facts handled:**
+    - A read of no column, such as `count(*)` over a join, reaches the authorizer without a database name. It is
+      allowed for a room table's name only. That is safe because TEMP shadows unqualified names and no real table
+      shares a room name (tested).
+    - A recursive CTE is denied whether or not the query says `recursive`.
+- **D3 done:** `src/assistant/datacatalog.py::catalog(role)`, built from `dataroom.TABLES` (tables, column names and
+  types) and `src/assistant/catalog/`: `tables.md` (all 17 tables, 194 columns: meaning, unit, allowed values as the
+  stores write them), `rules.md` (Vietnam time, `khong_dau` search, count with `count(*)`), and `cio.md`, `rm.md`,
+  `client.md`, `compliance.md` (Admin reads Compliance's) with definitions and 18 / 14 / 13 / 12 examples. Gate:
+  `tests/test_datacatalog.py`, 10 tests: a column missing from the docs (or documented and not in the room) fails;
+  the codes in `news.STATUSES`, `views.LIFECYCLE`, `apply.run.STATUS_LABEL`, `alerts.KINDS`, `flows.LABELS` and
+  `contacts.CHANNELS` are each documented; every example runs in its role's room. On a copy of the live data every
+  example runs; the CIO's question of 2026-10-24 reads new 1,419 and grouped 64, and 57 fetched today. Changed from
+  §3.3: “bị bác” is `trang_thai = 'REJECTED'` (the code is upper case). The CIO's catalog is about 11,000
+  characters; D5 measures what it costs per turn.
+- **D4 done:** `truy_van` in `assistant.registry` for the five roles with a room (label “Truy vấn dữ liệu”), its
+  description followed by the role's catalog (`Tool.reference`; the docstring path drops line breaks). Three calls a
+  turn (`Ctx.queries`). One `assistant.query` audit row per query, refusals included (actor, role, SQL, rows, ms or
+  the reason). Each step carries `query` (SQL, total, shown, tables, `as_of`, ms), and the panel shows it under
+  “Cách tính”, a closed `<details>` (desktop and phone). With `client_ai` off, `dataroom.template` writes the
+  step's text (“Có 1.415 tin.”, one value, or the first 10 rows) and the model sees only its status. Gate:
+  `tests/test_assistant_data.py` (8 tests, the 2026-10-24 conversation replayed on a scripted model) and
+  `tests/ui/test_copilot_ui.py::test_an_answer_from_the_data_room_shows_how_it_counted_collapsed`. Changed from
+  §3.5, with evidence: the rule in the prompt did not make Haiku 5.5 count again. Replaying the CIO's conversation
+  on the real model with a copy of the live data, “Sao lại 200? Tôi thấy 1.415 tin chờ xử lý mà.” got “Tôi đã đếm
+  lại ngay… 1.420” with **no tool called**, three runs of three (the rule, a stronger rule, and a line at the
+  prompt's end). So `turn.disputes` marks a turn whose question names a number the last answer did not say; its
+  prompt says so and its first model request carries `tool_choice="required"` (`turn.Copilot`). With it the replay
+  counted again (`select count(*) … where trang_thai = 'new'`, 1.420, SQL shown). Its answer still offered a guess
+  why a page could differ; D5 grades that. Cost of the replays: 8 turns, 13 requests, US$0.0209. A request with
+  the CIO's catalog is about 15,000 input tokens, so a turn of four requests would pass `LIMITS.total_tokens`
+  (60,000); D5 measures it.
 
 ## 1. Why: the CIO chat of 2026-10-24
 

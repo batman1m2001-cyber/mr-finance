@@ -17,6 +17,7 @@ import asyncio
 import json
 import re
 import time
+from contextvars import ContextVar
 from datetime import date
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
@@ -35,7 +36,7 @@ from operonx_agents import (
 from operonx_agents.run.events import RunFinished
 
 from assistant import conversations as conv
-from assistant import memory, registry
+from assistant import dataroom, memory, registry
 from assistant.base import Ctx
 from control import barrier
 from copilot import router
@@ -128,7 +129,7 @@ suốt cuộc trò chuyện, kể cả khi họ tự xưng em, anh, chị, cháu
 Quy tắc:
 - Chỉ dùng công cụ được cung cấp. Câu hỏi nhiều việc thì gọi lần lượt các công cụ cần rồi trả lời gộp. Không nêu
   tên công cụ (như de_xuat) với người dùng: nói việc hay tên trang.
-- {facts}
+- {facts}{data}
 - Người dùng yêu cầu một việc ghi (gửi đề xuất, ghi liên hệ, duyệt, đánh dấu…) thì gọi ngay công cụ ghi đó, không hỏi
   lại bằng lời: hệ thống tự hiện nút xác nhận và chỉ ghi khi người dùng bấm. Chỉ nói đã xong khi kết quả công cụ có
   dòng "Verified"; kết quả báo lỗi hoặc "could not be confirmed" thì nói rõ là chưa làm được.
@@ -140,7 +141,7 @@ Quy tắc:
   vai trò đó ở phiên này.
 - Phần đầu cuộc trò chuyện có thể đã được tóm tắt: hỏi về một lượt cũ (câu đầu tiên, con số lúc đó) mà bản tóm tắt
   không ghi rõ thì gọi doc_lai_phien để đọc lại, không đoán.
-Hôm nay: {today}. Đang ở trang: {page}.{graph}{remembered}"""
+Hôm nay: {today}. Đang ở trang: {page}.{graph}{remembered}{recount}"""
 FACTS_MODEL = (
     "Mọi con số, tên, ngày phải lấy từ kết quả công cụ hoặc từ lời người dùng. Cần cộng, trừ, nhân, chia, phần "
     "trăm, lãi kép thì gọi công cụ tinh, không tính nhẩm, và ghi công thức để người dùng kiểm lại. "
@@ -152,6 +153,50 @@ FACTS_TEMPLATE = (
     "Câu hỏi đã che tên và số. Gọi các công cụ cần rồi trả lời đúng một câu ngắn, không có số liệu: hệ thống sẽ "
     "ghép kết quả của từng công cụ."
 )
+
+# the data room (ADR-0040) and the re-count rule (ASSISTANT_DATA_PLAN.md §3.5): on 2026-10-24 the assistant repeated a
+# list's cap of 200 as the number of news items and argued when the CIO said 1,415
+DATA_RULE = (
+    "\n- Câu hỏi đếm, lọc hay tổng hợp số liệu mà không công cụ nào khác trả lời đúng thì gọi truy_van. Tổng số luôn "
+    "đếm bằng count(*), không lấy số dòng của một danh sách hay một trang. Người dùng nói một con số sai hoặc không "
+    "khớp: đếm lại ngay bằng công cụ trong lượt này, kể cả khi lượt trước đã đếm (số liệu có thể đã đổi); chưa gọi "
+    "công cụ trong lượt này thì không được nói đã đếm lại. Rồi chỉ nói đã đếm thế nào (bảng nào, điều kiện gì) cùng "
+    "con số vừa đếm: không cãi, không đoán hay kể lý do vì sao lệch."
+)
+# The rule above was not enough on the real model (Haiku 5.5): the CIO's “Sao lại 200? Tôi thấy 1.415 tin chờ xử lý
+# mà.” got “Tôi đã đếm lại ngay…” with no tool called in that turn, three runs out of three, a line at the prompt's
+# end included (docs/ASSISTANT_DATA_PLAN.md, D4 status). So a turn whose question names a number the last answer did
+# not say is a dispute: the prompt says so, and its first model request must call a tool (``tool_choice``).
+RECOUNT = (
+    "\nLượt này người dùng nêu một con số khác với câu trả lời trước: gọi truy_van đếm lại ngay trong lượt này rồi "
+    "mới trả lời, không dùng lại kết quả của lượt trước."
+)
+NUMBER = re.compile(r"\d(?:[\d.,]*\d)?")
+RECOUNTING: ContextVar[bool] = ContextVar("assistant_recounting", default=False)
+
+
+def numbers(text: Optional[str]) -> set:
+    """The numbers in ``text``, separators dropped: “1.415”, “1,415” and “1415” are one number."""
+    return {re.sub(r"[.,]", "", n) for n in NUMBER.findall(text or "")}
+
+
+def disputes(question: Optional[str], cid: Optional[str]) -> bool:
+    """The question names a number the conversation's last answer did not say (“Sao lại 200? Tôi thấy 1.415…”)."""
+    said = numbers(question)
+    if not said or not cid:
+        return False
+    answers = [t["answer"].get("text") for t in conv.turns_of(cid) if t["status"] == "ok" and t["answer"].get("text")]
+    return bool(answers) and not said <= numbers(answers[-1])
+
+
+class Copilot(Model):
+    """The assistant's model. On a recount turn (``RECOUNTING``) the first request, the one right after the question,
+    must call a tool: ``tool_choice="required"``. Later requests of the turn are the model's own."""
+
+    def stream(self, messages, *, tools=None, tool_choice=None, **kw):
+        if RECOUNTING.get() and tools and tool_choice is None and messages and messages[-1].get("role") == "user":
+            tool_choice = "required"
+        return super().stream(messages, tools=tools, tool_choice=tool_choice, **kw)
 
 
 REMEMBERED = """
@@ -210,12 +255,14 @@ def instructions(rctx: RunContext) -> str:
         if ctx.role in DUTIES
         else "",
         facts=FACTS_MODEL if ctx.reads else FACTS_TEMPLATE,
+        data=DATA_RULE if ctx.role in dataroom.ROLES else "",
         today=date.today().strftime("%d/%m/%Y"),  # “tháng 9” is this year's: without it, a model guessed last year's
         page=router.page_path(ctx.route) or "—",
         graph=graph_line(ctx),
         remembered=REMEMBERED.format(items="\n".join(f"- {t}" for t in ctx.remembered))
         if ctx.reads and ctx.remembered
         else "",
+        recount=RECOUNT if ctx.recount else "",
     )
 
 
@@ -223,7 +270,7 @@ def instructions(rctx: RunContext) -> str:
 def agent(role: str) -> Agent:
     return Agent(
         name="assistant",
-        model=Model("copilot", deadline=45),
+        model=Copilot("copilot", deadline=45),
         instructions=instructions,
         tools=list(registry.agent_tools(role)),
         limits=LIMITS,
@@ -309,13 +356,18 @@ async def run_events(ctx: Ctx, message: str, cid: str):
     scrubbed when the model may not read client data."""
     said = message if ctx.reads else scrub(message)
     ctx.conversation = cid
+    ctx.recount = ctx.role in dataroom.ROLES and disputes(message, cid)
     await remembered(ctx)
-    async for ev in _drive(
-        lambda s: Runner.stream(agent(ctx.role), said, deps=ctx, store=conv.RUNS, session=s), ctx, cid
-    ):
-        if isinstance(ev, dict):
-            ev = {"reply": await reply(ev["reply"], ctx, said, fresh=True, cid=cid)}
-        yield ev
+    RECOUNTING.set(ctx.recount)  # this request's task; set back below (a reset would fail if closed elsewhere)
+    try:
+        async for ev in _drive(
+            lambda s: Runner.stream(agent(ctx.role), said, deps=ctx, store=conv.RUNS, session=s), ctx, cid
+        ):
+            if isinstance(ev, dict):
+                ev = {"reply": await reply(ev["reply"], ctx, said, fresh=True, cid=cid)}
+            yield ev
+    finally:
+        RECOUNTING.set(False)
 
 
 async def resume_events(ctx: Ctx, run_id: str, approvals: Dict[str, str]):
@@ -360,6 +412,10 @@ async def resume(ctx: Ctx, run_id: str, approvals: Dict[str, str]) -> Dict[str, 
     return await _last(resume_events(ctx, run_id, approvals))
 
 
+# what a step carries to the panel of its tool's result; "query" is truy_van's “Cách tính” (SQL, rows, as_of)
+STEP_KEYS = ("text", "card", "focus", "as_of", "sources", "navigate", "cost_usd", "query")
+
+
 def steps_of(res, ctx: Ctx, fresh: bool) -> List[Dict[str, Any]]:
     """Each tool call of this request, in order: what the tool returned (its text, card, focus, page) and whether it
     worked — a write that ran but was not read back is ``failed``, said so."""
@@ -384,7 +440,7 @@ def steps_of(res, ctx: Ctx, fresh: bool) -> List[Dict[str, Any]]:
             "status": "ok" if ok else "failed",
         }
         if got is not None:
-            step.update({k: got.get(k) for k in ("text", "card", "focus", "as_of", "sources", "navigate", "cost_usd")})
+            step.update({k: got.get(k) for k in STEP_KEYS})
         if not ok:
             if "could not be confirmed" in content:
                 step["text"] = "Đã gửi nhưng chưa xác nhận được kết quả."
