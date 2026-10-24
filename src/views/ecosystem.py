@@ -41,7 +41,13 @@ GROUPS = [
 
 # the assistant's tools, by the module that holds them (every registry tool is in exactly one: a test checks)
 TOOL_FAMILIES = {
-    "tools_app": ("assistant.tools", "assistant.actions", "assistant.graphtools", "assistant.desktools"),
+    "tools_app": (
+        "assistant.tools",
+        "assistant.actions",
+        "assistant.graphtools",
+        "assistant.desktools",
+        "assistant.dataroom",
+    ),
     "tools_memory": ("assistant.memory",),
     "tools_knowledge": ("assistant.knowledge",),
     "tools_follow": ("assistant.followups",),
@@ -60,7 +66,8 @@ NODES: List[Dict[str, Any]] = [
              "để sản phẩm không dừng vì AI (NFR-03).",
      "reads": "câu hỏi đã che tên và số"},
     {"id": "tools_app", "group": "front", "label": "Công cụ của ứng dụng", "icon": "layers",
-     "does": "Chạy đúng đồ thị mà các trang chạy: tổng quan, dòng tiền, tác động, đề xuất, sự kiện, cảnh báo…"},
+     "does": "Chạy đúng đồ thị mà các trang chạy: tổng quan, dòng tiền, tác động, đề xuất, sự kiện, cảnh báo…; "
+             "đếm, lọc bằng truy_van trên phòng dữ liệu chỉ đọc của vai trò (ADR-0040)."},
     {"id": "tools_memory", "group": "front", "label": "Trí nhớ", "icon": "history",
      "does": "Nhớ, sửa, quên những gì người dùng bảo và xác nhận; tìm lại hội thoại cũ (A4)."},
     {"id": "tools_follow", "group": "front", "label": "Theo dõi", "icon": "bell",

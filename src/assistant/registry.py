@@ -14,12 +14,12 @@ import pydantic
 from operonx_agents import RunContext
 from operonx_agents import tool as agent_tool
 
-from assistant import actions, desktools, followups, graphtools, knowledge, memory, tools
+from assistant import actions, dataroom, desktools, followups, graphtools, knowledge, memory, tools
 from assistant.base import Ctx, Tool, allowed
 
 REGISTRY: Dict[str, Tool] = {**tools.CATALOGUE}
 for _name, _t in {**actions.CATALOGUE, **memory.CATALOGUE, **knowledge.CATALOGUE, **followups.CATALOGUE,
-                  **graphtools.CATALOGUE, **desktools.CATALOGUE}.items():  # fmt: skip
+                  **graphtools.CATALOGUE, **desktools.CATALOGUE, **dataroom.CATALOGUE}.items():  # fmt: skip
     assert _name not in REGISTRY, f"two tools named {_name!r}"
     REGISTRY[_name] = _t
 LABELS = {  # what a step is called in the panel ("Các bước")
@@ -80,6 +80,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "ho_so_khach": "Hồ sơ khách",
     "chuoi_nhat_ky": "Chuỗi nhật ký",
     "cau_hinh_cho_duyet": "Cấu hình chờ duyệt",
+    "truy_van": "Truy vấn dữ liệu",
 }
 DEMO_USER = {**tools.USER, "admin": "admin", "specialist": "sp_global"}  # who acts when sign-in is off
 
@@ -189,8 +190,12 @@ def _agent_tool(tool: Tool, role: str):
 
     call.__signature__, call.__annotations__, call.__doc__ = _signature(tool, role)
     call.__name__ = call.__qualname__ = tool.name
+    # truy_van: its description and the role's data catalog (tables, columns, definitions, examples), lines kept — the
+    # docstring's summary would be joined into one paragraph
+    described = tool.description + "\n\n" + tool.reference(role) if tool.reference is not None else None
     return agent_tool(
         call,
+        description=described,
         approval="always" if tool.write else "never",
         idempotent=not tool.write,
         readonly=not tool.write,

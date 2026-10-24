@@ -44,6 +44,23 @@ flexibly, dynamically answer user” → “go”).
   example runs; the CIO's question of 2026-10-24 reads new 1,419 and grouped 64, and 57 fetched today. Changed from
   §3.3: “bị bác” is `trang_thai = 'REJECTED'` (the code is upper case). The CIO's catalog is about 11,000
   characters; D5 measures what it costs per turn.
+- **D4 done:** `truy_van` in `assistant.registry` for the five roles with a room (label “Truy vấn dữ liệu”), its
+  description followed by the role's catalog (`Tool.reference`; the docstring path drops line breaks). Three calls a
+  turn (`Ctx.queries`). One `assistant.query` audit row per query, refusals included (actor, role, SQL, rows, ms or
+  the reason). Each step carries `query` (SQL, total, shown, tables, `as_of`, ms), and the panel shows it under
+  “Cách tính”, a closed `<details>` (desktop and phone). With `client_ai` off, `dataroom.template` writes the
+  step's text (“Có 1.415 tin.”, one value, or the first 10 rows) and the model sees only its status. Gate:
+  `tests/test_assistant_data.py` (8 tests, the 2026-10-24 conversation replayed on a scripted model) and
+  `tests/ui/test_copilot_ui.py::test_an_answer_from_the_data_room_shows_how_it_counted_collapsed`. Changed from
+  §3.5, with evidence: the rule in the prompt did not make Haiku 5.5 count again. Replaying the CIO's conversation
+  on the real model with a copy of the live data, “Sao lại 200? Tôi thấy 1.415 tin chờ xử lý mà.” got “Tôi đã đếm
+  lại ngay… 1.420” with **no tool called**, three runs of three (the rule, a stronger rule, and a line at the
+  prompt's end). So `turn.disputes` marks a turn whose question names a number the last answer did not say; its
+  prompt says so and its first model request carries `tool_choice="required"` (`turn.Copilot`). With it the replay
+  counted again (`select count(*) … where trang_thai = 'new'`, 1.420, SQL shown). Its answer still offered a guess
+  why a page could differ; D5 grades that. Cost of the replays: 8 turns, 13 requests, US$0.0209. A request with
+  the CIO's catalog is about 15,000 input tokens, so a turn of four requests would pass `LIMITS.total_tokens`
+  (60,000); D5 measures it.
 
 ## 1. Why: the CIO chat of 2026-10-24
 

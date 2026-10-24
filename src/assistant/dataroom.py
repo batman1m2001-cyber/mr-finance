@@ -33,7 +33,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Tuple
 
-from assistant.base import Ctx, ToolFailed
+from assistant.base import Ctx, Param, Tool, ToolFailed
 
 ROWS = 200  # rows returned; the total is counted past it
 SECONDS = 2.0  # a query (and its count) stops after this
@@ -604,13 +604,98 @@ def text_of(res: Dict[str, Any], lines: int = 50) -> str:
     return head + ".\n" + "\n".join(body) if res["columns"] else head + "."
 
 
+CALLS = 3  # truy_van calls a turn (ADR-0040): a fourth is refused, the model answers from what it has
+# what one row of a table is called, for the template's sentence ("Có 1.415 tin.")
+NOUNS = {"tin": "tin", "tin_bi_giu": "tin bị giữ", "su_kien": "sự kiện", "nhan_dinh": "nhận định",
+         "de_xuat": "lần áp dụng", "tac_dong_gia_dinh": "dòng tác động", "du_bao": "dự báo", "viec_nen": "lần chạy",
+         "nguon_du_lieu": "lần lấy số liệu", "gia_dinh": "gia đình", "tai_san": "khoản", "lien_he": "lần liên hệ",
+         "duyet": "yêu cầu duyệt", "dong_tien": "giao dịch", "muc_tieu": "mục tiêu", "nhat_ky": "dòng nhật ký",
+         "canh_bao": "cảnh báo"}  # fmt: skip
+COUNT = re.compile(r"^\s*select\s+count\s*\(\s*(?:\*|distinct\s+\w+|\w+)\s*\)(?:\s+as\s+\w+)?\s+from\s+(\w+)\b", re.I)
+
+
+def vn(v: Any) -> str:
+    """A number as the person reads it: 1.415, 0,15."""
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return _num(v)
+    if isinstance(v, float) and not v.is_integer():
+        return f"{v:,.2f}".replace(",", " ").replace(".", ",").replace(" ", ".")
+    return f"{int(v):,}".replace(",", ".")
+
+
+def template(res: Dict[str, Any]) -> str:
+    """The answer said without the model (``client_ai`` off, ADR-0026): one count over one table as a sentence
+    ("Có 1.415 tin."), one value as itself, otherwise the total and the first rows."""
+    if res["total"] == 1 and len(res["columns"]) == 1:
+        v = res["rows"][0][0]
+        m = COUNT.match(res["sql"])
+        if m and m.group(1).lower() in NOUNS and isinstance(v, int):
+            return f"Có {vn(v)} {NOUNS[m.group(1).lower()]}."
+        return f"{res['columns'][0]}: {vn(v)}."
+    head = f"{vn(res['total'])} dòng" + (f", {min(res['shown'], 10)} dòng đầu" if res["total"] > 10 else "")
+    body = [" | ".join(res["columns"])] + [" | ".join(vn(v) for v in r) for r in res["rows"][:10]]
+    return head + ":\n" + "\n".join(body) if res["columns"] and res["rows"] else head + "."
+
+
+def _audit(ctx: Ctx, sql: str, res: Optional[Dict[str, Any]], ms: float, refused: Optional[str] = None) -> None:
+    """One audit row per query (ADR-0040): who, the role, the SQL, the rows and the time — or why it was refused."""
+    from control import audit, db
+
+    data: Dict[str, Any] = {"role": ctx.role, "client_id": ctx.client_id, "sql": sql[:SQL_CHARS], "ms": round(ms, 1)}
+    if res is not None:
+        data.update(rows=res["total"], shown=res["shown"])
+    if refused is not None:
+        data["refused"] = refused[:300]
+    actor = ctx.user or f"client:{ctx.client_id or '-'}"
+    with db.tx() as con:
+        audit.append(con, actor, "assistant.query", ",".join(res["tables"]) if res and res["tables"] else "-", data)
+
+
 async def truy_van(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """The ``truy_van`` tool's run: one SELECT in the room; the rows, the total, the SQL and when."""
-    res = await query(ctx, str(args.get("sql") or ""))
+    """The ``truy_van`` tool's run: one SELECT in the room; the rows, the total, the SQL and when. Audited, refused
+    after :data:`CALLS` a turn; with ``ctx.reads`` off the text is the template, which the person reads, not the
+    model."""
+    sql = str(args.get("sql") or "")
+    ctx.queries += 1
+    started = time.perf_counter()
+    try:
+        if ctx.queries > CALLS:
+            raise Refused(f"Đã truy vấn {CALLS} lần trong lượt này: trả lời bằng các kết quả đã có")
+        res = await query(ctx, sql)
+    except Refused as exc:
+        _audit(ctx, sql, None, 1000 * (time.perf_counter() - started), str(exc))
+        raise
+    _audit(ctx, sql, res, 1000 * (time.perf_counter() - started))
+    how = {k: res[k] for k in ("sql", "total", "shown", "tables", "as_of")}
     return {
-        "text": text_of(res),
+        "text": text_of(res) if ctx.reads else template(res),
         "data": {"total": res["total"], "shown": res["shown"], "columns": res["columns"], "sql": res["sql"]},
         "as_of": res["as_of"],
         "sources": [f"Truy vấn trên {', '.join(res['tables']) or 'không bảng nào'} lúc {res['as_of']}"],
-        "query": res,
+        "query": {**how, "ms": round(res["build_ms"] + res["query_ms"], 1)},  # “Cách tính” in the panel
     }
+
+
+DESCRIPTION = (
+    "đếm, lọc, liệt kê hay tổng hợp số liệu bằng một câu SELECT trên các bảng dưới đây (chỉ những gì vai trò này "
+    "được xem): dùng khi không công cụ nào khác trả lời đúng câu hỏi, khi cần một tổng số, và khi người dùng nói một "
+    "con số sai. Kết quả có tổng số dòng, câu SQL và thời điểm; người dùng xem được câu SQL"
+)
+
+
+def _catalog(role: str) -> str:
+    from assistant import datacatalog
+
+    return datacatalog.catalog(role)
+
+
+CATALOGUE: Dict[str, Tool] = {
+    "truy_van": Tool(
+        "truy_van",
+        DESCRIPTION,
+        ROLES,
+        truy_van,
+        params={"sql": Param(str, "một câu SELECT (SQLite) trên các bảng dưới đây; đếm bằng count(*)")},
+        reference=_catalog,
+    )
+}
