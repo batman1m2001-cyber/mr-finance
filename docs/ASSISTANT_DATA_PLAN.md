@@ -11,6 +11,29 @@ flexibly, dynamically answer user” → “go”).
   Found beyond §2: the held-news tool read `inbox()`'s first 200; Hệ thống counted open alerts among the last 30;
   the bell asked for 1,000 news to count them. `wealth_store.reviews` has no cap, so the queue tool's total is its
   length (now in its data); no separate count function was needed there.
+- **D2 done:** `src/assistant/dataroom.py` (`query`, `truy_van`, not yet in the registry: D4). Gate:
+  `tests/test_dataroom.py`, 54 tests. Every adversarial case of §4 is refused, and a refusal names nothing outside
+  the room: a real table reads like a missing one. Changed from §3.1–3.2, with evidence:
+  - **TEMP tables, not TEMP views.** SQLite tells the authorizer which view a read comes from by name, and a CTE
+    named like a view gets that name. A probe on a copy of the live data showed `with tin as (select email from
+    main.people) select * from tin` reaching the authorizer as a read of `people.email` from source `tin`, so a
+    rule based on the view would leak. Instead, each query copies the room tables its SQL names (and the role
+    holds) into TEMP before the authorizer is set. The authorizer then allows reads of those tables and of nothing
+    in `main`. Building `tin` (1,481 rows) took 30 ms; a family table about 2 ms plus the served read (about
+    50–250 ms for an RM's three households).
+  - **Family data comes from the served reads**, not `json_extract` on the real tables. Those columns can be sealed
+    (`control.crypto`), and the served reads already apply `people.auth` (`desk.reads.book_of`, `auth.client_for`,
+    `auth.visible`). `tac_dong_gia_dinh` carries a family's totals per run, never its holdings.
+  - **Functions:** §3.2's list plus `upper`, `length`, `substr`, `instr`, `trim`, `replace`, `ifnull`, `iif`,
+    `nullif`, `abs`, `total`, `group_concat`, `datetime`, `julianday`, `json_array_length` and the window
+    functions. Also added is `khong_dau(text)`, which strips Vietnamese diacritics, because SQLite's `lower` only
+    folds ASCII. Excluded: `printf`/`format`, `randomblob`, `zeroblob`, `load_extension`, `sqlite_*` and
+    `json_each` (it reads as a table).
+  - **Two SQLite facts handled:**
+    - A read of no column, such as `count(*)` over a join, reaches the authorizer without a database name. It is
+      allowed for a room table's name only. That is safe because TEMP shadows unqualified names and no real table
+      shares a room name (tested).
+    - A recursive CTE is denied whether or not the query says `recursive`.
 
 ## 1. Why: the CIO chat of 2026-10-24
 
