@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-24 — The data catalog (D3): what the assistant reads before it writes SQL, per role: every table and column
+  of the room with its meaning, unit and allowed values, shared rules, the pages' definitions and 12–18 examples
+  each; a test fails on an undocumented column and runs every example in its room. — OWN-DA-04,
+  requirements_traceability §5
 - 2026-10-24 — The data room (D2): `truy_van`'s SQL runs on TEMP tables built for the role and person (copies, not
   views: a CTE named like a view passed the authorizer as that view), read-only under the authorizer, 2 s, 200 rows
   with the total; 54 adversarial and positive tests. — OWN-DA-02, OWN-DA-03, requirements_traceability §5
