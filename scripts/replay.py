@@ -24,7 +24,7 @@ trial's own steps, every draft's shadow forecasts scored against what the market
   live one's market data, configuration and families, without its news or its trial); the report is
   out/trial/replays/<name>.json (``/api/trial/replay/<name>``), each move's drill-down beside it.
 
-Resumable: a morning already played is skipped.
+Resumable: a morning already played is skipped; its events stopped by the day's token budget run again.
 """
 
 from __future__ import annotations
@@ -58,12 +58,16 @@ MORNING = (8, 30)
 GOOGLE = "https://news.google.com/rss/search?"
 
 
-def env(state: Path, last: date) -> None:
+def env(state: Path, first: date, last: date) -> None:
     """The deployment's .env (the agents' endpoint and models), the replay's own state file, its last morning."""
     for line in (ROOT / ".env").read_text().splitlines():
         if "=" in line and not line.startswith("#"):
             k, v = line.split("=", 1)
             os.environ.setdefault(k, v)
+    # the day's token budget counts from today's midnight, and the replay plays many mornings today: each morning
+    # played gets the live day's budget (the 2026-09 run stopped on 04/10 at 3,000,000)
+    daily = int(os.environ.get("AGENT_DAILY_TOKENS") or 300_000)
+    os.environ["AGENT_DAILY_TOKENS"] = str(daily * ((last - first).days + 1))
     os.environ["MF_STATE"] = str(state)
     os.environ["MF_TRIAL_UNTIL"] = last.isoformat()  # the mornings scored end with the last one played
     sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
@@ -213,8 +217,42 @@ async def play(day: date, per_day: int) -> list:
     return made
 
 
+BUDGET = "Vượt ngân sách token trong ngày"
+
+
+async def retry_budget() -> list:
+    """The events of mornings already played whose agent stopped on the day's token budget, run again: the budget
+    is the live day's, and a replay plays many mornings in one (an agent's own error stays as it is)."""
+    from trial import daily, shadow
+    from views import store as vstore
+
+    made = []
+    for day, rows in sorted(daily.days().items()):
+        for t in rows:
+            v = vstore.get(t["view_id"]) if t.get("view_id") else None
+            if not v or v["status"] != "AGENT_ERROR" or BUDGET not in str(v.get("error")):
+                continue
+            t1 = time.time()
+            got = await daily.run_agent(t["event_id"])
+            v = vstore.get(got["view_id"]) if got["view_id"] else None
+            t.update(view_id=got["view_id"], agent_s=round(time.time() - t1, 1), status=(v or {}).get("status"))
+            t["error"] = got["error"] or (v or {}).get("challenge_error")
+            if v and v["status"] in shadow.RECORDED:
+                t["forecasts"] = shadow.record(v, t)
+            data = {k: x for k, x in t.items() if k not in ("event_id", "day")}
+            daily._keep(t["event_id"], day, data)
+            made.append(f"{day} {t['event_id']} again {t['status']} {t['agent_s']} s · {t['title'][:70]}")
+        drafts = sum(1 for t in daily.days().get(day, []) if t.get("view_id"))
+        if made and made[-1].startswith(day):
+            daily.note_day(day, status="ran" if drafts else "no_drafts", drafts=drafts)
+    return made
+
+
 async def play_all(first: date, last: date, per_day: int, done: set, weekdays: bool) -> None:
-    """Every morning not played yet, in one event loop (the model clients are kept for the loop)."""
+    """Every morning not played yet, in one event loop (the model clients are kept for the loop); first the events
+    stopped by the token budget."""
+    for line in await retry_budget():
+        print(line, flush=True)
     d = first
     while d <= last:
         if (d.weekday() < 5 or not weekdays) and d.isoformat() not in done:
@@ -278,7 +316,7 @@ def main() -> int:
             return 0
     prepare(state)
     meta_path.write_text(json.dumps(meta))
-    env(state, last)
+    env(state, first, last)
     from operonx.core.registry.resource_hub import ResourceHub
 
     ResourceHub.set_instance(ResourceHub.from_yaml(str(ROOT / "resources.yaml")))
