@@ -123,3 +123,24 @@ An outside review (ChatGPT) proposed a broad audit-and-benchmark programme. What
   - **Pick for the test, fixed before desk3's numbers**: the track with the highest 1w direction on calls over
     July + August together (the lab's dev table) among those with 1w recall ≥ 50%; a tie (within 1 point) goes to
     the one without a model call. odds_sel0.1 runs beside it as the selective line (high direction, low recall).
+- 2026-10-26, **desk3 on dev** (July + August): 56% 341/605 (3d) / 56% 419/744 (1w) at 58% / 59% recall; Opus
+  (desk3o) 56% / 56% at 58% / 60%. odds_all on the same moves: 55% / 56% at 57% / 59%. The desk reproduces the
+  market model; the model call adds nothing. By the pick rule (a tie goes to the track without a model call):
+  **odds_all frozen**, odds_sel0.1 beside it.
+- 2026-10-26, **the test, run once** (2026-09 replay, mornings 22/09 → 21/10, scored to 26/10; 403 moves still
+  pending, the rest come in after 28/10):
+
+  | Track | 3d direction · recall · big→big | 1w direction · recall · big→big |
+  |---|---|---|
+  | agents | 59% 92/157 · 37% · 0% (hindsight 62%) | 63% 78/123 · 38% · 0% (hindsight 72%) |
+  | odds_all (frozen) | 48% 148/308 · 60% · 14% (hindsight 58%) | 43% 132/310 · 54% · 10% (hindsight 60%) |
+  | odds_sel0.1 | 50% 26/52 · 14% | 38% 32/84 · 13% |
+
+  **The gate fails**: direction 43% against ≥ 65%, under the hindsight bar; only the recall reaches 50%, by calling
+  every move. The odds' August edge did not carry into September (the months flip, as on dev). Nothing ships;
+  the desk does not reach the live trial.
+- Conclusion: on the data held (closes only, the outlets' headlines, the agents' drafts), no source tried gives a
+  direction that holds from one month to the next at 3 days or a week: the agents, the odds (logistic and
+  LightGBM), the headline analogs, a learned fusion and three desk prompts on Sonnet and Opus. What does hold is
+  the size signal (P(big) AUC 0.73 at 1w: which factors are wild now). The next data worth trying is intraday
+  OHLCV and flows, not another prompt.
