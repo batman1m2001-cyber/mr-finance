@@ -50,6 +50,58 @@ direction>, "size": <expected absolute move in sigma>, "why": "<one short senten
 with one entry for every factor in "market" and both horizons."""
 
 
+# iteration 2 (desk2): desk1 set the analysts' sides aside and reasoned from the trend (July: 36% / 48% on its
+# calls, no big call); the analysts' sides are the one source with a record (67% at 3d), so the desk now starts
+# from their consensus and decides whether to follow it and how far, by the big-move odds
+SYSTEM2 = """You are the morning desk of a Vietnamese private bank's investment office. Every morning, before the
+market opens, you forecast how each market factor moves from yesterday's close over the next 3 days and the next
+week. You are scored on every factor and horizon:
+
+- A call is a direction (up or down) with a size of at least 0.25 sigma. Its direction is right when the market
+  moves that way. A move of at least 1 sigma is "big" (about a fifth of moves); a big move you did not call the
+  right way is missed, and a call you size at 1 sigma or more should be a big move the right way.
+- Sigma is the factor's typical move at that horizon.
+
+How to decide (follow it):
+1. Direction. "consensus" holds, per horizon and factor, the per-event analysts' drafts this morning: their mean
+   in sigma, how many events, and the share of drafts on the mean's side. Their direction is the only evidence
+   here with a record of beating chance (see "record": direction_right / calls, by factor too). Their sizes run
+   far too small: judge their side, not their size.
+   - Follow the consensus side when the drafts agree (share >= 0.7) and nothing in the news or the market
+     contradicts it; go against it only with a concrete reason from today's events.
+   - Where there is no consensus, call a direction only if the market model leans clearly (p_up >= 0.6 or
+     <= 0.4) or the news gives a concrete reason; otherwise "flat".
+2. Size. "p_big" is a fitted model's chance that the move is big; its 75th percentile is about 0.27 (1w) and 0.30
+   (3d). With a direction: size 1.2 when p_big is above that, or when today's news is a known large driver of the
+   factor; else 0.5. Never shrink a size because you are unsure of the direction: sureness goes in "p".
+
+What you read (DATA): "events" (the morning's news with the drafts), "consensus", "market" (per factor: recent
+moves in sigma m1d/m3d/m1w/m1m/m3m, vol against its year, place in its 1-year range, up60, the world's markets'
+moves, p_up and p_big per horizon), "record" (your past calls and the analysts', on moves already over).
+
+Answer with JSON only:
+{"calls": [{"factor": "<id>", "horizon": "3d"|"1w", "direction": "up"|"down"|"flat", "p": <0.5-1, how sure of the
+direction>, "size": <expected absolute move in sigma>, "why": "<one short sentence in Vietnamese>"}]}
+with one entry for every factor in "market" and both horizons."""
+SYSTEMS = {1: SYSTEM, 2: SYSTEM2}
+
+
+def consensus(events: List[Dict[str, Any]]) -> Dict[str, Dict[str, Dict[str, float]]]:
+    """Per horizon and factor, the morning's drafts: their mean in σ, how many events, the share on the mean's side."""
+    got: Dict[str, Dict[str, List[float]]] = {}
+    for e in events:
+        for h, by in (e.get("drafts") or {}).items():
+            for fid, z in by.items():
+                got.setdefault(h, {}).setdefault(fid, []).append(z)
+    out: Dict[str, Dict[str, Dict[str, float]]] = {}
+    for h, by in got.items():
+        for fid, zs in by.items():
+            mean = sum(zs) / len(zs)
+            side = sum((z > 0) == (mean > 0) for z in zs) / len(zs)
+            out.setdefault(h, {})[fid] = {"mean": round(mean, 2), "events": len(zs), "agree": round(side, 2)}
+    return out
+
+
 def sigma(fid: str, horizon: str, m: Any) -> float:
     return m.factor(fid).vol_month * math.sqrt(m.horizons[horizon])
 
@@ -96,6 +148,10 @@ def record(origin: str, past: List[Dict[str, Any]]) -> Dict[str, Any]:
             "big_missed": sum(r["verdict"] == "missed" for r in rows),
             "median_size_ratio": _median([abs(r["expected"]) / abs(r["realised"]) for r in rows
                                           if r.get("expected") and r.get("realised")]),
+            "by_factor": {f: {"calls": len(xs), "direction_right": sum((r["claim"] == "up") == (r["realised"] > 0)
+                                                                         for r in xs)}
+                          for f in sorted({r["factor"] for r in calls if r.get("factor")})
+                          for xs in [[r for r in calls if r.get("factor") == f]]},
         }
     return out
 
@@ -121,7 +177,8 @@ def packet(day: str, origin: str, events: List[Dict[str, Any]], series: Dict[str
                     row.setdefault("features", got["features"])
                     row[h] = {"p_up": got["p_up"], "p_big": got["p_big"]}
         market[fid] = row
-    out: Dict[str, Any] = {"day": day, "origin": origin, "events": events, "market": market}
+    out: Dict[str, Any] = {"day": day, "origin": origin, "events": events, "consensus": consensus(events),
+                           "market": market}
     if base is not None:
         texts = [f"{e['title']} {e.get('why') or ''}" for e in events]
         out["analogs"] = {h: kbase.analogs(base, texts, origin, h, series, m) for h in HORIZONS} if texts else {}
@@ -147,10 +204,10 @@ def parse(got: Dict[str, Any], origin: str, day: str, series: Dict[str, Any], m:
     return out
 
 
-async def call(p: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+async def call(p: Dict[str, Any], prompt: int = 1) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     from views import agents
 
-    text, meta = await agents.call_model("cio", SYSTEM, agents.wrap(p), MAX_TOKENS)
+    text, meta = await agents.call_model("cio", SYSTEMS[prompt], agents.wrap(p), MAX_TOKENS)
     return agents._json(text), meta
 
 

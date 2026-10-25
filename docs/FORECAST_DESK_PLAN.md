@@ -90,3 +90,11 @@ An outside review (ChatGPT) proposed a broad audit-and-benchmark programme. What
 | D: learned fusion (a meta-model over the agents' drafts, the odds and the desk) | after the August replay: fit on July, test on August (walk-forward), once; logistic, numpy |
 | Calibration (Brier, reliability) of P(up), P(big) and the desk's p | with the dev runs, in the lab's table |
 | Purging / embargo for overlapping windows | the week-block bootstrap already blocks by ISO week; the training rows stop at origins whose move is due by the last training day |
+- 2026-10-25, July (12 mornings with views; ~3 week blocks, CIs wide), the lab's table:
+  - **desk1** (odds + record): 36% (3d) / 48% (1w) on its calls, no big call. It set the analysts' sides aside
+    and reasoned from the trend.
+  - **desk2** (`--prompt 2`: start from the analysts' consensus, size by p_big): 55% / 56%, recall 50% / 28%,
+    said-big→big 11% / 12%. No better than the plain rule "the agents' side × the odds' size" over every move
+    (55% / 53%, recall 56% / 50%).
+  - The frontier in July: calling only the agents' claims holds 62–67% direction at 19–28% recall; calling every
+    move reaches ~50% recall at 53–55%. No source gives the direction of the big moves the agents do not claim.
