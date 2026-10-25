@@ -16,7 +16,7 @@ struct OneWealthApp: App {
 final class Shell {
     enum Phase: Equatable { case loading, ready, offline(String) }
 
-    var phase: Phase = .loading
+    var phase: Phase = .loading { didSet { log.notice("phase \(String(describing: self.phase), privacy: .public)") } }
     /// the colours at the page's top (its header) and bottom, behind the status bar and the home indicator
     var top = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
     var bottom = UIColor(red: 0xf1 / 255, green: 0xf1 / 255, blue: 0xf1 / 255, alpha: 1)

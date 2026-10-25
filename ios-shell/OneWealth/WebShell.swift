@@ -1,5 +1,8 @@
+import os
 import SwiftUI
 import WebKit
+
+let log = Logger(subsystem: "app.onewealth.demo", category: "shell")
 
 /// The website in a WKWebView: its sign-in kept (the default data store), its links to other sites sent to Safari,
 /// its downloads handed to the share sheet, its alerts shown as iOS alerts, its colours behind the status bar.
@@ -51,12 +54,19 @@ struct WebShell: UIViewRepresentable {
     /// background, walking up to the page's own. Sent when they change: a theme switch, another page.
     static let colours = """
     (function () {
+      // any CSS colour (color-mix, color(srgb …), oklch) as rgb(r, g, b), through a 1×1 canvas; null when see-through
+      const cx = document.createElement("canvas").getContext("2d", {willReadFrequently: true});
+      function rgb(c) {
+        cx.clearRect(0, 0, 1, 1); cx.fillStyle = "#000"; cx.fillStyle = c; cx.fillRect(0, 0, 1, 1);
+        const [r, g, b, a] = cx.getImageData(0, 0, 1, 1).data;
+        return a < 26 ? null : `rgb(${r}, ${g}, ${b})`;
+      }
       function at(x, y) {
         for (let e = document.elementFromPoint(x, y); e; e = e.parentElement) {
-          const c = getComputedStyle(e).backgroundColor;
-          if (c && c !== "transparent" && !/,\\s*0\\)$/.test(c)) return c;
+          const c = rgb(getComputedStyle(e).backgroundColor);
+          if (c) return c;
         }
-        return getComputedStyle(document.body || document.documentElement).backgroundColor;
+        return null;
       }
       let last = "";
       function post() {
@@ -96,6 +106,7 @@ struct WebShell: UIViewRepresentable {
                         await store.httpCookieStore.setCookie(cookie)
                     }
                 }
+                log.notice("open \(Server.start.absoluteString, privacy: .public)")
                 web.load(URLRequest(url: Server.start))
             }
         }
@@ -109,6 +120,7 @@ struct WebShell: UIViewRepresentable {
 
         func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
             guard let m = message.body as? [String: Any] else { return }
+            log.notice("page colours \(String(describing: m), privacy: .public)")
             if let css = m["top"] as? String, let c = Links.color(css) { shell.top = c }
             if let css = m["bottom"] as? String, let c = Links.color(css) { shell.bottom = c }
         }
@@ -163,6 +175,7 @@ struct WebShell: UIViewRepresentable {
             let e = error as NSError
             if e.domain == NSURLErrorDomain && e.code == NSURLErrorCancelled { return }
             if e.domain == "WebKitErrorDomain" && e.code == 102 { return }  // interrupted: a download, a link sent outside
+            log.notice("load failed \(e.domain, privacy: .public) \(e.code): \(e.localizedDescription, privacy: .public)")
             shell.phase = .offline(e.localizedDescription)
         }
 

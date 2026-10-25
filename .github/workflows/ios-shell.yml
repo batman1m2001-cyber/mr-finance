@@ -63,7 +63,7 @@ jobs:
             xcrun simctl io "$UDID" screenshot "shots/$name.png"
           }
           C=SIMCTL_CHILD_
-          shot "00-splash" 1 ${C}MF_SIGNOUT=1
+          shot "00-splash" 0.3 ${C}MF_SIGNOUT=1
           for mode in light dark; do
             xcrun simctl ui "$UDID" appearance "$mode"
             shot "01-signin-$mode" 12 ${C}MF_THEME=$mode ${C}MF_SIGNOUT=1
@@ -74,7 +74,11 @@ jobs:
           done
           # the server down: the app's retry screen, not the tunnel's error page
           xcrun simctl ui "$UDID" appearance light
-          shot "06-offline" 10 ${C}MF_URL=https://127.0.0.1:9/
+          shot "06-offline-3s" 3 ${C}MF_URL=https://127.0.0.1:9/
+          sleep 7; xcrun simctl io "$UDID" screenshot shots/06-offline-10s.png
+          # what the app saw: its phases, the page colours, failed loads; and a crash report if one was written
+          xcrun simctl spawn "$UDID" log show --last 20m --style compact --predicate 'subsystem == "app.onewealth.demo"' > shots/app-log.txt || true
+          cp ~/Library/Logs/DiagnosticReports/OneWealth* shots/ 2>/dev/null || true
           ls -la shots
           (cd build/Build/Products/Debug-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/ios-shell/OneWealth-simulator.zip" OneWealth.app)
 
