@@ -9,6 +9,8 @@ time is kept apart and only used for the lag.
 A day's collection time (NEWS_OPS_PLAN N2) is the sum of its runs' own durations, over the runs that kept one, with
 their count beside it. A news item reached a portfolio (N3) when its event has an application run the RMs see with at
 least one family whose expected 3-month change is not zero; the count grows after the day, as views are approved.
+Nobody approves a trial draft, so beside it each day counts the news a trial morning's draft would have taken to a
+portfolio, by the same rule on that morning's frozen book (``drafted``).
 """
 
 from __future__ import annotations
@@ -97,6 +99,29 @@ def reached() -> Dict[str, set]:
     return dict(out)
 
 
+def drafted() -> Dict[str, set]:
+    """Each news item a trial morning's draft would have taken to a portfolio, and the families: those whose frozen
+    3-month exposure (``eval_snapshots``) times the draft's expected factor moves is not zero. A morning without a
+    snapshot counts nothing."""
+    from control import db
+    from trial import daily, finance
+
+    snaps = finance.snapshots()
+    moves: Dict[str, Dict[str, float]] = defaultdict(dict)
+    with db.tx() as con:
+        for r in con.execute("select view_id, factor, data from shadow_forecasts where horizon = '3m'"):
+            moves[r["view_id"]][r["factor"]] = json.loads(r["data"])["expected"]
+    out: Dict[str, set] = defaultdict(set)
+    for day, evs in daily.days().items():
+        book = ((snaps.get(day) or {}).get("exposure") or {}).get("3m") or {}
+        for ev in evs:
+            mv = moves.get(ev.get("view_id")) or {}
+            hit = {fam for fam, e in book.items() if round(sum(e.get(f, 0.0) * x for f, x in mv.items()))}
+            for nid in ev.get("news_ids") or []:
+                out[nid] |= hit
+    return {k: v for k, v in out.items() if v}
+
+
 def _relevant(item: Dict[str, Any]) -> bool:
     return item.get("relevance") in ("high", "medium") and not item.get("restricted")
 
@@ -116,7 +141,7 @@ def days(n: int = 14, now: Optional[float] = None) -> List[Dict[str, Any]]:
     for r in runs(first, now + 1):
         by_run[day_of(r["at"])].append(r)
     by_item: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
-    reach = reached()
+    reach, draft = reached(), drafted()
     for it in _items(first, now + 1):
         by_item[day_of(it["ingested"])].append(it)
     out = []
@@ -129,6 +154,7 @@ def days(n: int = 14, now: Optional[float] = None) -> List[Dict[str, Any]]:
         status = Counter(r["status"] for r in rs)
         timed = [r["duration_s"] for r in rs if r.get("duration_s") is not None]
         hit = [reach[i["id"]] for i in kept if i["id"] in reach]
+        hit_draft = [draft[i["id"]] for i in kept if i["id"] in draft]
         out.append(
             {
                 "day": day,
@@ -159,6 +185,8 @@ def days(n: int = 14, now: Optional[float] = None) -> List[Dict[str, Any]]:
                 "last_run": max((r.get("finished") or r["at"] for r in rs), default=None),
                 "portfolio": len(hit),
                 "portfolio_families": len(set().union(*hit)) if hit else 0,
+                "portfolio_draft": len(hit_draft),
+                "portfolio_draft_families": len(set().union(*hit_draft)) if hit_draft else 0,
             }
         )
     return out[::-1]

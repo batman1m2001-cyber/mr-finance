@@ -12,6 +12,10 @@ DAY = "2026-10-20"
 
 
 def _seed():
+    from news import store
+
+    # one ingest run today: view A draws from the first day that collected (none before it, never empty days)
+    store.record_run({"at": time.time(), "added": 0, "refused": 0, "duplicates": 0, "held": 0, "sources": {}})
     rows = [
         (
             f"{DAY}:1w:VNINDEX",

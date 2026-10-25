@@ -959,6 +959,22 @@ metric(
     families="Gia đình chạm tới",
 )
 metric(
+    "collect.portfolio_draft",
+    "Tin tác động danh mục (nháp thử nghiệm)",
+    "Số tin thu trong ngày (theo giờ thu thập) thuộc một sự kiện thử nghiệm mà bản nháp của agent, nếu được duyệt, "
+    "chạm tới ít nhất một gia đình: phơi nhiễm 3 tháng của gia đình chốt sáng hôm đó × biến động kỳ vọng của bản nháp "
+    "khác 0. Không ai duyệt bản nháp thử nghiệm; số này tăng sau ngày thu, khi buổi sáng kế tiếp dùng tin.",
+    "src/news/monitor.py::drafted",
+    families="Gia đình chạm tới",
+)
+metric(
+    "collect.skipped",
+    "Tin quá cũ",
+    "Tin đọc được nhưng đăng trước lúc thu quá max_age_days ngày (data/news_config.json, hiện 7), bỏ qua: tin cũ "
+    "không phải sự kiện mới. Đọc = quá cũ + trùng + mới.",
+    "src/news/rules.py::gate",
+)
+metric(
     "collect.duration",
     "Thời gian lấy tin trong ngày",
     "Tổng thời gian chạy của các lần lấy tin trong ngày, chỉ các lần có ghi thời gian (từ 24/10/2026); số lần có ghi "

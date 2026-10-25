@@ -192,6 +192,32 @@ def test_a_news_item_reached_a_portfolio_through_an_approved_view_and_never_thro
     assert monitor.reached() == {} and monitor.days(1, NOW + 60)[0]["portfolio"] == 0
 
 
+
+def test_a_trial_draft_reaches_a_portfolio_on_its_morning_s_frozen_book_and_never_through_a_zero_move():
+    """Nobody approves a trial draft: beside the approved count, the news a draft would have taken to a family."""
+    from control import db
+    from news import monitor, store
+
+    kd = _feed(
+        ("Ngân hàng Nhà nước tăng lãi suất điều hành", "https://vnexpress.net/a.html", "x", NOW - 600),
+        ("Giá vàng SJC lập đỉnh", "https://vnexpress.net/b.html", "x", NOW - 600),
+    )
+    _ingest({"vnexpress_kd": kd})
+    a, b = sorted(i["id"] for i in store.inbox(status="all", since=0, limit=None))
+    today = monitor.day_of(NOW)
+    book = {"exposure": {"3m": {"F1": {"vnindex": 1000.0}, "F2": {"gold": 5.0}}}, "late": False}
+    with db.tx() as con:
+        con.execute("insert into eval_snapshots values (?, ?, ?)", (today, NOW, db.dumps(book)))
+        for ev, view, nid, expected in (("EV-1", "VW-1", a, 2.0), ("EV-2", "VW-2", b, 0.0)):
+            con.execute("insert into trial_events values (?, ?, ?, ?)",
+                        (ev, today, NOW, db.dumps({"view_id": view, "news_ids": [nid]})))  # fmt: skip
+            con.execute("insert into shadow_forecasts values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (f"{view}:3m:vnindex", view, "vnindex", "3m", today, today, NOW, None,
+                         db.dumps({"expected": expected})))  # fmt: skip
+    assert monitor.drafted() == {a: {"F1"}}  # F2 holds no vnindex; a zero move reaches nobody
+    [day] = monitor.days(1, NOW + 60)
+    assert (day["portfolio"], day["portfolio_draft"], day["portfolio_draft_families"]) == (0, 1, 1)
+
 # -- accuracy (§2.2–2.5) ----------------------------------------------------------------------------------------
 
 CFG = {"material_sigma": 1.0, "claim_share": 0.25}
