@@ -13,11 +13,11 @@
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261025t1";
+import {mount as mountCopilot} from "./copilot.js?v=20261025t2";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261025t1";
-import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261025t1";
-import {DESKS} from "./desk/roles.js?v=20261025t1";
+import {mount as mountHeader} from "./header.js?v=20261025t2";
+import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261025t2";
+import {DESKS} from "./desk/roles.js?v=20261025t2";
 
 const ROLES = {
   client: {
@@ -175,7 +175,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261025t1");
+  wsLoad ||= import("./workspace/workspace.js?v=20261025t2");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -196,7 +196,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261025t1");
+  dkLoad ||= import("./desk/desk.js?v=20261025t2");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});
@@ -310,7 +310,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261025t1`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261025t2`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
@@ -458,7 +458,7 @@ function signInPage() {
   $("#whoami").innerHTML = "";
   const box = document.createElement("div");
   $("#page").replaceChildren(box);
-  import("./pages/signin.js?v=20261025t1").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
+  import("./pages/signin.js?v=20261025t2").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
     .catch(e => { box.innerHTML = failed(e); });
 }
 

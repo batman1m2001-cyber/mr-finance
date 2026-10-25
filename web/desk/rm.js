@@ -9,7 +9,7 @@
    families only, BRD-RULE-ROLE-02). data-node marks what the RM's assistant reads (its step lights it). */
 import {ago, esc, pct, signClass, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
-import {contact} from "./contact.js?v=20261025t1";
+import {contact} from "./contact.js?v=20261025t2";
 
 const TONE = {3: "bad", 2: "warn", 1: "human", 0: ""};
 const PAGES = [["khach-hang/tong-quan", "Wealth view"], ["khach-hang/ke-hoach", "Wealth planning advisor"],

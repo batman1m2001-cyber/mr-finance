@@ -60,9 +60,9 @@ export async function render(box, ctx) {
         <div class="kv"><span>Chưa chốt</span><b>${n(vnd(pf.unrealized, true), "perf.unrealized", {cost: vnd(pf.invested_cost)})} <span class="muted">(${n(pct(pf.unrealized_pct, true), "perf.unrealized", {cost: vnd(pf.invested_cost)})})</span></b></div>
         <div class="kv"><span>Lợi nhuận từ đầu năm</span><b>${n(pct(pf.ytd_return, true), "perf.ytd_return")}</b></div>
         <div class="kv"><span>So với ${esc(pf.benchmark_name)} (${n(pct(pf.benchmark_ytd, true), "perf.benchmark_ytd", {benchmark: pf.benchmark_name})})</span><b class="${pf.vs_benchmark >= 0 ? "up" : "down"}">${n(pct(pf.vs_benchmark, true), "perf.vs_benchmark", {mine: pct(pf.ytd_return, true), bench: pct(pf.benchmark_ytd, true)})}</b></div>
-        ${pf.by_class.length ? `<table class="table mt"><thead><tr><th>Loại</th><th class="r">Giá trị</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
+        ${pf.by_class.length ? `<div class="scrollx mt"><table class="table"><thead><tr><th>Loại</th><th class="r">Giá trị</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
           ${pf.by_class.map(c => `<tr><td>${esc(c.label)}</td><td class="r">${n(vnd(c.value), "class.value")}</td><td class="r"><span class="${c.pnl >= 0 ? "up" : "down"}">${n(vnd(c.pnl, true), "perf.class", {value: vnd(c.value), cost: vnd(c.cost)})}</span> <span class="muted small">${n(pct(c.return, true), "perf.class", {value: vnd(c.value), cost: vnd(c.cost)})}</span></td></tr>`).join("")}
-        </tbody></table>` : ""}
+        </tbody></table></div>` : ""}
       </div>
     `,
     risk: `      <div class="panel c6" id="d-risk" data-focus="kpi:risk"><h3>Rủi ro</h3>

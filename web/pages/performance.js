@@ -39,11 +39,11 @@ export function pipeline(agents, hint, sub) {
 }
 
 export function adviceTable(rows, who) {
-  return `<table class="table"><thead><tr><th>Ngày</th><th>Khuyến nghị</th><th>Kết quả</th><th class="r">Giá trị</th></tr></thead><tbody>
+  return `<div class="scrollx"><table class="table"><thead><tr><th>Ngày</th><th>Khuyến nghị</th><th>Kết quả</th><th class="r">Giá trị</th></tr></thead><tbody>
     ${rows.map(x => `<tr><td class="nowrap">${esc(x.date)}</td><td><span data-explains>${esc(x.text)}</span><div class="small muted">${who ? esc(x.client) + " · " : ""}${esc(AGENT_NAME[x.agent] || x.agent)}</div></td>
       <td><span class="pill ${OUTCOME[x.outcome][0]}">${OUTCOME[x.outcome][1]}</span></td>
       <td class="r ${x.value > 0 && x.outcome === "right" ? "up" : x.value < 0 ? "down" : ""}">${x.value ? how(vnd(x.value, x.outcome !== "missed"), "advisory.value") : "—"}</td></tr>`).join("")}
-  </tbody></table>`;
+  </tbody></table></div>`;
 }
 
 export function missedList(news) {

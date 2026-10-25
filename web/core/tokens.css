@@ -274,7 +274,7 @@ main#main { max-width: 1320px; padding: 20px 24px 40px; }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn.sm { padding: 5px 11px; font-size: 12.5px; }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn[disabled] { opacity: .5; cursor: not-allowed; }
 .linkbtn { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font: inherit; text-decoration: underline; }
-:is(#page, .ws-cashview, .drawer) .field { display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
+:is(#page, .ws-cashview, .drawer) .field { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
 :is(#page, .ws-cashview, .drawer) .field textarea { min-height: 70px; resize: vertical; }
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .table th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--hair); }
@@ -368,6 +368,12 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 /* fixes found on the screenshots */
 :is(#page, .ws-cashview, .drawer) .hero { white-space: nowrap; font-size: clamp(34px, 4.6vw, 56px); }
 :is(#page, .ws-cashview, .drawer) .hero.md { font-size: clamp(28px, 3.4vw, 40px); }
+/* a panel's width is not the viewport's (a column of a sheet beside the assistant): its hero number and its KPI tiles
+   size by the panel — “+945 nghìn” ran 85px out of a 294px panel at 1170, three goal tiles were 49px wide at 1024 */
+:is(#page, .ws-cashview, .drawer) .panel:has(.hero, .kpis) { container-type: inline-size; }
+:is(#page, .ws-cashview, .drawer) .panel .hero { font-size: clamp(28px, 14cqi, 56px); }
+:is(#page, .ws-cashview, .drawer) .panel .hero.md { font-size: clamp(22px, 13cqi, 40px); }
+:is(#page, .ws-cashview, .drawer) .panel .hero.sm { font-size: clamp(18px, 11cqi, 28px); }
 :is(#page, .ws-cashview, .drawer, .dk-center) .btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
 .tt { min-width: 0; overflow-wrap: anywhere; } /* a legacy source row ran 8px past a phone screen */
 .shell-bar [hidden], [hidden].seg, .pick[hidden], .scopewrap[hidden] { display: none !important; } /* legacy .seg set display */
@@ -383,7 +389,7 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .kpi { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius); padding: 16px 18px; min-width: 0;
   box-shadow: var(--shadow); }
 .kpi .k { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
-.kpi .v { font-size: 26px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 2px 0; white-space: nowrap; }
+.kpi .v { font-size: 26px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 2px 0; }  /* wraps: “7,56 tỷ” ran 20px out of a tile at 1170 */
 .kpi .s { font-size: 12.5px; color: var(--ink-2); }
 .kpi .s.up { color: var(--up); } .kpi .s.down { color: var(--down); }  /* a KPI's line that says ahead or behind (was grey: .kpi .s outranked .up) */
 .pcard { display: grid; gap: 10px; align-content: start; container-type: inline-size; }
@@ -592,7 +598,7 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 :is(#page, .ws-cashview, .dk-body) :is(select, input, textarea):focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--band); }
 :is(#page, .dk-body) input[type="checkbox"], :is(#page, .dk-body) input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; }
 /* ── R3: the rebuilt pages (Chi tiết, Tài sản, Kế hoạch, Khẩu vị rủi ro, Chi phí chính sách, Chuyên gia, Hiệu quả) ── */
-.seg { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface-2); }
+.seg { display: inline-flex; flex-wrap: wrap; max-width: 100%; gap: 2px; padding: 2px; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface-2); }
 .seg button { border: 0; background: transparent; padding: 5px 12px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 12.5px;
   font-weight: 600; color: var(--ink-2); white-space: nowrap; }
 .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(23, 18, 58, .12); }
@@ -634,7 +640,8 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .subhead { text-transform: none; letter-spacing: normal; color: var(--ink); }
 .allocgrid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
 .allocgrid .table td:first-child { white-space: nowrap; }
-@media (max-width: 1100px) { .allocgrid { grid-template-columns: minmax(0, 1fr); } }
+.allocbox { container-type: inline-size; }
+@container (max-width: 600px) { .allocgrid { grid-template-columns: minmax(0, 1fr); } }  /* by the panel's width: half a row at 1280 is too narrow */
 .table td.r, .table th.r { white-space: nowrap; }
 @media (max-width: 560px) { .table td, .table th { padding: 8px 6px; } }
 .chatlog { display: grid; gap: 8px; align-content: start; max-height: 260px; min-height: 120px; overflow-y: auto; padding: 10px;
@@ -681,6 +688,7 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .row.one { flex-wrap: nowrap; }
 .row.one > :not(.ic-chip, .pill, .score) { min-width: 0; }
 .sechead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.sechead > * { min-width: 0; max-width: 100%; }  /* a heading's control row shrinks to the line (cio/ban's scenario select ran 216px past a phone) */
 .sechead .h2 { display: flex; gap: 8px; align-items: center; margin: 0; }
 .cards2 { display: grid; gap: var(--s-4); grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 900px) { .cards2 { grid-template-columns: minmax(0, 1fr); } }
@@ -1633,3 +1641,17 @@ body[data-role="client"] .ws-page { min-height: 44px; font-size: 15px; }
   .ws:not(.desk) .ws-tool-l { position: static; width: auto; height: auto; clip: auto; white-space: normal; max-width: 100%;
     font-size: 10.5px; line-height: 1.1; }
 }
+
+/* a select is as wide as its longest option: a scenario title pushed cio/ban 216px past a phone, a field's option past
+   its panel (cio/ban-tin, cio/nghien-cuu) */
+:is(#page, .ws-cashview, .drawer, .dk-body, .ws-sheet-b) select { max-width: 100%; min-width: 0; text-overflow: ellipsis; }
+
+/* KPI tiles by the panel holding them (the panel is a container: see .panel:has(.hero, .kpis)); last, over .kpis.three/.six */
+:has(> .kpis) { container-type: inline-size; }
+@container (max-width: 860px) { .kpis.six { grid-template-columns: repeat(3, minmax(0, 1fr)); } }  /* six at 117 px broke "+1,12 tỷ" */
+@container (max-width: 520px) { .kpis, .kpis.six { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container (max-width: 360px) { .kpis, .kpis.three, .kpis.six { grid-template-columns: minmax(0, 1fr); } }
+/* a grid sits in its parent's width, not the viewport's (a sheet, a column of another grid): it stacks by that box
+   (two c6 option panels sat 105 px wide in a 226 px column of the plan at 1024) */
+:has(> .cols) { container-type: inline-size; }
+@container (max-width: 560px) { .cols > * { grid-column: span 12; } }
