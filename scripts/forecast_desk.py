@@ -109,7 +109,7 @@ async def run(a) -> int:
         p = desk.packet(day, origin, evs, series, m, o, base, history)
         t0 = time.time()
         try:
-            got, meta = await desk.call(p, a.prompt)
+            got, meta = await desk.call(p, a.prompt, a.model)
         except Exception as exc:  # noqa: BLE001 — a morning that fails is written down and skipped
             print(day, "error", repr(exc)[:200], flush=True)
             continue
@@ -131,6 +131,7 @@ def main() -> int:
     ap.add_argument("--after", nargs="*", default=[])
     ap.add_argument("--days", type=int)
     ap.add_argument("--prompt", type=int, default=1, help="the desk's prompt iteration (trial/desk.SYSTEMS)")
+    ap.add_argument("--model", default="cio", help="the model resource: cio (Sonnet) or challenger (Opus)")
     a = ap.parse_args()
     state = LAB / "desk" / a.tag / f"{a.replay}.db"  # the calls' tokens and costs go here, never in the replay's
     state.parent.mkdir(parents=True, exist_ok=True)
