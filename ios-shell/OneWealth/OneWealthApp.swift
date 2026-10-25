@@ -56,6 +56,8 @@ struct RootView: View {
 enum Mark {
     static let brown = Color(red: 0x59 / 255, green: 0x39 / 255, blue: 0x2c / 255)
     static let gold = Color(red: 0xc8 / 255, green: 0xa4 / 255, blue: 0x5d / 255)
+    /// the app icon's square, a step lighter than the splash behind it
+    static let tile = Color(red: 0x68 / 255, green: 0x45 / 255, blue: 0x36 / 255)
 }
 
 struct Splash<Below: View>: View {
@@ -68,7 +70,7 @@ struct Splash<Below: View>: View {
                 Circle().fill(.white).frame(width: 18, height: 18)
             }
             .frame(width: 104, height: 104)
-            .background(Mark.brown.brightness(0.06), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .background(Mark.tile, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
             Text("OneWealth").font(.title2.weight(.semibold)).foregroundStyle(.white)
             below
         }
