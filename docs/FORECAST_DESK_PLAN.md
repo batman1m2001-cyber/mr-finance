@@ -68,3 +68,25 @@ If the gate fails, the report says so with the numbers, and the desk does not re
 ## Status
 
 - 2026-10-25: plan written.
+- 2026-10-25, dev evidence on the calendar (every factor, every origin 01/07 → due by 21/09; overlapping
+  windows, so about 11 independent weeks):
+  - **Odds** (step 3): P(up) IC 0.06 (3d) / 0.04 (1w) against momentum 0.03 / −0.14: kept, weak; an edge only on
+    a few factors (USDVND 1w 72%, FOREIGN_FLOW 3d 71%). P(big) AUC 0.65 / 0.73 against |momentum| 0.52 / 0.66:
+    kept. Within one factor the AUC is mostly under 0.6: the size signal is which factors are wild now.
+  - **Knowledge base** (step 4): 41,963 headlines 2024-01 → 2026-09. Analogs' mean move IC −0.09 (3d) / −0.10
+    (1w), and −0.08 / −0.09 with the last 30 days left out: **dropped** (the rule: dev IC > 0).
+
+## Backlog (outside advice, 2026-10-25)
+
+An outside review (ChatGPT) proposed a broad audit-and-benchmark programme. What it adds, and where it stands:
+
+| Item | Status |
+|---|---|
+| Chronological split, origin-only features, test untouched, fair baselines, honest reporting | already the plan (Decisions, Gate) |
+| Configurations A existing / B quant-only / C news + quant | already the plan: agents track, odds and momentum tracks, the desk |
+| Gradient boosting (LightGBM) against the logistic odds | **done**, dev calendar, settings fixed before looking: P(up) IC 0.07 vs 0.04 (1w), 0.07 vs 0.06 (3d); P(big) AUC 0.73 = 0.73 (1w), 0.67 vs 0.65 (3d). No gain worth a dependency: not kept |
+| Candlesticks, ATR, OHLCV indicators | **not possible on stored data**: `market_series` holds one close per day. Needs new provider fields (open/high/low/volume) for VNINDEX and the world markets; deferred |
+| Deep learning (N-BEATS, N-HiTS, TFT) | deferred: 12 series of about 1,600 trading days, and a GBM on the same inputs finds no nonlinear direction signal; no torch in the app's venv |
+| D: learned fusion (a meta-model over the agents' drafts, the odds and the desk) | after the August replay: fit on July, test on August (walk-forward), once; logistic, numpy |
+| Calibration (Brier, reliability) of P(up), P(big) and the desk's p | with the dev runs, in the lab's table |
+| Purging / embargo for overlapping windows | the week-block bootstrap already blocks by ISO week; the training rows stop at origins whose move is due by the last training day |
