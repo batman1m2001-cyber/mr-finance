@@ -98,3 +98,20 @@ An outside review (ChatGPT) proposed a broad audit-and-benchmark programme. What
     (55% / 53%, recall 56% / 50%).
   - The frontier in July: calling only the agents' claims holds 62–67% direction at 19–28% recall; calling every
     move reaches ~50% recall at 53–55%. No source gives the direction of the big moves the agents do not claim.
+- 2026-10-26, August (01/08 → 21/08 mornings, moves due by 21/09; ~4 week blocks), each month on its own
+  (direction on calls · recall of big moves):
+
+  | Track | Jul 3d | Jul 1w | Aug 3d | Aug 1w |
+  |---|---|---|---|---|
+  | agents | 67% 32/48 · 19% | 62% 24/39 · 29% | 52% 130/250 · 33% | 53% 130/245 · 24% |
+  | odds_all (odds' side, odds' size) | 40% · 44% | 42% · 33% | 59% · 60% | 59% · 63% |
+  | odds_sel0.1 (only when \|P(up) − ½\| ≥ 0.1) | 47% 9/19 · 0% | 50% 14/28 · 0% | 66% 47/71 · 7% | 64% 67/104 · 12% |
+  | fuse_all (agents' side, odds' size) | 55% · 56% | 53% · 50% | 52% · 54% | 54% · 52% |
+
+  The months flip: the agents lead in July, the odds in August. With 3–4 week blocks a month, that is a regime
+  swing, not a skill; on the two months together nothing passes 56% direction at ≥ 50% recall (odds_all 55% / 56%
+  at 57% / 59%), and 65% is reached only by odds_sel0.1 on August alone, at 7–12% recall.
+  - **D, learned fusion** (ridge logistic over the agents' z, the claim × share, the drafts' count, the odds' P(up)
+    and P(big), the trailing move and the 60-day majority; fitted on July's 144 moves per horizon, rules fixed
+    before): August 43% (3d) / 48% (1w) when sure, 44% / 54% on every move: **dropped**. July is too few weeks to
+    learn weights from; the agents' weight changes sign between the horizons.
