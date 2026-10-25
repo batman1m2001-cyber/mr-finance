@@ -1,0 +1,52 @@
+# The OneWealth demo app (ios-shell/README.md): the website, every role and page, in an iPhone app of its own.
+# XcodeGen makes OneWealth.xcodeproj from this file: `xcodegen` in ios-shell/.
+name: OneWealth
+options:
+  bundleIdPrefix: app.onewealth
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # signing: CI builds pass CODE_SIGNING_ALLOWED=NO; Sideloadly signs the .ipa with a free Apple ID
+    CODE_SIGN_STYLE: Automatic
+targets:
+  OneWealth:
+    type: application
+    platform: iOS
+    sources: [OneWealth]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.onewealth.demo
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_KEY_CFBundleDisplayName: OneWealth
+        INFOPLIST_KEY_UILaunchScreen_Generation: "YES"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: "YES"
+        # a statement photo for the upload field: the page's file picker offers the camera and the library
+        INFOPLIST_KEY_NSCameraUsageDescription: "Chụp ảnh sao kê để tải lên OneWealth."
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Chọn ảnh sao kê để tải lên OneWealth."
+        TARGETED_DEVICE_FAMILY: "1"
+  OneWealthTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [OneWealthTests]
+    dependencies:
+      - target: OneWealth
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/OneWealth.app/OneWealth"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+schemes:
+  OneWealth:
+    build:
+      targets:
+        OneWealth: all
+        OneWealthTests: [test]
+    test:
+      targets: [OneWealthTests]
