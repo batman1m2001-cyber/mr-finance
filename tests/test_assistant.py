@@ -106,7 +106,7 @@ def test_a_write_waits_for_the_person_who_asked_then_runs_once_and_is_checked():
 def test_a_declined_write_runs_nothing():
     llm = ScriptedLLM(asks(("ghi_lien_he", {"channel": "call"})), says("Không ghi."))
     with scripted(copilot=llm):
-        a = ask("Ghi lại cuộc gọi với khách này", role="rm", route="#/rm/hom-nay")
+        a = ask("Ghi lại cuộc gọi với khách này", role="rm", route="#/rm")
         done = ask(role="rm", turn_id=a["turn_id"], approvals={a["waits"][0]["id"]: "deny"})
     from contacts import store as contacts
 

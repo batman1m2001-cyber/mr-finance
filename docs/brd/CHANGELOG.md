@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-25 — Business feedback 7 (owner): the RM's desk is Tổng quan (“Khách hàng đang quản lý”, the net worth
+  coloured), no Hôm nay (contact log in Thông tin), the client picker inside the Khách hàng and Advisory performance
+  sheets, no “Nội bộ” on the RM's sheets (BRD-RULE-SEC-03 narrowed). — OWN-FB-19…25, business_rules, FEAT-13,
+  requirements_traceability, docs/BUSINESS_FEEDBACK_7_PLAN.md
 - 2026-10-24 — Business feedback 6 (owner): the RM's and the CIO's desks reorganised (nested tabs, Decision board
   with the inbox in it, plain words on impact, Mô hình and AI to Admin), the client's impact bars by asset class, and
   no Compliance or Expert account (their duties the CIO's, four eyes kept). Planned. — owner_requirements FB,

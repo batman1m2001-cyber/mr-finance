@@ -3,7 +3,7 @@
    by POST /api/declare (FEAT-23), and the book: every holding grouped by asset class, with source and trust, when
    and at what it was bought, cost, value, and profit against cost (deposits: interest accrued to the price date).
    The last read and the chat are kept for this browser tab, per client. */
-import {internal, $, esc, get, n as how, pct, post, vnd} from "../core/core.js";
+import {$, esc, get, n as how, pct, post, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 
 const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
@@ -97,7 +97,7 @@ export async function render(box, ctx) {
   const closed = keep("mf.book.closed") || {};
   let chat = keep(`mf.chat.${client}`) || [], busy = false;
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">${staff ? "Tài sản" : "Wealth View"}</div><h1 class="h1">Dữ liệu chi tiết tài sản</h1>
       <p class="lede">Từng khoản tài sản và khoản nợ · thêm dữ liệu bằng sao kê hoặc chat</p></div></div>
     <div class="cols">

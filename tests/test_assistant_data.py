@@ -199,4 +199,4 @@ def test_the_panel_shows_how_it_counted_collapsed():
     assert '<details class="cp-how small muted mt"><summary>Cách tính</summary>' in js  # collapsed: no `open`
     assert "s.query && s.query.sql" in js and "meta(m) + how(m)" in js and "số liệu lúc" in js
     shell = open("web/shell.js", encoding="utf-8").read()
-    assert "./copilot.js?v=20261024f6" in shell  # the browser fetches the new panel
+    assert "./copilot.js?v=20261025f7" in shell  # the browser fetches the new panel

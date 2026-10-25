@@ -71,7 +71,7 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "phoi_nhiem": "Phơi nhiễm",
     "lan_ap_dung": "Lần áp dụng",
     "do_chinh_xac": "Độ chính xác",
-    "so_khach_hang": "Sổ khách hàng",
+    "so_khach_hang": "Tổng quan",
     "van_hanh": "Vận hành",
     "agent_nen": "Agent và việc nền",
     "chuoi_nhat_ky": "Chuỗi nhật ký",

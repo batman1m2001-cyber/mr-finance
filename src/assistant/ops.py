@@ -28,7 +28,7 @@ START = {
         "Độ chính xác của mô hình?",
         "Hộp tin có bao nhiêu tin?",
     ],
-    "rm": ["Sổ khách hàng có gì cần làm?", *HELP["rm"][:3]],
+    "rm": ["Tổng quan có gì cần làm?", *HELP["rm"][:3]],
     "admin": [
         "Hệ thống có gì bất thường?",
         "Chuỗi nhật ký còn nguyên không?",

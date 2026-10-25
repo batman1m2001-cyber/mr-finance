@@ -13,11 +13,11 @@
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261024f6";
+import {mount as mountCopilot} from "./copilot.js?v=20261025f7";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261024f6";
-import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261024f6";
-import {DESKS} from "./desk/roles.js?v=20261024f6";
+import {mount as mountHeader} from "./header.js?v=20261025f7";
+import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261025f7";
+import {DESKS} from "./desk/roles.js?v=20261025f7";
 
 const ROLES = {
   client: {
@@ -40,8 +40,7 @@ const ROLES = {
   rm: {
     label: "RM", user: "rm01",
     nav: [
-      {id: "ban", label: "Sổ khách hàng", desk: true},  // FEAT-41: the RM's desk (SCR-RM-07)
-      {id: "hom-nay", label: "Hôm nay", page: "today"},
+      {id: "ban", label: "Tổng quan", desk: true},  // FEAT-41: the RM's desk (SCR-RM-07); OWN-FB-21: Hôm nay's contact log is on it
       // OWN-FB-02…06: four tabs, two of them with inner tabs (web/desk/desk.js); `hidden` pages open, with no tab
       {id: "khach-hang", label: "Khách hàng", clientPick: true,
         tabs: {wealth: "Wealth view", plan: "Wealth planning advisor", news: "Headline news", perf: "Advisory performance"}, sub: [
@@ -51,11 +50,11 @@ const ROLES = {
           {id: "chinh-sach", label: "News and prediction", page: "policy", tab: "news"},
           {id: "do-thi", label: "Đồ thị tác động", page: "graph", tab: "news"},
           {id: "hieu-qua", label: "Khách hàng này", page: "performance", tab: "perf"},
-          {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall", tab: "perf"},
+          {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall", tab: "perf", noPick: true},  // every client: no picker
           {id: "tac-dong", label: "Tác động tin", page: "impact", hidden: true},  // the desk's and the bell's evidence
           {id: "duyet", label: "Duyệt đề xuất", page: "advisor", hidden: true}]},  // the desk's "Đề xuất chờ duyệt"
       {id: "hieu-qua", label: "Advisory performance", clientPick: true, sub: [
-        {id: "khach-hang", label: "Khách hàng này", page: "performance"}, {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall"}]},
+        {id: "khach-hang", label: "Khách hàng này", page: "performance"}, {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall", noPick: true}]},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
@@ -111,9 +110,9 @@ window.addEventListener("pagehide", () => { leaving = true; });
 window.addEventListener("beforeunload", () => { leaving = true; });
 const pages = {};  // page name → its module (a promise)
 
-// addresses whose page moved (OWN-FB-02, -11): the address bar gets the page that took its place
+// addresses whose page moved (OWN-FB-02, -11, -21): the address bar gets the page that took its place
 const MOVED = {"rm/khach-hang/toan-canh": "rm/khach-hang/tong-quan", "rm/khach-hang/ban-do": "rm/khach-hang/tong-quan",
-  "cio/hop-tin": "cio"};
+  "cio/hop-tin": "cio", "rm/hom-nay": "rm"};
 function moved() {
   const path = location.hash.replace(/^#\/?/, "");
   const from = Object.keys(MOVED).find(k => path === k || path.startsWith(`${k}/`));
@@ -176,7 +175,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261024f6");
+  wsLoad ||= import("./workspace/workspace.js?v=20261025f7");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -197,7 +196,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261024f6");
+  dkLoad ||= import("./desk/desk.js?v=20261025f7");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});
@@ -230,7 +229,7 @@ function drawChrome(rt) {
     sub.hidden = true;
     sub.innerHTML = "";
   }
-  const pick = r.clientPick || rt.nav.clientPick;
+  const pick = (r.clientPick || rt.nav.clientPick) && !(rt.sub && rt.sub.noPick);
   $("#client-pick").hidden = !pick || (state.me && state.me.role === "client");
   scopeSwitch(pick);
   if (state.me) {
@@ -311,7 +310,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261024f6`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261025f7`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
@@ -459,7 +458,7 @@ function signInPage() {
   $("#whoami").innerHTML = "";
   const box = document.createElement("div");
   $("#page").replaceChildren(box);
-  import("./pages/signin.js?v=20261024f6").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
+  import("./pages/signin.js?v=20261025f7").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
     .catch(e => { box.innerHTML = failed(e); });
 }
 

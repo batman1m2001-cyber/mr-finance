@@ -43,7 +43,7 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "tac-dong": ("Tác động tin", {"client": "#/client/tin/thi-truong", "rm": "#/rm/khach-hang/tac-dong"}),
     "do-thi": ("Đồ thị tác động", {"client": "#/client/tin/do-thi", "rm": "#/rm/khach-hang/do-thi"}),
     "duyet": ("Duyệt đề xuất", {"rm": "#/rm/khach-hang/duyet"}),
-    "hom-nay": ("Hôm nay", {"rm": "#/rm/hom-nay"}),
+    "hom-nay": ("Tổng quan", {"rm": "#/rm"}),  # the page went, its contact log is on the desk (OWN-FB-21)
     "hop-tin": ("Decision board", {"cio": "#/cio"}),  # the inbox is on the board (OWN-FB-11)
     "tin-bi-giu": ("Tin bị giữ", {"cio": "#/cio/giu"}),  # Compliance's duty is the CIO's (OWN-FB-18)
     # since A1 (the registry's own tools)
@@ -70,6 +70,7 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "thu-nghiem": ("Thử nghiệm hằng ngày", {r: f"#/{r}/mo-hinh/thu-nghiem" for r in ("cio", "admin")}),  # B1
     "agent": ("Agent", {r: f"#/{r}/agent" for r in ("cio", "admin")}),
     "tai-khoan": ("Tài khoản và vai trò", {"admin": "#/admin/tai-khoan"}),
+    "nguon-tin": ("Nguồn tin", {"admin": "#/admin/nguon-tin"}),  # N1: the white list the news collection reads
     "viec-nen": ("Việc nền", {r: f"#/{r}/viec-nen" for r in ("cio", "admin")}),
     "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "admin")}),
     # every staff page of the menu (web/shell.js): Compliance asked to publish research and, with no research page

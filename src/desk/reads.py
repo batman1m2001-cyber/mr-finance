@@ -195,7 +195,7 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
               "#/cio/ap-dung"),
         stage("families", "Gia đình", len(families), "gia đình được tính", len(flagged),
               f"{len(flagged)} chạm ngưỡng RM xem trước", "#/cio/phoi-nhiem"),  # the frame "đến khách hàng"
-        stage("rm", "RM", len(rm_families), "gia đình RM cần xem trước", 0, "trên trang Hôm nay của RM",
+        stage("rm", "RM", len(rm_families), "gia đình RM cần xem trước", 0, "trên trang Tổng quan của RM",
               "#/cio/do-thi"),
     ]  # fmt: skip
     return {
@@ -218,7 +218,7 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
                       "sub": f"{r['families']} gia đình · {r['totals']['pre_review']} chạm ngưỡng",
                       "route": f"#/cio/ap-dung/{r['id']}"} for r in effective[:5]],
             "families": [{"id": f, "title": name_of.get(f, f), "sub": "chạm ngưỡng RM xem trước"} for f in flagged],
-            "rm": [{"id": f, "title": name_of.get(f, f), "sub": "trên trang Hôm nay của RM"} for f in rm_families],
+            "rm": [{"id": f, "title": name_of.get(f, f), "sub": "trên trang Tổng quan của RM"} for f in rm_families],
         },
     }  # fmt: skip
 

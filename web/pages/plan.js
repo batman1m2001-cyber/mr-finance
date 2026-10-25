@@ -5,7 +5,7 @@
    again), before/after, and two options that can be sent to the RM (POST /api/review/propose). A wealth view on
    top sums the followed goals and the cash flow; after a decision or stress test it shows the picture after it.
    Regulation notes on the goals (FR-603) as the viewer may read them. Followed goals are kept in this browser. */
-import {internal, $, esc, get, n as how, pct, post, vnd} from "../core/core.js";
+import {$, esc, get, n as how, pct, post, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {progress} from "../charts/mini.js?v=20261016r2";
 import {cashSeries, cashflow, monthsText} from "../charts/money.js?v=20261016r4";
@@ -59,7 +59,7 @@ export async function render(box, ctx) {
     st.result = null;
   }
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">${staff ? "Kế hoạch" : "Wealth Planning Advisor"}</div><h1 class="h1">Kế hoạch tài chính</h1>
       <p class="lede">Tư vấn kế hoạch tài chính theo mốc đời · mô phỏng trên chính tài sản của bạn</p></div></div>
     <div id="mini"></div><div id="reg"></div>

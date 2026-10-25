@@ -5,7 +5,7 @@
    (six months past, 12/24/36 ahead) with large payments and recurring items, and the top news by impact. The client's
    workspace draws it as its dashboard (ctx.board, UX_TOOLBAR_PLAN T3+T4): the overview first, then cash flow and the
    month's flows. */
-import {internal, n, nAttrs, $, esc, pct, post, vnd} from "../core/core.js";
+import {n, nAttrs, $, esc, pct, post, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {gauge} from "../charts/mini.js?v=20261016r2";
 import {monthsText} from "../charts/money.js?v=20261016r4";
@@ -90,7 +90,7 @@ export async function render(box, ctx) {
   // a part of it as its own page (ctx.board.only: the client's Dòng tiền, B3.1): the other blocks are drawn as always,
   // out of sight, so every step below finds its element
   const only = ctx.board && ctx.board.only, shown = (k) => !only || only.includes(k);
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="cols">
 ${(ctx.board ? ["hero", "alloc", "pnl", "cash", "month", "risk", "liq"] : ["hero", "alloc", "pnl", "risk", "liq", "cash"]).map(k => (shown(k) ? B[k] : `<div hidden>${B[k]}</div>`)).join("")}
       ${only ? `<div hidden><div class="panel c12" id="news"></div></div>` : `<div class="panel c12" id="news"></div>`}

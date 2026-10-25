@@ -42,8 +42,8 @@ and not a recommendation.
 ## Limitations
 - Nothing is sent to a client (BRD-RULE-SCOPE-05); the client view is an in-app page.
 - Client content names each event's outlets and their count, never a headline (BRD-RULE-CONTENT-02).
-- “Nội bộ” (BRD-RULE-SEC-03) stamps every staff explanation page (advisory, impact, trace, graph, Toàn cảnh,
-  Hôm nay) and none of the client's, checked in a browser.
+- “Nội bộ” (BRD-RULE-SEC-03) stamps the Cách tính (trace) drawer and the CIO's graph; since OWN-FB-23 (owner,
+  2026-10-25) the RM's sheets carry none, and the client's never did, checked in a browser.
 
 ## Conflict-of-interest disclosure (BRD completion F8)
 The client's labels carry `conflicts`: the disclosure of each related-party research item behind the events shown,

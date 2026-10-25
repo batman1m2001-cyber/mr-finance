@@ -223,7 +223,7 @@ async def accuracy(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def book(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Sổ khách hàng: the RM's families by how soon they need the RM, with why; proposals, goal tasks, contacts."""
+    """Tổng quan (was Sổ khách hàng): the RM's families by how soon they need the RM, with why; proposals, goal tasks, contacts."""
     d = _desk(ctx, "rm")
     fams = d["families"]
     if not fams:
@@ -252,7 +252,7 @@ async def book(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         "text": text,
         "data": {"families": len(fams), "soon": len(soon), "proposals": len(d["proposals"]), "tasks": len(d["tasks"])},
         "focus": ["book"] + [f"family:{f['id']}" for f in soon],
-        "sources": ["Sổ khách hàng", "Hôm nay", "Duyệt đề xuất"],
+        "sources": ["Tổng quan", "Duyệt đề xuất"],
     }
 
 

@@ -48,6 +48,13 @@ RM, and the roles of the BRD: Compliance's and the Expert's duties are the CIO's
 | OWN-FB-16 | CIO: Mô hình and AI & cấu hình move to Admin; the CIO has one plain Hiệu quả page (news collected, forecasts right and wrong, each with its count) | note 16, plan F4 | documented |
 | OWN-FB-17 | Customer · Headline News: each row of Tác động lên tài sản ròng is a bar stacked by asset class, each part named with its amount on hover, the parts adding to the row | note 17, plan F5 | documented |
 | OWN-FB-18 | No Compliance or Expert account: the roles leave the sign-in, menus and desks; their duties are the CIO's with the four-eyes rule kept (a second CIO approves); a recommendation is the RM's alone | note 18, plan F6 | documented |
+| OWN-FB-19 | RM · the desk's list is “Khách hàng đang quản lý” and the desk counts khách hàng, not gia đình | feedback 7 p.1, plan G1 | documented |
+| OWN-FB-20 | RM · the net worth on the desk's list is coloured, and shown as a net worth (no “+”) | feedback 7 p.1, plan G1 | documented |
+| OWN-FB-21 | RM · no Hôm nay page or rail item; its call list and goal tasks are on the desk, its contact log in the desk's Thông tin (Ghi liên hệ); the old address opens the desk | feedback 7 p.1, plan G2 | documented |
+| OWN-FB-22 | RM · the client picker sits in the Khách hàng sheet beside its tabs, not in the top bar; none on “Tất cả khách hàng” | feedback 7 p.2, plan G3 | documented |
+| OWN-FB-23 | RM · no “Nội bộ” line on the Khách hàng tabs (the CIO's graph and the Cách tính drawer keep it) | feedback 7 p.3, plan G4 | documented |
+| OWN-FB-24 | RM · the client picker in the Advisory performance sheet too, so “Khách hàng này” says which | feedback 7 p.4, plan G3 | documented |
+| OWN-FB-25 | RM · the rail's “Sổ khách” is “Tổng quan” | feedback 7 p.1, plan G1 | documented |
 
 ## EV — Measuring the news agents (2026-10-24)
 
