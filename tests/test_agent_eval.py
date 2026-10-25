@@ -336,6 +336,32 @@ def test_the_rates_carry_their_counts_and_leave_pending_out():
     assert empty["precision"] == {"value": None, "hits": 0, "n": 0}  # no denominator, no rate
 
 
+def test_the_call_direction_counts_calls_only_with_the_naive_call_beside_it():
+    from trial import evaluate
+
+    rows = [
+        {"verdict": "correct", "claim": "up", "realised": 2.0},
+        {"verdict": "incorrect", "reason": "not_material", "claim": "up", "realised": 0.1},  # right way, too small
+        {"verdict": "incorrect", "reason": "not_material", "claim": "down", "realised": 0.2},
+        {"verdict": "incorrect", "reason": "wrong_direction", "claim": "down", "realised": 1.5},
+        {"verdict": "incorrect", "reason": "not_material", "claim": "up", "realised": 0.0},  # flat: no direction
+        {"verdict": "missed", "reason": "not_predicted", "realised": -3.0},  # no call
+        {"verdict": "quiet", "realised": -0.1},
+        {"verdict": "excluded", "reason": "conflicting", "claim": "conflicting", "realised": 1.0},
+    ]
+    r = evaluate.rates(rows)["call_direction"]
+    assert (r["hits"], r["n"], r["value"]) == (2, 4, 0.5)
+    assert r["naive"] == {"value": 1.0, "hits": 4, "n": 4, "claim": "up"}  # the market rose on every call
+    assert r["p"] == 0.6875  # 2 or more of 4 by a coin toss
+    assert evaluate.rates([])["call_direction"] == {
+        "value": None,
+        "hits": 0,
+        "n": 0,
+        "naive": {"value": None, "hits": 0, "n": 0, "claim": "down"},
+        "p": None,
+    }
+
+
 def test_the_timeline_adds_up_by_due_day_and_leaves_pending_out():
     from trial import evaluate
 

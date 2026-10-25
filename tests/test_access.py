@@ -63,6 +63,7 @@ READS = {
     "/api/accuracy": DESK,
     "/api/trial": DESK,
     "/api/trial/move/ES-0000": DESK,
+    "/api/trial/replay/2026-07": DESK,
     "/api/measure": DESK,
     "/api/research": CIO,
     "/api/newsletters": CIO,

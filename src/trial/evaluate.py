@@ -211,8 +211,36 @@ def _mean(xs: List[float]) -> Optional[float]:
     return round(sum(xs) / len(xs), 4) if xs else None
 
 
+def _tail(k: int, n: int) -> Optional[float]:
+    """The chance of ``k`` or more right in ``n`` calls by a coin toss (one-sided binomial at ½)."""
+    return round(sum(math.comb(n, i) for i in range(k, n + 1)) / 2**n, 4) if n else None
+
+
+def call_direction(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """When the agent calls a move up or down (correct or incorrect, the market moved): how often the market went
+    its way, however far. Beside it the best naive call on the same moves (always up, or always down: the share the
+    market took the more common way, known only afterwards) and the chance a coin toss does as well."""
+    calls = [r for r in rows if r["verdict"] in ("correct", "incorrect") and r.get("realised")]
+    hits = sum(1 for r in calls if (r["claim"] == "up") == (r["realised"] > 0))
+    ups = sum(1 for r in calls if r["realised"] > 0)
+    naive = max(ups, len(calls) - ups)
+    return {
+        "value": _share(hits, len(calls)),
+        "hits": hits,
+        "n": len(calls),
+        "naive": {
+            "value": _share(naive, len(calls)),
+            "hits": naive,
+            "n": len(calls),
+            "claim": "up" if ups * 2 > len(calls) else "down",
+        },
+        "p": _tail(hits, len(calls)),
+    }
+
+
 def rates(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Precision, recall, direction and error over ``rows``, each with its count; coverage beside them."""
+    """Precision, recall, direction (over every move, and when the agent calls one) and error over ``rows``, each
+    with its count; coverage beside them."""
     v = {k: [r for r in rows if r["verdict"] == k] for k in VERDICTS}
     wrong_dir = [r for r in v["incorrect"] if r.get("reason") == "wrong_direction"]
     missed_agent = [r for r in v["missed"] if r.get("reason") == "not_predicted"]
@@ -238,6 +266,7 @@ def rates(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
             "hits": sum(r["direction_hit"] for r in dirs),
             "n": len(dirs),
         },
+        "call_direction": call_direction(rows),
         "error_sd": {"value": _mean(err), "n": len(err)},
         "counts": {k: len(x) for k, x in v.items()},
         "missed": {"not_predicted": len(missed_agent), "wrong_direction": len(wrong_dir), "no_run": len(missed_no_run)},
@@ -255,12 +284,21 @@ def rates(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def timeline(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Precision and recall as they stood after each due day, over the moves scored by then (View B's chart)."""
+    """Precision, recall and the call direction as they stood after each due day, over the moves scored by then
+    (View B's chart)."""
     done = [r for r in rows if r["verdict"] in FINAL[:4] and r.get("due")]
     out = []
     for d in sorted({r["due"] for r in done}):
         x = rates([r for r in done if r["due"] <= d])
-        out.append({"day": d, "precision": x["precision"], "recall": x["recall"], "scored": x["coverage"]["scored"]})
+        out.append(
+            {
+                "day": d,
+                "precision": x["precision"],
+                "recall": x["recall"],
+                "call_direction": {k: x["call_direction"][k] for k in ("value", "hits", "n")},
+                "scored": x["coverage"]["scored"],
+            }
+        )
     return out
 
 

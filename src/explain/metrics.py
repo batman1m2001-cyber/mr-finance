@@ -642,14 +642,6 @@ metric(
     A,
 )
 metric(
-    "threshold.pre_review",
-    "Ngưỡng RM xem trước",
-    "Một thiết lập (Cấu hình → ngưỡng, CIO sửa, có phê duyệt): gia "
-    "đình có kịch bản xấu 3 tháng (P10) bằng hoặc thấp hơn ngưỡng này, tính theo tài sản ròng, được đưa vào danh sách "
-    "RM xem trước.",
-    "src/apply/reads.py::rm_today",
-)
-metric(
     "impact.p10_3m",
     "Kịch bản xấu 3 tháng (P10)",
     "P10: 1 trong 10 khả năng kết quả 3 tháng xấu hơn mức này (mốc 10% "
@@ -1003,13 +995,14 @@ metric(
     n="Biến động lớn",
 )
 metric(
-    "eval.direction",
-    "Đúng hướng",
-    "Tỷ lệ = số biến động đã chấm có dấu kỳ vọng trùng dấu biến động thực tế ÷ số biến động đã chấm có kỳ vọng và "
-    "biến động khác 0.",
-    E + "rates",
-    hits="Đúng hướng",
-    n="Đã chấm",
+    "eval.call_direction",
+    "Đúng hướng khi agent ra tín hiệu",
+    "Chỉ các lần agent nói tăng hoặc giảm (đúng hoặc sai, thị trường có đi). Tỷ lệ = số lần thị trường đi đúng chiều agent "
+    "nói, mạnh hay yếu ÷ số lần nói. Bên cạnh: cách đoán ngây thơ tốt nhất trên cùng các lần đó (luôn nói tăng, hoặc "
+    "luôn nói giảm — chọn sau khi biết kết quả) và xác suất tung đồng xu đúng được bằng chừng ấy lần.",
+    E + "call_direction",
+    hits="Đúng chiều",
+    n="Số lần agent nói",
 )
 metric(
     "eval.event_recall",

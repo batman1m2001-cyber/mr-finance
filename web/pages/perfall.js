@@ -3,7 +3,7 @@
    per client, one row per client (a row opens that client's performance), the latest advice, the news missed
    grouped by item with the clients it touched, and the average reading. Data: GET /api/advisory/all. */
 import {esc, get, n as how, pct, vnd} from "../core/core.js";
-import {adviceTable, drawEngagement, drawSparks, engSeg, missedList, pipeline, tiles} from "./performance.js?v=20261025t2";
+import {adviceTable, drawEngagement, drawSparks, engSeg, missedList, pipeline, tiles} from "./performance.js?v=20261025t3";
 
 export async function render(box, ctx) {
   const a = await get("/api/advisory/all");

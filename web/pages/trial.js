@@ -12,7 +12,8 @@
 import {drawer, esc, get, n as how, pct, vnd, when} from "../core/core.js";
 import {legend, lines, stack} from "../charts/trend.js?v=20261025a";
 
-const H = [["3d", "3 ngày"], ["1w", "1 tuần"], ["3m", "3 tháng"]];
+// one week the headline, three days beside it (owner, 25/10); three months only from the July replay
+const H = [["1w", "1 tuần"], ["3d", "3 ngày"], ["3m", "3 tháng"]];
 const HL = Object.fromEntries(H);
 const STATUS = {PENDING_APPROVAL: "chờ CIO", AGENT_ERROR: "agent lỗi", APPROVED: "đã duyệt", REJECTED: "bị từ chối"};
 let horizon = "1w";
@@ -86,10 +87,10 @@ function charts(box, d) {
   const a = e.accuracy.horizons[horizon].timeline, f = e.finance.horizons[horizon].timeline;
   if (at("#tr-acc") && a.length) {
     at("#tr-acc").replaceChildren(lines(a.map(x => x.day), [
-      {label: "Độ chính xác", color: "var(--s7)", values: a.map(x => (x.precision.n ? x.precision.value : null))},
+      {label: "Đúng hướng khi ra tín hiệu", color: "var(--s7)", values: a.map(x => (x.call_direction && x.call_direction.n ? x.call_direction.value : null))},
       {label: "Độ phủ", color: "var(--s5)", values: a.map(x => (x.recall.n ? x.recall.value : null))},
     ], at("#tr-acc").clientWidth, {pct: true, fmt: (v) => pct(v, false, 0),
-      tip: (i) => `<div class="small muted">chính xác ${a[i].precision.hits}/${a[i].precision.n} · phủ ${a[i].recall.hits}/${a[i].recall.n} · ${a[i].scored} đã chấm</div>`}));
+      tip: (i) => `<div class="small muted">đúng hướng ${(a[i].call_direction || {}).hits ?? 0}/${(a[i].call_direction || {}).n ?? 0} · phủ ${a[i].recall.hits}/${a[i].recall.n} · ${a[i].scored} đã chấm</div>`}));
   }
   if (at("#tr-vnd") && f.length) {
     const gs = groups(e.accuracy.families);
@@ -115,6 +116,9 @@ const badge = (pair, fallback) => `<span class="badge ${pair ? pair[0] : ""}">${
 const rate = (r, metric) => (!r || !r.n ? `— <span class="muted small">(0)</span>`
   : `${how(pct(r.value, false, 0), metric, {hits: String(r.hits), n: String(r.n)})} <span class="muted small">(${r.hits}/${r.n})</span>`);
 const money = (x, metric, n) => `${how(vnd(x.vnd, true), metric, {n: String(x.n)})} <span class="muted small">(${x.n})</span>`;
+// the call direction's line: the best naive call on the same moves, and a coin toss's chance of doing as well
+const naive = (c) => (!c || !c.n ? "chưa có lần nói nào đến hạn"
+  : `luôn đoán ${c.naive.claim === "up" ? "tăng" : "giảm"} ${pct(c.naive.value, false, 0)} · đồng xu p = ${c.p < 0.001 ? "<0,001" : c.p.toFixed(c.p < 0.01 ? 3 : 2).replace(".", ",")}`);
 const usd = (x) => (x == null ? "chưa có" : `US$${x.toFixed(2)}`);
 
 function paint(box, d) {
@@ -182,6 +186,16 @@ function viewB(d, e) {
   const late = Object.values(e.finance.snapshots).filter(s => s.late).length;
   const r = source === "live" ? null : reps[source].replay;
   return `
+    <section class="panel mt"><h3>Kết quả chính <span class="hint">1 tuần · 3 ngày bổ trợ</span></h3>
+      <div class="kpis">${["1w", "3d"].map(h => { const x = e.accuracy.horizons[h];
+        return `${kpi(`${HL[h]} · Đúng hướng khi ra tín hiệu`, rate(x.call_direction, "eval.call_direction"), naive(x.call_direction))}
+          ${kpi(`${HL[h]} · Độ phủ biến động lớn`, rate(x.recall, "eval.recall"), `bỏ lỡ ${x.missed.not_predicted} · sai hướng ${x.missed.wrong_direction}`)}`; }).join("")}</div>
+      <details class="more"><summary>Cách đọc</summary><ul class="small">
+        <li>Đúng hướng: chỉ các lần agent nói tăng hoặc giảm; thị trường đi đúng chiều đó, mạnh hay yếu.</li>
+        <li>Độ phủ: trong các biến động lớn (từ một lần biến động thường trở lên), agent nói đúng bao nhiêu.</li>
+        <li>Luôn đoán tăng/giảm: cách đoán ngây thơ tốt nhất trên cùng các lần đó, chọn sau khi biết kết quả. p: xác suất tung đồng xu đúng được bằng chừng ấy lần.</li>
+        <li>Kỳ 3 ngày chưa hiệu chỉnh: biến động ngắn phần lớn là nhiễu.</li></ul></details>
+    </section>
     ${r ? `<section class="panel mt"><h3>${repLabel(r)} <span class="hint">${r.mornings} buổi sáng · tối đa ${r.per_day} sự kiện mỗi sáng</span></h3>
       <p class="small">Tin cũ của bốn báo (VnEconomy, VnExpress, CafeF, Vietstock) chạy lại từng buổi sáng qua đúng các bước của thử nghiệm, cùng mô hình, rồi chấm như trực tiếp với diễn biến thị trường đến nay.
         Mô hình chỉ biết đến khoảng tháng 6/2026, không biết kết quả sau đó; agent chỉ đọc tin và danh mục yếu tố, không có số liệu thị trường. Không ai duyệt: việc duyệt không đổi điểm.</p>
@@ -195,18 +209,20 @@ function viewB(d, e) {
       <p class="small">${e.accuracy.mornings.map(m => `${day(m.day)} ${badge(MORNING[m.status], m.status)}${m.drafts ? ` <span class="muted">${m.drafts} bản nháp</span>` : ""}`).join(" · ") || "Chưa có."}</p>
     </section>
 
+
     <div class="kpis mt">
       ${kpi("Độ chính xác", rate(a.precision, "eval.precision"), "khi agent nói tăng hoặc giảm, thị trường đi đúng và đủ mạnh")}
       ${kpi("Độ phủ biến động lớn", rate(a.recall, "eval.recall"), `bỏ lỡ ${a.missed.not_predicted} · sai hướng ${a.missed.wrong_direction}${a.missed.no_run ? ` · không chạy ${a.missed.no_run}` : ""}`)}
-      ${kpi("Đúng hướng", rate(a.direction, "eval.direction"), a.error_sd.n ? `sai số ${a.error_sd.value.toFixed(2).replace(".", ",")} lần biến động thường (${a.error_sd.n})` : "sai số: chưa có")}
+      ${kpi("Đúng hướng khi ra tín hiệu", rate(a.call_direction, "eval.call_direction"), naive(a.call_direction))}
       ${kpi("Đã chấm", `${c.scored}/${c.moves}`, `${c.pending} chờ · ${c.failed} không chấm được · ${c.excluded} loại ra${a.first_due ? ` · hạn đầu ${day(a.first_due)}` : ""}`)}
     </div>
+    ${a.error_sd.n ? `<p class="small muted mt-xs">Sai số trung bình ${a.error_sd.value.toFixed(2).replace(".", ",")} lần biến động thường (${a.error_sd.n} dự báo).</p>` : ""}
     ${a.uncalibrated ? `<p class="small warn-text mt-xs">Kỳ 3 ngày chưa hiệu chỉnh: biến động ngắn phần lớn là nhiễu.</p>` : ""}
     ${c.scored ? "" : `<p class="small muted mt-xs">Chưa dự báo nào đến hạn chấm ở kỳ ${HL[horizon]}: các tỷ lệ hiện “—”, không phải 0.</p>`}
 
     <section class="panel mt"><h3>Theo ngày chấm <span class="hint">${HL[horizon]} · cộng dồn đến mỗi ngày</span></h3>
-      ${a.timeline.length ? `<div><p class="small"><b>Độ chính xác và độ phủ</b></p><div id="tr-acc" class="mt-xs"></div>
-        ${legend([{label: "Độ chính xác", color: "var(--s7)"}, {label: "Độ phủ", color: "var(--s5)"}])}</div>
+      ${a.timeline.length ? `<div><p class="small"><b>Đúng hướng khi ra tín hiệu và độ phủ</b></p><div id="tr-acc" class="mt-xs"></div>
+        ${legend([{label: "Đúng hướng khi ra tín hiệu", color: "var(--s7)"}, {label: "Độ phủ", color: "var(--s5)"}])}</div>
         <div class="mt"><p class="small"><b>Lãi lỗ ròng mô phỏng theo nhóm</b> <span class="muted">${esc(e.finance.label)}</span></p>
         ${f.timeline.length ? `<div id="tr-vnd" class="mt-xs"></div>${legend(groups(e.accuracy.families))}` : `<p class="small muted">Các dự báo đã chấm chưa có ảnh chụp danh mục: chưa tính được.</p>`}</div>
         <p class="footnote">${a.timeline.length} ngày chấm, ${a.timeline[a.timeline.length - 1].scored} dự báo: mẫu nhỏ, chỉ để xem xu hướng. Ròng = gọi đúng − gọi sai, không trừ cơ hội bỏ lỡ.
@@ -215,9 +231,9 @@ function viewB(d, e) {
     </section>
 
     <section class="panel mt"><h3>Theo nhóm tài sản <span class="hint">${HL[horizon]}</span></h3>
-      <div class="scrollx"><table class="table"><thead><tr><th></th><th class="num">Độ chính xác</th><th class="num">Độ phủ</th><th class="num">Đúng hướng</th><th class="num">Đúng · sai · bỏ lỡ</th><th class="num">Chờ</th></tr></thead><tbody>
+      <div class="scrollx"><table class="table"><thead><tr><th></th><th class="num">Độ chính xác</th><th class="num">Độ phủ</th><th class="num">Đúng hướng khi ra tín hiệu</th><th class="num">Đúng · sai · bỏ lỡ</th><th class="num">Chờ</th></tr></thead><tbody>
         ${fams.map(([k, l]) => { const x = a.by_family[k]; return `<tr><td>${esc(l)}</td><td class="num">${rate(x.precision, "eval.precision")}</td><td class="num">${rate(x.recall, "eval.recall")}</td>
-          <td class="num">${rate(x.direction, "eval.direction")}</td><td class="num">${x.counts.correct} · ${x.counts.incorrect} · ${x.counts.missed}</td><td class="num">${x.counts.pending}</td></tr>`; }).join("")}
+          <td class="num">${rate(x.call_direction, "eval.call_direction")}</td><td class="num">${x.counts.correct} · ${x.counts.incorrect} · ${x.counts.missed}</td><td class="num">${x.counts.pending}</td></tr>`; }).join("")}
       </tbody></table></div>
     </section>
 
