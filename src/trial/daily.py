@@ -55,7 +55,9 @@ def candidates(now: float, since: Optional[float] = None) -> List[Dict[str, Any]
         with db.tx() as con:
             last = con.execute("select max(created) from trial_events").fetchone()[0]
         since = max(last or now - WINDOW_S, now - MAX_WINDOW_S)
-    items = news_store.inbox(status="new", since=since, limit=2000)
+    # the whole window, then what was out by ``now``: a replay's store holds the month ahead, and a cap taken newest
+    # first kept only news after the morning played (22/09 → 06/10 found none)
+    items = news_store.inbox(status="new", since=since, limit=None)
     keep = [i for i in items if not i["held"] and i.get("relevance") in ("high", "medium")]
     return [i for i in keep if (i.get("published") or i["ingested"]) <= now][:MAX_NEWS]
 

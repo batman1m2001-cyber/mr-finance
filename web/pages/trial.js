@@ -6,7 +6,9 @@
    B · Hiệu quả agent: each move scored (trial/evaluate.py), its simulated VND (trial/finance.py), what the calls
    cost (trial/costs.py); a move opens from the news to the VND (GET /api/trial/move/<id>). Every rate shows k/n;
    what is unavailable says so, never 0. NEWS_CHARTS_PLAN: the news kept per day by group (A); precision and recall,
-   and the simulated net VND by group, over the scoring days (B) — charts/trend.js, the tables below them their view. */
+   and the simulated net VND by group, over the scoring days (B) — charts/trend.js, the tables below them their view.
+   REPLAY_PLAN: View B on past news played back (scripts/replay.py) beside the live one, the same renderer —
+   GET /api/trial/replay/<name>, its moves opened with ?replay=<name>. */
 import {drawer, esc, get, n as how, pct, vnd, when} from "../core/core.js";
 import {legend, lines, stack} from "../charts/trend.js?v=20261025a";
 
@@ -15,6 +17,11 @@ const HL = Object.fromEntries(H);
 const STATUS = {PENDING_APPROVAL: "chờ CIO", AGENT_ERROR: "agent lỗi", APPROVED: "đã duyệt", REJECTED: "bị từ chối"};
 let horizon = "1w";
 let view = "a";
+let source = "live"; // View B on the live trial, or on a replay's name
+const reps = {};
+// the View B being read: the live trial's, or the replay's loaded
+const cur = (d) => (source === "live" ? d.evaluation : (reps[source] || {}).evaluation);
+const repLabel = (r) => `Chạy lại ${day(r.first)} – ${day(r.last)}`;
 
 const day = (s) => (s ? s.split("-").reverse().join("/") : "—");
 // a rate and how many it was counted over; it opens its “cách tính” (BRD-NFR-11)
@@ -51,6 +58,12 @@ export async function render(box) {
     charts(box, d);
     for (const b of box.querySelectorAll("[data-h]")) b.onclick = () => { horizon = b.dataset.h; draw(); };
     for (const b of box.querySelectorAll("[data-view]")) b.onclick = () => { view = b.dataset.view; draw(); };
+    for (const b of box.querySelectorAll("[data-src]")) b.onclick = async () => {
+      const name = b.dataset.src;
+      if (name !== "live" && !reps[name]) reps[name] = await get(`/api/trial/replay/${encodeURIComponent(name)}`);
+      source = name;
+      draw();
+    };
     for (const b of box.querySelectorAll("[data-move]")) b.onclick = () => openMove(b.dataset.move);
   };
   draw();
@@ -61,10 +74,10 @@ const GROUP = ["--s1", "--s2", "--s3", "--s4"];
 const groups = (labels) => Object.entries(labels).map(([key, label], i) => ({key, label, color: `var(${GROUP[i] || "--other"})`}));
 
 function charts(box, d) {
-  const e = d.evaluation;
+  const e = cur(d);
   if (!e) return;
   const at = (id) => box.querySelector(id);
-  const m = e.collection;
+  const m = d.evaluation.collection;
   const kept = collected(m.days);
   if (at("#tr-kept") && kept.length) {
     const days = kept.slice().reverse().map(x => ({day: x.day, values: x.by_category}));
@@ -105,7 +118,8 @@ const money = (x, metric, n) => `${how(vnd(x.vnd, true), metric, {n: String(x.n)
 const usd = (x) => (x == null ? "chưa có" : `US$${x.toFixed(2)}`);
 
 function paint(box, d) {
-  const e = d.evaluation;
+  const e = d.evaluation, rs = d.replays || [];
+  if (source !== "live" && !reps[source]) source = "live";
   const tabs = `<div class="seg" role="group" aria-label="Góc xem"><button type="button" data-view="a" aria-pressed="${view === "a"}">A · Thu thập tin</button><button type="button" data-view="b" aria-pressed="${view === "b"}">B · Hiệu quả agent</button></div>`;
   const seg = `<div class="seg" role="group" aria-label="Kỳ hạn">${H.map(([k, l]) => `<button type="button" data-h="${k}" aria-pressed="${horizon === k}">${l}</button>`).join("")}</div>`;
   box.innerHTML = `
@@ -113,7 +127,8 @@ function paint(box, d) {
       <p class="lede">Mỗi sáng 08:30 agent tự gom tin thành sự kiện; Agent CIO và Agent Phản biện chạy trên từng sự kiện, không ai duyệt.
         ${d.days.length ? `${d.days.length} buổi sáng: ${day(d.days[0])} – ${day(d.days[d.days.length - 1])}${gaps(d.days).length ? ` (${gaps(d.days).map(day).join(", ")} không chạy)` : ""}.` : "Chưa có buổi sáng nào."}</p></div>
       <div class="row">${tabs}${view === "b" ? seg : ""}</div></div>
-    ${e ? (view === "a" ? viewA(d, e.collection) : viewB(d, e)) : legacy(d)}`;
+    ${view === "b" && e && rs.length ? `<div class="seg mt" role="group" aria-label="Dữ liệu"><button type="button" data-src="live" aria-pressed="${source === "live"}">Trực tiếp</button>${rs.map(r => `<button type="button" data-src="${esc(r.name)}" aria-pressed="${source === r.name}">${repLabel(r)}</button>`).join("")}</div>` : ""}
+    ${e ? (view === "a" ? viewA(d, e.collection) : viewB(d, cur(d))) : legacy(d)}`;
 }
 
 function viewA(d, m) {
@@ -163,9 +178,19 @@ function viewB(d, e) {
   const order = ["correct", "incorrect", "missed", "quiet", "failed", "pending", "excluded"];
   mine.sort((x, y) => order.indexOf(x.verdict) - order.indexOf(y.verdict) || (x.day < y.day ? 1 : -1));
   const missCount = {};
-  for (const m of ev.misses) missCount[m.why] = (missCount[m.why] || 0) + 1;
+  for (const m of ev ? ev.misses : []) missCount[m.why] = (missCount[m.why] || 0) + 1;
   const late = Object.values(e.finance.snapshots).filter(s => s.late).length;
+  const r = source === "live" ? null : reps[source].replay;
   return `
+    ${r ? `<section class="panel mt"><h3>${repLabel(r)} <span class="hint">${r.mornings} buổi sáng · tối đa ${r.per_day} sự kiện mỗi sáng</span></h3>
+      <p class="small">Tin cũ của bốn báo (VnEconomy, VnExpress, CafeF, Vietstock) chạy lại từng buổi sáng qua đúng các bước của thử nghiệm, cùng mô hình, rồi chấm như trực tiếp với diễn biến thị trường đến nay.
+        Mô hình chỉ biết đến khoảng tháng 6/2026, không biết kết quả sau đó; agent chỉ đọc tin và danh mục yếu tố, không có số liệu thị trường. Không ai duyệt: việc duyệt không đổi điểm.</p>
+      <details class="more"><summary>Khác với trực tiếp</summary><ul class="small">
+        <li>Tin chỉ có tiêu đề và giờ đăng (lấy qua Google News), không có nội dung bài.</li>
+        <li>Lãi lỗ mô phỏng tính trên danh mục các gia đình hôm nay (danh mục của những ngày đó không được lưu), ghi là chụp muộn.</li>
+        <li>Không đo “Agent chọn sự kiện”: nguồn đối chiếu bắt đầu từ 08/10 và khớp với tin trực tiếp.</li>
+        <li>Các dự báo không độc lập: cùng một diễn biến thị trường chấm nhiều buổi sáng liền nhau.</li></ul></details>
+    </section>` : ""}
     <section class="panel mt"><h3>Các buổi sáng <span class="hint">${e.accuracy.mornings.length}</span></h3>
       <p class="small">${e.accuracy.mornings.map(m => `${day(m.day)} ${badge(MORNING[m.status], m.status)}${m.drafts ? ` <span class="muted">${m.drafts} bản nháp</span>` : ""}`).join(" · ") || "Chưa có."}</p>
     </section>
@@ -212,11 +237,11 @@ function viewB(d, e) {
         </tbody></table></div></details>
     </section>
 
-    <section class="panel mt"><h3>Agent chọn sự kiện <span class="hint">tin quan trọng của nguồn đối chiếu đã vào sự kiện</span></h3>
+    ${ev ? `<section class="panel mt"><h3>Agent chọn sự kiện <span class="hint">tin quan trọng của nguồn đối chiếu đã vào sự kiện</span></h3>
       <p class="small">${rate(ev, "eval.event_recall")} · ${ev.by_day.map(x => `${day(x.day)} ${x.in_events}/${x.important}`).join(" · ")}</p>
       ${ev.misses.length ? `<details class="more"><summary>${ev.misses.length} tin lọt: ${Object.entries(missCount).map(([k, n]) => `${esc(MISS[k] || k)} ${n}`).join(" · ")}</summary>
         <ul class="small">${ev.misses.map(m => `<li>${day(m.day)} · ${esc(m.title)} <span class="muted">— ${esc(MISS[m.why] || m.why)}</span></li>`).join("")}</ul></details>` : ""}
-    </section>
+    </section>` : ""}
 
     <section class="panel mt"><h3>Chi phí gọi mô hình <span class="hint">${e.costs.total.n_reported}/${e.costs.total.n_calls} lần gọi có chi phí · tổng ${usd(e.costs.total.cost_usd)}</span></h3>
       <div class="scrollx"><table class="table"><thead><tr><th>Agent</th><th class="num">Lần gọi</th><th class="num">Token</th><th class="num">Chi phí</th><th class="num">Thời gian</th><th class="num">Thử lại · lỗi</th><th>Mô hình</th></tr></thead><tbody>
@@ -236,7 +261,7 @@ function viewB(d, e) {
       ${mine.length > 60 ? `<p class="small muted">${mine.length - 60} dự báo chờ chấm khác.</p>` : ""}
     </section>
 
-    <details class="panel flat mt more"><summary>Số đo cũ của thử nghiệm (dự báo bóng, mua · bán · giữ, kịch bản, sự kiện)</summary>${legacy(d)}</details>`;
+    ${r ? "" : `<details class="panel flat mt more"><summary>Số đo cũ của thử nghiệm (dự báo bóng, mua · bán · giữ, kịch bản, sự kiện)</summary>${legacy(d)}</details>`}`;
 }
 
 const AGENT = {cio: "Agent CIO", challenger: "Agent Phản biện", grouping: "Gom tin thành sự kiện"};
@@ -244,7 +269,7 @@ const CLAIM = {up: "tăng", down: "giảm", flat: "đứng", conflicting: "trái
 
 async function openMove(id) {
   const body = drawer("Một dự báo", `<p class="muted">Đang tải…</p>`);
-  const s = await get(`/api/trial/move/${encodeURIComponent(id)}`);
+  const s = await get(`/api/trial/move/${encodeURIComponent(id)}${source === "live" ? "" : `?replay=${encodeURIComponent(source)}`}`);
   const unit = (x) => (x == null ? "—" : s.unit === "pct" ? how(pct(x, true, 1), "eval.move", {unit: s.unit}) : `${x > 0 ? "+" : ""}${x.toFixed(2).replace(".", ",")} ${esc(s.unit)}`);
   const fams = s.vnd ? Object.entries(s.vnd.families) : [];
   body.innerHTML = `

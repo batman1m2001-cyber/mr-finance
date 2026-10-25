@@ -912,13 +912,35 @@ async def trial(request: Request) -> JSONResponse:
     from trial import report
 
     out = await asyncio.to_thread(report.summary)
-    replay = ROOT / "out" / "trial" / "replay.json"  # B1.5: July 2026 played back (scripts/replay_july.py)
+    replay = ROOT / "out" / "trial" / "replay.json"  # B1.5: July 2026 played back (the first replay's report)
     if replay.exists():
         r = json.loads(replay.read_text(encoding="utf-8"))
         keep = ("replay", "at", "days", "runs", "accuracy", "calls", "scenarios", "events")
         out["replay"] = {k: r.get(k) for k in keep}
     out["evaluation"] = await asyncio.to_thread(_evaluation)
+    out["replays"] = [r["replay"] for r in map(_replay, sorted(p.stem for p in REPLAYS.glob("*.json")
+                                                                 if not p.stem.endswith(".moves"))) if r]
     return JSONResponse(out)
+
+
+REPLAYS = ROOT / "out" / "trial" / "replays"  # REPLAY_PLAN: past news played back, View B on it (scripts/replay.py)
+
+
+def _replay(name: str, part: str = "") -> dict | None:
+    p = REPLAYS / f"{name}{part}.json"
+    if "/" in name or not p.exists():
+        return None
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+async def trial_replay(request: Request) -> JSONResponse:
+    """One replay's View B (accuracy, simulated VND, cost, the moves) as /api/trial gives the live one's."""
+    import asyncio
+
+    r = await asyncio.to_thread(_replay, request.path_params["name"])
+    if r is None:
+        return JSONResponse({"error": "không có lần chạy lại này"}, status_code=404)
+    return JSONResponse({"replay": r["replay"], "evaluation": r["evaluation"]})
 
 
 def _evaluation() -> dict:
@@ -942,7 +964,11 @@ async def trial_move(request: Request) -> JSONResponse:
 
     from trial import evaluate
 
-    got = await asyncio.to_thread(evaluate.detail, request.path_params["sid"])
+    name, sid = request.query_params.get("replay"), request.path_params["sid"]
+    if name:
+        got = ((await asyncio.to_thread(_replay, name, ".moves")) or {}).get(sid)
+    else:
+        got = await asyncio.to_thread(evaluate.detail, sid)
     if got is None:
         return JSONResponse({"error": "không có dự báo này"}, status_code=404)
     return JSONResponse(got)
@@ -1359,6 +1385,7 @@ app = Starlette(
         Route("/api/accuracy", accuracy),
         Route("/api/trial", trial),
         Route("/api/trial/move/{sid}", trial_move),
+        Route("/api/trial/replay/{name}", trial_replay),
         Route("/api/measure", measure_reports),
         Route("/api/market/series", market_series),
         Route("/api/research", research_list),
