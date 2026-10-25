@@ -4,7 +4,7 @@
    holding × sensitivity × probability, the probability by legal status — as diverging bars that filter to risks
    or opportunities, each bar a stack of its parts by asset class (OWN-FB-17); the house views (mock research-house forecasts) matched to the client's holdings; and one
    card per item, grouped by kind. Data: POST /api/alerts, POST /api/dashboard, POST /api/goals, GET /api/views. */
-import {ASSET_CLASS, CLASS_COLOR, internal, esc, followedIds, get, n as how, pct, post, vnd} from "../core/core.js";
+import {ASSET_CLASS, CLASS_COLOR, esc, followedIds, get, n as how, pct, post, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {hover} from "../charts/charts.js";
 
@@ -78,7 +78,7 @@ export async function render(box, ctx) {
   if (rk.status !== "ok") acts.push(`Giảm điểm nóng: mức sụt giảm ước tính ${how(pct(rk.current), "risk.current")} so với ngưỡng ${how(pct(rk.limit, false, 0), "risk.limit")}`);
   if (first && first.goal.actions[0]) acts.push(`${esc(first.title)}: <span data-explains>${esc(first.goal.actions[0].text)}</span>`);
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">Headline News</div><h1 class="h1">News and Prediction</h1>
       <p class="lede">Chính sách, vĩ mô và hạ tầng đang làm tài sản ròng ${rep.scope === "family" ? "gia đình" : "của bạn"} tăng hay giảm bao nhiêu</p></div></div>
     <div class="cols">

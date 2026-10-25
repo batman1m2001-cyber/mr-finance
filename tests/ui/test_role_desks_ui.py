@@ -144,7 +144,7 @@ def test_the_desk_on_a_phone_and_dark_and_the_customer_untouched(open_page):
     assert p.page.is_hidden("#nav") and not p.problems()
 
 
-# -- RM · Sổ khách hàng (M2) ---------------------------------------------------------------------------------------
+# -- RM · Tổng quan (M2; was Sổ khách hàng) ---------------------------------------------------------------------------------------
 
 
 def test_the_rm_works_at_its_book_and_every_page_is_a_sheet(open_page):
@@ -165,14 +165,14 @@ def test_the_rm_works_at_its_book_and_every_page_is_a_sheet(open_page):
     p.page.wait_for_function("document.querySelector('#client').value === 'C04'")
 
     seen = routes("rm")
-    assert len(seen) == 5  # the client's pages are tabs of Khách hàng (OWN-FB-02…05)
+    assert len(seen) == 4  # the client's pages are tabs of Khách hàng (OWN-FB-02…05); no Hôm nay (OWN-FB-21)
     for r in seen:
         p.go(r)
         assert p.page.is_visible("#ws-sheet"), r
         assert p.page.locator(".ws-tool[aria-current]").count() == 1, r
         assert not p.problems(), (r, p.problems())
     p.go("#/rm/khach-hang/ke-hoach")
-    assert p.page.locator("#dk-tabs a").count() == 4 and not p.page.is_hidden("#client-pick")
+    assert p.page.locator("#dk-tabs a").count() == 4 and p.page.is_visible("#dk-who #client-pick")  # in the sheet (OWN-FB-22)
     p.go("#/rm")
     assert p.page.is_hidden("#ws-sheet") and not p.problems()
 
@@ -188,8 +188,8 @@ def test_the_rm_assistant_lights_the_book(open_page):
     p.ctx.add_init_script(f"window.__script = {json.dumps(script)};")
     p.go("#/rm")
     p.page.wait_for_selector(".desk-rm [data-fam]")
-    assert "Sổ khách hàng có gì cần làm?" in p.page.inner_text("#ws-pane-a")  # the RM's own suggestions
-    p.page.fill("#cp-q", "Sổ khách hàng có gì cần làm?")
+    assert "Tổng quan có gì cần làm?" in p.page.inner_text("#ws-pane-a")  # the RM's own suggestions
+    p.page.fill("#cp-q", "Tổng quan có gì cần làm?")
     p.page.press("#cp-q", "Enter")
     p.page.wait_for_selector('[data-node="book"].act', timeout=4000)
     p.page.wait_for_selector('[data-node="calls"].lit', timeout=6000)

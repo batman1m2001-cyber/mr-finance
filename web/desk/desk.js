@@ -9,7 +9,7 @@ import {$, esc, get} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {dockFrame} from "../workspace/dock.js?v=20261018m0";
-import {DESKS} from "./roles.js?v=20261024f6";
+import {DESKS} from "./roles.js?v=20261025f7";
 
 export function mount(main, {role, nav, go, client = () => null, setClient = () => {}, user = () => null}) {
   const cfg = DESKS[role];
@@ -51,7 +51,8 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
         <header class="ws-sheet-h"><button type="button" class="linkbtn" id="ws-sheet-back" aria-label="Về ${esc(cfg.title)}">${icon("chevron", {size: 16})}<span class="dk-back-l"> ${esc(cfg.title)}</span></button>
           <b id="ws-sheet-t"></b><nav class="dk-tabs" id="dk-tabs" aria-label="Các trang trong nhóm"></nav>
           <button type="button" class="iconbtn" id="ws-sheet-x" aria-label="Đóng">✕</button></header>
-        <nav class="dk-tabs2" id="dk-tabs2" aria-label="Các trang trong mục" hidden></nav>
+        <div class="dk-line" id="dk-line" hidden><nav class="dk-tabs2" id="dk-tabs2" aria-label="Các trang trong mục"></nav>
+          <div class="dk-who" id="dk-who"><span class="small muted dk-who-l">Khách hàng</span></div></div>
         <div class="ws-sheet-b" id="ws-sheet-b"></div>
       </section>
     </section>
@@ -67,6 +68,10 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
     </aside>`;
   main.prepend(root);
   $("#ws-sheet-b", root).appendChild($("#page"));  // the shell's #page is the sheet's body: the pages draw as before
+  // the client picker and Cá nhân / Gia đình sit in the sheet, beside its inner tabs, so the page says whose it is
+  // (OWN-FB-22, -24); the shell still shows or hides them, and they go back to the header with the desk
+  const picker = ["#client-pick", "#scope-wrap"].map(sel => { const el = $(sel); return {el, parent: el.parentNode, next: el.nextSibling}; });
+  for (const {el} of picker) $("#dk-who", root).appendChild(el);
 
   // ── the dock ──────────────────────────────────────────────────────────────────────────────────────
   const tab = (which) => {
@@ -100,7 +105,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
   async function load(again) {
     if (loading && !again) return loading;
     loading = (async () => {
-      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261024f6`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
+      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261025f7`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
       data = got;
       view = mod;
       mod.render($("#dk-body", root), data, api);
@@ -182,6 +187,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
       const strip = $("#dk-tabs", root);
       strip.innerHTML = tabs.map(t => `<a href="${t.href}"${t === top ? ' aria-current="page"' : ""}>${esc(t.label)}</a>`).join("");
       const strip2 = $("#dk-tabs2", root);
+      $("#dk-line", root).hidden = !inner.length && $("#client-pick").hidden;  // the shell set the picker for this page
       strip2.hidden = !inner.length;
       strip2.innerHTML = inner.map(p => `<a href="${p.href}"${p.key === key ? ' aria-current="page"' : ""}>${esc(p.label)}</a>`).join("");
       const cur = strip.querySelector("[aria-current]");  // the page you are on is in view, not scrolled off
@@ -194,6 +200,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
       document.removeEventListener("keydown", onKey);
       window.removeEventListener("resize", onResize);
       main.appendChild($("#page"));
+      for (const {el, parent, next} of picker) parent.insertBefore(el, next);
       root.remove();
     },
   };

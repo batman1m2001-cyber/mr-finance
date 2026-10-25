@@ -5,7 +5,7 @@
    server checks the user's role). The RM's approval is the last (OWN-FB-18 retired the certified specialist; items
    kept from before may still say pending_specialist); the RM may also write a recommendation for the family (POST
    /api/review/recommend), which reaches the client at once. Data: GET /api/advisory?client_id=, GET /api/review. */
-import {internal, esc, get, n as how, post, toast} from "../core/core.js";
+import {esc, get, n as how, post, toast} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 
 const STATUS = {pending: ["ai", "Chờ RM duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
@@ -52,7 +52,7 @@ export async function render(box, ctx) {
   const team = staff ? "" : adv.error ? `<div class="notice bad" role="alert">Không tải được: ${esc(adv.error)}</div>`
     : `<div class="cards2">${person(adv.team.rm)}</div><p class="small muted mt-xs">${icon("info", {size: 14})} ${esc(adv.note)}</p>`;
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="pagehead"><div>${staff ? `<div class="eyebrow">Khách hàng</div>` : ""}
       <h1 class="h1">${staff ? "Duyệt đề xuất" : "Relationship specialist"}</h1>
       <p class="lede">${staff ? "Phương án khách hàng gửi từ Kế hoạch, chờ RM duyệt" : "Chuyên viên quan hệ khách hàng phụ trách bạn"}</p></div></div>

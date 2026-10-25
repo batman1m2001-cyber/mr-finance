@@ -2,15 +2,15 @@
    Staff only. The same counts as performance.js summed over the clients, each AI's average score with its score
    per client, one row per client (a row opens that client's performance), the latest advice, the news missed
    grouped by item with the clients it touched, and the average reading. Data: GET /api/advisory/all. */
-import {internal, esc, get, n as how, pct, vnd} from "../core/core.js";
-import {adviceTable, drawEngagement, drawSparks, engSeg, missedList, pipeline, tiles} from "./performance.js?v=20261024f6";
+import {esc, get, n as how, pct, vnd} from "../core/core.js";
+import {adviceTable, drawEngagement, drawSparks, engSeg, missedList, pipeline, tiles} from "./performance.js?v=20261025f7";
 
 export async function render(box, ctx) {
   const a = await get("/api/advisory/all");
   const sm = a.summary;
   const rate = (c) => (c.right + c.wrong ? how(pct(c.right / (c.right + c.wrong), false, 0), "advisory.hit_rate", {right: String(c.right), wrong: String(c.wrong)}) : "—");
 
-  box.innerHTML = `${internal()}
+  box.innerHTML = `
     <div class="pagehead"><div><h1 class="h1" lang="en">Advisory performance</h1>
       <p class="lede">Hiệu quả tư vấn và AI trên tất cả khách hàng · ${a.clients.length} khách hàng · 12 tháng</p></div></div>
     ${tiles(sm, `lượt khách hàng · tác động ${how(vnd(sm.missed_news_value, true), "advisory.missed_news")}`)}

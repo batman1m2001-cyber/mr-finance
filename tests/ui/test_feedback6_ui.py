@@ -46,7 +46,7 @@ def test_the_rms_book_has_no_drawing_and_advisory_performance_is_the_mock(open_p
     assert "Advisory performance" in rail(p)
     p.go("#/rm/hieu-qua/khach-hang")
     body = p.page.inner_text("#page")
-    assert "Nội bộ" in body and "Dữ liệu mẫu" in body
+    assert "Nội bộ" not in body and "Dữ liệu mẫu" in body  # the line went (OWN-FB-23)
     names = p.page.eval_on_selector_all(".pipe .agent", "as => as.map(a => a.title)")
     assert names == ["AI News Reader", "AI Impact Assessor", "AI Planning Advisor", "AI Client Chat"]  # OWN-FB-06
     assert [t for t, _ in tabs(p, "#dk-tabs2") or tabs(p)] == ["Khách hàng này", "Tất cả khách hàng"]

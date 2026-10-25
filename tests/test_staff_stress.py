@@ -84,7 +84,7 @@ def test_d03_the_guide_has_each_desk_and_who_decides():
     from assistant.knowledge import GUIDE
 
     rm = (GUIDE / "rm.md").read_text()
-    assert "## Sổ khách hàng — #/rm" in rm and "## Ai duyệt gì" in rm and "không bao giờ gửi thẳng" in rm
+    assert "## Tổng quan — #/rm" in rm and "## Ai duyệt gì" in rm and "không bao giờ gửi thẳng" in rm
     assert "## Bàn quyết định — #/cio" in (GUIDE / "cio.md").read_text()
     assert not (GUIDE / "chuyen-gia.md").exists() and not (GUIDE / "tuan-thu.md").exists()  # OWN-FB-18
     assert "## Vận hành — #/admin" in (GUIDE / "quan-tri.md").read_text()
@@ -207,6 +207,7 @@ def test_d11_held_news_names_each_item_and_marks_its_text_as_data():
     [
         ("rm", "đề xuất chờ duyệt?", "so_khach_hang"),
         ("rm", "Sổ khách hàng có gì cần làm?", "so_khach_hang"),
+        ("rm", "Tổng quan có gì cần làm?", "so_khach_hang"),  # the desk's name since OWN-FB-25
         ("rm", "Duyệt đề xuất này", "duyet_de_xuat"),
         ("rm", "Duyệt đề xuất đang chờ", "duyet_de_xuat"),  # a command, though it shares the desk's words
         ("cio", "Có gì chờ tôi duyệt?", "ban_quyet_dinh"),
@@ -241,7 +242,7 @@ def test_d12_the_fallback_answers_every_staff_role(role):
     from assistant import ops
 
     approved(*MARKET)
-    q = {"rm": "Sổ khách hàng có gì cần làm?", "cio": "Có gì chờ tôi duyệt?",
+    q = {"rm": "Tổng quan có gì cần làm?", "cio": "Có gì chờ tôi duyệt?",
          "admin": "Hệ thống có gì bất thường?"}[role]  # fmt: skip
     r = {"approvals": None, "message": q, "route": f"#/{role}", "role": role, "client_id": None, "scope": "personal",
          "followed": None}  # fmt: skip

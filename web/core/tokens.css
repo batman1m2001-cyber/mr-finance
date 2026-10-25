@@ -1495,14 +1495,33 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .desk .ws-sheet-h .iconbtn { flex: none; }
 /* a sheet with tabs (OWN-FB-14): the back link is its chevron, the tabs name the page; inner tabs on their own line */
 .desk.dk-tabbed .dk-back-l { display: none; }
-.dk-tabs2 { display: flex; gap: 18px; padding: 0 20px; border-bottom: 1px solid var(--hair); overflow-x: auto; scrollbar-width: none; flex: none; background: var(--plane); }
+/* the line under the tabs (OWN-FB-22, -24): the inner tabs on the left, whose page it is on the right */
+.dk-line { display: flex; align-items: center; gap: 12px; padding: 0 20px; border-bottom: 1px solid var(--hair); flex: none; background: var(--plane); min-height: 44px; }
+.dk-line[hidden] { display: none; }
+.dk-tabs2 { display: flex; gap: 18px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1 1 auto; align-self: stretch; align-items: flex-end; }
 .dk-tabs2::-webkit-scrollbar { display: none; }
+.dk-who { display: flex; align-items: center; gap: 8px; margin-left: auto; padding: 6px 0; flex: none; min-width: 0; }
+.dk-who:not(:has(#client-pick:not([hidden]))) { display: none; }
+.dk-who-l { white-space: nowrap; }
+.dk-who .pick select { padding: 6px 12px; border: 1px solid var(--accent); border-radius: 999px; background: var(--surface);
+  color: var(--ink); font: inherit; font-size: 13.5px; font-weight: 650; max-width: 300px; }
+.dk-who .seg { border: 1px solid var(--hair); border-radius: 999px; background: var(--surface-2); padding: 2px; }
+.dk-who .seg button { padding: 4px 10px; border-radius: 999px; color: var(--ink-2); font-weight: 600; font-size: 12.5px; }
+.dk-who .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(23, 18, 58, .12); }
 .dk-tabs2[hidden] { display: none; }
 .dk-tabs2 a { padding: 9px 2px 8px; border-bottom: 2px solid transparent; text-decoration: none; color: var(--ink-2); font-size: 13px; font-weight: 600; white-space: nowrap; }
 .dk-tabs2 a[aria-current] { border-color: var(--accent); color: var(--accent); }
 button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
 /* the RM's book (SCR-RM-07): rings by how soon, dots by net worth */
 .rk-end { display: flex; align-items: center; gap: 8px; flex: none; }
+/* the net worth stands out on the list (OWN-FB-20): a gold-tinted pill, brown figures */
+.rk-nw { padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--cta) 24%, var(--surface)); color: var(--accent);
+  font-weight: 700; font-size: 13px; white-space: nowrap; }
+.dk-form { display: grid; gap: 8px; }
+.dk-form label { display: grid; gap: 3px; }
+.dk-form select, .dk-form textarea { padding: 7px 9px; border: 1px solid var(--hair); border-radius: var(--radius-s); background: var(--surface);
+  color: var(--ink); font: inherit; width: 100%; }
+.dk-form .btn { justify-self: start; }
 .dk-row.sel { background: var(--accent-soft); }
 .rk-acts { display: flex; flex-wrap: wrap; gap: 6px; }
 /* Admin's operations map (SCR-ADM-02): four lanes left to right, each node coloured by its last record */
@@ -1543,7 +1562,11 @@ button.dk-row { width: 100%; border: 0; background: none; font: inherit; text-al
   .desk .ws-sheet-h b { flex: 1 1 0; }  /* basis 0: the line holds back · title · ✕, the title takes an ellipsis */
   .dk-tabs { order: 5; flex-basis: 100%; }
   .desk.dk-tabbed .dk-tabs { order: 0; flex-basis: 0; }  /* no title: back · tabs · ✕ on one line */
-  .dk-tabs2 { padding: 0 14px; }
+  .dk-line { padding: 0 14px; flex-wrap: wrap; row-gap: 0; }
+  .dk-tabs2 { flex-basis: 100%; }
+  .dk-tabs2[hidden] + .dk-who { margin-left: 0; }
+  .dk-who { flex: 1 1 100%; margin-left: 0; flex-wrap: wrap; row-gap: 6px; }
+  .dk-who .pick { flex: 1 1 calc(100% - 90px); min-width: 0; }  /* the name gets the line, the scope wraps under it */ .dk-who .pick select { width: 100%; max-width: none; }
   .ad-map { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .ad-lane::before, .ad-lane::after { display: none; }
   .dk-head .pill { white-space: normal; max-width: 100%; }

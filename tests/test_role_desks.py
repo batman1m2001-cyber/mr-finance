@@ -77,7 +77,7 @@ def test_every_page_of_the_menu_is_in_exactly_one_rail_group(role):
 
 def test_the_rm_keeps_every_page_it_had():
     # the RM's menu before the desk, page for page; the ten client pages stay under Khách hàng
-    assert menu("rm") == ["ban", "hom-nay", "khach-hang", "hieu-qua", "bo-nho"]
+    assert menu("rm") == ["ban", "khach-hang", "hieu-qua", "bo-nho"]  # Hôm nay went, its contact log is on the desk (OWN-FB-21)
     shell = (WEB / "shell.js").read_text(encoding="utf-8")
     block = shell.split('{id: "khach-hang", label: "Khách hàng", clientPick: true,', 1)[1].split("]},", 1)[0]
     pages = ["tong-quan", "tai-san", "ke-hoach", "chinh-sach", "do-thi", "hieu-qua", "tat-ca"]  # OWN-FB-02…06
@@ -92,6 +92,7 @@ def test_no_retired_role_has_a_menu_or_a_desk():
 def test_admin_keeps_every_page_it_had():
     added = {"viec-nen", "tai-khoan"}  # owner 2026-10-18: Việc nền, Tài khoản và vai trò (Q-25)
     added |= {"mo-hinh", "do-luong"}  # OWN-FB-16: Mô hình and Đo lường move from the CIO
+    added |= {"nguon-tin"}  # N1 (NEWS_OPS_PLAN): Nguồn tin
     kept = [p for p in menu("admin") if p not in added]
     assert kept == ["ban", "he-thong", "du-lieu", "cau-hinh", "agent", "nhat-ky", "bo-nho"]
     assert added <= set(menu("admin"))

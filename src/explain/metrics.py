@@ -711,7 +711,7 @@ metric(
     "measure.contact_signal_share",
     "Liên hệ bắt đầu từ tín hiệu hệ thống",
     "Tỷ lệ = số liên hệ RM ghi là bắt đầu từ một tín hiệu ÷ tổng số liên hệ RM ghi trong tháng. Tín hiệu: một dòng ở "
-    "Hôm nay (gia đình cần xem trước sau một lần áp dụng, hoặc việc theo mục tiêu do quy định mới), được kiểm khi ghi. "
+    "Tổng quan của RM (gia đình cần xem trước sau một lần áp dụng, hoặc việc theo mục tiêu do quy định mới), được kiểm khi ghi. "
     "Mục tiêu ≥ 50 %.",
     "src/contacts/store.py::share",
     month="Tháng",

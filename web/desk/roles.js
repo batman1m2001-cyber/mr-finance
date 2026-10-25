@@ -29,10 +29,9 @@ export const DESKS = {
     ],
   },
   rm: {
-    title: "Sổ khách hàng", view: "rm",
+    title: "Tổng quan", view: "rm",
     groups: [
-      {id: "ban", label: "Sổ khách hàng", short: "Sổ khách", icon: "users", tip: "Sổ khách hàng: gia đình của bạn, ai cần bạn trước", desk: true, nav: ["ban"]},
-      {id: "hom-nay", label: "Hôm nay", icon: "calendar", tip: "Hôm nay: cần xem trước, việc theo mục tiêu, nhật ký liên hệ", nav: ["hom-nay"]},
+      {id: "ban", label: "Tổng quan", icon: "users", tip: "Tổng quan: khách hàng đang quản lý, ai cần bạn trước, ghi liên hệ", desk: true, nav: ["ban"]},  // OWN-FB-25, -21
       {id: "khach-hang", label: "Khách hàng", icon: "user", tip: "Khách hàng đang chọn: Wealth view, Wealth planning advisor, Headline news, Advisory performance", nav: ["khach-hang"]},
       {id: "hieu-qua", label: "Advisory performance", short: "Hiệu quả", icon: "activity", tip: "Advisory performance: khách hàng này và tất cả khách hàng của bạn", nav: ["hieu-qua"]},
       {id: "bo-nho", label: "Bộ nhớ", icon: "archive", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},

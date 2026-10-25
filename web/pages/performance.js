@@ -3,7 +3,7 @@
    missed, news missed), each AI in the pipeline with its score, metrics and a twelve-month accuracy line, the
    advice log, the important news it missed, how much the client reads, and the risk tests over time (tolerance
    against capacity). Data: GET /api/advisory?client_id=. perfall.js shows the same over every client. */
-import {internal, esc, get, n as how, pct, vnd} from "../core/core.js";
+import {esc, get, n as how, pct, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {columns, lines, sparkline} from "../charts/money.js?v=20261016r4";
 
@@ -81,7 +81,7 @@ export async function render(box, ctx) {
   const first = tests[0], last = tests[tests.length - 1];
   const drift = last.tolerance - first.tolerance, over = last.tolerance - last.capacity;
 
-  box.innerHTML = `${internal()}
+  box.innerHTML = `
     <div class="pagehead"><div><h1 class="h1" lang="en">Advisory performance</h1>
       <p class="lede">Hiệu quả tư vấn và AI cho khách hàng ${esc(me.name || client)} · 12 tháng</p></div></div>
     ${tiles(t.summary, `đã có tín hiệu sớm · tác động ${how(vnd(t.summary.missed_news_value, true), "advisory.missed_news")}`)}

@@ -31,7 +31,7 @@ const DESK = new Set(["cio", "admin"]);  // A7: the panel links to the Agent pag
 const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", admin: "Quản trị"};
 const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
-  rm: ["Sổ khách hàng có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
+  rm: ["Tổng quan có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
   cio: ["Có gì chờ tôi duyệt?", "Tác động lớn nhất tới tài sản ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
   admin: ["Hệ thống có gì bất thường?", "Chuỗi nhật ký còn nguyên không?", "Có cảnh báo hệ thống nào?", "Cấu hình nào chờ duyệt?"],
 };
