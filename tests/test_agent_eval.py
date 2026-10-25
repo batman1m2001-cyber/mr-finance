@@ -310,6 +310,23 @@ def test_the_rates_carry_their_counts_and_leave_pending_out():
     assert empty["precision"] == {"value": None, "hits": 0, "n": 0}  # no denominator, no rate
 
 
+def test_the_timeline_adds_up_by_due_day_and_leaves_pending_out():
+    from trial import evaluate
+
+    rows = [
+        {"verdict": "correct", "direction_hit": True, "due": "2026-10-24"},
+        {"verdict": "missed", "reason": "not_predicted", "due": "2026-10-24"},
+        {"verdict": "incorrect", "reason": "wrong_direction", "direction_hit": False, "due": "2026-10-25"},
+        {"verdict": "pending", "reason": "not_due", "due": "2026-10-26"},  # not a day on the chart
+        {"verdict": "excluded", "reason": "conflicting", "due": "2026-10-26"},
+    ]
+    t = evaluate.timeline(rows)
+    assert [d["day"] for d in t] == ["2026-10-24", "2026-10-25"]
+    assert t[0]["precision"] == {"value": 1.0, "hits": 1, "n": 1} and t[0]["recall"]["n"] == 2
+    assert t[1]["precision"] == {"value": 0.5, "hits": 1, "n": 2} and t[1]["scored"] == 3  # cumulative
+    assert evaluate.timeline([{"verdict": "pending", "due": "2026-10-26"}]) == []
+
+
 def test_a_failed_grouping_call_is_recorded_on_the_morning_and_raised(monkeypatch):
     from test_views import NOW, news
 
@@ -454,6 +471,25 @@ def test_vnd_by_hand_correct_incorrect_missed_and_a_negative_warning():
     assert (t["scored"], t["unavailable"], t["late"]) == (6, 1, 0)
     assert t["by_family"]["stocks"]["net"]["vnd"] == 35_000_000 and t["by_family"]["policy_macro"]["net"]["n"] == 0
     assert finance.value(rows[0], None) is None
+
+
+def test_the_vnd_timeline_adds_up_per_group_by_due_day():
+    from trial import finance, segments
+
+    asyncio.run(finance.keep("2026-10-22", families=FAMS))
+    rows = [
+        {**_scored("correct", 2.5), "due": "2026-10-29"},  # +25 m
+        {**_scored("incorrect", -2.0), "due": "2026-10-29"},  # −20 m
+        {**_scored("missed", 4.0, expected=0.1), "due": "2026-10-30"},  # 0 on the net, still a scored move
+        {**_scored("correct", 3.0, day="2026-10-24"), "due": "2026-10-30"},  # no snapshot: not on the chart
+        {**_scored("pending", None), "realised": None, "due": "2026-10-31"},
+    ]
+    t = finance.summary(rows)["horizons"]["1w"]["timeline"]
+    zero = {g: 0 for g in segments.FAMILIES}
+    assert t == [
+        {"day": "2026-10-29", "by_family": {**zero, "stocks": 5_000_000}, "n": 2},
+        {"day": "2026-10-30", "by_family": {**zero, "stocks": 5_000_000}, "n": 3},
+    ]
 
 
 # -- cost per agent (§3) ----------------------------------------------------------------------------------------

@@ -254,6 +254,16 @@ def rates(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+def timeline(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Precision and recall as they stood after each due day, over the moves scored by then (View B's chart)."""
+    done = [r for r in rows if r["verdict"] in FINAL[:4] and r.get("due")]
+    out = []
+    for d in sorted({r["due"] for r in done}):
+        x = rates([r for r in done if r["due"] <= d])
+        out.append({"day": d, "precision": x["precision"], "recall": x["recall"], "scored": x["coverage"]["scored"]})
+    return out
+
+
 def by_factor_error(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     """The mean absolute error per factor, in the factor's own unit (bp, % …), with n."""
     out: Dict[str, Dict[str, Any]] = {}
@@ -330,6 +340,7 @@ def summary(today: Optional[str] = None) -> Dict[str, Any]:
             "by_family": {fam: rates([r for r in mine if r.get("family") == fam]) for fam in segments.FAMILIES},
             "by_factor_error": by_factor_error(mine),
             "first_due": min((r["due"] for r in mine), default=None),
+            "timeline": timeline(mine),
         }
     return {
         "settings": settings(),

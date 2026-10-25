@@ -18,6 +18,9 @@ Source: [`2026-10-25_news_ops.md`](../sources/owner_requests/2026-10-25_news_ops
 | OWN-NO-01 | Admin's Nguồn tin page: each source with its last 7 days; add, edit, switch off, delete and test one (https and a public address only, nothing kept); the changes are proposed as a new version of `news_sources` and approved before the next run reads them | request 1, plan N1 | documented |
 | OWN-NO-02 | View A says each day's collection time (the runs' total, over the runs that kept it, with their count) and its first and last run | request 2, plan N2 | documented |
 | OWN-NO-03 | View A counts by collection day the news that reached a portfolio (its event has an application run the RMs see with a family whose expected 3-month change is not zero) and the families reached | request 2, plan N3 | documented |
+| OWN-NO-04 | View A charts the news kept each collection day, stacked by the four groups and Chưa xếp, with a legend and a tooltip per day | request 4, charts plan C1 | documented |
+| OWN-NO-05 | View B charts precision and recall by scoring day, cumulative, per horizon; pending moves are never on it and a day with no denominator is a gap, never 0 % | request 4, charts plan C2 | documented |
+| OWN-NO-06 | View B charts the simulated net VND (right − wrong) by group, cumulative by scoring day, labelled simulated and not proof the agent caused it; before the first scoring day it says when that is and draws nothing | request 4, charts plan C3 | documented |
 
 ## FB — Business feedback 6: the staff desks (2026-10-24)
 
