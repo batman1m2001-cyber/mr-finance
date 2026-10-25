@@ -5,8 +5,10 @@
    AGENT_EVALUATION_PLAN E5: two views. A · Thu thập tin: each ingest run's funnel and health by day (news/monitor.py).
    B · Hiệu quả agent: each move scored (trial/evaluate.py), its simulated VND (trial/finance.py), what the calls
    cost (trial/costs.py); a move opens from the news to the VND (GET /api/trial/move/<id>). Every rate shows k/n;
-   what is unavailable says so, never 0. */
+   what is unavailable says so, never 0. NEWS_CHARTS_PLAN: the news kept per day by group (A); precision and recall,
+   and the simulated net VND by group, over the scoring days (B) — charts/trend.js, the tables below them their view. */
 import {drawer, esc, get, n as how, pct, vnd, when} from "../core/core.js";
+import {legend, lines, stack} from "../charts/trend.js?v=20261025a";
 
 const H = [["3d", "3 ngày"], ["1w", "1 tuần"], ["3m", "3 tháng"]];
 const HL = Object.fromEntries(H);
@@ -29,11 +31,40 @@ export async function render(box) {
   const d = await get("/api/trial");
   const draw = () => {
     paint(box, d);
+    charts(box, d);
     for (const b of box.querySelectorAll("[data-h]")) b.onclick = () => { horizon = b.dataset.h; draw(); };
     for (const b of box.querySelectorAll("[data-view]")) b.onclick = () => { view = b.dataset.view; draw(); };
     for (const b of box.querySelectorAll("[data-move]")) b.onclick = () => openMove(b.dataset.move);
   };
   draw();
+}
+
+// the groups in their fixed order: one colour per group on both views (the validated --s1…--s4; “Chưa xếp” the grey)
+const GROUP = ["--s1", "--s2", "--s3", "--s4"];
+const groups = (labels) => Object.entries(labels).map(([key, label], i) => ({key, label, color: `var(${GROUP[i] || "--other"})`}));
+
+function charts(box, d) {
+  const e = d.evaluation;
+  if (!e) return;
+  const at = (id) => box.querySelector(id);
+  const m = e.collection;
+  if (at("#tr-kept") && m.days.length) {
+    const days = m.days.slice().reverse().map(x => ({day: x.day, values: x.by_category}));
+    at("#tr-kept").replaceChildren(stack(days, groups(m.categories), at("#tr-kept").clientWidth));
+  }
+  const a = e.accuracy.horizons[horizon].timeline, f = e.finance.horizons[horizon].timeline;
+  if (at("#tr-acc") && a.length) {
+    at("#tr-acc").replaceChildren(lines(a.map(x => x.day), [
+      {label: "Độ chính xác", color: "var(--s7)", values: a.map(x => (x.precision.n ? x.precision.value : null))},
+      {label: "Độ phủ", color: "var(--s5)", values: a.map(x => (x.recall.n ? x.recall.value : null))},
+    ], at("#tr-acc").clientWidth, {pct: true, fmt: (v) => pct(v, false, 0),
+      tip: (i) => `<div class="small muted">chính xác ${a[i].precision.hits}/${a[i].precision.n} · phủ ${a[i].recall.hits}/${a[i].recall.n} · ${a[i].scored} đã chấm</div>`}));
+  }
+  if (at("#tr-vnd") && f.length) {
+    const gs = groups(e.accuracy.families);
+    at("#tr-vnd").replaceChildren(lines(f.map(x => x.day), gs.map(g => ({...g, values: f.map(x => x.by_family[g.key])})),
+      at("#tr-vnd").clientWidth, {fmt: (v) => vnd(v, true), tip: (i) => `<div class="small muted">${f[i].n} dự báo có giá trị · ${esc(e.finance.label)}</div>`}));
+  }
 }
 
 // ── E5 · the two views ─────────────────────────────────────────────────────────────────────────────────
@@ -81,6 +112,10 @@ function viewA(d, m) {
       ${kpi("Tin quan trọng thu được", r.share != null ? how(pct(r.share, false, 0), "trial.recall", {collected: String(r.collected), important: String(r.important)}) : "—", `${r.collected}/${r.important} tin của nguồn đối chiếu (KPI-02)`)}
     </div>
 
+    <section class="panel mt"><h3>Tin giữ lại mỗi ngày <span class="hint">theo nhóm · ${m.days.length} ngày thu thập</span></h3>
+      <div id="tr-kept" class="mt-xs"></div>${legend(groups(m.categories))}
+    </section>
+
     <section class="panel mt"><h3>Theo ngày <span class="hint">ngày thu thập (giờ Việt Nam), không phải ngày đăng</span></h3>
       <div class="scrollx"><table class="table"><thead><tr><th>Ngày</th><th class="num">Lần lấy</th><th>Từ – đến</th><th class="num">Thời gian lấy</th><th class="num">Lỗi</th><th class="num">Đọc</th><th class="num">Trùng</th><th class="num">Mới</th><th class="num">Giữ lại</th><th class="num">Liên quan</th><th class="num">Tác động danh mục</th>
         ${cats.map(([, l]) => `<th class="num">${esc(l)}</th>`).join("")}<th class="num">Thiếu giờ đăng</th><th class="num">Trễ</th></tr></thead><tbody>
@@ -125,6 +160,16 @@ function viewB(d, e) {
     </div>
     ${a.uncalibrated ? `<p class="small warn-text mt-xs">Kỳ 3 ngày chưa hiệu chỉnh: biến động ngắn phần lớn là nhiễu.</p>` : ""}
     ${c.scored ? "" : `<p class="small muted mt-xs">Chưa dự báo nào đến hạn chấm ở kỳ ${HL[horizon]}: các tỷ lệ hiện “—”, không phải 0.</p>`}
+
+    <section class="panel mt"><h3>Theo ngày chấm <span class="hint">${HL[horizon]} · cộng dồn đến mỗi ngày</span></h3>
+      ${a.timeline.length ? `<div><p class="small"><b>Độ chính xác và độ phủ</b></p><div id="tr-acc" class="mt-xs"></div>
+        ${legend([{label: "Độ chính xác", color: "var(--s7)"}, {label: "Độ phủ", color: "var(--s5)"}])}</div>
+        <div class="mt"><p class="small"><b>Lãi lỗ ròng mô phỏng theo nhóm</b> <span class="muted">${esc(e.finance.label)}</span></p>
+        ${f.timeline.length ? `<div id="tr-vnd" class="mt-xs"></div>${legend(groups(e.accuracy.families))}` : `<p class="small muted">Các dự báo đã chấm chưa có ảnh chụp danh mục: chưa tính được.</p>`}</div>
+        <p class="footnote">${a.timeline.length} ngày chấm, ${a.timeline[a.timeline.length - 1].scored} dự báo: mẫu nhỏ, chỉ để xem xu hướng. Ròng = gọi đúng − gọi sai, không trừ cơ hội bỏ lỡ.
+          Một phép giả định trên danh mục mô phỏng, không phải lãi lỗ thật và không chứng minh agent gây ra lãi lỗ.</p>`
+        : `<p class="small muted">Chưa ngày chấm nào ở kỳ ${HL[horizon]}${a.first_due ? `: hạn chấm đầu ${day(a.first_due)}` : ""}. Biểu đồ hiện từ ngày chấm đầu tiên.</p>`}
+    </section>
 
     <section class="panel mt"><h3>Theo nhóm tài sản <span class="hint">${HL[horizon]}</span></h3>
       <div class="scrollx"><table class="table"><thead><tr><th></th><th class="num">Độ chính xác</th><th class="num">Độ phủ</th><th class="num">Đúng hướng</th><th class="num">Đúng · sai · bỏ lỡ</th><th class="num">Chờ</th></tr></thead><tbody>

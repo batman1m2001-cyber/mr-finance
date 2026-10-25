@@ -144,6 +144,18 @@ def _totals(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+def timeline(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """The simulated net VND as it added up by due day, per group (View B's chart): scored moves with a snapshot."""
+    valued = [r for r in rows if r.get("vnd") and r.get("due") and r.get("family") in segments.FAMILIES]
+    run, n, out = {g: 0 for g in segments.FAMILIES}, 0, []
+    for d in sorted({r["due"] for r in valued}):
+        for r in (r for r in valued if r["due"] == d):
+            run[r["family"]] += sum(f["value"] for f in r["vnd"]["families"].values())
+            n += 1
+        out.append({"day": d, "by_family": dict(run), "n": n})
+    return out
+
+
 def summary(rows: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     """View B's money block per horizon, overall and by the four groups, labelled simulated."""
     from trial import evaluate
@@ -158,6 +170,7 @@ def summary(rows: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         out[h] = {
             **_totals(mine),
             "by_family": {g: _totals([r for r in mine if r.get("family") == g]) for g in segments.FAMILIES},
+            "timeline": timeline(mine),
         }
     return {
         "label": LABEL,

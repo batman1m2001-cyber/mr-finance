@@ -77,3 +77,21 @@ def test_view_b_shows_every_rate_with_its_count_and_a_move_opens_to_its_vnd(open
     assert "đúng" in drawer.inner_text()
     assert page.evaluate("document.documentElement.scrollWidth") <= page.viewport_size["width"]
     assert not p.problems()
+
+
+@pytest.mark.parametrize("size", ["desktop", "phone"])
+def test_the_charts_draw_from_the_first_scoring_day_and_say_when_there_is_none(open_page, size):
+    _seed()
+    p = open_page(size)
+    p.go("#/cio/mo-hinh/thu-nghiem")
+    page = p.page
+    page.locator("#tr-kept svg").wait_for()  # view A: news kept per day, by group
+    page.click('[data-view="b"]')
+    page.locator("#tr-acc svg").wait_for()  # 1w: the VNINDEX move is due 26/10
+    assert page.locator("#tr-vnd svg").count() == 1
+    assert "không phải lãi lỗ thật" in page.locator("#page").inner_text()
+    page.click('[data-h="3d"]')
+    page.locator("text=Chưa ngày chấm nào ở kỳ").wait_for()  # nothing scored at 3d: no chart, never a 0 line
+    assert page.locator("#tr-acc svg").count() == 0
+    assert page.evaluate("document.documentElement.scrollWidth") <= page.viewport_size["width"]
+    assert not p.problems()
