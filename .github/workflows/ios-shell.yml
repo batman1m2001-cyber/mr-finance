@@ -63,7 +63,8 @@ jobs:
             xcrun simctl io "$UDID" screenshot "shots/$name.png"
           }
           C=SIMCTL_CHILD_
-          shot "00-splash" 0.3 ${C}MF_SIGNOUT=1
+          # the splash: a server that never answers (the screenshot itself takes seconds, so a real load is done by then)
+          shot "00-splash" 1 ${C}MF_URL=https://10.255.255.1/
           for mode in light dark; do
             xcrun simctl ui "$UDID" appearance "$mode"
             shot "01-signin-$mode" 12 ${C}MF_THEME=$mode ${C}MF_SIGNOUT=1
@@ -72,10 +73,9 @@ jobs:
             shot "04-cio-$mode" 15 ${C}MF_THEME=$mode ${C}MF_DEMO=cio "${C}MF_ROUTE=#/cio/ban"
             shot "05-admin-$mode" 15 ${C}MF_THEME=$mode ${C}MF_DEMO=admin "${C}MF_ROUTE=#/admin/mo-hinh/thu-nghiem"
           done
-          # the server down: the app's retry screen, not the tunnel's error page
+          # no way to the server (a phone without internet: the name does not resolve): the app's retry screen
           xcrun simctl ui "$UDID" appearance light
-          shot "06-offline-3s" 3 ${C}MF_URL=https://127.0.0.1:9/
-          sleep 7; xcrun simctl io "$UDID" screenshot shots/06-offline-10s.png
+          shot "06-offline" 5 ${C}MF_URL=https://onewealth.invalid/
           # what the app saw: its phases, the page colours, failed loads; and a crash report if one was written
           xcrun simctl spawn "$UDID" log show --last 20m --style compact --predicate 'subsystem == "app.onewealth.demo"' > shots/app-log.txt || true
           cp ~/Library/Logs/DiagnosticReports/OneWealth* shots/ 2>/dev/null || true
