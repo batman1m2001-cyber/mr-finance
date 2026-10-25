@@ -115,3 +115,11 @@ An outside review (ChatGPT) proposed a broad audit-and-benchmark programme. What
     and P(big), the trailing move and the 60-day majority; fitted on July's 144 moves per horizon, rules fixed
     before): August 43% (3d) / 48% (1w) when sure, 44% / 54% on every move: **dropped**. July is too few weeks to
     learn weights from; the agents' weight changes sign between the horizons.
+  - **desk1 / desk2 on August**: desk1 55% 36/65 (3d) / 66% 64/97 (1w) at 8% / 14% recall (in July 36% / 48%);
+    desk2 50% / 53% at 41% / 40% recall. Neither holds across the months.
+  - **desk3** (the third and last iteration, written from the two months): the market model's side by default,
+    the analysts' only on a strong consensus with the odds near even, always a direction; sizes from P(big). Run
+    on Sonnet (desk3) and once on Opus (desk3o), over July and August.
+  - **Pick for the test, fixed before desk3's numbers**: the track with the highest 1w direction on calls over
+    July + August together (the lab's dev table) among those with 1w recall ≥ 50%; a tie (within 1 point) goes to
+    the one without a model call. odds_sel0.1 runs beside it as the selective line (high direction, low recall).
