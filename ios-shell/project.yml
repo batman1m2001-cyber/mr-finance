@@ -9,8 +9,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "1.1.0"
+    CURRENT_PROJECT_VERSION: "2"
     # signing: CI builds pass CODE_SIGNING_ALLOWED=NO; Sideloadly signs the .ipa with a free Apple ID
     CODE_SIGN_STYLE: Automatic
 targets:
@@ -27,9 +27,9 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: "YES"
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: "YES"
-        # a statement photo for the upload field: the page's file picker offers the camera and the library
-        INFOPLIST_KEY_NSCameraUsageDescription: "Chụp ảnh sao kê để tải lên OneWealth."
-        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Chọn ảnh sao kê để tải lên OneWealth."
+        # a document photo for the assistant and the upload field (sao kê, biên lai, hoá đơn, tài sản): the page's file picker offers the camera and the library
+        INFOPLIST_KEY_NSCameraUsageDescription: "Chụp ảnh sao kê, biên lai, hoá đơn hay giấy tờ tài sản để gửi cho OneWealth."
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Chọn ảnh sao kê, biên lai, hoá đơn hay giấy tờ tài sản để gửi cho OneWealth."
         TARGETED_DEVICE_FAMILY: "1"
   OneWealthTests:
     type: bundle.unit-test
