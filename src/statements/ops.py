@@ -110,59 +110,63 @@ def load_sample(filename: str) -> dict:
 
 
 @op
-def save_holdings(client_id: str, filename: str, institution: str, items: list, method: str = "rules") -> dict:
-    """The items as holdings — a stock valued at today's price, a balance as it is — kept as
-    this client's ``statement`` holdings (reading the same file again replaces them)."""
-    mk = fixtures.market()
+def as_holding(client_id: str, institution: str, filename: str, it: dict, mk: dict, ident: str) -> dict:
+    """One statement item as a holding: a stock valued at today's price, a balance as it is. A stock's key is its
+    ticker at the institution; a balance's is ``ident`` (what the caller counts it by)."""
     tag = re.sub(r"[^a-z0-9]+", "-", institution.lower()).strip("-") or "other"
-    out = []
-    for it in items:
-        if it["type"] == "stock":
-            row = {"ticker": it["ticker"], "qty": it["qty"], "avg_price": it.get("avg_price")}
-            if it["ticker"] in mk["stocks"]:
-                h = valuation.stock(
-                    client_id,
-                    "statement",
-                    row,
-                    mk,
-                    "statement",
-                    ident=f"{tag}:stock:{it['ticker']}",
-                )
-            else:  # a ticker the market file does not have: the statement's own price
-                price = it.get("price") or it.get("avg_price") or 0
-                h = valuation.holding(
-                    client_id,
-                    "statement",
-                    f"{tag}:stock:{it['ticker']}",
-                    trust="statement",
-                    cls="stock",
-                    name=f"Cổ phiếu {it['ticker']}",
-                    value=it["qty"] * price,
-                    cost=it["qty"] * it["avg_price"] if it.get("avg_price") else None,
-                    liquid=True,
-                    stress=0.3,
-                    ticker=it["ticker"],
-                    qty=it["qty"],
-                    price=price,
-                )
-            h["name"] = f"{h['name']} ({institution})"
-        else:
-            cls = "deposit" if it["type"] == "deposit" else "cash"
+    if it["type"] == "stock":
+        row = {"ticker": it["ticker"], "qty": it["qty"], "avg_price": it.get("avg_price")}
+        if it["ticker"] in mk["stocks"]:
+            h = valuation.stock(
+                client_id,
+                "statement",
+                row,
+                mk,
+                "statement",
+                ident=f"{tag}:stock:{it['ticker']}",
+            )
+        else:  # a ticker the market file does not have: the statement's own price
+            price = it.get("price") or it.get("avg_price") or 0
             h = valuation.holding(
                 client_id,
                 "statement",
-                f"{tag}:{cls}:{len(out)}",
+                f"{tag}:stock:{it['ticker']}",
                 trust="statement",
-                cls=cls,
-                name=f"{it['name']} ({institution})",
-                value=it["balance"],
+                cls="stock",
+                name=f"Cổ phiếu {it['ticker']}",
+                value=it["qty"] * price,
+                cost=it["qty"] * it["avg_price"] if it.get("avg_price") else None,
                 liquid=True,
-                rate=it.get("rate"),
-                maturity=it.get("maturity"),
-                opened=None if not it.get("maturity") else mk["as_of"],
+                stress=0.3,
+                ticker=it["ticker"],
+                qty=it["qty"],
+                price=price,
             )
-        h["detail"].update({"institution": institution, "file": filename})
-        out.append(h)
+        h["name"] = f"{h['name']} ({institution})"
+    else:
+        cls = "deposit" if it["type"] == "deposit" else "cash"
+        h = valuation.holding(
+            client_id,
+            "statement",
+            f"{tag}:{cls}:{ident}",
+            trust="statement",
+            cls=cls,
+            name=f"{it['name']} ({institution})",
+            value=it["balance"],
+            liquid=True,
+            rate=it.get("rate"),
+            maturity=it.get("maturity"),
+            opened=None if not it.get("maturity") else mk["as_of"],
+        )
+    h["detail"].update({"institution": institution, "file": filename})
+    return h
+
+
+def save_holdings(client_id: str, filename: str, institution: str, items: list, method: str = "rules") -> dict:
+    """The items as holdings (``as_holding``), kept as this client's ``statement`` holdings (reading the same file
+    again replaces them)."""
+    mk = fixtures.market()
+    out = [as_holding(client_id, institution, filename, it, mk, str(i)) for i, it in enumerate(items)]
     store.put_holdings(client_id, "statement", out)
     total = sum(h["value"] for h in out)
     return {

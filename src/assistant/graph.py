@@ -10,6 +10,7 @@ from operonx.app.serve import egress, ingress
 
 from assistant.ops import (
     answer,
+    attach,
     check_request,
     consolidate_due,
     conversations,
@@ -32,6 +33,7 @@ def assistant_flow(
     approvals=None,
     conversation_id=None,
     graph=None,
+    attachments=None,
 ):
     """Ask OneWealth: the role's tools in as many steps as the question needs; writes wait for the person."""
     ask = check_request(
@@ -45,6 +47,7 @@ def assistant_flow(
         approvals=approvals,
         conversation_id=conversation_id,
         graph=graph,
+        attachments=attachments,
     )
     done = turn(request=ask["request"])
     out = answer(request=ask["request"], result=done["result"])
@@ -74,6 +77,13 @@ def assistant_memory_flow(action="list", item_id=None, text=None, kind=None, que
     documents they added (A5)."""
     got = memory_page(action=action, item_id=item_id, text=text, kind=kind, query=query, role=role, client_id=client_id,
                       file_name=file_name, data=data, key=key)  # fmt: skip
+    START >> got >> END
+
+
+@graph
+def assistant_attach_flow(role="client", client_id=None, file_name=None, data=None):
+    """A file or image attached in the panel, read once and kept 24 hours (docs/OCR_PLAN.md)."""
+    got = attach(role=role, client_id=client_id, file_name=file_name, data=data)
     START >> got >> END
 
 

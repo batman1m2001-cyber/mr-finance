@@ -11,6 +11,7 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
                     assistant_flow ──► an answer from the role's tools in several steps; writes wait for the person
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
                     · POST /api/assistant/memory ──► the Bộ nhớ page (A4) · 02:30 daily ──► assistant_retention
+                    · POST /api/assistant/attach ──► a file or image, read once (OCR_PLAN)
                     · every 5 min ──► assistant_consolidate (A6) · market and news jobs ──► follow-ups (A6)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
@@ -69,6 +70,7 @@ from assistant.graph import (
     assistant_consolidate_flow,
     assistant_conversations_flow,
     assistant_flow,
+    assistant_attach_flow,
     assistant_memory_flow,
     assistant_retention_flow,
     assistant_stream_flow,
@@ -235,6 +237,13 @@ APP = Application(
             graph=assistant_memory_flow,
             description="POST {action: list | search | update | delete | clear, item_id, text, kind, query, role, "
             "client_id}: the Bộ nhớ page (A4).",
+        ),
+        Service(
+            "assistant_attach",
+            http("POST", "/api/assistant/attach", port=PORT),
+            graph=assistant_attach_flow,
+            description="POST {file_name, data: base64, role, client_id}: a file or image for the assistant, read "
+            "once and kept 24 hours (docs/OCR_PLAN.md).",
         ),
         Service(
             "statement",

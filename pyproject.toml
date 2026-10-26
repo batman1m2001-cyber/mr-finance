@@ -8,6 +8,7 @@ dependencies = [
     "operonx-agents>=0.3.1",
     "python-dotenv>=1.0",  # operonx.bootstrap() reads .env with it
     "pypdf>=6.19.0",
+    "pillow>=10",  # the assistant reads photos (OCR_PLAN): opened, shrunk, a scan's pages
     "openpyxl>=3.1.5",
     "cryptography>=43",
     "operonx-kb[pdf]>=0.2.6",
