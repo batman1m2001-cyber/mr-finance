@@ -248,6 +248,13 @@ struct WebShell: UIViewRepresentable {
             if !present(alert, over: webView) { completionHandler(nil) }
         }
 
+        func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+                     initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
+                     decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+            log.info("capture \(origin.host, privacy: .public)")
+            decisionHandler(Links.mayCapture(host: origin.host) ? .grant : .deny)  // the page asks each time without this
+        }
+
         /// Shown over whatever is on screen; false when nothing is (the answer then goes back at once).
         @discardableResult
         private func present(_ controller: UIViewController, over view: UIView) -> Bool {

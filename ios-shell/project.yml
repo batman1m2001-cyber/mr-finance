@@ -9,8 +9,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "1.1.0"
-    CURRENT_PROJECT_VERSION: "2"
+    MARKETING_VERSION: "1.2.0"
+    CURRENT_PROJECT_VERSION: "3"
     # signing: CI builds pass CODE_SIGNING_ALLOWED=NO; Sideloadly signs the .ipa with a free Apple ID
     CODE_SIGN_STYLE: Automatic
 targets:
@@ -30,6 +30,8 @@ targets:
         # a document photo for the assistant and the upload field (sao kê, biên lai, hoá đơn, tài sản): the page's file picker offers the camera and the library
         INFOPLIST_KEY_NSCameraUsageDescription: "Chụp ảnh sao kê, biên lai, hoá đơn hay giấy tờ tài sản để gửi cho OneWealth."
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Chọn ảnh sao kê, biên lai, hoá đơn hay giấy tờ tài sản để gửi cho OneWealth."
+        # the assistant's voice mode: the page records through getUserMedia, granted for our own site only (WebShell)
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: "Nói chuyện với trợ lý OneWealth bằng giọng nói."
         TARGETED_DEVICE_FAMILY: "1"
   OneWealthTests:
     type: bundle.unit-test

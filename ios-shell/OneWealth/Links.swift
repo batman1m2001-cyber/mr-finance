@@ -29,6 +29,11 @@ enum Links {
         }
     }
 
+    /// The microphone and camera go to our own pages only (the system's own prompt still asks once).
+    static func mayCapture(host: String, server: URL = Server.url) -> Bool {
+        host.lowercased() == server.host?.lowercased()
+    }
+
     /// The colour the page reports (`rgb(r, g, b)` or `rgba(r, g, b, a)`), or nil when it is not one.
     static func color(_ css: String) -> UIColor? {
         let parts = css.split(whereSeparator: { !"0123456789.".contains($0) }).compactMap { Double($0) }

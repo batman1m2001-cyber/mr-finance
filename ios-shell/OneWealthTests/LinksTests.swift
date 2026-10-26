@@ -21,6 +21,11 @@ final class LinksTests: XCTestCase {
         XCTAssertEqual(Links.place(nil, server: server), .cancel)
     }
 
+    func testOnlyOurSiteMayRecord() {
+        XCTAssertTrue(Links.mayCapture(host: "OneWeath.ngrok.app", server: server))
+        XCTAssertFalse(Links.mayCapture(host: "vnexpress.net", server: server))
+    }
+
     func testThePageColours() {
         XCTAssertTrue(Links.isDark(Links.color("rgb(17, 13, 11)")!))
         XCTAssertFalse(Links.isDark(Links.color("rgba(241, 241, 241, 1)")!))
