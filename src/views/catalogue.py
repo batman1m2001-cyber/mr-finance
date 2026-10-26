@@ -155,7 +155,7 @@ ENTRIES: List[Dict[str, Any]] = [
         "checks": "khách thấy ngay điều đã ghi trong câu trả lời",
         "measured": [],
         "runs": "khi khách khai báo qua chat",
-        "code": ["src/declare/graph.py"],
+        "code": ["src/declare/graph.py", "src/declare/agent.py"],
         "built": True,
     },
     {

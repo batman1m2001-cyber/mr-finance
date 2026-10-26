@@ -16,6 +16,7 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
+POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
@@ -88,7 +89,7 @@ from control.graph import (
 )
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
-from declare.graph import declare_flow
+from declare.graph import declare_flow, declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
 from feed.graph import feed_flow, feed_open_flow
 from flows.graph import flows_flow
@@ -256,6 +257,13 @@ APP = Application(
             http("POST", "/api/declare", port=PORT),
             graph=declare_flow,
             description="POST {client_id, message, session_id}: one chat turn of declarations.",
+        ),
+        Service(
+            "declare_stream",
+            http("POST", "/api/declare/stream", port=PORT),
+            graph=declare_stream_flow,
+            description="POST the same body as /api/declare, Accept: text/event-stream: the turn as it happens — "
+            "step, text, form (what the agent asks back), then the answer.",
         ),
         Service(
             "risk",
