@@ -1,0 +1,508 @@
+{
+ "agents:3d": {
+  "call_direction": {
+   "value": 0.586,
+   "hits": 92,
+   "n": 157
+  },
+  "hindsight": {
+   "value": 0.618,
+   "hits": 97,
+   "n": 157,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.371,
+   "hits": 13,
+   "n": 35
+  },
+  "precision": {
+   "value": 0.068,
+   "hits": 13,
+   "n": 192
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 35
+  },
+  "amount_precision": {
+   "value": null,
+   "hits": 0,
+   "n": 0
+  },
+  "ic": 0.11,
+  "moves": 302,
+  "interval": [
+   0.51,
+   0.627
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.454,
+    "hits": 64,
+    "n": 141,
+    "p": 0.0
+   },
+   "majority60": {
+    "value": 0.516,
+    "hits": 79,
+    "n": 153,
+    "p": 0.0055
+   }
+  }
+ },
+ "momentum:3d": {
+  "call_direction": {
+   "value": 0.48,
+   "hits": 85,
+   "n": 177
+  },
+  "hindsight": {
+   "value": 0.576,
+   "hits": 102,
+   "n": 177,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.262,
+   "hits": 11,
+   "n": 42
+  },
+  "precision": {
+   "value": 0.054,
+   "hits": 11,
+   "n": 202
+  },
+  "amount_recall": {
+   "value": 0.048,
+   "hits": 2,
+   "n": 42
+  },
+  "amount_precision": {
+   "value": 0.05,
+   "hits": 2,
+   "n": 40
+  },
+  "ic": -0.083,
+  "moves": 360,
+  "interval": [
+   0.392,
+   0.557
+  ],
+  "fair": {
+   "majority60": {
+    "value": 0.514,
+    "hits": 89,
+    "n": 173,
+    "p": 0.8195
+   }
+  }
+ },
+ "majority60:3d": {
+  "call_direction": {
+   "value": 0.566,
+   "hits": 43,
+   "n": 76
+  },
+  "hindsight": {
+   "value": 0.579,
+   "hits": 44,
+   "n": 76,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.19,
+   "hits": 8,
+   "n": 42
+  },
+  "precision": {
+   "value": 0.07,
+   "hits": 8,
+   "n": 114
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 42
+  },
+  "amount_precision": {
+   "value": null,
+   "hits": 0,
+   "n": 0
+  },
+  "ic": 0.102,
+  "moves": 360,
+  "interval": [
+   0.418,
+   0.812
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.489,
+    "hits": 23,
+    "n": 47,
+    "p": 0.0815
+   }
+  }
+ },
+ "odds_all:3d": {
+  "call_direction": {
+   "value": 0.481,
+   "hits": 148,
+   "n": 308
+  },
+  "hindsight": {
+   "value": 0.578,
+   "hits": 178,
+   "n": 308,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.595,
+   "hits": 25,
+   "n": 42
+  },
+  "precision": {
+   "value": 0.069,
+   "hits": 25,
+   "n": 360
+  },
+  "amount_recall": {
+   "value": 0.143,
+   "hits": 6,
+   "n": 42
+  },
+  "amount_precision": {
+   "value": 0.12,
+   "hits": 6,
+   "n": 50
+  },
+  "ic": 0.033,
+  "moves": 360,
+  "interval": [
+   0.449,
+   0.515
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.464,
+    "hits": 123,
+    "n": 265,
+    "p": 0.3255
+   },
+   "majority60": {
+    "value": 0.507,
+    "hits": 152,
+    "n": 300,
+    "p": 0.8955
+   }
+  }
+ },
+ "odds_sel0.1:3d": {
+  "call_direction": {
+   "value": 0.5,
+   "hits": 26,
+   "n": 52
+  },
+  "hindsight": {
+   "value": 0.635,
+   "hits": 33,
+   "n": 52,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.143,
+   "hits": 6,
+   "n": 42
+  },
+  "precision": {
+   "value": 0.109,
+   "hits": 6,
+   "n": 55
+  },
+  "amount_recall": {
+   "value": 0.024,
+   "hits": 1,
+   "n": 42
+  },
+  "amount_precision": {
+   "value": 1.0,
+   "hits": 1,
+   "n": 1
+  },
+  "ic": -0.011,
+  "moves": 360,
+  "interval": [
+   0.357,
+   0.676
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.609,
+    "hits": 28,
+    "n": 46,
+    "p": 1.0
+   },
+   "majority60": {
+    "value": 0.558,
+    "hits": 29,
+    "n": 52,
+    "p": 1.0
+   }
+  }
+ },
+ "agents:1w": {
+  "call_direction": {
+   "value": 0.634,
+   "hits": 78,
+   "n": 123
+  },
+  "hindsight": {
+   "value": 0.715,
+   "hits": 88,
+   "n": 123,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.385,
+   "hits": 15,
+   "n": 39
+  },
+  "precision": {
+   "value": 0.12,
+   "hits": 15,
+   "n": 125
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 39
+  },
+  "amount_precision": {
+   "value": null,
+   "hits": 0,
+   "n": 0
+  },
+  "ic": 0.193,
+  "moves": 301,
+  "interval": [
+   0.51,
+   0.775
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.642,
+    "hits": 79,
+    "n": 123,
+    "p": 0.5928
+   },
+   "majority60": {
+    "value": 0.429,
+    "hits": 51,
+    "n": 119,
+    "p": 0.0075
+   }
+  }
+ },
+ "momentum:1w": {
+  "call_direction": {
+   "value": 0.536,
+   "hits": 111,
+   "n": 207
+  },
+  "hindsight": {
+   "value": 0.57,
+   "hits": 118,
+   "n": 207,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.41,
+   "hits": 16,
+   "n": 39
+  },
+  "precision": {
+   "value": 0.077,
+   "hits": 16,
+   "n": 207
+  },
+  "amount_recall": {
+   "value": 0.077,
+   "hits": 3,
+   "n": 39
+  },
+  "amount_precision": {
+   "value": 0.079,
+   "hits": 3,
+   "n": 38
+  },
+  "ic": 0.129,
+  "moves": 317,
+  "interval": [
+   0.485,
+   0.599
+  ],
+  "fair": {
+   "majority60": {
+    "value": 0.485,
+    "hits": 97,
+    "n": 200,
+    "p": 0.1911
+   }
+  }
+ },
+ "majority60:1w": {
+  "call_direction": {
+   "value": 0.56,
+   "hits": 79,
+   "n": 141
+  },
+  "hindsight": {
+   "value": 0.546,
+   "hits": 77,
+   "n": 141,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.359,
+   "hits": 14,
+   "n": 39
+  },
+  "precision": {
+   "value": 0.095,
+   "hits": 14,
+   "n": 148
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 39
+  },
+  "amount_precision": {
+   "value": null,
+   "hits": 0,
+   "n": 0
+  },
+  "ic": 0.148,
+  "moves": 317,
+  "interval": [
+   0.443,
+   0.74
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.455,
+    "hits": 61,
+    "n": 134,
+    "p": 0.088
+   }
+  }
+ },
+ "odds_all:1w": {
+  "call_direction": {
+   "value": 0.426,
+   "hits": 132,
+   "n": 310
+  },
+  "hindsight": {
+   "value": 0.603,
+   "hits": 187,
+   "n": 310,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.538,
+   "hits": 21,
+   "n": 39
+  },
+  "precision": {
+   "value": 0.066,
+   "hits": 21,
+   "n": 317
+  },
+  "amount_recall": {
+   "value": 0.103,
+   "hits": 4,
+   "n": 39
+  },
+  "amount_precision": {
+   "value": 0.075,
+   "hits": 4,
+   "n": 53
+  },
+  "ic": 0.018,
+  "moves": 317,
+  "interval": [
+   0.317,
+   0.564
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.538,
+    "hits": 163,
+    "n": 303,
+    "p": 0.911
+   },
+   "majority60": {
+    "value": 0.487,
+    "hits": 147,
+    "n": 302,
+    "p": 0.8734
+   }
+  }
+ },
+ "odds_sel0.1:1w": {
+  "call_direction": {
+   "value": 0.381,
+   "hits": 32,
+   "n": 84
+  },
+  "hindsight": {
+   "value": 0.714,
+   "hits": 60,
+   "n": 84,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.128,
+   "hits": 5,
+   "n": 39
+  },
+  "precision": {
+   "value": 0.058,
+   "hits": 5,
+   "n": 86
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 39
+  },
+  "amount_precision": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 5
+  },
+  "ic": -0.093,
+  "moves": 317,
+  "interval": [
+   0.274,
+   0.547
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.5,
+    "hits": 42,
+    "n": 84,
+    "p": 0.8769
+   },
+   "majority60": {
+    "value": 0.562,
+    "hits": 45,
+    "n": 80,
+    "p": 0.9865
+   }
+  }
+ }
+}

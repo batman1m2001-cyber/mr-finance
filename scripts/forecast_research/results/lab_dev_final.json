@@ -1,0 +1,932 @@
+{
+ "agents:3d": {
+  "call_direction": {
+   "value": 0.544,
+   "hits": 162,
+   "n": 298
+  },
+  "hindsight": {
+   "value": 0.55,
+   "hits": 164,
+   "n": 298,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.307,
+   "hits": 31,
+   "n": 101
+  },
+  "precision": {
+   "value": 0.088,
+   "hits": 31,
+   "n": 354
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 108
+  },
+  "amount_precision": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 3
+  },
+  "ic": 0.075,
+  "moves": 669,
+  "interval": [
+   0.462,
+   0.634
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.506,
+    "hits": 124,
+    "n": 245,
+    "p": 0.2045
+   },
+   "majority60": {
+    "value": 0.531,
+    "hits": 155,
+    "n": 292,
+    "p": 0.372
+   }
+  }
+ },
+ "momentum:3d": {
+  "call_direction": {
+   "value": 0.515,
+   "hits": 177,
+   "n": 344
+  },
+  "hindsight": {
+   "value": 0.578,
+   "hits": 199,
+   "n": 344,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.325,
+   "hits": 39,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.094,
+   "hits": 39,
+   "n": 416
+  },
+  "amount_recall": {
+   "value": 0.125,
+   "hits": 15,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": 0.124,
+   "hits": 15,
+   "n": 121
+  },
+  "ic": 0.045,
+  "moves": 768,
+  "interval": [
+   0.441,
+   0.576
+  ],
+  "fair": {
+   "majority60": {
+    "value": 0.438,
+    "hits": 144,
+    "n": 329,
+    "p": 0.0505
+   }
+  }
+ },
+ "majority60:3d": {
+  "call_direction": {
+   "value": 0.542,
+   "hits": 96,
+   "n": 177
+  },
+  "hindsight": {
+   "value": 0.531,
+   "hits": 94,
+   "n": 177,
+   "claim": "down"
+  },
+  "recall": {
+   "value": 0.142,
+   "hits": 17,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.059,
+   "hits": 17,
+   "n": 288
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": null,
+   "hits": 0,
+   "n": 0
+  },
+  "ic": -0.082,
+  "moves": 768,
+  "interval": [
+   0.392,
+   0.675
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.583,
+    "hits": 49,
+    "n": 84,
+    "p": 0.684
+   }
+  }
+ },
+ "odds_all:3d": {
+  "call_direction": {
+   "value": 0.551,
+   "hits": 342,
+   "n": 621
+  },
+  "hindsight": {
+   "value": 0.556,
+   "hits": 345,
+   "n": 621,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.575,
+   "hits": 69,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.09,
+   "hits": 69,
+   "n": 768
+  },
+  "amount_recall": {
+   "value": 0.208,
+   "hits": 25,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": 0.111,
+   "hits": 25,
+   "n": 225
+  },
+  "ic": 0.064,
+  "moves": 768,
+  "interval": [
+   0.484,
+   0.623
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.523,
+    "hits": 257,
+    "n": 491,
+    "p": 0.1715
+   },
+   "majority60": {
+    "value": 0.501,
+    "hits": 297,
+    "n": 593,
+    "p": 0.156
+   }
+  }
+ },
+ "odds_sel0.1:3d": {
+  "call_direction": {
+   "value": 0.622,
+   "hits": 56,
+   "n": 90
+  },
+  "hindsight": {
+   "value": 0.522,
+   "hits": 47,
+   "n": 90,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.058,
+   "hits": 7,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.07,
+   "hits": 7,
+   "n": 100
+  },
+  "amount_recall": {
+   "value": 0.025,
+   "hits": 3,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": 0.125,
+   "hits": 3,
+   "n": 24
+  },
+  "ic": 0.049,
+  "moves": 768,
+  "interval": [
+   0.519,
+   0.695
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.545,
+    "hits": 42,
+    "n": 77,
+    "p": 0.1405
+   },
+   "majority60": {
+    "value": 0.517,
+    "hits": 45,
+    "n": 87,
+    "p": 0.1685
+   }
+  }
+ },
+ "fuse_all:3d": {
+  "call_direction": {
+   "value": 0.526,
+   "hits": 318,
+   "n": 605
+  },
+  "hindsight": {
+   "value": 0.555,
+   "hits": 336,
+   "n": 605,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.542,
+   "hits": 65,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.087,
+   "hits": 65,
+   "n": 744
+  },
+  "amount_recall": {
+   "value": 0.15,
+   "hits": 18,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": 0.083,
+   "hits": 18,
+   "n": 218
+  },
+  "ic": 0.033,
+  "moves": 768,
+  "interval": [
+   0.457,
+   0.599
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.52,
+    "hits": 247,
+    "n": 475,
+    "p": 0.4205
+   },
+   "majority60": {
+    "value": 0.501,
+    "hits": 291,
+    "n": 581,
+    "p": 0.225
+   }
+  }
+ },
+ "desk2:3d": {
+  "call_direction": {
+   "value": 0.515,
+   "hits": 244,
+   "n": 474
+  },
+  "hindsight": {
+   "value": 0.551,
+   "hits": 261,
+   "n": 474,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.425,
+   "hits": 51,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.087,
+   "hits": 51,
+   "n": 587
+  },
+  "amount_recall": {
+   "value": 0.183,
+   "hits": 22,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": 0.11,
+   "hits": 22,
+   "n": 200
+  },
+  "ic": 0.058,
+  "moves": 768,
+  "interval": [
+   0.441,
+   0.58
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.512,
+    "hits": 191,
+    "n": 373,
+    "p": 0.4515
+   },
+   "majority60": {
+    "value": 0.493,
+    "hits": 226,
+    "n": 458,
+    "p": 0.2765
+   }
+  }
+ },
+ "desk3:3d": {
+  "call_direction": {
+   "value": 0.564,
+   "hits": 341,
+   "n": 605
+  },
+  "hindsight": {
+   "value": 0.555,
+   "hits": 336,
+   "n": 605,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.583,
+   "hits": 70,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.094,
+   "hits": 70,
+   "n": 744
+  },
+  "amount_recall": {
+   "value": 0.233,
+   "hits": 28,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": 0.119,
+   "hits": 28,
+   "n": 235
+  },
+  "ic": 0.069,
+  "moves": 768,
+  "interval": [
+   0.493,
+   0.634
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.52,
+    "hits": 247,
+    "n": 475,
+    "p": 0.0485
+   },
+   "majority60": {
+    "value": 0.501,
+    "hits": 291,
+    "n": 581,
+    "p": 0.0935
+   }
+  }
+ },
+ "desk3o:3d": {
+  "call_direction": {
+   "value": 0.559,
+   "hits": 338,
+   "n": 605
+  },
+  "hindsight": {
+   "value": 0.555,
+   "hits": 336,
+   "n": 605,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.583,
+   "hits": 70,
+   "n": 120
+  },
+  "precision": {
+   "value": 0.094,
+   "hits": 70,
+   "n": 744
+  },
+  "amount_recall": {
+   "value": 0.208,
+   "hits": 25,
+   "n": 120
+  },
+  "amount_precision": {
+   "value": 0.11,
+   "hits": 25,
+   "n": 228
+  },
+  "ic": 0.056,
+  "moves": 768,
+  "interval": [
+   0.489,
+   0.627
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.52,
+    "hits": 247,
+    "n": 475,
+    "p": 0.066
+   },
+   "majority60": {
+    "value": 0.501,
+    "hits": 291,
+    "n": 581,
+    "p": 0.108
+   }
+  }
+ },
+ "agents:1w": {
+  "call_direction": {
+   "value": 0.542,
+   "hits": 154,
+   "n": 284
+  },
+  "hindsight": {
+   "value": 0.56,
+   "hits": 159,
+   "n": 284,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.252,
+   "hits": 30,
+   "n": 119
+  },
+  "precision": {
+   "value": 0.106,
+   "hits": 30,
+   "n": 284
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 127
+  },
+  "amount_precision": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 2
+  },
+  "ic": 0.056,
+  "moves": 735,
+  "interval": [
+   0.497,
+   0.595
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.405,
+    "hits": 115,
+    "n": 284,
+    "p": 0.0005
+   },
+   "majority60": {
+    "value": 0.514,
+    "hits": 143,
+    "n": 278,
+    "p": 0.23
+   }
+  }
+ },
+ "momentum:1w": {
+  "call_direction": {
+   "value": 0.379,
+   "hits": 183,
+   "n": 483
+  },
+  "hindsight": {
+   "value": 0.582,
+   "hits": 281,
+   "n": 483,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.356,
+   "hits": 47,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.097,
+   "hits": 47,
+   "n": 483
+  },
+  "amount_recall": {
+   "value": 0.167,
+   "hits": 22,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": 0.161,
+   "hits": 22,
+   "n": 137
+  },
+  "ic": -0.153,
+  "moves": 768,
+  "interval": [
+   0.328,
+   0.45
+  ],
+  "fair": {
+   "majority60": {
+    "value": 0.484,
+    "hits": 229,
+    "n": 473,
+    "p": 0.9815
+   }
+  }
+ },
+ "majority60:1w": {
+  "call_direction": {
+   "value": 0.522,
+   "hits": 202,
+   "n": 387
+  },
+  "hindsight": {
+   "value": 0.512,
+   "hits": 198,
+   "n": 387,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.235,
+   "hits": 31,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.08,
+   "hits": 31,
+   "n": 387
+  },
+  "amount_recall": {
+   "value": 0.0,
+   "hits": 0,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": null,
+   "hits": 0,
+   "n": 0
+  },
+  "ic": -0.079,
+  "moves": 768,
+  "interval": [
+   0.452,
+   0.587
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.39,
+    "hits": 151,
+    "n": 387,
+    "p": 0.0
+   }
+  }
+ },
+ "odds_all:1w": {
+  "call_direction": {
+   "value": 0.56,
+   "hits": 430,
+   "n": 768
+  },
+  "hindsight": {
+   "value": 0.56,
+   "hits": 430,
+   "n": 768,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.591,
+   "hits": 78,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.102,
+   "hits": 78,
+   "n": 768
+  },
+  "amount_recall": {
+   "value": 0.25,
+   "hits": 33,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": 0.169,
+   "hits": 33,
+   "n": 195
+  },
+  "ic": 0.053,
+  "moves": 768,
+  "interval": [
+   0.497,
+   0.616
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.41,
+    "hits": 315,
+    "n": 768,
+    "p": 0.001
+   },
+   "majority60": {
+    "value": 0.521,
+    "hits": 391,
+    "n": 751,
+    "p": 0.1905
+   }
+  }
+ },
+ "odds_sel0.1:1w": {
+  "call_direction": {
+   "value": 0.614,
+   "hits": 81,
+   "n": 132
+  },
+  "hindsight": {
+   "value": 0.553,
+   "hits": 73,
+   "n": 132,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.106,
+   "hits": 14,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.106,
+   "hits": 14,
+   "n": 132
+  },
+  "amount_recall": {
+   "value": 0.076,
+   "hits": 10,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": 0.196,
+   "hits": 10,
+   "n": 51
+  },
+  "ic": 0.051,
+  "moves": 768,
+  "interval": [
+   0.496,
+   0.718
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.409,
+    "hits": 54,
+    "n": 132,
+    "p": 0.0
+   },
+   "majority60": {
+    "value": 0.569,
+    "hits": 74,
+    "n": 130,
+    "p": 0.282
+   }
+  }
+ },
+ "fuse_all:1w": {
+  "call_direction": {
+   "value": 0.536,
+   "hits": 399,
+   "n": 744
+  },
+  "hindsight": {
+   "value": 0.562,
+   "hits": 418,
+   "n": 744,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.515,
+   "hits": 68,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.091,
+   "hits": 68,
+   "n": 744
+  },
+  "amount_recall": {
+   "value": 0.182,
+   "hits": 24,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": 0.127,
+   "hits": 24,
+   "n": 189
+  },
+  "ic": 0.011,
+  "moves": 768,
+  "interval": [
+   0.501,
+   0.578
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.41,
+    "hits": 305,
+    "n": 744,
+    "p": 0.0005
+   },
+   "majority60": {
+    "value": 0.527,
+    "hits": 384,
+    "n": 729,
+    "p": 0.3975
+   }
+  }
+ },
+ "desk2:1w": {
+  "call_direction": {
+   "value": 0.539,
+   "hits": 302,
+   "n": 560
+  },
+  "hindsight": {
+   "value": 0.539,
+   "hits": 302,
+   "n": 560,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.379,
+   "hits": 50,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.089,
+   "hits": 50,
+   "n": 560
+  },
+  "amount_recall": {
+   "value": 0.174,
+   "hits": 23,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": 0.154,
+   "hits": 23,
+   "n": 149
+  },
+  "ic": 0.048,
+  "moves": 768,
+  "interval": [
+   0.507,
+   0.579
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.404,
+    "hits": 226,
+    "n": 560,
+    "p": 0.0
+   },
+   "majority60": {
+    "value": 0.532,
+    "hits": 292,
+    "n": 549,
+    "p": 0.4255
+   }
+  }
+ },
+ "desk3:1w": {
+  "call_direction": {
+   "value": 0.563,
+   "hits": 419,
+   "n": 744
+  },
+  "hindsight": {
+   "value": 0.562,
+   "hits": 418,
+   "n": 744,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.591,
+   "hits": 78,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.105,
+   "hits": 78,
+   "n": 744
+  },
+  "amount_recall": {
+   "value": 0.265,
+   "hits": 35,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": 0.177,
+   "hits": 35,
+   "n": 198
+  },
+  "ic": 0.064,
+  "moves": 768,
+  "interval": [
+   0.498,
+   0.615
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.41,
+    "hits": 305,
+    "n": 744,
+    "p": 0.001
+   },
+   "majority60": {
+    "value": 0.527,
+    "hits": 384,
+    "n": 729,
+    "p": 0.19
+   }
+  }
+ },
+ "desk3o:1w": {
+  "call_direction": {
+   "value": 0.562,
+   "hits": 418,
+   "n": 744
+  },
+  "hindsight": {
+   "value": 0.562,
+   "hits": 418,
+   "n": 744,
+   "claim": "up"
+  },
+  "recall": {
+   "value": 0.598,
+   "hits": 79,
+   "n": 132
+  },
+  "precision": {
+   "value": 0.106,
+   "hits": 79,
+   "n": 744
+  },
+  "amount_recall": {
+   "value": 0.273,
+   "hits": 36,
+   "n": 132
+  },
+  "amount_precision": {
+   "value": 0.179,
+   "hits": 36,
+   "n": 201
+  },
+  "ic": 0.077,
+  "moves": 768,
+  "interval": [
+   0.502,
+   0.609
+  ],
+  "fair": {
+   "momentum": {
+    "value": 0.41,
+    "hits": 305,
+    "n": 744,
+    "p": 0.0015
+   },
+   "majority60": {
+    "value": 0.527,
+    "hits": 384,
+    "n": 729,
+    "p": 0.204
+   }
+  }
+ }
+}

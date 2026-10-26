@@ -1,0 +1,197 @@
+<title>Forecast Desk Findings</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; numbers in mono; pass/fail as coloured chips, details folded */
+:root {
+  --bg: #f6f7f8; --surface: #ffffff; --ink: #1d2730; --muted: #5d6b78; --rule: #dde2e7;
+  --accent: #1f6f78; --odds: #b0662a; --good: #2d7a4b; --bad: #b23a3a; --chip-bad: #f6e3e3; --chip-good: #e2f1e7;
+  --display: "Newsreader", Georgia, serif; --body: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12171c; --surface: #1a2128; --ink: #e3e8ec; --muted: #9aa7b3; --rule: #2c353e;
+  --accent: #5fb7bf; --odds: #e09a5e; --good: #6cc48f; --bad: #e57d7d; --chip-bad: #3a2224; --chip-good: #1f3528;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12171c; --surface: #1a2128; --ink: #e3e8ec; --muted: #9aa7b3; --rule: #2c353e;
+  --accent: #5fb7bf; --odds: #e09a5e; --good: #6cc48f; --bad: #e57d7d; --chip-bad: #3a2224; --chip-good: #1f3528;
+  color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body); }
+main { max-width: 760px; margin: 0 auto; padding-block: 32px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 36px; }
+h1, h2 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.35rem; }
+p { margin: 0; max-width: 66ch; }
+section { display: grid; gap: 14px; min-width: 0; }
+.eyebrow { font: 500 0.72rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.05rem; }
+.verdict { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--bad); border-radius: 6px;
+  padding: 16px 18px; display: grid; gap: 6px; }
+.verdict strong { font-size: 1.05rem; }
+.num, td.n, th.n { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.wrap { overflow-x: auto; min-width: 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 0.8rem; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+.chip { display: inline-block; font: 500 0.75rem var(--mono); padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.chip.bad { background: var(--chip-bad); color: var(--bad); }
+.chip.good { background: var(--chip-good); color: var(--good); }
+.example { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; display: grid; gap: 10px; }
+.steps { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
+.steps dt { font: 500 0.8rem var(--mono); color: var(--muted); padding-top: 2px; }
+.steps dd { margin: 0; }
+figure { margin: 0; display: grid; gap: 8px; }
+figcaption { color: var(--muted); font-size: 0.85rem; }
+svg text { font-family: var(--mono); font-size: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; background: currentColor; }
+.legend .a { color: var(--accent); } .legend .o { color: var(--odds); }
+details { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 16px; }
+details[open] { padding-bottom: 14px; }
+summary { cursor: pointer; font-weight: 500; }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+details > *:not(summary) { margin-top: 10px; }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.muted { color: var(--muted); }
+</style>
+
+<main>
+  <header style="display:grid;gap:10px">
+    <div class="eyebrow">OneWealth · forecast desk · 26/10/2026</div>
+    <h1>Forecast Desk Findings</h1>
+    <p class="lede">Could we make the agents' 3-day and 1-week calls clearly better than a guess? We tried seven ways over two months of data, then ran one test month.</p>
+  </header>
+
+  <div class="verdict">
+    <strong>Result: no. The test month failed the target.</strong>
+    <p>No method picks the <em>direction</em> of a market better than a coin in a way that lasts from one month to the next. What does work is telling <em>which</em> markets are about to move a lot, without saying which way.</p>
+  </div>
+
+  <section>
+    <div class="eyebrow">1 · The data</div>
+    <h2>What we have</h2>
+    <div class="wrap"><table>
+      <thead><tr><th>Data</th><th>What it holds</th><th class="n">Size</th></tr></thead>
+      <tbody>
+        <tr><td>Market prices</td><td>One closing price per day, 2020-01 → 2026-10: VN stocks and VN-Index (VNDirect), world FX, oil, gold, S&amp;P 500, US 10-year (MSN), BTC/ETH (Binance), USD/VND (VCB), SJC gold (PNJ), VN government bonds (HNX), foreign net buying (CafeF)</td><td class="n">31 series<br>46,343 days</td></tr>
+        <tr><td>News archive</td><td>Daily headlines from CafeF, Vietstock, VnEconomy, VnExpress, 2024-01 → 2026-10</td><td class="n">41,963 headlines</td></tr>
+        <tr><td>Agent replays</td><td>The agents re-run on past mornings' news, as if live: each event gets drafts forecasting 15 market factors</td><td class="n">3 replays<br>94 mornings</td></tr>
+      </tbody>
+    </table></div>
+    <div class="wrap"><table>
+      <thead><tr><th>Replay</th><th>Mornings</th><th class="n">News events</th><th class="n">1-week moves scored</th><th class="n">Big moves</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>July</td><td>01/07 → 20/07, weekdays</td><td class="n">27</td><td class="n">143</td><td class="n">17</td><td>practice</td></tr>
+        <tr><td>August</td><td>01/08 → 21/09, daily</td><td class="n">218</td><td class="n">592</td><td class="n">110</td><td>practice</td></tr>
+        <tr><td>September</td><td>22/09 → 21/10, daily</td><td class="n">158</td><td class="n">301 <span class="muted">+43 due</span></td><td class="n">39</td><td>the test, run once</td></tr>
+      </tbody>
+    </table></div>
+    <details>
+      <summary>Gaps in the data</summary>
+      <ul>
+        <li>Only closing prices: no open, high, low or volume, so no candlestick or volume signals.</li>
+        <li>3 of the 15 factors have no market price (house prices, two credit spreads), so their forecasts cannot be scored.</li>
+        <li>3-month forecasts are not due yet; only 3-day and 1-week are scored.</li>
+        <li>September is still filling in: 43 one-week moves come due by 28/10.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section>
+    <div class="eyebrow">2 · How a forecast is scored</div>
+    <h2>One example</h2>
+    <div class="example">
+      <dl class="steps">
+        <dt>Morning</dt><dd>01/08: four news events touch gold. Gold's typical 1-week move (σ) is 2.6%.</dd>
+        <dt>Agents</dt><dd>Their drafts average <span class="num">+0.2%</span>, under the 0.25σ minimum, so it does not count as a call.</dd>
+        <dt>Odds model</dt><dd>Says up, small (<span class="num">+0.8%</span>).</dd>
+        <dt>Reality</dt><dd>Gold rose <span class="num">7.4%</span> in the week, 2.9σ: a <strong>big move</strong> (≥ 1σ).</dd>
+        <dt>Score</dt><dd>Agents: <span class="chip bad">missed</span> · Odds model: <span class="chip good">direction right</span> but it did not say big.</dd>
+      </dl>
+    </div>
+    <p><strong>Direction</strong> = the share of calls that went the right way. <strong>Recall</strong> = the share of big moves that were called the right way. About 1 move in 6 is big.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">3 · What we tried</div>
+    <h2>Seven ideas, all measured on July and August</h2>
+    <div class="wrap"><table>
+      <thead><tr><th>Idea</th><th>What happened</th><th>Kept</th></tr></thead>
+      <tbody>
+        <tr><td>Statistical odds model (momentum, volatility, 1-year range, overnight world markets)</td><td>Direction near chance. Good at spotting big moves (score 0.73, where 0.5 is chance)</td><td><span class="chip good">size only</span></td></tr>
+        <tr><td>LightGBM in place of the simple model</td><td>Same as the simple model</td><td><span class="chip bad">no</span></td></tr>
+        <tr><td>News knowledge base: find similar past days, use what markets did next</td><td>Slightly worse than chance</td><td><span class="chip bad">no</span></td></tr>
+        <tr><td>Fusion: agents' direction plus the model's size</td><td>54% direction at 52% recall</td><td><span class="chip bad">no</span></td></tr>
+        <tr><td>Learned fusion: fitted on July, tested on August</td><td>43–54% on August. July is too short to learn from</td><td><span class="chip bad">no</span></td></tr>
+        <tr><td>LLM desk, 3 prompt versions (Sonnet, and Opus once)</td><td>The best version just copied the odds model: 56%</td><td><span class="chip bad">no gain</span></td></tr>
+        <tr><td>Candlesticks, deep learning</td><td>Not possible: no open/high/low/volume data, too few days</td><td><span class="chip bad">skipped</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="eyebrow">4 · What is happening</div>
+    <h2>Whoever wins one month loses the next</h2>
+    <figure>
+      <div class="wrap">
+        <svg viewBox="0 0 640 262" width="100%" role="img" aria-label="1-week direction accuracy by month. Agents: July 62%, August 53%, September 63%. Odds model: July 42%, August 59%, September 43%. Target 65%, coin 50%.">
+          <g stroke="var(--rule)" stroke-width="1">
+            <line x1="50" y1="20" x2="600" y2="20"/><line x1="50" y1="60" x2="600" y2="60"/>
+            <line x1="50" y1="100" x2="600" y2="100"/><line x1="50" y1="180" x2="600" y2="180"/>
+            <line x1="50" y1="220" x2="600" y2="220"/>
+          </g>
+          <g fill="var(--muted)" text-anchor="end">
+            <text x="42" y="24">80%</text><text x="42" y="64">70%</text><text x="42" y="104">60%</text>
+            <text x="42" y="144">50%</text><text x="42" y="184">40%</text><text x="42" y="224">30%</text>
+          </g>
+          <line x1="50" y1="140" x2="600" y2="140" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="58" y="134" fill="var(--muted)">coin</text>
+          <line x1="50" y1="80" x2="600" y2="80" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="6 3"/>
+          <text x="58" y="74" fill="var(--good)">target 65%</text>
+          <polyline points="140,92 340,128 540,88" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+          <polyline points="140,172 340,104 540,168" fill="none" stroke="var(--odds)" stroke-width="2.5"/>
+          <g fill="var(--accent)"><circle cx="140" cy="92" r="5"/><circle cx="340" cy="128" r="5"/><circle cx="540" cy="88" r="5"/></g>
+          <g fill="var(--odds)"><circle cx="140" cy="172" r="5"/><circle cx="340" cy="104" r="5"/><circle cx="540" cy="168" r="5"/></g>
+          <g fill="var(--accent)" text-anchor="middle"><text x="140" y="112">62%</text><text x="340" y="148">53%</text><text x="540" y="108">63%</text></g>
+          <g fill="var(--odds)" text-anchor="middle"><text x="140" y="192">42%</text><text x="340" y="94">59%</text><text x="540" y="188">43%</text></g>
+          <g fill="var(--ink)" text-anchor="middle"><text x="140" y="244">July</text><text x="340" y="244">August</text><text x="540" y="244">September (test)</text></g>
+        </svg>
+      </div>
+      <div class="legend"><span class="a">Agents (on their own calls)</span><span class="o">Odds model (calls every move)</span></div>
+      <figcaption>1-week direction accuracy. A month holds only 3–7 independent weeks, so a swing of ±10 points is luck, not skill.</figcaption>
+    </figure>
+    <p>The agents' 63% in September looks good, but September markets mostly rose: always calling "up" would have scored 72% on the same moves.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">5 · The test</div>
+    <h2>September against the target</h2>
+    <p>The setup was frozen from July and August before the test: the odds model, because the LLM desk added nothing to it.</p>
+    <div class="wrap"><table>
+      <thead><tr><th>Target, 1 week</th><th class="n">Needed</th><th class="n">Got</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Direction right on calls</td><td class="n">≥ 65%</td><td class="n">43%</td><td><span class="chip bad">fail</span></td></tr>
+        <tr><td>Big moves called the right way</td><td class="n">≥ 50%</td><td class="n">54%</td><td><span class="chip good">pass*</span></td></tr>
+        <tr><td>Big moves forecast as big</td><td class="n">≥ 40%</td><td class="n">10%</td><td><span class="chip bad">fail</span></td></tr>
+        <tr><td>"Big" forecasts that were big</td><td class="n">≥ 30%</td><td class="n">8%</td><td><span class="chip bad">fail</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">* Only because it calls every move, and half of those calls are wrong.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">6 · What next</div>
+    <h2>Better data, not a better prompt</h2>
+    <ul>
+      <li><strong>Keep:</strong> the big-move signal. It can warn "VN-Index is likely to move a lot this week" without saying which way.</li>
+      <li><strong>Get:</strong> daily open, high, low and volume, plus money flows (foreign and proprietary trading). These are the inputs we lack.</li>
+      <li><strong>Open:</strong> the long-run money check (weekly long/short since 2023) is written but has not been run yet.</li>
+      <li><strong>After 28/10:</strong> rescore September once the last moves come due. The setup stays frozen.</li>
+    </ul>
+  </section>
+</main>
