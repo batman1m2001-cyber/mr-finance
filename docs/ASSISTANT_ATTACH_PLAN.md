@@ -1,5 +1,7 @@
 # The assistant takes a file: "dùng file này add vào tài sản cho tôi" (2026-10-22)
 
+> Superseded by [OCR_PLAN.md](OCR_PLAN.md) (2026-10-26), which also takes images and scans.
+
 **Asked** (owner, 2026-10-22). Some pages take a file (Dữ liệu chi tiết tài sản's *Tải sao kê*: PDF, Excel, CSV).
 The owner wants to give the same file to the assistant: attach it in the panel and say "dùng file này add vào tài sản
 cho tôi". It answers with what it read, and adds it only after the person confirms.
