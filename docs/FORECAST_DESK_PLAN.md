@@ -98,7 +98,7 @@ An outside review (ChatGPT) proposed a broad audit-and-benchmark programme. What
     (55% / 53%, recall 56% / 50%).
   - The frontier in July: calling only the agents' claims holds 62–67% direction at 19–28% recall; calling every
     move reaches ~50% recall at 53–55%. No source gives the direction of the big moves the agents do not claim.
-- 2026-10-26, August (01/08 → 21/08 mornings, moves due by 21/09; ~4 week blocks), each month on its own
+- 2026-10-26, August (52 mornings 01/08 → 21/09, moves due by 28/09; ~7 week blocks), each month on its own
   (direction on calls · recall of big moves):
 
   | Track | Jul 3d | Jul 1w | Aug 3d | Aug 1w |
