@@ -1,8 +1,8 @@
 """Sign-in (BRD-RULE-SEC-01, §13.1; owner 2026-10-16): every person has their own account, and only a verified
 session is trusted.
 
-- **Accounts.** Customers (and household members), RMs, CIOs, Compliance, Admin and the specialists (who approve
-  action recommendations for the families assigned to them, G8) have accounts in ``accounts``. A password is kept
+- **Accounts.** Customers (and household members), RMs, CIOs and Admin have accounts in ``accounts`` (there is no
+  Compliance or specialist account since OWN-FB-18). A password is kept
   as a salted scrypt hash. Seeded accounts get ``MF_DEMO_PASSWORD`` when it is set; otherwise they have no
   password until one is set (``scripts/set_password.py``).
 - **Session.** Signing in sets an HttpOnly cookie: the person's id and an expiry, signed with HMAC-SHA256. The
@@ -37,7 +37,7 @@ from people import store
 
 COOKIE = "mf_session"
 TTL = 12 * 3600
-ACCOUNT_ROLES = ("client", "rm", "cio", "compliance", "admin", "specialist")
+ACCOUNT_ROLES = ("client", "rm", "cio", "admin")
 
 
 class NotSignedIn(PermissionError):
@@ -222,8 +222,6 @@ def _viewer(p: Dict[str, Any]) -> Dict[str, Any]:
         out["family"] = p.get("member_of") or p["id"]
     if p["role"] == "rm":
         out["families"] = store.families_of(p["id"])
-    if p["role"] == "specialist":
-        out["families"] = store.families_of_specialist(p["id"])
     return out
 
 
@@ -326,8 +324,8 @@ def checking() -> bool:
 
 
 def may_see(viewer: Dict[str, Any], client_id: str) -> bool:
-    """A family's data: the family itself (and its household), its assigned RM and specialists, and the CIO,
-    Compliance and Admin (who need it for runs, review and audit)."""
+    """A family's data: the family itself (and its household), its assigned RM, and the CIO and Admin (who need it
+    for runs, review and audit)."""
     cid = str(client_id or "")
     if viewer["role"] == "client":
         family = viewer["family"]
@@ -338,9 +336,7 @@ def may_see(viewer: Dict[str, Any], client_id: str) -> bool:
         return head == family
     if viewer["role"] == "rm":
         return store.assigned_rm(cid) == viewer["id"]
-    if viewer["role"] == "specialist":
-        return viewer["id"] in store.specialists_of(cid)
-    return viewer["role"] in ("cio", "compliance", "admin")
+    return viewer["role"] in ("cio", "admin")
 
 
 def require_client(client_id: str) -> None:

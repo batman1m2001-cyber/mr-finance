@@ -642,18 +642,10 @@ metric(
     A,
 )
 metric(
-    "threshold.pre_review",
-    "Ngưỡng RM xem trước",
-    "Một thiết lập (Cấu hình → ngưỡng, CIO sửa, có phê duyệt): gia "
-    "đình có kịch bản xấu 3 tháng (P10) bằng hoặc thấp hơn ngưỡng này, tính theo tài sản ròng, được đưa vào danh sách "
-    "RM xem trước.",
-    "src/apply/reads.py::rm_today",
-)
-metric(
     "impact.p10_3m",
     "Kịch bản xấu 3 tháng (P10)",
-    "P10 = mốc 10% của phân bố tác động 3 tháng (10% khả năng thấp "
-    "hơn), tính theo tài sản ròng; trong danh sách là sự kiện có P10 xấu nhất của gia đình.",
+    "P10: 1 trong 10 khả năng kết quả 3 tháng xấu hơn mức này (mốc 10% "
+    "của phân bố tác động), tính theo tài sản ròng; trong danh sách là sự kiện có P10 xấu nhất của gia đình.",
     "src/engine/scenario.py::evaluate",
     event="Sự kiện",
 )
@@ -664,7 +656,7 @@ metric(
     A,
 )
 
-# ── Đo lường, Agent (CIO, Tuân thủ, Admin) ──────────────────────────────────────────────────────────────
+# ── Đo lường, Agent (CIO, Admin) ────────────────────────────────────────────────────────────────────
 R = "src/measure/reports.py::"
 metric(
     "measure.no_edit",
@@ -711,7 +703,7 @@ metric(
     "measure.contact_signal_share",
     "Liên hệ bắt đầu từ tín hiệu hệ thống",
     "Tỷ lệ = số liên hệ RM ghi là bắt đầu từ một tín hiệu ÷ tổng số liên hệ RM ghi trong tháng. Tín hiệu: một dòng ở "
-    "Hôm nay (gia đình cần xem trước sau một lần áp dụng, hoặc việc theo mục tiêu do quy định mới), được kiểm khi ghi. "
+    "Tổng quan của RM (gia đình cần xem trước sau một lần áp dụng, hoặc việc theo mục tiêu do quy định mới), được kiểm khi ghi. "
     "Mục tiêu ≥ 50 %.",
     "src/contacts/store.py::share",
     month="Tháng",
@@ -733,7 +725,7 @@ metric(
     "measure.control_effect",
     "Hiệu quả kinh doanh: có và không có công cụ",
     "Chênh lệch = trung bình nhóm có công cụ − trung bình nhóm đối chứng, theo quý; khoảng tin cậy 90 % = chênh lệch ± "
-    "1,645 × sai số chuẩn (Welch). Nhóm đối chứng: tỷ lệ gia đình do Tuân thủ cấu hình (mặc định 10 %), rút trong từng "
+    "1,645 × sai số chuẩn (Welch). Nhóm đối chứng: tỷ lệ gia đình do CIO cấu hình (mặc định 10 %), rút trong từng "
     "tầng (phân khúc × RM) theo seed; RM không nhận tín hiệu nào cho họ, khách vẫn được phục vụ đủ. Chỉ số: liên hệ "
     "mỗi gia đình mỗi tháng, tỷ lệ mục tiêu “Đạt” sau lần áp dụng cuối quý, khuyến nghị hành động được duyệt mỗi gia "
     "đình. Dưới hai gia đình một nhóm thì không tính khoảng.",
@@ -937,6 +929,141 @@ metric(
     "Mục tiêu tin quan trọng thu được",
     "Một thiết lập, không phải kết quả tính: mục tiêu KPI-02 của BRD, đọc từ nguồn đối chiếu tin.",
     "src/news/reference.py::coverage",
+)
+# ── the agents' evaluation (AGENT_EVALUATION_PLAN E5): View A and View B of the trial page ─────────────────────
+E = "src/trial/evaluate.py::"
+F = "src/trial/finance.py::"
+metric(
+    "collect.relevant",
+    "Tin liên quan danh mục",
+    "Tỷ lệ = số tin giữ lại trong ngày (theo giờ thu thập) có mức liên quan cao hoặc vừa và không bị giữ lại ÷ số tin "
+    "giữ lại trong ngày.",
+    "src/news/monitor.py::days",
+    hits="Tin liên quan",
+    n="Tin giữ lại",
+)
+metric(
+    "collect.portfolio",
+    "Tin tác động danh mục",
+    "Số tin thu trong ngày (theo giờ thu thập) thuộc một sự kiện đã có lần áp dụng RM xem được (hiệu lực, đã thay hoặc "
+    "đã rút) với ít nhất một gia đình có kỳ vọng 3 tháng khác 0. Số này tăng sau ngày thu, khi nhận định được duyệt.",
+    "src/news/monitor.py::reached",
+    families="Gia đình chạm tới",
+)
+metric(
+    "collect.portfolio_draft",
+    "Tin tác động danh mục (nháp thử nghiệm)",
+    "Số tin thu trong ngày (theo giờ thu thập) thuộc một sự kiện thử nghiệm mà bản nháp của agent, nếu được duyệt, "
+    "chạm tới ít nhất một gia đình: phơi nhiễm 3 tháng của gia đình chốt sáng hôm đó × biến động kỳ vọng của bản nháp "
+    "khác 0. Không ai duyệt bản nháp thử nghiệm; số này tăng sau ngày thu, khi buổi sáng kế tiếp dùng tin.",
+    "src/news/monitor.py::drafted",
+    families="Gia đình chạm tới",
+)
+metric(
+    "collect.skipped",
+    "Tin quá cũ",
+    "Tin đọc được nhưng đăng trước lúc thu quá max_age_days ngày (data/news_config.json, hiện 7), bỏ qua: tin cũ "
+    "không phải sự kiện mới. Đọc = quá cũ + trùng + mới.",
+    "src/news/rules.py::gate",
+)
+metric(
+    "collect.duration",
+    "Thời gian lấy tin trong ngày",
+    "Tổng thời gian chạy của các lần lấy tin trong ngày, chỉ các lần có ghi thời gian (từ 24/10/2026); số lần có ghi "
+    "đứng bên cạnh.",
+    "src/news/monitor.py::days",
+    runs="Lần có ghi thời gian",
+)
+metric(
+    "eval.precision",
+    "Độ chính xác của agent",
+    "Một biến động là một yếu tố, một kỳ hạn, từ giá đóng cửa trước một buổi sáng; nhiều bản nháp cùng nói về nó được "
+    "chấm một lần. Agent “nói” khi kỳ vọng vượt ¼ biến động thường của kỳ; biến động lớn khi thị trường đi quá 1 lần "
+    "biến động thường (data/evaluation.json). Tỷ lệ = số lần nói đúng hướng và thị trường đi đủ mạnh ÷ số lần nói. "
+    "Chờ chấm, loại ra và không chấm được không tính.",
+    E + "rates",
+    hits="Đúng",
+    n="Số lần agent nói",
+)
+metric(
+    "eval.recall",
+    "Độ phủ biến động lớn",
+    "Tỷ lệ = số biến động lớn agent nói đúng ÷ số biến động lớn trong các buổi sáng agent đã chạy (đúng + sai hướng + "
+    "không nói). Buổi sáng không chạy được đếm riêng.",
+    E + "rates",
+    hits="Đúng",
+    n="Biến động lớn",
+)
+metric(
+    "eval.call_direction",
+    "Đúng hướng khi agent ra tín hiệu",
+    "Chỉ các lần agent nói tăng hoặc giảm (đúng hoặc sai, thị trường có đi). Tỷ lệ = số lần thị trường đi đúng chiều agent "
+    "nói, mạnh hay yếu ÷ số lần nói. Bên cạnh: cách đoán ngây thơ tốt nhất trên cùng các lần đó (luôn nói tăng, hoặc "
+    "luôn nói giảm — chọn sau khi biết kết quả) và xác suất tung đồng xu đúng được bằng chừng ấy lần.",
+    E + "call_direction",
+    hits="Đúng chiều",
+    n="Số lần agent nói",
+)
+metric(
+    "eval.event_recall",
+    "Tin quan trọng vào sự kiện",
+    "Tin quan trọng của nguồn đối chiếu (từ hai báo trở lên) mà ta đã thu trong khoảng của một buổi sáng. Tỷ lệ = số "
+    "tin trong số đó nằm trong một sự kiện của buổi sáng ÷ số tin đó.",
+    E + "event_recall",
+    hits="Vào sự kiện",
+    n="Tin quan trọng",
+)
+metric(
+    "eval.move",
+    "Biến động của yếu tố",
+    "Biến động của yếu tố từ giá đóng cửa trước buổi sáng (gốc) đến ngày đến hạn, theo đơn vị của yếu tố.",
+    E + "judge_move",
+    unit="Đơn vị",
+)
+metric(
+    "eval.vnd_effect",
+    "Tác động lên danh mục mô phỏng",
+    "Tác động = độ nhạy của danh mục gia đình với yếu tố (VND mỗi đơn vị, chụp buổi sáng đó, từ hệ số tải của mô hình) "
+    "× biến động thực tế. Mô phỏng, không phải lãi lỗ thật.",
+    F + "value",
+)
+metric(
+    "eval.vnd_correct",
+    "Giá trị các lần gọi đúng (mô phỏng)",
+    "Với mỗi lần agent nói đúng: |độ nhạy × biến động thực tế|, cộng qua các gia đình — nếu gia đình làm theo toàn bộ. "
+    "Không chứng minh agent gây ra lãi.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_incorrect",
+    "Thiệt của các lần gọi sai (mô phỏng)",
+    "Với mỗi lần agent nói sai: −|độ nhạy × biến động thực tế|, cộng qua các gia đình — nếu gia đình làm theo toàn bộ.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_net",
+    "Ròng mô phỏng",
+    "Ròng = giá trị các lần gọi đúng − thiệt của các lần gọi sai. Cơ hội bỏ lỡ không trừ vào ròng. Dự báo chờ chấm, "
+    "loại ra hoặc không có ảnh chụp danh mục không tính.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_warning",
+    "Cảnh báo giảm đúng (mô phỏng)",
+    "Các lần gọi đúng mà biến động làm danh mục gia đình giảm (độ nhạy × biến động < 0): giá trị của lời cảnh báo.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_missed",
+    "Cơ hội bỏ lỡ (mô phỏng)",
+    "Với mỗi biến động lớn agent không nói: |độ nhạy × biến động thực tế|, cộng qua các gia đình. Hiện bên cạnh, không "
+    "trừ vào ròng.",
+    F + "_totals",
+    n="Số lần",
 )
 metric(
     "scenario.move",

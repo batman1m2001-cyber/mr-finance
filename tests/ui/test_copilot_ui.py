@@ -16,9 +16,9 @@ def ask(p, q):
 
 def test_an_answer_marks_what_it_read_and_the_states_follow(open_page):
     p = open_page()
-    p.go("#/rm/khach-hang/toan-canh")  # the RM's docked panel, over a sheet of the desk
+    p.go("#/rm/khach-hang/tong-quan")  # the RM's docked panel, over a sheet of the desk
     ask(p, "Tài sản của khách này thế nào?")
-    assert p.page.inner_text("#cp-ctx").startswith("Đang xem: Toàn cảnh · RM")  # the page's context
+    assert p.page.inner_text("#cp-ctx").startswith("Đang xem: Tổng quan · RM")  # the page's context
     marked = p.page.eval_on_selector_all(".mf-focus", "es => es.map(e => e.dataset.focus)")
     assert sorted(marked) == ["kpi:liquidity", "kpi:net_worth", "kpi:risk"]
     assert p.page.get_attribute(".cp-panel", "data-state") == "ok"
@@ -35,7 +35,7 @@ def test_on_a_phone_the_docked_answer_marks_the_page_at_once(open_page):
     # the RM's assistant is docked on the desk (FEAT-41): below the page on a phone, never over it, so there is no
     # panel to close before the marks show (the floating panel's wait is for roles without a desk)
     p = open_page("phone")
-    p.go("#/rm/khach-hang/toan-canh")
+    p.go("#/rm/khach-hang/tong-quan")
     ask(p, "Tài sản của khách này thế nào?")
     assert p.page.locator(".mf-focus").count() == 3
     assert p.page.locator("#cp-close:visible").count() == 0
@@ -43,7 +43,7 @@ def test_on_a_phone_the_docked_answer_marks_the_page_at_once(open_page):
 
 def test_reduced_motion_runs_no_animation(open_page):
     p = open_page(reduced=True)
-    p.go("#/rm/khach-hang/toan-canh")
+    p.go("#/rm/khach-hang/tong-quan")
     ask(p, "Tài sản của khách này thế nào?")
     assert p.page.locator(".mf-focus").count() == 3
     assert p.page.evaluate("document.getAnimations().length") == 0
@@ -51,7 +51,7 @@ def test_reduced_motion_runs_no_animation(open_page):
 
 def test_busy_lasts_exactly_as_long_as_the_request(open_page):
     p = open_page()
-    p.go("#/rm/khach-hang/toan-canh")
+    p.go("#/rm/khach-hang/tong-quan")
     p.page.evaluate(  # the docked panel's request is the stream (FEAT-41): hold it until the test lets it go
         """() => { const f0 = window.fetch; window.__hold = null;
              window.fetch = (u, o) => String(u).includes('/api/assistant/stream')
@@ -94,7 +94,7 @@ def test_the_assistant_asks_before_a_write_and_shows_its_steps(open_page, monkey
     llm = ScriptedLLM(asks(("hom_nay", {})), asks(("ghi_lien_he", {"channel": "call"})), says("Đã ghi cuộc gọi."))
     with scripted(copilot=llm):
         p = open_page()
-        p.go("#/rm/khach-hang/toan-canh")
+        p.go("#/rm/khach-hang/tong-quan")
         a = ask(p, "Hôm nay gọi ai, rồi ghi lại cuộc gọi với khách này")
         assert "Ghi một cuộc gọi với gia đình" in a.inner_text() and contacts.recent() == []
         assert p.page.get_attribute(".cp-panel", "data-state") == "pending"
@@ -134,3 +134,40 @@ def test_a_conversation_is_picked_up_on_another_device_listed_and_deleted(open_p
     q.page.click(f"[data-del='{cid}']")
     q.page.wait_for_selector("text=Chưa có cuộc trò chuyện nào.")
     assert not p.problems() and not q.problems()
+
+
+def test_an_answer_from_the_data_room_shows_how_it_counted_collapsed(open_page, monkeypatch):
+    """ASSISTANT_DATA_PLAN D4: an answer from ``truy_van`` carries “Cách tính”, closed; opened, it shows the SQL, the
+    rows shown of the total, the table and the time of the data (desktop and phone)."""
+    import re
+    import time as clock
+
+    from operonx_agents.testing import ScriptedLLM, asks, says, scripted
+
+    from news import store as news
+
+    now = clock.time()
+    news.add([
+        {"source": "cafef_ck", "url_key": f"u{i}", "title_key": f"t{i}", "published": now, "ingested": now,
+         "kind": "domestic", "status": "new", "relevance": "high", "title": f"Tin {i}", "outlet": "CafeF",
+         "label": "Trong nước", "summary": "", "restricted": []}
+        for i in range(7)
+    ])  # fmt: skip
+    monkeypatch.setenv("MF_AI", "on")
+    monkeypatch.setenv("LLM_MODEL_COPILOT", "scripted-model")
+    sql = "select count(*) from tin where trang_thai = 'new'"
+    for size in ("desktop", "phone"):
+        llm = ScriptedLLM(asks(("truy_van", {"sql": sql})), says("Có 7 tin chờ xử lý."))
+        with scripted(copilot=llm):
+            p = open_page(size)
+            p.go("#/cio/hop-tin")
+            a = ask(p, "Có bao nhiêu tin chờ xử lý?")
+        how = a.locator("details.cp-how")
+        assert how.count() == 1 and how.get_attribute("open") is None  # collapsed: no wall of SQL
+        assert how.locator("summary").inner_text() == "Cách tính" and not a.locator(".cp-sql").is_visible()
+        how.locator("summary").click()
+        assert a.locator(".cp-sql").inner_text() == sql
+        line = a.locator(".cp-q").inner_text()
+        assert re.fullmatch(re.escape(sql) + r"\n1 dòng · tin · số liệu lúc \d{4}-\d\d-\d\d \d\d:\d\d", line), line
+        assert not p.problems(), p.problems()
+        p.close()

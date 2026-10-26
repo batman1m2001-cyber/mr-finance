@@ -4,8 +4,8 @@
    policy items (business feedback 2026-10-22: the overview first, cash flow second). It replaces the client's Toàn
    cảnh and Chi tiết sheets; the drawing is pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
 import {esc} from "../core/core.js";
-import {render} from "../pages/detail.js?v=20261022w1";
-import {href} from "./lenses.js?v=20261022w1";
+import {render} from "../pages/detail.js?v=20261025t3";
+import {href} from "./lenses.js?v=20261025t3";
 
 export function mount(el, {client, scope}) {
   let key = null, board = {}, loading = null;

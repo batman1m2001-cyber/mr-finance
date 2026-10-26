@@ -1,4 +1,4 @@
-"""The newsletter's served steps (FR-801): a CIO drafts; the CIO edits, submits or withdraws; Compliance approves or
+"""The newsletter's served steps (FR-801): a CIO drafts, edits, submits or withdraws; another CIO approves or
 returns."""
 
 from __future__ import annotations
@@ -18,9 +18,10 @@ async def draft(
     mode: str = "template",
     distribution: Optional[dict] = None,
     conflict: Optional[dict] = None,
+    body: str = "",
 ) -> dict:
-    """POST /api/newsletters: a draft from approved views."""
-    return {"newsletter": await store.draft(view_ids, by, title, mode, distribution, conflict)}
+    """POST /api/newsletters: a draft from approved views, or the CIO's own article (a body)."""
+    return {"newsletter": await store.draft(view_ids, by, title, mode, distribution, conflict, body)}
 
 
 @op

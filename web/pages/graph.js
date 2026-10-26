@@ -43,7 +43,7 @@ export async function render(box, ctx) {
   const src = (e) => e.sources.map(s => `${SRC[s.type] || s.type} ${esc(s.id)}`).join(" · ");
   const val = (e) => (e.value == null ? "" : how(vnd(e.value, true), "impact.edge"));
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `${cio ? internal() : ""}
     <div class="panel">
       <h3>${cio ? `Đồ thị lần áp dụng <span class="hint">${esc(g.run_id)} · ${g.families} gia đình · 3 tháng</span>`
         : `Đồ thị tác động <span class="hint">${esc(g.family || "")} · ${g.runs.length} lần áp dụng đang hiệu lực · 3 tháng</span>`}</h3>

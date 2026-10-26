@@ -16,15 +16,15 @@ from wealth import fixtures
 
 @op
 def upload(item: dict, by: str) -> dict:
-    """A report, house view or regulation note, waiting for Compliance."""
+    """A report, house view or regulation note, waiting for another CIO to release it."""
     roles.require(by, "cio")
     return {"item": store.upload(item or {}, by)}
 
 
 @op
 def release(item_id: str, decision: str, by: str, note: str = "") -> dict:
-    """Compliance releases (after the release time) or rejects, with a note."""
-    roles.require(by, "compliance")
+    """A CIO other than the one who uploaded it releases (after the release time) or rejects, with a note."""
+    roles.require(by, "cio")
     return {"item": store.decide(str(item_id), str(decision), by, note)}
 
 

@@ -69,6 +69,24 @@ def test_impact_is_exposure_times_sensitivity_times_probability():
         assert a["source"] and a["status_label"]
 
 
+def test_each_alert_splits_by_asset_class_and_the_parts_add_up_to_its_impact():
+    """OWN-FB-17: a sector hit splits by each holding's own sensitivity (a bond moves 0.3 of a stock at beta 1);
+    a hit on no holding (the salary, a payment ahead) is its own part; every client's parts add to the row."""
+    rows = [
+        h("stock", 1 * TY, sector="Ngân hàng", beta=1.0, name="CP"),
+        h("bond", 1 * TY, sector="Ngân hàng", name="TP"),
+    ]
+    f = {"rule": {"type": "sector", "sector": "Ngân hàng", "sensitivity": -0.1}}
+    (hit,) = _rules.sector(f, rows, {}, fixtures.market())
+    parts = _rules.by_class(hit, rows, hit["raw"])
+    assert parts == {"stock": round(-0.1 * TY), "bond": round(-0.1 * TY * 0.3)}
+    assert abs(parts["stock"] / parts["bond"] - 1 / 0.3) < 1e-6
+    assert _rules.by_class({"affected": ["Thu nhập từ lương"]}, rows, 5e6) == {"income": 5_000_000}
+    for cid in fixtures.client_ids():
+        for a in report(cid)["alerts"]:
+            assert sum(a["by_class"].values()) == a["impact"], (cid, a["id"])
+
+
 def test_every_client_gets_alerts_largest_first_and_the_latest_is_kept():
     for cid in fixtures.client_ids():
         r = report(cid)

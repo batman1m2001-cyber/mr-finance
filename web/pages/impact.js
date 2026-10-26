@@ -1,7 +1,7 @@
 /* Tác động tin: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {internal, ASSET_CLASS, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
+import {ASSET_CLASS, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
@@ -32,7 +32,7 @@ export async function render(box, ctx) {
   let sel = [...effective].sort((a, b) => Math.abs(b.horizons["3m"].expected) - Math.abs(a.horizons["3m"].expected))[0] || items[0];
   const flagged = staff && effective.some(i => i.pre_review);
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="cols">
       <div class="panel hero-panel c5">
         <div class="eyebrow">Tác động tin · 3 tháng tới</div>

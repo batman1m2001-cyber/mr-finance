@@ -41,17 +41,17 @@ def test_the_group_is_drawn_again_from_the_seed_within_each_stratum():
     assert abs(sum(sizes) / len(sizes) - 0.5) < 0.1
 
 
-def test_the_control_group_is_two_person_compliance_configuration():
+def test_the_control_group_is_two_person_cio_configuration():
     with pytest.raises(ValueError, match="0,5"):
-        config.propose("control_group", {**CFG, "share": 0.6}, "compliance")
+        config.propose("control_group", {**CFG, "share": 0.6}, "cio")
     with pytest.raises(ValueError, match="strata"):
-        config.propose("control_group", {**CFG, "strata": ["age"]}, "compliance")
-    with pytest.raises(Exception, match="Tuân thủ"):
-        config.propose("control_group", CFG, "cio")
-    v = config.propose("control_group", CFG, "compliance", "Thí điểm quý 4")
+        config.propose("control_group", {**CFG, "strata": ["age"]}, "cio")
+    with pytest.raises(Exception, match="CIO"):
+        config.propose("control_group", CFG, "admin")
+    v = config.propose("control_group", CFG, "cio", "Thí điểm quý 4")
     with pytest.raises(Exception):
-        config.decide(v["id"], "approve", "compliance")  # not the proposer
-    config.decide(v["id"], "approve", "compliance2")
+        config.decide(v["id"], "approve", "cio")  # not the proposer
+    config.decide(v["id"], "approve", "cio2")
     assert control.members() == ["C03", "C05"]
 
 

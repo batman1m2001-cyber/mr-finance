@@ -1,15 +1,15 @@
 """The staff stress test's working day (docs/STAFF_STRESS_PLAN.md U1): what waits on each desk, put on a served copy
-through the app's own writes — so the RM, the CIO, the Expert, Compliance and the Admin each find real work.
+through the app's own writes — so the RM, the CIO and the Admin each find real work.
 
     MF_STATE=<copy>/state.db .venv/bin/python -P scripts/stress_staff_seed.py --base http://127.0.0.1:8041
 
-Over HTTP, signed in as the person who would do it: two RM recommendations (C01, C04) waiting for their specialists
-and one for C03 by rm03; research uploaded by the CIO; a letter sent to Compliance; a policy document added by
-Compliance; a threshold change proposed by the CIO. In-process, on the copy's state (no endpoint takes them): a
-client's proposal waiting for the RM (C01, as `gui_de_xuat` stores it), two news items naming the restricted list
-(held, through the real ingest flow on a feed; one carries an instruction to the assistant in its text), and two
-system alerts (a news source, for the CIO and Admin; the AI zone, for Admin). Prints what it made; never touches
-the live demo's state.
+Over HTTP, signed in as the person who would do it: three RM recommendations (C01, C04; C03 by rm03), each the RM's
+alone since OWN-FB-18; research uploaded by the CIO; a letter the CIO sent to a second CIO; a policy document added by
+the second CIO (cio2); a threshold change proposed by the CIO. In-process, on the copy's state (no endpoint takes them):
+a client's proposal waiting for the RM (C01, as `gui_de_xuat` stores it), two news items naming the restricted list
+(held, through the real ingest flow on a feed; one carries an instruction to the assistant in its text), and two system
+alerts (a news source, for the CIO and Admin; the AI zone, for Admin). Prints what it made; never touches the live
+demo's state.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ def who(base: str, person: str) -> httpx.Client:
 
 
 def over_http(base: str) -> None:
-    rm01, rm03, cio, cmp = who(base, "rm01"), who(base, "rm03"), who(base, "cio"), who(base, "compliance")
+    rm01, rm03, cio, cio2 = who(base, "rm01"), who(base, "rm03"), who(base, "cio"), who(base, "cio2")
     for c, cid, title, acts, note, by in [
         (
             rm01,
@@ -112,7 +112,7 @@ def over_http(base: str) -> None:
         "hàng thương mại. Điều 2. Đối tượng áp dụng. Ngân hàng thương mại và khách hàng cá nhân có tài sản từ năm tỷ "
         "đồng. Điều 3. Nguyên tắc. Tư vấn phải phù hợp với khẩu vị rủi ro đã đánh giá và được ghi nhận đầy đủ."
     )
-    r = cmp.post(
+    r = cio2.post(
         "/api/policy",
         json={
             "item": {
@@ -125,7 +125,7 @@ def over_http(base: str) -> None:
                 "text": text,
                 "note": "Bản lấy ý kiến",
             },
-            "by": "compliance",
+            "by": "cio2",
         },
     )
     out("policy", r.status_code, r.text[:120])

@@ -9,14 +9,14 @@ Nhập e-mail hoặc mã khách hàng và mật khẩu rồi bấm Đăng nhập
 đăng nhập hoặc mật khẩu”, không nói sai phần nào. Chưa đăng nhập thì không thấy gì của ứng dụng: không menu, không
 chọn gia đình, không trợ lý.
 
-Trên bản demo công khai có mục **Tài khoản demo**: danh sách tài khoản theo vai trò (khách hàng, RM, CIO, Tuân thủ,
-Quản trị, Chuyên gia), bấm một lần là vào. Sau khi đăng nhập, góc trên hiện tên, chức danh và nút **Đăng xuất**; menu
+Trên bản demo công khai có mục **Tài khoản demo**: danh sách tài khoản theo vai trò (khách hàng, RM, CIO,
+Quản trị), bấm một lần là vào. Sau khi đăng nhập, góc trên hiện tên, chức danh và nút **Đăng xuất**; menu
 chỉ có các trang của vai trò mình, mở địa chỉ trang của vai trò khác sẽ quay về trang của mình.
 
 ## Thanh trên cùng — mọi trang
 
 - **Ô tìm kiếm** (phím tắt `/`): tìm tài sản, mục tiêu, tin tức hay tên trang rồi mở thẳng.
-- **Chọn khách hàng** (RM, chuyên gia và nhân viên): chọn gia đình đang xem. Khách hàng không có ô này.
+- **Chọn khách hàng** (RM và nhân viên): chọn gia đình đang xem. Khách hàng không có ô này.
 - **Cá nhân / Gia đình**: xem số liệu của riêng mình hay của cả gia đình (các thành viên cùng hộ). Dấu “?” bên cạnh
   giải thích hai chế độ.
 - **Chuông**: các cảnh báo mới dành cho mình.
@@ -51,7 +51,7 @@ Những điều bạn đã nhờ trợ lý ghi nhớ và các cuộc trò chuy�
   tiền, tỷ lệ, số tài khoản, số thẻ hay thông tin của người ngoài gia đình.
 - **Các cuộc trò chuyện**: **Mở** để mở lại trong khung trợ lý, **Xoá** để xoá hẳn. Ô tìm kiếm tìm trong mọi tin nhắn
   của bạn (không cần gõ dấu), mỗi kết quả cho biết cuộc trò chuyện, ai nói và lúc nào.
-- Cuộc trò chuyện được giữ theo chính sách lưu giữ của Tuân thủ (mặc định 365 ngày kể từ lượt cuối) rồi tự xoá. Mục
+- Cuộc trò chuyện được giữ theo chính sách lưu giữ do CIO cấu hình (mặc định 365 ngày kể từ lượt cuối) rồi tự xoá. Mục
   đã xoá là xoá hẳn, không khôi phục được.
 
 ## Cách tính — nút cạnh các con số

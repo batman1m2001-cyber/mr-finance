@@ -21,7 +21,7 @@ Toàn cảnh, and the graph adds nothing Toàn cảnh does not show.
    |---|---|---|
    | Wealth View | Wealth view · Dữ liệu chi tiết tài sản | Tổng quan › Toàn cảnh; Tài sản |
    | Wealth Planning Advisor | Wealth planning advisor · Risk profile test | Mục tiêu › Kế hoạch; Rủi ro › Khẩu vị rủi ro |
-   | Headline News | Tác động tin · Đồ thị tác động · Chi phí chính sách | Tin tức |
+   | Headline News | News and Prediction · Đồ thị tác động | Tin tức (Chi phí chính sách renamed; Tác động tin no tab: [feedback 3](../sources/owner_requests/2026-10-22_business_feedback_3.md)) |
    | Relationship specialist | — | Chuyên gia |
 
    Only the names and the grouping change: every page is the same page, and the layout stays the new one.

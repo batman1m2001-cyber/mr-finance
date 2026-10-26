@@ -24,23 +24,11 @@ START = {
     **HELP,
     "cio": [
         "Có gì chờ tôi duyệt?",
-        "Phơi nhiễm lớn nhất ở đâu?",
+        "Tác động lớn nhất tới tài sản ở đâu?",
         "Độ chính xác của mô hình?",
         "Hộp tin có bao nhiêu tin?",
     ],
-    "rm": ["Sổ khách hàng có gì cần làm?", *HELP["rm"][:3]],
-    "specialist": [
-        "Khuyến nghị nào đang chờ tôi duyệt?",
-        "Hồ sơ của gia đình này thế nào?",
-        "Chứng chỉ của tôi còn hiệu lực không?",
-        "Tìm khách hàng",
-    ],
-    "compliance": [
-        "Có gì chờ Tuân thủ?",
-        "Có bao nhiêu tin bị giữ?",
-        "Chuỗi nhật ký còn nguyên không?",
-        "Cấu hình nào chờ duyệt?",
-    ],
+    "rm": ["Tổng quan có gì cần làm?", *HELP["rm"][:3]],
     "admin": [
         "Hệ thống có gì bất thường?",
         "Chuỗi nhật ký còn nguyên không?",
@@ -521,7 +509,7 @@ async def memory_page(
 
 @op
 async def retention_sweep() -> dict:
-    """Compliance's retention: conversations past ``assistant_retention`` and expired items deleted (A4)."""
+    """The CIO's retention: conversations past ``assistant_retention`` and expired items deleted (A4)."""
     from assistant.retention import sweep
 
     return {"swept": await sweep()}

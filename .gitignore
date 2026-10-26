@@ -31,3 +31,7 @@ data/zone/
 
 # the central log (src/control/log.py), beside the state file
 data/mr-finance-log.jsonl*
+
+# the santander_vn book's client files (scripts/make_santander_vn.py, ~76 MB): regenerated from the two public files;
+# not committed until the Santander licence is read (docs/CLIENT_DATASET_PLAN.md D0)
+data/datasets/santander_vn/clients/

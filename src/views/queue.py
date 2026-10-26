@@ -29,7 +29,7 @@ def enqueue(event_id: str, by: str, mode: Optional[str] = None) -> Dict[str, Any
     roles.require(by, "cio")
     ev = events.get(str(event_id))
     if ev["blocked"]:
-        raise Conflict(f"Sự kiện {ev['id']} đang bị giữ chờ Tuân thủ: {', '.join(ev['held'])}")
+        raise Conflict(f"Sự kiện {ev['id']} đang bị giữ chờ CIO cho đi tiếp: {', '.join(ev['held'])}")
     try:
         run_mode = agents.resolve_mode(mode)
     except agents.AgentError as exc:

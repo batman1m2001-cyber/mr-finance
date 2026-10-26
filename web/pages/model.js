@@ -15,7 +15,7 @@ export async function render(box, ctx) {
   const [m, e] = await Promise.all([get("/api/model"), get("/api/model/estimate").catch(() => null)]);
   const est = m.factors.filter(f => !f.assumed).length;
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">CIO · Mô hình yếu tố</div><div class="h1">${esc(m.version)}
+    <div class="pagehead"><div><div class="eyebrow">Mô hình yếu tố</div><div class="h1">${esc(m.version)}
       ${est ? `<span class="pill good">${est}/15 ước lượng</span>` : `<span class="badge assumed">tham số giả định</span>`}</div>
       <div class="lede small" data-explains>${esc(m.note)}</div></div></div>
     <div class="cols">

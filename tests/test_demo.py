@@ -92,8 +92,4 @@ def test_the_five_minute_demo(client):
     done = client.post(
         "/api/review/decide", json={"item_id": item["id"], "decision": "approved", "note": "Đồng ý", "by": "rm01"}
     ).json()["item"]
-    assert done["status"] == "pending_specialist"  # C01 has a certified specialist (G8)
-    done = client.post(
-        "/api/review/specialist", json={"item_id": item["id"], "decision": "approved", "by": "sp_global"}
-    ).json()["item"]
-    assert done["status"] == "approved"
+    assert done["status"] == "approved"  # the RM's approval is the last (OWN-FB-18)

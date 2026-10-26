@@ -6,8 +6,7 @@ SECTIONS = [  # rail item, its home, its tabs (label, current at the home)
     ("tong-quan", "Wealth View", "#/client/tong-quan", [["Wealth view", True], ["Dữ liệu chi tiết tài sản", False]]),
     ("muc-tieu", "Wealth Planning Advisor", "#/client/muc-tieu/ke-hoach",
      [["Wealth planning advisor", True], ["Risk profile test", False]]),
-    ("tin", "Headline News", "#/client/tin/thi-truong",
-     [["Tác động tin", True], ["Đồ thị tác động", False], ["Chi phí chính sách", False]]),
+    ("tin", "Headline News", "#/client/tin/chinh-sach", [["News and Prediction", True], ["Đồ thị tác động", False]]),
     ("chuyen-gia", "Relationship specialist", "#/client/chuyen-gia", []),
 ]  # fmt: skip
 TABS = """(sel) => [...document.querySelectorAll(sel + ' a')].filter(a => a.offsetParent)
@@ -36,7 +35,7 @@ def test_the_four_sections_their_tabs_and_headings(open_page):
         ("#/client/tai-san", "tong-quan", ["Wealth View", "Dữ liệu chi tiết tài sản"]),
         ("#/client/rui-ro/khau-vi", "muc-tieu", ["Wealth Planning Advisor", "Risk profile test"]),
         ("#/client/muc-tieu/ke-hoach", "muc-tieu", ["Wealth Planning Advisor", "Kế hoạch tài chính"]),
-        ("#/client/tin/chinh-sach", "tin", ["Headline News", "Chi phí chính sách"]),
+        ("#/client/tin/chinh-sach", "tin", ["Headline News", "News and Prediction"]),
         ("#/client/chuyen-gia", "chuyen-gia", ["", "Relationship specialist"]),
     ]:
         p.go(route)
@@ -96,3 +95,27 @@ def test_the_wealth_check_line_is_coloured(open_page):
     )
     assert colour == want and colour != grey
     assert not p.problems()
+
+
+RGB = "(el) => getComputedStyle(el).backgroundColor"
+LUM = """([a, b]) => { const l = c => { const v = c.match(/\\d+/g).slice(0, 3).map(x => { x /= 255;
+  return x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; });
+  return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+  const [h, o] = [l(a), l(b)].sort((x, y) => y - x); return (h + .05) / (o + .05); }"""
+
+
+def test_gold_marks_the_main_action_only(open_page):
+    """Business feedback 5 (2026-10-23, the Private palette: gold, champagne, sand, brown). Gold is the main action
+    (a primary button, Hỏi trợ lý, the bell's count) with dark words at 4.5:1; tabs and links stay brown or light."""
+    gold = "rgb(200, 164, 93)"
+    for theme in ("light", "dark"):
+        p = open_page(theme=theme, dock=False)
+        p.go("#/client/tai-san")
+        btn = p.page.wait_for_selector("#page .btn.primary")
+        fab = p.page.wait_for_selector("#ws-fab")
+        assert btn.evaluate(RGB) == gold and fab.evaluate(RGB) == gold, theme
+        words = btn.evaluate("el => getComputedStyle(el).color")
+        assert p.page.evaluate(LUM, [words, gold]) >= 4.5, theme
+        tab = p.page.wait_for_selector("#ws-sheet-tabs a[aria-current='page']")
+        assert gold not in (tab.evaluate(RGB), tab.evaluate("el => getComputedStyle(el).color")), theme
+        assert not p.problems()

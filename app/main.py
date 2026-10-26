@@ -21,21 +21,20 @@ POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ─�
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
 POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
-POST /api/review/specialist ──► specialist_flow (certified specialist, G8)
 POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
 every 2 h ──► news_reference: the independent reference's stories, judged collected a day later (KPI-02)
 15:45/16:00/17:30 daily and hourly, `operonx run market_<kind>` ──► the market jobs: public sources into SQLite
      (market_backfill on demand) · GET /api/market[/series] ──► app/web.py (the source registry, the series)
-POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (Compliance)
+POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (a CIO)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
 POST /api/events ──► event_flow · POST /api/events/urgent ──► event_urgent_flow (KPI-01) · POST /api/events/run-agent
      ──► agent_queue_flow, then the agent_worker job ──► cio_agent_flow (agent + challenger)
 POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, newsletter_act_flow (FR-801: the CIO drafts from
-     approved views, Compliance approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
-POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: Compliance adds a document from the Official
-     Gazette, a second person verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
+     approved views, another CIO approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
+POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: a CIO adds a document from the Official
+     Gazette, a second CIO verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
 Every 20 s ──► heartbeat: the minute recorded, availability in business hours (NFR-03)
 Hourly ──► audit_check: the audit chain walked, new rows to write-once segments · POST /api/system/alerts/ack ──►
      alert_ack_flow; GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
@@ -49,7 +48,7 @@ approve ──► an application run for every family · POST /api/runs/recomput
 POST /api/research, /api/research/release, /api/goals/outflow ──► the research and goal-branch flows ·
      GET /api/research, /api/goals/regulation ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
-     clients, the specialist team, the advisory track record, the house views, the UI)
+     clients, the RM team, the advisory track record, the house views, the UI)
 
 Each service runs its graph as is: the JSON body fills the graph's parameters, and the reply is
 its outputs (`{"dashboard": ...}`, `{"read": ...}`, ...). Every service and job of the product is
@@ -114,7 +113,7 @@ from overview.graph import overview_flow
 from people.graph import account_decide_flow, account_request_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
-from review.graph import propose_flow, recommend_flow, review_flow, specialist_flow
+from review.graph import propose_flow, recommend_flow, review_flow
 from risk.graph import risk_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
 from search.graph import search_flow
@@ -289,22 +288,14 @@ APP = Application(
             "decide",
             http("POST", "/api/review/decide", port=PORT),
             graph=review_flow,
-            description="POST {item_id, decision: approved|rejected, note?}: the RM's decision; an approval of a "
-            "family with a certified specialist waits for them (WF-08).",
-        ),
-        Service(
-            "specialist_decide",
-            http("POST", "/api/review/specialist", port=PORT),
-            graph=specialist_flow,
-            description="POST {item_id, decision, note?, by}: the family's certified specialist approves or rejects "
-            "an action recommendation (ROLE-05, WF-08).",
+            description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
         Service(
             "recommend",
             http("POST", "/api/review/recommend", port=PORT),
             graph=recommend_flow,
             description="POST {client_id, title, actions, note?, by}: the RM writes an action recommendation for a "
-            "family; it waits for the family's certified specialist, if any.",
+            "family; it reaches the client at once (the RM's alone, OWN-FB-18).",
         ),
         Service(
             "news_fetch",
@@ -322,7 +313,7 @@ APP = Application(
             "news_release",
             http("POST", "/api/news/release", port=PORT),
             graph=release_flow,
-            description="POST {item_id, by, note}: Compliance releases an item held by the restricted list.",
+            description="POST {item_id, by, note}: a CIO releases an item held by the restricted list.",
         ),
         Service(
             "event",
@@ -371,7 +362,10 @@ APP = Application(
             "research_release",
             http("POST", "/api/research/release", port=PORT),
             graph=research_release_flow,
-            description="POST {item_id, decision: release|reject, by, note}: Compliance, after the release time.",
+            description=(
+                "POST {item_id, decision: release|reject, by, note}: a CIO other than the one who filed it, after the "
+                "release time."
+            ),
         ),
         Service(
             "goal_outflow",
@@ -414,7 +408,7 @@ APP = Application(
             "policy_verify",
             http("POST", "/api/policy/verify", port=PORT),
             graph=policy_verify_flow,
-            description="POST {document_id, by, note}: a second Compliance person confirms the source (FR-306).",
+            description="POST {document_id, by, note}: a second CIO confirms the source (FR-306).",
         ),
         Service(
             "policy_status",
@@ -467,7 +461,7 @@ APP = Application(
             schedule=schedule(at="07:00", port=PORT),
             description="07:00 daily: the policy sweep over every client.",
         ),
-        # the assistant's retention (A4): conversations past Compliance's assistant_retention, expired memory items
+        # the assistant's retention (A4): conversations past the CIO's assistant_retention, expired memory items
         Job(
             "assistant_retention",
             graph=assistant_retention_flow,
@@ -586,7 +580,7 @@ APP = Application(
             schedule=schedule(every="1h", port=PORT),
             timeout=600,
             description="Hourly: the audit chain walked and new rows copied to write-once segments; an alert for "
-            "Compliance and Admin when either is broken.",
+            "the CIO and Admin when either is broken.",
         ),
         Job(
             "heartbeat",

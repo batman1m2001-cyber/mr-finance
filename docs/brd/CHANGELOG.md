@@ -2,6 +2,62 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-25 — Business feedback 7 (owner): the RM's desk is Tổng quan (“Khách hàng đang quản lý”, the net worth
+  coloured), no Hôm nay (contact log in Thông tin), the client picker inside the Khách hàng and Advisory performance
+  sheets, no “Nội bộ” on the RM's sheets (BRD-RULE-SEC-03 narrowed). — OWN-FB-19…25, business_rules, FEAT-13,
+  requirements_traceability, docs/BUSINESS_FEEDBACK_7_PLAN.md
+- 2026-10-24 — Business feedback 6 (owner): the RM's and the CIO's desks reorganised (nested tabs, Decision board
+  with the inbox in it, plain words on impact, Mô hình and AI to Admin), the client's impact bars by asset class, and
+  no Compliance or Expert account (their duties the CIO's, four eyes kept). Planned. — owner_requirements FB,
+  requirements_traceability §5, docs/BUSINESS_FEEDBACK_6_PLAN.md
+- 2026-10-24 — The data room's eval (D5): 90 questions, 30 per role, gold answers from the database; Haiku 5.5
+  89/90, p95 5.3 s, US$0.003 a turn; Sonnet 5.5 measured (15/15, US$0.06 a turn, no forced tool call), so Haiku
+  stays; totals computed in SQL, the recount's result says not to guess why, one catalog ambiguity fixed. —
+  OWN-DA-07, OWN-DA-08, requirements_traceability §0 and §5
+- 2026-10-24 — Measuring the news agents (owner): each ingest run's funnel, status and sources, the days by
+  collection time; the scenario agents' moves scored at 3d and 1w (precision, recall, direction, coverage, event
+  recall), valued in VND on the simulated book, labelled simulated; cost per model call, never 0 when missing; the
+  trial page in View A and View B with a drill-down per move. — owner_requirements EV, requirements_traceability §5,
+  docs/AGENT_EVALUATION_PLAN.md
+- 2026-10-24 — The data room wired in (D4): `truy_van` in the registry for the five roles with a room, with the
+  role's catalog; three queries a turn; an audit row per query; “Cách tính” (SQL, rows, table, time), closed; the
+  template with `client_ai` off; the re-count rule, and a question naming a number the last answer did not say must
+  call a tool (`tool_choice`): the rule alone did not make Haiku 5.5 count again. — OWN-DA-03, OWN-DA-05…07,
+  requirements_traceability §5
+- 2026-10-24 — The data catalog (D3): what the assistant reads before it writes SQL, per role: every table and column
+  of the room with its meaning, unit and allowed values, shared rules, the pages' definitions and 12–18 examples
+  each; a test fails on an undocumented column and runs every example in its room. — OWN-DA-04,
+  requirements_traceability §5
+- 2026-10-24 — The data room (D2): `truy_van`'s SQL runs on TEMP tables built for the role and person (copies, not
+  views: a CTE named like a view passed the authorizer as that view), read-only under the authorizer, 2 s, 200 rows
+  with the total; 54 adversarial and positive tests. — OWN-DA-02, OWN-DA-03, requirements_traceability §5
+- 2026-10-24 — Totals are counts (D1): the inbox page says 1.417 (was 300) and “40 / 1.417”; alerts, search,
+  the CIO desk's Tin stage and the held-news tool count in the database. — OWN-DA-01, requirements_traceability §5
+- 2026-10-24 — The assistant reads the data itself (owner): totals are counts; one tool, `truy_van`, a SQL
+  `select` on role-scoped read-only views under SQLite's authorizer, with a catalog, "Cách tính", an audit entry
+  and an eval gate; amends `Param`'s rule for that tool. Planned (D0). — ADR-0040, owner_requirements DA,
+  requirements_traceability §5, docs/ASSISTANT_DATA_PLAN.md
+- 2026-10-23 — The test book built (D2–D3): `scripts/make_santander_vn.py` matches the 6,500 Santander clients to
+  SCF 2022 households and writes them in the fixtures' schema; all valued by `wealth.valuation`, Σ AUM 428,000 tỷ,
+  share at TCB 35 %, 58.7 % with over half their wealth in one class; calibration in `data/calibration/`. Proposed.
+  — ADR-0038, docs/CLIENT_DATASET_PLAN.md
+- 2026-10-23 — The test book (Q-27): 6,500 Private clients, all Techcombank's, from Santander's TOP clients
+  (behaviour), matched SCF 2022 households (make-up of wealth) and the owner's totals (≥ 25 tỷ each, Σ AUM 428,000
+  tỷ); the demo's five families kept; D1's sampler run on the real file (6,500 drawn, all TOP; the first 1,000 a
+  subset). The submission's 21 tỷ-at-TCB assumption raised (TO_DISCUSS D-04). Proposed. — ADR-0038, ADR-0005,
+  requirements/open_questions.md (Q-18, Q-27), decisions/README.md, docs/CLIENT_DATASET_PLAN.md, docs/TO_DISCUSS.md
+- 2026-10-23 — The Private palette (business feedback 5): gold #c8a45d marks the main action with dark-brown words;
+  brown #59392c the ink of links, tabs and selections; light grey and sand surfaces; champagne in dark. Replaces the
+  black-and-red reading of feedback 4. OWN-WN-11. — sources/owner_requests/2026-10-23_business_feedback_5.md,
+  owner_requirements.md, requirements_traceability.md, ux/design_system.md
+- 2026-10-22 — The colour tone (business feedback 4, after Techcombank Private; the owner: red and black, not
+  painful): Techcombank red marks the main action only — a primary button, Hỏi trợ lý, the bell's count; the rest
+  stays black, white and greys. OWN-WN-11. — sources/owner_requests/2026-10-22_business_feedback_4.md,
+  owner_requirements.md, requirements_traceability.md, ux/design_system.md
+- 2026-10-22 — Headline News (business feedback 3): Chi phí chính sách is News and Prediction, the first tab; Đồ thị
+  tác động second; Tác động tin is no tab (its address stays: the bell's and the feed's evidence). OWN-WN-10.
+  — ADR-0037, sources/owner_requests/2026-10-22_business_feedback_3.md, owner_requirements.md,
+  requirements_traceability.md, ux/information_architecture.md, ux/screens/client.md, ux/screen_inventory.md, FEAT-25.
 - 2026-10-22 — The client's menu by the bank's names (business feedback 2, nine items):
   - four sections: Wealth View (Wealth view · Dữ liệu chi tiết tài sản), Wealth Planning Advisor (Wealth planning
     advisor · Risk profile test), Headline News, Relationship specialist;

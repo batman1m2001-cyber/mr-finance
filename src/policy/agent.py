@@ -1,5 +1,5 @@
-"""The policy agent (BRD-FR-306, RULE-AI-01: owner Compliance, risk medium): a summary of one verified policy
-document, each point with a quote from it and the article the quote is in.
+"""The policy agent (BRD-FR-306, RULE-AI-01: owner the CIO since OWN-FB-18, risk medium): a summary of one verified
+policy document, each point with a quote from it and the article the quote is in.
 
 It reads the document and nothing else — this module imports no client, family or portfolio data — and every
 answer passes ``policy.text.check`` (quotes word for word inside the named article; no conclusion for a client;
@@ -30,7 +30,7 @@ def _prompt() -> str:
 
 
 async def summarise(doc_id: str, by: str, mode: str = "") -> Dict[str, Any]:
-    roles.require(by, "compliance")
+    roles.require(by, "cio")
     d = store.get(doc_id)
     if not d["verified"]:
         raise Conflict("Văn bản chưa được xác nhận nguồn: Agent Chính sách chỉ đọc văn bản đã xác nhận")

@@ -79,7 +79,7 @@ def test_d03_the_calculator_runs_arithmetic_only(bad):
 
 
 def test_d03_every_role_has_the_calculator():
-    for role in ("client", "rm", "cio", "compliance", "specialist", "admin"):
+    for role in ("client", "rm", "cio", "admin"):
         assert "tinh" in {t.name for t in registry.agent_tools(role)}
 
 

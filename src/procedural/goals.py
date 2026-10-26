@@ -1,7 +1,7 @@
 """The goal branch (BRD §10, FR-601…604): a regulation that does not move prices but can delay a goal
 that sends money abroad. The result is a date, papers and an urgency — never money.
 
-Inputs: regulation notes Compliance released, and each family's active goals (their dated outflows).
+Inputs: regulation notes a CIO released, and each family's active goals (their dated outflows).
 Nothing else: no AML data, no risk rating (§13.2).
 
 - A goal's purpose and destination come from what the RM declared (FR-601). Undeclared, they are

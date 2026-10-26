@@ -79,7 +79,7 @@ def assistant_memory_flow(action="list", item_id=None, text=None, kind=None, que
 
 @graph
 def assistant_retention_flow():
-    """Daily: conversations past Compliance's retention, and expired memory items, deleted."""
+    """Daily: conversations past the CIO's retention, and expired memory items, deleted."""
     swept = retention_sweep()
     START >> swept >> END
 

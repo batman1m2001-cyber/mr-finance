@@ -133,7 +133,7 @@ def test_classification_by_source_then_words():
     assert calm.event_type is None and calm.factors == [] and calm.relevance == "low"  # "vững vàng" is not gold
 
 
-def test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it():
+def test_an_item_naming_the_restricted_list_is_held_until_the_cio_releases_it():
     out = ingest(
         {
             "vneconomy_tc": feed(
@@ -145,17 +145,17 @@ def test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it
     [it] = store.inbox()
     assert it["held"] and it["restricted"] == ["Sao Mai Land (mock)"]
     engine = Operon(release_flow, params={"item_id": None, "by": None, "note": None})
-    for who in ("cio", "rm01", "nobody"):  # only Compliance may release (BR-04)
+    for who in ("admin", "rm01", "nobody"):  # only the CIO may release (BR-04, OWN-FB-18)
         denied = asyncio.run(engine.run(inputs={"item_id": it["id"], "by": who, "note": "Cho qua"}))
         assert "$errors" in denied and store.inbox()[0]["held"]
-    bad = asyncio.run(engine.run(inputs={"item_id": it["id"], "by": "compliance", "note": " "}))
+    bad = asyncio.run(engine.run(inputs={"item_id": it["id"], "by": "cio", "note": " "}))
     assert "$errors" in bad  # a release needs a reason
     ok = asyncio.run(
-        engine.run(inputs={"item_id": it["id"], "by": "compliance", "note": "Tin công khai, không liên quan giao dịch"})
+        engine.run(inputs={"item_id": it["id"], "by": "cio", "note": "Tin công khai, không liên quan giao dịch"})
     )
     assert ok["released"] == it["id"]
     [it] = store.inbox()
-    assert not it["held"] and it["cleared"]["by"] == "compliance"
+    assert not it["held"] and it["cleared"]["by"] == "cio"
 
 
 # -- the run and the inbox ---------------------------------------------------------------------
@@ -205,7 +205,7 @@ def test_the_inbox_filters_and_dismiss():
     assert [i["source"] for i in store.inbox()] == ["vnexpress_kd"]
     assert store.inbox(status="dismissed")[0]["history"][0]["by"] == "cio"
     vne_id = store.inbox(source="vnexpress_kd")[0]["id"]
-    for who in ("compliance", "rm01"):  # only the CIO drops items (FR-103)
+    for who in ("admin", "rm01"):  # only the CIO drops items (FR-103)
         denied = asyncio.run(
             Operon(dismiss_flow, params={"ids": None, "by": None, "note": None}).run(
                 inputs={"ids": [vne_id], "by": who}
@@ -229,3 +229,26 @@ def test_the_inbox_endpoint_returns_items_and_feed_health():
     vne = next(s for s in body["sources"] if s["id"] == "vnexpress_kd")
     assert vne["last"]["accepted"] == 1 and sum(vne["hourly"]) == 1 and len(vne["hourly"]) == 24
     assert TestClient(app).get("/api/news/inbox?since=abc").status_code == 400
+
+
+def test_the_assistant_counts_the_inbox_in_the_database_not_a_capped_list():
+    """CIO chat 2026-10-24: the inbox held 1,415 new items and the assistant said 200, the length of ``inbox()``'s
+    default page. 250 new and 3 grouped, 4 of them fetched today: every figure counted, today's by source."""
+    from assistant.base import Ctx
+    from assistant.tools import inbox
+
+    now, old = time.time(), time.time() - 3 * 86400
+    rows = [
+        {"source": "vnexpress_kd" if i % 2 else "cafef_ck", "url_key": f"u{i}", "title_key": f"t{i}", "published": old,
+         "ingested": now if i < 4 else old, "kind": "domestic", "status": "grouped" if i >= 250 else "new"}
+        for i in range(253)
+    ]  # fmt: skip
+    assert store.add(rows)[1] == 0 and len(store.inbox()) == 200  # the page the old count read
+    out = asyncio.run(inbox(Ctx(role="cio", client_id=None, scope="own", question=""), {}))
+    assert out["data"] == {
+        "new": 250,
+        "grouped": 3,
+        "fetched_today": 4,
+        "by_source": {"cafef_ck": 2, "vnexpress_kd": 2},
+    }
+    assert "250 tin mới" in out["text"] and "3 tin đã gom" in out["text"] and "lấy về 4 tin" in out["text"]

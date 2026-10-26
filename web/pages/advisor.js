@@ -2,10 +2,10 @@
    FEAT-28). The client sees the relationship specialist who looks after them (all contact details mock) and the
    approval queue read-only: what they sent from Kế hoạch, pending or decided with the note. The RM sees the same
    queue for the picked client and decides each pending proposal, with a note (POST /api/review/decide; the
-   server checks the user's role). An approval of a family with a certified specialist waits for them (G8,
-   pages/specialist.js); the RM may also write a recommendation for the family (POST /api/review/recommend), through
-   the same gate. Data: GET /api/advisory?client_id=, GET /api/review. */
-import {internal, esc, get, n as how, post, toast} from "../core/core.js";
+   server checks the user's role). The RM's approval is the last (OWN-FB-18 retired the certified specialist; items
+   kept from before may still say pending_specialist); the RM may also write a recommendation for the family (POST
+   /api/review/recommend), which reaches the client at once. Data: GET /api/advisory?client_id=, GET /api/review. */
+import {esc, get, n as how, post, toast} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 
 const STATUS = {pending: ["ai", "Chờ RM duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
@@ -33,7 +33,6 @@ export async function render(box, ctx) {
   const mine = q.items.filter(x => x.client_id === client && (staff || x.kind !== "rm_note" || x.status === "approved"));
   const open = (x) => x.status === "pending" || x.status === "pending_specialist";
   const pending = mine.filter(open), done = mine.filter(x => !open(x));
-  const approvers = (q.approvers || {})[client] || [];
 
   const item = (x) => {
     const [tone, text] = STATUS[x.status] || STATUS.pending;
@@ -53,21 +52,19 @@ export async function render(box, ctx) {
   const team = staff ? "" : adv.error ? `<div class="notice bad" role="alert">Không tải được: ${esc(adv.error)}</div>`
     : `<div class="cards2">${person(adv.team.rm)}</div><p class="small muted mt-xs">${icon("info", {size: 14})} ${esc(adv.note)}</p>`;
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="pagehead"><div>${staff ? `<div class="eyebrow">Khách hàng</div>` : ""}
       <h1 class="h1">${staff ? "Duyệt đề xuất" : "Relationship specialist"}</h1>
       <p class="lede">${staff ? "Phương án khách hàng gửi từ Kế hoạch, chờ RM duyệt" : "Chuyên viên quan hệ khách hàng phụ trách bạn"}</p></div></div>
     ${team}
-    <div class="sechead mt"><h2 class="h2">Hàng chờ duyệt</h2><span class="small muted">Hàng chờ chuyên gia duyệt · <b>${pending.length}</b> đang chờ ·
-      mọi khuyến nghị từ Wealth Planning Advisor đều là mô phỏng cho đến khi chuyên gia duyệt</span></div>
-    ${staff ? `<p class="small mt-xs">${approvers.length ? `Sau khi RM duyệt, chuyên gia có chứng chỉ duyệt tiếp: <b>${approvers.map(a => esc(a.name)).join(", ")}</b> (BRD-RULE-WF-08).`
-      : `Gia đình chưa có chuyên gia có chứng chỉ: RM duyệt một mình, như BRD cho phép (“nếu có”).`}</p>` : ""}
+    <div class="sechead mt"><h2 class="h2">Hàng chờ duyệt</h2><span class="small muted">Hàng chờ ${staff ? "RM" : "chuyên gia"} duyệt · <b>${pending.length}</b> đang chờ ·
+      mọi khuyến nghị từ Wealth Planning Advisor đều là mô phỏng cho đến khi ${staff ? "RM" : "chuyên gia"} duyệt</span></div>
     <div class="cards2">${pending.map(item).join("") || `<div class="panel muted">Không có đề xuất nào đang chờ.</div>`}</div>
-    ${staff ? `<form class="panel mt" id="recommend" autocomplete="off"><h3>Khuyến nghị cho gia đình <span class="hint">RM viết · ${approvers.length ? "chuyên gia có chứng chỉ duyệt trước khi đến khách" : "đến khách ngay, không có người duyệt thứ hai"}</span></h3>
+    ${staff ? `<form class="panel mt" id="recommend" autocomplete="off"><h3>Khuyến nghị cho gia đình <span class="hint">RM viết · đến khách ngay</span></h3>
         <label class="small">Tiêu đề <input name="title" maxlength="200" style="width:100%" placeholder="Ví dụ: Cơ cấu lại tiền gửi"></label>
         <label class="small mt-xs" style="display:block">Việc cần làm, mỗi dòng một việc <textarea name="actions" rows="3" style="width:100%" placeholder="Chuyển 200 triệu sang kỳ hạn 12 tháng"></textarea></label>
         <label class="small mt-xs" style="display:block">Ghi chú cho khách <input name="note" maxlength="1000" style="width:100%"></label>
-        ${approvers.length ? "" : `<p class="small warn-text mt-xs">Không có người duyệt thứ hai: khuyến nghị này được tính là chưa có người duyệt ở BRD-KPI-05.</p>`}
+        <p class="small warn-text mt-xs">Không có người duyệt thứ hai: khuyến nghị này được tính là chưa có người duyệt ở BRD-KPI-05.</p>
         <div class="row mt-xs"><button type="submit" class="btn primary">Gửi khuyến nghị</button></div></form>` : ""}
     ${done.length ? `<h3 class="subhead mt">Đã xử lý</h3><div class="cards2">${done.map(item).join("")}</div>` : ""}`;
 
@@ -90,9 +87,9 @@ export async function render(box, ctx) {
     const btn = form.querySelector("button[type=submit]");
     btn.disabled = true;
     try {
-      const r = await post("/api/review/recommend", {client_id: client, title: form.elements.title.value, note: form.elements.note.value,
+      await post("/api/review/recommend", {client_id: client, title: form.elements.title.value, note: form.elements.note.value,
         actions: form.elements.actions.value.split("\n"), by: ctx.user});
-      toast(r.item.status === "approved" ? "Đã gửi đến khách" : "Đã gửi, chờ chuyên gia duyệt");
+      toast("Đã gửi đến khách");
     } catch (err) { toast("Không gửi được: " + err.message); btn.disabled = false; return; }
     if (box.isConnected) await render(box, ctx);
   };

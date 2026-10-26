@@ -16,7 +16,7 @@ def ingest_flow(feeds=None, now=None, tick=None, at=None):
     """Fetch, gate, sort and keep the news."""
     got = fetch(feeds=feeds, now=now)
     seen = screen(fetched=got["fetched"], at=got["at"])
-    kept = keep(rows=seen["rows"], counts=seen["counts"], at=got["at"])
+    kept = keep(rows=seen["rows"], counts=seen["counts"], at=got["at"], started=got["started"])
     topics = follow_ups_topics(after=kept["ingest"])  # the follow-ups on approved events (A6)
     START >> got >> seen >> kept >> topics >> END
     kept >> END  # the ingest stays the graph's answer (POST /api/news/ingest)
@@ -31,7 +31,7 @@ def dismiss_flow(ids, by="cio", note=""):
 
 @graph
 def release_flow(item_id, by, note):
-    """Compliance lets an item that names someone on the restricted list through (BR-04)."""
+    """The CIO lets an item that names someone on the restricted list through (BR-04)."""
     done = release(item_id=item_id, by=by, note=note)
     START >> done >> END
 

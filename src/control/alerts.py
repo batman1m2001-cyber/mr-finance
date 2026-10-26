@@ -16,7 +16,7 @@ KINDS: Dict[str, Dict[str, Any]] = {
     "news_feed": {"label": "Nguồn tin không lấy được", "roles": ("cio", "admin"), "severity": "medium"},
     "market_job": {"label": "Chuỗi thị trường không lấy được", "roles": ("cio", "admin"), "severity": "medium"},
     "agent": {"label": "Agent lỗi", "roles": ("cio", "admin"), "severity": "high"},
-    "audit_chain": {"label": "Chuỗi nhật ký kiểm toán gãy", "roles": ("compliance", "admin"), "severity": "high"},
+    "audit_chain": {"label": "Chuỗi nhật ký kiểm toán gãy", "roles": ("cio", "admin"), "severity": "high"},
     "inbox": {"label": "Gói từ vùng AI bị từ chối", "roles": ("cio", "admin"), "severity": "medium"},
     "zone_sync": {"label": "Không gửi được vùng AI", "roles": ("admin",), "severity": "medium"},
     "job": {"label": "Việc nền chạy tay lỗi", "roles": ("admin",), "severity": "medium"},
@@ -136,6 +136,22 @@ def for_role(role: str, limit: int = 50) -> List[Dict[str, Any]]:
             (*kinds, limit),
         ).fetchall()
     return [{**db.load(r), "label": KINDS[r["kind"]]["label"]} for r in rows]
+
+
+def counts(role: Optional[str] = None) -> Dict[str, int]:
+    """How many alerts are not resolved (``total``) and how many nobody has looked at yet (``open``), counted in the
+    database: the role's kinds (as ``for_role``), or every kind with no role. ``for_role`` is a page of 50."""
+    kinds = [k for k, v in KINDS.items() if role is None or role in v["roles"]]
+    if not kinds:
+        return {"total": 0, "open": 0}
+    marks = ",".join("?" * len(kinds))
+    with db.tx() as con:
+        rows = con.execute(
+            f"select status, count(*) from alerts where status != 'resolved' and kind in ({marks}) group by status",
+            kinds,
+        ).fetchall()
+    by = {r[0]: r[1] for r in rows}
+    return {"total": sum(by.values()), "open": by.get("open", 0)}
 
 
 def recent(limit: int = 30) -> List[Dict[str, Any]]:

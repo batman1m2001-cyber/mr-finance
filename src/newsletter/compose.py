@@ -7,7 +7,7 @@ CONTENT-01/02).
 - **Agent** (the CIO agent's model, ``llm:cio``): writes only the opening paragraph, from those sections' text; mock
   when no models are set (labelled). Whatever it writes passes the guard or the template's opening is used, with the
   finding kept.
-- **Guard**: no recommendation wording (Compliance's ``forbidden_phrases``), no ticker of the catalogue, no name on
+- **Guard**: no recommendation wording (the ``forbidden_phrases`` configuration), no ticker of the catalogue, no name on
   the restricted list, and the labels CONTENT-02 requires.
 """
 
@@ -102,7 +102,7 @@ def template_intro(sections: List[Dict[str, Any]]) -> str:
 
 def text_of(letter: Dict[str, Any]) -> str:
     """Everything a reader sees, for the guard."""
-    parts = [letter["title"], letter["intro"]]
+    parts = [letter["title"], letter["intro"], letter.get("body", "")]
     for s in letter["sections"]:
         parts += [
             s.get("heading", s["event"]),
@@ -113,7 +113,7 @@ def text_of(letter: Dict[str, Any]) -> str:
 
 
 def guard(letter: Dict[str, Any]) -> List[str]:
-    """What stops the letter going to Compliance: empty means it passes."""
+    """What stops the letter going for approval: empty means it passes."""
     from news.ops import config as news_config
 
     text = text_of(letter)

@@ -19,8 +19,8 @@ def test_a_page_seen_before_draws_at_once_and_then_shows_the_new_answer(open_pag
     p.go("#/cio/cau-hinh")
     rows = p.page.locator("#page tr").count()
     p.go("#/cio/nhan-dinh")
-    proposal = {"kind": "control_group", "data": CONTROL, "by": "compliance"}
-    api(base_url, "/api/config/propose", proposal, who="compliance")
+    proposal = {"kind": "control_group", "data": CONTROL, "by": "cio"}
+    api(base_url, "/api/config/propose", proposal, who="cio")
     waiting = held(p.page, "**/api/config")
     p.page.evaluate("location.hash = '#/cio/cau-hinh'")
     p.page.wait_for_function("(n) => document.querySelectorAll('#page tr').length === n", arg=rows)

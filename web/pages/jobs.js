@@ -1,8 +1,8 @@
 /* Việc nền (owner 2026-10-18, docs/OWNER_BACKLOG_1018_PLAN.md A): the agents and the background jobs on one page, for
-   the CIO, Admin and Compliance (GET /api/jobs). Agent: the mode and today's budget, each agent's runs, the queue of
+   the CIO and Admin (GET /api/jobs). Agent: the mode and today's budget, each agent's runs, the queue of
    “Chạy Agent CIO” requests; the CIO starts Agent CIO on an event with no view yet (POST /api/events/run-agent) and
    re-runs a failed challenger (POST /api/views/decide, action challenge). Lịch chạy: each job's clock and last run;
-   Admin runs one now (POST /api/jobs/run). Lần chạy tay: who ran what. Compliance reads it without buttons. The
+   Admin runs one now (POST /api/jobs/run). Lần chạy tay: who ran what. The
    assistant does the same writes on a Xác nhận. Rows are lists (.item), so a phone reads them as they are. */
 import {ago, esc, get, post, toast} from "../core/core.js";
 import {JOB} from "./system.js?v=20261020u1";
@@ -26,7 +26,7 @@ export async function render(box, ctx) {
   const failing = d.jobs.filter(j => j.last && !j.last.ok).length;
   const waiting = a.queue.filter(j => j.status === "queued" || j.status === "running").length;
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">${cio ? "CIO" : admin ? "Quản trị" : "Tuân thủ"}</div>
+    <div class="pagehead"><div><div class="eyebrow">${cio ? "CIO" : "Quản trị"}</div>
       <h1 class="h1">Việc nền</h1>
       <p class="lede">Agent ${esc(MODE[st.mode] || st.mode)} · ${waiting ? `${waiting} lần chạy đang chờ` : "không lần chạy nào chờ"}
         · ${d.jobs.length} việc theo lịch${failing ? ` · <span class="bad-text">${failing} đang lỗi</span>` : ""}.

@@ -12,7 +12,7 @@ def test_two_admins_add_an_account_and_its_code_signs_the_person_in(open_page, s
     p = open_page(size)
     p.go("#/admin/tai-khoan")
     page = p.page
-    assert page.locator('#acc-people [data-person="sp_global"] [data-kind]').count() == 0  # a demo persona: kept
+    assert page.locator('#acc-people [data-person="cio2"] [data-kind]').count() == 0  # a demo persona: kept
     page.fill("#acc-add-form [name=full_name]", "Phạm Minh Thư")
     page.fill("#acc-add-form [name=email]", email)
     page.select_option("#acc-add-form [name=role]", "rm")

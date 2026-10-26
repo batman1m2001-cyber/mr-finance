@@ -40,16 +40,16 @@ def gazette(monkeypatch):
     return SimpleNamespace(get=get, asked=asked)
 
 
-def added(gazette, by="compliance"):
+def added(gazette, by="cio"):
     return store.add({"gazette_url": PAGE_URL}, by, get_url=gazette.get)
 
 
 def verified(gazette):
     d = added(gazette)
-    return store.verify(d["id"], "compliance2", "Đối chiếu với tệp PDF đã ký trên Công báo")
+    return store.verify(d["id"], "cio2", "Đối chiếu với tệp PDF đã ký trên Công báo")
 
 
-def summarise(doc_id, by="compliance", mode=""):
+def summarise(doc_id, by="cio", mode=""):
     return asyncio.run(agent.summarise(doc_id, by, mode))
 
 
@@ -65,29 +65,29 @@ def test_a_gazette_document_is_fetched_from_the_gazettes_own_signed_pdf(gazette)
     with pytest.raises(Conflict, match="đã có"):
         added(gazette)
     with pytest.raises(BadRequest, match="Công báo"):
-        store.add({"gazette_url": "https://example.com/van-ban/x.htm"}, "compliance")
+        store.add({"gazette_url": "https://example.com/van-ban/x.htm"}, "cio")
 
 
-def test_a_pasted_document_needs_an_official_address_and_only_compliance_adds(gazette):
+def test_a_pasted_document_needs_an_official_address_and_only_a_cio_adds(gazette):
     item = {"source_url": "https://blog.example.vn/du-thao", "title": "Dự thảo Thông tư sửa đổi", "status": "draft"}
     with pytest.raises(BadRequest, match="tên miền chính thức"):
-        store.add(item, "compliance")
+        store.add(item, "cio")
     with pytest.raises(roles.Forbidden):
-        added(gazette, by="cio")
-    d = store.add({**item, "source_url": "https://www.sbv.gov.vn/du-thao-1", "number": "x/2026/TT-NHNN"}, "compliance")
+        added(gazette, by="rm01")
+    d = store.add({**item, "source_url": "https://www.sbv.gov.vn/du-thao-1", "number": "x/2026/TT-NHNN"}, "cio")
     assert d["status"] == "draft" and d["text"] == "" and d["issuer"] == "Ngân hàng Nhà nước Việt Nam"
     with pytest.raises(Conflict, match="Chưa có văn bản"):
-        store.verify(d["id"], "compliance2", "Đối chiếu với trang nguồn của NHNN")
+        store.verify(d["id"], "cio2", "Đối chiếu với trang nguồn của NHNN")
 
 
-def test_a_second_compliance_person_verifies_the_source(gazette):
+def test_a_second_cio_verifies_the_source(gazette):
     d = added(gazette)
     with pytest.raises(roles.Forbidden, match="khác người thêm"):
-        store.verify(d["id"], "compliance", "Đối chiếu với tệp PDF đã ký trên Công báo")
+        store.verify(d["id"], "cio", "Đối chiếu với tệp PDF đã ký trên Công báo")
     with pytest.raises(BadRequest, match="20 ký tự"):
-        store.verify(d["id"], "compliance2", "ok")
-    v = store.verify(d["id"], "compliance2", "Đối chiếu với tệp PDF đã ký trên Công báo")["verified"]
-    assert v["by"] == "compliance2" and v["text_sha256"] == text.sha(TEXT)
+        store.verify(d["id"], "cio2", "ok")
+    v = store.verify(d["id"], "cio2", "Đối chiếu với tệp PDF đã ký trên Công báo")["verified"]
+    assert v["by"] == "cio2" and v["text_sha256"] == text.sha(TEXT)
 
 
 # -- the check -----------------------------------------------------------------------------------
@@ -135,9 +135,9 @@ def test_the_agent_reads_only_verified_text_and_mock_quotes_pass_the_check(gazet
     d = added(gazette)
     with pytest.raises(Conflict, match="chưa được xác nhận"):
         summarise(d["id"])
-    store.verify(d["id"], "compliance2", "Đối chiếu với tệp PDF đã ký trên Công báo")
+    store.verify(d["id"], "cio2", "Đối chiếu với tệp PDF đã ký trên Công báo")
     with pytest.raises(roles.Forbidden):
-        summarise(d["id"], by="cio")
+        summarise(d["id"], by="rm01")
     s = summarise(d["id"])["summary"]
     assert s["mode"] == "mock" and s["attempts"] == 1 and len(s["points"]) >= 2
     assert "gồm 12 điều" in s["summary"]  # Điều 4 quoted again inside the amendment (Điều 11) is not a 13th
@@ -196,14 +196,14 @@ def test_live_three_failing_answers_end_the_run_in_error_with_an_alert(gazette, 
 def test_the_radar_keeps_each_documents_status_history_and_what_changed(gazette):
     draft = store.add(
         {"source_url": "https://www.sbv.gov.vn/du-thao-2", "title": "Dự thảo Thông tư về tư vấn", "status": "draft"},
-        "compliance",
+        "cio",
     )
     with pytest.raises(BadRequest, match="10 ký tự"):
-        store.set_status(draft["id"], "consultation", "compliance", "ok")
+        store.set_status(draft["id"], "consultation", "cio", "ok")
     with pytest.raises(Conflict, match="đang"):
-        store.set_status(draft["id"], "draft", "compliance", "Vẫn là dự thảo trên trang NHNN")
+        store.set_status(draft["id"], "draft", "cio", "Vẫn là dự thảo trên trang NHNN")
     look = store.radar()["documents"][0]["changed_at"] + 0.001
-    d = store.set_status(draft["id"], "consultation", "compliance", "NHNN đăng lấy ý kiến trên trang", "20/10/2026")
+    d = store.set_status(draft["id"], "consultation", "cio", "NHNN đăng lấy ý kiến trên trang", "20/10/2026")
     assert [h["status"] for h in d["history"]] == ["draft", "consultation"] and d["history"][-1]["date"] == "20/10/2026"
     other = added(gazette)
     r = store.radar(since=look)
@@ -228,20 +228,20 @@ def test_the_policy_prompt_is_versioned_configuration():
 def test_the_endpoints(gazette, monkeypatch):
     monkeypatch.setattr(source, "_get", gazette.get)
     with TestClient(Application.find(".").asgi()) as c:
-        r = c.post("/api/policy", json={"item": {"gazette_url": PAGE_URL}, "by": "compliance"})
+        r = c.post("/api/policy", json={"item": {"gazette_url": PAGE_URL}, "by": "cio"})
         assert r.status_code == 200, r.text
         did = r.json()["document"]["id"]
-        r = c.post("/api/policy/summarise", json={"document_id": did, "by": "compliance"})
+        r = c.post("/api/policy/summarise", json={"document_id": did, "by": "cio"})
         assert r.status_code == 409 and "xác nhận" in r.json()["error"]
         r = c.post(
-            "/api/policy/verify", json={"document_id": did, "by": "compliance2", "note": "Đối chiếu tệp PDF đã ký"}
+            "/api/policy/verify", json={"document_id": did, "by": "cio2", "note": "Đối chiếu tệp PDF đã ký"}
         )
         assert r.status_code == 200, r.text
-        r = c.post("/api/policy/summarise", json={"document_id": did, "by": "compliance"})
+        r = c.post("/api/policy/summarise", json={"document_id": did, "by": "cio"})
         assert r.status_code == 200 and r.json()["document"]["summary"]["points"]
         r = c.post(
             "/api/policy/status",
-            json={"document_id": did, "status": "effective", "by": "compliance", "note": "Có hiệu lực theo điều khoản"},
+            json={"document_id": did, "status": "effective", "by": "cio", "note": "Có hiệu lực theo điều khoản"},
         )
         assert r.status_code == 200 and r.json()["document"]["status"] == "effective"
         radar = c.get("/api/policy").json()

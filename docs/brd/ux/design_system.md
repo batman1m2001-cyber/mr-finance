@@ -17,19 +17,23 @@ the code wins and this page is corrected.
 
 ## Themes
 
-Light first, as on the kit's concept board (owner, 2026-10-16; [UI redesign plan](../../UI_REDESIGN_PLAN.md) R-D1):
-a pale lavender-grey plane, white cards with a soft shadow, 16 px corners, sentence-case card titles, small tinted
-icon chips, one indigo accent. Dark (deep indigo, lavender accent) is kept from 2026-10-15. The theme follows the OS
-until the user toggles it (◐, stored as `mf.theme`).
+The Techcombank Private palette (business feedback 5, 2026-10-23; OWN-WN-11): gold #c8a45d, deep gold #b08d47,
+champagne #d4b26a, sand #e1d1bb, light grey #f1f1f1, brown #59392c. Light for everyone unless the person picks dark
+(◐, stored as `mf.theme`).
+- `--accent` brown #59392c (champagne #d4b26a in dark): links, the current tab, selections, focus, the hero figure.
+- `--cta` gold #c8a45d: the main action only — a primary button, Hỏi trợ lý, the bell's count. Its words are dark
+  brown #2b1a12 (7:1); white on gold would be 2.4:1. `--cta-hover` deep gold #b08d47 (champagne in dark).
+- `--brand-red` (the name kept): deep gold #b08d47, the thin mark of where you are; the logo's ring is gold.
 
 ## Tokens (light → dark)
 
 | Group | Tokens | Use |
 |---|---|---|
-| Surfaces | `--plane` #f6f6fb, `--surface` white, `--surface-2`, `--surface-3` | page, cards, nested blocks and tracks |
+| Surfaces | `--plane` #f1f1f1, `--surface` white, `--surface-2`, `--surface-3` | page, cards, nested blocks and tracks |
 | Ink | `--ink` `--ink-2` `--muted` | text levels; every text colour ≥ 4.5:1 on its surface in both themes |
 | Lines | `--hair` (card borders), `--axis` (inputs, chart axes), `--ring` | |
-| Accent | `--accent` #5b47d6 `--accent-soft` `--brand` `--hero` | actions, current tab, hero figure; the logo and Copilot button use #7a63f0 → #4a36c4 |
+| Accent | `--accent` #59392c `--accent-soft` `--brand` `--hero` | links, current tab, selections, focus, hero figure |
+| Gold | `--brand-red` #b08d47; `--cta` #c8a45d `--cta-ink` `--cta-hover` | the logo and where you are; the main action (see Themes) |
 | Series | `--s1`…`--s8`, `--other` | categorical series in fixed order; asset classes have fixed colours (`CLASS_COLOR`) |
 | Status | `--good` `--warning` `--serious` `--critical` (+ `-soft`) | statuses with a label, never colour alone |
 | Money | `--up` `--down` `--flat`; `--in` `--out` | gain/loss; cash in/out |

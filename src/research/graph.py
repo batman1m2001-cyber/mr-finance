@@ -15,7 +15,7 @@ def research_upload_flow(item, by):
 
 @graph
 def research_release_flow(item_id, decision, by, note=""):
-    """Compliance releases or rejects an uploaded item."""
+    """A second CIO releases or rejects an uploaded item."""
     done = release(item_id=item_id, decision=decision, by=by, note=note)
     START >> done >> END
 

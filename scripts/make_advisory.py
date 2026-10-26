@@ -91,11 +91,11 @@ CLIENTS = {
     "C05": {"rm": "hcm", "lead": ["real_estate", "banking"], "scale": 0.3},
 }
 
-AGENTS = [
-    {"id": "news", "name": "Agent CIO", "name_vi": "đọc tin, lập nhận định và kịch bản"},
-    {"id": "impact", "name": "Bộ máy tác động", "name_vi": "tính tác động lên danh mục — không gọi mô hình"},
-    {"id": "planner", "name": "Kế hoạch của RM", "name_vi": "RM lập kế hoạch và hành động"},
-    {"id": "chat", "name": "OneWealth Copilot", "name_vi": "trả lời khách ở khung Trợ lý"},
+AGENTS = [  # the owner's names (OWN-FB-06)
+    {"id": "news", "name": "AI News Reader", "name_vi": "AI đọc báo, tổng hợp tin"},
+    {"id": "impact", "name": "AI Impact Assessor", "name_vi": "AI đánh giá tác động lên danh mục"},
+    {"id": "planner", "name": "AI Planning Advisor", "name_vi": "AI tư vấn kế hoạch và hành động"},
+    {"id": "chat", "name": "AI Client Chat", "name_vi": "AI chat với khách hàng"},
 ]
 
 # the advice a record holds: (month, agent, what was advised, outcome, value in VND at scale 1)

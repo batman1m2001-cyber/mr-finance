@@ -3,15 +3,16 @@
 import {empty, esc, get, n as how, post, runBadge, severity, signClass, toast, vnd, when} from "../core/core.js";
 
 export async function render(box, ctx) {
-  const {runs} = await get("/api/runs");
+  const [{runs}, {events}] = await Promise.all([get("/api/runs"), get("/api/events")]);
+  const title = Object.fromEntries(events.map(e => [e.id, e.title]));  // a run is named by its news (OWN-FB-14)
   if (!runs.length) {
     box.innerHTML = `<div class="panel">${empty("Chưa có lần áp dụng", "Một lần áp dụng được tạo khi CIO duyệt nhận định.")}</div>`;
     return;
   }
   const run = runs.find(r => r.id === ctx.param) || runs[0];
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">CIO · Lần áp dụng</div><div class="h1">${esc(run.id)} ${runBadge(run.status, run.status_label)}</div>
-      <div class="lede small">Nhận định <a href="#/cio/nhan-dinh/${esc(run.view_id)}">${esc(run.view_id)}</a> · ${run.families} gia đình · giá ngày ${esc(run.price_date || "—")} · mô hình ${esc(run.model ? run.model.version : "—")} · ${esc(run.engine_version || "")}</div></div>
+    <div class="pagehead"><div><div class="eyebrow">CIO · Lần áp dụng</div><div class="h1 long">${esc(title[run.event_id] || run.event_id)} ${runBadge(run.status, run.status_label)}</div>
+      <div class="lede small">${esc(run.id)} · nhận định <a href="#/cio/nhan-dinh/${esc(run.view_id)}">${esc(run.view_id)}</a> · ${run.families} gia đình · giá ngày ${esc(run.price_date || "—")} · mô hình ${esc(run.model ? run.model.version : "—")} · ${esc(run.engine_version || "")}</div></div>
       <div class="row">
         <a class="btn" href="#/cio/do-thi/${esc(run.id)}">Xem đồ thị</a>
         <button type="button" class="btn" id="verify">Kiểm tra tính lại</button>
@@ -28,8 +29,8 @@ export async function render(box, ctx) {
         <div class="row" style="margin-top:8px">${run.status === "NEEDS_CIO_REVIEW" ? '<button type="button" class="btn primary" data-act="make_effective">Cho hiệu lực</button>' : ""}
         <button type="button" class="btn danger" data-act="withdraw">Thu hồi lần áp dụng</button></div>` : ""}</div>
       <div class="panel c12"><h3>Lịch sử trạng thái</h3>${(run.history || []).map(h => `<div class="row" style="gap:10px;margin:4px 0"><span class="small muted num">${when(h.at)}</span>${runBadge(h.status, h.status)}<span class="small" data-quote>${esc(h.by)}${h.note ? ` · ${esc(h.note)}` : ""}</span></div>`).join("")}</div>
-      <div class="panel c12"><h3>Mọi lần áp dụng</h3><div class="scrollx"><table class="table"><thead><tr><th>Mã</th><th>Trạng thái</th><th class="r">Kỳ vọng 3 tháng</th><th class="r">Xem trước</th><th>Lúc</th></tr></thead><tbody>
-        ${runs.map(r => `<tr class="click" data-id="${esc(r.id)}"><td>${esc(r.id)}</td><td>${runBadge(r.status, r.status_label)}</td><td class="r ${signClass(r.totals && r.totals.expected_3m)}">${r.totals ? how(vnd(r.totals.expected_3m, true), "run.expected_3m", {families: String(r.families)}) : "—"}</td><td class="r">${r.totals ? r.totals.pre_review : "—"}</td><td class="small">${when(r.created)}</td></tr>`).join("")}
+      <div class="panel c12"><h3>Mọi lần áp dụng</h3><div class="scrollx"><table class="table"><thead><tr><th>Kịch bản</th><th>Trạng thái</th><th class="r">Kỳ vọng 3 tháng</th><th class="r">Xem trước</th><th>Lúc</th></tr></thead><tbody>
+        ${runs.map(r => `<tr class="click" data-id="${esc(r.id)}"><td>${esc(title[r.event_id] || r.event_id)} <span class="small muted">· ${esc(r.price_date || "")} · ${esc(r.id)}</span></td><td>${runBadge(r.status, r.status_label)}</td><td class="r ${signClass(r.totals && r.totals.expected_3m)}">${r.totals ? how(vnd(r.totals.expected_3m, true), "run.expected_3m", {families: String(r.families)}) : "—"}</td><td class="r">${r.totals ? r.totals.pre_review : "—"}</td><td class="small">${when(r.created)}</td></tr>`).join("")}
       </tbody></table></div></div>
     </div>`;
   box.querySelectorAll("[data-id]").forEach(r => { r.onclick = () => ctx.go(ctx.href("ap-dung", r.dataset.id)); });

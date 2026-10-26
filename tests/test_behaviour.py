@@ -37,7 +37,7 @@ def _actions(obj):
 
 def test_a_recommendation_counts_when_a_person_reviewed_it_and_the_chain_logged_it():
     _, r = approved(*MARKET)
-    item = wealth.propose("C05", "plan", "Kế hoạch thử", {})  # C05: no certified specialist, the RM decides alone
+    item = wealth.propose("C05", "plan", "Kế hoạch thử", {})  # the RM decides alone (OWN-FB-18)
     got = run(REVIEW, item_id=item, decision="approved", note="Đồng ý", by="rm01")
     assert got["item"]["data"]["decided_by"] == "rm01" and _actions(item) == ["review.decide"]
     # an item decided the way the queue did before G7: no one named, nothing in the chain

@@ -31,11 +31,11 @@ def test_upload_then_chat_then_the_dashboard_shows_both():
         assert client.post("/api/reset").json() == {"reset": True}
 
 
-def test_the_specialist_team_and_the_advisory_record():
+def test_the_rm_and_the_advisory_record():
     app = Application.find(".")
     with TestClient(app.asgi()) as client:
         out = client.get("/api/advisory", params={"client_id": "C01"}).json()
-        assert out["team"]["rm"]["email"] and len(out["team"]["specialists"]) == 5
+        assert out["team"]["rm"]["email"] and "specialists" not in out["team"]
         assert {a["id"] for a in out["tracking"]["agents"]} == {"news", "impact", "planner", "chat"}
         assert out["tracking"]["risk_tests"]
         assert client.get("/api/advisory", params={"client_id": "nobody"}).status_code == 404

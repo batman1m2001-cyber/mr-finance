@@ -7,7 +7,7 @@ from __future__ import annotations
 import time
 from typing import Any, Dict
 
-from assistant.base import Ctx, Param, Tool, ToolFailed
+from assistant.base import Ctx, Tool, ToolFailed
 from assistant.tools import _pct, _vnd
 
 
@@ -29,7 +29,7 @@ def _spct(x: float, digits: int = 1) -> str:
 
 
 async def cio_desk(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Bàn quyết định: what waits for the CIO, then where each stage of the pipeline stands."""
+    """Decision board: what waits for the CIO, then where each stage of the pipeline stands."""
     d = _desk(ctx, "cio")
     waits = d["decide"]
     listed = "; ".join(f"{x['title']} ({x['id']}, {x['status']})" for x in waits[:6])
@@ -41,7 +41,7 @@ async def cio_desk(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         "text": f"{head} Dòng chảy: {stages}",
         "data": {"waiting": len(waits), "stages": {s["id"]: s["count"] for s in d["pipeline"]}},
         "focus": ["decide"] + [f"stage:{s['id']}" for s in d["pipeline"] if s["waits"]],
-        "sources": ["Bàn quyết định"],
+        "sources": ["Decision board"],
     }
 
 
@@ -83,7 +83,7 @@ STATE_SAY = {"done": "chạy xong", "active": "đang chạy", "waiting": "đang 
 
 def _can_run(ctx: Ctx) -> str:
     """What this role may start (owner 2026-10-18): the CIO, Agent CIO on an event with no view and the challenger
-    where it failed; Admin, the jobs on the list; Compliance, nothing. Each runs on the person's Xác nhận, or from the
+    where it failed; Admin, the jobs on the list. Each runs on the person's Xác nhận, or from the
     Việc nền page."""
     if ctx.role == "cio":
         from app.web import agents_read
@@ -110,7 +110,7 @@ def _can_run(ctx: Ctx) -> str:
             + (f"Đang chạy: {', '.join(busy)}. " if busy else "")
             + "Trợ lý chạy được khi bạn bấm Xác nhận, hoặc làm ở trang Việc nền. Các agent do CIO chạy."
         )
-    return "CIO chạy các agent, Quản trị chạy các việc nền (trang Việc nền); Tuân thủ xem."
+    return "CIO chạy các agent, Quản trị chạy các việc nền (trang Việc nền)."
 
 
 async def background(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -223,7 +223,7 @@ async def accuracy(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def book(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Sổ khách hàng: the RM's families by how soon they need the RM, with why; proposals, goal tasks, contacts."""
+    """Tổng quan (was Sổ khách hàng): the RM's families by how soon they need the RM, with why; proposals, goal tasks, contacts."""
     d = _desk(ctx, "rm")
     fams = d["families"]
     if not fams:
@@ -252,11 +252,11 @@ async def book(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         "text": text,
         "data": {"families": len(fams), "soon": len(soon), "proposals": len(d["proposals"]), "tasks": len(d["tasks"])},
         "focus": ["book"] + [f"family:{f['id']}" for f in soon],
-        "sources": ["Sổ khách hàng", "Hôm nay", "Duyệt đề xuất"],
+        "sources": ["Tổng quan", "Duyệt đề xuất"],
     }
 
 
-# -- Admin (and Compliance: the chain and configuration) ---------------------------------------------------------
+# -- Admin (and the CIO: the chain and configuration) -------------------------------------------------------------
 
 
 async def operations(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -334,110 +334,18 @@ async def config_waiting(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-# -- Expert (specialist) -------------------------------------------------------------------------------------------
-
-
-async def expert_desk(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Bàn chuyên gia: the recommendations waiting for this specialist, oldest first, and the certificate."""
-    d = _desk(ctx, "specialist")
-    cert = d["certificate"]
-    head = (
-        f"Chứng chỉ {cert['certificate']} ({cert['issuer']}) hiệu lực đến {cert['valid_until']}."
-        if cert
-        else "Bạn chưa có chứng chỉ còn hiệu lực nên chưa duyệt được khuyến nghị; Tuân thủ cập nhật trong Cấu hình."
-    )
-    w = d["waiting"]
-    each = "; ".join(
-        f"{x['title']} cho {x['name']} ({x['id']}, gia đình {x['family_id']}, RM {x['rm'] or '—'}, gửi "
-        f"{_when(x['created'])})"
-        for x in w[:6]
-    )
-    mine = ", ".join(f["id"] for f in d["families"])
-    return {
-        "text": f"{head} "
-        + (f"{len(w)} khuyến nghị chờ bạn duyệt, cũ nhất trước: {each}." if w else "Không khuyến nghị nào chờ bạn.")
-        + (f" Gia đình được giao cho bạn: {mine}." if mine else ""),
-        "data": {"waiting": len(w), "certified": bool(cert), "families": [f["id"] for f in d["families"]]},
-        "focus": ["queue"],
-        "sources": ["Duyệt khuyến nghị"],
-    }
-
-
-async def family_profile(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Hồ sơ khách: an assigned family's picture — net worth, allocation, risk against its limit, liquidity, goals —
-    through the reads the dashboard and the plan use; refused for a family not assigned to this specialist (Q-26)."""
-    from dataclasses import replace
-
-    from assistant.tools import goals, overview
-    from people import store as people
-
-    d = _desk(ctx, "specialist")
-    fid = str(args.get("gia_dinh") or "").strip().upper()
-    if not fid:
-        waiting = sorted({x["family_id"] for x in d["waiting"]})
-        if len(waiting) != 1:
-            raise ToolFailed("Cần biết gia đình nào: hãy nói mã gia đình (lấy từ bàn chuyên gia)")
-        fid = waiting[0]
-    if fid not in {f["id"] for f in d["families"]} or ctx.user not in people.specialists_of(fid):
-        raise ToolFailed(f"Gia đình {fid} không được giao cho bạn")
-    one = replace(ctx, client_id=fid, scope="family", followed=None)
-    a = await overview(one, {})
-    try:
-        g = (await goals(one, {}))["text"]
-    except ToolFailed:
-        g = ""
-    day = f" Số liệu ngày {a['as_of']}." if a.get("as_of") else ""  # the data's own date (D10)
-    return {
-        "text": f"Gia đình {fid}: {a['text']} {g}".strip() + day,
-        "data": {"family": fid},
-        "as_of": a.get("as_of"),
-        "focus": ["evidence"],
-        "sources": ["Bảng tổng quan", "Kế hoạch mục tiêu"],
-    }
-
-
-# -- Compliance ----------------------------------------------------------------------------------------------------
-
-
-async def controls(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """Bàn kiểm soát: what waits for Compliance, oldest first, then each control's steps and the chain."""
-    d = _desk(ctx, "compliance")
-    label = {c["id"]: c["label"] for c in d["controls"]}
-    q = d["queue"]
-    # the item's own line too (a report's number, who uploaded it): “HV-2026-10” was “not in the system” (cmp-lim-02)
-    oldest = "; ".join(
-        f"{x['title']} ({label[x['control']]}, {x['id']}{', ' + x['sub'] if x.get('sub') else ''}, từ {_when(x['at'])})"
-        for x in q[:5]
-    )
-    head = f"{len(q)} việc chờ Tuân thủ, cũ nhất trước: {oldest}." if q else "Không việc nào chờ Tuân thủ."
-    each = "; ".join(
-        f"{c['label']}: " + ", ".join(f"{s['count']} {s['label'].lower()}" for s in c["steps"]) for c in d["controls"]
-    )
-    ch = d["chain"]
-    chain = "Chuỗi nhật ký nguyên vẹn" if ch["ok"] else f"Chuỗi nhật ký gãy ở dòng {ch['broken_at']}"
-    return {
-        "text": f"{head} Từng chốt: {each}. {chain} ({ch['count']} dòng). Quyết định ở trang của từng chốt.",
-        "data": {
-            "waiting": len(q),
-            "controls": {c["id"]: c["steps"][0]["count"] for c in d["controls"]},
-            "chain_ok": ch["ok"],
-        },  # fmt: skip
-        "focus": ["controls", "queue"] + [c["id"] for c in d["controls"] if c["steps"][0]["count"]],
-        "sources": ["Bàn kiểm soát"],
-    }
-
-
 CATALOGUE: Dict[str, Tool] = {
     t.name: t
     for t in (
         Tool(
             "ban_quyet_dinh",
             "bàn quyết định của CIO: việc chờ CIO quyết định (nhận định chờ duyệt, lần áp dụng chờ xem lại, cấu hình, "
-            "bản tin bị trả lại, sự kiện chưa có nhận định) và dòng chảy từ tin đến gia đình",
+            "bản tin chờ duyệt hoặc bị trả lại, tin bị giữ, nghiên cứu chờ phát hành, văn bản chính sách chờ xác nhận "
+            "nguồn, sự kiện chưa có nhận định) và dòng chảy từ tin đến gia đình",
             ("cio",),
             cio_desk,
             page="ban-lam-viec",
-            follow=["Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?"],
+            follow=["Tác động lớn nhất tới tài sản ở đâu?", "Lần áp dụng nào đang hiệu lực?"],
         ),
         Tool(
             "phoi_nhiem",
@@ -454,7 +362,7 @@ CATALOGUE: Dict[str, Tool] = {
             ("cio",),
             runs,
             page="ap-dung",
-            follow=["Phơi nhiễm lớn nhất ở đâu?"],
+            follow=["Tác động lớn nhất tới tài sản ở đâu?"],
         ),
         Tool(
             "do_chinh_xac",
@@ -479,7 +387,7 @@ CATALOGUE: Dict[str, Tool] = {
             "các agent và việc chạy nền (Agent CIO, Phản biện, Chính sách, hàng đợi, lấy tin, dữ liệu thị trường, quét "
             "chính sách, tổng hợp trí nhớ, lưu giữ): trạng thái, lần chạy gần nhất, số lần chạy và lỗi hôm nay; với "
             "CIO các sự kiện chạy được Agent CIO và phản biện lỗi, với Quản trị các việc chạy tay được",
-            ("cio", "compliance", "admin"),
+            ("cio", "admin"),
             background,
             page="viec-nen",
             follow=["Có việc nền nào lỗi không?", "Có gì chờ tôi duyệt?"],
@@ -494,47 +402,17 @@ CATALOGUE: Dict[str, Tool] = {
             follow=["Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
         ),
         Tool(
-            "ban_chuyen_gia",
-            "bàn chuyên gia: các khuyến nghị RM đã duyệt đang chờ bạn duyệt, cũ nhất trước, và chứng chỉ của bạn",
-            ("specialist",),
-            expert_desk,
-            page="ban-lam-viec",
-            follow=["Hồ sơ của gia đình này thế nào?"],
-        ),
-        Tool(
-            "ho_so_khach",
-            "hồ sơ một gia đình được giao cho bạn: tài sản ròng, phân bổ, rủi ro so với ngưỡng, thanh khoản, mục tiêu",
-            ("specialist",),
-            family_profile,
-            params={
-                "gia_dinh": Param(
-                    str, "mã gia đình, lấy từ công cụ ban_chuyen_gia; bỏ trống khi chỉ một gia đình chờ", ""
-                )
-            },
-            page="ban-lam-viec",
-            timeout=60.0,
-        ),
-        Tool(
-            "ban_kiem_soat",
-            "bàn kiểm soát của Tuân thủ: việc đang chờ Tuân thủ, cũ nhất trước (tin bị giữ, nghiên cứu chờ phát hành, "
-            "bản tin chờ duyệt, văn bản chính sách chờ xác nhận, cấu hình chờ duyệt), từng chốt và chuỗi nhật ký",
-            ("compliance",),
-            controls,
-            page="ban-lam-viec",
-            follow=["Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
-        ),
-        Tool(
             "chuoi_nhat_ky",
             "đọc tình trạng chuỗi nhật ký kiểm toán ngay bây giờ: nguyên vẹn hay gãy ở đâu, số dòng, bản chỉ ghi một "
             "lần (chỉ đọc; Quản trị bảo “chạy ngay việc” kiểm tra chuỗi thì là chay_viec_nen)",
-            ("admin", "compliance"),
+            ("admin", "cio"),
             chain,
             page="nhat-ky",
         ),
         Tool(
             "cau_hinh_cho_duyet",
             "các cấu hình đang chờ duyệt: loại, ai đề xuất, vai trò nào duyệt, có cần người thứ hai không",
-            ("admin", "compliance"),
+            ("admin", "cio"),
             config_waiting,
             page="cau-hinh",
         ),

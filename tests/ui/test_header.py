@@ -21,10 +21,10 @@ def test_search_opens_a_holding_a_page_and_a_client(open_page):
     assert "Wealth planning advisor" in p.page.inner_text("#q-results .pop-item")
     p.page.click("#q-results .pop-item")
     p.page.wait_for_function("location.hash === '#/client/muc-tieu/ke-hoach'")
-    p.go("#/rm/hom-nay")
+    p.go("#/rm")
     p.page.fill("#q", "hanh")  # an RM finds a client by name; the page switches to that client
     p.page.locator("#q-results .pop-item", has_text="Đỗ Thị Hạnh").first.click()
-    p.page.wait_for_function("location.hash === '#/rm/khach-hang/toan-canh'")
+    p.page.wait_for_function("location.hash === '#/rm/khach-hang/tong-quan'")  # Toàn cảnh's place (OWN-FB-02)
     p.page.wait_for_function("document.querySelector('#client').value === 'C04'")
     assert not p.problems()
 

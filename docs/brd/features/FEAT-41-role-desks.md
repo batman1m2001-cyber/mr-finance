@@ -4,7 +4,7 @@
 |---|---|
 | Type | Extension (owner request, 2026-10-18), **experiment**: branch `exp/graph-workspace` |
 | Requirements | OWN-MR-01…12; keeps every requirement the staff screens carry today (the map in [ux/role_desks.md](../ux/role_desks.md)) |
-| Users | CIO, RM, Admin, Expert (`specialist`), Compliance. The Customer keeps FEAT-40 |
+| Users | CIO, RM, Admin. The Customer keeps FEAT-40. Expert and Compliance were retired by OWN-FB-18 (2026-10-24) |
 | Entry points | `#/<role>` and `#/<role>/ban` (the desk); every older staff address opens its page as a sheet over the desk; `GET /api/desk` |
 | Plan | [docs/MULTI_ROLE_UX_PLAN.md](../../MULTI_ROLE_UX_PLAN.md) M0–M6; decision [ADR-0036](../decisions/ADR-0036-every-staff-role-works-at-its-own-desk.md) |
 | Status | see [traceability](../requirements/requirements_traceability.md) §5 |
@@ -104,7 +104,9 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
   `chuoi_nhat_ky` and `cau_hinh_cho_duyet` (also Compliance's) beside `canh_bao_he_thong` and `da_xem_canh_bao`.
   Steps light the map's nodes and panels.
 
-### Expert — Bàn chuyên gia (SCR-SP-02, built in M4, 2026-10-18)
+### Expert — Bàn chuyên gia (SCR-SP-02, built in M4, 2026-10-18; retired 2026-10-24)
+
+**Retired by OWN-FB-18:** the role, its accounts and this desk are gone. The RM's approval is the last; a recommendation reaches the client at once. Kept below as the record of what was built.
 
 - **Rail:** Bàn chuyên gia · Duyệt khuyến nghị · Bộ nhớ at the foot. Both pages at their addresses.
 - **The bench:** the queue beside the evidence. Left, the recommendations an RM approved for the families assigned to
@@ -126,7 +128,9 @@ Filled in as each phase is built (plan §3): CIO (M1), RM (M2), Admin (M3), Expe
 - **Every desk (from M4):** while a page is open as a sheet, the centre under it is inert — no focus, no click — so
   the Expert's decision bar cannot be reached behind Duyệt khuyến nghị.
 
-### Compliance — Bàn kiểm soát (SCR-CMP-06, built in M5, 2026-10-18)
+### Compliance — Bàn kiểm soát (SCR-CMP-06, built in M5, 2026-10-18; retired 2026-10-24)
+
+**Retired by OWN-FB-18:** each control below is the CIO's now (held news, research release, letters, policy, configuration, the audit chain under the CIO's Nhật ký), with a second CIO as the other pair of eyes: the approver is never the author. Kept below as the record of what was built.
 
 - **Rail:** Bàn kiểm soát · Tin bị giữ · Nội dung (Nghiên cứu, Bản tin, Chính sách) · Đo lường · Nhật ký · AI & cấu
   hình (Agent, Cấu hình) · Bộ nhớ at the foot. All nine pages at their addresses.

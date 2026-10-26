@@ -7,7 +7,7 @@ import asyncio
 
 from operonx import op
 
-from trial import daily, report, shadow
+from trial import daily, evaluate, report, shadow
 from wealth.paths import ROOT
 
 OUT = ROOT / "out" / "trial"
@@ -21,6 +21,7 @@ async def trial_day(force: bool = False, tick: int = None, at: str = None) -> di
 
 def _score(today: str = None) -> dict:
     got = {"recorded": daily.record_missing(), **shadow.score(today)}
+    got["evaluated"] = evaluate.score(today)
     got["report"] = daily.write_day(str(OUT), report.summary())
     return got
 
@@ -28,4 +29,9 @@ def _score(today: str = None) -> dict:
 @op
 async def trial_score(today: str = None, tick: int = None, at: str = None) -> dict:
     """Trial drafts → shadow forecasts kept; the due ones scored; the report written."""
-    return {"scored": await asyncio.to_thread(_score, today)}
+    from datetime import date
+
+    from trial import finance
+
+    late = await finance.keep_missing(today or date.today().isoformat())  # a morning that froze no book: late
+    return {"scored": {**await asyncio.to_thread(_score, today), "snapshots_late": late}}

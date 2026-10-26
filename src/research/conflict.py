@@ -1,6 +1,6 @@
 """Conflict of interest, as a structured field (BRD-RULE-CONTENT-02, CONTENT-03; BRD completion F8): on research and on
 the newsletter. ``{related, parties, statement}`` — whether the piece concerns a party related to the bank, which, and
-the disclosure the client reads. Text that names a party on Compliance's ``related_parties`` list cannot go out as
+the disclosure the client reads. Text that names a party on the ``related_parties`` list cannot go out as
 “không liên quan”: it must be declared. Shown on every piece of client content that uses the item."""
 
 from __future__ import annotations

@@ -88,7 +88,7 @@ def test_the_clockwork_and_unknown_jobs_are_not_run_by_hand(job, name):
         jobs.start(name, "admin")
 
 
-@pytest.mark.parametrize("who", ["cio", "rm01", "compliance"])
+@pytest.mark.parametrize("who", ["cio", "rm01"])
 def test_only_admin_runs_a_job(job, who):
     with pytest.raises(roles.Forbidden):
         jobs.start("audit_check", who)
@@ -112,7 +112,7 @@ def test_the_page_read_shows_agents_jobs_and_manual_runs(job, monkeypatch):
     by = {j["id"]: j for j in d["jobs"]}
     assert by["audit_check"]["runnable"] and by["audit_check"]["running"] == d["manual"][0]["id"]
     assert not by["heartbeat"]["runnable"] and by["heartbeat"]["running"] is None
-    assert web.allowed_roles("/api/jobs") == ("cio", "compliance", "admin")
+    assert web.allowed_roles("/api/jobs") == ("cio", "admin")
 
 
 def test_what_the_cio_may_start_and_agent_nen_says_it(state, monkeypatch):
@@ -129,7 +129,6 @@ def test_what_the_cio_may_start_and_agent_nen_says_it(state, monkeypatch):
 
     assert [e["id"] for e in agents_read()["can_run"]] == [ev["id"]]
     said = {r: asyncio.run(desktools.background(Ctx(r, None, "personal", "", user=r), {}))["text"] for r in
-            ("cio", "admin", "compliance")}  # fmt: skip
+            ("cio", "admin")}  # fmt: skip
     assert ev["id"] in said["cio"] and "Xác nhận" in said["cio"] and "không chạy agent" not in said["cio"]
     assert "Kiểm tra chuỗi nhật ký" in said["admin"] and "CIO" in said["admin"]
-    assert "Tuân thủ xem" in said["compliance"]

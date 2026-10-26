@@ -55,7 +55,9 @@ def candidates(now: float, since: Optional[float] = None) -> List[Dict[str, Any]
         with db.tx() as con:
             last = con.execute("select max(created) from trial_events").fetchone()[0]
         since = max(last or now - WINDOW_S, now - MAX_WINDOW_S)
-    items = news_store.inbox(status="new", since=since, limit=2000)
+    # the whole window, then what was out by ``now``: a replay's store holds the month ahead, and a cap taken newest
+    # first kept only news after the morning played (22/09 → 06/10 found none)
+    items = news_store.inbox(status="new", since=since, limit=None)
     keep = [i for i in items if not i["held"] and i.get("relevance") in ("high", "medium")]
     return [i for i in keep if (i.get("published") or i["ingested"]) <= now][:MAX_NEWS]
 
@@ -91,8 +93,14 @@ async def group(news: List[Dict[str, Any]], n: int) -> Dict[str, Any]:
             continue
         used.update(ids)
         seg = e.get("segment") if e.get("segment") in segments.SEGMENTS else None
-        out.append({"title": str(e["title"]).strip()[:200], "news_ids": ids[:6], "segment": seg,
-                    "why": str(e.get("why") or "")[:300]})
+        out.append(
+            {
+                "title": str(e["title"]).strip()[:200],
+                "news_ids": ids[:6],
+                "segment": seg,
+                "why": str(e.get("why") or "")[:300],
+            }
+        )
     return {"events": out[:n], "meta": meta}
 
 
@@ -120,6 +128,21 @@ def _keep(event_id: str, day: str, data: Dict[str, Any]) -> None:
         )
 
 
+def note_day(day: str, **fields: Any) -> Dict[str, Any]:
+    """The morning's record (AGENT_EVALUATION_PLAN §2.4): ran, found no news, failed and why, and the grouping
+    call's tokens and cost. A morning with no record and no events left no trace (``evaluate.mornings``)."""
+    with db.tx() as con:
+        r = con.execute("select data from trial_days where day = ?", (day,)).fetchone()
+        data = {**(json.loads(r["data"]) if r else {}), **fields}
+        con.execute("insert or replace into trial_days values (?, ?)", (day, db.dumps(data)))
+    return data
+
+
+def notes() -> Dict[str, Dict[str, Any]]:
+    with db.tx() as con:
+        return {r["day"]: json.loads(r["data"]) for r in con.execute("select * from trial_days order by day")}
+
+
 async def run(now: Optional[float] = None, force: bool = False) -> Dict[str, Any]:
     """The ``trial_daily`` job."""
     now = now or time.time()
@@ -129,12 +152,23 @@ async def run(now: Optional[float] = None, force: bool = False) -> Dict[str, Any
     if day in days() and not force:
         return {"day": day, "made": [], "reason": "Đã chạy hôm nay"}
     if agents.resolve_mode(None) != "live":
+        note_day(day, status="not_live", at=time.time())
         return {"day": day, "made": [], "reason": "Agent không ở chế độ trực tiếp: thử nghiệm không chạy mô phỏng"}
+    from trial import finance
+
+    await finance.keep(day)  # the book as it stood this morning, before the agents (AGENT_EVALUATION_PLAN §2.6)
     news = candidates(now)
     if not news:
+        note_day(day, status="no_news", at=time.time(), candidates=0)
         return {"day": day, "made": [], "reason": "Không có tin mới đủ liên quan"}
     t0 = time.time()
-    grouped = await group(news, max_events())
+    note_day(day, status="running", started=t0, candidates=len(news), error=None)
+    try:
+        grouped = await group(news, max_events())
+    except Exception as exc:  # recorded, then raised: the job record keeps the trace
+        note_day(day, status="failed", stage="group", finished=time.time(), error=f"{type(exc).__name__}: {exc}"[:300])
+        raise
+    note_day(day, group={**grouped["meta"], "s": round(time.time() - t0, 1)}, events=len(grouped["events"]))
     made = []
     for e in grouped["events"]:
         items = news_store.get(e["news_ids"])
@@ -162,6 +196,8 @@ async def run(now: Optional[float] = None, force: bool = False) -> Dict[str, Any
             trial["forecasts"] = shadow.record(v, trial)
         _keep(ev["id"], day, trial)
         made.append({"event_id": ev["id"], **{k: trial.get(k) for k in ("view_id", "status", "error", "segment")}})
+    drafts = sum(1 for m in made if m["view_id"])
+    note_day(day, status="ran" if drafts else "no_drafts", finished=time.time(), drafts=drafts)
     return {"day": day, "made": made, "candidates": len(news), "events": len(grouped["events"])}
 
 

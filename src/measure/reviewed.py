@@ -6,12 +6,13 @@ What the product delivers as a recommendation (our reading, labelled “Đề xu
 - **an application run made effective** — the RMs and clients read its impact. Reviewer: the person who
   approved the view (the decision it was applied from). Log: the approval and the run becoming effective, both
   in the audit chain.
-- **a newsletter approved** — Compliance's approval of the CIO's letter. Reviewer: the approver, never the
-  author. Log: the approval in the audit chain.
+- **a newsletter approved** — a second CIO's approval of the author's letter (Compliance's before OWN-FB-18).
+  Reviewer: the approver, never the author. Log: the approval in the audit chain.
 - **an RM queue item approved** — an option the client proposed, or a recommendation the RM wrote, approved by the
-  family's certified specialist when it has one, else by the RM (FEAT-27, G8). Reviewer: the specialist, else the
-  RM who decided. Log: the decisions in the audit chain (recorded from G7; earlier decisions name no one). An RM's
-  own recommendation approved by that RM alone has no second person and is counted as a miss.
+  RM (FEAT-27; before OWN-FB-18 by the family's certified specialist when it had one). Reviewer: the specialist on
+  those older items, else the RM who decided. Log: the decisions in the audit chain (recorded from G7; earlier
+  decisions name no one). An RM's own recommendation approved by that RM alone has no second person and is counted
+  as a miss.
 
 A recommendation counts when its reviewer is a person on the staff list (not an agent, not the system), other
 than its author, and its log entries are in the chain. Each one that does not is listed with what is missing.

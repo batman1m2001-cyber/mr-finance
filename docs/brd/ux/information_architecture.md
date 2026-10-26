@@ -30,9 +30,9 @@ Khách hàng (client) — 2026-10-22, ADR-0037            RM
 │   ├── Wealth planning advisor  SCR-CL-03            │   ├── Toàn cảnh ................... SCR-CL-08 (staff view)
 │   └── Risk profile test ...... SCR-CL-04            │   ├── Bản đồ tài chính ............ SCR-CL-11 (staff view)
 ├── Headline News                                     │   ├── Chi tiết .................... SCR-CL-01 (staff view)
-│   ├── Tác động tin ........... SCR-CL-05            │   ├── Tài sản ..................... SCR-CL-02
+│   ├── News and Prediction .... SCR-CL-06            │   ├── Tài sản ..................... SCR-CL-02
 │   ├── Đồ thị tác động ........ SCR-CL-09            │   ├── Kế hoạch .................... SCR-CL-03
-│   └── Chi phí chính sách ..... SCR-CL-06            │   ├── Chi phí chính sách .......... SCR-CL-06
+│   └── (Tác động tin, no tab) . SCR-CL-05            │   ├── Chi phí chính sách .......... SCR-CL-06
 └── Relationship specialist .... SCR-CL-07            │   ├── Hiệu quả tư vấn ............. SCR-RM-04
                                                       │   └── Duyệt đề xuất ............... SCR-RM-06
                                                       └── Hiệu quả tư vấn (all clients) ... SCR-RM-05

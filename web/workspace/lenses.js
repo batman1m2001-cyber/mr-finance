@@ -33,7 +33,7 @@ export const SHEETS = {
   "khau-vi": {page: "risktest", label: "Risk profile test", route: "#/client/rui-ro/khau-vi", lens: "muc-tieu", nav: ["rui-ro", "khau-vi"]},
   "thi-truong": {page: "impact", label: "Tác động tin", route: "#/client/tin/thi-truong", lens: "tin", nav: ["tin", "thi-truong"]},
   "do-thi": {page: "graph", label: "Đồ thị tác động", route: "#/client/tin/do-thi", lens: "tin", nav: ["tin", "do-thi"]},
-  "chinh-sach": {page: "policy", label: "Chi phí chính sách", route: "#/client/tin/chinh-sach", lens: "tin", nav: ["tin", "chinh-sach"]},
+  "chinh-sach": {page: "policy", label: "News and Prediction", route: "#/client/tin/chinh-sach", lens: "tin", nav: ["tin", "chinh-sach"]},
   "chuyen-gia": {page: "advisor", label: "Relationship specialist", route: "#/client/chuyen-gia", lens: null, nav: ["chuyen-gia"]},
   "bo-nho": {page: "memory", label: "Bộ nhớ", route: "#/client/bo-nho", lens: null, nav: ["bo-nho"]},
 };
@@ -41,7 +41,9 @@ export const SHEETS = {
 export const SECTIONS = {
   "tong-quan": {home: "#/client/tong-quan", tabs: [["Wealth view", "#/client/tong-quan", "money"], [SHEETS["tai-san"].label, SHEETS["tai-san"].route]]},
   "muc-tieu": {home: SHEETS["ke-hoach"].route, tabs: ["ke-hoach", "khau-vi"].map(id => [SHEETS[id].label, SHEETS[id].route])},
-  "tin": {home: SHEETS["thi-truong"].route, tabs: ["thi-truong", "do-thi", "chinh-sach"].map(id => [SHEETS[id].label, SHEETS[id].route])},
+  // News and Prediction first, then Đồ thị tác động; Tác động tin is no tab (business, 2026-10-22) — its address stays
+  // for the bell's and the feed's evidence
+  "tin": {home: SHEETS["chinh-sach"].route, tabs: ["chinh-sach", "do-thi"].map(id => [SHEETS[id].label, SHEETS[id].route])},
   "chuyen-gia": {home: SHEETS["chuyen-gia"].route, tabs: [[SHEETS["chuyen-gia"].label, SHEETS["chuyen-gia"].route]]},
 };
 // the toolbar: the bank's four sections (business feedback 2, 2026-10-22). Bộ nhớ is not on it (UX_TOOLBAR_PLAN T2):
@@ -65,7 +67,7 @@ const BOARD = {"tong-quan/toan-canh": "month", "tong-quan/chi-tiet": "nw"};
 const OLD = {
   "tai-san": "tai-san",
   "muc-tieu": "ke-hoach", "muc-tieu/ke-hoach": "ke-hoach", "muc-tieu/khau-vi": "khau-vi", "rui-ro": "khau-vi", "rui-ro/khau-vi": "khau-vi",
-  "tin": "thi-truong", "tin/thi-truong": "thi-truong", "tin/do-thi": "do-thi", "tin/chinh-sach": "chinh-sach",
+  "tin": "chinh-sach", "tin/thi-truong": "thi-truong", "tin/do-thi": "do-thi", "tin/chinh-sach": "chinh-sach",
   "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
 };
 // Dòng tiền's own page is the dashboard's cash part now (ADR-0037)

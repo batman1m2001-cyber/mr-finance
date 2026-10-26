@@ -43,9 +43,9 @@ donut, gauge, progress); styles `.kpis`, `.pcard`, `.contrib`, `.ratios`, `.wmap
 
 ## Acceptance and tests
 `tests/test_flows.py` (bands = rows to the dong, C01 09/2026 = 30.0 tr left, default month, family adds the
-spouse, bad requests refused, endpoint). `tests/ui/test_pulse.py` (3): the class split, donut parts, goals and
-feed items equal the APIs' (and the split sums to the month change); a picked band flows three times, pauses
-with a hidden tab and ends; reduced motion picks without dots. Plus the route sweep at 1440 and 390 px.
+spouse, bad requests refused, endpoint). The Toàn cảnh page and its browser tests (`tests/ui/test_pulse.py`) were
+retired by OWN-FB-02 (2026-10-24): no role reaches it, its cards are in the Bảng số liệu
+(`tests/ui/test_graph_workspace_ui.py`) and the assistant's marks moved to Tổng quan (`tests/ui/test_copilot_ui.py`).
 
 ## Limitations
 - Months are the fixtures' 12 (10/2025–09/2026); flows of statement uploads and declarations are not included

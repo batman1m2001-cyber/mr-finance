@@ -1,23 +1,23 @@
-/* Nghiên cứu: the research side uploads reports, house views and regulation notes; Compliance
-   releases or rejects them (another person, after the release time, with a note). A released report
+/* Nghiên cứu: a CIO uploads reports, house views and regulation notes; another CIO releases or rejects them
+   (never the uploader, after the release time, with a note; OWN-FB-18 retired Compliance). A released report
    reaches the CIO's inbox as "Độc quyền"; a regulation note goes to the goal branch. */
 import {empty, esc, get, post, toast, when} from "../core/core.js";
 
-const STATUS = {PENDING_RELEASE: ["warn", "Chờ Tuân thủ"], RELEASED: ["good", "Đã phát hành"], REJECTED: ["bad", "Từ chối"]};
+const STATUS = {PENDING_RELEASE: ["warn", "Chờ CIO khác phát hành"], RELEASED: ["good", "Đã phát hành"], REJECTED: ["bad", "Từ chối"]};
 const LEVEL = {contact_now: "bad", confirm_goal: "human", remind: "warn", note: ""};
 
 export async function render(box, ctx) {
   const [{items, kinds}, reg] = await Promise.all([get("/api/research"), get("/api/goals/regulation")]);
   const purposes = reg.purposes;
-  const isCompliance = ctx.role === "compliance";
+  const mayRelease = (i) => ctx.role === "cio" && i.uploaded_by !== ctx.user;
   const byNote = {};
   for (const m of reg.matches) (byNote[m.note_id] ||= []).push(m);
   const pending = items.filter(i => i.status === "PENDING_RELEASE").length;
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">${isCompliance ? "Tuân thủ" : "CIO"} · Nghiên cứu và ghi chú quy định</div>
+    <div class="pagehead"><div><div class="eyebrow">CIO · Nghiên cứu và ghi chú quy định</div>
       <div class="h1">${pending} chờ phát hành · ${items.length - pending} đã xử lý</div>
-      <div class="lede small">Chỉ nạp sau giờ phát hành chính thức. Người phát hành phải khác người nạp. Ghi chú quy định không đổi giá tài sản: nó đi nhánh mục tiêu (mốc chuẩn bị, hồ sơ, mức khẩn).</div></div></div>
-    ${isCompliance ? "" : `<div class="panel" style="margin-bottom:16px"><details class="more"><summary>Nạp báo cáo mới</summary>
+      <div class="lede small">Chỉ nạp sau giờ phát hành chính thức. Người phát hành là một CIO khác người nạp. Ghi chú quy định không đổi giá tài sản: nó đi nhánh mục tiêu (mốc chuẩn bị, hồ sơ, mức khẩn).</div></div></div>
+    ${ctx.role !== "cio" ? "" : `<div class="panel" style="margin-bottom:16px"><details class="more"><summary>Nạp báo cáo mới</summary>
       <form id="up" class="cols" style="margin-top:8px">
         <label class="field c3">Loại<select name="kind">${Object.entries(kinds).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select></label>
         <label class="field c3">Số báo cáo<input name="report_no" required></label>
@@ -44,7 +44,7 @@ export async function render(box, ctx) {
             <label class="field c6">Thông điệp cho khách (chung cho mọi khách cùng loại mục tiêu)<textarea name="client_message"></textarea></label>
             <label class="field c6">Gợi ý cho RM<textarea name="rm_hint"></textarea></label>
           </div></fieldset>
-        <div class="c12 row"><button class="btn primary" type="submit">Nạp, chờ Tuân thủ</button></div>
+        <div class="c12 row"><button class="btn primary" type="submit">Nạp, chờ CIO khác</button></div>
       </form></details></div>`}
     <div class="panel" style="padding:8px">${items.length ? items.map(i => {
       const st = STATUS[i.status] || ["", i.status];
@@ -57,11 +57,11 @@ export async function render(box, ctx) {
           <div class="small ${i.conflict && i.conflict.related ? "warn-text" : "muted"}" style="margin-top:4px">${i.conflict && i.conflict.related ? `Xung đột lợi ích (${esc(i.conflict.parties.join(", "))}): ${esc(i.conflict.statement)}` : "Không có xung đột lợi ích cần công bố"}</div>
           ${i.regulation ? `<div class="small muted" style="margin-top:4px">${esc(i.regulation.status === "issued" ? "Đã ban hành" : "Dự thảo")} · ${i.regulation.purposes.map(p => esc(purposes[p])).join(", ")} · chuẩn bị thêm ${i.regulation.prep_weeks} tuần</div>` : ""}
           ${m.length ? `<details class="more"><summary>${m.length} mục tiêu bị ảnh hưởng</summary>${m.map(x => `<div class="small" style="margin:4px 0"><span class="badge ${LEVEL[x.level]}">${esc(x.level_label)}</span> ${esc(x.family_name)} · ${esc(x.goal)} · mốc ${esc(x.milestone)}</div>`).join("")}</details>` : ""}
-          ${isCompliance && i.status === "PENDING_RELEASE" ? `<div class="row" style="margin-top:8px"><input data-note="${esc(i.id)}" placeholder="Ghi chú của Tuân thủ (từ 20 ký tự)" style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
+          ${mayRelease(i) && i.status === "PENDING_RELEASE" ? `<div class="row" style="margin-top:8px"><input data-note="${esc(i.id)}" placeholder="Ghi chú của người phát hành (từ 20 ký tự)" style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
             <button type="button" class="btn sm primary" data-decide="release" data-id="${esc(i.id)}">Phát hành</button><button type="button" class="btn sm danger" data-decide="reject" data-id="${esc(i.id)}">Từ chối</button></div>` : ""}
         </div>
         <span class="badge ${st[0]}">${st[1]}</span></div>`;
-    }).join("") : empty("Chưa có báo cáo nào", isCompliance ? "Báo cáo do bên nghiên cứu nạp sẽ chờ ở đây." : "Mở “Nạp báo cáo mới” để nạp.")}</div>`;
+    }).join("") : empty("Chưa có báo cáo nào", "Mở “Nạp báo cáo mới” để nạp.")}</div>`;
 
   const form = box.querySelector("#up");
   if (form) {
@@ -82,7 +82,7 @@ export async function render(box, ctx) {
           prep_weeks: Number(f.get("prep_weeks") || 0), purposes: f.getAll("purposes"), countries: list("countries"),
           documents: list("documents"), client_message: f.get("client_message"), rm_hint: f.get("rm_hint")};
       }
-      try { const r = await post("/api/research", {item, by: ctx.user}); toast(`Đã nạp ${r.item.id}; chờ Tuân thủ`); render(box, ctx); }
+      try { const r = await post("/api/research", {item, by: ctx.user}); toast(`Đã nạp ${r.item.id}; chờ CIO khác phát hành`); render(box, ctx); }
       catch (err) { toast(err.message); }
     };
   }

@@ -1,0 +1,22 @@
+{
+ "note": "Techcombank's figures and our assumptions for the santander_vn book (docs/CLIENT_DATASET_PLAN.md, ADR-0038). Each figure: value, source; 'giả định' = our assumption.",
+ "clients": {"value": 6500, "source": "the owner, 2026-10-23 (Private clients); also nop_bai_cuoc_thi.md §4"},
+ "aum_total_ty": {"value": 428000, "source": "the owner, 2026-10-23 (AUM of the Private clients; scope to confirm, Q-27)"},
+ "aum_floor_ty": {"value": 25, "source": "techcombank.com/thong-tin/blog/vip-ngan-hang: AUM ≥ 23 tỷ or relationship value ≥ 25 tỷ, three-month average"},
+ "aum_rank_correlation": {"value": 0.7, "source": "giả định: how closely the AUM rank follows Santander's income rank"},
+ "tiers": {
+  "source": "giả định: cut-offs by AUM at TCB, tỷ",
+  "value": [
+   {"from": 25, "to": 50, "label": "Mới lên Private"},
+   {"from": 50, "to": 100, "label": "HNW"},
+   {"from": 100, "to": 250, "label": "HNW cao"},
+   {"from": 250, "to": 750, "label": "VHNW"},
+   {"from": 750, "to": null, "label": "UHNW"}
+  ]
+ },
+ "share_at_tcb": {
+  "source": "giả định: the share of a client's total wealth held at TCB falls with wealth; the book's aggregate is solved to 'mean'; the floor's share is 'at_floor' (solved), 'at_750' at ≥ 750 tỷ. Sensitivity runs: 0.25 / 0.35 / 0.50",
+  "value": {"mean": 0.35, "at_750": 0.20}
+ },
+ "clients_per_rm": {"value": 150, "source": "idea_final_v3_business.md §1.3 (150 KH/RM)"}
+}

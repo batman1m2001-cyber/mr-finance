@@ -40,7 +40,7 @@ def test_the_map_draws_what_the_endpoint_says_and_opens_a_run(open_page):
 
 def test_on_a_phone_the_map_is_a_list_per_group(open_page):
     p = open_page("phone")
-    p.go("#/compliance/agent")
+    p.go("#/cio/agent")
     p.page.wait_for_selector(".eco-list .eco-node")
     assert p.page.locator(".eco-wire").count() == 0 and p.page.locator(".eco-list .mgroup").count() == 6
     p.page.click("[data-node='policy_sweep']")

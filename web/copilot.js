@@ -27,27 +27,23 @@ import {icon} from "./core/icons.js?v=20261017s1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
 
-const DESK = new Set(["cio", "compliance", "admin"]);  // A7: the panel links to the Agent page's map
-const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ", specialist: "Chuyên gia", admin: "Quản trị"};
+const DESK = new Set(["cio", "admin"]);  // A7: the panel links to the Agent page's map
+const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", admin: "Quản trị"};
 const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
-  rm: ["Sổ khách hàng có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
-  cio: ["Có gì chờ tôi duyệt?", "Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
-  compliance: ["Có gì chờ Tuân thủ?", "Có bao nhiêu tin bị giữ?", "Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
-  specialist: ["Khuyến nghị nào đang chờ tôi duyệt?", "Hồ sơ của gia đình này thế nào?", "Chứng chỉ của tôi còn hiệu lực không?"],
+  rm: ["Tổng quan có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
+  cio: ["Có gì chờ tôi duyệt?", "Tác động lớn nhất tới tài sản ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
   admin: ["Hệ thống có gì bất thường?", "Chuỗi nhật ký còn nguyên không?", "Có cảnh báo hệ thống nào?", "Cấu hình nào chờ duyệt?"],
 };
 // what each role's own assistant is for (FEAT-41): the line before the first question, and the box's hint
 const INTRO = {
   client: "Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn.",
   rm: "Hỏi về sổ khách hàng của bạn — ai cần gọi trước, đề xuất chờ duyệt, liên hệ — hay tài sản, dòng tiền, tin tác động của khách hàng đang chọn.",
-  cio: "Hỏi về việc chờ bạn quyết định, phơi nhiễm, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
-  compliance: "Hỏi về tin bị giữ, nghiên cứu và bản tin chờ duyệt, chính sách hay chuỗi nhật ký.",
+  cio: "Hỏi về việc chờ bạn quyết định, tin bị giữ, tác động tới tài sản, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
   admin: "Hỏi về tình trạng hệ thống, nguồn dữ liệu, cảnh báo, cấu hình chờ duyệt hay chuỗi nhật ký.",
-  specialist: "Hỏi về khuyến nghị chờ bạn duyệt và hồ sơ của gia đình được giao.",
 };
-const ASK = {client: "Hỏi về tài sản, dòng tiền, tin…", rm: "Hỏi về sổ khách hàng, khách đang chọn…", cio: "Hỏi về nhận định, phơi nhiễm, tin…",
-  compliance: "Hỏi về tin bị giữ, bản tin, nhật ký…", admin: "Hỏi về hệ thống, cảnh báo, cấu hình…", specialist: "Hỏi về khuyến nghị, hồ sơ khách…"};
+const ASK = {client: "Hỏi về tài sản, dòng tiền, tin…", rm: "Hỏi về sổ khách hàng, khách đang chọn…", cio: "Hỏi về nhận định, tác động, tin…",
+  admin: "Hỏi về hệ thống, cảnh báo, cấu hình…"};
 const MODE = {  // how the answer was written: the badge and the line under the form
   model: (a) => [`mô hình ${String(a.model || "").split("/").pop()}`.trim(), "Mô hình đọc kết quả công cụ của ứng dụng (chế độ demo) và viết câu trả lời; số liệu lấy từ công cụ. Không phải khuyến nghị đầu tư."],
   template: () => ["mẫu cố định", "Mô hình chỉ thấy câu hỏi đã che tên và số, không thấy số liệu; câu trả lời ghép từ kết quả công cụ theo mẫu. Không phải khuyến nghị đầu tư."],
@@ -126,6 +122,16 @@ function meta(m) {
   return bits || src ? `<div class="cp-meta">${bits ? `<div>${esc(bits)}</div>` : ""}${src}</div>` : "";
 }
 
+// “Cách tính” of an answer's queries (ADR-0040), collapsed: each one's SQL, its rows and when it ran
+const vnNum = (x) => Number(x || 0).toLocaleString("vi-VN");
+function how(m) {
+  const qs = (m.steps || []).filter(s => s.query && s.query.sql);
+  if (!qs.length) return "";
+  const rows = (q) => `${q.shown < q.total ? `${vnNum(q.shown)} / ` : ""}${vnNum(q.total)} dòng`;
+  return `<details class="cp-how small muted mt"><summary>Cách tính</summary>${qs.map(({query: q}) => `<div class="cp-q">
+    <pre class="cp-sql">${esc(q.sql)}</pre><div>${rows(q)} · ${esc((q.tables || []).join(", ") || "—")} · số liệu lúc ${esc(q.as_of || "—")}</div></div>`).join("")}</details>`;
+}
+
 export function mount() {
   const panel = document.createElement("aside");
   panel.className = "cp-panel"; panel.hidden = true;
@@ -169,7 +175,11 @@ export function mount() {
       $("#cp-q", panel).placeholder = ASK[role] || ASK.client;
       if (had && !panel.hidden) { draw(); sugg(); resume(); }
     }
-    const page = (docked ? document.querySelector("#ws-sheet:not([hidden]) #ws-sheet-t") || document.querySelector("#ws-title, #dk-title") || {}
+    // a sheet with tabs has no title of its own (OWN-FB-14): its current tab, the inner one first, names the page
+    const sheet = docked && document.querySelector("#ws-sheet:not([hidden])");
+    const titled = sheet && ["#ws-sheet-t", "#dk-tabs2 [aria-current]", "#dk-tabs [aria-current]"].map(q => sheet.querySelector(q))
+      .find(e => e && e.textContent.trim() && !e.closest("[hidden]"));
+    const page = (docked ? titled || document.querySelector("#ws-title, #dk-title") || {}
       : document.querySelector("#subnav:not([hidden]) [aria-current=page]") || document.querySelector("#nav [aria-current=page]") || {}).textContent || "";
     const name = (($("#client") || {}).selectedOptions || [])[0];
     $("#cp-ctx", panel).textContent = `Đang xem: ${page.trim() || "—"} · ${ROLE_LABEL[role]}${["client", "rm"].includes(role) && name ? " · " + name.textContent.split("·")[0].trim() : ""}`;
@@ -191,7 +201,7 @@ export function mount() {
       ? `<div class="cp-bot cp-think" data-running><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Vẫn đang trả lời…${(m.steps || []).length ? `<div class="cp-steps small">${m.steps.map(x => `<span class="chip ${x.status === "ok" ? "" : "bad"}">${esc(x.label || x.tool)} ${STEP[x.status] || ""}</span>`).join(" ")}</div>` : ""}</div>`
       : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${m.mode === "model" ? prose(m.text) : esc(m.text)}
           ${(m.waits || []).length > 1 ? `<ul class="cp-notes">${m.waits.map(w => `<li>${esc(w.summary)}</li>`).join("")}</ul>` : ""}
-          ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) : ""}
+          ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) + how(m) : ""}
           ${(m.steps || []).length > 1 || m.status === "interrupted" || (m.steps || []).some(s => s.status !== "ok") ? `<div class="cp-steps small muted">Các bước: ${m.steps.map(s => `<span class="chip ${s.status === "ok" ? "" : "bad"}" title="${esc(s.text || "")}">${esc(s.label || s.tool)} ${STEP[s.status] || ""}</span>`).join(" ")}</div>` : ""}
           ${(m.confirm || (m.waits || []).length) && !m.done ? `<div class="row mt"><button type="button" class="btn sm" data-ok="${i}">Xác nhận</button><button type="button" class="btn sm ghostbtn" data-no="${i}">Huỷ</button></div>` : ""}
           ${(m.citations || []).length || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${(m.citations || []).filter(c => !(m.here && c.route === location.hash)).map(c => `<a class="small" data-ev="${i}" href="${esc(c.route)}">Mở ${esc(c.label)} →</a>`).join("")}</div>` : ""}

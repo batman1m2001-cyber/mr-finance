@@ -1,21 +1,19 @@
-/* Hiệu quả tư vấn for one client (SCR-RM-04; UI redesign R3, was the pre-redesign “performance” tab; FEAT-28).
+/* Advisory performance for one client (SCR-RM-04; laid out as the owner's mock, OWN-FB-06; UI redesign R3, was the pre-redesign “performance” tab; FEAT-28).
    Staff only. What the AI advised and what came of it over twelve months: the counts and money (right, wrong,
    missed, news missed), each AI in the pipeline with its score, metrics and a twelve-month accuracy line, the
    advice log, the important news it missed, how much the client reads, and the risk tests over time (tolerance
    against capacity). Data: GET /api/advisory?client_id=. perfall.js shows the same over every client. */
-import {internal, esc, get, n as how, pct, vnd} from "../core/core.js";
+import {esc, get, n as how, pct, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {columns, lines, sparkline} from "../charts/money.js?v=20261016r4";
 
 export const OUTCOME = {right: ["good", "Đúng"], wrong: ["bad", "Sai"], missed: ["warn", "Bỏ lỡ"], avoided: ["", "Không làm · đúng"], open: ["ai", "Đang theo dõi"]};
-const AGENT_NAME = {news: "Agent CIO", impact: "Bộ máy tác động", planner: "Kế hoạch của RM", chat: "OneWealth Copilot"};  // the agent checklist's names
-const AGENT_ICON = {news: "news", impact: "zap", planner: "target", chat: "bot"};
+const AGENT_NAME = {news: "AI News Reader", impact: "AI Impact Assessor", planner: "AI Planning Advisor", chat: "AI Client Chat"};  // the owner's mock (OWN-FB-06)
 export const ENG = [["minutes", "Phút đọc / tuần", "phút / tuần"], ["days", "Ngày đọc / tháng", "ngày / tháng"]];
 export const eng = {view: "minutes"};  // shared by both pages for this page's life
 
 const kpi = (ic, tone, label, value, sub, cls = "") => `<div class="kpi pcard">
-  <div class="pc-head"><span class="ic-chip sm" style="--tone:${tone}">${icon(ic, {size: 14})}</span><span class="k">${label}</span></div>
-  <div class="v ${cls}">${value}</div><div class="s muted">${sub}</div></div>`;
+  <div class="k">${label}</div><div class="v ${cls}">${value}</div><div class="s muted">${sub}</div></div>`;
 
 export function tiles(sm, newsSub) {
   const decided = sm.right + sm.wrong;
@@ -30,20 +28,22 @@ export function tiles(sm, newsSub) {
 }
 
 // the AI pipeline: one card per AI, in order; sub(g) is what goes under its line
+// the AI pipeline (the owner's mock, OWN-FB-06): four numbered cards in order, an arrow from each to the next
 export function pipeline(agents, hint, sub) {
-  return `<div class="panel mt"><h3>Chuỗi tư vấn <span class="badge warn">Dữ liệu mẫu</span> <span class="hint">${hint}</span></h3>
-    <div class="pipe">${agents.map((g, i) => `<div class="agent">
-      <div class="row tight one"><span class="ic-chip sm">${icon(AGENT_ICON[g.id] || "bot", {size: 14})}</span>
-        <div><b>${i + 1}. ${esc(g.name)}</b><div class="small muted">${esc(g.name_vi)}</div></div><span class="score">${how(String(g.score), "advisory.agent_metric")}</span></div>
-      <div class="spark" data-spark="${i}"></div>${sub(g)}</div>`).join("")}</div></div>`;
+  return `<div class="panel mt"><h3>AI pipeline <span class="hint">${hint}</span> <span class="badge warn">Dữ liệu mẫu</span></h3>
+    <div class="pipe">${agents.map((g, i) => `<div class="agent" title="${esc(g.name)}">
+      <div class="row tight one"><span class="ag-n" aria-hidden="true">${i + 1}</span>
+        <div><b>${esc(g.name)}</b><div class="small muted">${esc(g.name_vi)}</div></div><span class="score">${how(String(g.score), "advisory.agent_metric")}</span></div>
+      <div class="spark" data-spark="${i}"></div>${sub(g)}
+      ${i < agents.length - 1 ? `<span class="ag-to" aria-hidden="true">${icon("arrow", {size: 14})}</span>` : ""}</div>`).join("")}</div></div>`;
 }
 
 export function adviceTable(rows, who) {
-  return `<table class="table"><thead><tr><th>Ngày</th><th>Khuyến nghị</th><th>Kết quả</th><th class="r">Giá trị</th></tr></thead><tbody>
+  return `<div class="scrollx"><table class="table"><thead><tr><th>Ngày</th><th>Khuyến nghị</th><th>Kết quả</th><th class="r">Giá trị</th></tr></thead><tbody>
     ${rows.map(x => `<tr><td class="nowrap">${esc(x.date)}</td><td><span data-explains>${esc(x.text)}</span><div class="small muted">${who ? esc(x.client) + " · " : ""}${esc(AGENT_NAME[x.agent] || x.agent)}</div></td>
       <td><span class="pill ${OUTCOME[x.outcome][0]}">${OUTCOME[x.outcome][1]}</span></td>
       <td class="r ${x.value > 0 && x.outcome === "right" ? "up" : x.value < 0 ? "down" : ""}">${x.value ? how(vnd(x.value, x.outcome !== "missed"), "advisory.value") : "—"}</td></tr>`).join("")}
-  </tbody></table>`;
+  </tbody></table></div>`;
 }
 
 export function missedList(news) {
@@ -81,12 +81,11 @@ export async function render(box, ctx) {
   const first = tests[0], last = tests[tests.length - 1];
   const drift = last.tolerance - first.tolerance, over = last.tolerance - last.capacity;
 
-  box.innerHTML = `${internal()}
-    <div class="pagehead"><div><div class="eyebrow">Khách hàng · <span lang="en">Advisory performance</span></div><h1 class="h1">Hiệu quả tư vấn</h1>
-      <p class="lede">Hiệu quả tư vấn và AI cho khách hàng ${esc(me.name || client)} · 12 tháng</p></div>
-      <a class="btn sm" href="#/rm/hieu-qua">Tất cả khách hàng ${icon("arrow", {size: 14})}</a></div>
+  box.innerHTML = `
+    <div class="pagehead"><div><h1 class="h1" lang="en">Advisory performance</h1>
+      <p class="lede">Hiệu quả tư vấn và AI cho khách hàng ${esc(me.name || client)} · 12 tháng</p></div></div>
     ${tiles(t.summary, `đã có tín hiệu sớm · tác động ${how(vnd(t.summary.missed_news_value, true), "advisory.missed_news")}`)}
-    ${pipeline(t.agents, "điểm từng bước 0–100 · xu hướng độ chính xác 12 tháng · sinh bởi scripts/make_advisory.py",
+    ${pipeline(t.agents, "hiệu quả từng AI · điểm 0–100 · xu hướng độ chính xác 12 tháng",
       g => g.metrics.map(m => `<div class="kv"><span>${esc(m.label)}</span><b class="${m.tone === "bad" ? "down" : ""}">${how(esc(m.value), "advisory.agent_metric")}</b></div>`).join(""))}
     <div class="cols mt">
       <div class="panel c7"><h3>Nhật ký khuyến nghị <span class="hint">${t.advice.length} khuyến nghị</span></h3>${adviceTable(t.advice)}</div>

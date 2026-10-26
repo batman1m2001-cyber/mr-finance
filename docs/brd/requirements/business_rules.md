@@ -134,7 +134,7 @@ Status per rule: [`requirements_traceability.md`](requirements_traceability.md) 
 |---|---|---|---|
 | BRD-RULE-SEC-01 | §13.1 | Only a verified sign-in token is trusted; roles come from an email mapping (bank target: SSO, least privilege by role and assigned families) | documented |
 | BRD-RULE-SEC-02 | §13.1 | Every API checks the role before processing | documented |
-| BRD-RULE-SEC-03 | §13.1 | Internal explanations for RMs are stamped “Nội bộ” | documented |
+| BRD-RULE-SEC-03 | §13.1 | Internal explanations for RMs are stamped “Nội bộ” — narrowed by OWN-FB-23 (2026-10-25) to the Cách tính drawer and the CIO's graph; the RM's sheets carry none | documented |
 | BRD-RULE-SEC-04 | §13.1 | Separation of duties: research releaser ≠ uploader; newsletter approver ≠ author; two people for prompts, AI models, the factor model, alert thresholds and the restricted list. Compare by demo user id by default; `SOD_STRICT` compares verified emails | documented (Q-15 resolved by ADR-0016: the sentence and F14 apply) |
 | BRD-RULE-SEC-05 | §13.1 table | Configuration owners: thresholds, return assumptions, factor model → CIO (two-person: no); white/restricted lists, forbidden phrases, data-sharing consent → Compliance (no); prompts, AI models → Admin (**yes**); news sources, price sources, ticker mapping → Admin (no) | documented (two-person per ADR-0016) |
 | BRD-RULE-SEC-06 | §13.2 | Unreleased or not-yet-published research never reaches an agent | documented |

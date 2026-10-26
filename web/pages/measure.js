@@ -1,4 +1,4 @@
-/* CIO and Tuân thủ · Đo lường (F3): the monthly measurement reports, read from what the product records —
+/* CIO and Admin · Đo lường (F3): the monthly measurement reports, read from what the product records —
    misses with causes (MEAS-03), rubber-stamping (MEAS-05), news to RM (KPI-01, WF-09), inbox and agent timing
    (NFR-02), availability in business hours (NFR-03), recommendations reviewed and logged (KPI-05), RM contacts from a
    signal (KPI-06), high-level alerts the client opened (KPI-07), the business effect against a control group
@@ -85,7 +85,7 @@ export async function render(box) {
     </section>
 
     <section class="panel mt"><h3>Liên hệ bắt đầu từ tín hiệu hệ thống <span class="hint">BRD-KPI-06 · mục tiêu ≥ ${how(pct(ct.target, false, 0), "measure.contact_signal_share")}</span></h3>
-      <p class="small">RM ghi mỗi lần liên hệ khách ở trang Hôm nay, kèm tín hiệu khởi đầu (gia đình cần xem trước, việc theo mục tiêu) hoặc không. Tín hiệu được kiểm khi ghi. Hành vi thật của RM chỉ đo được khi thí điểm.</p>
+      <p class="small">RM ghi mỗi lần liên hệ khách ở Tổng quan (Ghi liên hệ), kèm tín hiệu khởi đầu (gia đình cần xem trước, việc theo mục tiêu) hoặc không. Tín hiệu được kiểm khi ghi. Hành vi thật của RM chỉ đo được khi thí điểm.</p>
       ${ct.by_month.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Tháng</th><th class="num">Liên hệ</th><th class="num">Từ tín hiệu</th><th class="num">Tỷ lệ</th></tr></thead><tbody>
         ${ct.by_month.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${x.contacts}</td><td class="num">${x.from_signal}</td>
           <td class="num"><span class="${x.share >= ct.target ? "good-text" : "bad-text"}">${how(pct(x.share, false, 0), "measure.contact_signal_share", {month: x.month, contacts: x.contacts, from_signal: x.from_signal})}</span></td></tr>`).join("")}

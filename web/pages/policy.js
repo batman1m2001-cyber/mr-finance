@@ -2,9 +2,9 @@
    check: the return this year against the benchmark, the followed goals behind, and what to do first (the full
    plan is on Kế hoạch). Then what each policy, macro and infrastructure item does to net worth — impact =
    holding × sensitivity × probability, the probability by legal status — as diverging bars that filter to risks
-   or opportunities; the house views (mock research-house forecasts) matched to the client's holdings; and one
+   or opportunities, each bar a stack of its parts by asset class (OWN-FB-17); the house views (mock research-house forecasts) matched to the client's holdings; and one
    card per item, grouped by kind. Data: POST /api/alerts, POST /api/dashboard, POST /api/goals, GET /api/views. */
-import {internal, esc, followedIds, get, n as how, pct, post, vnd} from "../core/core.js";
+import {ASSET_CLASS, CLASS_COLOR, esc, followedIds, get, n as how, pct, post, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {hover} from "../charts/charts.js";
 
@@ -17,6 +17,10 @@ const KIND = {
 const STANCE = {positive: ["good", "Tích cực"], neutral: ["", "Trung tính"], cautious: ["warn", "Thận trọng"]};
 const RANK = {on_track: 0, at_risk: 1, off_track: 2};
 const view = {filter: "all", allViews: false};  // for this page's life
+// an alert's parts: the asset classes it moves, or a payment ahead / the salary when it moves no holding
+const PART = {...ASSET_CLASS, outflow: "Khoản chi sắp tới", income: "Thu nhập"};
+const partColor = (k) => CLASS_COLOR[k] || "var(--other)";
+const parts = (a) => Object.entries(a.by_class || {[a.impact >= 0 ? "income" : "outflow"]: a.impact});
 
 const sevPill = (a) => (a.opportunity
   ? `<span class="pill good">Cơ hội · ${SEV[a.severity][1]}</span>`
@@ -30,6 +34,24 @@ function touches(v, holdings) {
     if (h.class === "real_estate" && t.areas) return t.areas.includes(h.detail.area);
     return (t.classes || []).includes(h.class);
   });
+}
+
+// the parts the bars show, one entry per colour (a payment ahead and the salary share the grey; the tip names each)
+function legend(alerts) {
+  const by = new Map();
+  for (const [k] of alerts.flatMap(parts)) {
+    const c = partColor(k), names = by.get(c) || [];
+    if (!names.includes(PART[k] || k)) names.push(PART[k] || k);
+    by.set(c, names);
+  }
+  return [...by].map(([c, names]) => `<span><i style="background:${c}"></i>${esc(names.join(", "))}</span>`).join("");
+}
+
+// one bar: as long as the alert's impact, cut into its parts by asset class (largest at the axis)
+function stack(a, maxAbs) {
+  const total = Math.abs(a.impact) || 1;
+  return `<span class="stk" style="width:${Math.abs(a.impact) / maxAbs * 100}%">${parts(a).map(([k, v]) =>
+    `<i data-part="${esc(k)}" style="flex:${Math.abs(v) / total};background:${partColor(k)}"></i>`).join("")}</span>`;
 }
 
 export async function render(box, ctx) {
@@ -56,8 +78,8 @@ export async function render(box, ctx) {
   if (rk.status !== "ok") acts.push(`Giảm điểm nóng: mức sụt giảm ước tính ${how(pct(rk.current), "risk.current")} so với ngưỡng ${how(pct(rk.limit, false, 0), "risk.limit")}`);
   if (first && first.goal.actions[0]) acts.push(`${esc(first.title)}: <span data-explains>${esc(first.goal.actions[0].text)}</span>`);
 
-  box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">${staff ? "Tin tức" : "Headline News"}</div><h1 class="h1">Chi phí chính sách</h1>
+  box.innerHTML = `
+    <div class="pagehead"><div><div class="eyebrow">Headline News</div><h1 class="h1">News and Prediction</h1>
       <p class="lede">Chính sách, vĩ mô và hạ tầng đang làm tài sản ròng ${rep.scope === "family" ? "gia đình" : "của bạn"} tăng hay giảm bao nhiêu</p></div></div>
     <div class="cols">
       <div class="panel c12" data-focus="policy:check">
@@ -70,7 +92,7 @@ export async function render(box, ctx) {
           <div class="kpi"><div class="k">Việc nên làm trước</div>
             ${acts.length ? `<ol class="ul">${acts.slice(0, 3).map(a => `<li>${a}</li>`).join("")}</ol>` : `<p class="muted">Không có việc gấp.</p>`}</div>
         </div>
-        <a class="btn sm mt" href="${planHref}">Mở ${staff ? "Kế hoạch tài chính" : "Wealth Planning Advisor"} ${icon("arrow", {size: 14})}</a>
+        <a class="btn sm mt" href="${planHref}">Mở Wealth Planning Advisor ${icon("arrow", {size: 14})}</a>
       </div>
       <div class="panel c12" id="impact"></div>
       <div class="c12" id="views"></div>
@@ -86,15 +108,20 @@ export async function render(box, ctx) {
     const el = box.querySelector("#impact");
     el.innerHTML = `<h3>Tác động lên tài sản ròng <span class="hint">${rep.scope === "family" ? "gia đình" : "cá nhân"} · tài sản ròng ${how(vnd(rep.net_worth), "net_worth")}</span></h3>
       <p class="small muted">Tác động (VND) = Mức nắm giữ × Độ nhạy × Xác suất xảy ra · xác suất theo trạng thái: dự thảo thấp, đang lấy ý kiến trung bình, đã thông qua cao.</p>
-      <div class="row spread"><div class="legend"><span><i style="background:var(--out)"></i>Rủi ro (giảm tài sản)</span><span><i style="background:var(--in)"></i>Cơ hội (tăng tài sản)</span></div>
+      <div class="row spread"><div class="legend"><span class="muted">← Rủi ro · Cơ hội →</span>${legend(list.slice(0, 10))}</div>
         <div class="seg" role="group" aria-label="Lọc">${[["all", "Tất cả"], ["risk", "Rủi ro"], ["opp", "Cơ hội"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${f === k}">${t}</button>`).join("")}</div></div>
       <div class="dbars mt">${list.slice(0, 10).map(a => `<div class="dbar" tabindex="0" data-a="${esc(a.id)}" data-focus="policy:${esc(a.id)}"><span class="dl" data-explains>${esc(a.title)}</span>
-        <span class="dt"><span class="dneg">${a.impact < 0 ? `<span style="width:${Math.abs(a.impact) / maxAbs * 100}%"></span>` : ""}</span><span class="dpos">${a.impact > 0 ? `<span style="width:${a.impact / maxAbs * 100}%"></span>` : ""}</span></span>
+        <span class="dt"><span class="dneg">${a.impact < 0 ? stack(a, maxAbs) : ""}</span><span class="dpos">${a.impact > 0 ? stack(a, maxAbs) : ""}</span></span>
         <span class="dv ${a.impact >= 0 ? "up" : "down"}">${how(vnd(a.impact, true), "policy.impact", pin(a))}</span></div>`).join("") || `<p class="muted">Không có mục nào.</p>`}</div>`;
     for (const b of el.querySelectorAll("[data-af]")) b.onclick = () => { view.filter = b.dataset.af; drawImpact(); drawSections(); };
     for (const row of el.querySelectorAll("[data-a]")) {
       const a = rep.alerts.find(x => x.id === row.dataset.a);
-      hover(row, `<b>${esc(a.title)}</b><div data-explains>${esc(a.message)}</div><div class="row"><span>Tác động</span><span>${how(vnd(a.impact, true), "policy.impact", pin(a))}</span></div>`);
+      let on = null;  // the part under the pointer, bold in the tip
+      for (const seg of row.querySelectorAll("[data-part]")) seg.addEventListener("mouseenter", () => { on = seg.dataset.part; });
+      row.addEventListener("mouseleave", () => { on = null; });
+      hover(row, () => `<b>${esc(a.title)}</b><div data-explains>${esc(a.message)}</div>
+        ${parts(a).map(([k, v]) => `<div class="row"${k === on ? ' style="font-weight:700"' : ""}><span><i class="sw" style="background:${partColor(k)}"></i>${esc(PART[k] || k)}</span><span>${vnd(v, true)}</span></div>`).join("")}
+        <div class="row"><span>Tác động</span><span>${how(vnd(a.impact, true), "policy.impact", pin(a))}</span></div>`);
     }
   };
 

@@ -7,6 +7,89 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## NO — The news sources and the collection figures (2026-10-25)
+
+Source: [`2026-10-25_news_ops.md`](../sources/owner_requests/2026-10-25_news_ops.md); plan
+[`docs/NEWS_OPS_PLAN.md`](../../NEWS_OPS_PLAN.md). Extends news ingestion (FEAT-01), the versioned configuration
+(FR-701) and View A (OWN-EV-01).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-NO-01 | Admin's Nguồn tin page: each source with its last 7 days; add, edit, switch off, delete and test one (https and a public address only, nothing kept); the changes are proposed as a new version of `news_sources` and approved before the next run reads them | request 1, plan N1 | documented |
+| OWN-NO-02 | View A says each day's collection time (the runs' total, over the runs that kept it, with their count) and its first and last run | request 2, plan N2 | documented |
+| OWN-NO-03 | View A counts by collection day the news that reached a portfolio (its event has an application run the RMs see with a family whose expected 3-month change is not zero) and the families reached | request 2, plan N3 | documented |
+| OWN-NO-04 | View A charts the news kept each collection day, stacked by the four groups and Chưa xếp, with a legend and a tooltip per day | request 4, charts plan C1 | documented |
+| OWN-NO-05 | View B charts precision and recall by scoring day, cumulative, per horizon; pending moves are never on it and a day with no denominator is a gap, never 0 % | request 4, charts plan C2 | documented |
+| OWN-NO-06 | View B charts the simulated net VND (right − wrong) by group, cumulative by scoring day, labelled simulated and not proof the agent caused it; before the first scoring day it says when that is and draws nothing | request 4, charts plan C3 | documented |
+
+## FB — Business feedback 6: the staff desks (2026-10-24)
+
+Source: [`2026-10-24_business_feedback_6.md`](../sources/owner_requests/2026-10-24_business_feedback_6.md); plan
+[`docs/BUSINESS_FEEDBACK_6_PLAN.md`](../../BUSINESS_FEEDBACK_6_PLAN.md). Amends MR (the desks, FEAT-41), WN-10 for the
+RM, and the roles of the BRD: Compliance's and the Expert's duties are the CIO's (note 18).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-FB-01 | RM · Sổ khách hàng has no drawing of the families around the RM; its cards stay, a card lists the families to pick | note 1, plan F2 | documented |
+| OWN-FB-02 | RM · Khách hàng has no tab Tác động tin, Toàn cảnh, Bản đồ tài chính or Duyệt đề xuất; their addresses open the page that replaced them, or still open for the links that lead there | notes 2 and 6, plan F2 | documented |
+| OWN-FB-03 | RM · Khách hàng: Headline news, two inner tabs News and prediction and Đồ thị tác động (was Chi phí chính sách) | note 3, plan F2 | documented |
+| OWN-FB-04 | RM · Khách hàng: Wealth planning advisor (was Kế hoạch) | note 4, plan F2 | documented |
+| OWN-FB-05 | RM · Khách hàng: Wealth view, two inner tabs Tổng quan and Dữ liệu chi tiết tài sản | note 5, plan F2 | documented |
+| OWN-FB-06 | RM: Advisory performance (was Hiệu quả tư vấn), two inner tabs Khách hàng này and Tất cả khách hàng, in the client's view and on the rail; laid out as the owner's mock (Nội bộ, six figures, the AI pipeline of four agents with arrows, the log, the news missed), its sample data marked | note 6, plan F2 | documented |
+| OWN-FB-07 | CIO: the desk is called Decision board everywhere (rail, title, heading, hint, back link, the assistant's guide) | note 7, plan F3 | documented |
+| OWN-FB-08 | CIO · Decision board: the flow has no Sự kiện stage; Gia đình and RM sit in their own tinted frame | note 8, plan F3 | documented |
+| OWN-FB-09 | CIO · Decision board: each decision row shows its impact level (cao, vừa, thấp) and its news group | note 9, plan F3 | documented |
+| OWN-FB-10 | CIO · Decision board: the decisions filter by source, domestic or international, relevance and words; 20 rows, then Xem thêm | note 10, plan F3 | documented |
+| OWN-FB-11 | CIO · Decision board holds the inbox (source health, filters, Lấy tin ngay, Bỏ tin, Gom thành sự kiện); the Tin tức group is gone, its addresses still open | note 11, plan F3 | documented |
+| OWN-FB-12 | CIO · Decision board: Tổng quan tác động tới tài sản, full width, in plain words with no raw ids, a picker of the scenario and the families ranked (Gia đình, Kỳ vọng, % tài sản ròng, P10); no Sự kiện gần đây | note 12, plan F3 | documented |
+| OWN-FB-13 | CIO · Decision board has no card Mô hình và dữ liệu or Agent dưới bàn | note 13, plan F3 | documented |
+| OWN-FB-14 | CIO · Tác động: a sheet with tabs shows no title or labelled back link above them; Tác động danh mục (was Phơi nhiễm) and Đồ thị lần áp dụng; Lần áp dụng no tab; plain words, P10 explained | note 14, plan F1, F4 | documented |
+| OWN-FB-15 | CIO · Nội dung is one tab Bài viết: the CIO writes their own news or policy article, or a letter from approved views, for Private clients only; Nghiên cứu and Chính sách no tab | note 15, plan F4 | documented |
+| OWN-FB-16 | CIO: Mô hình and AI & cấu hình move to Admin; the CIO has one plain Hiệu quả page (news collected, forecasts right and wrong, each with its count) | note 16, plan F4 | documented |
+| OWN-FB-17 | Customer · Headline News: each row of Tác động lên tài sản ròng is a bar stacked by asset class, each part named with its amount on hover, the parts adding to the row | note 17, plan F5 | documented |
+| OWN-FB-18 | No Compliance or Expert account: the roles leave the sign-in, menus and desks; their duties are the CIO's with the four-eyes rule kept (a second CIO approves); a recommendation is the RM's alone | note 18, plan F6 | documented |
+| OWN-FB-19 | RM · the desk's list is “Khách hàng đang quản lý” and the desk counts khách hàng, not gia đình | feedback 7 p.1, plan G1 | documented |
+| OWN-FB-20 | RM · the net worth on the desk's list is coloured, and shown as a net worth (no “+”) | feedback 7 p.1, plan G1 | documented |
+| OWN-FB-21 | RM · no Hôm nay page or rail item; its call list and goal tasks are on the desk, its contact log in the desk's Thông tin (Ghi liên hệ); the old address opens the desk | feedback 7 p.1, plan G2 | documented |
+| OWN-FB-22 | RM · the client picker sits in the Khách hàng sheet beside its tabs, not in the top bar; none on “Tất cả khách hàng” | feedback 7 p.2, plan G3 | documented |
+| OWN-FB-23 | RM · no “Nội bộ” line on the Khách hàng tabs (the CIO's graph and the Cách tính drawer keep it) | feedback 7 p.3, plan G4 | documented |
+| OWN-FB-24 | RM · the client picker in the Advisory performance sheet too, so “Khách hàng này” says which | feedback 7 p.4, plan G3 | documented |
+| OWN-FB-25 | RM · the rail's “Sổ khách” is “Tổng quan” | feedback 7 p.1, plan G1 | documented |
+
+## EV — Measuring the news agents (2026-10-24)
+
+Source: [`2026-10-24_agent_evaluation.md`](../sources/owner_requests/2026-10-24_agent_evaluation.md); plan
+[`docs/AGENT_EVALUATION_PLAN.md`](../../AGENT_EVALUATION_PLAN.md). Extends news ingestion (FEAT-01) and accuracy
+tracking (FEAT-18); no new agent, engine or backtest.
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-EV-01 | Each ingest run keeps its funnel (fetched, too old, duplicates, unique, retained, relevant), start, end, duration, status (ok, partial, failed) and sources; the days' trends count items by collection time, never publication time; a field an old run did not keep is unavailable, never 0 | task §1, plan E1 | documented |
+| OWN-EV-02 | The scenario agents' moves at 3d and 1w are scored against the market: precision, recall, missed, direction and error, each with its n, and coverage (due, scored, pending, failed, excluded); the materiality threshold is read from `data/evaluation.json` | task §2.1, plan E2 | documented |
+| OWN-EV-03 | Recall against independent material events: each important story of the reference set is followed to where it was lost (not grouped, not a candidate, an earlier or later run, beyond the limit) | task §2.1, plan E2 | documented |
+| OWN-EV-04 | The scored moves in VND on the simulated book, through the engine's loadings and the families' holdings frozen each morning: correct, incorrect, missed opportunity, correct negative warnings, the net, by group, each with its n; labelled simulated; a move without a snapshot is unavailable | task §2.2, plan E3 | documented |
+| OWN-EV-05 | A verdict once final is kept as scored; a draft made on or before its origin close is excluded; duplicate drafts of one move count once; a pending move is never incorrect; a failed morning or call keeps its reason | task §2.3, plan E2 | documented |
+| OWN-EV-06 | Each model call keeps its agent, run, provider, model, tokens in, out and cached, cost, latency, attempt and error; a cost not reported is None, counted apart, never 0; earlier calls are backfilled from the bridge's log only where exactly one line matches | task §4, plan E0, E4 | documented |
+| OWN-EV-07 | The trial page has View A Thu thập tin and View B Hiệu quả agent, and each move opens to its news, claim, market, verdict and VND by family; no rate without its denominator | task §3, plan E5 | documented |
+| OWN-EV-08 | No market move is read as the agents' gain or loss: every VND figure says it is simulated, "nếu gia đình làm theo toàn bộ" | task §5, plan §2.6 | documented |
+
+## DA — The assistant reads the data itself (2026-10-24)
+
+Source: [`2026-10-24_assistant_data_access.md`](../sources/owner_requests/2026-10-24_assistant_data_access.md); plan
+[`docs/ASSISTANT_DATA_PLAN.md`](../../ASSISTANT_DATA_PLAN.md); decision
+[ADR-0040](../decisions/ADR-0040-the-assistant-queries-role-scoped-read-only-views.md). Extends AS (FEAT-32).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-DA-01 | A number shown or said as a total comes from a count in the database, one function shared by the page and the assistant (news, alerts, search, reviews); a page of rows says "40 / 1.415" | plan §2, D1 | documented |
+| OWN-DA-02 | The assistant has one tool, `truy_van`, that runs a SQL `select` on views built for the role and person signed in (CIO, RM, client, Compliance/Admin), never on a real table; another family's rows, held news, accounts, e-mail addresses and the audit chain's hashes are never visible | plan §3.1, D2 | documented |
+| OWN-DA-03 | The query runs read-only under SQLite's authorizer: real tables, `ATTACH`, `PRAGMA`, writes, `load_extension`, recursive CTEs and several statements are refused; 2 s per query, 200 rows with the total, 3 calls a turn | plan §3.2, D2 | documented |
+| OWN-DA-04 | A catalog per role documents every view and column (meaning, unit, allowed values), the business's definitions and example questions; an undocumented column fails a test | plan §3.3, D3 | documented |
+| OWN-DA-05 | The answer shows its SQL, row count and `as_of` under "Cách tính", collapsed; each query is audited (who, role, SQL, rows, time) | plan §3.4, D4 | documented |
+| OWN-DA-06 | With `client_ai` off the model writes the SQL but never reads the rows; a template assembles the answer | plan §3.4, D4 | documented |
+| OWN-DA-07 | When the person contradicts a number, the assistant counts again and shows how; it does not argue | plan §3.5, D4 | documented |
+| OWN-DA-08 | An eval on real models, ~30 questions per role with gold answers from the database: accuracy ≥ 90 %, p95 ≤ 6 s, ≤ US$0.01 a turn; Haiku and Sonnet measured for the SQL step and the model chosen | plan §3.6, D5 | documented |
+
 ## WN — The client's menu by the bank's names (2026-10-22, business feedback 2)
 
 Source: [`2026-10-22_business_feedback_2.md`](../sources/owner_requests/2026-10-22_business_feedback_2.md) (the
@@ -25,6 +108,8 @@ xếp layout dọc theo bản mới": the names, not the old look.
 | OWN-WN-07 | Wealth view opens on the overview (net worth and its sources, allocation, P&L); cash flow second | item 0 | documented |
 | OWN-WN-08 | Every old client address still opens its page, under its new section | ADR-0037 §2 | documented |
 | OWN-WN-09 | The assistant and the user guide use the same names | ADR-0037 §5 | documented |
+| OWN-WN-10 | Headline News has two tabs: News and Prediction (Chi phí chính sách, renamed) first, then Đồ thị tác động; Tác động tin is no tab, its address kept for the bell's and the feed's evidence | [feedback 3](../sources/owner_requests/2026-10-22_business_feedback_3.md) | documented |
+| OWN-WN-11 | The colour tone of Techcombank Private, its palette (gold #C8A45D, deep gold #B08D47, champagne #D4B26A, sand #E1D1BB, light grey #F1F1F1, brown #59392C): gold only on the main action (a primary button, Hỏi trợ lý, the bell's count) with dark words at 4.5:1; tabs, links and selections brown; first read as black and red (feedback 4), replaced by feedback 5 | [feedback 4](../sources/owner_requests/2026-10-22_business_feedback_4.md), [feedback 5](../sources/owner_requests/2026-10-23_business_feedback_5.md) | documented |
 
 ## MR — A desk for every staff role (2026-10-18, experiment)
 

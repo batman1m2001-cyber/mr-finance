@@ -19,12 +19,12 @@ export const PAST = 6;
 /* allocation: a donut and the table with profit against cost, into ``el`` */
 export function drawAlloc(el, d) {
   const rows = d.allocation, assets = d.net_worth.assets;
-  el.innerHTML = `<div class="allocgrid"><div class="center">${donut(rows.map(a => ({key: a.group, value: a.value, color: GROUP_COLOR[a.group] || "var(--other)", label: `${a.group}: ${vnd(a.value)}, ${pct(a.share)}`})),
+  el.innerHTML = `<div class="allocbox"><div class="allocgrid"><div class="center">${donut(rows.map(a => ({key: a.group, value: a.value, color: GROUP_COLOR[a.group] || "var(--other)", label: `${a.group}: ${vnd(a.value)}, ${pct(a.share)}`})),
       {size: 148, stroke: 20, center: vnd(rows.reduce((x, a) => x + a.value, 0)), sub: "tài sản", label: "Phân bổ tài sản", how: nAttrs("assets.total")})}</div>
-    <table class="table"><thead><tr><th>Loại tài sản</th><th class="r">Giá trị</th><th class="r">Tỷ trọng</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
+    <div class="scrollx"><table class="table"><thead><tr><th>Loại tài sản</th><th class="r">Giá trị</th><th class="r">Tỷ trọng</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
     ${rows.map(a => `<tr><td><span class="ic-chip sm" style="--tone:${GROUP_COLOR[a.group] || "var(--other)"}">${icon(GROUP_ICON[a.group] || "wallet", {size: 12})}</span> ${esc(a.group)}</td>
       <td class="r">${n(vnd(a.value), "class.value")}</td><td class="r"><b>${n(pct(a.share, false, a.share < 0.1 ? 1 : 0), "class.share", {value: vnd(a.value), assets: vnd(assets)})}</b></td>
-      <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${n(pct(a.return, true), "class.return", {pnl: vnd(a.pnl, true)})}</span>`}</td></tr>`).join("")}</tbody></table></div>`;
+      <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${n(pct(a.return, true), "class.return", {pnl: vnd(a.pnl, true)})}</span>`}</td></tr>`).join("")}</tbody></table></div></div></div>`;
   for (const s of el.querySelectorAll(".seg")) {
     const a = rows.find(x => x.group === s.dataset.key);
     if (a) hover(s, `<b>${esc(a.group)}</b><br>${vnd(a.value)} · ${pct(a.share)}`);

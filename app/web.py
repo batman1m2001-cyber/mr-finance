@@ -66,9 +66,9 @@ def viewer(request: Request):
 
 
 def _visible_clients(v) -> list:
-    if v is None or v["role"] in ("cio", "compliance", "admin"):
+    if v is None or v["role"] in ("cio", "admin"):
         return fixtures.client_ids()
-    if v["role"] in ("rm", "specialist"):
+    if v["role"] == "rm":
         return [c for c in fixtures.client_ids() if c in v.get("families", [])]
     return [v["family"]]
 
@@ -188,12 +188,7 @@ async def reviews(request: Request) -> JSONResponse:
     heads = {cid: fixtures.client(cid).get("member_of") or cid for cid in fixtures.client_ids(members=True)}
     rows = [r for r in rows if heads.get(r["client_id"], r["client_id"]) in mine]
     names = {cid: fixtures.client(cid)["name"] for cid in heads}
-    from review import specialist
-
-    # who approves after the RM, per family the person sees (G8): its certified specialists, none → the RM alone
-    approvers = {cid: specialist.approvers(cid) for cid in sorted(mine)}
     v = viewer(request)
-    me = specialist.certificate(v["id"]) if v and v["role"] == "specialist" else None
     if v and v["role"] == "client":  # an RM's recommendation reaches the client once it is approved (G8)
         rows = [r for r in rows if r["kind"] != "rm_note" or r["status"] == "approved"]
     return JSONResponse(
@@ -202,8 +197,6 @@ async def reviews(request: Request) -> JSONResponse:
                 {**r, "client_name": names.get(r["client_id"], r["client_id"]), "family_id": heads.get(r["client_id"])}
                 for r in rows
             ],
-            "approvers": approvers,
-            "certificate": me,
         }
     )
 
@@ -319,22 +312,25 @@ async def news_inbox(request: Request) -> JSONResponse:
     q = request.query_params
     try:
         since = float(q["since"]) if q.get("since") else None
-        limit = min(int(q.get("limit") or 200), 1000)
+        limit = min(int(q.get("limit") or 200), 5000)
     except ValueError:
         return JSONResponse({"error": "since and limit are numbers"}, status_code=400)
     if q.get("held"):
-        items = [i for i in news_store.inbox(status="all", limit=5000) if i["held"]]
+        items = news_store.inbox(status="all", held=True, limit=None)
         cfg = news_ops.config()
-        return JSONResponse({"items": items, "sources": [], "last_run": None, "config_version": cfg["version"]})
-    items = news_store.inbox(
-        source=q.get("source") or None,
-        kind=q.get("kind") or None,
-        status=q.get("status") or "new",
-        relevance=q.get("relevance") or None,
-        since=since,
-        query=q.get("q") or None,
-        limit=limit,
-    )
+        return JSONResponse(
+            {"items": items, "total": len(items), "sources": [], "last_run": None, "config_version": cfg["version"]}
+        )
+    filters = {
+        "source": q.get("source") or None,
+        "kind": q.get("kind") or None,
+        "status": q.get("status") or "new",
+        "relevance": q.get("relevance") or None,
+        "since": since,
+        "query": q.get("q") or None,
+    }
+    items = news_store.inbox(**filters, limit=limit)
+    total = news_store.count(**filters)
     cfg = news_ops.config()
     last = news_store.last_run()
     hourly = news_store.counts_by_hour()
@@ -349,7 +345,9 @@ async def news_inbox(request: Request) -> JSONResponse:
         }
         for s in cfg["sources"]
     ]
-    return JSONResponse({"items": items, "sources": sources, "last_run": last, "config_version": cfg["version"]})
+    return JSONResponse(
+        {"items": items, "total": total, "sources": sources, "last_run": last, "config_version": cfg["version"]}
+    )
 
 
 async def events_list(request: Request) -> JSONResponse:
@@ -531,9 +529,6 @@ async def desk(request: Request) -> JSONResponse:
 
     v = viewer(request)
     role = v["role"] if v else request.query_params.get("role") or ""
-    if v is None and role == "specialist" and request.query_params.get("user"):
-        # sign-in off: the specialist the page decides as (Duyệt khuyến nghị's ``by``), as GET /api/review's page does
-        v = {"id": request.query_params["user"], "role": "specialist"}
     try:
         return JSONResponse(desk_reads.desk(role, v))
     except roles.Forbidden as exc:
@@ -655,7 +650,7 @@ async def system_alerts(request: Request) -> JSONResponse:
 
     v = viewer(request)
     role = v["role"] if v else request.query_params.get("role", "admin")
-    return JSONResponse({"alerts": alerts.for_role(role)})
+    return JSONResponse({"alerts": alerts.for_role(role), **alerts.counts(role)})  # the page of 50, and its totals
 
 
 JOBS: list = []  # filled by app/main.py: {id, description, when: {every|at}}
@@ -790,6 +785,7 @@ def system_read() -> dict:
         "agent_queue": agent_queue.waiting(),
         "zone_syncs": zone_sync.recent(5),
         "alerts": control_alerts.recent(30),
+        "alerts_open": control_alerts.counts()["open"],  # counted, not the open ones among the last 30
         "log": control_log.recent(30, "warning"),
         "people": [{**a, "families": families.get(a["id"])} for a in accounts if a["role"] != "client"],
         "clients": sum(1 for a in accounts if a["role"] == "client"),
@@ -916,12 +912,66 @@ async def trial(request: Request) -> JSONResponse:
     from trial import report
 
     out = await asyncio.to_thread(report.summary)
-    replay = ROOT / "out" / "trial" / "replay.json"  # B1.5: July 2026 played back (scripts/replay_july.py)
+    replay = ROOT / "out" / "trial" / "replay.json"  # B1.5: July 2026 played back (the first replay's report)
     if replay.exists():
         r = json.loads(replay.read_text(encoding="utf-8"))
         keep = ("replay", "at", "days", "runs", "accuracy", "calls", "scenarios", "events")
         out["replay"] = {k: r.get(k) for k in keep}
+    out["evaluation"] = await asyncio.to_thread(_evaluation)
+    out["replays"] = [r["replay"] for r in map(_replay, sorted(p.stem for p in REPLAYS.glob("*.json")
+                                                                 if not p.stem.endswith(".moves"))) if r]
     return JSONResponse(out)
+
+
+REPLAYS = ROOT / "out" / "trial" / "replays"  # REPLAY_PLAN: past news played back, View B on it (scripts/replay.py)
+
+
+def _replay(name: str, part: str = "") -> dict | None:
+    p = REPLAYS / f"{name}{part}.json"
+    if "/" in name or not p.exists():
+        return None
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+async def trial_replay(request: Request) -> JSONResponse:
+    """One replay's View B (accuracy, simulated VND, cost, the moves) as /api/trial gives the live one's."""
+    import asyncio
+
+    r = await asyncio.to_thread(_replay, request.path_params["name"])
+    if r is None:
+        return JSONResponse({"error": "không có lần chạy lại này"}, status_code=404)
+    return JSONResponse({"replay": r["replay"], "evaluation": r["evaluation"]})
+
+
+def _evaluation() -> dict:
+    """AGENT_EVALUATION_PLAN E5: View A (collection) and View B (accuracy, simulated VND, cost) of the trial page."""
+    from news import monitor
+    from trial import costs, evaluate, finance
+
+    c = costs.summary()
+    return {
+        "collection": monitor.summary(),
+        "accuracy": evaluate.summary(),
+        "finance": finance.summary(),
+        "costs": {"agents": c["agents"], "total": c["total"]},
+        "moves": evaluate.moves(),
+    }
+
+
+async def trial_move(request: Request) -> JSONResponse:
+    """One scored move, from the news to the VND per family (AGENT_EVALUATION_PLAN E5 drill-down)."""
+    import asyncio
+
+    from trial import evaluate
+
+    name, sid = request.query_params.get("replay"), request.path_params["sid"]
+    if name:
+        got = ((await asyncio.to_thread(_replay, name, ".moves")) or {}).get(sid)
+    else:
+        got = await asyncio.to_thread(evaluate.detail, sid)
+    if got is None:
+        return JSONResponse({"error": "không có dự báo này"}, status_code=404)
+    return JSONResponse(got)
 
 
 async def accuracy(request: Request) -> JSONResponse:
@@ -987,6 +1037,36 @@ async def news_config(request: Request) -> JSONResponse:
     cfg = news_ops.config()
     return JSONResponse({k: cfg[k] for k in ("version", "note", "gates", "sources", "restricted", "event_types")})
 
+
+
+async def news_sources(request: Request) -> JSONResponse:
+    """Nguồn tin (Admin, N1): the white list in force, the proposal waiting, each source's last 7 days."""
+    import time
+
+    from news import monitor
+
+    k = next(k for k in config.overview() if k["kind"] == "news_sources")
+    pending = k["pending"] and config.get(k["pending"]["id"])
+    keep = ("id", "version", "proposed_by", "created", "note", "data")
+    health = {h["source"]: h for h in monitor.sources(time.time() - 7 * 86400)}
+    return JSONResponse(
+        {
+            "active": {"id": k["active"]["id"], "version": k["active"]["version"]},
+            "sources": config.data("news_sources"),
+            "pending": pending and {x: pending.get(x) for x in keep},
+            "health": health,
+        }
+    )
+
+
+async def news_source_test(request: Request) -> JSONResponse:
+    """Thử một nguồn (Admin, N1): https and a public address only, the fetch's timeout and size cap, nothing kept."""
+    import asyncio
+
+    url = (request.query_params.get("url") or "").strip()
+    if not url.startswith("https://"):
+        return JSONResponse({"error": "chỉ thử url https"}, status_code=400)
+    return JSONResponse(await asyncio.to_thread(news_ops.probe, url))
 
 async def research_list(request: Request) -> JSONResponse:
     """Uploaded research and regulation notes with their status (CIO, Compliance)."""
@@ -1154,8 +1234,8 @@ async def auth_logout(request: Request) -> JSONResponse:
 # Who may open each read (BRD §4 roles, BRD-RULE-SEC-02; F5): the longest matching prefix decides, and a read
 # that matches none is open to everyone signed in (a family's data is then checked by people.auth.may_see). Each
 # role's pages use a subset of its row (tests/test_access.py walks every route as every role).
-STAFF = ("cio", "rm", "compliance", "admin")
-OVERSIGHT = ("cio", "compliance", "admin")  # the news-impact desk and those who check it
+STAFF = ("cio", "rm", "admin")
+OVERSIGHT = ("cio", "admin")  # the news-impact desk and those who check it
 ROUTE_ROLES = {
     "/api/advisory/all": STAFF,
     "/api/model": STAFF,
@@ -1164,6 +1244,7 @@ ROUTE_ROLES = {
     "/api/agents/catalogue": OVERSIGHT,
     "/api/agents/map": OVERSIGHT,  # A7: the ecosystem map and its runs
     "/api/news": OVERSIGHT,  # the inbox and held items: an RM sees news only once applied (FR-502)
+    "/api/news/sources": ("admin",),  # Nguồn tin: the white list is Admin's (N1)
     "/api/events": OVERSIGHT,
     "/api/views/": OVERSIGHT,  # one view with its drafts and findings
     "/api/runs": OVERSIGHT,  # an RM reads a family's runs through /api/families/…/impact, post-checked only
@@ -1171,20 +1252,19 @@ ROUTE_ROLES = {
     "/api/accuracy": OVERSIGHT,
     "/api/trial": OVERSIGHT,
     "/api/measure": OVERSIGHT,
-    "/api/research": ("cio", "compliance"),  # unreleased research (FR-203)
+    "/api/research": ("cio",),  # unreleased research (FR-203)
     "/api/market": ("cio", "admin"),
-    "/api/audit": ("compliance", "admin"),
+    "/api/audit": ("cio", "admin"),
     "/api/system": ("admin",),
     "/api/accounts": ("admin",),  # Tài khoản và vai trò (Q-25)
     "/api/jobs": OVERSIGHT,  # Việc nền: agents and jobs; Admin runs jobs, the CIO the agents
     "/api/system/alerts": OVERSIGHT,  # the bell: each role its kinds of alert
-    "/api/newsletters": ("cio", "compliance"),  # the CIO writes, Compliance approves (FR-801)
-    "/api/policy": ("cio", "compliance"),  # Compliance keeps the radar, the CIO reads it (FR-306)
+    "/api/newsletters": ("cio",),  # a CIO writes, another CIO approves (FR-801, OWN-FB-18)
+    "/api/policy": ("cio",),  # the CIOs keep the radar (FR-306, OWN-FB-18)
     "/api/rm/": ("rm",),
-    "/api/desk": ("cio", "rm", "compliance", "admin", "specialist"),  # each gets its own role's desk (FEAT-41)
+    "/api/desk": ("cio", "rm", "admin"),  # each gets its own role's desk (FEAT-41)
 }
-ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "compliance": "Tuân thủ", "admin": "Quản trị",
-              "specialist": "Chuyên gia"}  # fmt: skip
+ROLE_LABEL = {"client": "khách hàng", "rm": "RM", "cio": "CIO", "admin": "Quản trị"}
 
 
 def allowed_roles(path: str):
@@ -1268,6 +1348,8 @@ app = Starlette(
         Route("/api/views", views),
         Route("/api/news/inbox", news_inbox),
         Route("/api/news/config", news_config),
+        Route("/api/news/sources", news_sources),
+        Route("/api/news/sources/test", news_source_test),
         Route("/api/model", model),
         Route("/api/model/estimate", model_estimate_preview),
         Route("/api/events", events_list),
@@ -1302,6 +1384,8 @@ app = Starlette(
         Route("/api/inbox", inbox_receive, methods=["POST"]),
         Route("/api/accuracy", accuracy),
         Route("/api/trial", trial),
+        Route("/api/trial/move/{sid}", trial_move),
+        Route("/api/trial/replay/{name}", trial_replay),
         Route("/api/measure", measure_reports),
         Route("/api/market/series", market_series),
         Route("/api/research", research_list),

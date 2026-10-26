@@ -4,7 +4,7 @@
   links on the gazette's own file host, extracts the text (pypdf) and keeps the PDF's SHA-256. The text is the
   source's, not anyone's copy.
 - **Another official page** (a draft under consultation on a ministry's or the State Bank's site): the address must
-  be on an official domain and the text is pasted; a second Compliance person confirms it matches the source.
+  be on an official domain and the text is pasted; a second CIO confirms it matches the source.
 """
 
 from __future__ import annotations

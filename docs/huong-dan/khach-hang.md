@@ -10,7 +10,7 @@ Màn hình chính của khách hàng.
 Thanh bên trái có bốn mục, đúng tên của ngân hàng: **Wealth View**, **Wealth Planning Advisor**, **Headline News** và
 **Relationship specialist**. Wealth View có hai thẻ: **Wealth view** (trang này) và **Dữ liệu chi tiết tài sản**.
 Wealth Planning Advisor có hai thẻ: **Wealth planning advisor** (kế hoạch) và **Risk profile test** (bài test khẩu vị
-rủi ro). Headline News có ba thẻ: Tác động tin, Đồ thị tác động, Chi phí chính sách.
+rủi ro). Headline News có hai thẻ: **News and Prediction** (chi phí chính sách) và **Đồ thị tác động**.
 
 Wealth view là toàn bộ bức tranh tài chính của bạn ở một trang, mọi con số ở một chỗ (các địa chỉ cũ — Toàn cảnh
 `#/client/tong-quan/toan-canh`, Chi tiết `#/client/tong-quan/chi-tiet`, Dòng tiền `#/client/dong-tien`, đồ thị tài
@@ -61,9 +61,23 @@ Thẻ thứ hai của Wealth Planning Advisor: bài kiểm tra khẩu vị rủi
 nút “← Câu trước”). Kết quả: mức chịu đựng rủi ro và khả năng chịu rủi ro trên năm mức, câu giải thích khi hai mức
 khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở phần Rủi ro của Wealth View.
 
+## News and Prediction — #/client/tin/chinh-sach
+
+Thẻ đầu của Headline News (trước đây là Chi phí chính sách). Chính sách (lãi suất, thuế, quy định…) có thể làm bạn mất hay được bao nhiêu: **Tác động lên tài sản ròng** theo từng
+chính sách (lọc tất cả / rủi ro / cơ hội), nhận định của các nhà nghiên cứu khớp với tài sản của bạn (dữ liệu giả
+định), và từng thẻ chính sách: mức độ, tình trạng pháp lý, tác động có xác suất, cách tính (giá trị × độ nhạy × xác
+suất) và nguồn.
+
+## Đồ thị tác động — #/client/tin/do-thi
+
+Thẻ thứ hai của Headline News. Tin nào chạm tới tiền của bạn, qua đường nào, tới mục tiêu nào — đọc từ trái sang phải qua bảy cột: Tin, Sự kiện,
+Kịch bản, Yếu tố, Tài sản, Gia đình, Mục tiêu. Bấm một nút để làm sáng đường đi của nó; bấm lần nữa hoặc “Bỏ chọn” để
+bỏ. Chọn một sự kiện mở bảng tác động: hướng, kịch bản chính, các nhóm tài sản và mục tiêu trước → sau. Có nút chuyển
+“Đồ thị / Danh sách” và bộ lọc theo loại.
+
 ## Tác động tin — #/client/tin/thi-truong
 
-Thẻ đầu của Headline News. Sau khi CIO duyệt một nhận định về tin thị trường và hậu kiểm đạt, trang này cho biết tài sản của bạn có thể thay đổi
+Không còn là một thẻ: trang mở từ chuông, từ “Điều đáng chú ý” và từ liên kết “Tác động của tin” trên Wealth View. Sau khi CIO duyệt một nhận định về tin thị trường và hậu kiểm đạt, trang này cho biết tài sản của bạn có thể thay đổi
 bao nhiêu trong 3 tháng tới, dải dao động rộng hay hẹp và đến từ đâu — theo nhóm tài sản, không nêu mã cổ phiếu, không
 phải khuyến nghị.
 
@@ -76,22 +90,8 @@ phải khuyến nghị.
 
 Chưa có tin nào được duyệt thì trang báo tác động sẽ hiện khi có.
 
-## Đồ thị tác động — #/client/tin/do-thi
-
-Tin nào chạm tới tiền của bạn, qua đường nào, tới mục tiêu nào — đọc từ trái sang phải qua bảy cột: Tin, Sự kiện,
-Kịch bản, Yếu tố, Tài sản, Gia đình, Mục tiêu. Bấm một nút để làm sáng đường đi của nó; bấm lần nữa hoặc “Bỏ chọn” để
-bỏ. Chọn một sự kiện mở bảng tác động: hướng, kịch bản chính, các nhóm tài sản và mục tiêu trước → sau. Có nút chuyển
-“Đồ thị / Danh sách” và bộ lọc theo loại.
-
-## Chi phí chính sách — #/client/tin/chinh-sach
-
-Chính sách (lãi suất, thuế, quy định…) có thể làm bạn mất hay được bao nhiêu: **Tác động lên tài sản ròng** theo từng
-chính sách (lọc tất cả / rủi ro / cơ hội), nhận định của các nhà nghiên cứu khớp với tài sản của bạn (dữ liệu giả
-định), và từng thẻ chính sách: mức độ, tình trạng pháp lý, tác động có xác suất, cách tính (giá trị × độ nhạy × xác
-suất) và nguồn.
-
 ## Relationship specialist — #/client/chuyen-gia
 
 Chuyên gia của bạn: chuyên viên quan hệ khách hàng (tên, liên hệ — dữ liệu demo) và **Hàng chờ chuyên gia duyệt**: các phương án
-bạn đã gửi từ Wealth Planning Advisor, đang chờ hay đã được duyệt / từ chối kèm ghi chú. Trang này chỉ để xem; RM và chuyên gia quyết
+bạn đã gửi từ Wealth Planning Advisor, đang chờ hay đã được duyệt / từ chối kèm ghi chú. Trang này chỉ để xem; RM quyết
 định ở trang của họ.

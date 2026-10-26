@@ -1,12 +1,14 @@
 """Write data/people/staff.json: the seed of the staff in the people table (src/people).
 
 Everyone who works on a family, in one list:
-- the staff who sign in: CIO, RM, Compliance and Admin users;
-- the specialists of each family's team.
+- the staff who sign in: CIO and Admin users (two of each: the second is the second pair of eyes) and the RMs.
+
+There is no Compliance or specialist user (OWN-FB-18): the CIO took Compliance's duties, four eyes kept, and an
+action recommendation is the RM's alone.
 
 The RMs who sign in are the RMs on the families' teams, so “your RM” and the RM user are the same person.
 Names, e-mails, phones and offices are the advisory record's (scripts/make_advisory.py). Each family's team is
-its RM and the five specialists, and ``lead`` marks the specialists who matter most to that family. All mock.
+its RM. All mock.
 Deterministic.
 
     uv run python scripts/make_people.py
@@ -58,20 +60,6 @@ def staff() -> list:
             }
         )
     out += [
-        {
-            "id": "compliance",
-            "role": "compliance",
-            "name": "Đỗ Minh Châu",
-            "title": "Tuân thủ (tuyến 2)",
-            "email": f"chau.do@{D}",
-        },
-        {
-            "id": "compliance2",
-            "role": "compliance",
-            "name": "Vũ Hải Nam",
-            "title": "Tuân thủ (tuyến 2)",
-            "email": f"nam.vu@{D}",
-        },
         {"id": "admin", "role": "admin", "name": "Quản trị demo", "title": "Quản trị", "email": f"admin@{D}"},
         {
             "id": "admin2",
@@ -81,25 +69,11 @@ def staff() -> list:
             "email": f"admin2@{D}",
         },
     ]
-    for s in adv.SPECIALISTS:
-        out.append(
-            {
-                "id": f"sp_{s['id']}",
-                "role": "specialist",
-                "specialty": s["id"],
-                "name": s["name"],
-                "title": s["role_vi"],
-                "title_en": s["role"],
-                "email": s["email"],
-                "phone": s["phone"],
-                "covers": s["covers"],
-            }
-        )
     return out
 
 
 def teams() -> dict:
-    return {cid: {"rm": RM_IDS[c["rm"]], "lead": [f"sp_{x}" for x in c["lead"]]} for cid, c in adv.CLIENTS.items()}
+    return {cid: {"rm": RM_IDS[c["rm"]]} for cid, c in adv.CLIENTS.items()}
 
 
 def main() -> None:

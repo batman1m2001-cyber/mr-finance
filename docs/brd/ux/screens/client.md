@@ -18,11 +18,12 @@ the screens below keep their IDs, routes and content, and a client page's headin
 | Wealth View | Dữ liệu chi tiết tài sản | SCR-CL-02 | `#/client/tai-san` |
 | Wealth Planning Advisor | Wealth planning advisor | SCR-CL-03 | `#/client/muc-tieu/ke-hoach` |
 | Wealth Planning Advisor | Risk profile test | SCR-CL-04 | `#/client/rui-ro/khau-vi` |
-| Headline News | Tác động tin · Đồ thị tác động · Chi phí chính sách | SCR-CL-05, CL-09, CL-06 | `#/client/tin/…` |
+| Headline News | News and Prediction · Đồ thị tác động | SCR-CL-06 (titled “News and Prediction”), CL-09 | `#/client/tin/chinh-sach`, `…/do-thi` |
+| — (no tab, feedback 3) | Tác động tin | SCR-CL-05 | `#/client/tin/thi-truong`: the bell's and the feed's evidence |
 | Relationship specialist | — | SCR-CL-07 (titled “Relationship specialist”) | `#/client/chuyen-gia` |
 | — (hidden from the client) | — | SCR-CL-11, SCR-CL-12 (the graph) | only `#/client/xem/<lens>`, linked from nowhere |
 
-Chi phí chính sách's Wealth Check line reads green when ahead of VN-Index and red when behind (business item 6;
+News and Prediction's Wealth Check line reads green when ahead of VN-Index and red when behind (business item 6;
 every KPI's ahead/behind line had been grey).
 
 ---
@@ -355,8 +356,8 @@ events and policy items by impact, or the selected node — figures, “Mở r�
 selection lights its links and hides the other labels. News edges are dashed (“có thể ảnh hưởng”). Phones open on
 the list.
 
-**Tests.** `tests/test_overview.py`; `tests/ui/test_pages.py::test_the_overview_graph_selects_expands_and_opens_pages`,
-`tests/ui/test_pages.py::test_the_overview_graph_is_a_list_on_a_phone`.
+**Tests.** `tests/test_overview.py`. The RM's page view of this graph (Bản đồ) was retired by OWN-FB-02 (2026-10-24)
+with its two browser tests; the Customer's graph is the workspace (`tests/ui/test_graph_workspace_ui.py`).
 
 ---
 

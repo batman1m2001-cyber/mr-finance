@@ -18,8 +18,6 @@ exe = next(iter(sorted(Path.home().glob(".cache/ms-playwright/chromium-*/chrome-
 DESKS = [  # (person, role, the desk's question)
     ("rm01", "rm", "Sổ khách hàng hôm nay có gì cần làm?"),
     ("cio", "cio", "Có gì chờ tôi duyệt?"),
-    ("sp_insurance", "specialist", "Khuyến nghị nào đang chờ tôi duyệt?"),
-    ("compliance", "compliance", "Có gì đang chờ Tuân thủ?"),
     ("admin", "admin", "Hệ thống có gì bất thường?"),
 ]
 # what the desk lights while the assistant works (web/desk/desk.js: a step's nodes take `act`, the answer keeps `lit`)
