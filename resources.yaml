@@ -56,7 +56,7 @@ llm:onprem:
 # (GET /speakers on the same host); speed 1.0, not the server's 1.2, for older listeners (VOICE_PLAN V-D5).
 http:tts:
   url: ${TTS_API_URL:http://192.168.1.212:8086/tts}
-  api_key: ${TTS_API_KEY}
+  api_key: ${TTS_API_KEY:}
   api_key_header: X-API-Key
   timeout_s: ${TTS_REQUEST_TIMEOUT_S:30.0}
   options:
@@ -69,7 +69,7 @@ http:tts:
 # The embedding output is the callbot's speech-vs-noise gate's; the voice does not read it.
 http:stt:
   url: ${STT_API_URL:https://stt.edupia.com.vn:8010}
-  api_key: ${STT_API_KEY}
+  api_key: ${STT_API_KEY:}
   api_key_header: X-API-Key
   timeout_s: ${STT_REQUEST_TIMEOUT_S:30.0}
   verify_ssl: ${STT_VERIFY_SSL:true}
