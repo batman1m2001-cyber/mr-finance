@@ -159,7 +159,7 @@ async def fallback_events(r: Dict[str, Any], why: str):
         return
     seen = scrub(r.get("said", r["message"]))
     got = router.keyword(seen, r["route"], r["role"])
-    if r["files"] and not got["tool"]:  # a file and no command: what it is, from its reading (our text, no model)
+    if r.get("files") and not got["tool"]:  # a file and no command: what it is, from its reading (our text, no model)
         from assistant import attachments as att
 
         text = att.described([att.get(context(r), f["id"]) for f in r["files"]])

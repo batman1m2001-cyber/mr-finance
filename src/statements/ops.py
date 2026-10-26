@@ -109,7 +109,6 @@ def load_sample(filename: str) -> dict:
     return {"content": base64.b64encode(path.read_bytes()).decode()}
 
 
-@op
 def as_holding(client_id: str, institution: str, filename: str, it: dict, mk: dict, ident: str) -> dict:
     """One statement item as a holding: a stock valued at today's price, a balance as it is. A stock's key is its
     ticker at the institution; a balance's is ``ident`` (what the caller counts it by)."""
@@ -162,6 +161,7 @@ def as_holding(client_id: str, institution: str, filename: str, it: dict, mk: di
     return h
 
 
+@op
 def save_holdings(client_id: str, filename: str, institution: str, items: list, method: str = "rules") -> dict:
     """The items as holdings (``as_holding``), kept as this client's ``statement`` holdings (reading the same file
     again replaces them)."""

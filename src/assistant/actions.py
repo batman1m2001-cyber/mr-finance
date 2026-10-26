@@ -5,8 +5,9 @@ resolved here), then read back by its verifier.
 
 Left to their pages, deliberately: the four-eyes governance decisions (configuration versions, approving CIO
 views, reviewing runs, newsletters, policy documents, research release, the market model), grouping news into
-events, releasing held news and the client's own uploads and risk test. Each needs the person to read evidence on
-that page; the assistant opens the page (``mo_trang``) instead of acting. Starting Agent CIO, re-running the
+events, releasing held news and the client's risk test. Each needs the person to read evidence on that page; the
+assistant opens the page (``mo_trang``) instead of acting. The client's own files are the exception (ADR-0041):
+``them_tu_tep``'s confirm line lists every item and the total, which is that evidence. Starting Agent CIO, re-running the
 challenger and running a background job are not decisions (owner 2026-10-18): they are writes here, on a Xác nhận."""
 
 from __future__ import annotations

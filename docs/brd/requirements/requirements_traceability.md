@@ -17,7 +17,7 @@ Last full review: **2026-10-16** (BRD completion F10); before that 2026-10-15, a
 | BRD rules (RULE) | 97 | 93 | 0 | 0 | 0 | 0 | 0 | 0 | 4 |
 | Original brief (BRIEF) | 29 | 28 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Redesign kit (KIT) | 19 | 10 | 2 | 0 | 0 | 0 | 0 | 0 | 7 |
-| Owner requests (OWN) | 160 | 154 | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
+| Owner requests (OWN) | 174 | 168 | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 
 **Traceability completeness:** every one of the BRD's 61 numbered requirements, its 7 success metrics and the 97
 rules extracted from its text has a row, a source location, and a status (100 % inventoried). **Implementation
@@ -267,6 +267,13 @@ are the documentation rules this repository itself follows.) Counts are recomput
 
 | ID | Features | Status | Notes |
 |---|---|---|---|
+| OWN-DOC-01 | FEAT-42, FEAT-32 | implemented_verified | O1, O5: `POST /api/assistant/attach`, `web/copilot.js` (clip, paste, drop, chips, the 2000 px JPEG shrink); the gate pasted and attached on desktop and phone, light and dark — `tests/test_attachments.py::test_a_file_the_assistant_does_not_take_is_refused_with_why`, `tests/test_attachments.py::test_a_request_takes_three_files_its_own_only_and_keeps_the_words_apart` |
+| OWN-DOC-02 | FEAT-42, FEAT-32, FEAT-22 | implemented_verified | O2: `attachments.read`, one vision call (reasoning off, temperature 0), a scanned PDF's first 3 pages; amounts in words kept in VND (`_in_vnd`); gate 5/5 read as written with the right kind, 5 requests, US$0.0034 — `tests/test_attachments.py::test_an_image_goes_to_the_model_as_one_jpeg_no_larger_than_2000px`, `tests/test_attachments.py::test_the_models_reading_is_kept_to_the_one_shape`, `tests/test_attachments.py::test_a_statement_is_read_by_the_rules_without_a_model_and_when_the_model_fails` |
+| OWN-DOC-03 | FEAT-42, FEAT-32 | implemented_verified | O3: the reading enters the turn's message as one text block (`attachments.compose`); gate: the bill with “hạn trả khi nào?” answered 20/10/2026 — `tests/test_attachments.py::test_the_turn_carries_the_reading_and_a_file_alone_asks_for_its_write` |
+| OWN-DOC-04 | FEAT-42, FEAT-32 | implemented_verified | O3, O4: the image-only question (`attachments.alone`); gate: the receipt pasted alone was named and its deposit offered — `tests/test_attachments.py::test_the_turn_carries_the_reading_and_a_file_alone_asks_for_its_write`, `tests/test_attachments.py::test_a_photo_alone_ends_in_its_confirmed_write_saved_once_however_often_attached` |
+| OWN-DOC-05 | FEAT-42, FEAT-32 | implemented_verified | O4: `them_tu_tep`, `luu_tai_lieu` (`src/assistant/filetools.py`); gate: Huỷ moved the net worth by 0, Xác nhận by +500,000,000 — `tests/test_attachments.py::test_a_photo_alone_ends_in_its_confirmed_write_saved_once_however_often_attached`, `tests/test_assistant_tools.py::test_a_write_asks_first_changes_nothing_then_is_read_back` |
+| OWN-DOC-06 | FEAT-42, FEAT-32, FEAT-22 | implemented_verified | O2, O4: `attachments.read`, `attachments.described` — `tests/test_attachments.py::test_an_image_without_a_model_allowed_to_read_it_is_refused`, `tests/test_attachments.py::test_without_the_model_a_file_is_described_from_its_reading` |
+| OWN-DOC-07 | FEAT-42, FEAT-32 | implemented_verified | O1: `attachments.put`/`get`/`sweep`, `assistant_retention` — `tests/test_attachments.py::test_a_file_is_its_owners_for_this_client_and_goes_after_24_hours` |
 | OWN-FB-01 | FEAT-41 | implemented_verified | F2: the book's drawing gone, the families a list of cards to pick — `tests/ui/test_feedback6_ui.py::test_the_rms_book_has_no_drawing_and_advisory_performance_is_the_mock` |
 | OWN-FB-02 | FEAT-41 | implemented_verified | F2: no tab Tác động tin, Toàn cảnh, Bản đồ, Duyệt đề xuất; `toan-canh`, `ban-do` → `tong-quan`, `tac-dong` and `duyet` still open — `tests/ui/test_feedback6_ui.py::test_the_rms_client_is_four_tabs_two_with_inner_tabs_and_no_title_over_them` |
 | OWN-FB-03 | FEAT-41, FEAT-25 | implemented_verified | F2: Headline news, inner tabs News and prediction · Đồ thị tác động — `tests/ui/test_feedback6_ui.py::test_the_rms_client_is_four_tabs_two_with_inner_tabs_and_no_title_over_them` |

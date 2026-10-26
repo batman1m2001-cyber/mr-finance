@@ -1,5 +1,10 @@
 # Any document to the assistant: attach, paste, photograph (2026-10-26)
 
+**Status: done** (O1–O7, 2026-10-26). Gate: 5/5 documents read as written with the right kind (5 requests,
+US$0.0034, ~4 s each); in the browser on C01, desktop and phone, light and dark: the receipt pasted alone named and
+offered, Huỷ 0, Xác nhận +500,000,000 on the net worth, the bill's date answered, the statement's confirm line with
+its 3 items and the total, no horizontal scroll; turns ~US$0.002. Recorded in ADR-0041, FEAT-42, OWN-DOC-01…07.
+
 **Asked** (owner, 2026-10-26). "Copy paste the image, or attach the image into the assistant: the image scan of a
 document (hoá đơn, biên lai, mô tả tài sản, sao kê…) for processing." And: "people can ask anything with any image;
 it does not even need a text, only the image, and the assistant routes it to the correct flow."

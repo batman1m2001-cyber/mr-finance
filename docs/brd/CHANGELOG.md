@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-26 — Any document to the assistant (owner): paste, attach or photograph a statement, receipt, bill or
+  asset description; read once on the client model, a file alone routes itself, saved behind Xác nhận with every
+  item and the total. Gate: 5/5 roughened documents read as written (US$0.0034), four screens. — ADR-0041, FEAT-42,
+  owner_requirements DOC, requirements_traceability §5, FEAT-22, FEAT-32, huong-dan/chung, docs/OCR_PLAN.md
 - 2026-10-25 — Business feedback 7 (owner): the RM's desk is Tổng quan (“Khách hàng đang quản lý”, the net worth
   coloured), no Hôm nay (contact log in Thông tin), the client picker inside the Khách hàng and Advisory performance
   sheets, no “Nội bộ” on the RM's sheets (BRD-RULE-SEC-03 narrowed). — OWN-FB-19…25, business_rules, FEAT-13,

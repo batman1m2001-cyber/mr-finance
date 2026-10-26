@@ -190,7 +190,7 @@ def test_retention_deletes_old_conversations_and_stale_facts():
     from assistant.retention import sweep
 
     got = asyncio.run(sweep())
-    assert got == {"conversations": 1, "turns": 1, "memory_items": 1}
+    assert got == {"conversations": 1, "turns": 1, "memory_items": 1, "attachments": 0}
     assert [c["id"] for c in conv.listing(ctx())] == [new]
     assert mem("list")["items"] == []
 

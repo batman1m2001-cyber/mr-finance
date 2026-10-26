@@ -21,9 +21,14 @@
    panel there; undock() hides it again (no route without a dock, signed out). Docked, a
    question goes to POST /api/assistant/stream: each real event of the turn (a tool starting and ending, the model's
    words, a write waiting) shows in the panel as it happens and goes to onEvent, which the graph draws (OWN-GW-06…10);
-   a stream that breaks is said, never papered over. */
+   a stream that breaks is said, never papered over.
+
+   Files (OCR_PLAN O5): the paperclip (the camera on a phone), a paste into the box or a drop on the panel attaches up
+   to three files. An image is shrunk in the browser to 2,000 px, JPEG 0.85, before it leaves (O-D1); each goes to
+   POST /api/assistant/attach once, and its chip says “đang đọc…” and then what it is. Gửi waits for the readings and
+   sends their ids with the words, or with none: a file alone is a question (O-D5). */
 import {$, esc, followedIds, post, stream, workspaceContext} from "./core/core.js";
-import {icon} from "./core/icons.js?v=20261017s1";
+import {icon} from "./core/icons.js?v=20261026o1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
 
@@ -53,6 +58,33 @@ const BADGE = {failed: ["bad", "Không thực hiện được"], forbidden: ["ba
 const STATE = {idle: "Sẵn sàng", busy: "Đang xử lý", ok: "Đã trả lời", error: "Không thực hiện được", pending: "Chờ bạn xác nhận"};
 const FOR = {ok: "ok", pending: "pending", failed: "error", forbidden: "error", unknown: "idle"};
 const STEP = {ok: "✓", failed: "✕", declined: "–", forbidden: "✕"};
+const MAX_FILES = 3, MAX_BYTES = 5 * 1024 * 1024, LONG_SIDE = 2000;  // as the server checks (assistant/attachments.py)
+const ACCEPT = "image/*,.pdf,.xlsx,.xlsm,.csv,.txt,.docx,.pptx,.md,.html,.htm";
+
+// an image as it is sent: at most 2,000 px on its long side, JPEG 0.85 (a screenshot of 3 MB becomes ~300 KB); anything
+// else as it is. Returns {name, data (base64), thumb (a small data URL, images only)}
+const b64 = (blob) => new Promise((ok, no) => {
+  const r = new FileReader();
+  r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = () => no(r.error); r.readAsDataURL(blob);
+});
+async function prepare(file) {
+  if (!/^image\/(jpeg|png|webp|heic|heif|gif|bmp)$/.test(file.type)) return {name: file.name || "tep", data: await b64(file), thumb: null};
+  const img = await createImageBitmap(file).catch(() => { throw new Error("Không mở được ảnh này; hãy gửi ảnh JPEG hoặc PNG"); });
+  const k = Math.min(1, LONG_SIDE / Math.max(img.width, img.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  const g = c.getContext("2d");
+  g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);  // a transparent screenshot reads on white, not black
+  g.drawImage(img, 0, 0, c.width, c.height);
+  const blob = await new Promise((ok) => c.toBlob(ok, "image/jpeg", 0.85));
+  const t = document.createElement("canvas"), tk = 96 / Math.max(c.width, c.height);
+  t.width = Math.max(1, Math.round(c.width * tk)); t.height = Math.max(1, Math.round(c.height * tk));
+  t.getContext("2d").drawImage(c, 0, 0, t.width, t.height);
+  const stem = (file.name || "anh").replace(/\.[^.]+$/, "") || "anh";
+  return {name: `${stem === "image" ? "anh-dan" : stem}.jpg`, data: await b64(blob), thumb: t.toDataURL("image/jpeg", 0.8)};
+}
+const fileHtml = (f, x) => `<span class="cp-file ${f.st || ""}"${f.title ? ` title="${esc(f.title)}"` : ""}>${f.thumb ? `<img src="${f.thumb}" alt="">` : `<i>${icon("file", {size: 16})}</i>`}
+  <span class="cp-file-t"><b>${esc(f.name)}</b>${f.note != null ? `<small>${esc(f.note)}</small>` : ""}</span>${x != null ? `<button type="button" class="linkbtn" data-unfile="${x}" title="Bỏ tệp này">${icon("x", {size: 14})}<span class="sr-only">Bỏ tệp ${esc(f.name)}</span></button>` : ""}</span>`;
 
 function context() {
   const role = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "client";
@@ -143,8 +175,11 @@ export function mount() {
     <div class="cp-ctx small muted" id="cp-ctx"></div>
     <div class="cp-msgs" id="cp-msgs" aria-live="polite"></div>
     <div class="cp-sugg" id="cp-sugg"></div>
-    <form class="cp-form" id="cp-form"><input id="cp-q" autocomplete="off" maxlength="2000" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
-      <button type="submit" class="btn sm">Gửi</button></form>
+    <div class="cp-files" id="cp-files" hidden></div>
+    <form class="cp-form" id="cp-form"><button type="button" class="cp-clip" id="cp-clip" title="Đính kèm ảnh hoặc tệp: biên lai, sao kê, hoá đơn… (hoặc dán, kéo thả vào đây)">${icon("clip", {size: 18})}<span class="sr-only">Đính kèm tệp</span></button>
+      <input type="file" id="cp-file" accept="${ACCEPT}" multiple hidden>
+      <input id="cp-q" autocomplete="off" maxlength="2000" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
+      <button type="submit" class="btn sm" id="cp-send">Gửi</button></form>
     <div class="cp-foot small muted" id="cp-foot">Trợ lý chỉ dùng các chức năng sẵn có của ứng dụng; việc ghi luôn chờ bạn xác nhận. Không phải khuyến nghị đầu tư.</div>`;
   document.body.append(panel);
   dropOld();
@@ -152,6 +187,7 @@ export function mount() {
   let cid = null, resumed = false, listing = null;  // the conversation on screen; the history list when it shows
   let sess = null, poll = 0;  // the session on screen as the server names it; the timer following a running turn
   let docked = false, live = null, run = null;  // run: the turn in flight, as its events tell it
+  let files = [];  // attached, not yet sent: {key, name, thumb, st: reading|ok|bad, id, note}
 
   // the panel's state, set only by what the request did
   const setState = (st) => {
@@ -196,7 +232,7 @@ export function mount() {
     if (listing) { drawList(box); box.scrollTop = 0; return; }
     const fresh = (i) => (i >= shown ? " cp-in" : "");
     box.innerHTML = msgs.length ? msgs.map((m, i) => m.me
-      ? `<div class="cp-me${fresh(i)}">${esc(m.text)}</div>`
+      ? `<div class="cp-me${fresh(i)}">${(m.files || []).length ? `<div class="cp-me-files">${m.files.map(f => fileHtml(f)).join("")}</div>` : ""}${m.text ? `<span>${esc(m.text)}</span>` : ""}</div>`
       : m.status === "running"  // a turn still answering on the server (the page was reloaded): what has run so far
       ? `<div class="cp-bot cp-think" data-running><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Vẫn đang trả lời…${(m.steps || []).length ? `<div class="cp-steps small">${m.steps.map(x => `<span class="chip ${x.status === "ok" ? "" : "bad"}">${esc(x.label || x.tool)} ${STEP[x.status] || ""}</span>`).join(" ")}</div>` : ""}</div>`
       : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${m.mode === "model" ? prose(m.text) : esc(m.text)}
@@ -313,10 +349,55 @@ export function mount() {
   };
   const send = (q) => {
     q = String(q || "").trim();
-    if (!q || busy) return;
-    msgs.push({me: true, text: q}); $("#cp-q", panel).value = "";
-    call({message: q});
+    const ready = files.filter(f => f.st === "ok");
+    if ((!q && !ready.length) || busy || files.some(f => f.st === "reading")) return;
+    msgs.push({me: true, text: q, files: ready.map(f => ({name: f.name, thumb: f.thumb, note: f.note}))}); $("#cp-q", panel).value = "";
+    files = []; drawFiles();
+    call({message: q, ...(ready.length ? {attachments: ready.map(f => f.id)} : {})});
   };
+
+  // -- files (O5): attach, read once on the server, show what each is; × takes one back ------------------------------
+  let fileKey = 0;
+  const drawFiles = () => {
+    const box = $("#cp-files", panel);
+    box.hidden = !files.length;
+    box.innerHTML = files.map(f => fileHtml(f, f.key)).join("");
+    for (const b of box.querySelectorAll("[data-unfile]")) b.onclick = () => { files = files.filter(f => f.key !== Number(b.dataset.unfile)); drawFiles(); };
+    const reading = files.some(f => f.st === "reading");
+    const send = $("#cp-send", panel);
+    send.disabled = reading; send.title = reading ? "Đang đọc tệp…" : "";
+    $("#cp-clip", panel).disabled = files.length >= MAX_FILES;
+  };
+  const addFiles = async (list) => {
+    for (const file of [...list]) {
+      if (files.length >= MAX_FILES) { alert(`Mỗi câu hỏi kèm tối đa ${MAX_FILES} tệp.`); break; }
+      const f = {key: ++fileKey, name: file.name || "anh-dan.png", thumb: null, st: "reading", note: "đang đọc…"};
+      files.push(f); drawFiles();
+      (async () => {
+        try {
+          const got = await prepare(file);
+          Object.assign(f, {name: got.name, thumb: got.thumb}); drawFiles();
+          if (got.data.length * 3 / 4 > MAX_BYTES) throw new Error("Tệp quá 5 MB.");
+          const c = context();
+          const a = (await post("/api/assistant/attach", {role: c.role, client_id: c.client_id, file_name: got.name, data: got.data})).attachment;
+          Object.assign(f, {id: a.id, st: "ok", note: a.label + (a.items ? ` · ${a.items} khoản` : ""), title: a.summary || ""});
+        } catch (e) { Object.assign(f, {st: "bad", note: e.message || "Không đọc được tệp"}); }
+        if (files.includes(f)) drawFiles();
+      })();
+    }
+  };
+  $("#cp-clip", panel).onclick = () => $("#cp-file", panel).click();
+  $("#cp-file", panel).onchange = (e) => { addFiles(e.target.files); e.target.value = ""; };
+  $("#cp-q", panel).addEventListener("paste", (e) => {
+    const got = [...(e.clipboardData || {}).files || []];
+    if (got.length) { e.preventDefault(); addFiles(got); }
+  });
+  panel.addEventListener("dragover", (e) => { if ([...e.dataTransfer.types].includes("Files")) { e.preventDefault(); panel.classList.add("cp-drop"); } });
+  panel.addEventListener("dragleave", (e) => { if (!panel.contains(e.relatedTarget)) panel.classList.remove("cp-drop"); });
+  panel.addEventListener("drop", (e) => {
+    panel.classList.remove("cp-drop");
+    if (e.dataTransfer.files.length) { e.preventDefault(); addFiles(e.dataTransfer.files); }
+  });
   const answers = (m, v) => Object.fromEntries(m.waits.map(w => [w.id, v]));
   const confirmIt = (i) => {
     const m = msgs[i]; m.done = true; msgs.push({me: true, text: "Xác nhận"});

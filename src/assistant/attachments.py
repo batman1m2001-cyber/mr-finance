@@ -261,8 +261,22 @@ def _amount(v: Any) -> Optional[float]:
     return n if n and n > 0 else None
 
 
+MONEY = ("balance", "value", "purchase_price", "monthly_payment", "rental_monthly", "price", "avg_price")
+
+
+def _in_vnd(it: Any) -> Any:
+    """An item whose amounts the model wrote in words ("8,5 tỷ", "500 triệu") with them in VND, as ``number`` would
+    read "8,5" alone."""
+    from declare._rules import money
+
+    if not isinstance(it, dict):
+        return it
+    return {k: (money(v) or [v])[0] if k in MONEY and isinstance(v, str) else v for k, v in it.items()}
+
+
 def clean_items(items: Any) -> List[Dict[str, Any]]:
     """The statements' items through their own checks; the declared ones kept only with their amount."""
+    items = [_in_vnd(it) for it in items] if isinstance(items, list) else items
     out = _parse.clean_items(items)
     for it in items if isinstance(items, list) else []:
         if not isinstance(it, dict):
@@ -399,18 +413,26 @@ ONLY_FILE = "Người dùng gửi tệp này, không kèm câu hỏi."
 MAX_FILES = 3
 
 
+def _day(iso: Any) -> str:
+    """2027-04-15 as 15/04/2027; anything else as it is."""
+    m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", str(iso))
+    return f"{m[3]}/{m[2]}/{m[1]}" if m else str(iso)
+
+
 def _item_line(it: Dict[str, Any]) -> str:
-    from wealth.money import vnd
+    from wealth.money import _vn, pct, vnd
 
     t = it["type"]
     if t == "stock":
-        return f"cổ phiếu {it['ticker']} {it['qty']:,.0f} cp" + (f", giá {it['price']:,.0f}" if it.get("price") else "")
+        return f"cổ phiếu {it['ticker']} {_vn(it['qty'], 0)} cp" + (f", giá {_vn(it['price'], 0)}" if it.get("price") else "")
     if t in ("cash", "deposit"):
-        rate = f", {it['rate'] * 100:.2f}%/năm".replace(".", ",") if it.get("rate") else ""
-        due = f", đáo hạn {it['maturity']}" if it.get("maturity") else ""
-        return f"{'tiền gửi' if t == 'deposit' else 'tiền'} “{it['name']}” {vnd(it['balance'])}{rate}{due}"
+        rate = f", {pct(it['rate'], digits=2)}/năm" if it.get("rate") else ""
+        due = f", đáo hạn {_day(it['maturity'])}" if it.get("maturity") else ""
+        kind = "tiền gửi" if t == "deposit" else "tiền"
+        name = "" if (it.get("name") or "").strip().lower() in ("", kind, "tiền", "tiền mặt", "cash") else f" “{it['name']}”"
+        return f"{kind}{name} {vnd(it['balance'])}{rate}{due}"
     if t == "gold":
-        return f"vàng {it['qty']:g} lượng"
+        return f"vàng {_vn(it['qty'], 2)} lượng"
     if t == "loan":
         return f"khoản vay “{it['name']}” dư nợ {vnd(it['value'])}"
     return f"{'bất động sản' if t == 'property' else 'tài sản'} “{it['name']}” {vnd(it['value'])}"
@@ -437,9 +459,18 @@ def block(f: Dict[str, Any], reads: bool) -> str:
     return "\n".join(lines)
 
 
+def alone(files: List[Dict[str, Any]]) -> str:
+    """What a file sent with no words asks (O-D5): say what it is, then propose its write, or keeping it."""
+    rows = [f for f in files if f["reading"]["items"]]
+    if not rows:
+        return f"{ONLY_FILE} Nói ngắn đó là gì, rồi hỏi có muốn lưu vào Tài liệu không."
+    ids = ", ".join(f["id"] for f in rows)
+    return f"{ONLY_FILE} Nói ngắn đó là gì và các con số chính, rồi gọi them_tu_tep (tep={ids}) để đề nghị ghi vào tài sản."
+
+
 def compose(files: List[Dict[str, Any]], message: str, reads: bool) -> str:
     """The turn's message: every file's block, then the question (an image alone is still one, O-D5)."""
-    return "\n\n".join([block(f, reads) for f in files] + [message or ONLY_FILE])
+    return "\n\n".join([block(f, reads) for f in files] + [message or alone(files)])
 
 
 def described(files: List[Dict[str, Any]]) -> str:

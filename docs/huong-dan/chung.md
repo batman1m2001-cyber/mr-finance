@@ -33,6 +33,11 @@ dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu b�
 - **Việc làm thay đổi dữ liệu** (lưu mục tiêu, gửi đề xuất, ghi nhớ…) luôn hiện **Xác nhận / Huỷ** trước; không xác
   nhận thì không có gì được ghi. Sau khi làm, trợ lý đọc lại để kiểm tra rồi mới báo xong.
 - Việc trợ lý không làm được, nó nói thẳng và gợi ý việc nó làm được.
+- **Gửi tài liệu cho trợ lý** (khách hàng và RM): bấm 📎 cạnh Gửi (trên điện thoại có thể chụp ảnh), dán ảnh chụp
+  màn hình vào ô nhập, hoặc kéo tệp vào khung — ảnh, PDF (cả bản scan), Excel, CSV, Word; tối đa 3 tệp một lần. Thẻ
+  tệp hiện *đang đọc…* rồi loại giấy tờ (“Biên lai · Vietcombank”). Có thể hỏi bất cứ điều gì về tệp, hoặc gửi tệp
+  không kèm chữ: trợ lý nói đó là gì, các số chính, và đề nghị ghi vào tài sản hay lưu vào Tài liệu. Dòng xác nhận
+  liệt kê từng khoản và tổng; chỉ bấm **Xác nhận** mới được ghi. Tệp được mã hoá và tự xoá sau 24 giờ.
 - **Cuộc trò chuyện** được lưu trên máy chủ: mở lại trên thiết bị khác vẫn thấy. Nút đồng hồ liệt kê các cuộc trò
   chuyện; **+ Mới** bắt đầu cuộc mới. Cuộc dài thì phần cũ được tóm tắt để trợ lý vẫn nhớ, khung báo khi việc này xảy ra.
 - Nội dung trợ lý viết không phải khuyến nghị đầu tư.

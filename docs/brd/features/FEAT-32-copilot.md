@@ -104,3 +104,6 @@ the barrier off the model reads only statuses.
 - Answers are template-shaped, not free prose; Investigate (dieu_tra) and Analyze (kich_ban) read existing graphs —
   no new analysis is invented.
 - Writes cover two tasks; research release, news dismiss/release and declarations are not Copilot tools yet.
+- Files (2026-10-26, FEAT-42, ADR-0041): the panel takes up to 3 files a message — paperclip, paste, drop; each is
+  read once when attached and enters the turn as text; a file alone routes itself; `them_tu_tep` and `luu_tai_lieu`
+  save it behind Xác nhận.
