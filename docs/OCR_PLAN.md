@@ -42,7 +42,7 @@ and scans, so a model has to read them.
     saved, because a write's plan runs twice and a second model reading could differ.
   - A table file goes through `read_flow`, unchanged.
   - An image, or a PDF whose text is under 50 characters (a scan), goes to the vision reader. For a scanned PDF,
-    pypdf takes the page images (at most the first 3 pages), so no new dependency is needed.
+    pypdf takes the page images (at most the first 10 pages — 3 until 2026-10-26; a longer scan's summary says how many were read), so no new dependency is needed.
 - **O-D3 The vision reader is one model call per file** (`read_image`, an `LLMOp` on the client model).
   - **Resource:** the client model, as for statements (BRD-NFR-08: client data reaches only the client model).
   - **Settings:** reasoning off, `temperature=0`, JSON out.

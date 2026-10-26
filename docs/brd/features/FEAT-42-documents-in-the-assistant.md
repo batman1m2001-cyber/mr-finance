@@ -27,7 +27,7 @@ with none, it is refused with the reason and a text file is read by the rules.
    browser shrinks a photo to 2000 px, JPEG. Each file is a chip — a thumbnail or a name — that says *đang đọc…*
    until its reading lands, then its kind ("Biên lai · Vietcombank"). Gửi waits for readings in progress.
 2. **Read once** (`src/assistant/attachments.py`). A table → the statement reader; an image or a scanned PDF (text
-   under 50 characters, first 3 pages) → one vision call: kind (`sao_ke`, `bien_lai`, `hoa_don`, `tai_san`,
+   under 50 characters, first 10 pages; a longer scan's summary says "Đọc 10/14 trang đầu.") → one vision call: kind (`sao_ke`, `bien_lai`, `hoa_don`, `tai_san`,
    `hop_dong_vay`, `khac`), title, institution, summary, fields, items in one shape, transcription. Amounts written
    in words ("8,5 tỷ") are kept in VND; an item without its amount is dropped.
 3. **Ask.** The turn's message carries each reading as text. With no words, the assistant says what the document is
@@ -45,3 +45,6 @@ the right kind (5 requests, US$0.0034, ~4 s each). In the browser on C01, deskto
 receipt pasted alone was named and its deposit offered; Huỷ moved the net worth by 0, Xác nhận by +500,000,000; the
 bill's due date answered; the statement's confirm line listed the 3 items and the total; no horizontal scroll. Turns
 about US$0.002 each.
+
+A 12-page scanned statement (holdings on pages 1, 6, 10 and 12): pages 1–10 in one call, the three holdings on them
+read as written, page 12's FPT not read; 10 s, US$0.0024 (2026-10-26).

@@ -29,7 +29,7 @@ import time
 import uuid
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from operonx.core.loggings import LOGGER
 
@@ -47,7 +47,7 @@ TABLES = (".pdf", ".xlsx", ".xlsm", ".csv", ".txt")
 DOCUMENTS = (".docx", ".pptx", ".md", ".html", ".htm")
 KINDS = IMAGES + TABLES + DOCUMENTS
 SCAN_CHARS = 50  # a PDF with less text than this is a scan
-SCAN_PAGES = 3
+SCAN_PAGES = 10  # of a scanned PDF read; a longer one says how many were
 LONG_SIDE = 2000  # px: what the browser sends (O-D1); a larger image from elsewhere is shrunk here
 TEXT_CHARS = 4000  # of the transcription kept
 READ_CHARS = 20_000  # of a file's text sent to the model
@@ -217,12 +217,13 @@ def image_urls(name: str, raw: bytes) -> List[str]:
     return [_jpeg(img)]
 
 
-def scan_urls(raw: bytes) -> List[str]:
-    """The largest image of each of a scanned PDF's first pages."""
+def scan_urls(raw: bytes) -> Tuple[List[str], int]:
+    """The largest image of each of a scanned PDF's first pages, and how many pages it has."""
     from pypdf import PdfReader
 
     out = []
-    for page in PdfReader(io.BytesIO(raw)).pages[:SCAN_PAGES]:
+    pages = PdfReader(io.BytesIO(raw)).pages
+    for page in pages[:SCAN_PAGES]:
         try:
             imgs = [im.image for im in page.images]
         except Exception as e:  # noqa: BLE001 — an image pypdf cannot decode: that page is skipped
@@ -231,7 +232,7 @@ def scan_urls(raw: bytes) -> List[str]:
         imgs = [im for im in imgs if im is not None]
         if imgs:
             out.append(_jpeg(max(imgs, key=lambda im: im.size[0] * im.size[1])))
-    return out
+    return out, len(pages)
 
 
 def document_text(name: str, raw: bytes) -> str:
@@ -361,13 +362,13 @@ async def read(name: str, raw: bytes) -> Dict[str, Any]:
     """A file's reading (O-D2, O-D3)."""
     ext = suffix(name)
     images: List[str] = []
-    text, kind, rows = "", "txt", []
+    text, kind, rows, pages = "", "txt", [], 0
     if ext in IMAGES:
         images = image_urls(name, raw)
     elif ext in TABLES:
         kind, text, rows = _parse.read_file(name, raw)
         if ext == ".pdf" and len(text.strip()) < SCAN_CHARS:
-            images = scan_urls(raw)
+            images, pages = scan_urls(raw)
             if not images:
                 raise Refused("PDF này không có chữ cũng không có ảnh trang nào đọc được.")
     else:
@@ -377,10 +378,13 @@ async def read(name: str, raw: bytes) -> Dict[str, Any]:
         if use is None:
             raise Refused(NO_MODEL)
         try:
-            return checked(await ask_model(use, name, images=images), name)
+            got = checked(await ask_model(use, name, images=images), name)
         except Exception as e:  # noqa: BLE001 — nothing else reads an image
             LOGGER.warning(f"[attach] the image could not be read: {type(e).__name__}: {e}")
             raise Refused("Chưa đọc được ảnh lúc này (mô hình không trả lời); hãy thử lại.") from e
+        if pages > SCAN_PAGES:  # the chip and the turn both say the rest was not read
+            got["summary"] = f"{got['summary']} (Đọc {SCAN_PAGES}/{pages} trang đầu.)".strip()
+        return got
     from wealth import ai
 
     use = ai.client_model()

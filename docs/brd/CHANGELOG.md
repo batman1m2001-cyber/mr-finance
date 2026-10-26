@@ -2,6 +2,8 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-26 — A scanned PDF is read to its 10th page (was 3); a longer scan's summary says "Đọc 10/N trang đầu.".
+  12-page scan: pages 1–10 in one call, 10 s, US$0.0024. — FEAT-42, huong-dan/chung, docs/OCR_PLAN.md
 - 2026-10-26 — Any document to the assistant (owner): paste, attach or photograph a statement, receipt, bill or
   asset description; read once on the client model, a file alone routes itself, saved behind Xác nhận with every
   item and the total. Gate: 5/5 roughened documents read as written (US$0.0034), four screens. — ADR-0041, FEAT-42,

@@ -136,6 +136,24 @@ def test_an_image_goes_to_the_model_as_one_jpeg_no_larger_than_2000px(model):
                              "rate": pytest.approx(0.052), "maturity": "2027-04-15"}]  # fmt: skip
 
 
+def scan(pages: int) -> bytes:
+    """A scanned PDF: one photo a page, no text."""
+    from PIL import Image
+
+    imgs = [Image.new("RGB", (60, 80), (255, 255, 250 - n)) for n in range(pages)]
+    buf = io.BytesIO()
+    imgs[0].save(buf, "PDF", save_all=True, append_images=imgs[1:])
+    return buf.getvalue()
+
+
+def test_a_scanned_pdf_sends_its_first_10_pages_and_says_when_there_were_more(model):
+    got = asyncio.run(att.read("sao-ke.pdf", scan(12)))
+    assert len(model[0]["images"]) == att.SCAN_PAGES == 10
+    assert got["summary"].endswith("(Đọc 10/12 trang đầu.)")
+    assert asyncio.run(att.read("sao-ke.pdf", scan(2)))["summary"] == RECEIPT["summary"]
+    assert len(model[1]["images"]) == 2
+
+
 def test_an_image_without_a_model_allowed_to_read_it_is_refused(monkeypatch):
     from wealth import ai
 
