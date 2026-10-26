@@ -68,6 +68,7 @@ The build state below is a summary; the authoritative status per requirement is 
 | [FEAT-40](FEAT-40-persistent-financial-graph.md) | Persistent financial graph: the Customer's workspace, lenses and sheets, the assistant animating it from real events | OWN-GW-01…14 | experiment G0–G7 — planned |
 | [FEAT-41](FEAT-41-role-desks.md) | Role desks: every staff role's own workspace — the frame of FEAT-40, a centre per role, pages as sheets, its own docked assistant | OWN-MR-01…12 | experiment M0–M6 — built (all five staff roles); Tài khoản và vai trò and Việc nền (owner 2026-10-18) |
 | [FEAT-42](FEAT-42-documents-in-the-assistant.md) | Documents in the assistant: a pasted, attached or photographed statement, receipt, bill or asset description read once and saved behind Xác nhận; a file alone routes itself | OWN-DOC-01…07 | built (2026-10-26) |
+| [FEAT-43](FEAT-43-voice-in-the-assistant.md) | Talking to the assistant: the microphone in the panel, the question asked after 1.2 s of quiet, the answer read sentence by sentence; typed turns unchanged | owner brief (VOICE_PLAN) | built (2026-10-27) |
 
 ## How features depend on each other
 

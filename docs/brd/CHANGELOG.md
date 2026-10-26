@@ -2,6 +2,9 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-27 — Talking to the assistant (owner): a microphone in the panel; the callbot's VAD, STT and TTS; the
+  question is asked 1.18 s after the person stops, the answer read sentence by sentence, Dừng; typed turns unchanged.
+  iPhone app 1.2.0 asks for the microphone. — FEAT-43, FEAT-32, docs/VOICE_PLAN.md
 - 2026-10-26 — Bổ sung tài sản streams its reply (`/api/declare/stream`), no longer reloads the page, answers in one or two human sentences and asks back at most one question or one form a turn; details given later fill in the same item; a long message wraps in its bubble (the header's `.me` kept it on one line) — FEAT-23.
 - 2026-10-26 — A scanned PDF is read to its 10th page (was 3); a longer scan's summary says "Đọc 10/N trang đầu.".
   12-page scan: pages 1–10 in one call, 10 s, US$0.0024. — FEAT-42, huong-dan/chung, docs/OCR_PLAN.md

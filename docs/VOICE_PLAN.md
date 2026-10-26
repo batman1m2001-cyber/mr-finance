@@ -1,6 +1,7 @@
 # OneWealth — Talking to the assistant: plan
 
-**Status: in progress** (owner's go, 2026-10-26). The brief is kept in the [appendix](#appendix--the-owners-brief-2026-10-26).
+**Status: done** (owner's go, 2026-10-26; P1–P4 built and measured 2026-10-27, on :8030 with the iPhone app 1.2.0 —
+the owner's "go with voice plan … sync the iphone app" took it live). Feature: [FEAT-43](brd/features/FEAT-43-voice-in-the-assistant.md). The brief is kept in the [appendix](#appendix--the-owners-brief-2026-10-26).
 
 ## 1. What exists
 
@@ -60,7 +61,27 @@ Protocol (JSON text frames, PCM as binary frames):
 | P1 | `src/voice/`: VAD (lifted), STT op (lifted), TTS sentence op (lifted), sentence cutter; deps onnxruntime, soxr, scipy; `models/silero_vad.onnx`; `audio_worker:` in resources.yaml | Unit tests: the cutter; a recorded TTS sentence fed through VAD → one utterance → STT gives the words back (real services, a few calls) |
 | P2 | `assistant_voice_flow` + the `assistant_voice` websocket service (declared before the UI mount), sign-in and Origin check | A scripted client streams a spoken question in real time and receives heard → asked; sends a `say` and receives voice frames |
 | P3 | Panel: mic button, capture (AudioWorklet), caption, play queue, Dừng, mic paused while busy/speaking; permissions-policy | Desktop and phone screenshots; a real spoken question answered aloud on :8040 / a worktree server |
-| P4 | Measure: end of speech → asked, asked → first sound, per-sentence synthesis | Numbers in this plan; nothing on :8030 until the owner hears it |
+| P4 | Measure: end of speech → asked, asked → first sound, per-sentence synthesis | Numbers in this plan (§4) |
+
+## 4. Measured (2026-10-27)
+
+The question "Tổng tài sản của tôi hiện nay là bao nhiêu?" spoken by the TTS voice (2.4 s), fed back as the microphone.
+
+| Step | Where | Time |
+|---|---|---|
+| end of speech → heard (VAD's 500 ms end + STT) | the real services, a scripted client (2 runs) | +0.65 s |
+| end of speech → asked (+ the rest of `VOICE_SILENCE_MS` 1200) | same | +1.18 s |
+| asked → first sentence playing (the model's first sentence, its tools first, + TTS) | Chromium, fake microphone, C01, Haiku | 5.8 s desktop, 3.8 s phone |
+| one sentence's synthesis | ZipVoice | 117–211 ms |
+
+The transcript came back as said ("tổng tài sản của tôi hiện nay là bao nhiêu"); "7,54" and "09/10/2026" were read whole.
+In the browser, desktop and phone, light and dark: Mời bạn nói… → the caption → Đang tìm câu trả lời… → Đang đọc câu
+trả lời with each sentence as it plays → the microphone listens again; the spoken bubble wears the microphone; a typed
+question after it is the typed flow (no voice rule, no icon); no horizontal scroll, no console errors. The wait after
+asking is the turn's own (the same for a typed question): the first sentence plays as soon as the model has written it.
+
+Tests: `tests/test_voice.py` — the cutter, markdown read as prose, Dừng, the door end to end through the real VAD
+(fake STT/TTS), another site's page and a signed-out visitor refused, the real services round trip (skipped without keys).
 
 ## Appendix — the owner's brief (2026-10-26)
 

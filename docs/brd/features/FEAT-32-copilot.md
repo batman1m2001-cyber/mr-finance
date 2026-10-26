@@ -107,3 +107,5 @@ the barrier off the model reads only statuses.
 - Files (2026-10-26, FEAT-42, ADR-0041): the panel takes up to 3 files a message — paperclip, paste, drop; each is
   read once when attached and enters the turn as text; a file alone routes itself; `them_tu_tep` and `luu_tai_lieu`
   save it behind Xác nhận.
+- Voice (2026-10-27, FEAT-43): the microphone button talks to the panel — the question asked after 1.2 s of
+  quiet goes through the same `send`, flagged `voice`; the answer is read aloud sentence by sentence.
