@@ -557,6 +557,28 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 @keyframes mf-breathe { 0%, 100% { transform: scale(1); opacity: .2; } 50% { transform: scale(1.3); opacity: .4; } }
 @media (prefers-reduced-motion: reduce) { .cp-orb::before { animation: none !important; transition: none; } }
 @media (max-width: 560px) { .cp-voice { margin: 6px 10px 0; padding: 10px 12px; gap: 12px; } .cp-voice-t b { font-size: 16px; } }
+/* files in the panel (OCR_PLAN O5): the paperclip, the chips waiting to be sent, the files in a sent bubble */
+.cp-clip { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; border: 1px solid var(--axis); border-radius: 9px; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.cp-clip:hover:not(:disabled) { color: var(--ink); background: var(--surface-2); }
+.cp-clip:disabled, .cp-form .btn:disabled { opacity: .45; cursor: default; }
+.cp-files { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 12px 0; }
+.cp-file { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; padding: 4px 4px 4px 4px; border: 1px solid var(--axis); border-radius: 10px; background: var(--surface); font-size: 12px; line-height: 1.3; }
+.cp-file img, .cp-file > i { flex: none; width: 34px; height: 34px; border-radius: 6px; object-fit: cover; background: var(--surface-2); display: inline-flex; align-items: center; justify-content: center; color: var(--muted); }
+.cp-file-t { display: grid; min-width: 0; padding-right: 2px; }
+.cp-file-t b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px; }
+.cp-file-t small { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px; }
+.cp-file.reading small { animation: cp-pulse 1.2s ease-in-out infinite; }
+.cp-file.bad { border-color: var(--critical); }
+.cp-file.bad small { color: var(--critical); white-space: normal; }
+.cp-file .linkbtn { display: inline-flex; padding: 4px; border-radius: 6px; color: var(--muted); }
+.cp-file .linkbtn:hover { color: var(--ink); background: var(--surface-2); }
+@keyframes cp-pulse { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .cp-file.reading small { animation: none; } }
+.cp-me { white-space: pre-line; }
+.cp-me-files { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; white-space: normal; }
+.cp-me-files .cp-file { background: var(--surface); }
+.cp-me-files + span { display: block; }
+.cp-panel.cp-drop { outline: 2px dashed var(--accent); outline-offset: -6px; }
 @media (max-width: 560px) { .cp-panel { right: 8px; left: 8px; width: auto; top: 8px; bottom: 76px; } }
 /* "Nội bộ" stamp on staff screens (RULE-SEC-03) */
 .internal { display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--ink-2); margin: 0 0 12px; }
@@ -675,11 +697,16 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 @container (max-width: 600px) { .allocgrid { grid-template-columns: minmax(0, 1fr); } }  /* by the panel's width: half a row at 1280 is too narrow */
 .table td.r, .table th.r { white-space: nowrap; }
 @media (max-width: 560px) { .table td, .table th { padding: 8px 6px; } }
-.chatlog { display: grid; gap: 8px; align-content: start; max-height: 260px; min-height: 120px; overflow-y: auto; padding: 10px;
+.chatlog { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; align-content: start; max-height: 260px; min-height: 120px; overflow-y: auto; padding: 10px;
   background: var(--surface-2); border-radius: 12px; }
 .msg { padding: 8px 12px; border-radius: 12px; max-width: 88%; line-height: 1.45; font-size: 13.5px; }
-.msg.me { justify-self: end; background: var(--accent-soft); border-radius: 12px 12px 2px 12px; }
+.msg.me { justify-self: end; background: var(--accent-soft); border-radius: 12px 12px 2px 12px;
+  display: block; margin-left: 0; white-space: normal; font-size: 13.5px; }  /* not the header's .me (nowrap) */
 .msg.bot { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px 12px 12px 2px; }
+.dform { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--hair); border-radius: 10px; background: var(--surface-2); }
+.dform .dfield { display: grid; gap: 3px; }
+.dform :is(input, select) { min-height: 36px; }
+.dform .btn { justify-self: start; }
 #page button.chip { cursor: pointer; font: inherit; font-size: 12.5px; color: var(--ink); text-align: left; }
 .book .grouprow { cursor: pointer; background: var(--surface-2); }
 .book .grouprow:hover td { background: var(--surface-3); }
@@ -1378,6 +1405,7 @@ button.ws-tool { border: 0; background: none; cursor: pointer; font: inherit; }
 .cp-form { gap: 6px; padding: 8px 12px; }
 .cp-form input { padding: 6px 10px; font-size: 13px; }
 .cp-form .btn { padding: 6px 12px; font-size: 12.5px; }
+.cp-clip { width: 32px; }
 .cp-foot { padding: 0 12px 8px; font-size: 10.5px; line-height: 1.4; }
 .ws-tabs { padding: 4px 6px; }
 .ws-tabs [role="tab"] { padding: 5px 10px; font-size: 12.5px; font-weight: 600; }

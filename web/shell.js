@@ -13,7 +13,7 @@
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261026v1";
+import {mount as mountCopilot} from "./copilot.js?v=20261027v1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261025t3";
 import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261025t3";
@@ -310,7 +310,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261025t3`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261026d1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

@@ -11,12 +11,14 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
                     assistant_flow ──► an answer from the role's tools in several steps; writes wait for the person
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
                     · POST /api/assistant/memory ──► the Bộ nhớ page (A4) · 02:30 daily ──► assistant_retention
+                    · POST /api/assistant/attach ──► a file or image, read once (OCR_PLAN)
                     · every 5 min ──► assistant_consolidate (A6) · market and news jobs ──► follow-ups (A6)
 WS   /api/assistant/voice?rate= ──► assistant_voice_flow ──► the assistant by voice: microphone PCM in, captions,
                     the question and the answer read sentence by sentence out (docs/VOICE_PLAN.md)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
+POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
@@ -71,6 +73,7 @@ from assistant.graph import (
     assistant_consolidate_flow,
     assistant_conversations_flow,
     assistant_flow,
+    assistant_attach_flow,
     assistant_memory_flow,
     assistant_retention_flow,
     assistant_stream_flow,
@@ -88,7 +91,7 @@ from control.graph import (
 )
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
-from declare.graph import declare_flow
+from declare.graph import declare_flow, declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
 from feed.graph import feed_flow, feed_open_flow
 from flows.graph import flows_flow
@@ -240,6 +243,13 @@ APP = Application(
             "client_id}: the Bộ nhớ page (A4).",
         ),
         Service(
+            "assistant_attach",
+            http("POST", "/api/assistant/attach", port=PORT),
+            graph=assistant_attach_flow,
+            description="POST {file_name, data: base64, role, client_id}: a file or image for the assistant, read "
+            "once and kept 24 hours (docs/OCR_PLAN.md).",
+        ),
+        Service(
             "statement",
             http("POST", "/api/statement", port=PORT),
             graph=statement_flow,
@@ -250,6 +260,13 @@ APP = Application(
             http("POST", "/api/declare", port=PORT),
             graph=declare_flow,
             description="POST {client_id, message, session_id}: one chat turn of declarations.",
+        ),
+        Service(
+            "declare_stream",
+            http("POST", "/api/declare/stream", port=PORT),
+            graph=declare_stream_flow,
+            description="POST the same body as /api/declare, Accept: text/event-stream: the turn as it happens — "
+            "step, text, form (what the agent asks back), then the answer.",
         ),
         Service(
             "risk",

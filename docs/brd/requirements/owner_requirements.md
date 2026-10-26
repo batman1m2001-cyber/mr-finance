@@ -7,6 +7,23 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## DOC — Any document to the assistant (2026-10-26)
+
+Source: [`2026-10-26_documents_to_the_assistant.md`](../sources/owner_requests/2026-10-26_documents_to_the_assistant.md); plan
+[`docs/OCR_PLAN.md`](../../OCR_PLAN.md); decision
+[ADR-0041](../decisions/ADR-0041-the-assistant-takes-files-and-images.md); feature [FEAT-42](../features/FEAT-42-documents-in-the-assistant.md).
+Extends AS (FEAT-32) and statement reading (FEAT-22).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-DOC-01 | The assistant takes a file three ways — the paperclip (the camera on a phone), pasting into its box, dropping on the panel — images, statements and documents up to 5 MB, at most 3 a message; each a chip that says it is being read, then its kind | request 1, plan O-D1, O-D9 | documented |
+| OWN-DOC-02 | A photo or a scan of a document (statement, receipt, bill, asset description, loan) is read once, when attached, on the client model: its kind, institution, summary, fields, items in one shape and its text; that first reading is what is saved | request 1, plan O-D2, O-D3 | documented |
+| OWN-DOC-03 | Any question about any file is answered from its reading; the image itself is never sent again | request 2, plan O-D4 | documented |
+| OWN-DOC-04 | A file sent with no words routes itself: the assistant says what it is, with its key numbers, and offers the write that fits it, or Tài liệu | request 2, plan O-D5 | documented |
+| OWN-DOC-05 | What a file shows is saved only on Xác nhận, the confirm line listing every item and the total, once however often the file is attached, and read back before it is said done; or the file is kept in Tài liệu | request 1, plan O-D6 | documented |
+| OWN-DOC-06 | With no client model an image is refused with its reason (client data reaches only the client model); a text file is read by the rules and described | plan O-D7, BRD-NFR-08 | documented |
+| OWN-DOC-07 | A file and its reading are sealed at rest, belong to the person and the client they were attached for, and expire after 24 hours | plan O-D8 | documented |
+
 ## NO — The news sources and the collection figures (2026-10-25)
 
 Source: [`2026-10-25_news_ops.md`](../sources/owner_requests/2026-10-25_news_ops.md); plan

@@ -128,6 +128,24 @@ def _a_job(mp):
     return {"job": "audit_check"}
 
 
+RECEIPT = {  # a savings receipt and a gold slip, as the reader keeps them (OCR_PLAN O-D2)
+    "kind": "bien_lai", "title": "Biên lai gửi tiết kiệm", "institution": "Vietcombank",
+    "summary": "Gửi 500 triệu kỳ hạn 6 tháng.", "fields": {"Số tiền": "500.000.000 VND"}, "method": "ai",
+    "text": "BIÊN LAI GỬI TIỀN TIẾT KIỆM",
+    "items": [{"type": "deposit", "name": "Tiền gửi 6 tháng", "balance": 500_000_000, "rate": 0.052,
+               "maturity": "2027-04-15"}, {"type": "gold", "qty": 2.0}],
+}  # fmt: skip
+
+
+def _a_file(role, reading=RECEIPT, name="bien-lai.jpg"):
+    def setup(mp):
+        from assistant import attachments
+
+        return {"tep": attachments.put(ctx(role), name, b"\xff\xd8 a photo", reading)}
+
+    return setup
+
+
 SETUP = {  # write → (who asks, what must exist first → the model's arguments)
     "duyet_de_xuat": ("rm", _review_pending),
     "lay_tin": ("cio", _feeds),
@@ -144,6 +162,8 @@ SETUP = {  # write → (who asks, what must exist first → the model's argument
     "quen": ("client", _an_item),
     "theo_doi": ("client", lambda mp: {"series": "VNINDEX", "op": "below", "level": 1200}),
     "huy_theo_doi": ("client", _a_follow_up),
+    "them_tu_tep": ("client", _a_file("client")),
+    "luu_tai_lieu": ("rm", _a_file("rm")),
 }
 DELETES = ("quen",)  # writes whose effect is an absence
 BUSINESS = (
@@ -157,6 +177,8 @@ BUSINESS = (
     "challenges",
     "job_runs",
     "account_requests",
+    "holdings",
+    "profile",
 )
 
 
@@ -165,6 +187,7 @@ def fingerprint(path):
     the follow-ups)."""
     h = hashlib.sha256(_rows(path, BUSINESS).encode())
     h.update(_rows(path.with_name("assistant.db"), ("operonx_agents_memory", "follow_ups")).encode())
+    h.update(repr(sorted(str(p) for p in (path.with_name("kb") / "blobs").rglob("*"))).encode())  # Tài liệu
     return h.hexdigest()
 
 

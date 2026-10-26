@@ -26,3 +26,8 @@ mbs_C02.csv, hsc_note.txt).
 This is client data (BRD NFR-08). The `client_ai` setting decides where it may go (ADR-0023): `demo` (the public
 demo) sends the mock statement to the configured model when AI is on; `onprem` reads it with `llm:onprem`, the
 bank's own model; `off` reads it with the rules. `tests/test_barrier.py` proves it at the wire.
+
+## The assistant's door (2026-10-26)
+A statement can also be given to the assistant (FEAT-42): a table file goes through this same reader; a photo or a
+scanned PDF (text under 50 characters) is read by one vision call on the client model, and its holdings are saved by
+`save_holdings` behind Xác nhận (`them_tu_tep`). Before this, a scan gave no item.

@@ -47,6 +47,8 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "da_xem_canh_bao": ("Đang chuẩn bị đánh dấu cảnh báo để bạn xác nhận", "Đã xử lý cảnh báo"),
     "nho_lai": ("Đang xem những điều bạn nhờ ghi nhớ", "Đã xem bộ nhớ"),
     "ghi_nho": ("Đang chuẩn bị ghi nhớ để bạn xác nhận", "Đã xử lý việc ghi nhớ"),
+    "them_tu_tep": ("Đang chuẩn bị ghi các khoản của tệp để bạn xác nhận", "Đã xử lý việc ghi từ tệp"),
+    "luu_tai_lieu": ("Đang chuẩn bị lưu tệp vào Tài liệu để bạn xác nhận", "Đã xử lý việc lưu tệp"),
     "quen": ("Đang chuẩn bị quên một điều để bạn xác nhận", "Đã xử lý việc quên"),
     "tim_lich_su": ("Đang tìm trong các cuộc trò chuyện trước", "Đã tìm trong lịch sử"),
     "doc_lai_phien": ("Đang đọc lại các lượt trước", "Đã đọc lại các lượt trước"),

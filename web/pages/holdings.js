@@ -1,9 +1,10 @@
 /* Tài sản (SCR-CL-02): every holding and debt, and adding more (UI redesign R3; was the pre-redesign “sources”
    tab). A statement upload (PDF, Excel, CSV, or a sample) read by POST /api/statement (FEAT-22), a declaration chat
-   by POST /api/declare (FEAT-23), and the book: every holding grouped by asset class, with source and trust, when
+   streamed by POST /api/declare/stream (FEAT-23; the agent may ask back with a form or a choice), and the book: every holding grouped by asset class, with source and trust, when
    and at what it was bought, cost, value, and profit against cost (deposits: interest accrued to the price date).
-   The last read and the chat are kept for this browser tab, per client. */
-import {$, esc, get, n as how, pct, post, vnd} from "../core/core.js";
+   The last read and the chat are kept for this browser tab, per client; a turn that records something redraws the
+   book only, not the page. */
+import {$, esc, get, n as how, pct, post, stream, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 
 const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
@@ -92,10 +93,14 @@ const pnlCell = (pnl, ret, accrued, inputs = {}) => {
 
 export async function render(box, ctx) {
   const client = ctx.client(), scope = ctx.scope(), staff = ctx.role !== "client";
-  const [{dashboard: d}, {clients}] = await Promise.all([post("/api/dashboard", {client_id: client, scope}), get("/api/clients")]);
+  let [{dashboard: d}, {clients}] = await Promise.all([post("/api/dashboard", {client_id: client, scope}), get("/api/clients")]);
   const me = clients.find(c => c.id === client) || {};
   const closed = keep("mf.book.closed") || {};
   let chat = keep(`mf.chat.${client}`) || [], busy = false;
+  const fresh = async () => {  // the book and the totals, after a write: only they are drawn again
+    d = (await post("/api/dashboard", {client_id: client, scope})).dashboard;
+    drawBook();
+  };
 
   box.innerHTML = `
     <div class="pagehead"><div><div class="eyebrow">${staff ? "Tài sản" : "Wealth View"}</div><h1 class="h1">Dữ liệu chi tiết tài sản</h1>
@@ -124,7 +129,8 @@ export async function render(box, ctx) {
         for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
         const read = (await post("/api/statement", {client_id: client, filename: name, content: btoa(bin)})).read;
         keep(`mf.read.${client}`, read);
-        ctx.go(location.hash);  // the book and the totals change: draw the page again
+        drawUpload();
+        await fresh();
       } catch (e) {
         out.innerHTML = `<span class="down">Không đọc được tệp: ${esc(e.message)}</span>`;
       }
@@ -137,33 +143,72 @@ export async function render(box, ctx) {
     };
   };
 
+  const formHtml = (f, i) => f.fields.length === 1 && f.fields[0].kind === "choice"
+    ? `<div class="row tight mt">${f.fields[0].options.map(o => `<button type="button" class="chip" data-say="${esc(o)}">${esc(o)}</button>`).join("")}</div>`
+    : `<form class="dform mt" data-form="${i}">${f.title ? `<div class="small"><b>${esc(f.title)}</b></div>` : ""}
+        ${f.fields.map((x, k) => `<label class="dfield"><span class="small muted">${esc(x.label)}</span><span class="row tight" style="flex-wrap:nowrap">${x.kind === "choice"
+          ? `<select name="f${k}"><option value=""></option>${x.options.map(o => `<option>${esc(o)}</option>`).join("")}</select>`
+          : `<input name="f${k}" autocomplete="off" inputmode="${["number", "money", "year"].includes(x.kind) ? "decimal" : "text"}" style="flex:1;min-width:0">`}${x.unit ? `<span class="small muted">${esc(x.unit)}</span>` : ""}</span></label>`).join("")}
+        <button type="submit" class="btn primary sm">Gửi</button></form>`;
+  const botHtml = (m, i) => `${m.text ? esc(m.text).replace(/\n/g, "<br>") : m.live ? `<span class="muted">${esc(m.step || "Đang ghi nhận…")}</span>` : ""}
+    ${m.form && !m.sent && !m.live && m.form.fields.length ? formHtml(m.form, i) : ""}
+    ${m.method ? `<div class="small muted">${m.method === "ai" ? "Trợ lý AI" : "Đọc theo quy tắc"}${m.recorded ? ` · ghi ${m.recorded} mục` : ""}</div>` : ""}`;
+
   const drawChat = () => {
-    const lines = chat.map(m => (m.who === "me" ? `<div class="msg me" data-quote>${esc(m.text)}</div>`
-      : `<div class="msg bot"${m.method ? " data-quote" : ""}>${esc(m.text).replace(/\n/g, "<br>")}${m.method ? `<div class="small muted">${m.method === "ai" ? "Trợ lý AI" : "Đọc theo quy tắc"}${m.recorded ? ` · ghi ${m.recorded} mục` : ""}</div>` : ""}</div>`)).join("");
+    const lines = chat.map((m, i) => (m.who === "me" ? `<div class="msg me" data-quote>${esc(m.text)}</div>`
+      : `<div class="msg bot"${m.method ? " data-quote" : ""} data-m="${i}">${botHtml(m, i)}</div>`)).join("");
     $("#chat", box).innerHTML = `<h3><span class="ic-chip sm" style="--tone:var(--s4)">${icon("sparkles", {size: 13})}</span> Bổ sung tài sản <span class="hint">khai báo qua chat</span></h3>
-      <div class="chatlog" id="chat-log" aria-live="polite">${lines || `<div class="msg bot">Chào anh/chị, hãy kể những tài sản ngân hàng chưa thấy: nhà đất, vàng, cổ phần, khoản nợ, người phụ thuộc…</div>`}
-        ${busy ? `<div class="msg bot muted">Đang ghi nhận…</div>` : ""}</div>
+      <div class="chatlog" id="chat-log" aria-live="polite">${lines || `<div class="msg bot">Chào anh/chị, hãy kể những tài sản ngân hàng chưa thấy: nhà đất, vàng, cổ phần, khoản nợ, người phụ thuộc…</div>`}</div>
       <div class="row tight mt" data-quote>${EXAMPLES.map(t => `<button type="button" class="chip" data-say="${esc(t)}">${esc(t)}</button>`).join("")}</div>
       <form id="chat-form" class="row mt" style="flex-wrap:nowrap"><input id="chat-in" autocomplete="off" style="flex:1;min-width:0" placeholder="Ví dụ: Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ" aria-label="Tin nhắn">
         <button type="submit" class="btn primary">Gửi</button></form>`;
+    const log = $("#chat-log", box);
+    const bubble = (i) => {  // one reply drawn again as its words arrive; the rest of the panel is left alone
+      const el = log.querySelector(`[data-m="${i}"]`);
+      if (el) el.innerHTML = botHtml(chat[i], i);
+      log.scrollTop = log.scrollHeight;
+    };
     const say = async (text) => {
       text = (text || "").trim();
       if (!text || busy) return;
+      for (const m of chat) if (m.form) m.sent = true;  // a new message answers (or passes on) what was asked
       chat.push({who: "me", text});
+      const i = chat.push({who: "bot", text: "", live: true}) - 1, m = chat[i];
       busy = true; drawChat();
+      let wrote = 0;
       try {
-        const turn = (await post("/api/declare", {client_id: client, message: text, session_id: `${client}-web`})).turn;
-        chat.push({who: "bot", text: turn.reply, method: turn.method, recorded: turn.recorded.length});
+        await stream("/api/declare/stream", {client_id: client, message: text, session_id: `${client}-web`}, (ev) => {
+          if (ev.type === "text") m.text += ev.text;
+          else if (ev.type === "step" && ev.phase === "start") m.step = ev.label;
+          else if (ev.type === "form") m.form = ev.form;
+          else if (ev.type === "answer") {
+            Object.assign(m, {text: ev.turn.reply, method: ev.turn.method, recorded: ev.turn.recorded.length});
+            wrote = ev.turn.recorded.length;
+          } else if (ev.type === "error") m.text = "Xin lỗi, có lỗi khi ghi nhận: " + ev.text;
+          else return;
+          bubble(i);
+        });
       } catch (e) {
-        chat.push({who: "bot", text: "Xin lỗi, có lỗi khi ghi nhận: " + e.message});
+        m.text = "Xin lỗi, có lỗi khi ghi nhận: " + e.message;
       }
+      if (!m.text) m.text = "Xin lỗi, em chưa nhận được trả lời. Anh/chị thử lại giúp em nhé.";
+      delete m.live; delete m.step;
       busy = false;
       keep(`mf.chat.${client}`, chat);
-      ctx.go(location.hash);  // a declaration adds holdings: draw the page again
+      drawChat();
+      $("#chat-in", box)?.focus({preventScroll: true});
+      if (wrote) await fresh();
     };
-    for (const b of box.querySelectorAll("[data-say]")) b.onclick = () => say(b.dataset.say);
+    for (const b of box.querySelectorAll("#chat [data-say]")) b.onclick = () => say(b.dataset.say);
+    for (const f of box.querySelectorAll("#chat [data-form]")) f.onsubmit = (e) => {
+      e.preventDefault();
+      const form = chat[+f.dataset.form].form;
+      const said = form.fields.map((x, k) => [x, (f.elements[`f${k}`].value || "").trim()]).filter(([, v]) => v)
+        .map(([x, v]) => `${x.label}: ${v}${x.unit && x.kind !== "choice" ? " " + x.unit : ""}`).join("; ");
+      if (said) say(form.title ? `${form.title} — ${said}` : said);
+    };
     $("#chat-form", box).onsubmit = (e) => { e.preventDefault(); const i = $("#chat-in", box); const t = i.value; i.value = ""; say(t); };
-    const log = $("#chat-log", box); log.scrollTop = log.scrollHeight;
+    log.scrollTop = log.scrollHeight;
   };
 
   const drawBook = () => {

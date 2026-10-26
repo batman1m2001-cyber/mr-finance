@@ -11,7 +11,7 @@ from typing import Dict
 from operonx.core.loggings import LOGGER
 
 from assistant import conversations as conv
-from assistant import memory
+from assistant import attachments, memory
 from control import audit, config, db
 
 DAY = 86400.0
@@ -33,7 +33,7 @@ async def sweep(now: float = None) -> Dict[str, int]:
             turns += conv.erase(con, cid)
         con.execute("commit")
     items = await memory.store().purge(now)
-    out = {"conversations": len(old), "turns": turns, "memory_items": items}
+    out = {"conversations": len(old), "turns": turns, "memory_items": items, "attachments": attachments.sweep(now)}
     if any(out.values()):
         conv.scrub()
     with db.tx() as c:

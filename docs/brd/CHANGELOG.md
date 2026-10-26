@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-26 — Bổ sung tài sản streams its reply (`/api/declare/stream`), no longer reloads the page, answers in one or two human sentences and asks back at most one question or one form a turn; details given later fill in the same item; a long message wraps in its bubble (the header's `.me` kept it on one line) — FEAT-23.
+- 2026-10-26 — A scanned PDF is read to its 10th page (was 3); a longer scan's summary says "Đọc 10/N trang đầu.".
+  12-page scan: pages 1–10 in one call, 10 s, US$0.0024. — FEAT-42, huong-dan/chung, docs/OCR_PLAN.md
+- 2026-10-26 — Any document to the assistant (owner): paste, attach or photograph a statement, receipt, bill or
+  asset description; read once on the client model, a file alone routes itself, saved behind Xác nhận with every
+  item and the total. Gate: 5/5 roughened documents read as written (US$0.0034), four screens. — ADR-0041, FEAT-42,
+  owner_requirements DOC, requirements_traceability §5, FEAT-22, FEAT-32, huong-dan/chung, docs/OCR_PLAN.md
 - 2026-10-25 — Business feedback 7 (owner): the RM's desk is Tổng quan (“Khách hàng đang quản lý”, the net worth
   coloured), no Hôm nay (contact log in Thông tin), the client picker inside the Khách hàng and Advisory performance
   sheets, no “Nội bộ” on the RM's sheets (BRD-RULE-SEC-03 narrowed). — OWN-FB-19…25, business_rules, FEAT-13,
