@@ -526,6 +526,37 @@ details.more > summary::before { content: "▸ "; } details.more[open] > summary
 .cp-form { display: flex; gap: 8px; padding: 10px 14px; }
 .cp-form input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--axis); border-radius: 9px; background: var(--surface); color: var(--ink); font: inherit; }
 .cp-foot { padding: 0 14px 10px; }
+/* talking (docs/VOICE_PLAN.md): the mic beside “Gửi”, and the bar that says what the voice is doing, in large type
+   (read from arm's length, by older eyes); the orb grows with the speaker's loudness (--lvl, 0–1) while listening,
+   breathes while thinking, and pulses while reading the answer */
+.cp-mic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 36px; padding: 0;
+  border: 1px solid var(--axis); border-radius: 9px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.cp-mic:hover { border-color: var(--accent); color: var(--accent); }
+.cp-mic:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cp-mic[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.cp-voice { --lvl: 0; display: flex; gap: 14px; align-items: center; margin: 8px 14px 0; padding: 12px 14px;
+  border: 1px solid var(--accent); border-radius: 14px; background: var(--accent-soft); overflow: hidden; }
+.cp-voice[hidden], .cp-vwhy[hidden] { display: none; }
+.cp-orb { flex: none; position: relative; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px;
+  border-radius: 50%; background: var(--accent); color: var(--accent-ink); }
+.cp-orb::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--accent); opacity: .28; z-index: -1;
+  transform: scale(calc(1 + var(--lvl) * .5)); transition: transform 90ms linear; }
+.cp-orb { isolation: isolate; }
+.cp-voice[data-vs="connecting"] .cp-orb { opacity: .6; }
+.cp-voice[data-vs="thinking"] .cp-orb::before { animation: mf-breathe 1.6s ease-in-out infinite; }
+.cp-voice[data-vs="speaking"] .cp-orb::before { animation: mf-ripple 1.4s ease-out infinite; }
+.cp-voice-t { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.cp-voice-t b { font-size: 17px; line-height: 1.3; }
+.cp-cap { font-size: 16px; line-height: 1.45; color: var(--ink-2); overflow-wrap: anywhere; }
+.cp-cap:empty { display: none; }
+.cp-voice .btn { flex: none; font-size: 15px; padding: 8px 14px; }
+.cp-vwhy { margin: 8px 14px 0; padding: 8px 12px; border-radius: 10px; background: var(--warning-soft); color: var(--ink); }
+.cp-said { display: flex; gap: 6px; align-items: baseline; }
+.cp-said-i { flex: none; display: inline-flex; color: var(--accent); vertical-align: -2px; }
+@keyframes mf-ripple { 0% { transform: scale(1); opacity: .45; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes mf-breathe { 0%, 100% { transform: scale(1); opacity: .2; } 50% { transform: scale(1.3); opacity: .4; } }
+@media (prefers-reduced-motion: reduce) { .cp-orb::before { animation: none !important; transition: none; } }
+@media (max-width: 560px) { .cp-voice { margin: 6px 10px 0; padding: 10px 12px; gap: 12px; } .cp-voice-t b { font-size: 16px; } }
 @media (max-width: 560px) { .cp-panel { right: 8px; left: 8px; width: auto; top: 8px; bottom: 76px; } }
 /* "Nội bộ" stamp on staff screens (RULE-SEC-03) */
 .internal { display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--ink-2); margin: 0 0 12px; }

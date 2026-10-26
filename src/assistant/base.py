@@ -46,6 +46,7 @@ class Ctx:
     graph: Dict[str, Any] = field(default_factory=dict)  # the workspace: lens, what is picked, active scenarios (F10)
     queries: int = 0  # truy_van calls in this request (ADR-0040: at most three a turn)
     recount: bool = False  # the person disputes a number of the last answer: this turn counts again (§3.5)
+    voice: bool = False  # asked by voice, the answer read aloud (docs/VOICE_PLAN.md V-D8): short, no tables
 
 
 @dataclass

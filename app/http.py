@@ -3,8 +3,8 @@ cross-site write refused. Registered as operonx middleware in app/main.py, so it
 graph services (``POST /api/dashboard`` …), the web app and ``/healthz`` alike.
 
 - **Headers:** a Content-Security-Policy that lets the page run only its own scripts (the one inline script, the
-  theme, by its hash) and be framed by nobody; ``nosniff``; no referrer; no camera, microphone or location;
-  same-origin opener and resources; HSTS when the request came over HTTPS (the host's TLS — ngrok on the demo).
+  theme, by its hash) and be framed by nobody; ``nosniff``; no referrer; no camera or location, the microphone for
+  this site only (the assistant's voice); same-origin opener and resources; HSTS when the request came over HTTPS (the host's TLS — ngrok on the demo).
 - **Client data is not cached:** ``Cache-Control: no-store`` on every ``/api/`` answer that did not set its own.
 - **No cross-site writes:** a POST, PUT, PATCH or DELETE whose ``Origin`` is another site is refused (403) before
   it reaches the app. The session cookie is ``SameSite=Lax`` already; this holds even for a browser that ignores it.
@@ -51,7 +51,7 @@ HEADERS = [
     (b"x-content-type-options", b"nosniff"),
     (b"x-frame-options", b"DENY"),
     (b"referrer-policy", b"no-referrer"),
-    (b"permissions-policy", b"camera=(), microphone=(), geolocation=(), payment=()"),
+    (b"permissions-policy", b"camera=(), microphone=(self), geolocation=(), payment=()"),
     (b"cross-origin-opener-policy", b"same-origin"),
     (b"cross-origin-resource-policy", b"same-origin"),
 ]

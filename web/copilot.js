@@ -23,9 +23,10 @@
    words, a write waiting) shows in the panel as it happens and goes to onEvent, which the graph draws (OWN-GW-06…10);
    a stream that breaks is said, never papered over. */
 import {$, esc, followedIds, post, stream, workspaceContext} from "./core/core.js";
-import {icon} from "./core/icons.js?v=20261017s1";
+import {icon} from "./core/icons.js?v=20261026v1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
+import {voice} from "./voice.js?v=20261026v1";
 
 const DESK = new Set(["cio", "admin"]);  // A7: the panel links to the Agent page's map
 const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", admin: "Quản trị"};
@@ -143,7 +144,12 @@ export function mount() {
     <div class="cp-ctx small muted" id="cp-ctx"></div>
     <div class="cp-msgs" id="cp-msgs" aria-live="polite"></div>
     <div class="cp-sugg" id="cp-sugg"></div>
+    <div class="cp-voice" id="cp-voice" hidden data-vs="off"><span class="cp-orb" id="cp-orb" aria-hidden="true">${icon("mic", {size: 22})}</span>
+      <div class="cp-voice-t"><b id="cp-vs" aria-live="polite"></b><span class="cp-cap" id="cp-cap"></span></div>
+      <button type="button" class="btn sm ghostbtn" id="cp-vstop" hidden>Dừng</button></div>
+    <div class="cp-vwhy small" id="cp-vwhy" hidden></div>
     <form class="cp-form" id="cp-form"><input id="cp-q" autocomplete="off" maxlength="2000" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
+      <button type="button" class="cp-mic" id="cp-mic" aria-pressed="false" title="Nói với trợ lý">${icon("mic", {size: 20})}<span class="sr-only">Nói với trợ lý</span></button>
       <button type="submit" class="btn sm">Gửi</button></form>
     <div class="cp-foot small muted" id="cp-foot">Trợ lý chỉ dùng các chức năng sẵn có của ứng dụng; việc ghi luôn chờ bạn xác nhận. Không phải khuyến nghị đầu tư.</div>`;
   document.body.append(panel);
@@ -196,7 +202,7 @@ export function mount() {
     if (listing) { drawList(box); box.scrollTop = 0; return; }
     const fresh = (i) => (i >= shown ? " cp-in" : "");
     box.innerHTML = msgs.length ? msgs.map((m, i) => m.me
-      ? `<div class="cp-me${fresh(i)}">${esc(m.text)}</div>`
+      ? `<div class="cp-me${m.voice ? " cp-said" : ""}${fresh(i)}">${m.voice ? `<i class="cp-said-i" title="Câu hỏi bằng giọng nói">${icon("mic", {size: 14})}</i>` : ""}${esc(m.text)}</div>`
       : m.status === "running"  // a turn still answering on the server (the page was reloaded): what has run so far
       ? `<div class="cp-bot cp-think" data-running><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Vẫn đang trả lời…${(m.steps || []).length ? `<div class="cp-steps small">${m.steps.map(x => `<span class="chip ${x.status === "ok" ? "" : "bad"}">${esc(x.label || x.tool)} ${STEP[x.status] || ""}</span>`).join(" ")}</div>` : ""}</div>`
       : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${m.mode === "model" ? prose(m.text) : esc(m.text)}
@@ -258,10 +264,11 @@ export function mount() {
         if (e.type === "step" && e.phase === "start") {
           const name = e.label || "một chức năng";  // a server without the sentences: the step's panel name
           run.text = "";
+          if (body.voice) vc.drop();
           run.steps.push({id: e.call_id, st: "run", at: performance.now(), run: e.doing || `Đang dùng: ${name}`, ok: e.done || name, bad: e.failed || `Không thực hiện được: ${name}`});
         }
         else if (e.type === "step" && e.phase === "end") { const x = run.steps.find(s => s.id === e.call_id && s.st === "run"); if (x) { x.st = e.ok ? "ok" : "bad"; x.ms = e.ms; } }
-        else if (e.type === "text") run.text += e.text;
+        else if (e.type === "text") { run.text += e.text; if (body.voice) vc.say(e.text); }
         else if (e.type === "wait") run.waiting = true;
         else if (e.type === "answer") answer = e.assistant;
         else if (e.type === "error") broke = e.text;
@@ -304,6 +311,7 @@ export function mount() {
       }
     } catch (e) { m = {status: "failed", text: docked && live ? e.message : `Không gọi được trợ lý: ${e.message}`}; }
     busy = false;
+    if (body.voice) vc.end(m.text);  // the rest of the answer, or all of it when no words streamed
     mode(m);
     msgs.push(m);
     setState(FOR[m.status] || "error");
@@ -311,12 +319,35 @@ export function mount() {
     else m.here = show(m) > 0;  // on this page: mark it now, and keep a button to mark it again
     draw(); sugg(m.suggest);
   };
-  const send = (q) => {
+  // spoken: the question came from the microphone; the answer is then written for listening (V-D8) and read aloud
+  const send = (q, spoken = false) => {
     q = String(q || "").trim();
-    if (!q || busy) return;
-    msgs.push({me: true, text: q}); $("#cp-q", panel).value = "";
-    call({message: q});
+    if (!q || busy) return false;
+    msgs.push({me: true, text: q, voice: spoken}); $("#cp-q", panel).value = "";
+    call(spoken ? {message: q, voice: true} : {message: q});
+    return true;
   };
+
+  // talking (docs/VOICE_PLAN.md): the bar above the form says what the voice is doing, in words large enough to
+  // read from arm's length; the caption is what was heard, then the sentence being read
+  const VS = {connecting: "Đang mở micro…", listening: "Mời bạn nói…", thinking: "Đang tìm câu trả lời…", speaking: "Đang đọc câu trả lời"};
+  const bar = $("#cp-voice", panel), cap = $("#cp-cap", panel), why = $("#cp-vwhy", panel);
+  const vc = voice({
+    onState(st, reason) {
+      bar.hidden = st === "off"; bar.dataset.vs = st;
+      $("#cp-vs", panel).textContent = VS[st] || "";
+      $("#cp-vstop", panel).hidden = st !== "speaking";
+      $("#cp-mic", panel).setAttribute("aria-pressed", String(st !== "off"));
+      if (st === "listening" || st === "off") { cap.textContent = ""; bar.style.setProperty("--lvl", 0); }
+      why.hidden = !reason; why.textContent = reason || "";
+    },
+    onHeard(text) { cap.textContent = `${cap.textContent} ${text}`.trim(); },
+    onAsked(text) { cap.textContent = ""; return send(text, true); },
+    onSpeak(text) { if (text) cap.textContent = text; },
+    onLevel(level) { bar.style.setProperty("--lvl", Math.min(1, level * 8).toFixed(2)); },
+  });
+  $("#cp-mic", panel).onclick = () => { why.hidden = true; if (vc.active()) vc.close(); else vc.start(); };
+  $("#cp-vstop", panel).onclick = () => vc.stop();
   const answers = (m, v) => Object.fromEntries(m.waits.map(w => [w.id, v]));
   const confirmIt = (i) => {
     const m = msgs[i]; m.done = true; msgs.push({me: true, text: "Xác nhận"});
@@ -536,6 +567,7 @@ export function mount() {
     undock() {
       if (!docked) return;
       docked = false; live = null;
+      vc.close();
       panel.classList.remove("cp-docked");
       document.body.appendChild(panel);
       panel.hidden = true;

@@ -136,7 +136,7 @@ Quy tắc:
   vai trò đó ở phiên này.
 - Phần đầu cuộc trò chuyện có thể đã được tóm tắt: hỏi về một lượt cũ (câu đầu tiên, con số lúc đó) mà bản tóm tắt
   không ghi rõ thì gọi doc_lai_phien để đọc lại, không đoán.
-Hôm nay: {today}. Đang ở trang: {page}.{graph}{remembered}{recount}"""
+Hôm nay: {today}. Đang ở trang: {page}.{graph}{remembered}{recount}{voice}"""
 FACTS_MODEL = (
     "Mọi con số, tên, ngày phải lấy từ kết quả công cụ hoặc từ lời người dùng. Cần cộng, trừ, nhân, chia, phần "
     "trăm, lãi kép thì gọi công cụ tinh, không tính nhẩm, và ghi công thức để người dùng kiểm lại. "
@@ -166,6 +166,15 @@ RECOUNT = (
     "\nLượt này người dùng nêu một con số khác với câu trả lời trước: gọi truy_van đếm lại ngay trong lượt này rồi "
     "mới trả lời, không dùng lại kết quả của lượt trước. Câu trả lời chỉ gồm bảng đã đếm, điều kiện và con số vừa đếm; "
     "không đoán vì sao con số của người dùng khác (không viết “có thể bạn…”, “có thể do…”)."
+)
+# A spoken turn (docs/VOICE_PLAN.md V-D8): the answer is read aloud, sentence by sentence, to a listener who may be
+# older; the screen still shows the whole answer and its sources. Typed turns get "" here, so their prompt is unchanged.
+VOICE = (
+    "\nLượt này người dùng hỏi bằng giọng nói và câu trả lời sẽ được đọc thành tiếng: trả lời 2–3 câu ngắn, câu đầu là "
+    "điều quan trọng nhất (con số chính trước). Làm tròn số cho dễ nghe (“khoảng 7,5 tỷ đồng”). Không dùng bảng, danh "
+    "sách, tiêu đề, ký hiệu hay công thức; nói ngày số liệu gọn trong một cụm. Phần chi tiết thì nói “chi tiết trên "
+    "màn hình”. Câu hỏi chưa rõ (khách nào, khoản nào, khoảng thời gian nào) thì hỏi lại đúng một câu ngắn để xác nhận. "
+    "Việc ghi vẫn chờ người dùng bấm Xác nhận trên màn hình: nói ngắn là đã hiện nút xác nhận."
 )
 NUMBER = re.compile(r"\d(?:[\d.,]*\d)?")
 RECOUNTING: ContextVar[bool] = ContextVar("assistant_recounting", default=False)
@@ -259,6 +268,7 @@ def instructions(rctx: RunContext) -> str:
         if ctx.reads and ctx.remembered
         else "",
         recount=RECOUNT if ctx.recount else "",
+        voice=VOICE if ctx.voice else "",
     )
 
 

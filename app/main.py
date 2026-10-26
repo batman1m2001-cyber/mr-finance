@@ -12,6 +12,8 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
                     · POST /api/assistant/memory ──► the Bộ nhớ page (A4) · 02:30 daily ──► assistant_retention
                     · every 5 min ──► assistant_consolidate (A6) · market and news jobs ──► follow-ups (A6)
+WS   /api/assistant/voice?rate= ──► assistant_voice_flow ──► the assistant by voice: microphone PCM in, captions,
+                    the question and the answer read sentence by sentence out (docs/VOICE_PLAN.md)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
@@ -57,7 +59,7 @@ declared here; operonx.toml only points at `APP`.
 
 import os
 
-from operonx.app import Application, Eval, Service, asgi, env, http
+from operonx.app import Application, Eval, Service, asgi, env, http, websocket
 from operonx.app import schedule as _schedule
 from operonx.app.evals import Gate
 from operonx.app.jobs import Job
@@ -122,6 +124,7 @@ from statements.graph import sample_flow, statement_flow
 from timeline.graph import timeline_flow
 from trial.graph import trial_daily_flow, trial_score_flow
 from views.graph import agent_eval_flow, agent_queue_flow, agent_worker_flow, decide_flow
+from voice.graph import assistant_voice_flow
 from zone.graph import zone_sync_flow
 
 barrier.install()  # every llm: call of this process passes the client-data barrier (BRD-NFR-08)
@@ -447,6 +450,14 @@ APP = Application(
             http("POST", "/api/jobs/run", port=PORT),
             graph=job_run_flow,
             description="POST {job, by}: Admin runs a background job now (control/jobs.py RUNNABLE); one at a time.",
+        ),
+        Service(
+            "assistant_voice",
+            websocket("/api/assistant/voice", port=PORT),
+            graph=assistant_voice_flow,
+            max_inflight=4000,
+            description="WS ?rate=&silence_ms=: microphone PCM (int16) in; heard, asked, and the answer's sentences "
+            "as WAVs out, from the panel's say frames (the callbot's VAD, STT, TTS).",
         ),
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
     ],

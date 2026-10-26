@@ -48,3 +48,43 @@ llm:onprem:
   api_key: ${LLM_ONPREM_API_KEY:not-set}
   base_url: ${LLM_ONPREM_BASE_URL:http://localhost:8000/v1}
   model: ${LLM_ONPREM_MODEL:not-set}
+
+# Used by: the assistant's voice (src/voice, docs/VOICE_PLAN.md). The callbot's two speech services
+# (educa-reminder-agent/resources.yaml, copied 2026-10-26), same endpoints and keys.
+# ZipVoice TTS: one sentence → a 16-bit mono WAV at `sample_rate`. 24 kHz, not the callbot's 8 kHz: a browser plays
+# it, and it measured real wideband at the same synthesis time. `speaker_id`/`style_id`: the callbot's voice
+# (GET /speakers on the same host); speed 1.0, not the server's 1.2, for older listeners (VOICE_PLAN V-D5).
+http:tts:
+  url: ${TTS_API_URL:http://192.168.1.212:8086/tts}
+  api_key: ${TTS_API_KEY}
+  api_key_header: X-API-Key
+  timeout_s: ${TTS_REQUEST_TIMEOUT_S:30.0}
+  options:
+    speaker_id: 4
+    style_id: 1
+    speed: 1.0
+    sample_rate: 24000
+
+# KServe v2 REST gateway in front of the FastConformer model. Audio in: float32 normalised to ±1.0 at 16 kHz.
+# The embedding output is the callbot's speech-vs-noise gate's; the voice does not read it.
+http:stt:
+  url: ${STT_API_URL:https://stt.edupia.com.vn:8010}
+  api_key: ${STT_API_KEY}
+  api_key_header: X-API-Key
+  timeout_s: ${STT_REQUEST_TIMEOUT_S:30.0}
+  verify_ssl: ${STT_VERIFY_SSL:true}
+  options:
+    model: ${STT_MODEL:fastconformer_asr}
+    version: ${STT_VERSION:}
+    audio_input_name: ${STT_AUDIO_INPUT_NAME:AUDIO_SIGNAL}
+    output_text_name: ${STT_OUTPUT_TEXT_NAME:TRANSCRIPT}
+    output_emb_name: ${STT_OUTPUT_EMB_NAME:EMBEDDING}
+    need_embedding: false
+
+# The voice's VAD (src/voice/_vad.py, the callbot's silero + preprocessing): one thread for every open microphone
+# (the callbot's measure: ~8 live streams per thread before frames queue).
+audio_worker:default:
+  n_workers: 1
+  inbound_maxsize: 4000
+  use_preprocess: true
+  vad_model: models/silero_vad.onnx

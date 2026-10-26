@@ -91,7 +91,7 @@ def graph_of(g: Any) -> Dict[str, Any]:
 
 
 def request_of(message=None, role=None, client_id=None, scope=None, route=None, goals=None, turn_id=None,
-               approvals=None, conversation_id=None, graph=None) -> dict:  # fmt: skip
+               approvals=None, conversation_id=None, graph=None, voice=None) -> dict:  # fmt: skip
     message = str(message or "").strip()
     if len(message) > 2000:
         raise ValueError("Câu hỏi dài quá 2.000 ký tự")
@@ -111,6 +111,7 @@ def request_of(message=None, role=None, client_id=None, scope=None, route=None, 
         "approvals": answers,
         "conversation_id": str(conversation_id or "") or None,
         "graph": graph_of(graph),
+        "voice": voice is True,
     }
 
 
@@ -133,6 +134,7 @@ def context(r: Dict[str, Any]) -> Ctx:
         reads=turns.model_reads(),
         route=r["route"],
         graph=r.get("graph") or {},
+        voice=bool(r.get("voice")),
     )
 
 
@@ -356,7 +358,8 @@ def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     return out
 
 
-FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id", "graph")
+FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id", "graph",
+          "voice")
 
 
 @op

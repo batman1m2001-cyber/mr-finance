@@ -11,6 +11,9 @@ dependencies = [
     "openpyxl>=3.1.5",
     "cryptography>=43",
     "operonx-kb[pdf]>=0.2.6",
+    "onnxruntime>=1.17",  # voice: Silero VAD (src/voice/_vad.py)
+    "soxr>=0.3",  # voice: the browser rate to 16 kHz
+    "scipy>=1.11",  # voice: VAD filters, reading the TTS WAV
 ]
 
 [project.optional-dependencies]
