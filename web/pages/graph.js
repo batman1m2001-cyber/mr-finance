@@ -1,7 +1,7 @@
 /* Đồ thị tác động (redesign kit K3): news → event → scenario → factor → asset → family → goal for one family,
    drawn in columns from GET /api/families/{id}/graph. Every edge shows the stored records it came from. Click
    (or Enter on) a node to light its path and read its details; the list view is the same graph as a table. */
-import {internal, $, empty, esc, get, n as how, pct, signClass, vnd} from "../core/core.js";
+import {internal, $, empty, esc, get, n as how, pct, signClass, t as tr, vnd} from "../core/core.js";
 import {hover} from "../charts/charts.js";
 
 const COLOR = {news: "var(--s7)", event: "var(--s1)", branch: "var(--s4)", factor: "var(--s5)", asset: "var(--s2)",
@@ -194,7 +194,8 @@ export async function render(box, ctx) {
         "stroke-width": state.sel === n.id ? 2.5 : 1.5}, grp);
       const t = mk("text", {x: q.x + 9, y: q.y + 18, class: "lbl"}, grp);
       const max = Math.floor((nodeW - 16) / 7);
-      t.textContent = n.label.length > max ? n.label.slice(0, max - 1) + "…" : n.label;
+      const name = tr(n.label);  // cut in the viewer's language
+      t.textContent = name.length > max ? name.slice(0, max - 1) + "…" : name;
       // headlines are the outlets' words; a branch's label carries its probability, explained in the node's panel
       if (["news", "event"].includes(n.kind)) t.setAttribute("data-quote", "");
       if (n.kind === "branch") t.setAttribute("data-explains", "");

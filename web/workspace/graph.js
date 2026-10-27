@@ -7,7 +7,7 @@
    end(id, ok, keys) when it ends, light(keys) when an answer names them, keep(keys) when it completes, reset() on the
    next question; writing() while text streams. Motion is transform and opacity only; pulses are Web Animations tracked by
    motion.js (OWN-GW-16…19). */
-import {n as how, esc, pct, signClass, vnd} from "../core/core.js";
+import {DECIMAL, n as how, esc, pct, signClass, t as tr, vnd} from "../core/core.js";
 import {CLASS_ICON, iconPaths} from "../core/icons.js?v=20261016r1";
 import {hover} from "../charts/charts.js";
 import {reduced, track} from "../motion.js?v=20261016r1";
@@ -49,6 +49,7 @@ const mk = (tag, attrs, parent) => {
 // a label that is too long keeps its first clause when that fits (“Tập trung Đất nền Long Thành, Đồng Nai” → “… Long
 // Thành”), else whole words and “…”; never half a word. The tooltip and the inspector keep the full name.
 const short = (s, k) => {
+  s = tr(s);  // cut in the viewer's language
   if (s.length <= k) return s;
   const clause = s.split(/\s*(?:[,(;:]|\s[–-]\s)/)[0].trim();
   if (clause.length >= 8 && clause.length <= k) return clause;
@@ -79,7 +80,7 @@ export function howOf(n) {
 }
 export const figureOf = (n) => (n.kind === "group" ? (n.value == null ? "" : ["event", "alert"].includes(n.of) ? vnd(n.value, true) : vnd(Math.abs(n.value)))
   : n.kind === "goal" ? `cần ${vnd(n.need)} · ${n.status_label}` : n.kind === "source" ? `${n.count} khoản`
-  : n.kind === "liquidity" ? `${vnd(n.value)}${n.months != null ? ` · ${String(n.months).replace(".", ",")} tháng` : ""}`
+  : n.kind === "liquidity" ? `${vnd(n.value)}${n.months != null ? ` · ${String(n.months).replace(".", DECIMAL)} tháng` : ""}`
     : n.kind === "scenario" ? (n.value == null ? "giả định · chưa bật" : `nếu xảy ra ${vnd(n.value, true)}`)
       : n.value == null ? "" : ["event", "alert"].includes(n.kind) ? vnd(n.value, true) : vnd(Math.abs(n.value)));
 export const srcText = (e) => [...new Set((e.sources || []).map(s => SRC[s.type] || s.type))].join(", ") + ` · ${(e.sources || []).length} bản ghi`;
@@ -260,7 +261,7 @@ export function createGraph(host, {onSelect, staffLabel} = {}) {
   }
   function labelAt(n, where, r) {
     const max = narrow ? 22 : isKid(n) ? 20 : 28;
-    const text = short(n.label, max), {name, fig: fpx, line} = sizes;
+    const text = short(tr(n.label), max), {name, fig: fpx, line} = sizes;  // English before it wraps
     const fig = n.kind === "source" || isKid(n) ? "" : n.kind === "goal"
       ? `cần ${vnd(n.need)}${n.status && n.status !== "on_track" ? ` · ${n.status_label}` : ""}` : figureOf(n);
     const lines = wrap(text, name, where === "above" || where === "below" ? (narrow ? 11 : 14) : narrow ? 12 : 16);

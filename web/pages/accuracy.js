@@ -2,7 +2,7 @@
    the forecast P10–P90 band, and how often the direction was right — the model walked forward over the stored
    history, and every approved view's own forecasts as their horizons pass (scored by the 18:30 job).
    GET /api/accuracy. */
-import {esc, get, n as how, pct} from "../core/core.js";
+import {LOCALE, esc, get, n as how, pct} from "../core/core.js";
 
 const H = [["1w", "1 tuần"], ["3m", "3 tháng"], ["12m", "12 tháng"]];
 const HL = Object.fromEntries(H);
@@ -96,7 +96,7 @@ function viewsTable(vh, accept, min, target) {
 
 function recorded(list) {
   if (!list || !list.length) return "";
-  const fmt = (x) => x == null ? "—" : (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toLocaleString("vi-VN", {maximumFractionDigits: 1});
+  const fmt = (x) => x == null ? "—" : (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toLocaleString(LOCALE, {maximumFractionDigits: 1});
   return `<h3 class="mt">VN-Index trong từng nhận định <span class="hint">dự báo và kết quả, % · ${HL[horizon]}</span></h3>
     <div class="scrollx"><table class="table"><thead><tr><th>Nhận định</th><th>Ngày duyệt</th><th>Hạn</th><th class="num">Kỳ vọng</th><th class="num">P10 … P90</th><th class="num">Thực tế</th><th>Kết quả</th></tr></thead><tbody>
     ${list.map(v => {

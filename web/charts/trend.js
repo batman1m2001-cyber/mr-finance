@@ -2,7 +2,7 @@
    over the scoring days — precision and recall, the simulated VND by group (view B). One axis; a 2px surface gap
    between stacked fills; 4px rounded data-ends; 2px lines with 8px markers; a legend beside, never colour alone; a
    tooltip on every column and point (charts.js::hover). The tables under each chart are its table view. */
-import {esc} from "../core/core.js";
+import {LOCALE, esc} from "../core/core.js";
 import {hover} from "./charts.js";
 
 const NS = "http://www.w3.org/2000/svg";
@@ -41,7 +41,7 @@ export function stack(days, cats, width) {
   const grid = svg("g", {class: "grid"}, s);
   for (let v = step; v <= top + 1e-9; v += step) {
     svg("line", {x1: L, x2: W - R, y1: y(v), y2: y(v)}, grid);
-    svg("text", {x: L - 6, y: y(v) + 4, "text-anchor": "end", class: "lbl"}, s).textContent = v.toLocaleString("vi-VN");
+    svg("text", {x: L - 6, y: y(v) + 4, "text-anchor": "end", class: "lbl"}, s).textContent = v.toLocaleString(LOCALE);
   }
   svg("line", {x1: L, x2: W - R, y1: y(0), y2: y(0), class: "base"}, s);
   const band = (W - L - R) / days.length, bw = Math.min(24, band * 0.62);
@@ -60,7 +60,7 @@ export function stack(days, cats, width) {
       acc += v;
     });
     if ((days.length - 1 - i) % every === 0) svg("text", {x: cx, y: H - 8, "text-anchor": "middle", class: "lbl"}, s).textContent = dm(d.day);
-    hover(col, `<b>${dm(d.day)} · ${total(d).toLocaleString("vi-VN")} tin</b>${cats.map(c => `<div class="row"><span>${swatch(c.color)}${esc(c.label)}</span><span>${(d.values[c.key] || 0).toLocaleString("vi-VN")}</span></div>`).join("")}`);
+    hover(col, `<b>${dm(d.day)} · ${total(d).toLocaleString(LOCALE)} tin</b>${cats.map(c => `<div class="row"><span>${swatch(c.color)}${esc(c.label)}</span><span>${(d.values[c.key] || 0).toLocaleString(LOCALE)}</span></div>`).join("")}`);
   });
   return s;
 }

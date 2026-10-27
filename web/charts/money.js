@@ -2,7 +2,7 @@
    (what happened solid, the forecast lighter, a “Hôm nay” line, ⚠ on a month with a large payment), month
    columns, lines over dates (0–100) and a sparkline. SVG drawn at the width it is shown at; one axis; a tooltip
    on every mark (charts.js::hover). */
-import {esc, vnd} from "../core/core.js";
+import {DECIMAL, esc, vnd} from "../core/core.js";
 import {hover} from "./charts.js";
 
 const NS = "http://www.w3.org/2000/svg";
@@ -150,6 +150,6 @@ export function sparkline(values, label, w = 132, h = 32) {
 
 /* Months of spending as the old pages said it: years from 36 months, one decimal below 10. */
 export function monthsText(m) {
-  const vn = (x, d) => x.toFixed(d).replace(".", ",").replace(/,0$/, "");
+  const vn = (x, d) => x.toFixed(d).replace(".", DECIMAL).replace(/,0$/, "");
   return m >= 36 ? vn(m / 12, 0) + " năm" : vn(m, m >= 10 ? 0 : 1) + " tháng";
 }

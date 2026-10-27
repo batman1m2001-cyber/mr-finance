@@ -9,7 +9,7 @@
    and the simulated net VND by group, over the scoring days (B) — charts/trend.js, the tables below them their view.
    REPLAY_PLAN: View B on past news played back (scripts/replay.py) beside the live one, the same renderer —
    GET /api/trial/replay/<name>, its moves opened with ?replay=<name>. */
-import {drawer, esc, get, n as how, pct, vnd, when} from "../core/core.js";
+import {LOCALE, DECIMAL, drawer, esc, get, n as how, pct, vnd, when} from "../core/core.js";
 import {legend, lines, stack} from "../charts/trend.js?v=20261025a";
 
 // one week the headline, three days beside it (owner, 25/10); three months only from the July replay
@@ -27,9 +27,9 @@ const repLabel = (r) => `Chạy lại ${day(r.first)} – ${day(r.last)}`;
 const day = (s) => (s ? s.split("-").reverse().join("/") : "—");
 // a rate and how many it was counted over; it opens its “cách tính” (BRD-NFR-11)
 const share = (x, n, m) => (x == null || !n ? "—" : `${how(pct(x, false, 0), m, {horizon: HL[horizon], n: String(n)})} <span class="muted small">(${n})</span>`);
-const secs = (s) => (s == null ? "—" : s >= 90 ? `${(s / 60).toFixed(1).replace(".", ",")} phút` : `${Math.round(s)} giây`);
-const num = (x) => (x == null ? "—" : x.toLocaleString("vi-VN"));
-const hm = (t) => new Date(t * 1000).toLocaleTimeString("vi-VN", {hour: "2-digit", minute: "2-digit", timeZone: "Asia/Ho_Chi_Minh"});
+const secs = (s) => (s == null ? "—" : s >= 90 ? `${(s / 60).toFixed(1).replace(".", DECIMAL)} phút` : `${Math.round(s)} giây`);
+const num = (x) => (x == null ? "—" : x.toLocaleString(LOCALE));
+const hm = (t) => new Date(t * 1000).toLocaleTimeString(LOCALE, {hour: "2-digit", minute: "2-digit", timeZone: "Asia/Ho_Chi_Minh"});
 
 // the days from the first that had a run or an item (the monitor's window can reach back before collection began)
 const collected = (days) => {
@@ -118,7 +118,7 @@ const rate = (r, metric) => (!r || !r.n ? `— <span class="muted small">(0)</sp
 const money = (x, metric, n) => `${how(vnd(x.vnd, true), metric, {n: String(x.n)})} <span class="muted small">(${x.n})</span>`;
 // the call direction's line: the best naive call on the same moves, and a coin toss's chance of doing as well
 const naive = (c) => (!c || !c.n ? "chưa có lần nói nào đến hạn"
-  : `luôn đoán ${c.naive.claim === "up" ? "tăng" : "giảm"} ${pct(c.naive.value, false, 0)} · đồng xu p = ${c.p < 0.001 ? "<0,001" : c.p.toFixed(c.p < 0.01 ? 3 : 2).replace(".", ",")}`);
+  : `luôn đoán ${c.naive.claim === "up" ? "tăng" : "giảm"} ${pct(c.naive.value, false, 0)} · đồng xu p = ${c.p < 0.001 ? `<0${DECIMAL}001` : c.p.toFixed(c.p < 0.01 ? 3 : 2).replace(".", DECIMAL)}`);
 const usd = (x) => (x == null ? "chưa có" : `US$${x.toFixed(2)}`);
 
 function paint(box, d) {
@@ -216,7 +216,7 @@ function viewB(d, e) {
       ${kpi("Đúng hướng khi ra tín hiệu", rate(a.call_direction, "eval.call_direction"), naive(a.call_direction))}
       ${kpi("Đã chấm", `${c.scored}/${c.moves}`, `${c.pending} chờ · ${c.failed} không chấm được · ${c.excluded} loại ra${a.first_due ? ` · hạn đầu ${day(a.first_due)}` : ""}`)}
     </div>
-    ${a.error_sd.n ? `<p class="small muted mt-xs">Sai số trung bình ${a.error_sd.value.toFixed(2).replace(".", ",")} lần biến động thường (${a.error_sd.n} dự báo).</p>` : ""}
+    ${a.error_sd.n ? `<p class="small muted mt-xs">Sai số trung bình ${a.error_sd.value.toFixed(2).replace(".", DECIMAL)} lần biến động thường (${a.error_sd.n} dự báo).</p>` : ""}
     ${a.uncalibrated ? `<p class="small warn-text mt-xs">Kỳ 3 ngày chưa hiệu chỉnh: biến động ngắn phần lớn là nhiễu.</p>` : ""}
     ${c.scored ? "" : `<p class="small muted mt-xs">Chưa dự báo nào đến hạn chấm ở kỳ ${HL[horizon]}: các tỷ lệ hiện “—”, không phải 0.</p>`}
 
@@ -286,7 +286,7 @@ const CLAIM = {up: "tăng", down: "giảm", flat: "đứng", conflicting: "trái
 async function openMove(id) {
   const body = drawer("Một dự báo", `<p class="muted">Đang tải…</p>`);
   const s = await get(`/api/trial/move/${encodeURIComponent(id)}${source === "live" ? "" : `?replay=${encodeURIComponent(source)}`}`);
-  const unit = (x) => (x == null ? "—" : s.unit === "pct" ? how(pct(x, true, 1), "eval.move", {unit: s.unit}) : `${x > 0 ? "+" : ""}${x.toFixed(2).replace(".", ",")} ${esc(s.unit)}`);
+  const unit = (x) => (x == null ? "—" : s.unit === "pct" ? how(pct(x, true, 1), "eval.move", {unit: s.unit}) : `${x > 0 ? "+" : ""}${x.toFixed(2).replace(".", DECIMAL)} ${esc(s.unit)}`);
   const fams = s.vnd ? Object.entries(s.vnd.families) : [];
   body.innerHTML = `
     <p><b>${esc(s.factor_name)}</b> · ${HL[s.horizon]} · từ giá đóng cửa ${day(s.origin)} đến ${day(s.due)}</p>

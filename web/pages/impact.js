@@ -1,7 +1,7 @@
 /* Tác động tin: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {ASSET_CLASS, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
+import {LOCALE, ASSET_CLASS, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
@@ -181,7 +181,7 @@ async function openHow(runId, client) {
   try {
     const d = await get(`/api/families/${encodeURIComponent(client)}/how?run=${encodeURIComponent(runId)}`);
     const UNIT = {pct: "%", bp: " điểm cơ bản", pp: " điểm %", sd: " độ lệch chuẩn"};
-    const n = d.number, mv = (m) => `${m.move > 0 ? "+" : "−"}${Math.abs(m.move).toLocaleString("vi-VN", {maximumFractionDigits: m.unit === "bp" ? 0 : 1})}${UNIT[m.unit] || ""}`;
+    const n = d.number, mv = (m) => `${m.move > 0 ? "+" : "−"}${Math.abs(m.move).toLocaleString(LOCALE, {maximumFractionDigits: m.unit === "bp" ? 0 : 1})}${UNIT[m.unit] || ""}`;
     body.setAttribute("data-explains", "");
     body.innerHTML = `
       <div class="eyebrow">${esc(d.event)} · giá ngày ${esc(d.run.price_date)} · CIO duyệt ${when(d.approved)}</div>

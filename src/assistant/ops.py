@@ -51,11 +51,12 @@ def check_request(
     conversation_id: str = None,
     graph: dict = None,
     attachments: list = None,
+    lang: str = None,
 ) -> dict:
     """Who asks (a customer always as client), what (≤ 2,000 characters, and up to three of their files), in which
     conversation (none: a new one), or which parked writes they answer; what the workspace shows them (``graph``)."""
     return {"request": request_of(message, role, client_id, scope, route, goals, turn_id, approvals, conversation_id,
-                                  graph, attachments)}  # fmt: skip
+                                  graph, attachments, lang=lang)}  # fmt: skip
 
 
 LENSES = {"tong-quan", "tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro"}
@@ -92,7 +93,7 @@ def graph_of(g: Any) -> Dict[str, Any]:
 
 
 def request_of(message=None, role=None, client_id=None, scope=None, route=None, goals=None, turn_id=None,
-               approvals=None, conversation_id=None, graph=None, attachments=None, voice=None) -> dict:  # fmt: skip
+               approvals=None, conversation_id=None, graph=None, attachments=None, voice=None, lang=None) -> dict:  # fmt: skip
     message = str(message or "").strip()
     ids = [str(x) for x in (attachments if isinstance(attachments, list) else [])]
     if len(message) > 2000:
@@ -115,6 +116,7 @@ def request_of(message=None, role=None, client_id=None, scope=None, route=None, 
         "graph": graph_of(graph),
         "files": [],
         "voice": voice is True,
+        "lang": "en" if lang == "en" else "vi",  # the answer's language (docs/LANGUAGE_PLAN.md L4)
     }
     if ids and not answers:  # the files' readings (OCR_PLAN O-D4): the model reads them, the panel shows the names
         from assistant import attachments as att
@@ -149,6 +151,7 @@ def context(r: Dict[str, Any]) -> Ctx:
         route=r["route"],
         graph=r.get("graph") or {},
         voice=bool(r.get("voice")),
+        lang=r.get("lang") or "vi",
     )
 
 
@@ -380,7 +383,7 @@ def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
 
 
 FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id", "graph",
-          "attachments", "voice")
+          "attachments", "voice", "lang")
 
 
 @op

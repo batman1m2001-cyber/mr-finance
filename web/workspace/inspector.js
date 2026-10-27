@@ -1,14 +1,14 @@
 /* Thông tin — the workspace's inspector (FEAT-40, OWN-GW-03): the selected node's figures with their “Cách tính”,
    its links with the records they were read from, and the sheets that show it in full; with nothing selected, what
    the lens looks at first. Built from the overview page's side panel (map.js). */
-import {formulaOf, n as how, esc, pct, post, signClass, vnd} from "../core/core.js";
+import {LOCALE, DECIMAL, formulaOf, n as how, esc, pct, post, signClass, t as tr, vnd} from "../core/core.js";
 import {timeline as drawTimeline} from "../charts/charts.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 import {LOOK, UNIT_WORD, certaintyOf, changeOf, changeText, changeTone, changeWord, figureOf, howOf, srcText} from "./graph.js?v=20261021t6";
 import {PARTS, SHEETS} from "./lenses.js?v=20261025t3";
 import {drawFeed} from "./feed.js?v=20261021t5";
 
-const short = (s, k) => (s.length > k ? s.slice(0, k - 1) + "…" : s);
+const short = (s, k) => ((s = tr(s)).length > k ? s.slice(0, k - 1) + "…" : s);  // cut in the viewer's language
 const titled = {event: "data-quote", alert: "data-explains"};  // a news event's title is the outlets' words
 const nameOf = (n, text) => (n.id === "RK:drawdown" ? how(text, "risk.current") : titled[n.kind] ? `<span ${titled[n.kind]}>${text}</span>` : text);
 const fig = (n, text) => (n.kind === "source" || !text ? text : how(text, ...howOf(n)));
@@ -74,7 +74,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
       n.kind === "goal" && `Cần <b>${how(vnd(n.need), "goal.need")}</b> · đang có ${how(vnd(n.have), "goal.have")} · ${n.gap > 0 ? `thiếu ${how(vnd(n.gap), "goal.gap", {need: vnd(n.need), have: vnd(n.have)})}` : "đủ"}${n.by ? ` · mốc ${esc(n.by)}` : ""}`,
       n.kind === "risk" && `${fig(n, vnd(Math.abs(n.value)))} · <span data-explains>${esc(n.detail)}</span>`,
       n.kind === "alert" && `Tác động ước tính <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b> · xác suất ${how(pct(n.probability, false, 0), "policy.probability")} · ${esc(n.status_label)}`,
-      n.kind === "event" && `Tác động kỳ vọng 3 tháng <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b>${n.approved_at ? ` · CIO duyệt ${new Date(n.approved_at * 1000).toLocaleDateString("vi-VN")}` : ""}`,
+      n.kind === "event" && `Tác động kỳ vọng 3 tháng <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b>${n.approved_at ? ` · CIO duyệt ${new Date(n.approved_at * 1000).toLocaleDateString(LOCALE)}` : ""}`,
       n.kind === "event" && n.outlets && n.outlets.length && `Nguồn: ${n.outlets.map(esc).join(", ")}`,
       n.kind === "alert" && n.source_text && `Nguồn: ${esc(n.source_text)}`,
       n.kind === "flow" && `${n.side === "in" ? "Tiền vào" : "Tiền ra"} tháng ${esc(n.month || "")} <b>${fig(n, vnd(Math.abs(n.value)))}</b> · từ giao dịch đã ghi nhận`,
@@ -83,7 +83,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
       n.kind === "category" && `${n.side === "in" ? "Tiền vào" : "Tiền ra"} tháng ${esc(n.month || "")} <b>${fig(n, vnd(Math.abs(n.value)))}</b> · ${n.rows} giao dịch · <span class="cert c-actual">thực tế</span>`,
       n.kind === "category" && (n.owners || []).length > 1 && `Của: ${n.owners.map(esc).join(", ")}`,
       n.kind === "liquidity" && (n.items || []).length && `Gồm: ${n.items.slice(0, 3).map(i => `${esc(i.label)} ${vnd(i.value)}`).join(" · ")}`,
-      n.kind === "liquidity" && `Tài sản thanh khoản <b>${fig(n, vnd(n.value))}</b>${n.months != null ? ` · đủ chi tiêu <b>${String(n.months).replace(".", ",")} tháng</b> (mốc an toàn 6 tháng)` : ""}`,
+      n.kind === "liquidity" && `Tài sản thanh khoản <b>${fig(n, vnd(n.value))}</b>${n.months != null ? ` · đủ chi tiêu <b>${String(n.months).replace(".", DECIMAL)} tháng</b> (mốc an toàn 6 tháng)` : ""}`,
       n.kind === "scenario" && `<span class="pill">giả định</span> ${esc(n.detail || "")}`,
       n.kind === "scenario" && (n.value == null ? `Chưa bật: kết quả không thay đổi tài sản thực của bạn.`
         : `${n.active ? "Phần của kịch bản này" : "Nếu xảy ra"}: <b class="${signClass(n.value)}">${vnd(n.value, true)}</b> — giả định, không cộng vào tài sản ròng.`),
@@ -256,7 +256,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
     const more = (e.sources || []).length > 8 ? `<br><span class="small muted">và ${(e.sources || []).length - 8} bản ghi khác</span>` : "";
     // assumptions, and confidence only where it is recorded
     const assume = {
-      event: ev && `Theo nhận định CIO duyệt${ev.approved_at ? ` ngày ${new Date(ev.approved_at * 1000).toLocaleDateString("vi-VN")}` : ""}, tầm nhìn 3 tháng; nhịp mỗi tháng = tác động ÷ 3`,
+      event: ev && `Theo nhận định CIO duyệt${ev.approved_at ? ` ngày ${new Date(ev.approved_at * 1000).toLocaleDateString(LOCALE)}` : ""}, tầm nhìn 3 tháng; nhịp mỗi tháng = tác động ÷ 3`,
       alert: al && `${esc(al.status_label || "")}${al.source_text ? ` · ${esc(al.source_text)}` : ""}`,
       scenario: sc && (sc.part ? (sc.part.assumptions || []).map(esc).join(" · ") : `${esc(sc.detail || "")} · chưa bật`),
       goal: gl && `Lãi tiền gửi ${gl.rate != null ? pct(gl.rate, false, 1) : "an toàn"}/năm${gl.by ? ` · đến ${esc(gl.by)}` : ""} · còn thiếu ${how(vnd(Math.max(0, gl.gap)), "goal.gap", {need: vnd(gl.need), have: vnd(gl.have)})}`,
@@ -294,7 +294,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
       const r = graph.combined();
       if (!sc.active || !r) return "Bật kịch bản để xem nó đi tới đâu: lớp tài sản, chi tiêu, thanh khoản, tài sản ròng và mục tiêu.";
       const goals = r.goals.filter(x => x.before.status !== x.after.status).map(x => `${esc(x.title)}: ${GOAL_WORD[x.after.status] || x.after.status}`);
-      return `${e.cost ? `Chi tiêu mỗi tháng +${vnd(e.cost.amount / 12)} → thanh khoản đủ ${r.after.liquid_months.toFixed(1).replace(".", ",")} tháng` : label(B.id)} → Tài sản ròng nếu xảy ra ${how(vnd(r.after.net_worth), "scenario.combined", {scenarios: r.scenarios.map(x => x.title).join(", ")})}${goals.length ? ` → ${goals.join(" · ")}` : " → mục tiêu không đổi trạng thái"}. Xem “Đường đi của kịch bản” ở nút kịch bản.`;
+      return `${e.cost ? `Chi tiêu mỗi tháng +${vnd(e.cost.amount / 12)} → thanh khoản đủ ${r.after.liquid_months.toFixed(1).replace(".", DECIMAL)} tháng` : label(B.id)} → Tài sản ròng nếu xảy ra ${how(vnd(r.after.net_worth), "scenario.combined", {scenarios: r.scenarios.map(x => x.title).join(", ")})}${goals.length ? ` → ${goals.join(" · ")}` : " → mục tiêu không đổi trạng thái"}. Xem “Đường đi của kịch bản” ở nút kịch bản.`;
     }
     if (type === "goal" && gl) {
       const pool = gl.pool ? `Nguồn ${esc(gl.have_label || "")} ${how(vnd(gl.pool.have), "goal.have")} dùng chung cho ${gl.pool.goals.length} mục tiêu (${gl.pool.goals.map(label).join(", ")}): tính một lần, không mục tiêu nào được coi là có tiền mà mục tiêu khác đã tính. ` : "";
@@ -336,7 +336,7 @@ export function render(el, {graph, lens, node, edge, kindLabel, openSheet, board
       ${step("Giả định", (s.assumptions || []).map(esc).join(" · ") || "—", "assumptions")}
       ${step("Lớp tài sản", cls.map(([c, v]) => `${esc((graph.node(`CL:${c}`) || {label: c}).label)} <b class="${signClass(v)}">${vnd(v, true)}</b>`).join(" · ") || "Không lớp nào thay đổi", "classes")}
       ${step("Nợ & chi tiêu", costs.map(c => `${esc(c.label)} <b class="down">${vnd(c.amount)}/năm</b> (~${vnd(c.amount / 12)}/tháng vào chi tiêu)${c.by !== s.id ? ` · tính ở “${esc(r.scenarios.find(x => x.id === c.by).title)}”` : c.also.length ? " · tính một lần" : ""}`).join("<br>") || "Không đổi", "costs")}
-      ${step(`Thanh khoản${many}`, `${vnd(r.before.liquid)} → <b>${vnd(r.after.liquid)}</b> · đủ ${r.before.liquid_months.toFixed(1).replace(".", ",")} → <b>${r.after.liquid_months.toFixed(1).replace(".", ",")} tháng</b> chi tiêu`, "liquidity")}
+      ${step(`Thanh khoản${many}`, `${vnd(r.before.liquid)} → <b>${vnd(r.after.liquid)}</b> · đủ ${r.before.liquid_months.toFixed(1).replace(".", DECIMAL)} → <b>${r.after.liquid_months.toFixed(1).replace(".", DECIMAL)} tháng</b> chi tiêu`, "liquidity")}
       ${step(`Tài sản ròng dự kiến${many}`, `${vnd(r.before.net_worth)} → <b>${vnd(r.after.net_worth)}</b> (<b class="${signClass(r.change)}">${vnd(r.change, true)}</b>; phần của kịch bản này ${vnd(n.value, true)})`, "net_worth")}
       ${step(`Mục tiêu${many}`, goals.map(x => `${esc(x.title)}: ${goalLine(x)}`).join("<br>") || "Không mục tiêu nào đổi trạng thái", "goals")}
     </ol><p class="small muted">${esc(r.note)}</p>`;

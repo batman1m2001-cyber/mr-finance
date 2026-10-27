@@ -27,7 +27,7 @@
    to three files. An image is shrunk in the browser to 2,000 px, JPEG 0.85, before it leaves (O-D1); each goes to
    POST /api/assistant/attach once, and its chip says “đang đọc…” and then what it is. Gửi waits for the readings and
    sends their ids with the words, or with none: a file alone is a question (O-D5). */
-import {$, esc, followedIds, post, stream, workspaceContext} from "./core/core.js";
+import {LOCALE, DECIMAL, $, english, esc, followedIds, post, stream, workspaceContext} from "./core/core.js";
 import {icon} from "./core/icons.js?v=20261027v1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
@@ -93,7 +93,7 @@ function context() {
   const scope = (document.querySelector("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope;
   const graph = role === "client" ? workspaceContext.get() : null;  // the Customer's workspace (F10)
   return {role: ROLE_LABEL[role] ? role : "client", client_id: client, scope, route: location.hash, goals: client ? followedIds(client) : null,
-    ...(graph ? {graph} : {})};
+    ...(graph ? {graph} : {}), ...(english ? {lang: "en"} : {})};  // the answer's language (LANGUAGE_PLAN L4)
 }
 
 const RESUME_S = 24 * 3600;  // the latest conversation is picked up again when it moved within a day
@@ -156,7 +156,7 @@ function meta(m) {
 }
 
 // “Cách tính” of an answer's queries (ADR-0040), collapsed: each one's SQL, its rows and when it ran
-const vnNum = (x) => Number(x || 0).toLocaleString("vi-VN");
+const vnNum = (x) => Number(x || 0).toLocaleString(LOCALE);
 function how(m) {
   const qs = (m.steps || []).filter(s => s.query && s.query.sql);
   if (!qs.length) return "";
@@ -266,7 +266,7 @@ export function mount() {
   // written, its words below as they come. The sentences are the server's (assistant/progress.py): never a tool's
   // id, its arguments or its result.
   const STEP_ST = {run: "đang chạy", ok: "xong", bad: "không thực hiện được"};
-  const secs = (ms) => `${(ms / 1000).toFixed(1).replace(".", ",")} s`;
+  const secs = (ms) => `${(ms / 1000).toFixed(1).replace(".", DECIMAL)} s`;
   const liveHtml = () => {
     const dots = `<span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span>`;
     const row = (st, label, ms) => `<li class="cp-prog-r ${st}"><span class="cp-prog-i" aria-hidden="true">${st === "run" ? dots : st === "ok" ? "✓" : "✕"}</span><span>${esc(label)}<span class="sr-only"> · ${STEP_ST[st]}</span></span>${ms != null ? `<span class="cp-prog-t">${secs(ms)}</span>` : ""}</li>`;
@@ -377,7 +377,9 @@ export function mount() {
       $("#cp-vstop", panel).hidden = st !== "speaking";
       $("#cp-mic", panel).setAttribute("aria-pressed", String(st !== "off"));
       if (st === "listening" || st === "off") { cap.textContent = ""; bar.style.setProperty("--lvl", 0); }
-      why.hidden = !reason; why.textContent = reason || "";
+      // the speech services hear and speak Vietnamese only (LANGUAGE_PLAN L5): in English the bar says so
+      const note = reason || (english && st !== "off" ? "Voice works in Vietnamese only: a spoken question is answered in Vietnamese." : "");
+      why.hidden = !note; why.textContent = note;
     },
     onHeard(text) { cap.textContent = `${cap.textContent} ${text}`.trim(); },
     onAsked(text) { cap.textContent = ""; return send(text, true); },

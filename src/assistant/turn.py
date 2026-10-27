@@ -118,7 +118,7 @@ DUTIES = {
     "và không bao giờ có mã một lần. Quản trị không xem tài sản hay danh mục của khách. Khoá API và mật khẩu không "
     "trang nào hiện: chúng ở kho bí mật của hạ tầng.",
 }
-RULES = """Bạn là trợ lý OneWealth, đang giúp {who}. Trả lời bằng tiếng Việt, ngắn gọn, đúng trọng tâm: thường dưới
+RULES = """Bạn là trợ lý OneWealth, đang giúp {who}. Trả lời bằng {language}, ngắn gọn, đúng trọng tâm: thường dưới
 150 chữ, dài hơn chỉ khi người dùng xin chi tiết hoặc hỏi nhiều việc. Xưng “tôi” và gọi người dùng là “bạn”
 suốt cuộc trò chuyện, kể cả khi họ tự xưng em, anh, chị, cháu…; không dùng “anh/chị”.
 Quy tắc:
@@ -141,7 +141,7 @@ Quy tắc:
   hỏi khác: chỉ trả lời câu đó.
 - Phần đầu cuộc trò chuyện có thể đã được tóm tắt: hỏi về một lượt cũ (câu đầu tiên, con số lúc đó) mà bản tóm tắt
   không ghi rõ thì gọi doc_lai_phien để đọc lại, không đoán.
-Hôm nay: {today}. Đang ở trang: {page}.{graph}{remembered}{recount}{voice}"""
+Hôm nay: {today}. Đang ở trang: {page}.{graph}{remembered}{recount}{voice}{english}"""
 FACTS_MODEL = (
     "Mọi con số, tên, ngày phải lấy từ kết quả công cụ hoặc từ lời người dùng. Cần cộng, trừ, nhân, chia, phần "
     "trăm, lãi kép thì gọi công cụ tinh, không tính nhẩm, và ghi công thức để người dùng kiểm lại. "
@@ -171,6 +171,14 @@ RECOUNT = (
     "\nLượt này người dùng nêu một con số khác với câu trả lời trước: gọi truy_van đếm lại ngay trong lượt này rồi "
     "mới trả lời, không dùng lại kết quả của lượt trước. Câu trả lời chỉ gồm bảng đã đếm, điều kiện và con số vừa đếm; "
     "không đoán vì sao con số của người dùng khác (không viết “có thể bạn…”, “có thể do…”)."
+)
+# The page is in English (docs/LANGUAGE_PLAN.md L4): the tools still speak Vietnamese, the answer does not. A spoken
+# turn stays Vietnamese, since the speech service reads Vietnamese only (L5).
+ENGLISH = (
+    "\nTrang đang ở tiếng Anh: trả lời hoàn toàn bằng tiếng Anh, kể cả khi câu hỏi hay kết quả công cụ là tiếng Việt; "
+    "xưng “I”, gọi người dùng là “you”. Giữ nguyên như trong dữ liệu: tên người, tên tài sản, mã chứng khoán, tiêu đề "
+    "tin. Viết số kiểu tiếng Anh: dấu phẩy ngăn hàng nghìn, dấu chấm thập phân (“1.25 bn VND”, “12.5%”, “1,415”). "
+    "Ngày viết dd/mm/yyyy. Tên trang dùng tên tiếng Anh trên menu (Overview, Net worth, News, Scenarios…)."
 )
 # A spoken turn (docs/VOICE_PLAN.md V-D8): the answer is read aloud, sentence by sentence, to a listener who may be
 # older; the screen still shows the whole answer and its sources. Typed turns get "" here, so their prompt is unchanged.
@@ -252,6 +260,7 @@ def graph_line(ctx: Ctx) -> str:
 
 def instructions(rctx: RunContext) -> str:
     ctx: Ctx = rctx.deps
+    english = ctx.lang == "en" and not ctx.voice
     return RULES.format(
         who=ROLE_NAMES.get(ctx.role, ctx.role),
         duties=(
@@ -274,6 +283,8 @@ def instructions(rctx: RunContext) -> str:
         else "",
         recount=RECOUNT if ctx.recount else "",
         voice=VOICE if ctx.voice else "",
+        language="tiếng Anh (English)" if english else "tiếng Việt",
+        english=ENGLISH if english else "",
     )
 
 

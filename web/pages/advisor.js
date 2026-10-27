@@ -5,7 +5,7 @@
    server checks the user's role). The RM's approval is the last (OWN-FB-18 retired the certified specialist; items
    kept from before may still say pending_specialist); the RM may also write a recommendation for the family (POST
    /api/review/recommend), which reaches the client at once. Data: GET /api/advisory?client_id=, GET /api/review. */
-import {esc, get, n as how, post, toast} from "../core/core.js";
+import {LOCALE, esc, get, n as how, post, toast} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 
 const STATUS = {pending: ["ai", "Chờ RM duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
@@ -38,7 +38,7 @@ export async function render(box, ctx) {
     const [tone, text] = STATUS[x.status] || STATUS.pending;
     const decide = staff && x.status === "pending" && x.kind !== "rm_note";
     return `<div class="panel qitem" data-focus="review:${esc(x.id)}">
-      <div class="row tight"><b>${esc(x.client_name)}</b><span class="small muted">${new Date(x.created * 1000).toLocaleString("vi-VN")}</span>
+      <div class="row tight"><b>${esc(x.client_name)}</b><span class="small muted">${new Date(x.created * 1000).toLocaleString(LOCALE)}</span>
         <span class="pill ${tone}" style="margin-left:auto">${text}</span></div>
       <div data-explains><h4>${esc(x.title)}</h4>
       <ul class="ul">${((x.data.option || {}).actions || []).map(a => `<li>${esc(a)}</li>`).join("")}</ul></div>

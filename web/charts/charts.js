@@ -1,7 +1,7 @@
 /* The charts of the new pages: one tooltip, one legend model, thin marks, a 2px surface gap between
    fills, direct labels on the few marks that matter, a table view next to every chart. Colours come
    from the tokens (validated palette); a sign is gain/loss, a series is its slot, never its rank. */
-import {esc, n, vnd, pct} from "../core/core.js";
+import {esc, n, vnd, pct, t as tr} from "../core/core.js";
 import {iconPaths} from "../core/icons.js?v=20261016r1";
 import {track} from "../motion.js?v=20261016r1";
 
@@ -196,7 +196,8 @@ export function diverging(box, rows, opts = {}) {
   data.forEach((r, i) => {
     const yy = i * row + 4, w = Math.max(2, Math.abs(r.value) * scale), xx = r.value < 0 ? zero - w : zero;
     const lab = el("text", {x: 0, y: yy + 16, class: "lbl"}, svg);
-    lab.textContent = r.label.length > 22 ? r.label.slice(0, 21) + "…" : r.label;
+    const name = tr(r.label);
+    lab.textContent = name.length > 22 ? name.slice(0, 21) + "…" : name;
     el("rect", {x: xx + (r.value < 0 ? 0 : 1), y: yy + 4, width: Math.max(1, w - 1), height: 18, rx: 4,
       fill: r.color || (r.value < 0 ? "var(--down)" : "var(--up)"), opacity: r.color ? 1 : 0.85}, svg);
     const v = el("text", {x: width, y: yy + 17, "text-anchor": "end", class: "val"}, svg);
@@ -370,11 +371,11 @@ export function sankey(box, f, opts = {}) {
     return best ? [best[0], cut(best[1])] : [cut(s)];
   };
   const label = (x, y, anchor, b) => {
-    const ls = lines(b.label, narrow ? 13 : 22, narrow ? 2 : 1), up = (ls.length - 1) * 13;
+    const name = tr(b.label), ls = lines(name, narrow ? 13 : 22, narrow ? 2 : 1), up = (ls.length - 1) * 13;  // English before it wraps
     const t = el("text", {x, y: y - up / 2, "text-anchor": anchor, class: "lbl"}, svg);
     if (ls.length > 1) for (const [i, s] of ls.entries()) el("tspan", {x, dy: i ? 13 : 0}, t).textContent = s;
     else t.textContent = ls[0];
-    if (ls.join(" ").replace(/…$/, "") !== b.label) t.setAttribute("data-full", b.label);
+    if (ls.join(" ").replace(/…$/, "") !== name) t.setAttribute("data-full", name);
     const v = el("text", {x, y: y + 15 + up / 2, "text-anchor": anchor, class: "val"}, svg);
     v.textContent = fmt(b.amount);
     howOn(v, b.rows ? "flow.band" : "flow.left", b.rows ? {rows: String(b.rows.length)} : {total_in: vnd(f.total_in), total_out: vnd(f.total_out)});

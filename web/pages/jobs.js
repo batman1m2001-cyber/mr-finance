@@ -4,7 +4,7 @@
    re-runs a failed challenger (POST /api/views/decide, action challenge). Lịch chạy: each job's clock and last run;
    Admin runs one now (POST /api/jobs/run). Lần chạy tay: who ran what. The
    assistant does the same writes on a Xác nhận. Rows are lists (.item), so a phone reads them as they are. */
-import {ago, esc, get, post, toast} from "../core/core.js";
+import {LOCALE, ago, esc, get, post, toast} from "../core/core.js";
 import {JOB} from "./system.js?v=20261020u1";
 
 const MODE = {live: "Mô hình thật", mock: "Mô phỏng", inbox: "Hộp chờ (vùng AI)"};
@@ -35,7 +35,7 @@ export async function render(box, ctx) {
 
     <section class="panel" id="jobs-agents"><div class="h3">Agent</div>
       <p class="small muted">Chế độ ${esc(MODE[st.mode] || st.mode)}${st.models ? ` · ${esc([st.models.cio, st.models.challenger].filter(Boolean).join(" · "))}` : ""}
-        · hôm nay ${Number(b.used_today || 0).toLocaleString("vi-VN")} / ${Number(b.daily || 0).toLocaleString("vi-VN")} token.
+        · hôm nay ${Number(b.used_today || 0).toLocaleString(LOCALE)} / ${Number(b.daily || 0).toLocaleString(LOCALE)} token.
         Nhận định ra là bản nháp: qua Agent Phản biện, rồi CIO duyệt ở trang Sự kiện &amp; nhận định.</p>
       <div class="list">${a.health.map(h => `<div class="item"><span class="badge ${h.failed ? "bad" : "good"}">${h.failed ? `${h.failed} lỗi` : "ổn"}</span>
         <div><div class="t">${esc(AGENT[h.agent] || h.agent)}</div><div class="m">${h.runs} lần trong 7 ngày · gần nhất ${esc(ago(h.last))}${h.last_error ? ` · ${esc(h.last_error)}` : ""}</div></div><span></span></div>`).join("")

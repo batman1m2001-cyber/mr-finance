@@ -1,10 +1,10 @@
 /* CIO · Mô hình · Tham số: the 15 factors the engine runs on. Sizes and realisation are the BRD's; each volatility
    says whether it is estimated from market history (F2) or assumed. Below: what estimating now would give, the
    out-of-sample check (MEAS-08), and — for a CIO — proposing it as the next version, which a second CIO approves. */
-import {esc, get, n as how, pct, post, toast} from "../core/core.js";
+import {LOCALE, esc, get, n as how, pct, post, toast} from "../core/core.js";
 
 const UNIT = {pct: "%", bp: "điểm cơ bản", pp: "điểm %", sd: "độ lệch chuẩn"};
-const n2 = (x) => x == null ? "—" : Number(x).toLocaleString("vi-VN", {maximumFractionDigits: 2});
+const n2 = (x) => x == null ? "—" : Number(x).toLocaleString(LOCALE, {maximumFractionDigits: 2});
 
 function badge(f) {
   return f.assumed ? `<span class="badge assumed">giả định</span>`

@@ -12,7 +12,7 @@
    graph, drawn into #page as before. A staff role with a desk (FEAT-41, ADR-0036: desk/roles.js) works the same way:
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
-import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
+import {$, $$, esc, explainOn, failed, howAudience, keep, lang, loading, setLang} from "./core/core.js";
 import {mount as mountCopilot} from "./copilot.js?v=20261027v1";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261025t3";
@@ -236,9 +236,11 @@ function drawChrome(rt) {
     $("#whoami").innerHTML = `<span class="me"><b>${esc(state.me.name)}</b><span class="me-title">${esc(state.me.title || r.label)}</span>
       <a class="linkbtn" href="#/${rt.role}/bo-nho"${rt.nav.id === "bo-nho" ? ' aria-current="page"' : ""}>Bộ nhớ</a>
       <button type="button" class="linkbtn" id="signout">Đăng xuất</button>
-      <button type="button" class="linkbtn me-theme" id="me-theme">Giao diện sáng / tối</button></span>`;
+      <button type="button" class="linkbtn me-theme" id="me-theme">Giao diện sáng / tối</button>
+      <div class="seg langpick me-lang" role="group" aria-label="Ngôn ngữ"><button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="vi" lang="vi">VI</button></div></span>`;
     $("#signout").onclick = signOut;
     $("#me-theme").onclick = theme;
+    langPick();
     // a phone: the name row is a popover behind the initials (tokens.css .meopen)
     const words = String(state.me.name || "").trim().split(/\s+/).filter(Boolean);
     $("#me-open").textContent = words.length > 1 ? words[0][0] + words[words.length - 1][0] : (words[0] || "?").slice(0, 2);
@@ -378,6 +380,14 @@ function ctx(rt) {
   };
 }
 
+// EN | VI: the one switch (docs/LANGUAGE_PLAN.md L1); picking reloads the page in that language
+function langPick() {
+  for (const b of $$(".langpick button")) {
+    b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+    b.onclick = () => { if (b.dataset.lang !== lang) setLang(b.dataset.lang); };
+  }
+}
+
 function theme() {
   const root = document.documentElement;
   const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
@@ -475,6 +485,7 @@ async function start() {
   state.me = me.user || null;
   if (state.me && ROLES[state.me.role]) ROLES[state.me.role].user = state.me.id;
   $("#theme").onclick = theme;
+  langPick();
   const meOpen = $("#me-open"), top = $(".shell-top");
   const meShow = (on) => { top.classList.toggle("me-shown", on); meOpen.setAttribute("aria-expanded", String(on)); };
   meOpen.onclick = (e) => { e.stopPropagation(); meShow(!top.classList.contains("me-shown")); };

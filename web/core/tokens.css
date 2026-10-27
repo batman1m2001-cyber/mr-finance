@@ -946,7 +946,8 @@ body.signed-out .bellwrap, body.signed-out #reset { display: none !important; }
 .rolebox[hidden] { display: none !important; }
 /* a phone's header is one row (two with the RM's client picker): search behind a button, the name row behind the
    initials, the theme switch inside that popover — the page starts about 80 px higher (docs/UX_FIXES_1020_PLAN.md P) */
-.qopen, .meopen, .me .me-theme { display: none; }
+.qopen, .meopen, .me .me-theme, .me .me-lang { display: none; }
+.shell-bar .langpick button { padding: 6px 10px; font-size: 12.5px; letter-spacing: .03em; }
 @media (max-width: 760px) {
   .shell-top { position: relative; z-index: 25; }  /* still scrolls away; its popovers stay over the page's sheets */
   .shell-bar { gap: 6px; padding: 8px 12px; }
@@ -958,10 +959,10 @@ body.signed-out .bellwrap, body.signed-out #reset { display: none !important; }
   .shell-bar:has(#client-pick:not([hidden])) #scope-wrap { order: 9; }  /* the RM: the scope under the picker */
   .qopen { display: inline-flex; align-items: center; justify-content: center; order: 3; margin-left: auto; }
   .shell-bar .bellwrap { order: 4; }
-  .shell-bar #theme { order: 5; }
+  .shell-bar #lang-pick, .shell-bar #theme { order: 5; }
   .meopen:not([hidden]) { display: inline-flex; align-items: center; justify-content: center; order: 6; font: 700 12px/1 var(--font);
     background: var(--accent-soft); color: var(--ink); letter-spacing: .02em; }
-  .shell-bar:has(.meopen:not([hidden])) #theme { display: none; }
+  .shell-bar:has(.meopen:not([hidden])) :is(#theme, #lang-pick) { display: none; }
   .search { display: none; }
   .shell-top.q-shown .search { display: flex; }
   .shell-top.q-shown .qopen { color: var(--accent); border-color: var(--accent); }
@@ -973,6 +974,7 @@ body.signed-out .bellwrap, body.signed-out #reset { display: none !important; }
   .shell-top.me-shown .me .me-title { display: block; margin-top: -6px; }
   .shell-top.me-shown .me .me-title::before { content: none; }
   .shell-top.me-shown .me .me-theme { display: inline; }
+  .shell-top.me-shown .me .me-lang { display: inline-flex; }
 }
 @media (max-width: 380px) {  /* 375 px phones keep the one row */
   .shell-bar { gap: 4px; }
