@@ -286,6 +286,12 @@ def review(item_id: str = None, decisions: dict = None, note: str = "", by: str 
 @op
 def queue() -> dict:
     """The CIO's allocation page: the allocations waiting for the CIO, the last ones decided, the RMs' bucket overrides."""
+    q = read_queue()
+    return {"waiting": q["waiting"], "decided": q["decided"], "overrides": q["overrides"]}
+
+
+def read_queue() -> dict:
+    """queue's read, for callers outside a flow (the CIO desk lists the waiting ones with its other decisions)."""
     rows = [r for r in store.reviews() if r["kind"] == "allocation"]
     waiting = [r for r in rows if r["status"] == WAITING]
     decided = [r for r in rows if r["status"] in ("approved", "rejected") and r["data"].get("actions")][:10]
@@ -294,7 +300,7 @@ def queue() -> dict:
     log = list(store.result(*OVERRIDE_LOG) or [])[:50]
     names |= {r["client_id"]: (fixtures.client(r["client_id"]) or {}).get("name", r["client_id"]) for r in log}
     labels = {**_engine.BUCKETS}
-    overrides = [{**r, "client_name": names[r["client_id"]], "from_label": labels[r["from"]], "to_label": labels[r["to"]]} for r in log]
+    overrides = [{**r, "client_name": names[r["client_id"]], "from_label": labels.get(r["from"], "—"), "to_label": labels.get(r["to"], "—")} for r in log]
     return {"waiting": [view(r) for r in waiting], "decided": [view(r) for r in decided], "overrides": overrides}
 
 

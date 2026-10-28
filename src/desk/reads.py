@@ -167,6 +167,12 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
             decide.append({"kind": "policy", "id": x["id"], "title": x["title"],
                            "status": "Chờ CIO khác xác nhận nguồn" if mine else "Chờ xác nhận nguồn",
                            "at": x["created"], "route": f"#/cio/chinh-sach/{x['id']}", **_signal(None)})  # fmt: skip
+    from allocation import ops as allocation  # ASSET_ALLOCATION_BRD P2 (Q-29): an RM's allocation waits for each action's yes
+
+    for r in allocation.read_queue()["waiting"]:
+        decide.append({"kind": "allocation", "id": r["id"], "title": r["title"],
+                       "status": "Chờ duyệt phân bổ", "at": r["created"], "route": "#/cio/phan-bo",
+                       **_signal(None)})  # fmt: skip
     for s in no_view:
         ev = s["event"]
         decide.append({"kind": "event", "id": ev["id"], "title": ev["title"], "status": "Chưa có nhận định",

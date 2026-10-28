@@ -1,7 +1,7 @@
 /* CIO · Bằng chứng tin (NEWS_EVIDENCE_BRD §8.2): every news frame, the ones not approved and the ones with precedents
    lacking a source first. A row opens the same panel the client and the RM see, with the CIO's review under it. */
 import {esc, post, pct, toast} from "../core/core.js";
-import {openFrame} from "./policy.js?v=20261028e3";
+import {openFrame} from "./policy.js?v=20261028p2";
 
 const TONE = {positive: "good", negative: "bad", unclear: ""};
 const BRANCH = {statistics: "Thống kê", qualitative: "Định tính"};
@@ -28,6 +28,7 @@ export async function render(box, ctx) {
         <td><span class="pill ${f.review.status === "approved" ? "good" : "warn"}">${esc(f.review.label)}</span></td></tr>`).join("")}
     </tbody></table></div></div>
     ${drafts(ev)}
+    ${catalogue(ev)}
     <details class="more mt"><summary>Ngưỡng</summary><p class="small muted" data-explains>Nhánh thống kê cần ít nhất ${ev.thresholds.min_precedents}
       tiền lệ, và tỷ lệ cùng chiều phải hơn tỷ lệ nền ${pct(ev.thresholds.min_edge, false, 0)}; thiếu thì đi nhánh định tính.</p></details>`;
   for (const row of box.querySelectorAll("[data-f]")) {
@@ -40,6 +41,18 @@ export async function render(box, ctx) {
     b.disabled = true;
     try { await post(url, {...body, by: ctx.user}); toast(done); render(box, ctx); }
     catch (e) { b.disabled = false; toast(e.message); }
+  };
+  const form = box.querySelector("[data-type]");
+  const fresh = () => form.querySelector("[data-new]").hidden = form.elements.event_type.value !== "";
+  form.elements.event_type.onchange = fresh;
+  fresh();
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const v = form.elements, et = v.event_type.value;
+    const dates = v.dates.value.split(/[\s,;]+/).filter(Boolean);
+    const series = [...form.querySelectorAll("[name=series]:checked")].map(x => x.value);
+    act(form.querySelector("button[type=submit]"), "/api/evidence/type",
+      et ? {event_type: et, dates} : {label: v.label.value.trim(), dates, series}, "Đã lưu vào danh mục");
   };
   box.querySelectorAll("[data-draft]").forEach(b => b.onclick = () => act(b, "/api/evidence/draft", {news_id: b.dataset.draft}, "Agent đã lập khung"));
   box.querySelectorAll("[data-dd]").forEach(b => b.onclick = () =>
@@ -55,7 +68,7 @@ function drafts(ev) {
       <span class="pill ${STATUS[d.review.status]}">${esc(d.review.label)}</span></div>
     <div class="row small muted" style="gap:4px 10px;flex-wrap:wrap;align-items:center"><span>${esc(d.event_label)}</span>
       <span class="pill ${TONE[d.direction]}">${esc(d.direction_label)}</span><span>${esc(d.timeframe_label)}</span>
-      <span>${d.precedents} tiền lệ</span><span>${d.mode === "mock" ? "mô phỏng" : `trực tiếp, ${d.attempts} lần`}</span></div>
+      <span>${d.precedents} tiền lệ</span>${d.measured.length ? `<span>Thống kê: ${measured(d.measured[0])}</span>` : ""}<span>${d.mode === "mock" ? "mô phỏng" : `trực tiếp, ${d.attempts} lần`}</span></div>
     <details class="more"><summary>Khung</summary><p class="small" data-quote>${esc(d.mechanism || "")}</p>
       <div class="small">${d.targets.map(t => `<span class="chip">${esc(t.name)}</span>`).join(" ")}</div>
       ${[...d.failed, ...d.notes].map(x => `<div class="small muted" data-explains>${esc(x)}</div>`).join("")}</details>
@@ -69,4 +82,36 @@ function drafts(ev) {
     ${ev.drafts.length ? `<ol style="margin:12px 0 0;padding:0;list-style:none;display:grid;gap:8px">${ev.drafts.map(card).join("")}</ol>`
       : `<p class="small muted mt">Chưa có khung nào do agent lập.</p>`}
   </section>`;
+}
+
+// NEWS_EVIDENCE_BRD P2: the full catalogue. The CIO adds a type or precedent dates; a type with enough dates gets the
+// statistics branch on each series (a direction only when it beats the base rate)
+const WAY = {up: "tăng", down: "giảm"};
+const measured = (p) => `<span>${esc(p.series_label)}</span> <span>${esc(p.timeframe_label)}</span>: <span>${WAY[p.way]}</span> <span class="num" data-explains>${p.same}/${p.n}</span>`;
+function catalogue(ev) {
+  const types = Object.entries(ev.calendar);
+  const shown = types.filter(([, t]) => t.dates.length || t.cio);
+  const rest = types.filter(([, t]) => !t.dates.length && !t.cio);
+  const row = ([k, t]) => {
+    // the strongest edge over the base rate first; the others folded (no wall of figures)
+    const got = t.preview.filter(p => p.direction !== "unclear").sort((a, b) => b.edge - a.edge);
+    return `<tr data-et="${esc(k)}"><td>${esc(t.label)}${t.cio ? ` <span class="chip">CIO</span>` : ""}</td>
+      <td class="r num" data-explains>${t.dates.length}</td>
+      <td>${got.length ? `<div class="small">${measured(got[0])}</div>${got.length > 1 ? `<details class="more"><summary>+${got.length - 1}</summary>
+        ${got.slice(1).map(p => `<div class="small">${measured(p)}</div>`).join("")}</details>` : ""}`
+        : `<span class="small muted">${t.dates.length >= ev.thresholds.min_precedents ? "Chưa có chiều rõ" : "Chưa đủ tiền lệ"}</span>`}</td></tr>`;
+  };
+  return `<section class="panel mt"><h3>Danh mục loại sự kiện <span class="hint">${types.length} loại; loại đủ tiền lệ đi nhánh thống kê</span></h3>
+    <div class="scrollx"><table class="table"><thead><tr><th>Loại</th><th class="r">Tiền lệ</th><th>Thống kê</th></tr></thead>
+      <tbody>${shown.map(row).join("")}</tbody></table></div>
+    ${rest.length ? `<details class="more"><summary>Loại chưa có tiền lệ</summary><div class="row tight">${rest.map(([, t]) =>
+      `<span class="chip">${esc(t.label)}</span>`).join("")}</div></details>` : ""}
+    <form data-type class="mt" style="display:grid;gap:8px">
+      <label class="small">Thêm vào <select name="event_type" class="input"><option value="">Loại mới…</option>${types.map(([k, t]) =>
+        `<option value="${esc(k)}">${esc(t.label)}</option>`).join("")}</select></label>
+      <div data-new style="display:grid;gap:8px"><input name="label" class="input" placeholder="Tên loại sự kiện" maxlength="80">
+        <div class="row tight small">${Object.entries(ev.series).map(([k, v]) =>
+          `<label><input type="checkbox" name="series" value="${esc(k)}"> ${esc(v)}</label>`).join("")}</div></div>
+      <input name="dates" class="input" placeholder="Ngày tiền lệ, mỗi ngày YYYY-MM-DD, cách nhau bằng dấu phẩy">
+      <div><button type="submit" class="btn primary">Lưu</button></div></form></section>`;
 }

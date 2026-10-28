@@ -3,7 +3,11 @@ directions and what changes. Anything outside them sends the frame back (§9 rul
 
 from __future__ import annotations
 
-from typing import Dict, Optional
+import re
+import time
+import unicodedata
+from datetime import date
+from typing import Any, Dict, List, Optional
 
 from procedural.goals import PURPOSES
 
@@ -59,6 +63,10 @@ ASSET_NAMES = {"stock": "cổ phiếu", "fund": "chứng chỉ quỹ", "bond": "
 TARGET_VALUES = {"floating": "lãi thả nổi", "fx": "ngoại tệ", "salary": "lương", "dividend": "cổ tức", "rent": "tiền thuê",
                  **ASSET_NAMES, **PURPOSES}  # fmt: skip
 
+# the series a type's precedents are measured on (P2, §5: any series the market store keeps, the CIO picks per type)
+SERIES = {"VNINDEX": "VN-Index", "SJC": "Vàng SJC", "USDVND": "Tỷ giá USD/VND", "VN_GOV_10Y": "Lợi suất TPCP 10 năm"}
+CIO_TYPES = ("_cio", "evidence_types")  # the CIO's additions (P2): new types and dates added to any type
+
 MIN_PRECEDENTS = 8  # the statistics branch needs this many (Q1, the CIO's to settle)
 MIN_EDGE = 0.10  # the same-direction share must beat the base rate by this much to call a direction (Q2)
 
@@ -79,3 +87,69 @@ def target_label(label: str) -> str:
 
         value = (fixtures.market().get("areas", {}).get(value) or {}).get("name", value)
     return f"{TARGET_KINDS.get(kind, kind)}: {TARGET_VALUES.get(value, value)}"
+
+
+def _kept() -> Dict[str, Any]:
+    from wealth import store
+
+    got = store.result(*CIO_TYPES) or {}
+    return {"types": dict(got.get("types") or {}), "dates": dict(got.get("dates") or {})}
+
+
+def event_types() -> Dict[str, Dict[str, Any]]:
+    """The catalogue an agent picks from: the built-in types, then the CIO's, with "Loại mới" last (P2)."""
+    built = {k: v for k, v in EVENT_TYPES.items() if k != "new"}
+    cio = {k: {"label": v["label"], "series": v.get("series") or [], "cio": True} for k, v in _kept()["types"].items()}
+    return {**built, **cio, "new": EVENT_TYPES["new"]}
+
+
+def events(seed: Dict[str, List[str]]) -> Dict[str, List[str]]:
+    """Each type's precedent dates: ``seed`` (data/evidence.json) with the dates the CIO added, sorted, no repeats."""
+    added = _kept()["dates"]
+    return {k: sorted(set(seed.get(k, [])) | set(added.get(k, []))) for k in {*seed, *added}}
+
+
+def slug(label: str) -> str:
+    """``"Bầu cử Mỹ"`` → ``cio_bau_cu_my``: a CIO type's id, never one of the built-in ones."""
+    plain = unicodedata.normalize("NFKD", label.replace("đ", "d").replace("Đ", "D")).encode("ascii", "ignore").decode()
+    return "cio_" + ("_".join(re.findall(r"[a-z0-9]+", plain.lower())) or "loai")[:40]
+
+
+def save(event_type: Optional[str], label: Optional[str], dates: List[str], series: List[str], by: str) -> Dict[str, Any]:
+    """The CIO adds a type (``label``) or dates to a type already there (``event_type``); dates are ISO days, none in
+    the future. Returns {event_type, label, added}. Raises ValueError with the reason."""
+    from wealth import store
+
+    today = date.today().isoformat()
+    good, bad = [], []
+    for d in dates or []:
+        d = str(d).strip()
+        try:
+            ok = date.fromisoformat(d).isoformat() == d and d <= today
+        except ValueError:
+            ok = False
+        (good if ok else bad).append(d)
+    if bad:
+        raise ValueError(f"Ngày không hợp lệ (YYYY-MM-DD, không ở tương lai): {', '.join(bad[:5])}")
+    off = [s for s in series or [] if s not in SERIES]
+    if off:
+        raise ValueError(f"Chuỗi không có: {', '.join(off)}")
+    kept = _kept()
+    if event_type:
+        if event_type not in event_types() or event_type == "new":
+            raise ValueError(f"Không có loại sự kiện {event_type!r}")
+        et = event_type
+    else:
+        name = str(label or "").strip()
+        if not name:
+            raise ValueError("Cần tên loại sự kiện hoặc loại có sẵn")
+        if any(v["label"].lower() == name.lower() for v in event_types().values()):
+            raise ValueError(f"Đã có loại {name!r}")
+        et = slug(name)
+        kept["types"][et] = {"label": name[:80], "by": by, "at": time.time()}
+    if et in kept["types"] and series:
+        kept["types"][et]["series"] = list(dict.fromkeys(series))
+    before = set(kept["dates"].get(et, []))
+    kept["dates"][et] = sorted(before | set(good))
+    store.put_result(*CIO_TYPES, kept)
+    return {"event_type": et, "label": event_types()[et]["label"], "added": len(set(good) - before)}

@@ -42,11 +42,35 @@ def review(fid: str) -> Dict[str, Any]:
     return reviews().get(fid) or dict(SEED)
 
 
-@lru_cache(maxsize=8)
-def _measured(stamp: Any, series: str, event_type: str, timeframe: str) -> Dict[str, Any]:
+def events() -> Dict[str, List[str]]:
+    """Each event type's precedent dates: the seed calendar with the dates the CIO added (P2)."""
+    return cat.events(data()["events"])
+
+
+@lru_cache(maxsize=256)
+def _measured(stamp: Any, series: str, dates: tuple, timeframe: str) -> Dict[str, Any]:
     from market import store as market
 
-    return _stats.measure(market.points(series), data()["events"].get(event_type, []), timeframe)
+    return _stats.measure(market.points(series), list(dates), timeframe)
+
+
+def measured(series: str, event_type: str, timeframe: str) -> Dict[str, Any]:
+    from market import store as market
+
+    return _measured(market.stamp(), series, tuple(events().get(event_type, [])), timeframe)
+
+
+def preview(event_type: str) -> List[Dict[str, Any]]:
+    """What the statistics branch would say for a type on each series and timeframe (P2): the CIO sees which pairs
+    already have enough precedents and a direction, before any frame asks for them."""
+    out = []
+    for series, name in cat.SERIES.items():
+        for tf in _stats.DAYS:
+            s = measured(series, event_type, tf)
+            out.append({"series": series, "series_label": name, "timeframe": tf, "timeframe_label": s["timeframe_label"],
+                        "n": s["n"], "enough": s["enough"], "direction": s["direction"],
+                        "direction_label": cat.DIRECTIONS[s["direction"]], **{k: s.get(k) for k in ("way", "same", "rate", "base_rate", "edge")}})  # fmt: skip
+    return out
 
 
 def stats(raw: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -54,11 +78,9 @@ def stats(raw: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     st = raw.get("stat")
     if raw.get("branch") != "statistics" or not st:
         return None
-    from market import store as market
-
-    s = _measured(market.stamp(), st["series"], raw["event_type"], st["timeframe"])
+    s = measured(st["series"], raw["event_type"], st["timeframe"])
     if s["n"]:
-        s = {**s, "sentence": _stats.sentence(s, cat.EVENT_TYPES[raw["event_type"]]["label"], st["series_label"])}
+        s = {**s, "sentence": _stats.sentence(s, cat.event_types()[raw["event_type"]]["label"], st["series_label"])}
     return s
 
 
@@ -116,7 +138,7 @@ def view(fid: str, cio: bool = False) -> Dict[str, Any]:
         "factor": fid,
         "title": next((x["title"] for x in fixtures.factors()["factors"] if x["id"] == fid), fid),
         "event_type": f["event_type"],
-        "event_label": cat.EVENT_TYPES[f["event_type"]]["label"],
+        "event_label": cat.event_types()[f["event_type"]]["label"],
         "branch": f["branch"],
         "channels": f["channels"],
         "mechanism": f["mechanism"],
@@ -174,7 +196,7 @@ def notes(today: Optional[date] = None) -> List[Dict[str, Any]]:
             {
                 "id": f"EV-{fid}",
                 "kind": "regulation",
-                "title": titles.get(fid, cat.EVENT_TYPES[f["event_type"]]["label"]),
+                "title": titles.get(fid, cat.event_types()[f["event_type"]]["label"]),
                 "regulation": {
                     "document": titles.get(fid),
                     "purposes": purposes,

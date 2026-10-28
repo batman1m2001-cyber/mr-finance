@@ -16,6 +16,7 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07 and SCR
 | Sự kiện & nhận định `nhan-dinh[/EV-…]` | SCR-CIO-02 | FEAT-02, 04 | BRD-FR-103, 301, 307 | Tin & sự kiện | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Nhận định `nhan-dinh/VW-…` | SCR-CIO-03 | FEAT-04, 05, 06 | BRD-BR-05…07, BR-14, FR-302…305 | Tin & sự kiện | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Phơi nhiễm `phoi-nhiem` | SCR-CIO-04 | FEAT-08 | BRD-BR-13, FR-403 | Tác động | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Phân bổ `phan-bo` | SCR-CIO-17 | FEAT-44 | OWN-AA-14…17 | Tác động | built — `tests/test_allocation.py::test_the_cio_approves_each_action_and_the_client_sees_only_the_approved_ones` |
 | Lần áp dụng `ap-dung[/AR-…]` | SCR-CIO-05 | FEAT-08 | BRD-FR-401, 405, 501 | Tác động | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Đồ thị lần áp dụng `do-thi[/AR-…]` | SCR-CIO-10 | FEAT-30 | KIT-UX-04 | Tác động | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Nghiên cứu `nghien-cuu` | SCR-CIO-06 | FEAT-03, 10 | BRD-FR-201, 204, 603 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |

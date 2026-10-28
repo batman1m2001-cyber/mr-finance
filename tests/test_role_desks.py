@@ -107,6 +107,7 @@ def test_the_cio_keeps_every_page_it_had():
     added |= {"hieu-qua"}  # OWN-FB-16: the CIO's Hiệu quả
     added |= {"giu", "nhat-ky"}  # OWN-FB-18: Compliance's held news and audit chain
     added |= {"bang-chung"}  # NEWS_EVIDENCE_BRD §8.2: every news frame and the CIO's review
+    added |= {"phan-bo"}  # ASSET_ALLOCATION_BRD P2: the allocations waiting for the CIO, the model, the bucket moves
     gone = {"hop-tin"}  # OWN-FB-11: the inbox is on the board
     assert set(before) - gone <= set(menu("cio")) and added <= set(menu("cio")) and not gone & set(menu("cio"))
     assert set(menu("cio")) == set(before) - gone | added | {"ban"}

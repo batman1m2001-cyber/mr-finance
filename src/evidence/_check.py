@@ -45,7 +45,7 @@ def check(frame: Dict[str, Any], computed: str = None) -> Tuple[List[str], Dict[
     if bad:
         return [f"Sai kiểu dữ liệu: {', '.join(bad)} (trường văn bản là một chuỗi, danh sách là mảng chuỗi)"], dict(frame)
     why: List[str] = []
-    if frame.get("event_type") not in cat.EVENT_TYPES:
+    if frame.get("event_type") not in cat.event_types():
         why.append(f"Loại sự kiện không có trong danh mục: {frame.get('event_type')!r}")
     bad = [t for t in frame.get("targets") or [] if not cat.valid_target(t)]
     if bad:

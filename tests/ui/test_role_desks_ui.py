@@ -81,7 +81,7 @@ def test_the_cio_works_at_its_desk_and_every_page_is_a_sheet(open_page):
         assert not p.problems(), (r, p.problems())
     p.go("#/cio/do-thi")
     tabs = p.page.eval_on_selector_all("#dk-tabs a", "as => as.map(a => a.getAttribute('href'))")
-    assert tabs == ["#/cio/phoi-nhiem", "#/cio/do-thi"]  # OWN-FB-14
+    assert tabs == ["#/cio/phoi-nhiem", "#/cio/phan-bo", "#/cio/do-thi"]  # OWN-FB-14; Phân bổ: ASSET_ALLOCATION_BRD P2
     p.page.click("#ws-sheet-x")
     p.page.wait_for_function("document.querySelector('#ws-sheet').hidden && location.hash === '#/cio'")
     assert not p.problems()

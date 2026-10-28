@@ -28,7 +28,11 @@ def read(factor: str = None, role: str = None) -> dict:
         "frames": [frames.view(f, cio) for f in ids if cio or frames.review(f)["status"] == "approved"],
     }
     if cio:
-        out["calendar"] = {k: {"label": cat.EVENT_TYPES[k]["label"], "dates": v} for k, v in frames.data()["events"].items()}
+        dates = frames.events()
+        out["calendar"] = {k: {"label": v["label"], "dates": dates.get(k, []), "cio": bool(v.get("cio")),
+                               "series": v.get("series") or [], "preview": frames.preview(k) if dates.get(k) else []}
+                           for k, v in cat.event_types().items() if k != "new"}  # fmt: skip
+        out["series"] = cat.SERIES
         out["thresholds"] = {"min_precedents": cat.MIN_PRECEDENTS, "min_edge": cat.MIN_EDGE}
         kept = agent.drafts()
         out["drafts"] = sorted((agent.view(k, d) for k, d in kept.items()), key=lambda d: -d["at"])
@@ -101,3 +105,19 @@ def decide_draft(news_id: str = None, decision: str = None, by: str = None, note
     with db.tx() as con:
         audit.append(con, u["id"], f"evidence.draft.{d['review']['status']}", news_id, {"note": d["review"]["note"]})
     return {"draft": agent.view(news_id, d)}
+
+
+@op
+def save_type(event_type: str = None, label: str = None, dates: list = None, series: list = None, by: str = None) -> dict:
+    """The CIO adds an event type to the catalogue, or precedent dates to a type there (P2); with enough dates a type
+    gets the statistics branch on the series measured. Audited."""
+    from control import audit, db, roles
+
+    u = roles.require(by, "cio")
+    try:
+        got = cat.save(event_type, label, list(dates or []), list(series or []), u["id"])
+    except ValueError as exc:
+        raise BadRequest(str(exc)) from None
+    with db.tx() as con:
+        audit.append(con, u["id"], "evidence.type", got["event_type"], {"label": got["label"], "added": got["added"]})
+    return {"type": {**got, "dates": frames.events().get(got["event_type"], [])}}

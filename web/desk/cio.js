@@ -16,7 +16,7 @@ const STAGE_PAGE = {news: "Hộp tin", views: "Sự kiện & nhận định", ru
 const TO_CLIENT = new Set(["families", "rm"]);  // OWN-FB-08: their own frame
 const KIND = {view: ["sparkles", "Nhận định"], run: ["zap", "Lần áp dụng"], config: ["sliders", "Cấu hình"],
   letter: ["mail", "Bài viết"], event: ["news", "Sự kiện"], held: ["shield", "Tin bị giữ"], research: ["file", "Nghiên cứu"],
-  policy: ["scale", "Chính sách"]};  // the last three were Compliance's (OWN-FB-18)
+  policy: ["scale", "Chính sách"], allocation: ["layers", "Phân bổ"]};  // research…policy were Compliance's (OWN-FB-18)
 const LEVEL = {high: ["bad", "Tác động cao"], medium: ["warn", "Tác động vừa"], low: ["", "Tác động thấp"]};
 const SCOPE = {domestic: "Trong nước", intl: "Quốc tế", both: "Trong nước + quốc tế"};
 const PAGE = 20;

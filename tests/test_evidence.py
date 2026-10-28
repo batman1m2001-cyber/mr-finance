@@ -11,7 +11,13 @@ from operonx import Operon
 
 from evidence import _check, _stats, agent, frames, labels
 from evidence import catalogue as cat
-from evidence.graph import evidence_decide_flow, evidence_draft_decide_flow, evidence_draft_flow, evidence_flow
+from evidence.graph import (
+    evidence_decide_flow,
+    evidence_draft_decide_flow,
+    evidence_draft_flow,
+    evidence_flow,
+    evidence_type_flow,
+)
 from impact.graph import alerts_flow
 from market import store as market
 from procedural import goals
@@ -263,3 +269,42 @@ def test_the_live_agent_is_sent_back_with_the_reasons(monkeypatch):
     frame, why, attempts, calls = asyncio.run(agent.live({"title": "Fed tăng lãi suất", "client_id": "C01"}))
     assert (why, attempts, len(calls)) == ([], 2, 2)
     assert "bị trả lại" in asked[1] and "C01" not in asked[0]
+
+
+# --- the full catalogue (P2): the CIO adds a type or precedent dates; enough dates give the statistics branch -------
+TYPE = Operon(evidence_type_flow, params={"event_type": None, "label": None, "dates": None, "series": None, "by": None})
+ELECTIONS = ["2008-11-04", "2010-11-02", "2012-11-06", "2014-11-04", "2016-11-08", "2018-11-06", "2020-11-03", "2022-11-08"]
+
+
+def test_the_cio_adds_a_type_and_its_dates_give_the_statistics_branch():
+    market.put("VNINDEX", "test", "", series(ELECTIONS))
+    out = go(TYPE, label="Bầu cử Mỹ", dates=ELECTIONS[:5], series=["VNINDEX"], by="cio")
+    assert "$errors" not in out, out.get("$errors")
+    et = out["type"]["event_type"]
+    assert (et, out["type"]["added"]) == ("cio_bau_cu_my", 5)
+    cal = run(READ, role="cio")["evidence"]["calendar"][et]
+    assert (cal["label"], cal["cio"], len(cal["dates"]), cal["series"]) == ("Bầu cử Mỹ", True, 5, ["VNINDEX"])
+    vn = lambda c: next(p for p in c["preview"] if (p["series"], p["timeframe"]) == ("VNINDEX", "1w"))  # noqa: E731
+    assert (vn(cal)["n"], vn(cal)["enough"], vn(cal)["direction"]) == (5, False, "unclear")  # too few: no direction
+    assert go(TYPE, event_type=et, dates=ELECTIONS[4:], by="cio")["type"]["added"] == 3  # the one repeated is not counted
+    cal = run(READ, role="cio")["evidence"]["calendar"][et]
+    assert (vn(cal)["n"], vn(cal)["direction"], vn(cal)["way"]) == (8, "negative", "down")
+    # the agent picks it: in its list, accepted by the checks, read from the words of an item
+    assert et in agent._system() and not [w for w in _check.check({"event_type": et})[0] if "Loại sự kiện" in w]
+    item = news_item("Kết quả bầu cử Mỹ làm thị trường biến động")
+    d = go(DRAFT, news_id=item["id"], by="cio", mode="mock")["draft"]
+    assert (d["event_type"], d["event_label"]) == (et, "Bầu cử Mỹ")
+    assert [(p["series"], p["timeframe"], p["same"], p["n"]) for p in d["measured"]][:1] == [("VNINDEX", "1w", 8, 8)]
+
+
+def test_dates_go_to_a_type_already_there_and_only_the_cio_saves_valid_ones():
+    before = len(frames.events()["sbv_rate_hike"])
+    assert go(TYPE, event_type="sbv_rate_hike", dates=["2022-09-23"], by="cio")["type"]["added"] == 1
+    assert len(run(READ, role="cio")["evidence"]["calendar"]["sbv_rate_hike"]["dates"]) == before + 1
+    assert "cần vai trò" in error(go(TYPE, label="Loại thử", dates=[], by="rm01"))
+    assert "Ngày không hợp lệ" in error(go(TYPE, event_type="fed_hike", dates=["2099-01-01"], by="cio"))
+    assert "Ngày không hợp lệ" in error(go(TYPE, event_type="fed_hike", dates=["23/09/2022"], by="cio"))
+    assert "Đã có loại" in error(go(TYPE, label="Fed tăng lãi suất", dates=[], by="cio"))
+    assert "Không có loại" in error(go(TYPE, event_type="nope", dates=[], by="cio"))
+    assert "Chuỗi không có" in error(go(TYPE, label="Loại thử", series=["NOPE"], by="cio"))
+    assert "calendar" not in run(READ, role="rm")["evidence"]

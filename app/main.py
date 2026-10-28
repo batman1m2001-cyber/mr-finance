@@ -33,6 +33,7 @@ POST /api/allocation {client_id, scope?, method?, assumptions?, role?} ──►
 POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item's evidence: statistics or the qualitative frame
                     (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
+                    · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
 POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
@@ -114,7 +115,13 @@ from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow, declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
-from evidence.graph import evidence_decide_flow, evidence_draft_decide_flow, evidence_draft_flow, evidence_flow
+from evidence.graph import (
+    evidence_decide_flow,
+    evidence_draft_decide_flow,
+    evidence_draft_flow,
+    evidence_flow,
+    evidence_type_flow,
+)
 from feed.graph import feed_flow, feed_open_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
@@ -397,6 +404,12 @@ APP = Application(
             http("POST", "/api/evidence/draft/decide", port=PORT),
             graph=evidence_draft_decide_flow,
             description="POST {news_id, decision, by, note?}: the CIO approves, returns or rejects the agent's draft.",
+        ),
+        Service(
+            "evidence_type",
+            http("POST", "/api/evidence/type", port=PORT),
+            graph=evidence_type_flow,
+            description="POST {event_type? | label?, dates, series?, by}: the CIO adds an event type or its precedent dates.",
         ),
         Service(
             "propose",

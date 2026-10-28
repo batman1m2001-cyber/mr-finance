@@ -1217,6 +1217,23 @@ metric(
     level="Mức rủi ro",
 )
 metric(
+    "alloc.bl",
+    "Tỷ trọng mô hình theo Black–Litterman",
+    "Tỷ trọng gốc của mức rủi ro là điểm xuất phát; mỗi lần CIO Tăng / Giảm một loại là một nhận định cộng / trừ "
+    "1 điểm % lợi nhuận năm cho loại đó; kết quả giữ trong ±5 điểm mỗi loại và trong khoảng cho phép, phần chênh vào "
+    "tiền chờ đầu tư. Độ biến động và tương quan là giả định của CIO (data/model_portfolio.json).",
+    "src/allocation/_model.py::black_litterman",
+    level="Mức rủi ro",
+)
+metric(
+    "alloc.eleven",
+    "Theo 11 loại tài sản",
+    "Đang có = giá trị mọi tài sản (hoặc khoản vay) của loại đó trong hộ, ở mọi giỏ. Trong Tăng trưởng = phần nằm "
+    "trong giỏ Tăng trưởng. Mục tiêu = tỷ trọng mô hình của nhóm × tỷ lệ chia của CIO × giỏ Tăng trưởng; loại không "
+    "thuộc giỏ Tăng trưởng không có mục tiêu.",
+    "src/allocation/_model.py::eleven",
+)
+metric(
     "policy.certain",
     "Số tiền chắc chắn nếu tin xảy ra",
     "Theo hợp đồng hoặc quy định, không ước tính (NEWS_EVIDENCE_BRD N1). Giảm trừ gia cảnh: phần thuế thu nhập cá "

@@ -2,7 +2,8 @@
    target, what is there and the gap (POST /api/allocation); the cash-flow method A/B/C; the numbered actions with their
    suitability check (a blocked one only on staff screens); the workings in collapsed zones; the assumptions (edit and
    run again); the worked example K-7F3A (POST /api/allocation/example); an RM sends the actions to the review queue
-   (POST /api/allocation/send). */
+   (POST /api/allocation/send). P2: the household by the 11 asset classes; an RM moves an asset to another bucket with a
+   reason (POST /api/allocation/override), which the CIO reads on #/cio/phan-bo. */
 import {$, esc, n as how, pct, post, toast, vnd} from "../core/core.js";
 
 const CHECK = {PASS: ["good", "Phù hợp"], WARN: ["warn", "Cần lưu ý"], BLOCK: ["bad", "Bị chặn"]};
@@ -49,6 +50,10 @@ export async function render(box, ctx) {
       ret.status === "short" ? `<span class="pill warn">Thiếu ${m(vnd(ret.short), "alloc.retirement")} khi nghỉ hưu</span>` : `<span class="pill good">Đủ cho nghỉ hưu</span>`],
   ];
   const acts = a.actions;
+  // every asset in the three buckets, the ones an RM moved first (P2: ghi đè giỏ, the CIO sees each)
+  const held = Object.entries(a.buckets).flatMap(([b, x]) => x.holdings.filter(h => h.key).map(h => ({...h, bucket: b})))
+    .sort((x, y) => !!y.moved - !!x.moved);
+  const moved = held.filter(h => h.moved);
   box.innerHTML = `
     <div class="pagehead"><div>
       <div class="eyebrow">Wealth Planning Advisor${a.example ? ` · Ví dụ ${esc(a.example.id)}` : ""}</div>
@@ -94,6 +99,20 @@ export async function render(box, ctx) {
       ${more("Mô hình Tăng trưởng", table(["Loại", "Hiện tại", "Tỷ trọng mục tiêu", "Mua / bán", "Nhận định"], gr.rebalance.rows.map(r =>
         [esc(r.label), m(pct(r.now_pct), "alloc.rebalance"), `${m(pct(r.target_pct), "alloc.rebalance")}${r.tilt ? ` <span class="small muted">(${m(pct(r.tilt, true, 0), "alloc.rebalance")})</span>` : ""}`, m(vnd(r.trade, true), "alloc.rebalance"), esc((r.views || []).join(", "))]))
         + `<p class="small muted">Lỗ khi thị trường xấu: trước ${m(pct(gr.worst_before.share), "alloc.worst")} · sau ${m(pct(gr.worst_after.share), "alloc.worst")}</p>`)}
+      ${more("Theo 11 loại tài sản", table(["Loại", "Đang có", "Trong Tăng trưởng", "Mức mục tiêu"], a.eleven.rows.map(r =>
+        [esc(r.label) + (r.loan ? ` <span class="chip">Khoản vay</span>` : ""), m(vnd(r.value), "alloc.eleven"), m(vnd(r.in_growth), "alloc.eleven"),
+          r.target == null ? `<span class="muted">—</span>` : `${m(vnd(r.target), "alloc.eleven")} <span class="small muted">(${m(pct(r.target_pct), "alloc.eleven")})</span>`]))
+        + `<p class="small muted">Ngoài 11 loại (tiền VND, tiền gửi, quỹ tiền tệ, bảo hiểm): ${m(vnd(a.eleven.outside), "alloc.eleven")}</p>`)}
+      ${staff && !a.example ? more("Chuyển tài sản sang giỏ khác", `${moved.length ? table(["Tài sản", "Giỏ", "Lý do"], moved.map(h =>
+        [esc(h.name), esc(BUCKET[h.moved.bucket]), `<span data-explains>${esc(h.moved.reason)}</span>`])) : ""}
+        <form data-override class="simform">
+          <label class="field"><span>Tài sản</span><select name="key">${held.map(h =>
+            `<option value="${esc(h.key)}">${esc(h.name)} · ${esc(BUCKET[h.bucket])}</option>`).join("")}</select></label>
+          <label class="field"><span>Sang giỏ</span><select name="bucket">${Object.entries(BUCKET).map(([k, v]) =>
+            `<option value="${k}">${esc(v)}</option>`).join("")}<option value="">Về giỏ mặc định</option></select></label>
+          <label class="field"><span>Lý do</span><input name="reason" placeholder="Ít nhất 10 ký tự"></label>
+          <button type="submit" class="btn primary">Chuyển</button></form>
+        <p class="small muted">CIO thấy mọi lần chuyển cùng lý do.</p>`) : ""}
       ${more("Di sản", table(["Khoản", "Cách tính", "Số tiền"], leg.floor_rows.map(r => [esc(r.label), `<span data-explains>${esc(r.how)}</span>`, m(vnd(r.amount), "alloc.legacy")]))
         + kvs([["Đang có", range(leg.have_low, leg.have, "alloc.legacy")], ["Nếu giá giảm", `${m(pct(leg.drop.drop, false, 0), "alloc.legacy")} (<span data-explains>${esc(leg.drop.note)}</span>)`],
           ["Cách bù", esc(leg.fill_with)]]))}
@@ -124,6 +143,18 @@ export async function render(box, ctx) {
   };
   const reset = $("[data-reset]", box);
   if (reset) reset.onclick = () => { st.assumptions = {}; render(box, ctx); };
+  const over = $("[data-override]", box);
+  if (over) over.onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target.elements;
+    try {
+      await post("/api/allocation/override", {client_id: client, scope, key: f.key.value, bucket: f.bucket.value,
+        reason: f.reason.value.trim(), by: ctx.user});
+      e.target.reset();
+      toast("Đã chuyển giỏ");
+      render(box, ctx);
+    } catch (err) { toast(err.message); }
+  };
   const send = $("[data-send]", box);
   if (send) send.onclick = async () => {
     send.disabled = true;

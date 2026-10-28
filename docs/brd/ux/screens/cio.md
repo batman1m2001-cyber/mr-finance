@@ -335,3 +335,23 @@ agent** · **Từ chối**. **Ngưỡng** (folded): 8 precedents and 10 points o
 **Responsive / a11y.** Phone: the table scrolls sideways in its panel; the drafts stack. Rows open by Enter.
 
 **Tests.** `tests/test_evidence.py`; the route in `tests/ui/test_routes.py::test_every_route_renders_without_errors`.
+
+## SCR-CIO-17 — Phân bổ (Allocations to approve)
+
+| | |
+|---|---|
+| Route | `#/cio/phan-bo` (a sheet over the CIO desk, rail group Tác động) |
+| Feature | [FEAT-44](../../features/FEAT-44-asset-allocation.md) |
+| Requirements | OWN-AA-14…17 (ASSET_ALLOCATION_BRD P2) |
+| Data | `POST /api/allocation/queue`, `/api/allocation/tilts`; `/api/allocation/review`, `/api/allocation/method` |
+
+**Centre.** How many allocations wait and how many bucket moves the RMs made. Each waiting allocation: its client,
+every action with its check and **Duyệt** · **Từ chối**, a note for the RM and **Ghi quyết định**; the client sees
+only the approved actions (Q-29). **Mô hình Tăng trưởng** at risk level 3: the base model, the ±2-point tilts and
+Black–Litterman side by side, ✓ on the way in force and a switch between them. **RM chuyển giỏ**: every move with its
+client, asset, from → to, reason, time and RM. **Đã duyệt gần đây** (folded). The desk lists each waiting allocation
+under the decisions waiting.
+
+**Responsive / a11y.** Phone: the tables scroll sideways in their panels; the decision buttons wrap under the action.
+
+**Tests.** `tests/test_allocation.py`; the route in `tests/ui/test_routes.py::test_every_route_renders_without_errors`.

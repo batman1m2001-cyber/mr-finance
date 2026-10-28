@@ -229,6 +229,10 @@ def test_the_cio_approves_each_action_and_the_client_sees_only_the_approved_ones
     rid, n = sent["review_id"], sent["actions"]
     assert n >= 2
     assert rid in [r["id"] for r in ok(QUEUE)["waiting"]]
+    from desk import reads as desk
+
+    waits = lambda: [x for x in desk.cio()["decide"] if x["kind"] == "allocation" and x["id"] == rid]  # noqa: E731
+    assert [x["route"] for x in waits()] == ["#/cio/phan-bo"]  # the desk lists it with the CIO's other decisions
     assert "$errors" in run(REVIEW, item_id=rid, by="rm01", decisions={"0": "approve"})  # the CIO's, not the RM's
     assert "$errors" in run(REVIEW, item_id=rid, by="cio", decisions={"0": "maybe"})
     half = ok(REVIEW, item_id=rid, by="cio", decisions={"0": "approve"})["item"]
@@ -239,6 +243,7 @@ def test_the_cio_approves_each_action_and_the_client_sees_only_the_approved_ones
     assert done["data"]["option"]["actions"] == [half["data"]["actions"][0]["what"]]
     assert "$errors" in run(REVIEW, item_id=rid, by="cio", decisions={"0": "reject"})  # decided once
     assert rid in [r["id"] for r in ok(QUEUE)["decided"]] and rid not in [r["id"] for r in ok(QUEUE)["waiting"]]
+    assert not waits()
     none = ok(SEND, client_id="C01", by="rm01")
     out = ok(REVIEW, item_id=none["review_id"], by="cio", decisions={str(i): "reject" for i in range(none["actions"])})
     assert out["item"]["status"] == "rejected"

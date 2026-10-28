@@ -6,7 +6,7 @@ export const DESKS = {
     title: "Decision board", view: "cio",
     groups: [
       {id: "ban", label: "Decision board", short: "Board", icon: "target", tip: "Decision board: việc chờ bạn, dòng tin đến gia đình, hộp tin", desk: true, nav: ["ban", "nhan-dinh", "giu", "mo-hinh", "do-luong", "agent", "viec-nen", "cau-hinh"]},  // Admin's pages: old links open here
-      {id: "tac-dong", label: "Tác động", icon: "zap", tip: "Tác động: tác động danh mục, đồ thị lần áp dụng", nav: ["phoi-nhiem", "do-thi", "ap-dung"]},
+      {id: "tac-dong", label: "Tác động", icon: "zap", tip: "Tác động: tác động danh mục, phân bổ chờ duyệt, đồ thị lần áp dụng", nav: ["phoi-nhiem", "phan-bo", "do-thi", "ap-dung"]},
       {id: "noi-dung", label: "Nội dung", icon: "file", tip: "Nội dung: bài viết cho khách Private, bằng chứng tin", nav: ["ban-tin", "nghien-cuu", "chinh-sach", "bang-chung"]},
       {id: "hieu-qua", label: "Hiệu quả", icon: "activity", tip: "Hiệu quả: bao nhiêu tin, dự báo đúng sai", nav: ["hieu-qua"]},
       {id: "nhat-ky", label: "Nhật ký", icon: "history", tip: "Nhật ký kiểm toán: chuỗi băm, xuất", nav: ["nhat-ky"]},  // OWN-FB-18: Compliance's chain

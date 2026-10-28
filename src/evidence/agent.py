@@ -60,9 +60,12 @@ def _plain(text: str) -> str:
 
 
 def classify(news: Dict[str, Any]) -> str:
-    """The keyword reading of an item's event type; "new" when no row of WORDS matches."""
+    """The keyword reading of an item's event type: a row of WORDS, else a CIO type whose name is in the text (P2);
+    "new" when nothing matches."""
     text = _plain(f"{news.get('title', '')} {news.get('summary', '')}")
-    return next((t for t, groups in WORDS if all(any(w in text for w in g) for g in groups)), "new")
+    found = next((t for t, groups in WORDS if all(any(w in text for w in g) for g in groups)), None)
+    cio = (k for k, v in cat.event_types().items() if v.get("cio") and _plain(v["label"]) in text)
+    return found or next(cio, "new")
 
 
 def seen(news: Dict[str, Any]) -> Dict[str, Any]:
@@ -102,7 +105,7 @@ def mock(news: Dict[str, Any], kind: Optional[str] = None) -> Dict[str, Any]:
 
 def _system() -> str:
     lists = {
-        "event_type": {k: v["label"] for k, v in cat.EVENT_TYPES.items()},
+        "event_type": {k: v["label"] for k, v in cat.event_types().items()},
         "channels": list(cat.CHANNELS),
         "changes": list(cat.CHANGES),
         "direction": list(cat.DIRECTIONS),
@@ -172,7 +175,7 @@ def suggested(drafted: set, n: int = 6) -> List[Dict[str, Any]]:
 def view(news_id: str, d: Dict[str, Any]) -> Dict[str, Any]:
     """A draft as the CIO's page shows it."""
     f = d["frame"]
-    ok = f.get("event_type") in cat.EVENT_TYPES and f.get("direction") in cat.DIRECTIONS
+    ok = f.get("event_type") in cat.event_types() and f.get("direction") in cat.DIRECTIONS
     return {
         "news_id": news_id,
         "news": d["news"],
@@ -180,7 +183,7 @@ def view(news_id: str, d: Dict[str, Any]) -> Dict[str, Any]:
         "attempts": d["attempts"],
         "failed": d["failed"],
         "event_type": f.get("event_type"),
-        "event_label": cat.EVENT_TYPES[f["event_type"]]["label"] if ok else "Loại mới",
+        "event_label": cat.event_types()[f["event_type"]]["label"] if ok else "Loại mới",
         "direction": f.get("direction") if ok else "unclear",
         "direction_label": cat.DIRECTIONS[f["direction"]] if ok else "Chưa rõ",
         "timeframe_label": cat.TIMEFRAMES.get(f.get("timeframe"), str(f.get("timeframe"))),
@@ -188,6 +191,8 @@ def view(news_id: str, d: Dict[str, Any]) -> Dict[str, Any]:
         "targets": [{"label": t, "name": cat.target_label(t)} for t in f.get("targets") or [] if cat.valid_target(t)],
         "precedents": len(f.get("precedents") or []),
         "notes": f.get("notes") or [],
+        # the series where this type's precedents already give a direction (P2): the CIO weighs the draft against them
+        "measured": [p for p in frames.preview(f["event_type"]) if p["direction"] != "unclear"] if ok else [],
         "review": {**d["review"], "label": STATUS_LABEL[d["review"]["status"]]},
         "cost_usd": sum(c.get("cost_usd") or 0 for c in d.get("calls") or []) or None,
         "at": d["at"],
