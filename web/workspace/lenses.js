@@ -18,7 +18,7 @@ export const LENSES = [
   {id: "dong-tien", label: "Dòng tiền", icon: "flow", tip: "Dòng tiền: thu nhập, chi tiêu, thanh khoản", sub: "Thu nhập và chi tiêu của tháng, và tiền dự phòng",
     kinds: ["family", "flow", "category", "liquidity", "class"], sheets: [], part: "cash"},
   {id: "muc-tieu", label: "Mục tiêu & kịch bản", short: "Mục tiêu", icon: "target", tip: "Mục tiêu và kịch bản giả định", sub: "Mục tiêu của bạn và các kịch bản giả định",
-    kinds: ["family", "goal", "scenario"], sheets: ["ke-hoach"]},
+    kinds: ["family", "goal", "scenario"], sheets: ["ke-hoach", "phan-bo"]},
   {id: "tin", label: "Tin tức", icon: "news", tip: "Tin tức, sự kiện và chính sách có thể tác động", sub: "Tin tức, sự kiện và chính sách có thể tác động tới tài sản của bạn",
     kinds: ["family", "event", "alert", "class"], sheets: ["thi-truong", "do-thi", "chinh-sach"]},
   {id: "rui-ro", label: "Rủi ro", icon: "alert", tip: "Rủi ro: mức lỗ khi căng thẳng, tập trung, dự phòng", sub: "Mức lỗ khi thị trường xấu, mức tập trung và tiền dự phòng",
@@ -30,6 +30,7 @@ export const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 export const SHEETS = {
   "tai-san": {page: "holdings", label: "Dữ liệu chi tiết tài sản", route: "#/client/tai-san", lens: "tong-quan", nav: ["tai-san"]},
   "ke-hoach": {page: "plan", label: "Wealth planning advisor", route: "#/client/muc-tieu/ke-hoach", lens: "muc-tieu", nav: ["muc-tieu", "ke-hoach"]},
+  "phan-bo": {page: "allocation", label: "Asset allocation", route: "#/client/muc-tieu/phan-bo", lens: "muc-tieu", nav: ["muc-tieu", "phan-bo"]},
   "khau-vi": {page: "risktest", label: "Risk profile test", route: "#/client/rui-ro/khau-vi", lens: "muc-tieu", nav: ["rui-ro", "khau-vi"]},
   "thi-truong": {page: "impact", label: "Tác động tin", route: "#/client/tin/thi-truong", lens: "tin", nav: ["tin", "thi-truong"]},
   "do-thi": {page: "graph", label: "Đồ thị tác động", route: "#/client/tin/do-thi", lens: "tin", nav: ["tin", "do-thi"]},
@@ -40,7 +41,7 @@ export const SHEETS = {
 // each section's page and its tabs (B3.1; the names: WEALTH_NAMES_PLAN): [label, address, the view a tab opens]
 export const SECTIONS = {
   "tong-quan": {home: "#/client/tong-quan", tabs: [["Wealth view", "#/client/tong-quan", "money"], [SHEETS["tai-san"].label, SHEETS["tai-san"].route]]},
-  "muc-tieu": {home: SHEETS["ke-hoach"].route, tabs: ["ke-hoach", "khau-vi"].map(id => [SHEETS[id].label, SHEETS[id].route])},
+  "muc-tieu": {home: SHEETS["ke-hoach"].route, tabs: ["ke-hoach", "phan-bo", "khau-vi"].map(id => [SHEETS[id].label, SHEETS[id].route])},
   // News and Prediction first, then Đồ thị tác động; Tác động tin is no tab (business, 2026-10-22) — its address stays
   // for the bell's and the feed's evidence
   "tin": {home: SHEETS["chinh-sach"].route, tabs: ["chinh-sach", "do-thi"].map(id => [SHEETS[id].label, SHEETS[id].route])},
@@ -66,7 +67,7 @@ const BOARD = {"tong-quan/toan-canh": "month", "tong-quan/chi-tiet": "nw"};
 // the old addresses: [first, second] → sheet id; a bare first segment with subpages opens its first one
 const OLD = {
   "tai-san": "tai-san",
-  "muc-tieu": "ke-hoach", "muc-tieu/ke-hoach": "ke-hoach", "muc-tieu/khau-vi": "khau-vi", "rui-ro": "khau-vi", "rui-ro/khau-vi": "khau-vi",
+  "muc-tieu": "ke-hoach", "muc-tieu/ke-hoach": "ke-hoach", "muc-tieu/phan-bo": "phan-bo", "muc-tieu/khau-vi": "khau-vi", "rui-ro": "khau-vi", "rui-ro/khau-vi": "khau-vi",
   "tin": "chinh-sach", "tin/thi-truong": "thi-truong", "tin/do-thi": "do-thi", "tin/chinh-sach": "chinh-sach",
   "chuyen-gia": "chuyen-gia", "bo-nho": "bo-nho",
 };

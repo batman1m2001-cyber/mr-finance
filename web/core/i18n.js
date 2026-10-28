@@ -15,7 +15,7 @@ export function setLang(l) {
   location.reload();  // every page and number drawn once in the new language
 }
 
-const book = english ? (await import("./lang/en.js?v=20261028m2")).default : {};
+const book = english ? (await import("./lang/en.js?v=20261028a1")).default : {};
 
 // ── the book, indexed ───────────────────────────────────────────────────────
 const VI = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i;
@@ -76,6 +76,11 @@ function lookup(core, depth) {
   if (core.includes("; ")) {
     const parts = core.split("; ").map((x) => lookup(x, depth + 1));
     if (!parts.includes(null)) return parts.join("; ");
+  }
+  // “cổ phiếu & quỹ, trái phiếu, vàng”: a list whose every item is a phrase of the book
+  if (core.includes(", ")) {
+    const parts = core.split(", ").map((x) => lookup(x, depth + 1));
+    if (!parts.includes(null)) return parts.join(", ");
   }
   return null;
 }

@@ -28,7 +28,8 @@ const ROLES = {
         {id: "toan-canh", label: "Wealth view", page: "pulse"}, {id: "ban-do", label: "Wealth view", page: "map"},
         {id: "chi-tiet", label: "Wealth view", page: "detail"}]},  // all three open the dashboard (T4; the graph is off)
       {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings"},
-      {id: "muc-tieu", label: "Wealth Planning Advisor", sub: [{id: "ke-hoach", label: "Wealth planning advisor", page: "plan"}]},
+      {id: "muc-tieu", label: "Wealth Planning Advisor", sub: [{id: "ke-hoach", label: "Wealth planning advisor", page: "plan"},
+        {id: "phan-bo", label: "Asset allocation", page: "allocation"}]},
       {id: "rui-ro", label: "Risk profile test", sub: [{id: "khau-vi", label: "Risk profile test", page: "risktest"}]},
       {id: "tin", label: "Headline News", sub: [
         {id: "chinh-sach", label: "News and Prediction", page: "policy"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
@@ -47,6 +48,7 @@ const ROLES = {
           {id: "tong-quan", label: "Tổng quan", page: "detail", tab: "wealth"},
           {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings", tab: "wealth"},
           {id: "ke-hoach", label: "Wealth planning advisor", page: "plan", tab: "plan"},
+          {id: "phan-bo", label: "Asset allocation", page: "allocation", tab: "plan"},  // ASSET_ALLOCATION_BRD: the three buckets
           {id: "chinh-sach", label: "News and prediction", page: "policy", tab: "news"},
           {id: "do-thi", label: "Đồ thị tác động", page: "graph", tab: "news"},
           {id: "hieu-qua", label: "Khách hàng này", page: "performance", tab: "perf"},
@@ -150,6 +152,7 @@ export function go(hash, focus) {
 
 // the client's pages by their former names too: the tabs carry the bank's English names (ADR-0037), a client still types these
 const ALSO = {"#/client/tong-quan": "Tổng quan Toàn cảnh Dòng tiền", "#/client/tai-san": "Tài sản", "#/client/muc-tieu/ke-hoach": "Kế hoạch tài chính Mục tiêu",
+  "#/client/muc-tieu/phan-bo": "Phân bổ tài sản Ba giỏ Thanh khoản Di sản Tăng trưởng",
   "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/chinh-sach": "Chi phí chính sách Tin tức", "#/client/chuyen-gia": "Relationship specialist"};
 
 // every page of a role, for the header search: label, its parent's label, its route (and other names it answers to)
@@ -312,7 +315,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261028m2`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261028a1`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 

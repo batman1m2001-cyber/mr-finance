@@ -641,16 +641,16 @@ def actions(case: Dict[str, Any], a: Dict[str, Any]) -> List[Dict[str, Any]]:
         later = (
             f"lùi hưu {delay['near']['years']} năm (đạt {pct(delay['near']['cover'])})"
             if delay.get("near") and delay["near"]["years"] != delay.get("enough")
-            else f"lùi hưu {delay['enough']} năm" if delay.get("enough") else "làm lại bài test"
+            else f"lùi hưu {delay['enough']} năm" if delay.get("enough") else None
         )
         rows.append(
             {
                 "bucket": "retirement",
                 "kind": "talk",
                 # saving more is offered only when it fits the income (half of it at most): else the goal is talked over
-                "what": f"Trao đổi tiết kiệm thêm {vnd(goal['extra_monthly'])}/tháng hoặc {later}"
+                "what": f"Trao đổi tiết kiệm thêm {vnd(goal['extra_monthly'])}/tháng" + (f" hoặc {later}" if later else "")
                 if goal.get("extra_monthly") and goal["extra_monthly"] <= a["cashflow"]["income_monthly"] / 2
-                else f"Trao đổi lại mục tiêu hưu: {later} hoặc giảm chi tiêu khi nghỉ",
+                else "Trao đổi lại mục tiêu hưu: " + (f"{later} hoặc " if later else "") + "giảm chi tiêu khi nghỉ",
                 "amount": None,
                 "why": f"Thiếu khoảng {vnd(goal['short'])} năm {goal['year']}; lợi nhuận cần {pct(goal['required'] or 0)} > kỳ vọng {pct(goal['expected'])}"
                 if goal["required"] is not None
