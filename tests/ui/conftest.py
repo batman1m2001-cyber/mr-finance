@@ -135,7 +135,7 @@ def in_thread(fn, *args):
 class Page:
     """A page that records errors and waits for the shell to say a route has rendered (`mf:page`)."""
 
-    def __init__(self, browser, base_url, size="desktop", reduced=False, theme="light", dock=True):
+    def __init__(self, browser, base_url, size="desktop", reduced=False, theme="light", dock=True, lang="vi"):
         w, h = SIZES[size]
         self.ctx = browser.new_context(
             viewport={"width": w, "height": h}, reduced_motion="reduce" if reduced else None, color_scheme=theme or "light"
@@ -144,6 +144,12 @@ class Page:
         # (None: the person chose nothing, the client's light default, B3.3)
         if theme:
             self.ctx.add_init_script(f"try {{ localStorage.setItem('mf.theme', '{theme}'); }} catch (_) {{}}")
+        # the app opens in English unless the person chose Vietnamese (mf.lang, 2026-10-27); these tests read the
+        # Vietnamese the pages are written in, unless they say otherwise (lang=None)
+        if lang:
+            self.ctx.add_init_script(
+                f"try {{ if (localStorage.getItem('mf.lang') === null) localStorage.setItem('mf.lang', '{lang}'); }} catch (_) {{}}"
+            )
         # the client's assistant is closed until its button opens it (B3.2), and the choice kept: these tests start
         # where the person had opened it on a computer, unless they say otherwise (dock=False; test_classic_ui)
         if dock:

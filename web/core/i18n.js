@@ -15,7 +15,7 @@ export function setLang(l) {
   location.reload();  // every page and number drawn once in the new language
 }
 
-const book = english ? (await import("./lang/en.js?v=20261027l2")).default : {};
+const book = english ? (await import("./lang/en.js?v=20261028m2")).default : {};
 
 // ── the book, indexed ───────────────────────────────────────────────────────
 const VI = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i;

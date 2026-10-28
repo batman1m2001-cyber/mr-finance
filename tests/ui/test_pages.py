@@ -85,8 +85,10 @@ def test_the_policy_filter_keeps_one_side(open_page, base_url):
     p.page.click("[data-af=risk]")
     assert p.page.locator("#impact .dv .pill.good").count() == 0
     p.page.click("[data-hz='1w']")  # the horizon filter: only what lands within a week
-    week = {a["title"] for a in rep["alerts"] if not a["opportunity"] and a["horizon"] == "1w"}
-    assert set(p.page.locator("#impact .dbar .dl").all_inner_texts()) == set(list(week)[:10]) or len(week) > 10
+    week = [a["id"] for a in rep["alerts"] if not a["opportunity"] and a["horizon"] == "1w"]
+    # by id: the titles show in the page's language
+    shown = [r.get_attribute("data-a") for r in p.page.locator("#impact .dbar").all()]
+    assert set(shown) == set(week) if len(week) <= 10 else set(shown) <= set(week)
     assert not p.problems()
 
 
