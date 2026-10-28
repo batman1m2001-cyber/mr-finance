@@ -79,6 +79,8 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "ban-tin": ("Bài viết", {"cio": "#/cio/ban-tin"}),  # OWN-FB-15
     "van-ban-chinh-sach": ("Chính sách", {"cio": "#/cio/chinh-sach"}),
     "bang-chung": ("Bằng chứng tin", {"cio": "#/cio/bang-chung"}),  # NEWS_EVIDENCE_BRD §8.2
+    "phan-bo-tai-san": ("Asset allocation", {"client": "#/client/muc-tieu/phan-bo", "rm": "#/rm/khach-hang/phan-bo"}),
+    "phan-bo": ("Phân bổ", {"cio": "#/cio/phan-bo"}),  # ASSET_ALLOCATION_BRD P2: each action approved
     "do-luong": ("Đo lường", {r: f"#/{r}/do-luong" for r in ("cio", "admin")}),
     "tham-so": ("Tham số mô hình", {r: f"#/{r}/mo-hinh/tham-so" for r in ("cio", "admin")}),
     "du-lieu-thi-truong": ("Dữ liệu thị trường", {"cio": "#/cio/mo-hinh/du-lieu", "admin": "#/admin/du-lieu"}),

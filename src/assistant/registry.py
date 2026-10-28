@@ -14,12 +14,13 @@ import pydantic
 from operonx_agents import RunContext
 from operonx_agents import tool as agent_tool
 
-from assistant import actions, dataroom, desktools, filetools, followups, graphtools, knowledge, memory, tools
+from assistant import actions, alloctools, dataroom, desktools, filetools, followups, graphtools, knowledge, memory, tools
 from assistant.base import Ctx, Tool, allowed
 
 REGISTRY: Dict[str, Tool] = {**tools.CATALOGUE}
 for _name, _t in {**actions.CATALOGUE, **memory.CATALOGUE, **knowledge.CATALOGUE, **followups.CATALOGUE,
-                  **graphtools.CATALOGUE, **desktools.CATALOGUE, **dataroom.CATALOGUE, **filetools.CATALOGUE}.items():  # fmt: skip
+                  **graphtools.CATALOGUE, **desktools.CATALOGUE, **dataroom.CATALOGUE, **filetools.CATALOGUE,
+                  **alloctools.CATALOGUE}.items():  # fmt: skip
     assert _name not in REGISTRY, f"two tools named {_name!r}"
     REGISTRY[_name] = _t
 LABELS = {  # what a step is called in the panel ("Các bước")
@@ -79,6 +80,10 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "truy_van": "Truy vấn dữ liệu",
     "them_tu_tep": "Ghi từ tệp",
     "luu_tai_lieu": "Lưu vào Tài liệu",
+    "phan_bo_tai_san": "Phân bổ tài sản",
+    "phan_bo_cho_duyet": "Phân bổ chờ duyệt",
+    "loai_su_kien": "Loại sự kiện",
+    "goi_y_nhan_muc_tieu": "Gợi ý nhãn mục tiêu",
 }
 DEMO_USER = {**tools.USER, "admin": "admin"}  # who acts when sign-in is off
 
