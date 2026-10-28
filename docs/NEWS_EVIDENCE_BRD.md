@@ -5,7 +5,7 @@
 | Ngày | 28/10/2026 |
 | Trạng thái | **Đề xuất**, chưa triển khai (trừ mục 8.1 đã làm ngày 27/10) |
 | Người yêu cầu | Chủ sản phẩm, trong phiên làm việc 27–28/10/2026 ([nguồn](brd/sources/owner_requests/2026-10-28_news_evidence.md)) |
-| Mã yêu cầu | OWN-NE-01 … OWN-NE-12 ([owner_requirements](brd/requirements/owner_requirements.md#ne--news-as-evidence-not-forecast-2026-10-28)) |
+| Mã yêu cầu | OWN-NE-01 … OWN-NE-15 ([owner_requirements](brd/requirements/owner_requirements.md#ne--news-as-evidence-not-forecast-2026-10-28)) |
 | Liên quan | FEAT-25 (cảnh báo chính sách), FEAT-01 (thu thập tin), FEAT-04 (agent nhận định), goal branch (`src/procedural`), tài liệu *Luồng end-to-end mới – Wealth Platform sau thay đổi* (28/10/2026) |
 
 ## 1. Bối cảnh và vấn đề

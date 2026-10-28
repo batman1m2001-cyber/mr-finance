@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Extension (owner BRD, 2026-10-28) |
-| Requirements | OWN-NE-01…12 ([owner_requirements](../requirements/owner_requirements.md#ne--news-as-evidence-not-forecast-2026-10-28)); the BRD verbatim: [`docs/NEWS_EVIDENCE_BRD.md`](../../NEWS_EVIDENCE_BRD.md) |
+| Requirements | OWN-NE-01…15 ([owner_requirements](../requirements/owner_requirements.md#ne--news-as-evidence-not-forecast-2026-10-28)); the BRD verbatim: [`docs/NEWS_EVIDENCE_BRD.md`](../../NEWS_EVIDENCE_BRD.md) |
 | Users | the client and the RM (read approved frames), the CIO (reviews every frame and the agent's drafts) |
 | Entry points | the frame panel from the impact chart, the cards and the feed (FEAT-25); [SCR-CIO-16](../ux/screens/cio.md#scr-cio-16--bằng-chứng-tin-news-evidence) `#/cio/bang-chung`; `POST /api/evidence` (+ `/decide`, `/draft`, `/draft/decide`) |
-| Plan | the BRD's §15: P0 and P1 built; P2 not built |
+| Plan | the BRD's §15: P0, P1 and P2 built (P2 2026-10-28) |
 | Status | built (2026-10-28) |
 
 ## Purpose
@@ -35,10 +35,16 @@ statistics when history gives enough cases, otherwise a qualitative frame a CIO 
    frame of that type, or live on the CIO's model; a new type goes qualitative with direction Chưa rõ. The draft
    waits for the CIO; a draft that failed the checks cannot be approved.
 
-## Not built (P2)
+## P2 (built 2026-10-28)
 
-The full catalogue of event types; the agent suggesting plan labels; the *Luồng end-to-end mới* document updated per
-the BRD's §11. Open: [Q-30](../requirements/open_questions.md#q-30--the-news-evidence-thresholds-and-who-sees-what).
+- **The full catalogue:** on SCR-CIO-16 the CIO adds an event type, or precedent dates to one (`POST
+  /api/evidence/type`). With 8 precedents and a 10-point edge a type gets the statistics branch on VN-Index, SJC gold,
+  USD/VND and the 10-year yield; the agent's drafts show those statistics.
+- **AI-suggested plan labels:** “Gợi ý bằng AI” on RM › Tác động tin (`POST /api/goals/suggest`) fills purpose and
+  country for goals the RM has not declared and the rule cannot read; nothing is kept until the RM saves it. One live
+  call per family, US$0.002–0.005.
+- **§11:** [END_TO_END_FLOW_CHANGES.md](../../END_TO_END_FLOW_CHANGES.md).
+- [Q-30](../requirements/open_questions.md#q-30--the-news-evidence-thresholds-and-who-sees-what) resolved.
 
 ## Tests
 

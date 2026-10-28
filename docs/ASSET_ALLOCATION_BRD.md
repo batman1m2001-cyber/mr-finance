@@ -5,7 +5,7 @@
 | Ngày | 28/10/2026 |
 | Trạng thái | **Đề xuất**, chưa triển khai |
 | Người yêu cầu | Chủ sản phẩm, trong phiên làm việc 28/10/2026 ([nguồn](brd/sources/owner_requests/2026-10-28_asset_allocation.md)) |
-| Mã yêu cầu | OWN-AA-01 … OWN-AA-13 ([owner_requirements](brd/requirements/owner_requirements.md#aa--asset-allocation-in-wealth-planning-advisor-2026-10-28)) |
+| Mã yêu cầu | OWN-AA-01 … OWN-AA-17 ([owner_requirements](brd/requirements/owner_requirements.md#aa--asset-allocation-in-wealth-planning-advisor-2026-10-28)) |
 | Tính năng | [FEAT-44](brd/features/FEAT-44-asset-allocation.md); màn hình [SCR-CL-13](brd/ux/screens/client.md#scr-cl-13--phân-bổ-tài-sản-asset-allocation) |
 | Liên quan | FEAT-24 (bài test khẩu vị rủi ro), FEAT-26 (mục tiêu, kịch bản), FEAT-27 (gửi chuyên gia duyệt), FEAT-20 (gộp tài sản), [BRD tin tức là bằng chứng](NEWS_EVIDENCE_BRD.md) §11, tài liệu *Luồng end-to-end mới – Wealth Platform sau thay đổi* (28/10/2026) §3, §5 |
 

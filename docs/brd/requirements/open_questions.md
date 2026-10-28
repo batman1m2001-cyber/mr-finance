@@ -32,9 +32,10 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-22 | divergence | Factor-model parameters are assumed, not estimated | resolved (ADR-0004); estimation blocked |
 | Q-23 | divergence | One process instead of a separate AI zone; no signed inbox | resolved for the demo (ADR-0009) |
 | Q-27 | ambiguity | Whose book the test data is: Private only, its size and amounts | resolved (6,500 Private, ≥ 25 tỷ, Σ 428,000 tỷ; ADR-0038); licence and scope open |
-| Q-28 | ambiguity | Which Liquidity target (A, B or C) is the default; H and the buffer | open (A built, all three shown) |
-| Q-29 | divergence | Who approves an allocation action: the specialist (FEAT-27) or the CIO | open (review queue built; CIO per action is P2) |
-| Q-30 | ambiguity | The news evidence thresholds, the level, the horizon, and who sees an unsourced precedent | open (8 and 10 points built) |
+| Q-28 | ambiguity | Which Liquidity target (A, B or C) is the default; H and the buffer | resolved (A, H = 3 years, 6 months; 2026-10-28) |
+| Q-29 | divergence | Who approves an allocation action: the specialist (FEAT-27) or the CIO | resolved (the CIO, each action; built in P2) |
+| Q-30 | ambiguity | The news evidence thresholds, the level, the horizon, and who sees an unsourced precedent | resolved (8, 10 points, share of net worth, from the frame, CIO only) |
+| Q-31 | ambiguity | ASSET_ALLOCATION_BRD §14 Q3–Q5: the model table, survivor spending, what the client sees | resolved (the CIO's assumption; 2/3, editable; amounts shown) |
 
 ---
 
@@ -215,13 +216,16 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 - **Consequence:** with B the Liquidity gap is 0.6 tỷ, and most of the first action (sell 11 tỷ of shares)
   disappears (BRD §11).
 - **As built:** A by default; all three shown on SCR-CL-13; H = 3 years and 6 months' buffer are editable assumptions.
-- **Open:** the default method, H and the buffer. Owner: product.
+- **Resolved (2026-10-28):** method A, H = 3 years, 6 months' buffer. A is the safest: it counts no income, so a family
+  that loses its income still has three years of spending in Liquidity. B and C stay on the screen for the RM to
+  compare, and H and the buffer stay editable per family.
 
 ### Q-29 — Who approves an allocation action
 - **Fact:** the BRD's AA-N7 sends actions to the specialist (FEAT-27, as built: the RM's **Gửi vào hàng duyệt** puts
   them in the review queue). The owner's document *Luồng end-to-end mới* §7 has the CIO approve them.
 - **As built:** the review queue (FEAT-27); a BLOCK action never reaches the client. Per-action CIO approval is P2.
-- **Open:** specialist or CIO in the bank's version. Owner: product, CIO.
+- **Resolved (2026-10-28):** the CIO, one action at a time, as in *Luồng end-to-end mới* §7. Built in P2: the RM
+  sends, the CIO approves or rejects each action on CIO › Phân bổ, and the client sees only the approved ones.
 
 ### Q-30 — The news evidence thresholds and who sees what
 - **Fact:** NEWS_EVIDENCE_BRD §14 leaves open: 8 precedents as the minimum for statistics (Q1); 10 points over the
@@ -230,4 +234,16 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
   whether the client sees an approved precedent with no source (Q6).
 - **As built:** 8 and 10 points (`evidence/catalogue.py`, shown to the CIO under Ngưỡng); VN-Index from the market
   store; the horizon from the frame; an unsourced precedent is shown without “Nguồn” and its mark only to the CIO.
-- **Open:** Q1–Q4 (CIO, product); Q6 (compliance).
+- **Resolved (2026-10-28):** Q1 8 precedents and Q2 10 points, as built: below them a type stays qualitative. Q3 the
+  level stays the estimated effect as a share of net worth (High ≥ 1 %, Medium ≥ 0.3 %): it already is a share of net
+  worth, and changing every live screen's level now is not worth it. Q4 the horizon comes from the frame; the
+  statistics show their own windows. Q5 the market store's VN-Index, SJC gold, USD/VND and 10-year yield. Q6 the
+  CIO only: a client or an RM never sees the “chưa có nguồn” mark, and a precedent without a source shows no
+  source line.
+
+### Q-31 — The allocation model table, survivor spending and what the client sees
+- **Fact:** ASSET_ALLOCATION_BRD §14 asks whether the model table, expected returns and loan limits (§7, §8.2) match
+  the bank's advisory policy (Q3); whether 2/3 of today's spending is right once the head of the household is gone
+  (Q4); and whether the client sees the sell/buy amounts or only “lệch mục tiêu” (Q5).
+- **Resolved (2026-10-28):** Q3 the table stays the CIO's assumption (the CIO tilts it; ASSET_ALLOCATION_BRD §7) until the bank gives its
+  own. Q4 2/3, editable per family. Q5 the client sees the amounts, but only of actions the CIO approved (Q-29).

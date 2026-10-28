@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | Type | Extension (owner BRD, 2026-10-28) |
-| Requirements | OWN-AA-01…13 ([owner_requirements](../requirements/owner_requirements.md#aa--asset-allocation-in-wealth-planning-advisor-2026-10-28)); the BRD verbatim: [`docs/ASSET_ALLOCATION_BRD.md`](../../ASSET_ALLOCATION_BRD.md) |
+| Requirements | OWN-AA-01…17 ([owner_requirements](../requirements/owner_requirements.md#aa--asset-allocation-in-wealth-planning-advisor-2026-10-28)); the BRD verbatim: [`docs/ASSET_ALLOCATION_BRD.md`](../../ASSET_ALLOCATION_BRD.md) |
 | Users | the client (read), the RM (read, send to the review queue), the CIO (tilts the model) |
 | Entry points | [SCR-CL-13](../ux/screens/client.md#scr-cl-13--phân-bổ-tài-sản-asset-allocation): client `#/client/muc-tieu/phan-bo`, RM `#/rm/khach-hang/phan-bo`; the tilt panel on the CIO's view page `#/cio/nhan-dinh/<view>`; `POST /api/allocation` (+ `/example`, `/tilt`, `/tilts`, `/send`) |
-| Plan | the BRD's §15: P0 and P1 built; P2 not built |
+| Plan | the BRD's §15: P0, P1 and P2 built (P2 2026-10-28) |
 | Status | built (2026-10-28) |
 
 ## Purpose
@@ -45,10 +45,14 @@ actions that close it, worked out by formula so the RM can show every number.
 K-7F3A (`data/allocation_example.json`, `/api/allocation/example`) gives the BRD's §11 numbers: Liquidity 19 / gap 11;
 Legacy 40.5 / 60 / gap 16–24; Growth 31 rebalanced −3.7 / +2.9 / −2.9 / +3.7; expected 8.3 % against 9.2 % needed.
 
-## Not built (P2)
+## P2 (built 2026-10-28)
 
-The CIO approving each action; an RM overriding a bucket with Compliance watching; Black–Litterman; the model on 11
-asset classes.
+- **The CIO approves each action** on CIO › Phân bổ (`#/cio/phan-bo`, SCR-CIO-17); the client sees only the approved
+  ones ([Q-29](../requirements/open_questions.md#q-29--who-approves-an-allocation-action) resolved).
+- **An RM moves a holding** to another bucket with a reason; the CIO's page and Compliance's log list every move.
+- **Black–Litterman** beside the ±2-point tilts, inside the same guards; the CIO picks the method every client uses.
+- **11 asset classes:** “Theo 11 loại tài sản” on SCR-CL-13 reads the household and the Growth model by the classes
+  the news labels use.
 
 ## Tests
 

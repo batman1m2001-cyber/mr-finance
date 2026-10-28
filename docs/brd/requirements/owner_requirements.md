@@ -27,6 +27,9 @@ Source: [`2026-10-28_news_evidence.md`](../sources/owner_requests/2026-10-28_new
 | OWN-NE-10 | What each role sees: the client and the RM read approved frames without the CIO's marks; the CIO reads every frame, the branch, the review and the thresholds on Bằng chứng tin | BRD §8.2 | documented |
 | OWN-NE-11 | Every frame passes the CIO: approve, return to the agent, reject; a returned or rejected frame leaves the chart until approved again; each decision is in the audit log | BRD N6, §4 | documented |
 | OWN-NE-12 | The agent reads a real news item, picks its event type from the catalogue and drafts the frame (a new type goes qualitative, direction Chưa rõ); the draft waits for the CIO and a draft that failed the checks cannot be approved | BRD §4, §15 P1 | documented |
+| OWN-NE-13 | The full event-type catalogue: the CIO adds a type or precedent dates to one; with enough precedents the type gets the statistics branch on VN-Index, SJC gold, USD/VND and the 10-year yield | BRD §5, §15 P2 | documented |
+| OWN-NE-14 | AI suggests a plan label (purpose, country) for a goal the RM has not declared and the rule cannot read; nothing is kept until the RM saves it | BRD §7, §15 P2 | documented |
+| OWN-NE-15 | The changes to *Luồng end-to-end mới* are written down section by section | BRD §11, §15 P2 | documented |
 
 ## AA — Asset allocation in Wealth Planning Advisor (2026-10-28)
 
@@ -49,6 +52,10 @@ Source: [`2026-10-28_asset_allocation.md`](../sources/owner_requests/2026-10-28_
 | OWN-AA-11 | Actions are at asset-class level, no ticker, no target price, no FR-604 words; every number from a formula, the same answer for the same input | BRD AA-N1, AA-N5, AA-N6, §13.8, §13.10 | documented |
 | OWN-AA-12 | SCR-CL-13 shows the three buckets with targets and gaps, the cash-flow table, the model and its tilts, the actions with their checks and how each number is worked out; the RM sends the actions to the specialist review queue (FEAT-27) | BRD AA-N7, §10, §4 | documented |
 | OWN-AA-13 | The worked example K-7F3A gives the BRD's numbers: 19 / 11; 40,5 / 60 / 16–24; 31; 3,7 / 2,9 / 2,9 / 3,7; 8,3 % / 9,2 % | BRD §11, §13.9 | documented |
+| OWN-AA-14 | The CIO approves or rejects each action of a sent allocation; the client sees only the approved ones | BRD §14 Q2, §15 P2 | documented |
+| OWN-AA-15 | An RM moves a holding to another bucket with a reason; the CIO sees every move | BRD §15 P2 | documented |
+| OWN-AA-16 | Black–Litterman as a second model method beside the ±2-point tilts, inside the same guards; the CIO picks the one in force | BRD §5, §15 P2 | documented |
+| OWN-AA-17 | The household and the Growth model read by the 11 asset classes the news labels use | BRD §15 P2 | documented |
 
 ## DOC — Any document to the assistant (2026-10-26)
 
