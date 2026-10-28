@@ -11,6 +11,10 @@ from impact import _rules
 from wealth import fixtures, profile, store
 
 SEVERITY = {"high": "Cao", "medium": "Trung bình", "low": "Thấp"}
+# the alerts the page states in VND (owner 2026-10-27): those on gold and bonds only, and the exchange-rate ones;
+# the rest are shown as a level and a horizon
+IN_VND_CLASSES = {"gold", "bond"}
+FX_RULES = {"study_abroad"}
 
 
 @op
@@ -35,11 +39,13 @@ def score(holdings: list, profile: dict) -> dict:
     mk = fixtures.market()
     assets = sum(h["value"] for h in holdings if h["kind"] == "asset")
     nw = assets - sum(h["value"] for h in holdings if h["kind"] == "liability")
+    business = {h["name"] for h in holdings if h["class"] == "business"}
     alerts: List[Dict[str, Any]] = []
     for f in fixtures.factors()["factors"]:
         for i, hit in enumerate(_rules.RULES[f["rule"]["type"]](f, holdings, profile, mk)):
             impact = hit["raw"] * f["probability"]
             share = impact / nw if nw else 0.0
+            parts = _rules.by_class(hit, holdings, impact)
             alerts.append(
                 {
                     "id": f"{f['id']}-{i}",
@@ -52,10 +58,15 @@ def score(holdings: list, profile: dict) -> dict:
                     "exposure": round(hit["exposure"]),
                     "sensitivity": round(hit["sensitivity"], 6),
                     "impact": round(impact),
-                    "by_class": _rules.by_class(hit, holdings, impact),
+                    "by_class": parts,
                     "impact_pct": share,
                     "severity": _rules.severity(share),
                     "severity_label": SEVERITY[_rules.severity(share)],
+                    "horizon": f["horizon"],
+                    "horizon_label": f["horizon_label"],
+                    # an item that moves only business equity is shown as good or bad news, no level or horizon
+                    "sign_only": bool(hit["affected"]) and set(hit["affected"]) <= business,
+                    "in_vnd": set(parts) <= IN_VND_CLASSES or f["rule"]["type"] in FX_RULES,
                     "opportunity": impact > 0,
                     "message": hit["message"],
                     "affected": hit["affected"],

@@ -79,9 +79,14 @@ def test_the_policy_filter_keeps_one_side(open_page, base_url):
     opp = [a for a in rep["alerts"] if a["opportunity"]]
     assert p.page.locator("#sections .acard").count() == len(opp)
     assert p.page.locator("#impact .dbar").count() == min(10, len(opp))
-    assert all(v.startswith("+") for v in p.page.locator("#impact .dv").all_inner_texts())
+    # each row ends in its level and horizon (Cao · 1 tháng), an opportunity's pill green
+    assert p.page.locator("#impact .dv .pill").count() == p.page.locator("#impact .dv .pill.good").count() > 0
+    assert all(" · " in v for v in p.page.locator("#impact .dv").all_inner_texts())
     p.page.click("[data-af=risk]")
-    assert all(not v.startswith("+") for v in p.page.locator("#impact .dv").all_inner_texts())
+    assert p.page.locator("#impact .dv .pill.good").count() == 0
+    p.page.click("[data-hz='1w']")  # the horizon filter: only what lands within a week
+    week = {a["title"] for a in rep["alerts"] if not a["opportunity"] and a["horizon"] == "1w"}
+    assert set(p.page.locator("#impact .dbar .dl").all_inner_texts()) == set(list(week)[:10]) or len(week) > 10
     assert not p.problems()
 
 

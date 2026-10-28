@@ -138,9 +138,9 @@ ${(ctx.board ? ["hero", "alloc", "pnl", "cash", "month", "risk", "liq"] : ["hero
     el.innerHTML = `<h3>Chính sách và dự án <span class="hint">${rep.risks} rủi ro · ${rep.opportunities} cơ hội</span><a class="small" style="margin-left:auto" href="${policyHref}">Xem tất cả ${rep.alerts.length} mục →</a></h3>
       <p class="small muted">Ước tính theo quy tắc riêng của từng chính sách (thuế, phí, vùng dự án), không phải bộ máy kịch bản. Tác động của tin thị trường: <a href="${marketHref}">Tác động tin</a>.</p>
       <div class="list">${top.map(a => `<div class="item"><span class="ic-chip" style="--tone:${a.opportunity ? "var(--good)" : "var(--critical)"}">${icon(a.opportunity ? "stock" : "down")}</span>
-        <div><div class="t">${esc(a.title)}</div><div class="row tight mt-xs"><span class="pill ${a.opportunity ? "good" : "bad"}">${a.opportunity ? "Cơ hội" : "Rủi ro"} · ${SEV[a.severity].toLowerCase()}</span></div>
+        <div><div class="t">${esc(a.title)}</div><div class="row tight mt-xs"><span class="pill ${a.opportunity ? "good" : "bad"}">${a.sign_only ? (a.opportunity ? "Tích cực" : "Tiêu cực") : `${a.opportunity ? "Cơ hội" : "Rủi ro"} · ${SEV[a.severity].toLowerCase()} · trong ${esc(a.horizon_label)}`}</span></div>
           <div class="m mt-xs" data-explains>${esc(a.message)}</div></div>
-        <b class="num ${a.impact >= 0 ? "up" : "down"}">${n(vnd(a.impact, true), "policy.impact", {exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, false, 2), probability: pct(a.probability, false, 0)})}</b></div>`).join("")}</div>`;
+        ${a.in_vnd ? `<b class="num ${a.impact >= 0 ? "up" : "down"}">${n(vnd(a.impact, true), "policy.impact", {exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, false, 2), probability: pct(a.probability, false, 0)})}</b>` : ""}</div>`).join("")}</div>`;
   };
 
   drawTiers(); drawAlloc(); drawCash(); drawNews();

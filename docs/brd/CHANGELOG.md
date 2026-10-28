@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-27 — News impact chart (owner): each row shows its level and horizon (Cao · 1 tháng; horizons 1 tuần to
+  3 tháng, assumed per factor) instead of VND, with a horizon filter; gold, bonds and the exchange rate keep their VND
+  estimate; an item on business equity only says Tích cực / Tiêu cực; the cards the same. — FEAT-25, SCR-CL-06
+
 - 2026-10-27 — Talking to the assistant (owner): a microphone in the panel; the callbot's VAD, STT and TTS; the
   question is asked 1.18 s after the person stops, the answer read sentence by sentence, Dừng; typed turns unchanged.
   iPhone app 1.2.0 asks for the microphone. — FEAT-43, FEAT-32, docs/VOICE_PLAN.md
