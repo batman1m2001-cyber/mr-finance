@@ -13,6 +13,19 @@ REQUIRED = ("channels", "mechanism", "targets", "direction", "changes", "timefra
 PARTS = (("event", "sự kiện"), ("outcome", "kết quả"), ("difference", "khác biệt bối cảnh"))  # every precedent's three
 # a price forecast: a rise or fall with a percentage after it ("sẽ tăng 15%", "giảm thêm 3,5 %")
 FORECAST = re.compile(r"(tăng|giảm|lên|xuống)\D{0,20}?\d+(?:[.,]\d+)?\s*(%|điểm\s*%)", re.IGNORECASE)
+TEXTS = ("event_type", "mechanism", "direction", "timeframe", "watch", "title", "client_message")
+LISTS = ("channels", "targets", "changes")
+
+
+def shape(frame: Dict[str, Any]) -> List[str]:
+    """The fields of the wrong kind (a model may answer a list where a text goes): the frame goes back on these before
+    the other checks read it."""
+    bad = [k for k in TEXTS if frame.get(k) is not None and not isinstance(frame[k], str)]
+    bad += [k for k in LISTS if not isinstance(frame.get(k) or [], list) or not all(isinstance(x, str) for x in frame.get(k) or [])]
+    ps = frame.get("precedents") or []
+    if not isinstance(ps, list) or not all(isinstance(p, dict) and all(isinstance(p.get(k) or "", str) for k, _ in PARTS) for p in ps):
+        bad.append("precedents")
+    return bad
 
 
 def client_texts(frame: Dict[str, Any]) -> List[str]:
@@ -28,6 +41,9 @@ def check(frame: Dict[str, Any], computed: str = None) -> Tuple[List[str], Dict[
     from procedural import goals
     from views import schema
 
+    bad = shape(frame)
+    if bad:
+        return [f"Sai kiểu dữ liệu: {', '.join(bad)} (trường văn bản là một chuỗi, danh sách là mảng chuỗi)"], dict(frame)
     why: List[str] = []
     if frame.get("event_type") not in cat.EVENT_TYPES:
         why.append(f"Loại sự kiện không có trong danh mục: {frame.get('event_type')!r}")

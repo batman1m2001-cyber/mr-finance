@@ -77,6 +77,9 @@ def test_the_checks_send_back_what_the_brd_forbids():
     assert any("cấm" in w for w in _check.check({**raw, "watch": "Theo dõi các vụ rửa tiền."})[0])
     bad = {**raw, "precedents": [{"event": "2013", "outcome": "", "difference": "x", "source": None}]}
     assert any("Tiền lệ 1 thiếu kết quả" in w for w in _check.check(bad)[0])
+    # a model's answer of the wrong kind goes back instead of breaking the check (seen live: watch as a list)
+    for wrong in ({"watch": ["Giá vàng thế giới", "Chênh lệch SJC"]}, {"targets": "asset:gold"}, {"precedents": ["2013"]}):
+        assert any("Sai kiểu" in w for w in _check.check({**raw, **wrong})[0]), wrong
 
 
 def test_the_statistics_say_n_and_the_base_rate():
