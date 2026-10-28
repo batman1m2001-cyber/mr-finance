@@ -86,3 +86,20 @@ news card; the assistant reads the same calls, with the no-guess line in its too
 ## 5. Status
 
 - Plan written 2026-10-28.
+- **S1 done 2026-10-28** (`scripts/sure_lab.py`, frozen in `data/sure_rules.json`, full table in out/sure/lab.json):
+  **no group passes at any k.** Six groups × two horizons, 5–7 families each. More families agreeing looked better on
+  dev (2021–2023, the 2022 fall and the 2023 rebound trended cleanly) and did not hold on validation (2024–mid 2025):
+
+  | Group · horizon, best k on validation | Dev right / majority | Validation right / majority | Calls (months) |
+  |---|---|---|---|
+  | VN stocks · 3m, k≥3 | 71% / 55% | 57% / 57% | 76 (13) |
+  | VN stocks · 1m, k≥4 | 65% / 64% | 75% / 50% | 8 (3) |
+  | Gold · 3m, k≥2 | 50% / 50% | 69% / 69% | 13 (7) |
+  | World stocks · 3m, k≥2 | 65% / 54% | 83% / 83% | 18 (10) |
+  | VN rates · 3m, k≥2 | 80% / 57% | 27% / 64% | 11 (7) |
+  | USD/VND · 1m, k≥2 | 88% / 50% | 64% / 64% | 11 (11) |
+
+  Where validation reads high it only matches "always the common side" (world stocks rose; gold rose). Where many
+  families agree the calls get too few to be evidence (≤ 14). So every group says **No strong signal**.
+- **S2 not run**: there is no frozen rule to test, and the test period stays unread for one.
+- Gate note: a group with one series (USD/VND) can speak at most 13 times in the test period, under D3's 15.

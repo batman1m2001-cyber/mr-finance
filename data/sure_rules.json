@@ -1,0 +1,204 @@
+{
+ "frozen": "2026-10-28",
+ "plan": "docs/SURE_CALLS_PLAN.md S1",
+ "gate": {
+  "hit": 0.7,
+  "n": 15,
+  "level": 0.9
+ },
+ "periods": {
+  "dev": [
+   "2021-01-01",
+   "2024-01-01"
+  ],
+  "val": [
+   "2024-01-01",
+   "2025-07-01"
+  ],
+  "test": [
+   "2025-07-01",
+   "2026-08-01"
+  ]
+ },
+ "horizons": {
+  "1m": 30,
+  "3m": 91
+ },
+ "groups": {
+  "vn_stocks": [
+   "VNINDEX",
+   "FPT",
+   "TCB",
+   "VCB",
+   "MBB",
+   "VNM",
+   "HPG",
+   "VHM",
+   "MWG",
+   "DGC",
+   "SSI"
+  ],
+  "gold": [
+   "XAUUSD",
+   "SJC"
+  ],
+  "crypto": [
+   "BTCUSD",
+   "ETHUSD"
+  ],
+  "usd_vnd": [
+   "USDVND"
+  ],
+  "vn_rates": [
+   "VN_GOV_10Y",
+   "VN_GOV_5Y"
+  ],
+  "world_stocks": [
+   "SPX",
+   "ACWI"
+  ]
+ },
+ "links": {
+  "vn_stocks": [
+   "world",
+   "dollar",
+   "usdvnd"
+  ],
+  "gold": [
+   "dollar",
+   "us10y"
+  ],
+  "crypto": [
+   "world",
+   "dollar"
+  ],
+  "usd_vnd": [
+   "dollar",
+   "us10y"
+  ],
+  "vn_rates": [
+   "us10y",
+   "usdvnd"
+  ],
+  "world_stocks": [
+   "dollar",
+   "us10y"
+  ]
+ },
+ "orientation": {
+  "vn_stocks:1m:stretch": 1,
+  "vn_stocks:1m:breakout": 1,
+  "vn_stocks:1m:quiet": 1,
+  "vn_stocks:1m:flows": 1,
+  "vn_stocks:1m:links.world": 1,
+  "vn_stocks:1m:links.dollar": -1,
+  "vn_stocks:1m:links.usdvnd": -1,
+  "vn_stocks:3m:stretch": 1,
+  "vn_stocks:3m:breakout": 1,
+  "vn_stocks:3m:quiet": 1,
+  "vn_stocks:3m:flows": -1,
+  "vn_stocks:3m:links.world": 1,
+  "vn_stocks:3m:links.dollar": -1,
+  "vn_stocks:3m:links.usdvnd": -1,
+  "gold:1m:stretch": 1,
+  "gold:1m:breakout": 1,
+  "gold:1m:quiet": 1,
+  "gold:1m:links.dollar": 1,
+  "gold:1m:links.us10y": 1,
+  "gold:3m:stretch": 1,
+  "gold:3m:breakout": 1,
+  "gold:3m:quiet": 1,
+  "gold:3m:links.dollar": 1,
+  "gold:3m:links.us10y": 1,
+  "crypto:1m:stretch": 1,
+  "crypto:1m:breakout": 1,
+  "crypto:1m:quiet": 1,
+  "crypto:1m:links.world": -1,
+  "crypto:1m:links.dollar": -1,
+  "crypto:3m:stretch": -1,
+  "crypto:3m:breakout": 1,
+  "crypto:3m:quiet": 1,
+  "crypto:3m:links.world": 1,
+  "crypto:3m:links.dollar": -1,
+  "usd_vnd:1m:stretch": 1,
+  "usd_vnd:1m:breakout": 1,
+  "usd_vnd:1m:quiet": 1,
+  "usd_vnd:1m:links.dollar": 1,
+  "usd_vnd:1m:links.us10y": 1,
+  "usd_vnd:3m:stretch": 1,
+  "usd_vnd:3m:breakout": 1,
+  "usd_vnd:3m:quiet": 1,
+  "usd_vnd:3m:links.dollar": 1,
+  "usd_vnd:3m:links.us10y": 1,
+  "vn_rates:1m:stretch": 1,
+  "vn_rates:1m:breakout": 1,
+  "vn_rates:1m:quiet": 1,
+  "vn_rates:1m:links.us10y": 1,
+  "vn_rates:1m:links.usdvnd": 1,
+  "vn_rates:3m:stretch": 1,
+  "vn_rates:3m:breakout": 1,
+  "vn_rates:3m:quiet": 1,
+  "vn_rates:3m:links.us10y": 1,
+  "vn_rates:3m:links.usdvnd": 1,
+  "world_stocks:1m:stretch": 1,
+  "world_stocks:1m:breakout": 1,
+  "world_stocks:1m:quiet": 1,
+  "world_stocks:1m:links.dollar": 1,
+  "world_stocks:1m:links.us10y": 1,
+  "world_stocks:3m:stretch": 1,
+  "world_stocks:3m:breakout": 1,
+  "world_stocks:3m:quiet": -1,
+  "world_stocks:3m:links.dollar": -1,
+  "world_stocks:3m:links.us10y": 1
+ },
+ "rules": {
+  "vn_stocks:1m": {
+   "k": null,
+   "families": 7
+  },
+  "vn_stocks:3m": {
+   "k": null,
+   "families": 7
+  },
+  "gold:1m": {
+   "k": null,
+   "families": 5
+  },
+  "gold:3m": {
+   "k": null,
+   "families": 5
+  },
+  "crypto:1m": {
+   "k": null,
+   "families": 5
+  },
+  "crypto:3m": {
+   "k": null,
+   "families": 5
+  },
+  "usd_vnd:1m": {
+   "k": null,
+   "families": 5
+  },
+  "usd_vnd:3m": {
+   "k": null,
+   "families": 5
+  },
+  "vn_rates:1m": {
+   "k": null,
+   "families": 5
+  },
+  "vn_rates:3m": {
+   "k": null,
+   "families": 5
+  },
+  "world_stocks:1m": {
+   "k": null,
+   "families": 5
+  },
+  "world_stocks:3m": {
+   "k": null,
+   "families": 5
+  }
+ }
+}
