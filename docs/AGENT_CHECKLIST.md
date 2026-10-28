@@ -14,6 +14,7 @@ is not on this list, and another fails if this page misses one of its names.
 | **Agent Chính sách** | Policy agent | Summarises one verified public policy document; every point carries a quote from it. | Tuân thủ | medium | not measured yet |
 | **Diễn giải nội bộ** | Internal explanation | The explanation of a computed figure for the RM, stamped internal. **Calls no model** today: a fixed template. | CIO | low | not measured yet |
 | **Agent Bằng chứng tin** | News evidence agent | Reads one news item (title, summary, outlet, date) and drafts its event type and a qualitative frame. A frame that fails the checks goes back with the reasons, at most twice; the CIO approves it on the Bằng chứng tin page. Never sees client data. | CIO | medium | not measured yet |
+| **Gợi ý nhãn mục tiêu** | Goal label suggester | Reads the name, date and category of each goal the RM has not declared and the rule cannot read, and suggests a purpose and destination country for money sent abroad. Nothing is kept until the RM saves it. Never sees amounts or client names. | RM | low | not measured yet |
 | **OneWealth Copilot** | the assistant | The Trợ lý panel, for every role: answers with the app's own tools; anything it would write waits for the person to confirm. Includes its helpers: naming a conversation, distilling memory from a finished one, web search with the question masked, and the keyword router when no model is set. | Quản trị | medium | Bộ kiểm tra trợ lý |
 | **Khai báo qua chat** | Declaration chat | Records what a client says they own or owe (land, gold, a loan, dependants, income). Rules when no model is set. | Quản trị | medium | not measured yet |
 | **Đọc sao kê** | Statement reader | Reads an uploaded bank statement into holdings; the client checks them before saving. Rules when no model is set. | Quản trị | medium | not measured yet |
@@ -24,7 +25,7 @@ is not on this list, and another fails if this page misses one of its names.
 its chain under these names, marked **Dữ liệu mẫu** — its scores are generated sample data.
 
 **Which setting each part uses** (`resources.yaml`; the names are historical, so read them here):
-`llm:cio` — Agent CIO, Agent Chính sách, Agent Bằng chứng tin, Viết bản tin · `llm:challenger` — Agent Phản biện · `llm:copilot` —
+`llm:cio` — Agent CIO, Agent Chính sách, Agent Bằng chứng tin, Gợi ý nhãn mục tiêu, Viết bản tin · `llm:challenger` — Agent Phản biện · `llm:copilot` —
 OneWealth Copilot · `llm:assistant` — Khai báo qua chat and Đọc sao kê (demo) · `llm:onprem` — the same two, on the
 bank's own model.
 

@@ -43,7 +43,7 @@ def test_every_model_call_belongs_to_a_checklist_entry():
 def test_every_entry_has_a_name_an_owner_and_a_measure():
     evals = {e["id"] for e in catalogue.EVALUATIONS}
     ids = [e["id"] for e in catalogue.ENTRIES]
-    assert len(ids) == len(set(ids)) == 9
+    assert len(ids) == len(set(ids)) == 10
     names = [e["name"] for e in catalogue.ENTRIES]
     assert len(names) == len(set(names))
     for e in catalogue.ENTRIES:
@@ -73,7 +73,7 @@ def test_the_endpoint():
 
     c = TestClient(app)
     body = c.get("/api/agents/catalogue?days=30").json()
-    assert body["quality"]["days"] == 30 and len(body["agents"]) == 9 and len(body["evaluations"]) == 3
+    assert body["quality"]["days"] == 30 and len(body["agents"]) == 10 and len(body["evaluations"]) == 3
     assert c.get("/api/agents/catalogue?days=x").status_code == 400
 
 

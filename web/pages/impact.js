@@ -139,12 +139,31 @@ function goalsPanel(g, staff) {
   return `<div class="panel c12"><h3>Mục tiêu và quy định <span class="hint">nhánh mục tiêu: mốc thời gian và hồ sơ, không phải tiền</span></h3>
     ${rows.length ? rows.map(m => `<div style="padding:6px 0"><span class="badge ${LEVEL[m.level]}">${esc(m.level_label)}</span> <b>${esc(m.goal)}</b> · ${esc(m.note_title)} · mốc <span class="num">${esc(m.milestone)}</span><div class="small muted" data-explains>${esc(m.rm_hint || "")}</div></div>`).join("") : '<div class="small muted">Chưa có ghi chú quy định nào khớp mục tiêu của gia đình này.</div>'}
     <details class="more" style="margin-top:8px"><summary>Khai dòng tiền ra nước ngoài cho mục tiêu (RM)</summary>
+      ${goalsList.some(x => !x.declared) ? `<div class="row" style="margin:6px 0;gap:8px;align-items:center"><button type="button" class="btn sm" data-suggest>Gợi ý bằng AI</button>
+        <span class="small muted">AI đọc tên mục tiêu chưa khai và điền sẵn; bấm Lưu để xác nhận.</span></div>` : ""}
       ${goalsList.map(x => `<div class="row" style="margin:6px 0"><span style="min-width:220px"><b>${esc(x.label)}</b><div class="small muted">${esc(x.date)}${x.declared ? ` · đã khai: ${esc((g.purposes || {})[x.declared.purpose] || x.declared.purpose)} ${esc(x.declared.country || "")}` : " · chưa khai"}</div></span>
         <select data-purpose="${esc(x.goal_id)}">${opts}</select><input data-country="${esc(x.goal_id)}" placeholder="Nước đến" style="width:110px;padding:6px 9px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
-        <button type="button" class="btn sm" data-declare="${esc(x.goal_id)}">Lưu</button></div>`).join("")}</details></div>`;
+        <button type="button" class="btn sm" data-declare="${esc(x.goal_id)}">Lưu</button><span class="small muted" data-hint="${esc(x.goal_id)}"></span></div>`).join("")}</details></div>`;
 }
 
 function wireGoals(box, ctx, client) {
+  const ask = box.querySelector("[data-suggest]");
+  if (ask) ask.onclick = async () => {
+    ask.disabled = true;
+    try {
+      const r = await post("/api/goals/suggest", {family_id: client, by: ctx.user});
+      Object.entries(r.suggestions).forEach(([id, s]) => {
+        const hint = box.querySelector(`[data-hint="${CSS.escape(id)}"]`);
+        if (s.purpose) {
+          box.querySelector(`[data-purpose="${CSS.escape(id)}"]`).value = s.purpose;
+          box.querySelector(`[data-country="${CSS.escape(id)}"]`).value = s.country;
+        }
+        if (hint) hint.innerHTML = `<span class="badge assumed">${s.purpose ? "gợi ý AI" : "AI: không chuyển ra nước ngoài"}</span> <span data-explains>${esc(s.why)}</span>`;
+      });
+      toast(Object.keys(r.suggestions).length ? "Đã điền gợi ý; kiểm tra rồi bấm Lưu" : "Không có mục tiêu nào cần gợi ý");
+    } catch (e) { toast(e.message); }
+    ask.disabled = false;
+  };
   box.querySelectorAll("[data-declare]").forEach(b => {
     b.onclick = async () => {
       const id = b.dataset.declare;

@@ -60,7 +60,7 @@ POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/vie
 approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
      run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
      /api/rm/today, /api/audit[/verify] ──► app/web.py
-POST /api/research, /api/research/release, /api/goals/outflow ──► the research and goal-branch flows ·
+POST /api/research, /api/research/release, /api/goals/outflow, /api/goals/suggest ──► the research and goal-branch flows ·
      GET /api/research, /api/goals/regulation ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
      clients, the RM team, the advisory track record, the house views, the UI)
@@ -146,7 +146,7 @@ from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
 from people.graph import account_decide_flow, account_request_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
-from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
+from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, recommend_flow, review_flow
 from risk.graph import risk_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
@@ -505,6 +505,12 @@ APP = Application(
             http("POST", "/api/goals/outflow", port=PORT),
             graph=goal_outflow_flow,
             description="POST {family_id, goal_id, purpose, country?, by}: the RM declares a goal's outflow.",
+        ),
+        Service(
+            "goal_suggest",
+            http("POST", "/api/goals/suggest", port=PORT),
+            graph=goal_suggest_flow,
+            description="POST {family_id, by, mode?}: AI suggests a purpose and country for the undeclared goals (P2).",
         ),
         Service(
             "model_estimate",

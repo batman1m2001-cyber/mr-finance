@@ -11,7 +11,8 @@ from starlette.testclient import TestClient
 from news import store as news_store
 from procedural import goals
 from research import store
-from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
+from research import suggest
+from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
 from research import ops as research_ops
 
 UPLOAD = Operon(research_upload_flow, params={"item": None, "by": None})
@@ -19,6 +20,7 @@ RELEASE = Operon(research_release_flow, params={"item_id": None, "decision": Non
 DECLARE = Operon(
     goal_outflow_flow, params={"family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
 )
+SUGGEST = Operon(goal_suggest_flow, params={"family_id": None, "by": None, "mode": None})
 NOTE = "Đã kiểm tra nguồn công khai và xung đột lợi ích"
 TODAY = date(2026, 10, 15)
 
@@ -179,3 +181,46 @@ def test_the_reads_and_the_rm_list():
     assert "không có mục tiêu" in str(
         run(DECLARE, family_id="C01", goal_id="GL-C01-99", purpose="study_abroad", by="rm01")["$errors"]
     )
+
+
+# -- AI gợi ý nhãn (NEWS_EVIDENCE_BRD §7, P2) ----------------------------------------------------
+
+
+def test_only_goals_neither_declared_nor_read_by_the_rule_get_a_suggestion():
+    rows = [
+        {"goal_id": "G1", "label": "Học phí du học (Úc) – Minh An", "date": "2027-08-01"},
+        {"goal_id": "G2", "label": "Gửi tiền cho con bên Canada", "date": "2027-08-01"},
+        {"goal_id": "G3", "label": "Phẫu thuật khớp gối", "date": "2027-08-01"},
+        {"goal_id": "G4", "label": "Chu cấp mẹ", "date": "2027-08-01"},
+    ]
+    left = suggest.unread(rows, {"G4": {"purpose": "other_transfer"}})
+    assert [g["goal_id"] for g in left] == ["G2", "G3"]  # G1 the rule reads, G4 the RM declared
+    got = suggest.mock(left)
+    assert got["G2"]["purpose"] == "support_abroad" and got["G2"]["country"] == "Canada"
+    assert got["G3"] == {"purpose": None, "country": "", "why": "Tên không nói đến nước ngoài"}
+
+
+def test_the_models_answer_is_kept_to_the_known_purposes_and_countries(monkeypatch):
+    from views import agents
+
+    async def model(resource, system, user, max_tokens, run_id=None):
+        assert "khớp gối" in user and "amount" not in user and resource == "cio"
+        return (
+            '{"G2": {"purpose": "support_abroad", "country": "Canada", "why": "gửi tiền cho con"},'
+            ' "G3": {"purpose": "hack", "country": "Atlantis", "why": "x"}}',
+            {"cost_usd": 0.001},
+        )
+
+    monkeypatch.setattr(agents, "call_model", model)
+    rows = [{"goal_id": "G2", "label": "Gửi tiền cho con", "date": "2027-08-01", "amount": 9},
+            {"goal_id": "G3", "label": "Phẫu thuật khớp gối", "date": "2027-08-01"}]
+    got, calls = asyncio.run(suggest.live(rows))
+    assert got["G2"] == {"purpose": "support_abroad", "country": "Canada", "why": "gửi tiền cho con"}
+    assert got["G3"]["purpose"] is None and got["G3"]["country"] == "" and calls == [{"cost_usd": 0.001}]
+
+
+def test_the_rm_asks_for_suggestions_and_nothing_is_kept():
+    out = run(SUGGEST, family_id="C04", by="rm01", mode="mock")
+    assert out["mode"] == "mock" and out["suggestions"]["GL-C04-01"]["purpose"] is None
+    assert store.declared() == {}
+    assert run(SUGGEST, family_id="C04", by="cio01", mode="mock")["$errors"]

@@ -136,6 +136,7 @@ def actions(vid, item):
         ("/api/feed/open", {"client_id": "C01", "key": "feed:x"}, {"C01"}),
         ("/api/review/recommend", {"client_id": "C01", "title": "x", "actions": ["y"], "by": "BY"}, {"rm01"}),
         ("/api/goals/outflow", {"family_id": "C01", "goal_id": "G1", "purpose": "học", "by": "BY"}, {"rm01"}),
+        ("/api/goals/suggest", {"family_id": "C01", "by": "BY"}, {"rm01"}),
         ("/api/model/estimate", {"by": "BY"}, CIO),
         ("/api/market/load", {"by": "BY", "since": "2026-01-01"}, {"admin"}),
         ("/api/system/alerts/ack", {"alert_id": "AL-0", "by": "BY"}, DESK),
