@@ -32,6 +32,9 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-22 | divergence | Factor-model parameters are assumed, not estimated | resolved (ADR-0004); estimation blocked |
 | Q-23 | divergence | One process instead of a separate AI zone; no signed inbox | resolved for the demo (ADR-0009) |
 | Q-27 | ambiguity | Whose book the test data is: Private only, its size and amounts | resolved (6,500 Private, ≥ 25 tỷ, Σ 428,000 tỷ; ADR-0038); licence and scope open |
+| Q-28 | ambiguity | Which Liquidity target (A, B or C) is the default; H and the buffer | open (A built, all three shown) |
+| Q-29 | divergence | Who approves an allocation action: the specialist (FEAT-27) or the CIO | open (review queue built; CIO per action is P2) |
+| Q-30 | ambiguity | The news evidence thresholds, the level, the horizon, and who sees an unsourced precedent | open (8 and 10 points built) |
 
 ---
 
@@ -204,3 +207,27 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 - **Open:** the Santander competition rules (D0); whether 428,000 tỷ is Private only, and its source; the share
   held at TCB (≈ 35 %, falling with wealth) and the tier cut-offs, giả định; the AUM by product, if Private Banking
   can give it. Owner: product, Private Banking.
+
+### Q-28 — Which liquidity target is the default
+- **Fact:** ASSET_ALLOCATION_BRD §6.1 computes the Liquidity target three ways on the same cash-flow table: A counts
+  no income (all spending and dated payments over H years); B the lowest point of the flow with all income plus 6
+  months' spending; C the same with certain income only (wages, rent). On K-7F3A they give 19, 8.6 and 16.9 tỷ (`tests/test_allocation.py::test_the_three_liquidity_targets_and_the_ladder_of_k7`).
+- **Consequence:** with B the Liquidity gap is 0.6 tỷ, and most of the first action (sell 11 tỷ of shares)
+  disappears (BRD §11).
+- **As built:** A by default; all three shown on SCR-CL-13; H = 3 years and 6 months' buffer are editable assumptions.
+- **Open:** the default method, H and the buffer. Owner: product.
+
+### Q-29 — Who approves an allocation action
+- **Fact:** the BRD's AA-N7 sends actions to the specialist (FEAT-27, as built: the RM's **Gửi vào hàng duyệt** puts
+  them in the review queue). The owner's document *Luồng end-to-end mới* §7 has the CIO approve them.
+- **As built:** the review queue (FEAT-27); a BLOCK action never reaches the client. Per-action CIO approval is P2.
+- **Open:** specialist or CIO in the bank's version. Owner: product, CIO.
+
+### Q-30 — The news evidence thresholds and who sees what
+- **Fact:** NEWS_EVIDENCE_BRD §14 leaves open: 8 precedents as the minimum for statistics (Q1); 10 points over the
+  base rate to call a direction (Q2); the Cao/Trung bình/Thấp level from the share of net worth held instead of the
+  assumed sensitivity (Q3); the horizon from the statistics or the frame (Q4); the price history for the demo (Q5);
+  whether the client sees an approved precedent with no source (Q6).
+- **As built:** 8 and 10 points (`evidence/catalogue.py`, shown to the CIO under Ngưỡng); VN-Index from the market
+  store; the horizon from the frame; an unsourced precedent is shown without “Nguồn” and its mark only to the CIO.
+- **Open:** Q1–Q4 (CIO, product); Q6 (compliance).

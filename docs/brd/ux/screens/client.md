@@ -395,3 +395,30 @@ and the dock stays reachable. (A full-screen sheet covered the dock, so the assi
 sheet was open.) Every animation has a still equivalent under reduced motion. Colour is never the only carrier of certainty (line style and a word).
 
 **Tests.** Planned in FEAT-40 “Acceptance”.
+
+## SCR-CL-13 — Phân bổ tài sản (Asset allocation)
+
+| | |
+|---|---|
+| Route | client `#/client/muc-tieu/phan-bo` (Wealth Planning Advisor → Asset allocation); RM `#/rm/khach-hang/phan-bo` (the client's Wealth planning advisor tab) |
+| Generation | new (ASSET_ALLOCATION_BRD, 2026-10-28) |
+| Feature | [FEAT-44](../../features/FEAT-44-asset-allocation.md) |
+| Requirements | OWN-AA-01…13 |
+| Data | `POST /api/allocation` {client_id, scope, method, assumptions, role}; `POST /api/allocation/send` (RM) |
+
+**Journey.** The client sees what must stay ready, what they want to leave and what the rest must earn, and what to
+change; the RM opens the same page, checks each action and sends them to the specialist.
+
+**Layout.** The method switch (A, B, C). Three bucket tiles (Thanh khoản, Di sản, Tăng trưởng: have, target, gap).
+The actions, numbered, each with its bucket, amount, why, the view behind it and its check (Phù hợp, Cần lưu ý with
+the warning; Bị chặn only for the RM). Folded under them: Dòng tiền (by year, the three targets), Bậc thang Thanh
+khoản, Cách bù phần thiếu (wait, sell, borrow), Mô hình Tăng trưởng (with the CIO's tilts), Di sản, Nghỉ hưu, Giả
+định (editable), Đối chiếu. Every figure opens how it is worked out.
+
+**Interaction.** Changing an assumption or the method recomputes; the RM's **Gửi vào hàng duyệt** sends the actions to
+the review queue and says so.
+
+**Responsive / a11y.** Phone: the tiles stack, the action list stays one column, the tables scroll sideways in their
+panel. Status is a word and a colour, never colour alone.
+
+**Tests.** `tests/test_allocation.py`; the route in `tests/ui/test_routes.py::test_every_route_renders_without_errors`.

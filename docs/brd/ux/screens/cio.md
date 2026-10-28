@@ -315,3 +315,23 @@ button with its count, unit, note and a badge for what waits; picking one fills 
 **A page as a sheet.** Back to the desk (← Bàn quyết định, ✕, Escape); the page's title; its group's pages as tabs
 (e.g. Tham số · Dữ liệu thị trường · Độ chính xác · Đo lường); the page itself below, unchanged.
 
+
+## SCR-CIO-16 — Bằng chứng tin (News evidence)
+
+| | |
+|---|---|
+| Route | `#/cio/bang-chung` (a sheet over the CIO desk) |
+| Feature | [FEAT-45](../../features/FEAT-45-news-evidence.md) |
+| Requirements | OWN-NE-01…12 |
+| Data | `POST /api/evidence` {role: cio}; `/api/evidence/decide`, `/api/evidence/draft`, `/api/evidence/draft/decide` |
+
+**Centre.** “<n> tin”, how many wait for review and how many have precedents with no source. A table of every frame
+(news, branch, direction, evidence, review), the ones not approved and the unsourced first; a row opens the frame
+panel the client and the RM see, with the CIO's review under it. **Agent lập khung từ tin**: the high-relevance news
+with no frame, each with **Lập khung**; the agent's drafts, each with its status, event type, direction, timeframe,
+precedents and mode, the frame folded under **Khung**, and **Duyệt** (hidden when the checks failed) · **Trả lại
+agent** · **Từ chối**. **Ngưỡng** (folded): 8 precedents and 10 points over the base rate.
+
+**Responsive / a11y.** Phone: the table scrolls sideways in its panel; the drafts stack. Rows open by Enter.
+
+**Tests.** `tests/test_evidence.py`; the route in `tests/ui/test_routes.py::test_every_route_renders_without_errors`.

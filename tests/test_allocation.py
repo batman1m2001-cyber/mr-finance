@@ -214,3 +214,14 @@ def test_an_rm_sends_the_actions_to_the_review_queue():
 
 def test_the_example_is_the_one_the_fixtures_write():
     assert case()["id"] == "K-7F3A" and fixtures.market()["as_of"]
+
+
+@pytest.mark.parametrize("cid", ["C01", "C02", "C03", "C04", "C05"])
+def test_no_action_sells_a_legacy_asset_or_raises_the_risk_level(cid):
+    """§13 rule 5 (AA-N3, AA-N4): a Di sản gap is talked over, never sold to fill; the level is the test's or the
+    simulated one, never raised to reach a goal."""
+    a = ok(FLOW, client_id=cid)["allocation"]
+    assert a["risk"]["level"] == ops.risk_of(cid, a["risk"]["drawdown_limit"])["level"]
+    for x in a["actions"]:
+        assert not set(x.get("moves") or {}) & set(_engine.LEGACY), (cid, x["what"])
+        assert x["bucket"] != "legacy" or (x["kind"] == "talk" and not x["moves"]), (cid, x["what"])

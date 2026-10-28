@@ -7,6 +7,49 @@ words where possible.
 
 Status: [`requirements_traceability.md`](requirements_traceability.md) §5.
 
+## NE — News as evidence, not forecast (2026-10-28)
+
+Source: [`2026-10-28_news_evidence.md`](../sources/owner_requests/2026-10-28_news_evidence.md); the BRD verbatim at
+[`docs/NEWS_EVIDENCE_BRD.md`](../../NEWS_EVIDENCE_BRD.md) (§ below are its sections); feature
+[FEAT-45](../features/FEAT-45-news-evidence.md); screen [SCR-CIO-16](../ux/screens/cio.md#scr-cio-16--bằng-chứng-tin-news-evidence). Extends FEAT-25 (alerts) and FEAT-04 (the CIO agent); questions [Q-30](open_questions.md#q-30--the-news-evidence-thresholds-and-who-sees-what).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-NE-01 | A news item's effect on a price is shown as direction · time · evidence, never as a forecast figure; every other figure traces to known data (loan terms, tax rules, drift, liquidity, LTV) | BRD N1, N2, §8.2, §13.1 | documented |
+| OWN-NE-02 | Statistics when there are at least 8 precedents and the same-way rate beats the base rate by 10 points; the statistics always say n and the base rate; with fewer the item goes qualitative | BRD N3, §5, §13.2 | documented |
+| OWN-NE-03 | With statistics, the direction shown is the computed one, not the agent's; the agent's is kept as a note for the CIO | BRD N5, §9 rule 7, §13.3 | documented |
+| OWN-NE-04 | A qualitative frame has every required field: event type, channels, mechanism, targets, direction, what changes, timeframe, what to watch, precedents — each precedent with event, outcome and difference | BRD §6, §13.4 | documented |
+| OWN-NE-05 | The checks of §9 send a frame back with the reasons, at most twice: values from the fixed catalogue, required fields, no forecast figure, no FR-604 words | BRD §9 | documented |
+| OWN-NE-06 | A precedent without a source never shows “Nguồn”; the “chưa có nguồn” mark appears to the CIO only | BRD §6, §13.5, Q6 | documented |
+| OWN-NE-07 | The agent reads the news item (title, summary, outlet, date) and the catalogue, never a client's data; matching news to clients is a rule | BRD N4, §4, §13.6 | documented |
+| OWN-NE-08 | News is matched to a client by rule, on the labels the client has (assets, loans, plans), the same way every run; each alert names the labels it matched | BRD §7, §13.7 | documented |
+| OWN-NE-09 | A plan label read from a goal's name is marked inferred; the RM confirms the goal before the client reads anything; the client's message has no FR-604 or AML wording (Example 4: news → plan label → a study-abroad goal → an RM task) | BRD §7, §10 ex. 4, §13.8, §13.9 | documented |
+| OWN-NE-10 | What each role sees: the client and the RM read approved frames without the CIO's marks; the CIO reads every frame, the branch, the review and the thresholds on Bằng chứng tin | BRD §8.2 | documented |
+| OWN-NE-11 | Every frame passes the CIO: approve, return to the agent, reject; a returned or rejected frame leaves the chart until approved again; each decision is in the audit log | BRD N6, §4 | documented |
+| OWN-NE-12 | The agent reads a real news item, picks its event type from the catalogue and drafts the frame (a new type goes qualitative, direction Chưa rõ); the draft waits for the CIO and a draft that failed the checks cannot be approved | BRD §4, §15 P1 | documented |
+
+## AA — Asset allocation in Wealth Planning Advisor (2026-10-28)
+
+Source: [`2026-10-28_asset_allocation.md`](../sources/owner_requests/2026-10-28_asset_allocation.md); the BRD verbatim at
+[`docs/ASSET_ALLOCATION_BRD.md`](../../ASSET_ALLOCATION_BRD.md) (§ below are its sections); feature
+[FEAT-44](../features/FEAT-44-asset-allocation.md); screen [SCR-CL-13](../ux/screens/client.md#scr-cl-13--phân-bổ-tài-sản-asset-allocation). Extends FEAT-26 (plan) and FEAT-27 (review queue); questions [Q-28](open_questions.md#q-28--which-liquidity-target-is-the-default), [Q-29](open_questions.md#q-29--who-approves-an-allocation-action).
+
+| ID | Requirement | Source | Doc status |
+|---|---|---|---|
+| OWN-AA-01 | Every asset of the client sits in exactly one of three buckets — Thanh khoản, Di sản, Tăng trưởng; the buckets plus the loans equal the net worth of Tổng quan | BRD §5, §13.1 | documented |
+| OWN-AA-02 | A cash-flow table over H years: certain income only (wages, pensions, rent), spending, dated events, loan payments; its lowest point; a line for a +1 point loan rate | BRD §6.1 | documented |
+| OWN-AA-03 | The Liquidity target is computed three ways (A, B, C) from the table shown, all three on screen; the default is the owner's to choose | BRD §6.1, §13.2, Q-28 | documented |
+| OWN-AA-04 | A model portfolio per risk level, tilted by the CIO from an approved view: 2 points a tilt, at most ±5, inside the level's range, summing to 100 % | BRD §7, §13.4 | documented |
+| OWN-AA-05 | Liquidity is filled first; Growth is rebalanced to the tilted model on what is left; buys equal sells plus the cash waiting | BRD AA-N2, §8.1, §13.3 | documented |
+| OWN-AA-06 | Wait, sell or borrow are compared to fill Liquidity, each with why; borrowing only when §8.2's conditions hold; the loans the client has are read (prepay, keep, rate shock) | BRD §8.2, §13.6, §15 P1 | documented |
+| OWN-AA-07 | Liquidity is laddered in deposits and government bonds by when the money is needed | BRD §6.1, §15 P1 | documented |
+| OWN-AA-08 | The Legacy floor, target and gap; a Legacy asset is never sold — a gap is talked over (insurance with a beneficiary, savings) | BRD AA-N3, §6.2, §13.5 | documented |
+| OWN-AA-09 | The return a goal needs against the model's expected one; when it needs more, the choices are said (save more, retire later, retake the test) and the risk level is never raised | BRD AA-N4, §6.3, §13.5 | documented |
+| OWN-AA-10 | Each action is checked PASS, WARN or BLOCK (the level's range, excluded classes, concentration, Liquidity left short, an old or a simulated risk test); a BLOCK never reaches the client; each action says why and the view behind it | BRD §9, §13.7 | documented |
+| OWN-AA-11 | Actions are at asset-class level, no ticker, no target price, no FR-604 words; every number from a formula, the same answer for the same input | BRD AA-N1, AA-N5, AA-N6, §13.8, §13.10 | documented |
+| OWN-AA-12 | SCR-CL-13 shows the three buckets with targets and gaps, the cash-flow table, the model and its tilts, the actions with their checks and how each number is worked out; the RM sends the actions to the specialist review queue (FEAT-27) | BRD AA-N7, §10, §4 | documented |
+| OWN-AA-13 | The worked example K-7F3A gives the BRD's numbers: 19 / 11; 40,5 / 60 / 16–24; 31; 3,7 / 2,9 / 2,9 / 3,7; 8,3 % / 9,2 % | BRD §11, §13.9 | documented |
+
 ## DOC — Any document to the assistant (2026-10-26)
 
 Source: [`2026-10-26_documents_to_the_assistant.md`](../sources/owner_requests/2026-10-26_documents_to_the_assistant.md); plan

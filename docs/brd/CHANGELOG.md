@@ -2,6 +2,12 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-28 — Two owner BRDs registered and built (P0 + P1): **news as evidence** — each news item shows direction ·
+  time · evidence, by statistics (n and the base rate) or a CIO-approved qualitative frame; the agent drafts frames
+  from real news for the CIO (Bằng chứng tin); **asset allocation** — three buckets (Thanh khoản, Di sản, Tăng trưởng),
+  their targets and checked actions by formula, the CIO's tilts, the RM's send; OWN-NE-01…12, OWN-AA-01…13 verified;
+  Q-28…Q-30 open. — FEAT-44, FEAT-45, SCR-CL-13, SCR-CIO-16, docs/NEWS_EVIDENCE_BRD.md, docs/ASSET_ALLOCATION_BRD.md
+
 - 2026-10-27 — News impact chart (owner): each row shows its level and horizon (Cao · 1 tháng; horizons 1 tuần to
   3 tháng, assumed per factor) instead of VND, with a horizon filter; gold, bonds and the exchange rate keep their VND
   estimate; an item on business equity only says Tích cực / Tiêu cực; the cards the same. — FEAT-25, SCR-CL-06
