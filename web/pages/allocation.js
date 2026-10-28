@@ -74,7 +74,7 @@ export async function render(box, ctx) {
         <li><div class="row" style="gap:8px;flex-wrap:wrap;align-items:baseline">
           <strong>${esc(x.what)}</strong>${x.amount ? `<span>${range(x.amount, x.amount_high, "alloc.action")}</span>` : ""}
           <span class="chip">${esc(x.bucket_label)}</span>${pill(x.check)}</div>
-          <div class="small muted">${esc(x.why)}</div>
+          <div class="small muted" data-explains>${esc(x.why)}</div>
           ${x.check.reasons.filter(r => r !== SIM).map(r => `<div class="small" data-explains>${esc(r)}</div>`).join("")}</li>`).join("")}
       </ol>
       ${staff && !a.example ? `<div class="row mt" style="gap:12px;align-items:center">
