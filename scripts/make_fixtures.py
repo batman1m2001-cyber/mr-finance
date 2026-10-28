@@ -364,6 +364,17 @@ MODEL_PORTFOLIO = {
         "vol": {"cash": 0.005, "bond": 0.05, "equity": 0.22, "gold": 0.15},
         "corr": {"bond|equity": 0.2, "bond|gold": 0.1, "equity|gold": 0.05},
     },
+    # P2: the model read by the 11 asset classes (allocation._model.eleven) — how a Growth class's target splits
+    # between the 11-class rows; real estate, company stakes, foreign currency and the loans have no Growth target
+    "eleven": {
+        "note": "Giả định CIO: tỷ trọng mô hình chia theo 11 loại tài sản (§15 P2)",
+        "split": {
+            "equity": {"vn_equity": 0.65, "foreign_equity": 0.15, "fund": 0.20},
+            "bond": {"bond": 0.80, "fund": 0.20},
+            "gold": {"gold": 1.0},
+            "crypto": {"crypto": 1.0},
+        },
+    },
 }
 
 

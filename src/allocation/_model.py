@@ -176,3 +176,83 @@ def model_for(level: int, tilts: List[Dict[str, Any]], method: str = "tilt") -> 
     if method == "bl":
         return black_litterman(level, tilts)
     return {**tilted(level, tilts), "method": "tilt"}
+
+
+# P2: the model read by the 11 asset classes the news labels use (NEWS_EVIDENCE_BRD §7) — a second view of the same
+# household and the same Growth model, not a second model
+ELEVEN = {
+    "vn_equity": "Cổ phiếu Việt Nam",
+    "foreign_equity": "Cổ phiếu nước ngoài",
+    "bond": "Trái phiếu",
+    "fund": "Chứng chỉ quỹ",
+    "gold": "Vàng",
+    "crypto": "Tài sản số",
+    "fx": "Ngoại tệ",
+    "real_estate": "Bất động sản",
+    "private_equity": "Cổ phần doanh nghiệp",
+    "usd_loan": "Vay ngoại tệ",
+    "floating_loan": "Vay lãi thả nổi",
+}
+LOANS = ("usd_loan", "floating_loan")
+
+
+def _foreign(detail: Dict[str, Any]) -> bool:
+    return (detail.get("currency") or "VND").upper() != "VND" or (detail.get("market") or "VN").upper() != "VN"
+
+
+def eleven_class(holding: Dict[str, Any]) -> str | None:
+    """Which of the 11 classes a holding is; None for what none of them is (VND cash and deposits, a money fund,
+    insurance, a fixed-rate VND loan)."""
+    cls, d = holding["class"], holding.get("detail") or {}
+    if holding.get("kind") == "liability":
+        if (d.get("currency") or "VND").upper() != "VND":
+            return "usd_loan"
+        return "floating_loan" if d.get("rate_type") == "floating" else None
+    if cls == "stock":
+        return "foreign_equity" if _foreign(d) else "vn_equity"
+    if cls == "fund":
+        return None if d.get("fund_type") == "money" else "fund"
+    if cls in ("cash", "deposit"):
+        return "fx" if _foreign(d) else None
+    return {"bond": "bond", "gold": "gold", "crypto": "crypto", "real_estate": "real_estate",
+            "business": "private_equity"}.get(cls)
+
+
+def eleven(holdings: List[Dict[str, Any]], growth: List[Dict[str, Any]], model: Dict[str, Any],
+           growth_total: float) -> Dict[str, Any]:
+    """The household by the 11 classes: each row's value, what of it sits in Growth, and the Growth model's target
+    for the row (a Growth class's target split by the CIO's ``eleven.split``; no target for the rows Growth does
+    not hold). ``outside`` is what is in none of the 11."""
+    split = data()["eleven"]["split"]
+    target = {k: 0.0 for k in ELEVEN}
+    has_target = set()
+    for c, m in model["classes"].items():
+        for k, share in (split.get(c) or {}).items():
+            target[k] += m["target"] * share
+            has_target.add(k)
+    value = {k: 0.0 for k in ELEVEN}
+    in_growth = {k: 0.0 for k in ELEVEN}
+    outside = 0.0
+    for h in holdings:
+        k = eleven_class(h)
+        if k is None:
+            outside += h["value"] if h.get("kind") == "asset" else 0.0
+        else:
+            value[k] += h["value"]
+    for h in growth:
+        k = eleven_class(h)
+        if k:
+            in_growth[k] += h["value"]
+    rows = [
+        {
+            "key": k,
+            "label": label,
+            "loan": k in LOANS,
+            "value": value[k],
+            "in_growth": in_growth[k],
+            "target_pct": round(target[k], 6) if k in has_target else None,
+            "target": target[k] * growth_total if k in has_target else None,
+        }
+        for k, label in ELEVEN.items()
+    ]
+    return {"rows": rows, "outside": outside, "growth_total": growth_total}

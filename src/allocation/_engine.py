@@ -555,6 +555,7 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
         "existing_loans": loan_rows,
         "concentrated": [{"name": h.get("name"), "share": h["value"] / assets} for h in concentrated],
     }
+    out["eleven"] = _model.eleven(holdings, buckets["growth"], model, re_["total"])
     out["actions"] = actions(case, out)
     return out
 

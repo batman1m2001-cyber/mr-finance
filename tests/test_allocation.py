@@ -317,3 +317,36 @@ def test_the_cio_picks_black_litterman_and_every_clients_model_follows(monkeypat
     finally:
         ok(METHOD, method="tilt", by="cio")
         ok(TILT, asset_class="equity", stance="neutral", view_id="V-1", by="cio")
+
+
+def test_eleven_classes_read_the_same_household_and_split_the_growth_model():
+    """P2: the 11 asset classes are a second view of the household — they add up to its assets with what none of them
+    is, and their Growth targets are the model's own targets split by the CIO's eleven.split."""
+    for cid in ("C01", "C03"):
+        a = ok(FLOW, client_id=cid, scope="family", role="rm01")["allocation"]
+        e = a["eleven"]
+        assert [r["key"] for r in e["rows"]] == list(_model.ELEVEN)
+        assets = sum(r["value"] for r in e["rows"] if not r["loan"]) + e["outside"]
+        assert abs(assets - a["reconcile"]["assets"]) < 1
+        split = sum(r["target_pct"] or 0 for r in e["rows"])
+        held = sum(m["target"] for c, m in a["model"]["classes"].items() if c in _model.data()["eleven"]["split"])
+        assert abs(split - held) < 1e-6
+    rows = {r["key"]: r for r in ok(FLOW, client_id="C01", scope="family", role="rm01")["allocation"]["eleven"]["rows"]}
+    assert rows["real_estate"]["target_pct"] is None and rows["real_estate"]["value"] > 0
+    assert rows["floating_loan"]["loan"] and rows["floating_loan"]["value"] > 0
+
+
+def test_a_holding_finds_its_eleven_class_from_its_detail():
+    def h(cls, kind="asset", **detail):
+        return {"class": cls, "kind": kind, "detail": detail}
+
+    assert _model.eleven_class(h("stock", ticker="FPT")) == "vn_equity"
+    assert _model.eleven_class(h("stock", ticker="AAPL", market="US", currency="USD")) == "foreign_equity"
+    assert _model.eleven_class(h("cash", currency="USD")) == "fx"
+    assert _model.eleven_class(h("deposit")) is None
+    assert _model.eleven_class(h("fund", fund_type="money")) is None
+    assert _model.eleven_class(h("fund", fund_type="bond")) == "fund"
+    assert _model.eleven_class(h("business")) == "private_equity"
+    assert _model.eleven_class(h("loan", "liability", currency="USD")) == "usd_loan"
+    assert _model.eleven_class(h("loan", "liability", rate_type="floating")) == "floating_loan"
+    assert _model.eleven_class(h("loan", "liability", rate_type="fixed")) is None
