@@ -1,5 +1,6 @@
 """The allocation's steps: the request checked, the case built (profile, certain income, risk level, the CIO's tilts),
-the three buckets allocated; the worked example K-7F3A; the CIO's tilt; an RM sending the actions to the review queue."""
+the three buckets allocated; the worked example K-7F3A; the CIO's tilt; an RM sending the actions to the review queue
+and the CIO deciding each of them (Q-29); an RM's bucket override (§5)."""
 
 from __future__ import annotations
 
@@ -18,6 +19,10 @@ from wealth.money import vnd
 EXAMPLE = Path(__file__).resolve().parents[2] / "data" / "allocation_example.json"
 CERTAIN = ("salary", "pension", "rent")  # income that keeps coming without a market: wages, a pension, rent
 TILTS = ("_cio", "allocation_tilts")  # where the CIO's tilts in force are kept (wealth.store results)
+OVERRIDES = "allocation_overrides"  # per client: the RM's bucket overrides in force ({holding key: {...}})
+OVERRIDE_LOG = ("_cio", "allocation_override_log")  # every override, newest first: the CIO (Compliance's desk) reads it
+METHOD = ("_cio", "allocation_model_method")  # how the tilts move the model: tilt (the default) or bl
+WAITING = "pending_cio"  # an allocation's actions wait for the CIO, each one (Q-29)
 
 
 def _method(method: Optional[str]) -> str:
@@ -99,6 +104,8 @@ def case_of(client_id: str, members: list, holdings: list, transactions: list) -
             "holdings": holdings,
             "tilts": tilts(),
             "excluded": list(me.get("excluded_classes") or []),
+            "overrides": dict(store.result(client_id, OVERRIDES) or {}),
+            "model_method": model_method(),
         }
     }
 
@@ -161,14 +168,38 @@ def tilt(asset_class: str = None, stance: str = None, view_id: str = None, reaso
     return {"tilts": kept, "model": {lv: _model.tilted(lv, kept) for lv in range(1, 6)}}
 
 
+def model_method() -> str:
+    """How the tilts move the model now: ``tilt`` (±2 points each, the default) or ``bl`` (Black–Litterman)."""
+    return str(store.result(*METHOD) or "tilt")
+
+
 @op
 def tilt_list() -> dict:
-    """The tilts in force, the classes a CIO may tilt and the model each level gets from them."""
+    """The tilts in force, the classes a CIO may tilt and the model each level gets from them, both ways side by side
+    (``model``: the ±2-point tilts, ``model_bl``: Black–Litterman) and the way in force."""
     kept = tilts()
     classes = [{"id": c, "label": _model.LABELS[c]} for c in _model.CLASSES if c != "crypto"]
     stances = [{"id": k, "label": v} for k, v in _model.STANCE_LABELS.items()]
     model = {lv: _model.tilted(lv, kept) for lv in range(1, 6)}
-    return {"tilts": kept, "classes": classes, "stances": stances, "model": model}
+    model_bl = {lv: _model.black_litterman(lv, kept) for lv in range(1, 6)}
+    methods = [{"id": k, "label": v} for k, v in _model.METHODS.items()]
+    return {"tilts": kept, "classes": classes, "stances": stances, "model": model, "model_bl": model_bl,
+            "method": model_method(), "methods": methods}  # fmt: skip
+
+
+@op
+def set_method(method: str = None, by: str = None) -> dict:
+    """The CIO picks how the tilts move every client's model: ``tilt`` or ``bl``; audited."""
+    from control import audit, db, roles
+
+    u = roles.require(by, "cio")
+    if method not in _model.METHODS:
+        raise BadRequest(f"method là một trong {', '.join(_model.METHODS)}")
+    was = model_method()
+    store.put_result(*METHOD, method)
+    with db.tx() as con:
+        audit.append(con, u["id"], "allocation.model_method", method, {"from": was, "to": method})
+    return {"method": method}
 
 
 @op
@@ -189,23 +220,120 @@ def send(client_id: str, allocation: dict, by: str = None) -> dict:
         {"label": "Cách tính", "value": allocation["method_label"]},
     ]
     title = f"Phân bổ ba giỏ – {allocation['client']['name']}"
+    said = [f"{a['what']}" + (f" ({_amount(a)})" if a.get("amount") else "") for a in shown]
     item = store.propose(
         client_id,
         "allocation",
         title,
         {
-            "option": {
-                "id": "allocation",
-                "title": title,
-                "actions": [f"{a['what']}" + (f" ({_amount(a)})" if a.get("amount") else "") for a in shown],
-            },
+            "option": {"id": "allocation", "title": title, "actions": said},
+            # Q-29: the CIO approves each action; the client sees only the approved ones
+            "actions": [
+                {"n": i, "what": w, "bucket": a["bucket_label"], "check": a["check"]["status"], "status": "pending"}
+                for i, (w, a) in enumerate(zip(said, shown))
+            ],
             "summary": summary,
             "warnings": sorted({r for a in shown if a["check"]["status"] == "WARN" for r in a["check"]["reasons"]}),
             "by": u["id"],
         },
+        status=WAITING,
     )
     return {"review_id": item, "actions": len(shown)}
 
 
+@op
+def review(item_id: str = None, decisions: dict = None, note: str = "", by: str = None) -> dict:
+    """The CIO's decision on each action of an allocation an RM sent (Q-29): ``decisions`` {n: approve | reject}. Once
+    every action is decided the item is approved with the approved actions only (the client sees those), or rejected
+    when none is; until then it keeps waiting for the CIO."""
+    from control import roles
+
+    u = roles.require(by, "cio")
+    item = store.review(str(item_id or ""))
+    if not item or item["kind"] != "allocation":
+        raise BadRequest(f"không có phân bổ chờ duyệt {item_id!r}")
+    if item["status"] != WAITING:
+        raise BadRequest(f"{item_id} đã {item['status']}")
+    acts = [dict(a) for a in item["data"].get("actions") or []]
+    for k, v in (decisions or {}).items():
+        if v not in ("approve", "reject"):
+            raise BadRequest("mỗi việc là approve hoặc reject")
+        hit = next((a for a in acts if str(a["n"]) == str(k)), None)
+        if hit is None:
+            raise BadRequest(f"không có việc số {k}")
+        hit.update(status={"approve": "approved", "reject": "rejected"}[v], by=u["id"])
+    kept = [a["what"] for a in acts if a["status"] == "approved"]
+    done = all(a["status"] != "pending" for a in acts)
+    status = ("approved" if kept else "rejected") if done else WAITING
+    data = {"actions": acts}
+    if done:
+        data["option"] = {**item["data"]["option"], "actions": kept}
+    got = store.move(
+        item["id"],
+        WAITING,
+        status,
+        u["id"],
+        "allocation.review",
+        data,
+        note=str(note or "")[:1000] if done else None,
+        audit_data={"approved": len(kept), "rejected": sum(a["status"] == "rejected" for a in acts)},
+    )
+    if got is None:
+        raise BadRequest(f"{item_id} vừa được duyệt bởi người khác")
+    return {"item": got}
+
+
+@op
+def queue() -> dict:
+    """The CIO's allocation page: the allocations waiting for the CIO, the last ones decided, the RMs' bucket overrides."""
+    rows = [r for r in store.reviews() if r["kind"] == "allocation"]
+    waiting = [r for r in rows if r["status"] == WAITING]
+    decided = [r for r in rows if r["status"] in ("approved", "rejected") and r["data"].get("actions")][:10]
+    names = {cid: (fixtures.client(cid) or {}).get("name", cid) for cid in {r["client_id"] for r in rows}}
+    view = lambda r: {**r, "client_name": names[r["client_id"]]}  # noqa: E731
+    log = list(store.result(*OVERRIDE_LOG) or [])[:50]
+    names |= {r["client_id"]: (fixtures.client(r["client_id"]) or {}).get("name", r["client_id"]) for r in log}
+    labels = {**_engine.BUCKETS}
+    overrides = [{**r, "client_name": names[r["client_id"]], "from_label": labels[r["from"]], "to_label": labels[r["to"]]} for r in log]
+    return {"waiting": [view(r) for r in waiting], "decided": [view(r) for r in decided], "overrides": overrides}
+
+
 def _amount(a: Dict[str, Any]) -> str:
     return f"{vnd(a['amount'])}–{vnd(a['amount_high'])}" if a.get("amount_high") else vnd(a["amount"])
+
+
+@op
+def override(client_id: str, holdings: list, key: str = None, bucket: str = "", reason: str = "", by: str = None) -> dict:
+    """An RM moves one asset into another bucket (§5), with a reason of at least 10 characters; an empty bucket takes
+    the override away (back to the bucket its class gives). Kept per client, in the audit chain and in the log the
+    CIO reads (Compliance's desk since OWN-FB-18)."""
+    import time
+
+    from control import audit, db, roles
+
+    u = roles.require(by, "rm")
+    h = next((x for x in holdings if x.get("key") == key and x["kind"] == "asset"), None)
+    if h is None:
+        raise BadRequest(f"không có tài sản {key!r} trong hộ này")
+    bucket = str(bucket or "")
+    if bucket and bucket not in _engine.BUCKETS:
+        raise BadRequest(f"bucket là một trong {', '.join(_engine.BUCKETS)}")
+    reason = str(reason or "").strip()[:300]
+    if bucket and len(reason) < 10:
+        raise BadRequest("Ghi đè giỏ cần lý do (ít nhất 10 ký tự)")
+    kept = dict(store.result(client_id, OVERRIDES) or {})
+    was = _engine.bucket_of(h, kept)
+    kept.pop(key, None)
+    by_class = _engine.bucket_of(h)
+    if bucket and bucket != by_class:
+        kept[key] = {"bucket": bucket, "reason": reason, "by": u["id"], "at": time.time(), "class_bucket": by_class}
+    now = _engine.bucket_of(h, kept)
+    if now == was:
+        raise BadRequest(f"{h.get('name')} đã ở giỏ {_engine.BUCKETS[now]}")
+    store.put_result(client_id, OVERRIDES, kept)
+    row = {"client_id": client_id, "key": key, "name": h.get("name"), "from": was, "to": now, "reason": reason, "by": u["id"],
+           "at": time.time()}  # fmt: skip
+    store.put_result(*OVERRIDE_LOG, ([row] + list(store.result(*OVERRIDE_LOG) or []))[:200])
+    with db.tx() as con:
+        audit.append(con, u["id"], "allocation.override", key, {k: row[k] for k in ("client_id", "from", "to", "reason")})
+    return {"override": row, "overrides": kept}

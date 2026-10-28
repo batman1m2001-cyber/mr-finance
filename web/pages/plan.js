@@ -21,7 +21,7 @@ const UNIT = {"tỷ": 1e9, "triệu": 1e6, "%": 0.01, "": 1, "USD": 1};
 const GOAL = {on_track: ["good", "Đúng tiến độ", "var(--good)"], at_risk: ["warn", "Cần chú ý", "var(--warning)"],
   off_track: ["bad", "Chậm tiến độ", "var(--critical)"], none: ["", "Chưa theo dõi", "var(--other)"]};
 const RANK = {on_track: 0, at_risk: 1, off_track: 2};
-const QUEUE = {pending: ["ai", "Chờ RM duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
+const QUEUE = {pending: ["ai", "Chờ RM duyệt"], pending_cio: ["ai", "Chờ CIO duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
   approved: ["good", "Đã duyệt"], rejected: ["bad", "Từ chối"]};
 const STAGE_ICON = {young: "user", family: "users", mid: "business", retire: "savings"};
 const plans = {};  // per client, for this page's life: the pick, the last result, what was sent

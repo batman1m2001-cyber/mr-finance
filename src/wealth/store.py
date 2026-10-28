@@ -158,17 +158,19 @@ def result(client_id: str, kind: str) -> Optional[Any]:
 # ── the RM queue ─────────────────────────────────────────────────────────
 
 
-def propose(client_id: str, kind: str, title: str, data: Dict[str, Any]) -> str:
+def propose(client_id: str, kind: str, title: str, data: Dict[str, Any], status: str = "pending") -> str:
+    """Into the queue: ``pending`` waits for the RM; ``pending_cio`` (an allocation's actions, Q-29) for the CIO."""
     item_id = f"R-{uuid.uuid4().hex[:8]}"
     with _db() as con:
         con.execute(
-            "insert into reviews values (?, ?, ?, ?, ?, 'pending', null, ?, null)",
+            "insert into reviews values (?, ?, ?, ?, ?, ?, null, ?, null)",
             (
                 item_id,
                 client_id,
                 kind,
                 _seal("reviews", item_id, "title", title),
                 _seal("reviews", item_id, "data", json.dumps(data, ensure_ascii=False)),
+                status,
                 time.time(),
             ),
         )

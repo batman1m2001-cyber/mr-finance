@@ -24,6 +24,7 @@ LABELS = {
 }
 STANCES = {"overweight": +1, "neutral": 0, "underweight": -1}
 STANCE_LABELS = {"overweight": "Tăng tỷ trọng", "neutral": "Trung lập", "underweight": "Giảm tỷ trọng"}
+METHODS = {"tilt": "Nghiêng ±2 điểm", "bl": "Black–Litterman"}
 
 
 @lru_cache(maxsize=1)
@@ -107,3 +108,71 @@ def expected_return(classes: Dict[str, Dict[str, Any]]) -> float:
     """Σ weight × the class's assumed return (crypto at the equity rate)."""
     r = data()["expected_return"]
     return sum(v["target"] * r.get(c, r["equity"]) for c, v in classes.items())
+
+
+def black_litterman(level: int, tilts: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """The model after the same tilts read as Black–Litterman views; the same shape as ``tilted``."""
+    import numpy as np
+
+    bl = data()["black_litterman"]
+    model = base(level)
+    step = tilted(level, tilts)  # the tilts that apply (a crypto or neutral one does not), their views and labels
+    risky = [c for c in ("cash", "bond", "equity", "gold")]
+    w = np.array([model[c]["target"] for c in risky])
+    vol = np.array([bl["vol"][c] for c in risky])
+    corr = np.eye(len(risky))
+    for pair, rho in bl["corr"].items():
+        a, b = (risky.index(x) for x in pair.split("|"))
+        corr[a, b] = corr[b, a] = rho
+    sigma = corr * np.outer(vol, vol)
+    pi = bl["delta"] * sigma @ w  # the returns the level's model is right for
+    net = {c: 0 for c in risky}
+    for t in step["applied"]:
+        net[t["asset_class"]] += STANCES[t["stance"]]
+    rows = [c for c in risky if net[c]]
+    if rows:
+        P = np.array([[1.0 if c == r else 0.0 for c in risky] for r in rows])
+        Q = P @ pi + np.array([net[r] * bl["view"] for r in rows])
+        ts = bl["tau"] * sigma
+        omega = np.diag(np.diag(P @ ts @ P.T))
+        a = np.linalg.inv(ts) + P.T @ np.linalg.inv(omega) @ P
+        mu = np.linalg.solve(a, np.linalg.inv(ts) @ pi + P.T @ np.linalg.inv(omega) @ Q)
+        want = np.linalg.solve(bl["delta"] * sigma, mu)
+    else:
+        want = w
+    cap = data()["tilt"]["cap"] / 100  # the same guard as the tilts: at most ±5 points a class
+    move = {c: max(-cap, min(cap, float(want[i] - w[i]))) for i, c in enumerate(risky) if c != "cash"}
+
+    def placed(k: float) -> Dict[str, float]:
+        out = {c: min(model[c]["high"], max(model[c]["low"], model[c]["target"] + k * d)) for c, d in move.items()}
+        out["cash"] = 1.0 - sum(out.values())
+        return out
+
+    k, got = 1.0, placed(1.0)
+    if not model["cash"]["low"] - 1e-9 <= got["cash"] <= model["cash"]["high"] + 1e-9:  # less of the move, cash in range
+        lo, hi = 0.0, 1.0
+        for _ in range(40):
+            k = (lo + hi) / 2
+            got = placed(k)
+            lo, hi = (k, hi) if model["cash"]["low"] - 1e-9 <= got["cash"] <= model["cash"]["high"] + 1e-9 else (lo, k)
+        k, got = lo, placed(lo)
+    classes = {}
+    for c, m in model.items():
+        target = got.get(c, m["target"])
+        classes[c] = {
+            "target": round(target, 6),
+            "low": m["low"],
+            "high": m["high"],
+            "base": m["target"],
+            "tilt": round(target - m["target"], 6),
+            "views": step["classes"][c]["views"],
+            "label": LABELS[c],
+        }
+    return {"classes": classes, "applied": step["applied"], "method": "bl", "scaled": round(k, 4)}
+
+
+def model_for(level: int, tilts: List[Dict[str, Any]], method: str = "tilt") -> Dict[str, Any]:
+    """The model in force: the ±2-point tilts or Black–Litterman."""
+    if method == "bl":
+        return black_litterman(level, tilts)
+    return {**tilted(level, tilts), "method": "tilt"}

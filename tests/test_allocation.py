@@ -11,6 +11,10 @@ from allocation import _engine, _model, ops
 from allocation.graph import (
     allocation_example_flow,
     allocation_flow,
+    allocation_method_flow,
+    allocation_override_flow,
+    allocation_queue_flow,
+    allocation_review_flow,
     allocation_send_flow,
     allocation_tilt_flow,
     allocation_tilts_flow,
@@ -24,6 +28,12 @@ EXAMPLE = Operon(allocation_example_flow, params={"method": None, "assumptions":
 TILT = Operon(allocation_tilt_flow, params={"asset_class": None, "stance": None, "view_id": None, "by": None, "reason": None})
 TILTS = Operon(allocation_tilts_flow, params={})
 SEND = Operon(allocation_send_flow, params={"client_id": None, "by": None, "scope": None, "method": None, "assumptions": None})
+REVIEW = Operon(allocation_review_flow, params={"item_id": None, "by": None, "decisions": None, "note": None})
+QUEUE = Operon(allocation_queue_flow, params={})
+METHOD = Operon(allocation_method_flow, params={"method": None, "by": None})
+OVERRIDE = Operon(
+    allocation_override_flow, params={"client_id": None, "key": None, "by": None, "bucket": None, "reason": None, "scope": None}
+)
 
 
 def run(engine, **inputs):
@@ -210,6 +220,28 @@ def test_an_rm_sends_the_actions_to_the_review_queue():
     assert len(item["data"]["option"]["actions"]) == out["actions"]
     assert [s["label"] for s in item["data"]["summary"]][:3] == ["Thanh khoản", "Di sản", "Tăng trưởng"]
     assert "$errors" in run(SEND, client_id="C01", by="nobody")
+    assert item["status"] == "pending_cio" and [a["status"] for a in item["data"]["actions"]] == ["pending"] * out["actions"]
+
+
+def test_the_cio_approves_each_action_and_the_client_sees_only_the_approved_ones():
+    """Q-29: the RM sends, the CIO decides each action; the item waits until every action is decided."""
+    sent = ok(SEND, client_id="C01", by="rm01")
+    rid, n = sent["review_id"], sent["actions"]
+    assert n >= 2
+    assert rid in [r["id"] for r in ok(QUEUE)["waiting"]]
+    assert "$errors" in run(REVIEW, item_id=rid, by="rm01", decisions={"0": "approve"})  # the CIO's, not the RM's
+    assert "$errors" in run(REVIEW, item_id=rid, by="cio", decisions={"0": "maybe"})
+    half = ok(REVIEW, item_id=rid, by="cio", decisions={"0": "approve"})["item"]
+    assert half["status"] == "pending_cio"
+    rest = {str(i): "reject" for i in range(1, n)}
+    done = ok(REVIEW, item_id=rid, by="cio", decisions=rest, note="giữ việc đầu")["item"]
+    assert done["status"] == "approved" and done["note"] == "giữ việc đầu"
+    assert done["data"]["option"]["actions"] == [half["data"]["actions"][0]["what"]]
+    assert "$errors" in run(REVIEW, item_id=rid, by="cio", decisions={"0": "reject"})  # decided once
+    assert rid in [r["id"] for r in ok(QUEUE)["decided"]] and rid not in [r["id"] for r in ok(QUEUE)["waiting"]]
+    none = ok(SEND, client_id="C01", by="rm01")
+    out = ok(REVIEW, item_id=none["review_id"], by="cio", decisions={str(i): "reject" for i in range(none["actions"])})
+    assert out["item"]["status"] == "rejected"
 
 
 def test_the_example_is_the_one_the_fixtures_write():
@@ -225,3 +257,63 @@ def test_no_action_sells_a_legacy_asset_or_raises_the_risk_level(cid):
     for x in a["actions"]:
         assert not set(x.get("moves") or {}) & set(_engine.LEGACY), (cid, x["what"])
         assert x["bucket"] != "legacy" or (x["kind"] == "talk" and not x["moves"]), (cid, x["what"])
+
+
+def test_an_rm_moves_an_asset_to_another_bucket_with_a_reason_and_the_cio_sees_it():
+    """§5: the RM overrides one asset's bucket with a reason; the log is the CIO's to read (Compliance's desk)."""
+    before = ok(FLOW, client_id="C01")["allocation"]
+    h = max(before["buckets"]["growth"]["holdings"], key=lambda x: x["value"])
+    args = dict(client_id="C01", key=h["key"], bucket="legacy")
+    assert "$errors" in run(OVERRIDE, **args, by="rm01", reason="ngắn")  # a reason of 10 characters at least
+    assert "$errors" in run(OVERRIDE, **args, by="cio", reason="giữ để lại cho con")  # the RM's
+    assert "$errors" in run(OVERRIDE, **{**args, "bucket": "growth"}, by="rm01", reason="đã ở giỏ này rồi")
+    got = ok(OVERRIDE, **args, by="rm01", reason="khách giữ để lại cho con")["override"]
+    assert (got["from"], got["to"]) == ("growth", "legacy")
+    after = ok(FLOW, client_id="C01")["allocation"]
+    assert after["buckets"]["legacy"]["value"] == pytest.approx(before["buckets"]["legacy"]["value"] + h["value"])
+    assert after["buckets"]["growth"]["value"] == pytest.approx(before["buckets"]["growth"]["value"] - h["value"])
+    moved = next(x for x in after["buckets"]["legacy"]["holdings"] if x["key"] == h["key"])
+    assert moved["moved"]["reason"] == "khách giữ để lại cho con"
+    assert after["reconcile"]["buckets"] == pytest.approx(before["reconcile"]["buckets"])
+    log = ok(QUEUE)["overrides"][0]
+    assert (log["key"], log["to_label"], log["by"]) == (h["key"], "Di sản", "rm01")
+    back = ok(OVERRIDE, client_id="C01", key=h["key"], bucket="", by="rm01")["override"]  # taken away
+    assert (back["from"], back["to"]) == ("legacy", "growth")
+    assert ok(FLOW, client_id="C01")["allocation"]["buckets"]["growth"]["value"] == pytest.approx(before["buckets"]["growth"]["value"])
+
+
+@pytest.mark.parametrize("level", [1, 2, 3, 4, 5])
+def test_black_litterman_reads_the_tilts_as_views_inside_the_cios_guards(level):
+    """§15 P2: no view gives the level's model; a view moves its class the same way as the tilt, at most ±5 points,
+    inside the range, and the model still sums to 100 %."""
+    plain = _model.black_litterman(level, [])["classes"]
+    assert all(v["target"] == pytest.approx(v["base"]) for v in plain.values())
+    for c, stance in (("equity", "overweight"), ("bond", "overweight"), ("gold", "underweight")):
+        t = [{"asset_class": c, "stance": stance, "view": "v"}]
+        tilt, bl = _model.tilted(level, t)["classes"], _model.black_litterman(level, t)["classes"]
+        assert sum(v["target"] for v in bl.values()) == pytest.approx(1.0)
+        for k, v in bl.items():
+            assert v["low"] - 1e-9 <= v["target"] <= v["high"] + 1e-9 and abs(v["tilt"]) <= 0.05 + 1e-9, (c, k)
+        if tilt[c]["tilt"]:  # the tilt could move the class: Black–Litterman moves it the same way
+            assert (bl[c]["tilt"] > 0) == (tilt[c]["tilt"] > 0), (c, bl[c], tilt[c])
+
+
+def test_the_cio_picks_black_litterman_and_every_clients_model_follows(monkeypatch):
+    from views import store as views
+
+    monkeypatch.setattr(views, "approved", lambda: [{"id": "V-1", "current": {"summary": "Lãi suất giảm"}}])
+    ok(TILT, asset_class="equity", stance="overweight", view_id="V-1", by="cio")
+    try:
+        assert "$errors" in run(METHOD, method="bl", by="rm01") and "$errors" in run(METHOD, method="x", by="cio")
+        out = ok(TILTS)
+        assert out["method"] == "tilt" and [m["id"] for m in out["methods"]] == ["tilt", "bl"]
+        lv = ok(FLOW, client_id="C01")["allocation"]["risk"]["level"]
+        assert ok(FLOW, client_id="C01")["allocation"]["model"]["method"] == "tilt"
+        ok(METHOD, method="bl", by="cio")
+        a = ok(FLOW, client_id="C01")["allocation"]
+        assert a["model"]["method"] == "bl"
+        assert a["model"]["classes"]["equity"]["target"] == pytest.approx(out["model_bl"][lv]["classes"]["equity"]["target"])
+        assert ok(TILTS)["method"] == "bl"
+    finally:
+        ok(METHOD, method="tilt", by="cio")
+        ok(TILT, asset_class="equity", stance="neutral", view_id="V-1", by="cio")

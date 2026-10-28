@@ -8,7 +8,7 @@
 import {LOCALE, esc, get, n as how, post, toast} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 
-const STATUS = {pending: ["ai", "Chờ RM duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
+const STATUS = {pending: ["ai", "Chờ RM duyệt"], pending_cio: ["ai", "Chờ CIO duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
   approved: ["good", "Đã duyệt"], rejected: ["bad", "Từ chối"]};
 
 function person(p) {
@@ -31,7 +31,7 @@ export async function render(box, ctx) {
     get("/api/review"),
   ]);
   const mine = q.items.filter(x => x.client_id === client && (staff || x.kind !== "rm_note" || x.status === "approved"));
-  const open = (x) => x.status === "pending" || x.status === "pending_specialist";
+  const open = (x) => ["pending", "pending_cio", "pending_specialist"].includes(x.status);
   const pending = mine.filter(open), done = mine.filter(x => !open(x));
 
   const item = (x) => {

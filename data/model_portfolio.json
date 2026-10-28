@@ -155,5 +155,22 @@
   "drop": 0.2,
   "period": "2011–2013",
   "note": "giả định"
+ },
+ "black_litterman": {
+  "note": "Giả định CIO cho Black–Litterman: độ biến động năm và tương quan giữa các nhóm (§15 P2)",
+  "delta": 2.5,
+  "tau": 0.05,
+  "view": 0.01,
+  "vol": {
+   "cash": 0.005,
+   "bond": 0.05,
+   "equity": 0.22,
+   "gold": 0.15
+  },
+  "corr": {
+   "bond|equity": 0.2,
+   "bond|gold": 0.1,
+   "equity|gold": 0.05
+  }
  }
 }

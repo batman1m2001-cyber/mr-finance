@@ -356,6 +356,14 @@ MODEL_PORTFOLIO = {
     "borrow": {"rate": 0.09, "debt_to_assets": 0.40, "service_to_certain_income": 0.40},
     "worst_case": {"equity": -0.30, "bond": -0.05, "gold": -0.10, "cash": 0.0},
     "real_estate_drop": {"drop": 0.20, "period": "2011–2013", "note": "giả định"},
+    # P2: the CIO's alternative to the ±2-point tilts (allocation._model.black_litterman): risk aversion δ, the prior's
+    # weight τ, the return a Tăng / Giảm adds or takes per step, the classes' yearly volatility and correlations
+    "black_litterman": {
+        "note": "Giả định CIO cho Black–Litterman: độ biến động năm và tương quan giữa các nhóm (§15 P2)",
+        "delta": 2.5, "tau": 0.05, "view": 0.01,
+        "vol": {"cash": 0.005, "bond": 0.05, "equity": 0.22, "gold": 0.15},
+        "corr": {"bond|equity": 0.2, "bond|gold": 0.1, "equity|gold": 0.05},
+    },
 }
 
 

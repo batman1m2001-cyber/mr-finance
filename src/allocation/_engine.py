@@ -1,9 +1,10 @@
 """Three buckets, their targets, and the actions that move a client toward them (ASSET_ALLOCATION_BRD §5–§9).
 
 ``allocate(case, method, assumptions)`` is formulas only: the same case gives the same answer. A case is
-``{as_of, profile, risk, holdings, tilts, excluded}`` — the household's consolidated holdings, its profile (income,
+``{as_of, profile, risk, holdings, tilts, excluded, overrides?}`` — the household's consolidated holdings, its profile (income,
 the certain part of it, spending, dated events, dependents, age, retirement age, the legacy it wants to leave), the
-risk level (from the test, or simulated from the drawdown the file states) and the CIO's tilts in force.
+risk level (from the test, or simulated from the drawdown the file states), the CIO's tilts in force (read as ±2-point tilts or as Black–Litterman views, ``model_method``) and the RM's
+bucket overrides ({holding key: {bucket, reason, …}}, §5).
 
 Order (§8.1): fill Liquidity to its target, then rebalance what is left of Growth to the tilted model.
 """
@@ -64,10 +65,14 @@ def settings(profile: Dict[str, Any], given: Optional[Dict[str, Any]]) -> Dict[s
     return out
 
 
-def bucket_of(holding: Dict[str, Any]) -> Optional[str]:
+def bucket_of(holding: Dict[str, Any], overrides: Optional[Dict[str, Any]] = None) -> Optional[str]:
+    """The bucket a holding counts in: the RM's override for it when there is one (§5), else by its class."""
     cls = holding["class"]
     if holding["kind"] != "asset":
         return None
+    moved = (overrides or {}).get(holding.get("key"))
+    if moved:
+        return moved["bucket"]
     if cls in LIQUID:
         return "liquidity"
     if cls in LEGACY:
@@ -135,8 +140,9 @@ def legacy(case: Dict[str, Any], s: Dict[str, Any], cash: Dict[str, Any], loans:
     floor = sum(r["amount"] for r in floor_rows)
     wish = s["legacy_wish"]
     target = max(wish or 0.0, floor)
-    assets = [h for h in holdings if h["kind"] == "asset" and h["class"] in LEGACY]
-    secured = sum(h["value"] for h in loans if (c := _collateral(h, holdings)) and c["class"] in LEGACY)
+    moved = case.get("overrides")
+    assets = [h for h in holdings if bucket_of(h, moved) == "legacy"]
+    secured = sum(h["value"] for h in loans if (c := _collateral(h, holdings)) and bucket_of(c, moved) == "legacy")
     insured = sum(
         float((h.get("detail") or {}).get("sum_assured") or h["value"])
         for h in assets
@@ -468,7 +474,7 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
 
     buckets = {b: [] for b in BUCKETS}
     for h in holdings:
-        b = bucket_of(h)
+        b = bucket_of(h, case.get("overrides"))
         if b:
             buckets[b].append(h)
     sums = {b: sum(h["value"] for h in hs) for b, hs in buckets.items()}
@@ -477,7 +483,7 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
     for h in buckets["growth"]:
         c = _model.model_class(h, level)
         growth[c] = growth.get(c, 0.0) + h["value"]
-    model = _model.tilted(level, case.get("tilts") or [])
+    model = _model.model_for(level, case.get("tilts") or [], case.get("model_method") or "tilt")
     excess = max(0.0, have - target)
     if excess:
         growth["cash"] = growth.get("cash", 0.0) + excess
@@ -508,7 +514,17 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
             b: {
                 "label": BUCKETS[b],
                 "value": sums[b],
-                "holdings": [{"name": h.get("name"), "class": h["class"], "value": h["value"], "owner_name": h.get("owner_name")} for h in hs],
+                "holdings": [
+                    {
+                        "key": h.get("key"),
+                        "name": h.get("name"),
+                        "class": h["class"],
+                        "value": h["value"],
+                        "owner_name": h.get("owner_name"),
+                        "moved": (case.get("overrides") or {}).get(h.get("key")),
+                    }
+                    for h in hs
+                ],
             }
             for b, hs in buckets.items()
         },

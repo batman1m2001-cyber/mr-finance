@@ -26,7 +26,10 @@ POST /api/goals     {client_id, scope?} ──► goals_flow ──► every lif
 POST /api/allocation {client_id, scope?, method?, assumptions?, role?} ──► allocation_flow ──► Liquidity, Legacy,
                     Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
                     the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
-                    /api/allocation/send ──► an RM sends the actions to the review queue
+                    /api/allocation/send ──► an RM sends the actions to the review queue ·
+                    /api/allocation/review ──► the CIO decides each action (Q-29), /api/allocation/queue lists them ·
+                    /api/allocation/override ──► an RM moves an asset to another bucket, with a reason ·
+                    /api/allocation/method ──► the CIO picks ±2-point tilts or Black–Litterman
 POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item's evidence: statistics or the qualitative frame
                     (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
@@ -78,6 +81,10 @@ from app.http import SecurityHeaders
 from allocation.graph import (
     allocation_example_flow,
     allocation_flow,
+    allocation_method_flow,
+    allocation_override_flow,
+    allocation_queue_flow,
+    allocation_review_flow,
     allocation_send_flow,
     allocation_tilt_flow,
     allocation_tilts_flow,
@@ -342,6 +349,30 @@ APP = Application(
             http("POST", "/api/allocation/send", port=PORT),
             graph=allocation_send_flow,
             description="POST {client_id, by, scope?, method?, assumptions?}: the actions to the review queue.",
+        ),
+        Service(
+            "allocation_review",
+            http("POST", "/api/allocation/review", port=PORT),
+            graph=allocation_review_flow,
+            description="POST {item_id, decisions {n: approve|reject}, by, note?}: the CIO decides each action.",
+        ),
+        Service(
+            "allocation_queue",
+            http("POST", "/api/allocation/queue", port=PORT),
+            graph=allocation_queue_flow,
+            description="POST {}: the allocations waiting for the CIO and the last ones decided.",
+        ),
+        Service(
+            "allocation_override",
+            http("POST", "/api/allocation/override", port=PORT),
+            graph=allocation_override_flow,
+            description="POST {client_id, key, bucket, reason, by, scope?}: an RM's bucket override, logged.",
+        ),
+        Service(
+            "allocation_method",
+            http("POST", "/api/allocation/method", port=PORT),
+            graph=allocation_method_flow,
+            description="POST {method: tilt|bl, by}: how the CIO's tilts move every client's model.",
         ),
         Service(
             "evidence",

@@ -2,11 +2,13 @@
 
 Served on POST /api/allocation (app/main.py), with the worked example (/api/allocation/example), the CIO's tilt
 (/api/allocation/tilt, read on /api/allocation/tilts) and an RM sending the actions to the review queue
-(/api/allocation/send)."""
+(/api/allocation/send), the CIO deciding each action (/api/allocation/review) the CIO's page
+(/api/allocation/queue) an RM's bucket override (/api/allocation/override)
+and the CIO's pick of tilts or Black–Litterman (/api/allocation/method)."""
 
 from operonx import END, START, graph
 
-from allocation.ops import allocate, case_of, check_request, example, send, tilt, tilt_list
+from allocation.ops import allocate, case_of, check_request, example, override, queue, review, send, set_method, tilt, tilt_list
 from consolidate.graph import consolidate_flow
 
 
@@ -54,3 +56,33 @@ def allocation_send_flow(client_id, by, scope="family", method="A", assumptions=
     out = allocate(case=made["case"], method=ask["method"], assumptions=ask["assumptions"], role="rm")
     sent = send(client_id=ask["client_id"], allocation=out["allocation"], by=by)
     START >> ask >> held >> made >> out >> sent >> END
+
+
+@graph
+def allocation_review_flow(item_id, by, decisions=None, note=""):
+    """The CIO approves or rejects each action of an allocation an RM sent (Q-29)."""
+    out = review(item_id=item_id, decisions=decisions, note=note, by=by)
+    START >> out >> END
+
+
+@graph
+def allocation_queue_flow():
+    """The allocations waiting for the CIO and the last ones decided."""
+    out = queue()
+    START >> out >> END
+
+
+@graph
+def allocation_override_flow(client_id, key, by, bucket="", reason="", scope="family"):
+    """An RM moves one asset of the household into another bucket, with a reason (§5)."""
+    ask = check_request(client_id=client_id, scope=scope)
+    held = consolidate_flow(client_id=ask["client_id"], scope=ask["scope"])
+    out = override(client_id=ask["client_id"], holdings=held["holdings"], key=key, bucket=bucket, reason=reason, by=by)
+    START >> ask >> held >> out >> END
+
+
+@graph
+def allocation_method_flow(method, by):
+    """The CIO picks how the tilts move the model: ±2-point tilts or Black–Litterman."""
+    out = set_method(method=method, by=by)
+    START >> out >> END

@@ -23,6 +23,7 @@ from wealth import store as wealth_store
 STAFF = ("rm", "cio", "admin")
 STATUS = {
     "pending": "chờ RM duyệt",
+    "pending_cio": "chờ CIO duyệt từng việc",  # an allocation's actions (ASSET_ALLOCATION_BRD Q-29)
     "pending_specialist": "chờ chuyên gia duyệt",  # kept for items queued before OWN-FB-18
     "approved": "đã duyệt",
     "rejected": "đã từ chối",
@@ -130,7 +131,7 @@ async def queue(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         items = wealth_store.reviews(client_id=_need_client(ctx))
     if not items:
         return {"text": "Không có đề xuất nào trong hàng chờ.", "data": {"items": []}}
-    waiting = [r for r in items if r["status"] in ("pending", "pending_specialist")]
+    waiting = [r for r in items if r["status"] in ("pending", "pending_cio", "pending_specialist")]
     text = f"{len(items)} đề xuất, {len(waiting)} đang chờ. " + " ".join(
         f"{k + 1}) {r['title']} ({_name(r['client_id'])}, mã {r['id']}) — {STATUS.get(r['status'], r['status'])}."
         for k, r in enumerate(items[:4])
