@@ -1,0 +1,224 @@
+{
+ "id": "K-7F3A",
+ "note": "Gia đình giả lập, số liệu minh họa (ASSET_ALLOCATION_BRD §11)",
+ "as_of": "2026-10-28",
+ "profile": {
+  "client_id": "K-7F3A",
+  "name": "Gia đình K-7F3A",
+  "age": 45,
+  "occupation": "Chủ doanh nghiệp",
+  "retirement_age": 60,
+  "legacy_wish": 60000000000,
+  "income_monthly": 350000000,
+  "income_certain_monthly": 100000000,
+  "spending_monthly": 205000000,
+  "income_note": "Lương 100 triệu + cổ tức công ty gia đình 250 triệu (không đều)",
+  "drawdown_limit": 0.15,
+  "dependents": [
+   {
+    "name": "Trần Gia Hân",
+    "relation": "Con",
+    "birth_year": 2009
+   },
+   {
+    "name": "Trần Gia Bảo",
+    "relation": "Con",
+    "birth_year": 2014
+   }
+  ],
+  "events": [
+   {
+    "date": "2027-03-10",
+    "direction": "out",
+    "amount": 5000000000,
+    "label": "Du học Úc – Gia Hân năm 1 (gồm đặt cọc nhà)",
+    "category": "school"
+   },
+   {
+    "date": "2028-03-10",
+    "direction": "out",
+    "amount": 2500000000.0,
+    "label": "Du học Úc – Gia Hân năm 2",
+    "category": "school"
+   },
+   {
+    "date": "2029-03-10",
+    "direction": "out",
+    "amount": 2500000000.0,
+    "label": "Du học Úc – Gia Hân năm 3",
+    "category": "school"
+   },
+   {
+    "date": "2030-03-10",
+    "direction": "out",
+    "amount": 2500000000.0,
+    "label": "Du học Úc – Gia Hân năm 4",
+    "category": "school"
+   }
+  ]
+ },
+ "risk": {
+  "level": 3,
+  "name": "Cân bằng",
+  "source": "simulated",
+  "at": null
+ },
+ "tilts": [
+  {
+   "asset_class": "equity",
+   "stance": "underweight",
+   "view": "NHNN tăng lãi suất điều hành"
+  },
+  {
+   "asset_class": "cash",
+   "stance": "overweight",
+   "view": "NHNN tăng lãi suất điều hành"
+  }
+ ],
+ "holdings": [
+  {
+   "key": "K-7F3A:example:DEP",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "deposit",
+   "name": "Tiền gửi",
+   "value": 8000000000,
+   "cost": 8000000000,
+   "detail": {
+    "account_type": "TD"
+   },
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:APT",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "real_estate",
+   "name": "Căn hộ",
+   "value": 18000000000,
+   "cost": 18000000000,
+   "detail": {
+    "use": "Ở"
+   },
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:TOWN",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "real_estate",
+   "name": "Nhà phố",
+   "value": 22000000000,
+   "cost": 22000000000,
+   "detail": {
+    "use": "Cho thuê"
+   },
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:BIZ",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "business",
+   "name": "Cổ phần công ty gia đình",
+   "value": 10000000000,
+   "cost": 10000000000,
+   "detail": {},
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:STK-1",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "stock",
+   "name": "Cổ phiếu ngân hàng",
+   "value": 12000000000,
+   "cost": 12000000000,
+   "detail": {},
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:STK-2",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "stock",
+   "name": "Cổ phiếu tiêu dùng",
+   "value": 10000000000,
+   "cost": 10000000000,
+   "detail": {},
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:FND-1",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "fund",
+   "name": "Quỹ cổ phiếu",
+   "value": 6000000000,
+   "cost": 6000000000,
+   "detail": {
+    "fund_type": "equity"
+   },
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:BND-1",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "bond",
+   "name": "Trái phiếu doanh nghiệp",
+   "value": 8000000000,
+   "cost": 8000000000,
+   "detail": {},
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:GLD-1",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "asset",
+   "class": "gold",
+   "name": "Vàng miếng",
+   "value": 6000000000,
+   "cost": 6000000000,
+   "detail": {},
+   "source": "example",
+   "trust": "declared"
+  },
+  {
+   "key": "K-7F3A:example:LOAN",
+   "owner": "K-7F3A",
+   "owner_name": "Chủ hộ",
+   "kind": "liability",
+   "class": "loan",
+   "name": "Vay thế chấp nhà phố",
+   "value": 6000000000,
+   "cost": 6000000000,
+   "detail": {
+    "rate": 0.09,
+    "rate_type": "floating",
+    "monthly_payment": 0,
+    "end": "2031-06-30",
+    "collateral": "TOWN"
+   },
+   "source": "example",
+   "trust": "declared"
+  }
+ ]
+}

@@ -335,6 +335,82 @@ def client_c05(rng):
     }
 
 
+# ── asset allocation (ASSET_ALLOCATION_BRD §7, §11) ──────────────────────
+
+# The Growth bucket's model portfolio: per risk level, each class's [target, low, high] in %; the CIO's assumptions
+# beside it (labelled "giả định" on screen). Written to data/model_portfolio.json.
+MODEL_PORTFOLIO = {
+    "note": "Giả định CIO, Tuân thủ xác nhận (bản đề xuất ASSET_ALLOCATION_BRD §7)",
+    "levels": {
+        "1": {"name": "Bảo toàn", "classes": {"cash": [40, 30, 60], "bond": [50, 35, 60], "equity": [5, 0, 10], "gold": [5, 0, 10]}},
+        "2": {"name": "Thận trọng", "classes": {"cash": [20, 10, 35], "bond": [45, 35, 55], "equity": [25, 15, 35], "gold": [10, 5, 15]}},
+        "3": {"name": "Cân bằng", "classes": {"cash": [10, 5, 20], "bond": [35, 25, 45], "equity": [45, 35, 55], "gold": [10, 5, 15]}},
+        "4": {"name": "Tăng trưởng", "classes": {"cash": [5, 0, 15], "bond": [25, 15, 35], "equity": [60, 50, 70], "gold": [10, 5, 15]}},
+        "5": {"name": "Mạo hiểm", "classes": {"cash": [5, 0, 10], "bond": [10, 5, 25], "equity": [75, 60, 85], "gold": [10, 0, 15]}},
+    },
+    "expected_return": {"cash": 0.045, "bond": 0.06, "equity": 0.12, "gold": 0.05},
+    "tilt": {"step": 2, "cap": 5},
+    "band": 0.01,
+    "concentration": 0.20,
+    "sell_tax": 0.001,
+    "borrow": {"rate": 0.09, "debt_to_assets": 0.40, "service_to_certain_income": 0.40},
+    "worst_case": {"equity": -0.30, "bond": -0.05, "gold": -0.10, "cash": 0.0},
+    "real_estate_drop": {"drop": 0.20, "period": "2011–2013", "note": "giả định"},
+}
+
+
+def _h(key, cls, name, value, detail=None, kind="asset"):
+    return {
+        "key": f"K-7F3A:example:{key}", "owner": "K-7F3A", "owner_name": "Chủ hộ", "kind": kind, "class": cls,
+        "name": name, "value": value, "cost": value, "detail": detail or {}, "source": "example", "trust": "declared",
+    }
+
+
+# The BRD's family K-7F3A (simulated, numbers illustrative): data/allocation_example.json, its own file so the
+# client list stays the five families. as_of in 10/2026, so the table runs 11/2026 → 10/2029.
+ALLOCATION_EXAMPLE = {
+    "id": "K-7F3A",
+    "note": "Gia đình giả lập, số liệu minh họa (ASSET_ALLOCATION_BRD §11)",
+    "as_of": "2026-10-28",
+    "profile": {
+        "client_id": "K-7F3A", "name": "Gia đình K-7F3A", "age": 45, "occupation": "Chủ doanh nghiệp",
+        "retirement_age": 60, "legacy_wish": 60 * TY,
+        "income_monthly": 350 * TR, "income_certain_monthly": 100 * TR, "spending_monthly": 205 * TR,
+        "income_note": "Lương 100 triệu + cổ tức công ty gia đình 250 triệu (không đều)",
+        "drawdown_limit": 0.15,
+        "dependents": [
+            {"name": "Trần Gia Hân", "relation": "Con", "birth_year": 2009},
+            {"name": "Trần Gia Bảo", "relation": "Con", "birth_year": 2014},
+        ],
+        "events": [
+            {"date": "2027-03-10", "direction": "out", "amount": 5 * TY, "label": "Du học Úc – Gia Hân năm 1 (gồm đặt cọc nhà)", "category": "school"},
+            {"date": "2028-03-10", "direction": "out", "amount": 2.5 * TY, "label": "Du học Úc – Gia Hân năm 2", "category": "school"},
+            {"date": "2029-03-10", "direction": "out", "amount": 2.5 * TY, "label": "Du học Úc – Gia Hân năm 3", "category": "school"},
+            {"date": "2030-03-10", "direction": "out", "amount": 2.5 * TY, "label": "Du học Úc – Gia Hân năm 4", "category": "school"},
+        ],
+    },
+    "risk": {"level": 3, "name": "Cân bằng", "source": "simulated", "at": None},
+    "tilts": [
+        {"asset_class": "equity", "stance": "underweight", "view": "NHNN tăng lãi suất điều hành"},
+        {"asset_class": "cash", "stance": "overweight", "view": "NHNN tăng lãi suất điều hành"},
+    ],
+    "holdings": [
+        _h("DEP", "deposit", "Tiền gửi", 8 * TY, {"account_type": "TD"}),
+        _h("APT", "real_estate", "Căn hộ", 18 * TY, {"use": "Ở"}),
+        _h("TOWN", "real_estate", "Nhà phố", 22 * TY, {"use": "Cho thuê"}),
+        _h("BIZ", "business", "Cổ phần công ty gia đình", 10 * TY),
+        _h("STK-1", "stock", "Cổ phiếu ngân hàng", 12 * TY),
+        _h("STK-2", "stock", "Cổ phiếu tiêu dùng", 10 * TY),
+        _h("FND-1", "fund", "Quỹ cổ phiếu", 6 * TY, {"fund_type": "equity"}),
+        _h("BND-1", "bond", "Trái phiếu doanh nghiệp", 8 * TY),
+        _h("GLD-1", "gold", "Vàng miếng", 6 * TY),
+        _h("LOAN", "loan", "Vay thế chấp nhà phố", 6 * TY,
+           {"rate": 0.09, "rate_type": "floating", "monthly_payment": 0, "end": "2031-06-30", "collateral": "TOWN"},
+           kind="liability"),
+    ],
+}
+
+
 def main() -> None:
     rng = random.Random(20261009)
     (DATA / "clients").mkdir(parents=True, exist_ok=True)
@@ -345,6 +421,8 @@ def main() -> None:
         tb["transactions"] = sorted(tb.get("transactions", []), key=lambda r: r["date"])
         (DATA / "clients" / f"{c['id']}.json").write_text(
             json.dumps(c, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    for name, data in (("model_portfolio", MODEL_PORTFOLIO), ("allocation_example", ALLOCATION_EXAMPLE)):
+        (DATA / f"{name}.json").write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

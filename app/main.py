@@ -23,6 +23,10 @@ POST /api/risk      {client_id, answers} ──► risk_flow ──► the next 
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
+POST /api/allocation {client_id, scope?, method?, assumptions?, role?} ──► allocation_flow ──► Liquidity, Legacy,
+                    Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
+                    the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
+                    /api/allocation/send ──► an RM sends the actions to the review queue
 POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
@@ -68,6 +72,7 @@ from operonx.app.jobs import Job
 
 from app import web
 from app.http import SecurityHeaders
+from allocation.graph import allocation_example_flow, allocation_flow, allocation_send_flow, allocation_tilt_flow
 from apply.graph import recompute_flow, run_decide_flow
 from assistant.graph import (
     assistant_consolidate_flow,
@@ -297,6 +302,30 @@ APP = Application(
             http("POST", "/api/goals", port=PORT),
             graph=goals_flow,
             description="POST {client_id, scope?}: every life goal, with its gap, status and actions.",
+        ),
+        Service(
+            "allocation",
+            http("POST", "/api/allocation", port=PORT),
+            graph=allocation_flow,
+            description="POST {client_id, scope?, method?, assumptions?, role?}: three buckets, targets, actions.",
+        ),
+        Service(
+            "allocation_example",
+            http("POST", "/api/allocation/example", port=PORT),
+            graph=allocation_example_flow,
+            description="POST {method?, assumptions?, role?}: the BRD's worked example K-7F3A.",
+        ),
+        Service(
+            "allocation_tilt",
+            http("POST", "/api/allocation/tilt", port=PORT),
+            graph=allocation_tilt_flow,
+            description="POST {asset_class, stance, view_id, by, reason?}: a CIO tilts the model portfolio.",
+        ),
+        Service(
+            "allocation_send",
+            http("POST", "/api/allocation/send", port=PORT),
+            graph=allocation_send_flow,
+            description="POST {client_id, by, scope?, method?, assumptions?}: the actions to the review queue.",
         ),
         Service(
             "propose",

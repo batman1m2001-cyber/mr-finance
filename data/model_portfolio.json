@@ -1,0 +1,159 @@
+{
+ "note": "Giả định CIO, Tuân thủ xác nhận (bản đề xuất ASSET_ALLOCATION_BRD §7)",
+ "levels": {
+  "1": {
+   "name": "Bảo toàn",
+   "classes": {
+    "cash": [
+     40,
+     30,
+     60
+    ],
+    "bond": [
+     50,
+     35,
+     60
+    ],
+    "equity": [
+     5,
+     0,
+     10
+    ],
+    "gold": [
+     5,
+     0,
+     10
+    ]
+   }
+  },
+  "2": {
+   "name": "Thận trọng",
+   "classes": {
+    "cash": [
+     20,
+     10,
+     35
+    ],
+    "bond": [
+     45,
+     35,
+     55
+    ],
+    "equity": [
+     25,
+     15,
+     35
+    ],
+    "gold": [
+     10,
+     5,
+     15
+    ]
+   }
+  },
+  "3": {
+   "name": "Cân bằng",
+   "classes": {
+    "cash": [
+     10,
+     5,
+     20
+    ],
+    "bond": [
+     35,
+     25,
+     45
+    ],
+    "equity": [
+     45,
+     35,
+     55
+    ],
+    "gold": [
+     10,
+     5,
+     15
+    ]
+   }
+  },
+  "4": {
+   "name": "Tăng trưởng",
+   "classes": {
+    "cash": [
+     5,
+     0,
+     15
+    ],
+    "bond": [
+     25,
+     15,
+     35
+    ],
+    "equity": [
+     60,
+     50,
+     70
+    ],
+    "gold": [
+     10,
+     5,
+     15
+    ]
+   }
+  },
+  "5": {
+   "name": "Mạo hiểm",
+   "classes": {
+    "cash": [
+     5,
+     0,
+     10
+    ],
+    "bond": [
+     10,
+     5,
+     25
+    ],
+    "equity": [
+     75,
+     60,
+     85
+    ],
+    "gold": [
+     10,
+     0,
+     15
+    ]
+   }
+  }
+ },
+ "expected_return": {
+  "cash": 0.045,
+  "bond": 0.06,
+  "equity": 0.12,
+  "gold": 0.05
+ },
+ "tilt": {
+  "step": 2,
+  "cap": 5
+ },
+ "band": 0.01,
+ "concentration": 0.2,
+ "sell_tax": 0.001,
+ "borrow": {
+  "rate": 0.09,
+  "debt_to_assets": 0.4,
+  "service_to_certain_income": 0.4
+ },
+ "worst_case": {
+  "equity": -0.3,
+  "bond": -0.05,
+  "gold": -0.1,
+  "cash": 0.0
+ },
+ "real_estate_drop": {
+  "drop": 0.2,
+  "period": "2011–2013",
+  "note": "giả định"
+ }
+}
