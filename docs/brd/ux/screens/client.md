@@ -208,9 +208,12 @@ a footnote with what stays unallocated (BR-08); runs stored before F10 show the 
 | Screenshot | [desktop](../../assets/current_ui/SCR-CL-06_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CL-06_phone-light.jpg) |
 
 **Layout.** “Kiểm tra tài sản” (Wealth check until 2026-10-20; YTD return vs benchmark, goals tracked, required actions, link to the planning
-advisor); **Tác động lên tài sản ròng** (diverging bars per policy, filter all / risks / opportunities, the formula);
+advisor); **Tác động lên tài sản ròng** (diverging bars per policy, filter all / risks / opportunities and by horizon, the
+formula; since 2026-10-27 each row ends in its horizon and, for gold, bonds and the exchange rate, its VND
+estimate, else its level, “Cao · 1 tháng”, and an item on business equity only in “Tích cực” / “Tiêu cực”; the
+cards the same);
 **House views** (8 mock research-house views matched to holdings, 2 shown + “Xem thêm”); the mock-data and
-legal-status notes; **Policy headlines** — one card per policy with level, legal status, the impact (with
+legal-status notes; **Policy headlines** — one card per policy with level, horizon, legal status, the impact (with
 probability), holding × sensitivity × probability, the holdings touched, the source line.
 
 **DEF-01 (fixed 2026-10-15).** The “Wealth check” card was squeezed into an 18 px column at 1440 px: the new pages'

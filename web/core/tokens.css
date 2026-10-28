@@ -790,6 +790,10 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .tip .sw, .legend .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
 .dbar .dv { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 @media (max-width: 560px) { .dbar { grid-template-columns: minmax(0, 1fr) 92px; } .dbar .dt { grid-column: 1 / 3; grid-row: 2; } }
+/* a news item's impact as its level and how soon (Cao · 1 tháng), not VND: a wider last column */
+.dbar.lv { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 168px; }
+.dbar.lv .dv { font-weight: 500; }
+@media (max-width: 560px) { .dbar.lv { grid-template-columns: minmax(0, 1fr) auto; } }
 .person .avatar { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; flex: none; font-weight: 700;
   background: var(--accent-soft); color: var(--accent); }
 .contact { display: grid; gap: 6px; margin-top: 14px; font-size: 13px; color: var(--ink-2); }

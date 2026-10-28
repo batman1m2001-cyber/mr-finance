@@ -192,11 +192,23 @@ FACTORS = [
 
 STATUS_LABEL = {"draft": "Dự thảo", "consultation": "Đang lấy ý kiến / dự kiến", "passed": "Đã thông qua / đã diễn ra"}
 
+# How soon each item's impact lands on the holdings, from 2026-10-09 (giả định for the demo, like the statuses):
+# a market move in days, a rule in force within the month, a draft or a project's price pass-through over months.
+HORIZON = {
+    "P01": "3m", "P02": "3m", "P03": "3m", "P04": "3m", "P05": "1m", "P06": "1m", "P07": "3m", "P08": "1w",
+    "P09": "1w", "P10": "2m", "P11": "2m", "P12": "1m", "P13": "2m", "P14": "3m",
+    "M01": "1m", "M02": "1w",
+    "I01": "3m", "I02": "3m", "I03": "3m",
+}  # fmt: skip
+HORIZON_LABEL = {"1w": "1 tuần", "1m": "1 tháng", "2m": "2 tháng", "3m": "3 tháng"}
+
 
 def main() -> None:
     for f in FACTORS:
         f["probability"] = STATUS[f["status"]]
         f["status_label"] = STATUS_LABEL[f["status"]]
+        f["horizon"] = HORIZON[f["id"]]
+        f["horizon_label"] = HORIZON_LABEL[f["horizon"]]
         f.setdefault("opportunity", False)
     OUT.write_text(
         json.dumps(

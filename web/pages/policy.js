@@ -16,15 +16,25 @@ const KIND = {
 };
 const STANCE = {positive: ["good", "Tích cực"], neutral: ["", "Trung tính"], cautious: ["warn", "Thận trọng"]};
 const RANK = {on_track: 0, at_risk: 1, off_track: 2};
-const view = {filter: "all", allViews: false};  // for this page's life
+const view = {filter: "all", horizon: "all", allViews: false};  // for this page's life
 // an alert's parts: the asset classes it moves, or a payment ahead / the salary when it moves no holding
 const PART = {...ASSET_CLASS, outflow: "Khoản chi sắp tới", income: "Thu nhập"};
 const partColor = (k) => CLASS_COLOR[k] || "var(--other)";
 const parts = (a) => Object.entries(a.by_class || {[a.impact >= 0 ? "income" : "outflow"]: a.impact});
 
-const sevPill = (a) => (a.opportunity
-  ? `<span class="pill good">Cơ hội · ${SEV[a.severity][1]}</span>`
-  : `<span class="pill ${SEV[a.severity][0]}">Rủi ro · ${SEV[a.severity][1]}</span>`);
+const sevPill = (a) => (a.sign_only
+  ? `<span class="pill ${a.opportunity ? "good" : "bad"}">${a.opportunity ? "Tích cực" : "Tiêu cực"}</span>`
+  : a.opportunity
+    ? `<span class="pill good">Cơ hội · ${SEV[a.severity][1]}</span>`
+    : `<span class="pill ${SEV[a.severity][0]}">Rủi ro · ${SEV[a.severity][1]}</span>`);
+// the chart's impact: in VND for gold, bonds and the exchange rate (in_vnd), else its level; with how soon
+// (−81 triệu · 1 tuần, Cao · 1 tháng); an item on business equity only, good or bad news
+const HORIZON = [["all", "Mọi thời gian"], ["1w", "1 tuần"], ["1m", "1 tháng"], ["2m", "2 tháng"], ["3m", "3 tháng"]];
+const LEVEL = {high: "Cao", medium: "Trung bình", low: "Thấp"};
+const pin = (a) => ({exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, true, 2), probability: pct(a.probability, false, 0)});
+const level = (a) => (a.sign_only
+  ? `<span class="pill ${a.opportunity ? "good" : "bad"}">${a.opportunity ? "Tích cực" : "Tiêu cực"}</span>`
+  : `<span class="pill ${a.opportunity ? "good" : SEV[a.severity][0]}">${a.in_vnd ? how(vnd(a.impact, true), "policy.impact", pin(a)) : LEVEL[a.severity]} · ${esc(a.horizon_label)}</span>`);
 
 // which of the client's holdings a house view is about
 function touches(v, holdings) {
@@ -101,27 +111,32 @@ export async function render(box, ctx) {
     </div>`;
 
   const drawImpact = () => {
-    const f = view.filter;
-    const list = rep.alerts.filter(a => f === "all" || (f === "opp" ? a.opportunity : !a.opportunity));
+    const f = view.filter, hz = view.horizon;
+    const list = rep.alerts.filter(a => (f === "all" || (f === "opp" ? a.opportunity : !a.opportunity))
+      && (hz === "all" || (!a.sign_only && a.horizon === hz)));
     const maxAbs = Math.max(1, ...rep.alerts.map(a => Math.abs(a.impact)));
-    const pin = (a) => ({exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, true, 2), probability: pct(a.probability, false, 0)});
     const el = box.querySelector("#impact");
     el.innerHTML = `<h3>Tác động lên tài sản ròng <span class="hint">${rep.scope === "family" ? "gia đình" : "cá nhân"} · tài sản ròng ${how(vnd(rep.net_worth), "net_worth")}</span></h3>
-      <p class="small muted">Tác động (VND) = Mức nắm giữ × Độ nhạy × Xác suất xảy ra · xác suất theo trạng thái: dự thảo thấp, đang lấy ý kiến trung bình, đã thông qua cao.</p>
+      <p class="small muted" data-explains>Mức tác động theo phần tài sản ròng bị ảnh hưởng (Mức nắm giữ × Độ nhạy × Xác suất xảy ra): cao từ 1%, trung bình từ 0,3%, thấp dưới 0,3% · tin về vàng, trái phiếu và tỷ giá ghi số tiền ước tính · thời gian là khi tác động dự kiến đến (giả định) · cổ phần doanh nghiệp chỉ ghi tích cực hay tiêu cực.</p>
       <div class="row spread"><div class="legend"><span class="muted">← Rủi ro · Cơ hội →</span>${legend(list.slice(0, 10))}</div>
-        <div class="seg" role="group" aria-label="Lọc">${[["all", "Tất cả"], ["risk", "Rủi ro"], ["opp", "Cơ hội"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${f === k}">${t}</button>`).join("")}</div></div>
-      <div class="dbars mt">${list.slice(0, 10).map(a => `<div class="dbar" tabindex="0" data-a="${esc(a.id)}" data-focus="policy:${esc(a.id)}"><span class="dl" data-explains>${esc(a.title)}</span>
+        <div class="row tight"><div class="seg" role="group" aria-label="Lọc theo thời gian">${HORIZON.map(([k, t]) => `<button type="button" data-hz="${k}" aria-pressed="${hz === k}">${t}</button>`).join("")}</div>
+        <div class="seg" role="group" aria-label="Lọc">${[["all", "Tất cả"], ["risk", "Rủi ro"], ["opp", "Cơ hội"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${f === k}">${t}</button>`).join("")}</div></div></div>
+      <div class="dbars mt">${list.slice(0, 10).map(a => `<div class="dbar lv" tabindex="0" data-a="${esc(a.id)}" data-focus="policy:${esc(a.id)}"><span class="dl" data-explains>${esc(a.title)}</span>
         <span class="dt"><span class="dneg">${a.impact < 0 ? stack(a, maxAbs) : ""}</span><span class="dpos">${a.impact > 0 ? stack(a, maxAbs) : ""}</span></span>
-        <span class="dv ${a.impact >= 0 ? "up" : "down"}">${how(vnd(a.impact, true), "policy.impact", pin(a))}</span></div>`).join("") || `<p class="muted">Không có mục nào.</p>`}</div>`;
+        <span class="dv">${level(a)}</span></div>`).join("") || `<p class="muted">Không có mục nào.</p>`}</div>`;
     for (const b of el.querySelectorAll("[data-af]")) b.onclick = () => { view.filter = b.dataset.af; drawImpact(); drawSections(); };
+    for (const b of el.querySelectorAll("[data-hz]")) b.onclick = () => { view.horizon = b.dataset.hz; drawImpact(); };
     for (const row of el.querySelectorAll("[data-a]")) {
       const a = rep.alerts.find(x => x.id === row.dataset.a);
       let on = null;  // the part under the pointer, bold in the tip
       for (const seg of row.querySelectorAll("[data-part]")) seg.addEventListener("mouseenter", () => { on = seg.dataset.part; });
       row.addEventListener("mouseleave", () => { on = null; });
       hover(row, () => `<b>${esc(a.title)}</b><div data-explains>${esc(a.message)}</div>
-        ${parts(a).map(([k, v]) => `<div class="row"${k === on ? ' style="font-weight:700"' : ""}><span><i class="sw" style="background:${partColor(k)}"></i>${esc(PART[k] || k)}</span><span>${vnd(v, true)}</span></div>`).join("")}
-        <div class="row"><span>Tác động</span><span>${how(vnd(a.impact, true), "policy.impact", pin(a))}</span></div>`);
+        ${parts(a).map(([k, v]) => `<div class="row"${k === on ? ' style="font-weight:700"' : ""}><span><i class="sw" style="background:${partColor(k)}"></i>${esc(PART[k] || k)}</span>${a.in_vnd ? `<span>${vnd(v, true)}</span>` : ""}</div>`).join("")}
+        ${a.sign_only
+          ? `<div class="row"><span>Tác động</span><span>${a.opportunity ? "Tích cực" : "Tiêu cực"}</span></div>`
+          : `<div class="row"><span>${a.in_vnd ? "Tác động" : "Mức tác động"}</span><span>${a.in_vnd ? how(vnd(a.impact, true), "policy.impact", pin(a)) : LEVEL[a.severity]}</span></div>
+             <div class="row"><span>Thời gian</span><span>trong ${esc(a.horizon_label)}</span></div>`}`);
     }
   };
 
@@ -158,13 +173,14 @@ export async function render(box, ctx) {
   const drawSections = () => {
     const f = view.filter;
     const list = rep.alerts.filter(a => f === "all" || (f === "opp" ? a.opportunity : !a.opportunity));
-    const pin = (a) => ({exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, true, 2), probability: pct(a.probability, false, 0)});
     const card = (a) => `<div class="panel acard" data-focus="policy:${esc(a.id)}">
-        <div class="row tight">${sevPill(a)}<span class="chip">${esc(a.status_label)}</span></div>
+        <div class="row tight">${sevPill(a)}${a.sign_only ? "" : `<span class="chip">trong ${esc(a.horizon_label)}</span>`}<span class="chip">${esc(a.status_label)}</span></div>
         <h4 data-explains>${esc(a.title)}</h4>
         <p class="small" data-explains>${esc(a.message)}</p>
-        <div class="kv"><span>Tác động ước tính (đã tính xác suất)</span><b class="${a.impact >= 0 ? "up" : "down"}">${how(vnd(a.impact, true), "policy.impact", pin(a))} · ${how(pct(a.impact_pct, true, 2), "policy.impact", pin(a))} tài sản ròng</b></div>
-        <div class="kv"><span>Mức nắm giữ × Độ nhạy × Xác suất</span><b>${how(vnd(a.exposure), "policy.exposure", {count: String(a.affected.length)})} × ${how(pct(a.sensitivity, true, 2), "policy.sensitivity")} × ${how(pct(a.probability, false, 0), "policy.probability")}</b></div>
+        ${a.in_vnd ? `<div class="kv"><span>Tác động ước tính (đã tính xác suất)</span><b class="${a.impact >= 0 ? "up" : "down"}">${how(vnd(a.impact, true), "policy.impact", pin(a))} · ${how(pct(a.impact_pct, true, 2), "policy.impact", pin(a))} tài sản ròng</b></div>
+        <div class="kv"><span>Mức nắm giữ × Độ nhạy × Xác suất</span><b>${how(vnd(a.exposure), "policy.exposure", {count: String(a.affected.length)})} × ${how(pct(a.sensitivity, true, 2), "policy.sensitivity")} × ${how(pct(a.probability, false, 0), "policy.probability")}</b></div>`
+        : `<div class="kv"><span>Mức tác động</span><b class="${a.impact >= 0 ? "up" : "down"}">${a.sign_only ? (a.opportunity ? "Tích cực" : "Tiêu cực") : LEVEL[a.severity]}</b></div>
+        ${a.sign_only ? "" : `<div class="kv"><span>Thời gian</span><b>trong ${esc(a.horizon_label)}</b></div>`}`}
         <div class="kv"><span>Khoản bị ảnh hưởng</span><b>${a.affected.map(esc).join(", ")}</b></div>
         <div class="small muted mt-xs" data-explains>Nguồn: ${esc(a.source)}</div></div>`;
     box.querySelector("#sections").innerHTML = Object.entries(KIND).map(([k, [en, vi, ic]]) => {
