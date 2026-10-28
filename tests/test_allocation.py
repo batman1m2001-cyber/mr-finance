@@ -8,7 +8,13 @@ import pytest
 from operonx import Operon
 
 from allocation import _engine, _model, ops
-from allocation.graph import allocation_example_flow, allocation_flow, allocation_send_flow, allocation_tilt_flow
+from allocation.graph import (
+    allocation_example_flow,
+    allocation_flow,
+    allocation_send_flow,
+    allocation_tilt_flow,
+    allocation_tilts_flow,
+)
 from views.schema import forbidden_words
 from wealth import fixtures, store
 from wealth.money import TY, TR
@@ -16,6 +22,7 @@ from wealth.money import TY, TR
 FLOW = Operon(allocation_flow, params={"client_id": None, "scope": None, "method": None, "assumptions": None, "role": None})
 EXAMPLE = Operon(allocation_example_flow, params={"method": None, "assumptions": None, "role": None})
 TILT = Operon(allocation_tilt_flow, params={"asset_class": None, "stance": None, "view_id": None, "by": None, "reason": None})
+TILTS = Operon(allocation_tilts_flow, params={})
 SEND = Operon(allocation_send_flow, params={"client_id": None, "by": None, "scope": None, "method": None, "assumptions": None})
 
 
@@ -180,6 +187,20 @@ def test_a_cio_tilts_from_an_approved_view_and_the_case_reads_it(monkeypatch):
     a = ok(FLOW, client_id="C01")["allocation"]
     assert a["model"]["classes"]["equity"]["views"] == ["Lãi suất tăng"]
     assert ok(TILT, asset_class="equity", stance="neutral", view_id="V-1", by="cio")["tilts"] == []
+
+
+def test_the_cio_page_reads_the_tilts_in_force_and_the_model_they_give(monkeypatch):
+    from views import store as views
+
+    monkeypatch.setattr(views, "approved", lambda: [{"id": "V-1", "current": {"summary": "Lãi suất tăng"}}])
+    out = ok(TILTS)
+    assert [c["id"] for c in out["classes"]] == ["cash", "bond", "equity", "gold"] and out["tilts"] == []
+    assert [s["id"] for s in out["stances"]] == ["overweight", "neutral", "underweight"]
+    ok(TILT, asset_class="gold", stance="overweight", view_id="V-1", by="cio")
+    out = ok(TILTS)
+    assert [(t["asset_class"], t["view_id"]) for t in out["tilts"]] == [("gold", "V-1")]
+    gold = out["model"][3]["classes"]["gold"]
+    assert gold["tilt"] == pytest.approx(0.02) and gold["target"] == pytest.approx(gold["base"] + 0.02)
 
 
 def test_an_rm_sends_the_actions_to_the_review_queue():

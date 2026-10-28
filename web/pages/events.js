@@ -193,6 +193,7 @@ async function renderView(box, ctx, id) {
             v.status === "PENDING_APPROVAL" ? `<div class="row" style="margin-top:6px;gap:6px"><input data-resp="${esc(f.id)}" placeholder="Trả lời (từ 10 ký tự)" style="flex:1;min-width:160px;padding:6px 9px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
               <button type="button" class="btn sm" data-answer="${esc(f.id)}" data-decision="accept">Chấp nhận</button><button type="button" class="btn sm" data-answer="${esc(f.id)}" data-decision="reject">Bác</button></div>` : ""}
         </div>`).join("") || '<div class="small muted">Không có phát hiện.</div>' : ""}</div>
+      ${v.status === "APPROVED" ? `<div class="panel c12" id="tilt"><h3>Nghiêng danh mục mô hình <span class="hint">±2 điểm mỗi lần, tối đa ±5; phần chênh vào tiền chờ đầu tư</span></h3><div class="small muted">Đang tải…</div></div>` : ""}
       ${d.application_runs.length ? `<div class="panel c12"><h3>Lần áp dụng</h3>${d.application_runs.map(r => `<div class="row spread" style="margin:6px 0"><a href="#/cio/ap-dung/${esc(r.id)}">${esc(r.id)}</a><span>${runBadge(r.status, r.status_label)} <span class="num ${signClass(r.totals && r.totals.expected_3m)}">${r.totals ? how(vnd(r.totals.expected_3m, true), "run.expected_3m", {families: String(r.families || "")}) : ""}</span> ${r.totals ? `· ${r.totals.pre_review} gia đình cần RM xem trước` : ""}</span></div>`).join("")}</div>` : ""}
     </div>` : ""}
     <div class="panel flat" style="margin-top:16px"><details class="more"><summary>Vết chạy agent (từng bước)</summary>
@@ -213,6 +214,8 @@ async function renderView(box, ctx, id) {
       })), {metric: "scenario.move", inputs: {branch: b.name}});
     });
   }
+  const tiltBox = box.querySelector("#tilt");
+  if (tiltBox) drawTilt(tiltBox, v, ctx);
   const act = async (body, msg) => {
     try { await post("/api/views/decide", {view_id: v.id, by: ctx.user, ...body}); toast(msg); } catch (e) { toast(e.message); }
     ctx.go(location.hash);
@@ -259,4 +262,26 @@ async function renderView(box, ctx, id) {
         edits: {scenarios: {...cur.scenarios, branches}}}, "Đã lưu bản sửa; phản biện chạy lại");
     };
   }
+}
+
+/* ASSET_ALLOCATION_BRD: from an approved view the CIO tilts a class of the model portfolio; level 3 shows the effect */
+async function drawTilt(panel, v, ctx) {
+  const t = await post("/api/allocation/tilts", {});
+  const mine = Object.fromEntries(t.tilts.filter(x => x.view_id === v.id).map(x => [x.asset_class, x.stance]));
+  const lv = t.model[3].classes;
+  const p = (x) => pct(x, false, 0);
+  panel.innerHTML = `${panel.querySelector("h3").outerHTML}<table class="table"><thead><tr><th>Loại tài sản</th><th>Nhận định này</th><th class="r">Mức rủi ro 3</th></tr></thead><tbody>${t.classes.map(c => `
+    <tr><td>${esc(c.label)}</td>
+      <td><div class="seg" role="group" aria-label="${esc(c.label)}">${t.stances.map(s => `<button type="button" data-cls="${c.id}" data-stance="${s.id}" aria-pressed="${(mine[c.id] || "neutral") === s.id}">${esc(s.label)}</button>`).join("")}</div></td>
+      <td class="r num">${lv[c.id].tilt ? `${how(p(lv[c.id].base), "alloc.model", {level: 3})} → <b>${how(p(lv[c.id].target), "alloc.model", {level: 3})}</b>` : how(p(lv[c.id].target), "alloc.model", {level: 3})}</td></tr>`).join("")}</tbody></table>`;
+  panel.querySelectorAll("[data-stance]").forEach(b => {
+    b.onclick = async () => {
+      if (b.getAttribute("aria-pressed") === "true") return;
+      try {
+        await post("/api/allocation/tilt", {asset_class: b.dataset.cls, stance: b.dataset.stance, view_id: v.id, by: ctx.user});
+        toast("Đã cập nhật danh mục mô hình");
+      } catch (e) { toast(e.message); }
+      drawTilt(panel, v, ctx);
+    };
+  });
 }

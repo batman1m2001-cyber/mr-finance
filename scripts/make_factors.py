@@ -143,6 +143,15 @@ FACTORS = [
         "source": "Nghị quyết của Quốc hội về thuế tối thiểu toàn cầu, áp dụng từ 2024",
         "rule": {"type": "business", "sensitivity": -0.04},
     },
+    {
+        "id": "P15",
+        "kind": "policy",
+        "title": "Có thể thắt chặt thủ tục chuyển tiền ra nước ngoài",
+        "status": "draft",
+        "source": "Tin tổng hợp về kiểm soát chuyển tiền ra nước ngoài (giả định cho demo)",
+        # no price moves: the plans that send money abroad take more steps (NEWS_EVIDENCE_BRD Ví dụ 4)
+        "rule": {"type": "plans", "purposes": ["study_abroad", "emigrate", "support_abroad"]},
+    },
     # ── macro ───────────────────────────────────────────────────────────
     {
         "id": "M01",
@@ -159,6 +168,15 @@ FACTORS = [
         "status": "consultation",
         "source": "Kịch bản giả định cho demo",
         "rule": {"type": "study_abroad", "fx_move": 0.03},
+    },
+    {
+        "id": "M03",
+        "kind": "macro",
+        "title": "Fed dự kiến tăng lãi suất thêm 0,25%",
+        "status": "consultation",
+        "source": "FOMC 16/09/2026: tăng lên 3,75–4%; dự báo trung vị thêm một lần tăng 0,25% trước cuối 2026",
+        # the move is the median of what the VN-Index did after past hikes (src/evidence, the statistics branch)
+        "rule": {"type": "stat", "classes": ["stock", "fund"]},
     },
     # ── infrastructure (micro, often good news) ─────────────────────────
     {
@@ -192,23 +210,21 @@ FACTORS = [
 
 STATUS_LABEL = {"draft": "Dự thảo", "consultation": "Đang lấy ý kiến / dự kiến", "passed": "Đã thông qua / đã diễn ra"}
 
-# How soon each item's impact lands on the holdings, from 2026-10-09 (giả định for the demo, like the statuses):
-# a market move in days, a rule in force within the month, a draft or a project's price pass-through over months.
-HORIZON = {
-    "P01": "3m", "P02": "3m", "P03": "3m", "P04": "3m", "P05": "1m", "P06": "1m", "P07": "3m", "P08": "1w",
-    "P09": "1w", "P10": "2m", "P11": "2m", "P12": "1m", "P13": "2m", "P14": "3m",
-    "M01": "1m", "M02": "1w",
-    "I01": "3m", "I02": "3m", "I03": "3m",
-}  # fmt: skip
-HORIZON_LABEL = {"1w": "1 tuần", "1m": "1 tháng", "2m": "2 tháng", "3m": "3 tháng"}
+# How soon each item's impact lands: the time in its evidence frame (data/evidence.json, scripts/make_evidence.py);
+# the chart filters 1–3 months under 3 months.
+EVIDENCE = Path(__file__).resolve().parents[1] / "data" / "evidence.json"
+TIMEFRAMES = {"1w": "1 tuần", "1m": "1 tháng", "1-3m": "1–3 tháng", "3m": "3 tháng", ">3m": "trên 3 tháng"}
+HORIZON = {"1w": "1w", "1m": "1m", "1-3m": "3m", "3m": "3m", ">3m": ">3m"}
 
 
 def main() -> None:
+    frames = json.loads(EVIDENCE.read_text(encoding="utf-8"))["frames"]
     for f in FACTORS:
+        tf = frames[f["id"]]["timeframe"]
         f["probability"] = STATUS[f["status"]]
         f["status_label"] = STATUS_LABEL[f["status"]]
-        f["horizon"] = HORIZON[f["id"]]
-        f["horizon_label"] = HORIZON_LABEL[f["horizon"]]
+        f["horizon"] = HORIZON[tf]
+        f["horizon_label"] = TIMEFRAMES[tf]
         f.setdefault("opportunity", False)
     OUT.write_text(
         json.dumps(

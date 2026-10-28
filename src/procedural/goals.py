@@ -116,6 +116,11 @@ def level(today: date, need: date, mile: date, note: Dict[str, Any]) -> str:
     return "note"
 
 
+def _dated(message: Optional[str], mile: date) -> Optional[str]:
+    """A note's client message with its ``{milestone}`` filled in as MM/YYYY ("nên chuẩn bị trước tháng 12/2026")."""
+    return message.replace("{milestone}", mile.strftime("%m/%Y")) if message else message
+
+
 def goals_of(client: Dict[str, Any], today: date) -> List[Dict[str, Any]]:
     """A family's active goals: its dated outflows not yet past (fixtures ``events``)."""
     out = []
@@ -179,7 +184,7 @@ def match(
                         "level_label": LEVELS[lv],
                         "documents": reg.get("documents", []),
                         # the client reads a message only for a declared goal at remind or contact level
-                        "client_message": reg.get("client_message")
+                        "client_message": _dated(reg.get("client_message"), mile)
                         if dec and lv in ("remind", "contact_now")
                         else None,
                         "rm_hint": reg.get("rm_hint")

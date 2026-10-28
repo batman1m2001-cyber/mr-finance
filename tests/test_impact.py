@@ -73,7 +73,7 @@ def test_each_alert_says_how_soon_and_business_equity_only_says_good_or_bad():
     """The chart shows a level and a horizon, not VND; an item that moves only business equity is good or bad news."""
     for cid in fixtures.client_ids():
         for a in report(cid)["alerts"]:
-            assert a["horizon"] in ("1w", "1m", "2m", "3m") and a["horizon_label"], (cid, a["id"])
+            assert a["horizon"] in ("1w", "1m", "3m", ">3m") and a["horizon_label"], (cid, a["id"])
     (p14,) = [a for a in report("C02")["alerts"] if a["factor"] == "P14"]
     assert p14["sign_only"] and not p14["opportunity"]
     assert not any(a["sign_only"] for a in report("C01")["alerts"])  # stocks, gold, property, deposits: graded

@@ -80,7 +80,8 @@ def test_the_rm_keeps_every_page_it_had():
     assert menu("rm") == ["ban", "khach-hang", "hieu-qua", "bo-nho"]  # Hôm nay went, its contact log is on the desk (OWN-FB-21)
     shell = (WEB / "shell.js").read_text(encoding="utf-8")
     block = shell.split('{id: "khach-hang", label: "Khách hàng", clientPick: true,', 1)[1].split("]},", 1)[0]
-    pages = ["tong-quan", "tai-san", "ke-hoach", "chinh-sach", "do-thi", "hieu-qua", "tat-ca"]  # OWN-FB-02…06
+    pages = ["tong-quan", "tai-san", "ke-hoach", "phan-bo", "chinh-sach", "do-thi", "hieu-qua", "tat-ca"]  # OWN-FB-02…06
+    # phan-bo: ASSET_ALLOCATION_BRD's three buckets (SCR-CL-13)
     assert re.findall(r'id: "([a-z-]+)"', block) == pages + ["tac-dong", "duyet"]
 
 
@@ -105,6 +106,7 @@ def test_the_cio_keeps_every_page_it_had():
     added = {"viec-nen"}  # owner 2026-10-18: Việc nền (docs/OWNER_BACKLOG_1018_PLAN.md A)
     added |= {"hieu-qua"}  # OWN-FB-16: the CIO's Hiệu quả
     added |= {"giu", "nhat-ky"}  # OWN-FB-18: Compliance's held news and audit chain
+    added |= {"bang-chung"}  # NEWS_EVIDENCE_BRD §8.2: every news frame and the CIO's review
     gone = {"hop-tin"}  # OWN-FB-11: the inbox is on the board
     assert set(before) - gone <= set(menu("cio")) and added <= set(menu("cio")) and not gone & set(menu("cio"))
     assert set(menu("cio")) == set(before) - gone | added | {"ban"}

@@ -27,6 +27,9 @@ POST /api/allocation {client_id, scope?, method?, assumptions?, role?} ──►
                     Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
                     the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
                     /api/allocation/send ──► an RM sends the actions to the review queue
+POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item's evidence: statistics or the qualitative frame
+                    (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
+                    · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
 POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
@@ -72,7 +75,13 @@ from operonx.app.jobs import Job
 
 from app import web
 from app.http import SecurityHeaders
-from allocation.graph import allocation_example_flow, allocation_flow, allocation_send_flow, allocation_tilt_flow
+from allocation.graph import (
+    allocation_example_flow,
+    allocation_flow,
+    allocation_send_flow,
+    allocation_tilt_flow,
+    allocation_tilts_flow,
+)
 from apply.graph import recompute_flow, run_decide_flow
 from assistant.graph import (
     assistant_consolidate_flow,
@@ -98,6 +107,7 @@ from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow, declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
+from evidence.graph import evidence_decide_flow, evidence_draft_decide_flow, evidence_draft_flow, evidence_flow
 from feed.graph import feed_flow, feed_open_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
@@ -322,10 +332,40 @@ APP = Application(
             description="POST {asset_class, stance, view_id, by, reason?}: a CIO tilts the model portfolio.",
         ),
         Service(
+            "allocation_tilts",
+            http("POST", "/api/allocation/tilts", port=PORT),
+            graph=allocation_tilts_flow,
+            description="POST {}: the CIO's tilts in force and the model each level gets.",
+        ),
+        Service(
             "allocation_send",
             http("POST", "/api/allocation/send", port=PORT),
             graph=allocation_send_flow,
             description="POST {client_id, by, scope?, method?, assumptions?}: the actions to the review queue.",
+        ),
+        Service(
+            "evidence",
+            http("POST", "/api/evidence", port=PORT),
+            graph=evidence_flow,
+            description="POST {factor?, role?}: each news item's evidence (statistics or qualitative frame).",
+        ),
+        Service(
+            "evidence_decide",
+            http("POST", "/api/evidence/decide", port=PORT),
+            graph=evidence_decide_flow,
+            description="POST {factor, decision, by, note?}: the CIO approves, returns or rejects a frame.",
+        ),
+        Service(
+            "evidence_draft",
+            http("POST", "/api/evidence/draft", port=PORT),
+            graph=evidence_draft_flow,
+            description="POST {news_id, by, mode?}: the evidence agent drafts one news item's frame for the CIO.",
+        ),
+        Service(
+            "evidence_draft_decide",
+            http("POST", "/api/evidence/draft/decide", port=PORT),
+            graph=evidence_draft_decide_flow,
+            description="POST {news_id, decision, by, note?}: the CIO approves, returns or rejects the agent's draft.",
         ),
         Service(
             "propose",

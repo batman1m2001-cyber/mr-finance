@@ -15,7 +15,8 @@ export function setLang(l) {
   location.reload();  // every page and number drawn once in the new language
 }
 
-const book = english ? (await import("./lang/en.js?v=20261028a1")).default : {};
+// the evidence frames' own book (written by scripts/make_evidence.py) sits beside the pages' one
+const book = english ? {...(await import("./lang/en_evidence.js?v=20261028e2")).default, ...(await import("./lang/en.js?v=20261028e2")).default} : {};
 
 // ── the book, indexed ───────────────────────────────────────────────────────
 const VI = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i;

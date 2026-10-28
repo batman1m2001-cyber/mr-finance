@@ -5,7 +5,7 @@ Check coloured, every old address on its page — and nothing on screen leading 
 SECTIONS = [  # rail item, its home, its tabs (label, current at the home)
     ("tong-quan", "Wealth View", "#/client/tong-quan", [["Wealth view", True], ["Dữ liệu chi tiết tài sản", False]]),
     ("muc-tieu", "Wealth Planning Advisor", "#/client/muc-tieu/ke-hoach",
-     [["Wealth planning advisor", True], ["Risk profile test", False]]),
+     [["Wealth planning advisor", True], ["Asset allocation", False], ["Risk profile test", False]]),
     ("tin", "Headline News", "#/client/tin/chinh-sach", [["News and Prediction", True], ["Đồ thị tác động", False]]),
     ("chuyen-gia", "Relationship specialist", "#/client/chuyen-gia", []),
 ]  # fmt: skip

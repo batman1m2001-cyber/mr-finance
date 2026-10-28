@@ -26,8 +26,8 @@ def test_the_rms_client_is_four_tabs_two_with_inner_tabs_and_no_title_over_them(
     assert p.page.is_hidden("#ws-sheet-t") and p.page.is_hidden("#ws-sheet-back .dk-back-l")  # OWN-FB-14
     p.go("#/rm/khach-hang/do-thi")
     assert [t for t, cur in tabs(p, "#dk-tabs2") if cur] == ["Đồ thị tác động"]
-    p.go("#/rm/khach-hang/ke-hoach")
-    assert p.page.is_hidden("#dk-tabs2")  # one page: no inner tabs
+    p.go("#/rm/khach-hang/ke-hoach")  # ASSET_ALLOCATION_BRD: the plan tab now holds the allocation too
+    assert tabs(p, "#dk-tabs2") == [["Wealth planning advisor", True], ["Asset allocation", False]]
     for gone, now in (("toan-canh", "tong-quan"), ("ban-do", "tong-quan")):
         p.go(f"#/rm/khach-hang/{gone}")
         assert p.page.url.endswith(f"#/rm/khach-hang/{now}"), gone

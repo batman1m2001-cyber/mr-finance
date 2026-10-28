@@ -1,0 +1,580 @@
+{
+ "as_of": "2026-10-28",
+ "events": {
+  "fed_cut": [
+   "2020-03-03",
+   "2020-03-15",
+   "2024-09-18",
+   "2024-11-07",
+   "2024-12-18",
+   "2025-09-17",
+   "2025-10-29",
+   "2025-12-10"
+  ],
+  "fed_hike": [
+   "2022-03-16",
+   "2022-05-04",
+   "2022-06-15",
+   "2022-07-27",
+   "2022-09-21",
+   "2022-11-02",
+   "2022-12-14",
+   "2023-02-01",
+   "2023-03-22",
+   "2023-05-03",
+   "2023-07-26",
+   "2026-09-16"
+  ],
+  "sbv_rate_hike": [
+   "2022-09-22",
+   "2022-10-24"
+  ]
+ },
+ "frames": {
+  "P01": {
+   "factor": "P01",
+   "branch": "qualitative",
+   "event_type": "second_property_tax",
+   "channels": [
+    "thuế/phí",
+    "cung/cầu"
+   ],
+   "mechanism": "Thuế hằng năm với người có từ hai bất động sản làm tăng chi phí giữ nhà thứ hai, nhu cầu mua để giữ có thể giảm.",
+   "targets": [
+    "asset:real_estate"
+   ],
+   "direction": "negative",
+   "changes": [
+    "chi phí",
+    "giá"
+   ],
+   "timeframe": ">3m",
+   "watch": "Dự thảo được trình Quốc hội và mức thuế suất cuối cùng.",
+   "precedents": [
+    {
+     "event": "Singapore tăng thuế mua nhà thêm (ABSD) và siết tỷ lệ vay (01/2013)",
+     "outcome": "Chỉ số giá nhà tư nhân giảm liên tục khoảng bốn năm, đến giữa 2017.",
+     "difference": "Thuế đánh khi mua, không phải hằng năm; đi kèm siết tín dụng.",
+     "source": null
+    }
+   ]
+  },
+  "P02": {
+   "factor": "P02",
+   "branch": "qualitative",
+   "event_type": "transfer_tax",
+   "channels": [
+    "thuế/phí"
+   ],
+   "mechanism": "Thuế tính trên phần lãi thay cho 2% giá bán: người bán có lãi lớn nộp nhiều hơn khi bán.",
+   "targets": [
+    "asset:real_estate"
+   ],
+   "direction": "negative",
+   "changes": [
+    "chi phí"
+   ],
+   "timeframe": ">3m",
+   "watch": "Bản Luật Thuế TNCN được thông qua và cách xác định giá vốn.",
+   "precedents": []
+  },
+  "P03": {
+   "factor": "P03",
+   "branch": "qualitative",
+   "event_type": "land_price_table",
+   "channels": [
+    "thuế/phí"
+   ],
+   "mechanism": "Bảng giá đất sát giá thị trường hơn làm tăng tiền sử dụng đất, lệ phí và thuế tính theo bảng giá.",
+   "targets": [
+    "asset:real_estate"
+   ],
+   "direction": "negative",
+   "changes": [
+    "chi phí"
+   ],
+   "timeframe": "3m",
+   "watch": "Bảng giá đất hằng năm của tỉnh, thành nơi có tài sản.",
+   "precedents": [
+    {
+     "event": "TP.HCM áp dụng bảng giá đất điều chỉnh (10/2024)",
+     "outcome": "Tiền sử dụng đất phải nộp tăng nhiều lần; nhiều hồ sơ chuyển mục đích sử dụng đất chậm lại.",
+     "difference": "Lần đó điều chỉnh giữa kỳ; nay bảng giá đổi hằng năm theo luật.",
+     "source": null
+    }
+   ]
+  },
+  "P04": {
+   "factor": "P04",
+   "branch": "qualitative",
+   "event_type": "sector_policy",
+   "channels": [
+    "lãi suất",
+    "tín dụng"
+   ],
+   "mechanism": "Chính sách ảnh hưởng biên lợi nhuận ngân hàng, lợi nhuận ngành giảm thì giá cổ phiếu ngân hàng chịu áp lực.",
+   "targets": [
+    "sector:Ngân hàng"
+   ],
+   "direction": "negative",
+   "changes": [
+    "giá"
+   ],
+   "timeframe": "3m",
+   "watch": "Nội dung chính thức của dự thảo và lợi nhuận quý của các ngân hàng.",
+   "precedents": []
+  },
+  "P05": {
+   "factor": "P05",
+   "branch": "qualitative",
+   "event_type": "ownership_cap",
+   "channels": [
+    "pháp lý",
+    "dòng vốn"
+   ],
+   "mechanism": "Cá nhân không được sở hữu quá 2,5% vốn một ngân hàng: khoản nắm giữ lớn khó mua thêm, khó bán một lần.",
+   "targets": [
+    "sector:Ngân hàng"
+   ],
+   "direction": "negative",
+   "changes": [
+    "thanh khoản"
+   ],
+   "timeframe": "1m",
+   "watch": "Hướng dẫn xử lý phần sở hữu vượt giới hạn.",
+   "precedents": []
+  },
+  "P06": {
+   "factor": "P06",
+   "branch": "qualitative",
+   "event_type": "bond_buyer_rule",
+   "channels": [
+    "pháp lý",
+    "dòng vốn"
+   ],
+   "mechanism": "Ít nhà đầu tư đủ điều kiện mua trái phiếu doanh nghiệp riêng lẻ hơn, nên khó bán lại trước hạn.",
+   "targets": [
+    "asset:bond"
+   ],
+   "direction": "negative",
+   "changes": [
+    "thanh khoản",
+    "giá"
+   ],
+   "timeframe": "1m",
+   "watch": "Khối lượng giao dịch trái phiếu doanh nghiệp trên thị trường thứ cấp.",
+   "precedents": [
+    {
+     "event": "Nghị định 65/2022 siết phát hành trái phiếu doanh nghiệp riêng lẻ (09/2022)",
+     "outcome": "Phát hành mới gần như dừng cuối 2022; nhiều trái phiếu khó bán lại, một số doanh nghiệp chậm trả.",
+     "difference": "Năm 2022 có thêm các vụ vi phạm lớn làm mất niềm tin; lần này chỉ siết người mua.",
+     "source": null
+    }
+   ]
+  },
+  "P07": {
+   "factor": "P07",
+   "branch": "qualitative",
+   "event_type": "trading_tax",
+   "channels": [
+    "thuế/phí"
+   ],
+   "mechanism": "Thuế giao dịch chứng khoán thay đổi làm thay đổi chi phí mỗi lần bán.",
+   "targets": [
+    "asset:stock",
+    "asset:fund"
+   ],
+   "direction": "negative",
+   "changes": [
+    "chi phí"
+   ],
+   "timeframe": ">3m",
+   "watch": "Phương án thuế trong bản Luật Thuế TNCN được thông qua.",
+   "precedents": []
+  },
+  "P08": {
+   "factor": "P08",
+   "branch": "qualitative",
+   "event_type": "market_upgrade",
+   "channels": [
+    "dòng vốn",
+    "tâm lý thị trường"
+   ],
+   "mechanism": "Quỹ theo chỉ số thị trường mới nổi mua cổ phiếu vốn hóa lớn khi nâng hạng có hiệu lực.",
+   "targets": [
+    "asset:stock",
+    "asset:fund"
+   ],
+   "direction": "positive",
+   "changes": [
+    "dòng tiền",
+    "giá"
+   ],
+   "timeframe": "1m",
+   "watch": "Dòng tiền khối ngoại ròng trên HOSE quanh ngày hiệu lực.",
+   "precedents": [
+    {
+     "event": "Pakistan được MSCI nâng hạng lên thị trường mới nổi (hiệu lực 06/2017)",
+     "outcome": "Chỉ số chứng khoán giảm mạnh trong năm sau ngày hiệu lực.",
+     "difference": "Pakistan có bất ổn chính trị và vĩ mô cùng lúc.",
+     "source": null
+    },
+    {
+     "event": "Ả Rập Xê Út vào nhóm mới nổi của FTSE Russell và MSCI (2019)",
+     "outcome": "Dòng vốn ngoại vào lớn trong các đợt đưa cổ phiếu vào chỉ số.",
+     "difference": "Quy mô vốn hóa lớn hơn nhiều; đưa vào chỉ số theo nhiều đợt.",
+     "source": null
+    }
+   ]
+  },
+  "P09": {
+   "factor": "P09",
+   "branch": "qualitative",
+   "event_type": "gold_policy",
+   "channels": [
+    "pháp lý",
+    "cung/cầu"
+   ],
+   "mechanism": "Nhà nước tăng cung vàng miếng, chênh lệch giá trong nước và thế giới có xu hướng thu hẹp.",
+   "targets": [
+    "asset:gold"
+   ],
+   "direction": "negative",
+   "changes": [
+    "giá"
+   ],
+   "timeframe": "1-3m",
+   "watch": "Chênh lệch giá SJC so với giá thế giới, hằng tuần.",
+   "precedents": [
+    {
+     "event": "NHNN bán vàng miếng bình ổn qua 4 ngân hàng quốc doanh (06/2024)",
+     "outcome": "Giá vàng SJC giảm từ 85,95 triệu xuống 76,98 triệu/lượng trong tháng 6/2024; chênh lệch thu hẹp mạnh trong vài tuần.",
+     "difference": "NHNN trực tiếp cung vàng; lần này là sửa nghị định.",
+     "source": "Chuỗi giá SJC trong kho dữ liệu thị trường"
+    },
+    {
+     "event": "Nghị định 24/2012 về quản lý kinh doanh vàng",
+     "outcome": "Chênh lệch giá trong nước và thế giới nới rộng trong nhiều năm sau đó.",
+     "difference": "Chính sách lúc đó theo hướng siết cung.",
+     "source": null
+    }
+   ]
+  },
+  "P10": {
+   "factor": "P10",
+   "branch": "qualitative",
+   "event_type": "crypto_framework",
+   "channels": [
+    "pháp lý"
+   ],
+   "mechanism": "Khung pháp lý mới mở kênh đầu tư hợp pháp: tài sản số đang tự giữ có thể chuyển sang sàn được cấp phép.",
+   "targets": [
+    "asset:crypto"
+   ],
+   "direction": "positive",
+   "changes": [
+    "thủ tục",
+    "thanh khoản"
+   ],
+   "timeframe": "1-3m",
+   "watch": "Danh sách sàn được cấp phép và điều kiện mở tài khoản.",
+   "precedents": []
+  },
+  "P11": {
+   "factor": "P11",
+   "branch": "qualitative",
+   "event_type": "fx_transfer_rule",
+   "channels": [
+    "tỷ giá",
+    "pháp lý"
+   ],
+   "mechanism": "Hạn mức và thủ tục chuyển tiền cho du học sinh thay đổi, ảnh hưởng chi phí và thời điểm chuyển tiền.",
+   "targets": [
+    "plan:study_abroad"
+   ],
+   "direction": "negative",
+   "changes": [
+    "chi phí",
+    "thủ tục"
+   ],
+   "timeframe": "1-3m",
+   "watch": "Dự thảo thông tư ngoại hối của NHNN.",
+   "precedents": []
+  },
+  "P12": {
+   "factor": "P12",
+   "branch": "qualitative",
+   "event_type": "pit_relief",
+   "channels": [
+    "thuế/phí"
+   ],
+   "mechanism": "Mức giảm trừ gia cảnh tăng làm giảm thuế thu nhập cá nhân phải nộp mỗi tháng.",
+   "targets": [
+    "income:salary"
+   ],
+   "direction": "positive",
+   "changes": [
+    "dòng tiền"
+   ],
+   "timeframe": "1m",
+   "watch": "Bảng lương tháng đầu áp dụng mức mới.",
+   "precedents": [
+    {
+     "event": "Nghị quyết 954/2020 nâng mức giảm trừ gia cảnh (kỳ tính thuế 2020)",
+     "outcome": "Mức giảm trừ bản thân tăng từ 9 lên 11 triệu, người phụ thuộc từ 3,6 lên 4,4 triệu; thuế phải nộp hằng tháng giảm tương ứng.",
+     "difference": "Mức tăng lần này lớn hơn.",
+     "source": "Nghị quyết 954/2020/UBTVQH14"
+    }
+   ],
+   "certain_from": "từ kỳ tính thuế 2026"
+  },
+  "P13": {
+   "factor": "P13",
+   "branch": "qualitative",
+   "event_type": "insurance_rule",
+   "channels": [
+    "pháp lý",
+    "tâm lý thị trường"
+   ],
+   "mechanism": "Quy định chặt hơn về bán và hủy hợp đồng bảo hiểm liên kết đầu tư; giá trị hoàn lại khi hủy sớm có thể thấp.",
+   "targets": [
+    "asset:insurance"
+   ],
+   "direction": "negative",
+   "changes": [
+    "giá",
+    "thủ tục"
+   ],
+   "timeframe": "1-3m",
+   "watch": "Thông tư hướng dẫn và biểu phí hủy hợp đồng của hãng bảo hiểm.",
+   "precedents": [
+    {
+     "event": "Khủng hoảng niềm tin bảo hiểm liên kết đầu tư sau kết luận thanh tra (2023)",
+     "outcome": "Doanh thu hợp đồng mới giảm mạnh; nhiều khách hủy hợp đồng và chịu phí hủy.",
+     "difference": "Lần đó là sự cố bán hàng; lần này là quy định mới.",
+     "source": null
+    }
+   ]
+  },
+  "P14": {
+   "factor": "P14",
+   "branch": "qualitative",
+   "event_type": "global_min_tax",
+   "channels": [
+    "thuế/phí"
+   ],
+   "mechanism": "Doanh nghiệp thuộc tập đoàn đa quốc gia lớn nộp bổ sung đến mức 15%, lợi nhuận sau thuế giảm.",
+   "targets": [
+    "asset:business"
+   ],
+   "direction": "negative",
+   "changes": [
+    "dòng tiền"
+   ],
+   "timeframe": ">3m",
+   "watch": "Tờ khai thuế bổ sung năm đầu áp dụng.",
+   "precedents": []
+  },
+  "M01": {
+   "factor": "M01",
+   "branch": "qualitative",
+   "event_type": "sbv_rate_hike",
+   "channels": [
+    "lãi suất",
+    "tín dụng"
+   ],
+   "mechanism": "Lãi suất điều hành tăng làm lãi vay thả nổi tăng ở kỳ điều chỉnh tới và giá trái phiếu đang giữ giảm.",
+   "targets": [
+    "loan:floating",
+    "asset:bond"
+   ],
+   "direction": "negative",
+   "changes": [
+    "chi phí",
+    "giá"
+   ],
+   "timeframe": "1m",
+   "watch": "Thông báo lãi suất của NHNN và lãi suất cơ sở của ngân hàng cho vay.",
+   "precedents": [
+    {
+     "event": "NHNN tăng lãi suất điều hành 1 điểm % (22/09/2022)",
+     "outcome": "VN-Index từ 1.214,7 xuống 1.126,1 điểm sau một tuần; lãi vay mua nhà tăng trong các tháng sau.",
+     "difference": "Năm 2022 có thêm sức ép tỷ giá và khủng hoảng trái phiếu doanh nghiệp.",
+     "source": "Chuỗi VN-Index trong kho dữ liệu thị trường"
+    },
+    {
+     "event": "NHNN tăng lãi suất điều hành lần hai, 1 điểm % (24/10/2022)",
+     "outcome": "VN-Index tăng từ 986,2 lên 1.027,9 điểm sau một tuần, rồi xuống 911,9 điểm ngày 15/11/2022.",
+     "difference": "Thị trường đã giảm sâu trước đó.",
+     "source": "Chuỗi VN-Index trong kho dữ liệu thị trường"
+    }
+   ],
+   "certain_from": "từ kỳ điều chỉnh lãi tới"
+  },
+  "M02": {
+   "factor": "M02",
+   "branch": "qualitative",
+   "event_type": "usd_vnd_rise",
+   "channels": [
+    "tỷ giá"
+   ],
+   "mechanism": "Tỷ giá USD/VND tăng làm khoản chi bằng ngoại tệ sắp tới tốn thêm tiền đồng.",
+   "targets": [
+    "plan:study_abroad",
+    "plan:emigrate",
+    "plan:support_abroad",
+    "plan:invest_abroad",
+    "plan:property_abroad"
+   ],
+   "direction": "negative",
+   "changes": [
+    "chi phí"
+   ],
+   "timeframe": "1w",
+   "watch": "Tỷ giá trung tâm và tỷ giá ngân hàng niêm yết.",
+   "precedents": [
+    {
+     "event": "Tỷ giá USD/VND năm 2022",
+     "outcome": "Từ 22.640 cuối 2021 lên đỉnh 24.660 ngày 11/11/2022, rồi về 23.410 cuối năm.",
+     "difference": "Năm 2022 Fed tăng lãi suất nhanh nhất trong nhiều thập kỷ.",
+     "source": "Chuỗi USD/VND trong kho dữ liệu thị trường"
+    }
+   ]
+  },
+  "M03": {
+   "factor": "M03",
+   "branch": "statistics",
+   "event_type": "fed_hike",
+   "stat": {
+    "series": "VNINDEX",
+    "series_label": "VN-Index",
+    "timeframe": "1w"
+   },
+   "channels": [
+    "lãi suất",
+    "dòng vốn"
+   ],
+   "mechanism": "Fed tăng lãi suất làm đồng USD mạnh lên, dòng vốn có xu hướng rút khỏi thị trường mới nổi.",
+   "targets": [
+    "asset:stock",
+    "asset:fund"
+   ],
+   "direction": "negative",
+   "changes": [
+    "giá"
+   ],
+   "timeframe": "1w",
+   "watch": "Quyết định của FOMC và dòng tiền khối ngoại trên HOSE tuần sau đó.",
+   "precedents": []
+  },
+  "I01": {
+   "factor": "I01",
+   "branch": "qualitative",
+   "event_type": "metro_line",
+   "channels": [
+    "cung/cầu"
+   ],
+   "mechanism": "Tuyến metro vận hành làm căn hộ gần ga dễ cho thuê và dễ bán hơn: giá thuê tăng trước, giá bán sau.",
+   "targets": [
+    "area:thao_dien"
+   ],
+   "direction": "positive",
+   "changes": [
+    "giá",
+    "thanh khoản"
+   ],
+   "timeframe": ">3m",
+   "watch": "Giá thuê và lượng giao dịch quanh các ga.",
+   "precedents": [
+    {
+     "event": "Tuyến Cát Linh – Hà Đông vận hành (Hà Nội, 11/2021)",
+     "outcome": "Mặt bằng giá căn hộ quanh các ga tăng sau khi tuyến chạy.",
+     "difference": "Tuyến trên cao, đi qua khu đã đông dân.",
+     "source": null
+    },
+    {
+     "event": "Bangkok: BTS (1999) và MRT (2004)",
+     "outcome": "Căn hộ cách ga khoảng 500 m có giá bán và giá thuê cao hơn rõ rệt so với khu xa ga; dự án mới dồn về dọc tuyến.",
+     "difference": "Thu nhập, mật độ dân và luật sở hữu nhà khác Việt Nam: chỉ tham khảo chiều hướng.",
+     "source": null
+    }
+   ]
+  },
+  "I02": {
+   "factor": "I02",
+   "branch": "qualitative",
+   "event_type": "airport",
+   "channels": [
+    "cung/cầu"
+   ],
+   "mechanism": "Sân bay khai thác kéo việc làm và hạ tầng về khu vực, nhu cầu nhà đất quanh đó có thể tăng.",
+   "targets": [
+    "area:long_thanh"
+   ],
+   "direction": "positive",
+   "changes": [
+    "giá",
+    "thanh khoản"
+   ],
+   "timeframe": ">3m",
+   "watch": "Ngày khai thác thương mại và số chuyến bay thực tế.",
+   "precedents": [
+    {
+     "event": "Sân bay Vân Đồn khai thác (Quảng Ninh, 12/2018)",
+     "outcome": "Giá đất quanh khu vực tăng nóng trước khi khai thác, rồi trầm lắng khi lượng khách thấp.",
+     "difference": "Long Thành là sân bay chính của vùng, quy mô lớn hơn nhiều.",
+     "source": null
+    }
+   ]
+  },
+  "I03": {
+   "factor": "I03",
+   "branch": "qualitative",
+   "event_type": "ring_road",
+   "channels": [
+    "cung/cầu"
+   ],
+   "mechanism": "Đường vành đai rút ngắn thời gian đi lại, khu dọc tuyến dễ cho thuê và dễ bán hơn.",
+   "targets": [
+    "area:vinhomes_grand_park"
+   ],
+   "direction": "positive",
+   "changes": [
+    "giá",
+    "thanh khoản"
+   ],
+   "timeframe": ">3m",
+   "watch": "Tiến độ thông xe từng đoạn.",
+   "precedents": []
+  },
+  "P15": {
+   "factor": "P15",
+   "branch": "qualitative",
+   "event_type": "outbound_transfer_control",
+   "headline": "Tin về rửa tiền qua kênh chuyển tiền ra nước ngoài",
+   "channels": [
+    "pháp lý"
+   ],
+   "mechanism": "Có thể dẫn đến thắt chặt thủ tục chuyển tiền ra nước ngoài.",
+   "targets": [
+    "plan:study_abroad",
+    "plan:emigrate",
+    "plan:support_abroad"
+   ],
+   "direction": "negative",
+   "changes": [
+    "thủ tục"
+   ],
+   "timeframe": "1-3m",
+   "watch": "Dự thảo thông tư của NHNN về ngoại hối.",
+   "precedents": [],
+   "client_message": "Việc chuyển tiền ra nước ngoài cho kế hoạch của gia đình có thể cần thêm thời gian và giấy tờ; nên chuẩn bị trước tháng {milestone}.",
+   "rm_hint": "Rà giấy tờ chứng minh mục đích chuyển tiền (thư nhập học, hóa đơn học phí) cùng khách.",
+   "documents": [
+    "Thư nhập học hoặc giấy tờ mục đích",
+    "Hóa đơn học phí, chi phí"
+   ],
+   "prep_weeks": 8
+  }
+ }
+}

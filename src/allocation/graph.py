@@ -1,11 +1,12 @@
 """allocation_flow: the household's holdings and profile → the case → three buckets, their targets and the actions.
 
 Served on POST /api/allocation (app/main.py), with the worked example (/api/allocation/example), the CIO's tilt
-(/api/allocation/tilt) and an RM sending the actions to the review queue (/api/allocation/send)."""
+(/api/allocation/tilt, read on /api/allocation/tilts) and an RM sending the actions to the review queue
+(/api/allocation/send)."""
 
 from operonx import END, START, graph
 
-from allocation.ops import allocate, case_of, check_request, example, send, tilt
+from allocation.ops import allocate, case_of, check_request, example, send, tilt, tilt_list
 from consolidate.graph import consolidate_flow
 
 
@@ -32,6 +33,13 @@ def allocation_example_flow(method="A", assumptions=None, role=None):
 def allocation_tilt_flow(asset_class, stance, view_id, by, reason=""):
     """A CIO tilts the model portfolio from an approved view."""
     out = tilt(asset_class=asset_class, stance=stance, view_id=view_id, reason=reason, by=by)
+    START >> out >> END
+
+
+@graph
+def allocation_tilts_flow():
+    """The CIO's tilts in force and the model they give each level."""
+    out = tilt_list()
     START >> out >> END
 
 

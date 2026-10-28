@@ -61,8 +61,8 @@ def test_the_client_picker_is_in_the_sheet(open_page):
     assert p.page.is_hidden("#client-pick") and p.page.is_hidden("#dk-line")
     p.go("#/rm/khach-hang/tat-ca")
     assert p.page.is_hidden("#client-pick") and p.page.is_visible("#dk-tabs2")
-    p.go("#/rm/khach-hang/ke-hoach")  # one page, no inner tabs: the line holds the picker alone
-    assert p.page.is_hidden("#dk-tabs2") and p.page.is_visible("#dk-who #client-pick")
+    p.go("#/rm/khach-hang/ke-hoach")  # the plan and the allocation (ASSET_ALLOCATION_BRD): inner tabs and the picker
+    assert p.page.is_visible("#dk-tabs2") and p.page.is_visible("#dk-who #client-pick")
     p.go("#/rm")
     assert p.page.is_hidden("#ws-sheet") and not p.problems()
 

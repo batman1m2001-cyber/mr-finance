@@ -21,6 +21,7 @@ The desks themselves (the new centres) are screens SCR-CIO-15, SCR-RM-07 and SCR
 | Nghiên cứu `nghien-cuu` | SCR-CIO-06 | FEAT-03, 10 | BRD-FR-201, 204, 603 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Bản tin `ban-tin[/NL-…]` | SCR-CIO-14 | FEAT-17 | BRD-FR-801 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Chính sách `chinh-sach[/PD-…]` (read only) | SCR-CMP-05 | FEAT-16 | BRD-FR-306 | Nội dung | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
+| Bằng chứng tin `bang-chung` | SCR-CIO-16 | FEAT-45 | OWN-NE-* | Nội dung | built — `tests/test_evidence.py::test_only_the_cio_sees_the_headline_the_review_and_the_unsourced_precedents` |
 | Mô hình → Tham số `mo-hinh/tham-so` | SCR-CIO-07 | FEAT-07, 14 | BRD-RULE-ENG-08…11 | Mô hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Mô hình → Dữ liệu thị trường `mo-hinh/du-lieu` | SCR-CIO-11 | FEAT-35 | BRD-RULE-ENG-11 | Mô hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |
 | Mô hình → Độ chính xác `mo-hinh/do-chinh-xac` | SCR-CIO-12 | FEAT-18 | BRD-BR-15, KPI-03/04 | Mô hình | built — `tests/ui/test_role_desks_ui.py::test_the_cio_works_at_its_desk_and_every_page_is_a_sheet` |

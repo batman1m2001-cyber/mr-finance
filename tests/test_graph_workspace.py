@@ -52,7 +52,7 @@ def test_the_menu_is_the_banks_four_sections():
                        ["chuyen-gia", "Relationship specialist"]]  # fmt: skip
     tabs = lenses("Object.fromEntries(L.TOOLBAR.map(t => [t.id, L.SECTIONS[t.id].tabs.map(x => x[0])]))")
     assert tabs == {"tong-quan": ["Wealth view", "Dữ liệu chi tiết tài sản"],
-                    "muc-tieu": ["Wealth planning advisor", "Risk profile test"],
+                    "muc-tieu": ["Wealth planning advisor", "Asset allocation", "Risk profile test"],
                     "tin": ["News and Prediction", "Đồ thị tác động"],  # business, 2026-10-22
                     "chuyen-gia": ["Relationship specialist"]}  # fmt: skip
     homes = lenses("L.TOOLBAR.map(t => L.SECTIONS[t.id].home)")

@@ -3,7 +3,7 @@
    suitability check (a blocked one only on staff screens); the workings in collapsed zones; the assumptions (edit and
    run again); the worked example K-7F3A (POST /api/allocation/example); an RM sends the actions to the review queue
    (POST /api/allocation/send). */
-import {$, esc, pct, post, toast, vnd} from "../core/core.js";
+import {$, esc, n as how, pct, post, toast, vnd} from "../core/core.js";
 
 const CHECK = {PASS: ["good", "Phù hợp"], WARN: ["warn", "Cần lưu ý"], BLOCK: ["bad", "Bị chặn"]};
 const BUCKET = {liquidity: "Thanh khoản", legacy: "Di sản", growth: "Tăng trưởng"};
@@ -16,9 +16,11 @@ const pages = {};  // per client, for this page's life: the method, the example 
 // an assumption as the form shows it: a share in percent to one decimal (⅔ → 66.7), any other number to two
 const shown = (x, f) => +(x / f).toFixed(f < 1 ? 1 : 2);
 const pill = (c) => `<span class="pill ${CHECK[c.status][0]}">${CHECK[c.status][1]}</span>`;
-const gap = (short, over) => (short > 0 ? `<span class="pill warn">Thiếu ${vnd(short)}</span>`
-  : over > 0 ? `<span class="pill ai">Dư ${vnd(over)}</span>` : `<span class="pill good">Đủ</span>`);
-const range = (a, b) => (b && Math.round(b) !== Math.round(a) ? `${vnd(a)}–${vnd(b)}` : vnd(a));
+// every figure opens its formula (BRD-NFR-11): alloc.* in src/explain/metrics.py
+const m = how;
+const gap = (short, over) => (short > 0 ? `<span class="pill warn">Thiếu ${m(vnd(short), "alloc.liquidity")}</span>`
+  : over > 0 ? `<span class="pill ai">Dư ${m(vnd(over), "alloc.liquidity")}</span>` : `<span class="pill good">Đủ</span>`);
+const range = (a, b, metric) => m(b && Math.round(b) !== Math.round(a) ? `${vnd(a)}–${vnd(b)}` : vnd(a), metric);
 const ym = (s) => (s ? `${s.slice(5, 7)}/${s.slice(0, 4)}` : "");
 const more = (title, body) => `<details class="more mt"><summary>${esc(title)}</summary>${body}</details>`;
 const kvs = (pairs) => pairs.map(([k, v]) => `<div class="kv"><span>${esc(k)}</span><b>${v}</b></div>`).join("");
@@ -42,9 +44,9 @@ export async function render(box, ctx) {
   const liq = a.liquidity, leg = a.legacy, ret = a.retirement, gr = a.growth, cf = a.cashflow;
   const tiles = [
     ["liquidity", liq.have, liq.target, `${a.method_label}`, gap(liq.short, liq.excess)],
-    ["legacy", leg.have, leg.target, `Sàn ${vnd(leg.floor)}`, leg.gap > 0 ? `<span class="pill warn">Thiếu ${range(leg.gap, leg.gap_high)}</span>` : `<span class="pill good">Đủ</span>`],
-    ["growth", a.buckets.growth.value, null, `Cần ${pct(ret.required)}/năm · mô hình ${pct(gr.expected)}`,
-      ret.status === "short" ? `<span class="pill warn">Thiếu ${vnd(ret.short)} khi nghỉ hưu</span>` : `<span class="pill good">Đủ cho nghỉ hưu</span>`],
+    ["legacy", leg.have, leg.target, `Sàn ${m(vnd(leg.floor), "alloc.legacy")}`, leg.gap > 0 ? `<span class="pill warn">Thiếu ${range(leg.gap, leg.gap_high, "alloc.legacy")}</span>` : `<span class="pill good">Đủ</span>`],
+    ["growth", a.buckets.growth.value, null, `Cần ${m(pct(ret.required), "alloc.retirement")}/năm · mô hình ${m(pct(gr.expected), "alloc.growth")}`,
+      ret.status === "short" ? `<span class="pill warn">Thiếu ${m(vnd(ret.short), "alloc.retirement")} khi nghỉ hưu</span>` : `<span class="pill good">Đủ cho nghỉ hưu</span>`],
   ];
   const acts = a.actions;
   box.innerHTML = `
@@ -62,18 +64,18 @@ export async function render(box, ctx) {
       <a href="${ctx.role === "client" ? "#/client/muc-tieu/khau-vi" : ctx.href("khach-hang", "ke-hoach")}">${staff ? "Mời khách làm bài test" : "Làm bài test rủi ro"}</a></p>` : ""}
     <div class="kpis mt" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${tiles.map(([id, have, target, sub, tag]) => `
       <div class="kpi"><div class="k">${esc(BUCKET[id])}</div>
-        <div class="v">${vnd(have)}</div>
-        <div class="small muted">${target != null ? `Cần ${vnd(target)} · ` : ""}${esc(sub)}</div>
+        <div class="v">${m(vnd(have), `alloc.${id}`, {method: a.method_label})}</div>
+        <div class="small muted">${target != null ? `Cần ${m(vnd(target), `alloc.${id}`, {method: a.method_label})} · ` : ""}${id === "liquidity" ? esc(sub) : sub}</div>
         <div class="mt">${tag}</div></div>`).join("")}
     </div>
     <section class="panel mt">
       <h2 class="panel-title">Việc nên trao đổi</h2>
       <ol class="alloc-acts" style="margin:0;padding-left:20px;display:grid;gap:10px">${acts.map(x => `
         <li><div class="row" style="gap:8px;flex-wrap:wrap;align-items:baseline">
-          <strong>${esc(x.what)}</strong>${x.amount ? `<span>${range(x.amount, x.amount_high)}</span>` : ""}
+          <strong>${esc(x.what)}</strong>${x.amount ? `<span>${range(x.amount, x.amount_high, "alloc.action")}</span>` : ""}
           <span class="chip">${esc(x.bucket_label)}</span>${pill(x.check)}</div>
           <div class="small muted">${esc(x.why)}</div>
-          ${x.check.reasons.filter(r => r !== SIM).map(r => `<div class="small">${esc(r)}</div>`).join("")}</li>`).join("")}
+          ${x.check.reasons.filter(r => r !== SIM).map(r => `<div class="small" data-explains>${esc(r)}</div>`).join("")}</li>`).join("")}
       </ol>
       ${staff && !a.example ? `<div class="row mt" style="gap:12px;align-items:center">
         <button type="button" class="btn primary" data-send ${st.sent ? "disabled" : ""}>Gửi vào hàng duyệt</button>
@@ -82,29 +84,29 @@ export async function render(box, ctx) {
     <section class="panel mt">
       <h2 class="panel-title">Cách tính</h2>
       ${more("Dòng tiền " + cf.horizon_years + " năm", table(["Năm", "Thu", "Chi đều", "Khoản lớn", "Ròng"],
-        cf.years.map(y => [`${ym(y.from)}–${ym(y.to)}`, vnd(y.income), vnd(y.recurring), vnd(y.dated), vnd(y.net, true)]))
-        + `<p class="small muted">${[`Đáy dòng tiền ${ym(cf.trough.month)}: ${vnd(cf.trough.cum, true)}`, `Đệm ${cf.buffer_months} tháng: ${vnd(cf.buffer)}`,
-          `Lãi vay +${pct(cf.rate_shock.pp, false, 0)}: thêm ${vnd(cf.rate_shock.monthly)}/tháng`].join(" · ")}</p>`
-        + table(["Cách tính", "Giỏ Thanh khoản cần"], Object.entries(cf.targets).map(([k, v]) => [esc(a.methods[k]), vnd(v)])))}
-      ${more("Bậc thang Thanh khoản", table(["Khoản", "Dùng cho", "Số tiền"], liq.ladder.map(r => [esc(r.what), esc(r.when), vnd(r.amount)])))}
+        cf.years.map(y => [`${ym(y.from)}–${ym(y.to)}`, ...[vnd(y.income), vnd(y.recurring), vnd(y.dated), vnd(y.net, true)].map(v => m(v, "alloc.cashflow"))]))
+        + `<p class="small muted">${[`Đáy dòng tiền ${ym(cf.trough.month)}: ${m(vnd(cf.trough.cum, true), "alloc.cashflow")}`, `Đệm ${cf.buffer_months} tháng: ${m(vnd(cf.buffer), "alloc.cashflow")}`,
+          `Lãi vay +${m(pct(cf.rate_shock.pp, false, 0), "alloc.cashflow")}: thêm ${m(vnd(cf.rate_shock.monthly), "alloc.cashflow")}/tháng`].map(x => `<span>${x}</span>`).join(" · ")}</p>`
+        + table(["Cách tính", "Giỏ Thanh khoản cần"], Object.entries(cf.targets).map(([k, v]) => [esc(a.methods[k]), m(vnd(v), "alloc.liquidity", {method: a.methods[k]})])))}
+      ${more("Bậc thang Thanh khoản", table(["Khoản", "Dùng cho", "Số tiền"], liq.ladder.map(r => [esc(r.what), esc(r.when), m(vnd(r.amount), "alloc.ladder")])))}
       ${more("Cách bù phần thiếu", table(["Cách bù", "Chi phí", "Được?", "Vì sao"], a.fill.options.map(o =>
-        [esc(o.label), esc(o.cost || ""), o.id === a.fill.chosen ? `<span class="pill good">Đã chọn</span>` : o.ok ? "Có" : "Không", esc(o.why)])))}
+        [esc(o.label), `<span data-explains>${esc(o.cost || "")}</span>`, o.id === a.fill.chosen ? `<span class="pill good">Đã chọn</span>` : o.ok ? "Có" : "Không", `<span data-explains>${esc(o.why)}</span>`])))}
       ${more("Mô hình Tăng trưởng", table(["Loại", "Hiện tại", "Tỷ trọng mục tiêu", "Mua / bán", "Nhận định"], gr.rebalance.rows.map(r =>
-        [esc(r.label), pct(r.now_pct), `${pct(r.target_pct)}${r.tilt ? ` <span class="small muted">(${pct(r.tilt, true, 0)})</span>` : ""}`, vnd(r.trade, true), esc((r.views || []).join(", "))]))
-        + `<p class="small muted">Lỗ khi thị trường xấu: trước ${pct(gr.worst_before.share)} · sau ${pct(gr.worst_after.share)}</p>`)}
-      ${more("Di sản", table(["Khoản", "Cách tính", "Số tiền"], leg.floor_rows.map(r => [esc(r.label), esc(r.how), vnd(r.amount)]))
-        + kvs([["Đang có", range(leg.have_low, leg.have)], ["Nếu giá giảm", `${pct(leg.drop.drop, false, 0)} (${esc(leg.drop.note)})`],
+        [esc(r.label), m(pct(r.now_pct), "alloc.rebalance"), `${m(pct(r.target_pct), "alloc.rebalance")}${r.tilt ? ` <span class="small muted">(${m(pct(r.tilt, true, 0), "alloc.rebalance")})</span>` : ""}`, m(vnd(r.trade, true), "alloc.rebalance"), esc((r.views || []).join(", "))]))
+        + `<p class="small muted">Lỗ khi thị trường xấu: trước ${m(pct(gr.worst_before.share), "alloc.worst")} · sau ${m(pct(gr.worst_after.share), "alloc.worst")}</p>`)}
+      ${more("Di sản", table(["Khoản", "Cách tính", "Số tiền"], leg.floor_rows.map(r => [esc(r.label), `<span data-explains>${esc(r.how)}</span>`, m(vnd(r.amount), "alloc.legacy")]))
+        + kvs([["Đang có", range(leg.have_low, leg.have, "alloc.legacy")], ["Nếu giá giảm", `${m(pct(leg.drop.drop, false, 0), "alloc.legacy")} (<span data-explains>${esc(leg.drop.note)}</span>)`],
           ["Cách bù", esc(leg.fill_with)]]))}
-      ${more("Nghỉ hưu", kvs([["Năm nghỉ", ret.year], ["Cần khi nghỉ", vnd(ret.need)], ["Dự kiến đạt", vnd(ret.reach)],
-        ["Lợi nhuận cần", `${pct(ret.required)}/năm`]].concat(ret.status === "short"
-        ? [["Tiết kiệm thêm", `${vnd(ret.extra_monthly)}/tháng`], ["Hoặc nghỉ muộn", ret.delay.enough ? `${ret.delay.enough} năm` : "Lùi 10 năm vẫn chưa đủ"]] : [])))}
+      ${more("Nghỉ hưu", kvs([["Năm nghỉ", ret.year], ["Cần khi nghỉ", m(vnd(ret.need), "alloc.retirement")], ["Dự kiến đạt", m(vnd(ret.reach), "alloc.retirement")],
+        ["Lợi nhuận cần", `${m(pct(ret.required), "alloc.retirement")}/năm`]].concat(ret.status === "short"
+        ? [["Tiết kiệm thêm", `${m(vnd(ret.extra_monthly), "alloc.retirement")}/tháng`], ["Hoặc nghỉ muộn", ret.delay.enough ? `${ret.delay.enough} năm` : "Lùi 10 năm vẫn chưa đủ"]] : [])))}
       ${more("Giả định", `<form data-assume class="simform">${Object.entries(EDIT).map(([k, [unit, f]]) => `
         <label class="field"><span><span>${esc(a.assumption_labels[k] || k)}</span> <span class="muted">${esc(unit)}</span></span>
         <input type="number" step="any" name="${k}" value="${shown(a.assumptions[k], f)}"></label>`).join("")}
         <button type="submit" class="btn primary">Tính lại</button>
         ${Object.keys(st.assumptions).length ? `<button type="button" class="btn" data-reset>Về mặc định</button>` : ""}</form>`)}
       ${more("Đối chiếu", kvs([["Tổng tài sản", vnd(a.reconcile.assets)], ["Nợ", vnd(a.reconcile.debts)],
-        ["Tài sản ròng", vnd(a.reconcile.net_worth)], ["Ba giỏ cộng lại", vnd(a.reconcile.buckets)]]))}
+        ["Tài sản ròng", vnd(a.reconcile.net_worth)], ["Ba giỏ cộng lại", vnd(a.reconcile.buckets)]].map(([k, v]) => [k, m(v, "alloc.reconcile")])))}
     </section>`;
 
   box.querySelectorAll("[data-method]").forEach(b => b.onclick = () => { st.method = b.dataset.method; render(box, ctx); });

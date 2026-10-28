@@ -162,6 +162,16 @@ def tilt(asset_class: str = None, stance: str = None, view_id: str = None, reaso
 
 
 @op
+def tilt_list() -> dict:
+    """The tilts in force, the classes a CIO may tilt and the model each level gets from them."""
+    kept = tilts()
+    classes = [{"id": c, "label": _model.LABELS[c]} for c in _model.CLASSES if c != "crypto"]
+    stances = [{"id": k, "label": v} for k, v in _model.STANCE_LABELS.items()]
+    model = {lv: _model.tilted(lv, kept) for lv in range(1, 6)}
+    return {"tilts": kept, "classes": classes, "stances": stances, "model": model}
+
+
+@op
 def send(client_id: str, allocation: dict, by: str = None) -> dict:
     """The actions an RM sends to the review queue: the ones a client may see (never a blocked one), with the summary
     of the three buckets."""

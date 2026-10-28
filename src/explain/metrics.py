@@ -1136,3 +1136,91 @@ metric(
     "thị trường hằng ngày) ÷ tổng tài sản. Phần này càng lớn, ước tính càng kém chắc chắn.",
     "src/apply/run.py::compute",
 )
+# ── ASSET_ALLOCATION_BRD: the three buckets (web/pages/allocation.js) and the CIO's tilts (web/pages/events.js) ──
+metric(
+    "alloc.liquidity",
+    "Giỏ Thanh khoản",
+    "Đang có = tiền mặt + tiền gửi của hộ. Cần = phần âm sâu nhất của dòng tiền cộng dồn trong số năm của giả định "
+    "(chi đều + khoản lớn đã lên lịch + trả nợ, trừ thu nhập theo cách tính: A không tính thu nhập, B tính đủ, C chỉ "
+    "phần chắc chắn) + đệm số tháng chi tiêu của giả định. Thiếu = cần − đang có; dư = đang có − cần.",
+    "src/allocation/_cashflow.py::table",
+    method="Cách tính",
+)
+metric(
+    "alloc.legacy",
+    "Giỏ Di sản",
+    "Đang có = bất động sản + cổ phần doanh nghiệp + giá trị bảo hiểm (khoảng thấp khi giá giảm theo mức trong giả "
+    "định). Sàn = nợ còn lại + chi tiêu gia đình (chi đều một năm × phần người ở lại) đến khi con nhỏ nhất đủ tuổi + "
+    "học phí còn lại + mong muốn để lại. Thiếu = sàn − đang có (khoảng: theo giá thấp và giá hiện tại).",
+    "src/allocation/_engine.py::legacy",
+)
+metric(
+    "alloc.growth",
+    "Giỏ Tăng trưởng",
+    "Giá trị = cổ phiếu + quỹ + trái phiếu + vàng + tài sản mã hóa của hộ, sau khi đã bù giỏ Thanh khoản. Mô hình = "
+    "lợi nhuận kỳ vọng của danh mục mục tiêu theo mức rủi ro (mỗi loại × tỷ trọng mục tiêu, sau nghiêng của CIO).",
+    "src/allocation/_model.py::expected_return",
+)
+metric(
+    "alloc.retirement",
+    "Nghỉ hưu: cần, dự kiến đạt, lợi nhuận cần",
+    "Cần khi nghỉ = chi tiêu một năm × (1 + lạm phát)^số năm đến khi nghỉ × bội số rút. Dự kiến đạt = giỏ Tăng trưởng "
+    "và tiết kiệm mỗi năm cộng lãi theo lợi nhuận mô hình. Lợi nhuận cần = mức nhỏ nhất (bước 0,1%) để đạt đủ. "
+    "Thiếu = cần − dự kiến đạt; tiết kiệm thêm = khoản mỗi tháng bù đủ phần thiếu.",
+    "src/allocation/_engine.py::retirement",
+)
+metric(
+    "alloc.action",
+    "Số tiền của một việc nên trao đổi",
+    "Bù Thanh khoản: phần thiếu của giỏ, lấy theo thứ tự trong 'Cách bù phần thiếu'. Mua / bán: phần chênh giữa tỷ "
+    "trọng mục tiêu và hiện tại của giỏ Tăng trưởng. Di sản: phần thiếu so với sàn (khoảng theo giá).",
+    "src/allocation/_engine.py::actions",
+)
+metric(
+    "alloc.cashflow",
+    "Dòng tiền theo năm",
+    "Mỗi năm: thu nhập − chi đều − khoản lớn đã lên lịch − trả nợ = ròng. Đáy = mức cộng dồn thấp nhất. Đệm = chi tiêu "
+    "một tháng × số tháng đệm. Lãi vay tăng: dư nợ thả nổi × mức tăng ÷ 12 mỗi tháng.",
+    "src/allocation/_cashflow.py::table",
+)
+metric(
+    "alloc.ladder",
+    "Bậc thang Thanh khoản",
+    "Phần cần của giỏ chia theo lúc dùng: khoản lớn sắp đến hạn ở bậc ngắn, đệm chi tiêu ở bậc linh hoạt.",
+    "src/allocation/_engine.py::ladder",
+)
+metric(
+    "alloc.rebalance",
+    "Mô hình Tăng trưởng: hiện tại, mục tiêu, mua / bán",
+    "Hiện tại = giá trị mỗi loại ÷ giỏ Tăng trưởng. Mục tiêu = tỷ trọng mô hình của mức rủi ro ± nghiêng của CIO "
+    "(trong ngoặc). Mua / bán = (mục tiêu − hiện tại) × giỏ Tăng trưởng.",
+    "src/allocation/_engine.py::rebalance",
+)
+metric(
+    "alloc.worst",
+    "Lỗ khi thị trường xấu",
+    "Σ giá trị mỗi loại × mức giảm của loại đó trong kịch bản xấu (data/model_portfolio.json) ÷ tổng giỏ Tăng trưởng; "
+    "trước và sau khi cân lại.",
+    "src/allocation/_engine.py::worst",
+)
+metric(
+    "alloc.reconcile",
+    "Đối chiếu ba giỏ",
+    "Tổng tài sản − nợ = tài sản ròng; ba giỏ cộng lại (trừ nợ) phải bằng tài sản ròng.",
+    "src/allocation/_engine.py::allocate",
+)
+metric(
+    "alloc.model",
+    "Tỷ trọng mô hình của một loại tài sản",
+    "Tỷ trọng gốc của mức rủi ro + nghiêng của CIO (±2 điểm mỗi lần, tối đa ±5); phần chênh vào tiền chờ đầu tư.",
+    "src/allocation/_model.py::tilted",
+    level="Mức rủi ro",
+)
+metric(
+    "policy.certain",
+    "Số tiền chắc chắn nếu tin xảy ra",
+    "Theo hợp đồng hoặc quy định, không ước tính (NEWS_EVIDENCE_BRD N1). Giảm trừ gia cảnh: phần thuế thu nhập cá "
+    "nhân bớt đi mỗi năm ÷ 12. Lãi suất: dư nợ lãi thả nổi × mức thay đổi lãi suất ÷ 12. Có hiệu lực từ kỳ ghi bên cạnh.",
+    "src/impact/_rules.py::rates",
+    event="Sự kiện",
+)

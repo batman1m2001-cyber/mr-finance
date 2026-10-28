@@ -12,7 +12,7 @@ from news import store as news_store
 from procedural import goals
 from research import store
 from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
-from research.ops import matches
+from research import ops as research_ops
 
 UPLOAD = Operon(research_upload_flow, params={"item": None, "by": None})
 RELEASE = Operon(research_release_flow, params={"item_id": None, "decision": None, "by": None, "note": None})
@@ -21,6 +21,11 @@ DECLARE = Operon(
 )
 NOTE = "Đã kiểm tra nguồn công khai và xung đột lợi ích"
 TODAY = date(2026, 10, 15)
+
+
+def matches(family_id, today):
+    """The uploaded notes' matches; the evidence frames' plan notes (EV-…) are tested in tests/test_evidence.py."""
+    return [m for m in research_ops.matches(family_id, today) if not m["note_id"].startswith("EV-")]
 
 
 def run(engine, **inputs):

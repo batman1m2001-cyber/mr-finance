@@ -11,7 +11,7 @@ HOMES = {  # the bank's four sections (business feedback 2, ADR-0037)
     "chuyen-gia": "#/client/chuyen-gia",
 }
 SHEET_TABS = {
-    "muc-tieu": [["Wealth planning advisor", True], ["Risk profile test", False]],
+    "muc-tieu": [["Wealth planning advisor", True], ["Asset allocation", False], ["Risk profile test", False]],
     "tin": [["News and Prediction", True], ["Đồ thị tác động", False]],
     "chuyen-gia": [],
 }
@@ -73,7 +73,7 @@ def test_old_addresses_open_what_they_did(open_page):
     p.go("#/client/muc-tieu/khau-vi")  # Khẩu vị rủi ro: Risk profile test, under Wealth Planning Advisor
     p.page.wait_for_function("!document.querySelector('#page .skeleton')")
     assert p.page.get_attribute('[data-tool="muc-tieu"]', "aria-current") is not None
-    assert p.page.evaluate(TABS, "#ws-sheet-tabs") == [["Wealth planning advisor", False], ["Risk profile test", True]]
+    assert p.page.evaluate(TABS, "#ws-sheet-tabs") == [["Wealth planning advisor", False], ["Asset allocation", False], ["Risk profile test", True]]
     assert not p.problems()
 
 

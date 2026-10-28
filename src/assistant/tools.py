@@ -78,6 +78,7 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
     "nghien-cuu": ("Nghiên cứu", {"cio": "#/cio/nghien-cuu"}),
     "ban-tin": ("Bài viết", {"cio": "#/cio/ban-tin"}),  # OWN-FB-15
     "van-ban-chinh-sach": ("Chính sách", {"cio": "#/cio/chinh-sach"}),
+    "bang-chung": ("Bằng chứng tin", {"cio": "#/cio/bang-chung"}),  # NEWS_EVIDENCE_BRD §8.2
     "do-luong": ("Đo lường", {r: f"#/{r}/do-luong" for r in ("cio", "admin")}),
     "tham-so": ("Tham số mô hình", {r: f"#/{r}/mo-hinh/tham-so" for r in ("cio", "admin")}),
     "du-lieu-thi-truong": ("Dữ liệu thị trường", {"cio": "#/cio/mo-hinh/du-lieu", "admin": "#/admin/du-lieu"}),

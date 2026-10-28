@@ -40,7 +40,10 @@ def declare_outflow(family_id: str, goal_id: str, purpose: str, by: str, country
 
 
 def matches(family_id: Optional[str] = None, today: Optional[date] = None) -> List[Dict[str, Any]]:
-    """Released regulation notes × active goals (computed on read: deterministic, from what is kept)."""
+    """Released regulation notes and the approved plan frames (NEWS_EVIDENCE_BRD Ví dụ 4) × active goals (computed
+    on read: deterministic, from what is kept)."""
+    from evidence import frames
+
     ids = [family_id] if family_id else auth.visible(fixtures.client_ids())
     fams = {fid: fixtures.client(fid) for fid in ids}
-    return goals.match(store.released_notes(), fams, store.declared(), today or date.today())
+    return goals.match(store.released_notes() + frames.notes(), fams, store.declared(), today or date.today())

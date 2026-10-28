@@ -12,7 +12,7 @@
  {"q": "làm sao để trợ lý quên điều nó đã nhớ về tôi", "role": "client", "want": "Bộ nhớ"},
  {"q": "Trợ lý có tự lưu thay đổi mà không hỏi tôi không?", "role": "client", "want": "OneWealth Copilot (Trợ lý)"},
  {"q": "chuyển sang giao diện sáng", "role": "client", "want": "Thanh trên cùng"},
- {"q": "sáng nay nên gọi cho khách nào trước", "role": "rm", "want": "Hôm nay"},
+ {"q": "sáng nay nên gọi cho khách nào trước", "role": "rm", "want": "Cần gọi trước"},
  {"q": "duyet de xuat cua khach o dau", "role": "rm", "want": "Duyệt đề xuất"},
  {"q": "khai mục đích chuyển tiền ra nước ngoài cho mục tiêu của khách", "role": "rm", "want": "Tác động tin"},
  {"q": "Gộp mấy tin thành một sự kiện thế nào?", "role": "cio", "want": "Hộp tin"},
