@@ -126,7 +126,8 @@ def summary(fid: str) -> Optional[Dict[str, Any]]:
         "certain_from": f.get("certain_from"),
         "targets": f["targets"],
         # the precedents in brief, for the chart's tip and the card (the full frame stays behind /api/evidence)
-        "precedents": [{k: p[k] for k in ("event", "outcome", "source")} for p in f.get("precedents") or []],
+        # each with its article's address when one was found (business feedback 2026-10-29)
+        "precedents": [{**{k: p[k] for k in ("event", "outcome", "source")}, "url": p.get("url")} for p in f.get("precedents") or []],
         "sentence": (f.get("stats") or {}).get("sentence"),
     }
 
@@ -152,7 +153,10 @@ def view(fid: str, cio: bool = False) -> Dict[str, Any]:
         "timeframe": f["timeframe"],
         "timeframe_label": cat.TIMEFRAMES[f["timeframe"]],
         "watch": f["watch"],
-        "precedents": [{k: p[k] for k in ("event", "outcome", "difference", "source")} for p in f.get("precedents") or []],
+        "precedents": [
+            {**{k: p[k] for k in ("event", "outcome", "difference", "source")}, "url": p.get("url")}
+            for p in f.get("precedents") or []
+        ],
         "label": label(f),
     }
     if f["branch"] == "statistics":

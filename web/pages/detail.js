@@ -2,7 +2,7 @@
    the pre-redesign page is here: net worth with the members it counts, assets by the three tiers of sources (each
    opening onto its sources), allocation with profit against cost and the debts under it, risk against the
    accepted drawdown with concentration warnings, the liquidity reserve, cash flow (six months past, 12/24/36 ahead) with large payments and recurring items. Assets, debt and net worth are three
-   tiles; the portfolio's profit and the policy items left it (business feedback 2026-10-29). The client's
+   tiles, net worth first and loudest; the portfolio's profit and the policy items left it (business feedback 2026-10-29). The client's
    workspace draws it as its dashboard (ctx.board, UX_TOOLBAR_PLAN T3+T4): the overview first, then cash flow and the
    month's flows. */
 import {n, nAttrs, $, esc, pct, post, vnd} from "../core/core.js";
@@ -42,15 +42,14 @@ export async function render(box, ctx) {
     hero: `      <div class="panel c12 nwhero" id="d-nw" data-focus="kpi:net_worth">
         <div>
           <div class="nwtiles">
+            <div class="nwtile main"><div class="pc-head"><span class="ic-chip sm" style="--tone:var(--accent)">${icon("target", {size: 14})}</span><span class="k">Tài sản ròng · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></div>
+              <div class="v">${n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</div>
+              <div class="small"><span class="${up ? "up" : "down"}">${up ? "▲" : "▼"} ${n(pct(nw.month_change_pct, true), "net_worth.month_change", chg)}</span> <span class="muted">so với tháng trước (${n(vnd(nw.month_change, true), "net_worth.month_change", chg)})</span></div></div>
             <div class="nwtile"><div class="pc-head"><span class="ic-chip sm" style="--tone:var(--s1)">${icon("wallet", {size: 14})}</span><span class="k">Tổng tài sản</span></div>
               <div class="v">${n(vnd(nw.assets), "assets.total")}</div></div>
             <div class="nwtile"><div class="pc-head"><span class="ic-chip sm" style="--tone:var(--critical)">${icon("loan", {size: 14})}</span><span class="k">Tổng nợ</span></div>
               <div class="v">${nw.liabilities ? "−" : ""}${n(vnd(nw.liabilities), "liabilities.total")}</div></div>
-            <div class="nwtile main"><div class="pc-head"><span class="ic-chip sm" style="--tone:var(--accent)">${icon("target", {size: 14})}</span><span class="k">Tài sản ròng · ${d.scope === "family" ? "gia đình" : "cá nhân"}</span></div>
-              <div class="v">${n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</div>
-              <div class="small"><span class="${up ? "up" : "down"}">${up ? "▲" : "▼"} ${n(pct(nw.month_change_pct, true), "net_worth.month_change", chg)}</span> <span class="muted">so với tháng trước (${n(vnd(nw.month_change, true), "net_worth.month_change", chg)})</span></div></div>
           </div>
-          <div class="small muted mt-xs">Tài sản ròng = tổng tài sản − tổng nợ · cập nhật ${esc(d.as_of)}</div>
           <div class="row tight mt">${who}</div>
         </div>
         <div id="srcmix"></div>

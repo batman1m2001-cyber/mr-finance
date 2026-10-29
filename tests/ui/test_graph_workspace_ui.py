@@ -307,7 +307,7 @@ def test_the_dataflow_follows_the_stream_and_only_the_stream(open_page):
     p.page.mouse.click(
         *p.page.evaluate(
             "() => { const r = document.querySelector('.ws-svg').getBoundingClientRect();"
-            " return [r.left + 12, r.bottom - 12]; })()"
+            " return [r.left + 12, r.bottom - 12]; }"
         )
     )
     p.page.wait_for_function("!document.querySelector('.ws-svg').classList.contains('focusing')")

@@ -3,6 +3,8 @@ the risk test goes back and forth and sets the drawdown limit the dashboard uses
 hoạch is approved by the RM and the client sees the note, the policy filter keeps one side, and a row of the
 all-clients performance opens that client."""
 
+import re
+
 from conftest import api, in_thread
 from test_apply import MARKET, approved
 
@@ -88,9 +90,9 @@ def test_the_policy_filter_keeps_one_side(open_page, base_url):
     p.page.click("[data-af=positive]")
     pos = [a for a in items if _direction(a) == "positive"]
     assert p.page.locator("#sections .acard").count() == len(pos)
-    # each row ends in its direction only (business feedback 2026-10-29): no amount, no horizon, a positive one green
+    # each row ends in its direction and when it takes effect (business feedback 2026-10-29): no amount, a positive one green
     assert p.page.locator("#impact .nrow .pill").count() == p.page.locator("#impact .nrow .pill.good").count() == len(pos) > 0
-    assert all(" · " not in v for v in p.page.locator("#impact .nrow .pill").all_inner_texts())
+    assert all(v.startswith("Tích cực") and not re.search(r"\d\s?(tỷ|triệu)", v) for v in p.page.locator("#impact .nrow .pill").all_inner_texts())
     p.page.click("[data-af=negative]")
     assert p.page.locator("#impact .nrow .pill.good").count() == 0
     p.page.click("[data-hz='1w']")  # the horizon filter: only what lands within a week

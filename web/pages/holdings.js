@@ -43,14 +43,16 @@ function bookRow(h, asOf, srcName) {
   const r = {bought: "", cost: h.cost, pnl: null, ret: null, note: "", why: {}};
   const price = (text) => how(text, "holding.price", {price_date: day(asOf)});
   const terms = (text) => how(text, "holding.terms", {source: srcName});
+  // the average price paid, on the row's line now that its column is gone (business feedback 2026-10-29)
+  const paid = (text) => how(text, "holding.buy_price", {source: srcName});
   if (h.class === "stock" || h.class === "bond") {
     r.bought = day(d.bought);
-    r.note = `${num(d.qty)} ${UNIT[h.class]} · giá nay ${price(`${num(d.price)} đ`)}`;
+    r.note = `${num(d.qty)} ${UNIT[h.class]}${d.avg_price ? ` · giá mua ${paid(`${num(d.avg_price)} đ`)}` : ""} · giá nay ${price(`${num(d.price)} đ`)}`;
     if (h.class === "bond") r.note += ` · coupon ${terms(pct(d.coupon))}/năm · đáo hạn ${day(d.maturity)}`;
     r.why = {qty: `${num(d.qty)} ${UNIT[h.class]}`, buy_price: d.avg_price ? `${num(d.avg_price)} đ` : null};
   } else if (h.class === "fund") {
     r.bought = day(d.bought);
-    r.note = `${num(d.units)} CCQ · NAV nay ${price(`${num(d.nav)} đ`)}`;
+    r.note = `${num(d.units)} CCQ${d.avg_nav ? ` · giá mua ${paid(`${num(d.avg_nav)} đ`)}` : ""} · NAV nay ${price(`${num(d.nav)} đ`)}`;
     r.why = {qty: `${num(d.units)} CCQ`, buy_price: d.avg_nav ? `${num(d.avg_nav)} đ` : null};
   } else if (h.class === "real_estate") {
     r.bought = d.purchase_year ? `Năm ${d.purchase_year}` : "";
@@ -279,7 +281,7 @@ export async function render(box, ctx) {
     $("#book", box).innerHTML = `<h3>Tất cả tài sản và khoản nợ <span class="hint">${d.holdings.length} khoản · ${groups.length} nhóm · bấm tên nhóm để thu gọn</span></h3>
       <div class="scrollx"><table class="table book">
         <thead><tr>${family ? `<th class="wide">Chủ sở hữu</th>` : ""}<th>Khoản</th><th class="wide">Nguồn · độ tin cậy</th><th>Ngày mua</th>
-          <th class="r">Giá vốn</th><th class="r">Giá trị hiện tại</th><th class="r">Lãi / lỗ</th><th class="r">Nợ vay trên tài sản</th><th class="r">Trả nợ / tháng</th></tr></thead>
+          <th class="r">Giá vốn</th><th class="r">Giá trị hiện tại</th><th class="r">Lãi / lỗ</th><th class="r nar">Nợ vay trên tài sản</th><th class="r nar">Trả nợ / tháng</th></tr></thead>
         ${body}
         <tfoot>${foot("Tổng tài sản", how(vnd(nw.assets), "assets.total"))}${foot("Tổng nợ", "−" + how(vnd(nw.liabilities), "liabilities.total"), "", pays ? payCell(pays) : "")}${foot("<b>Tài sản ròng</b>", `<b>${how(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</b>`, "total")}</tfoot>
       </table></div>

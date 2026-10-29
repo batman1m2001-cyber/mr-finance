@@ -1,9 +1,9 @@
 /* News and Prediction (SCR-CL-06; was Chi phí chính sách, FEAT-25). What moves the client's wealth, read as news
-   (business feedback 2026-10-29): on top every item with only its direction — positive, negative or neutral, no
-   amount, not even on hover — filtered by how soon and by direction; then the items in three sections: global
+   (business feedback 2026-10-29): on top every item with its direction — positive, negative or neutral — and when
+   it takes effect, no amount, not even on hover — filtered by how soon and by direction; then the items in three sections: global
    news (world and macro), local news (Vietnam, its infrastructure) and exclusive contents (laws at every stage, and
    the house views' analysis). Each card is a short summary, why it matters to someone who holds what it touches,
-   its precedents and its source, each linked. Each item opens its evidence (NEWS_EVIDENCE_BRD §8.2): the statistics
+   its precedents and its source, each linked to the article or document. Each item opens its evidence (NEWS_EVIDENCE_BRD §8.2): the statistics
    or the qualitative frame, and for the CIO the review. Data: POST /api/alerts, POST /api/dashboard, GET /api/views,
    POST /api/evidence. */
 import {closeDrawer, drawer, esc, get, n as how, pct, post, toast, vnd} from "../core/core.js";
@@ -27,10 +27,10 @@ const dir = (a) => {
   if (e === "unclear" || (!e && !a.impact)) return "neutral";
   return e ? (e === "positive" ? "positive" : "negative") : a.opportunity ? "positive" : "negative";
 };
-const dirPill = (a) => `<span class="pill ${DIR[dir(a)][0]}">${DIR[dir(a)][1]}</span>`;
-// a source's address: its own when stable, else a search for it; an assumption made for the demo has none
-const SEARCH = "https://www.google.com/search?q=";
-const linkOf = (text, url) => url || (!text || /giả định/i.test(text) ? null : SEARCH + encodeURIComponent(text));
+// how soon it takes effect (the evidence's time, else the item's horizon); an item on business equity alone has none
+const when = (a) => (a.sign_only ? "" : (a.evidence && a.evidence.timeframe_label) || a.horizon_label || "");
+// its direction and when it takes effect: “Tiêu cực · 3 tháng” (business feedback 2026-10-29)
+const dirPill = (a) => `<span class="pill ${DIR[dir(a)][0]}"><span>${DIR[dir(a)][1]}</span>${when(a) ? ` · <span>${esc(when(a))}</span>` : ""}</span>`;  // each its own phrase in English
 const linked = (html, url) => (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${html}</a>` : html);
 
 // the evidence panel: why, through what, what changes, what to watch, the precedents (or the measured moves) folded;
@@ -94,14 +94,14 @@ function touches(v, holdings) {
 }
 
 
-// an item's precedents, each linked to its own source or a search for it (or the statistics' sentence)
+// an item's precedents, each linked to its own source when it has one (or the statistics' sentence)
 function precedents(e) {
   if (!e) return "";
   if (e.sentence) return `<div class="nblock"><div class="nhead">Thống kê</div><p class="small" data-explains>${esc(e.sentence)}</p></div>`;
   const ps = e.precedents || [];
   if (!ps.length) return "";
   return `<div class="nblock"><div class="nhead">Tiền lệ (${ps.length})</div><ul class="nprec">${ps.map(p =>
-    `<li class="small">${linked(`<b>${esc(p.event)}</b>`, linkOf(p.event, p.url))}<div class="muted" data-explains>${esc(p.outcome)}</div></li>`).join("")}</ul></div>`;
+    `<li class="small">${linked(`<b>${esc(p.event)}</b>`, p.url)}<div class="muted" data-explains>${esc(p.outcome)}</div></li>`).join("")}</ul></div>`;
 }
 
 export async function render(box, ctx) {
@@ -146,7 +146,7 @@ export async function render(box, ctx) {
       row.onkeydown = (e) => { if (e.key === "Enter") openFrame(a, ctx, again); };
       hover(row, () => `<b>${esc(a.title)}</b>
         <div class="row"><span>Tác động</span><span>${DIR[dir(a)][1]}</span></div>
-        ${a.sign_only ? "" : `<div class="row"><span>Thời gian</span><span>${esc((a.evidence && a.evidence.timeframe_label) || a.horizon_label)}</span></div>`}
+        ${when(a) ? `<div class="row"><span>Thời gian</span><span>${esc(when(a))}</span></div>` : ""}
         ${a.affected.length ? `<div class="row"><span>Khoản liên quan</span><span>${a.affected.map(esc).join(", ")}</span></div>` : ""}
         <div class="small muted">Bấm để xem bằng chứng</div>`);
     }
@@ -154,7 +154,7 @@ export async function render(box, ctx) {
 
   // one item as a news card: summary, why it matters to you, precedents, source (business feedback 2026-10-29)
   const card = (a) => {
-    const src = linkOf(a.source, a.source_url), sum = a.summary || [];
+    const src = a.source_url, sum = a.summary || [];  // the article or document itself, never a search
     return `<div class="panel acard" data-focus="policy:${esc(a.id)}">
       <div class="row tight">${dirPill(a)}</div>
       <h4 data-explains>${esc(a.title)}</h4>

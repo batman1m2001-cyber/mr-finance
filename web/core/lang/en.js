@@ -4924,4 +4924,6 @@ export default {
 "Nghỉ hưu (nguyên giảng viên)":"Retired (former lecturer)",
 "Trưởng phòng marketing":"Head of marketing",
 "BĐS Sao Mai (mock)":"Sao Mai Real Estate (mock)",
+"giá mua {0}":"bought at {0}",
+"giá nay {0}":"price now {0}",
 };

@@ -419,11 +419,34 @@ def _split(v: Any, en: Dict[str, str]) -> Any:
     return v
 
 
+# Each precedent's article or document, checked to load (business feedback 2026-10-29: a link to what was read, never
+# a search); a precedent missing here has no link.
+PRECEDENT_URLS = {
+    "Singapore tăng thuế mua nhà thêm (ABSD) và siết tỷ lệ vay (01/2013)": "https://www.mas.gov.sg/news/media-releases/2013/additional-measures-to-ensure-a-stable-and-sustainable-property-market",
+    "Pakistan được MSCI nâng hạng lên thị trường mới nổi (hiệu lực 06/2017)": "https://www.pakistantoday.com.pk/2016/06/15/msci-upgrades-pakistan-to-emerging-markets-status",
+    "Ả Rập Xê Út vào nhóm mới nổi của FTSE Russell và MSCI (2019)": "https://oxfordbusinessgroup.com/articles-interviews/saudi-arabia-adds-securities-to-major-stock-market-indices",
+    "Bangkok: BTS (1999) và MRT (2004)": "https://en.wikipedia.org/wiki/Rail_transport_in_Bangkok",
+    "TP.HCM áp dụng bảng giá đất điều chỉnh (10/2024)": "https://vneconomy.vn/tp-hcm-cong-bo-bang-gia-dat-moi-ap-dung-den-het-nam-2025.htm",
+    "Nghị định 65/2022 siết phát hành trái phiếu doanh nghiệp riêng lẻ (09/2022)": "https://vanban.chinhphu.vn/?pageid=27160&docid=206561",
+    "NHNN bán vàng miếng bình ổn qua 4 ngân hàng quốc doanh (06/2024)": "https://www.sggp.org.vn/4-ngan-hang-va-1-doanh-nghiep-se-ban-vang-mieng-ra-thi-truong-tu-ngay-3-6-post742667.html",
+    "Nghị định 24/2012 về quản lý kinh doanh vàng": "https://vanban.chinhphu.vn/?pageid=27160&docid=157073",
+    "Nghị quyết 954/2020 nâng mức giảm trừ gia cảnh (kỳ tính thuế 2020)": "https://luatvietnam.vn/tin-van-ban-moi/tang-muc-giam-tru-gia-canh-thue-tncn-186-25423-article.html",
+    "Khủng hoảng niềm tin bảo hiểm liên kết đầu tư sau kết luận thanh tra (2023)": "https://tuoitre.vn/bo-tai-chinh-da-co-ket-luan-thanh-tra-4-cong-ty-bao-hiem-nhan-tho-20230616144044099.htm",
+    "NHNN tăng lãi suất điều hành 1 điểm % (22/09/2022)": "https://www.sggp.org.vn/ngan-hang-nha-nuoc-tang-lai-suat-dieu-hanh-post652216.html",
+    "NHNN tăng lãi suất điều hành lần hai, 1 điểm % (24/10/2022)": "https://tuoitre.vn/plo/ngan-hang-nha-nuoc-tiep-tuc-tang-lai-suat-dieu-hanh-109704701.htm",
+    "Tỷ giá USD/VND năm 2022": "https://www.vietnamplus.vn/nhin-lai-mot-nam-cstt-2022-ban-linh-duong-dau-voi-song-lon-post842246.vnp",
+    "Tuyến Cát Linh – Hà Đông vận hành (Hà Nội, 11/2021)": "https://nhandan.vn/ngay-611-chinh-thuc-khai-thac-thuong-mai-tuyen-duong-sat-cat-linh-ha-dong-post672501.html",
+    "Sân bay Vân Đồn khai thác (Quảng Ninh, 12/2018)": "https://diendandoanhnghiep.vn/khanh-thanh-san-bay-van-don-cang-hang-khong-bot-dau-tien-tai-viet-nam-10053836.html",
+}  # fmt: skip
+
+
 def main() -> None:
     en: Dict[str, str] = dict(CATALOGUE_EN)
     frames = {}
     for fid, f in FRAMES.items():
         frames[fid] = {"factor": fid, "branch": f.get("branch", "qualitative"), **_split(f, en)}
+        for p in frames[fid].get("precedents") or []:
+            p["url"] = PRECEDENT_URLS.get(p["event"])
     OUT.write_text(json.dumps({"as_of": "2026-10-28", "events": EVENTS, "frames": frames}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     body = ",\n".join(f"{json.dumps(k, ensure_ascii=False)}:{json.dumps(v, ensure_ascii=False)}" for k, v in sorted(en.items()))
     EN.write_text(

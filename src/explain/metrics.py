@@ -363,6 +363,14 @@ metric(
     price_date="Giá ngày",
 )
 metric(
+    "holding.buy_price",
+    "Giá mua bình quân",
+    "Giá mua bình quân một đơn vị như nguồn báo (sao kê, công ty chứng "
+    "khoán, quỹ) hoặc khách hàng khai; với bất động sản là số tiền đã bỏ ra khi mua.",
+    "src/wealth/valuation.py::stock",
+    source="Nguồn",
+)
+metric(
     "holding.cost",
     "Giá vốn",
     "Giá vốn = số lượng × giá mua bình quân (cổ phiếu, quỹ, trái phiếu), giá mua (bất "

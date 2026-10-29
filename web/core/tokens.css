@@ -15,6 +15,10 @@
    Money: green gain, orange-red loss, grey neutral, dashed = modelled / uncertain, "—" = unavailable. */
 :root {
   color-scheme: light;
+  /* the asset classes on Wealth view's allocation (bar, legend, icons): muted, one hue each (business feedback
+     2026-10-29); the same in both themes, white text inside */
+  --ac-cash: #299B79; --ac-stock: #C96A45; --ac-fund: #C77A9A; --ac-gold: #C6A04A; --ac-bond: #6557A5;
+  --ac-insurance: #A7A69F; --ac-property: #467EB5;
   --plane: #f1f1f1; --plane-glow: #f7f2e9; --surface: #ffffff; --surface-2: #f7f3ec; --surface-3: #efe6d8;
   --ink: #241a15; --ink-2: #59392c; --muted: #6e5e54;
   --hair: #ece3d6; --axis: #e1d1bb; --ring: rgba(89, 57, 44, .14);
@@ -658,12 +662,16 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .nwhero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 28px; align-items: start; }
 @media (max-width: 900px) { .nwhero { grid-template-columns: minmax(0, 1fr); } }
 /* Wealth view's head: assets, debt and net worth, one large tile each (business feedback 2026-10-29) */
-.nwtiles { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.35fr); gap: 12px; }
+.nwtiles { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .nwtile { background: var(--surface-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
 .nwtile .k { font-size: 13px; font-weight: 600; color: var(--ink-2); }
-.nwtile .v { font-size: 30px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; margin: 8px 0 4px; font-variant-numeric: tabular-nums; }
+/* net worth leads; assets and debt read quieter (business feedback 2026-10-29) */
+.nwtile .v { font-size: 24px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; margin: 8px 0 4px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.nwtile .k { color: var(--muted); }
 .nwtile.main { background: var(--surface); border-color: var(--axis); box-shadow: 0 0 0 1px var(--axis) inset; }
-@media (max-width: 1200px) { .nwtile .v { font-size: 24px; } }
+.nwtile.main .k { color: var(--ink); }
+.nwtile.main .v { font-size: 38px; font-weight: 800; color: var(--ink); }
+@media (max-width: 1200px) { .nwtile .v { font-size: 20px; } .nwtile.main .v { font-size: 30px; } }
 @media (max-width: 560px) { .nwtiles { grid-template-columns: minmax(0, 1fr); } }
 .hero-v { font-size: 44px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin: 6px 0 4px; font-variant-numeric: tabular-nums; }
 @media (max-width: 560px) { .hero-v { font-size: 34px; } }
@@ -701,9 +709,20 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .subhead { text-transform: none; letter-spacing: normal; color: var(--ink); }
 .allocgrid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
 .allocgrid .table td:first-child { white-space: nowrap; }
-.allocgrid .subrow th { padding-top: 16px; text-align: left; border-bottom: 1px solid var(--axis); }
-.allocgrid tfoot td { font-weight: 600; border-top: 1px solid var(--axis); }
-.allocgrid tfoot .total td { font-size: 15px; }
+/* the allocation's 100% bar and its table, assets and debts each under a tinted heading (business feedback 2026-10-29) */
+.stack100 { display: flex; height: 34px; border-radius: 8px; overflow: hidden; }
+/* no gaps (the widths stay true): a hairline of the surface between segments */
+.stack100 .sb { display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 2px; padding: 0 8px;
+  color: #fff; font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; }
+.stack100 .sb + .sb { box-shadow: inset 1px 0 0 var(--surface); }
+.stack100 .sb b { font-weight: 600; }
+.alloctable td:first-child { white-space: nowrap; }
+.alloctable .secrow th { text-align: left; font-size: 13px; font-weight: 700; padding: 8px 10px; }
+.alloctable .secrow.asset th { background: color-mix(in srgb, var(--up) 14%, var(--surface)); color: var(--up); }
+.alloctable .secrow.debt th { background: color-mix(in srgb, var(--down) 14%, var(--surface)); color: var(--down); }
+.alloctable .secrow .small { font-weight: 500; color: var(--muted); margin-left: 6px; }
+.alloctable tfoot td { font-weight: 600; border-top: 1px solid var(--axis); }
+.alloctable tfoot .total td { font-size: 15px; }
 .allocbox { container-type: inline-size; }
 @container (max-width: 600px) { .allocgrid { grid-template-columns: minmax(0, 1fr); } }  /* by the panel's width: half a row at 1280 is too narrow */
 .table td.r, .table th.r { white-space: nowrap; }
@@ -725,6 +744,9 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .book .grouprow[aria-expanded="false"] .caret { transform: rotate(-90deg); }
 .book tfoot td { font-weight: 600; border-top: 1px solid var(--axis); }
 .book tfoot .total td { font-size: 14px; }
+/* the debt columns: a wrapped heading and a narrow column, most rows have none (business feedback 2026-10-29) */
+.book th.nar { white-space: normal; width: 84px; line-height: 1.3; }
+.book td.nar { width: 84px; }
 .narrow-only { display: none; }
 @media (max-width: 760px) { .book .wide { display: none; } .narrow-only { display: block; } }
 @media (prefers-reduced-motion: reduce) { .book .grouprow .caret { transition: none; } }

@@ -211,7 +211,7 @@ FACTORS = [
 # What the client reads on News and Prediction (business feedback 2026-10-29): the section the item sits in
 # (global: world and macro news; local: Vietnam and its infrastructure; exclusive: laws at every stage and policy
 # analysis), a three-line summary, why it matters to someone who holds what it touches, and the source's address
-# when one is stable (otherwise the page links a search for the source).
+# — the article or document itself, checked to load; none when none was found (never a search).
 NEWS = {
     "P01": {
         "section": "exclusive",
@@ -221,6 +221,7 @@ NEWS = {
             "Mức thuế và ngưỡng áp dụng chưa được chốt.",
         ],
         "why": "Liên quan nếu gia đình bạn sở hữu nhiều hơn một bất động sản: chi phí nắm giữ có thể tăng.",
+        "source_url": "https://vnexpress.net/bo-tai-chinh-se-nghien-cuu-danh-thue-nguoi-so-huu-nhieu-nha-dat-4797640.html",
     },
     "P02": {
         "section": "exclusive",
@@ -230,6 +231,7 @@ NEWS = {
             "Bất động sản mua lâu và tăng giá mạnh sẽ chịu thuế cao hơn khi bán.",
         ],
         "why": "Liên quan tới bất động sản bạn đang nắm giữ: khoản lãi khi bán sau này có thể bị đánh thuế nhiều hơn.",
+        "source_url": "https://vnexpress.net/de-xuat-tinh-thue-20-tren-lai-tung-lan-chuyen-nhuong-bat-dong-san-4916909.html",
     },
     "P03": {
         "section": "exclusive",
@@ -239,6 +241,7 @@ NEWS = {
             "Tiền sử dụng đất, lệ phí và thuế tính theo bảng giá sẽ tăng.",
         ],
         "why": "Liên quan tới bất động sản của bạn: phí và thuế khi chuyển nhượng, cấp sổ có thể cao hơn.",
+        "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189&classid=1&typegroupid=3",
     },
     "P04": {
         "section": "exclusive",
@@ -257,6 +260,7 @@ NEWS = {
             "Khoản nắm giữ lớn khó mua thêm và khó bán một lần.",
         ],
         "why": "Liên quan tới khoản cổ phiếu ngân hàng lớn trong danh mục của bạn.",
+        "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211190&classid=1&typegroupid=3",
     },
     "P06": {
         "section": "exclusive",
@@ -266,6 +270,7 @@ NEWS = {
             "Các nghị định hướng dẫn quy định mốc áp dụng cụ thể.",
         ],
         "why": "Liên quan tới trái phiếu doanh nghiệp bạn đang nắm: bán trước hạn có thể khó hơn.",
+        "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=212484&classid=1&orggroupid=1",
     },
     "P07": {
         "section": "exclusive",
@@ -275,6 +280,7 @@ NEWS = {
             "Đang ở giai đoạn dự thảo.",
         ],
         "why": "Liên quan tới cổ phiếu và chứng chỉ quỹ bạn giao dịch.",
+        "source_url": "https://vneconomy.vn/bo-tai-chinh-rut-de-xuat-ap-thue-20-doi-voi-lai-rong-chung-khoan.htm",
     },
     "P08": {
         "section": "global",
@@ -284,7 +290,7 @@ NEWS = {
             "Dòng vốn ngoại thường vào theo nhiều đợt quanh ngày hiệu lực.",
         ],
         "why": "Liên quan tới cổ phiếu vốn hóa lớn trong danh mục của bạn, nhóm hưởng lợi đầu tiên từ dòng vốn ngoại.",
-        "source_url": "https://www.lseg.com/en/ftse-russell/equity-country-classification",
+        "source_url": "https://www.nst.com.my/amp/business/corporate/2025/10/1289826/vietnam-shares-hit-record-high-after-ftse-flags-upgrade-emerging",
     },
     "P09": {
         "section": "exclusive",
@@ -294,6 +300,7 @@ NEWS = {
             "Giá vàng miếng SJC có thể giảm về gần giá thế giới.",
         ],
         "why": "Liên quan tới vàng miếng bạn đang giữ: giá trị có thể giảm khi chênh lệch thu hẹp.",
+        "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=215074",
     },
     "P10": {
         "section": "exclusive",
@@ -303,6 +310,7 @@ NEWS = {
             "Tài sản số có khung pháp lý rõ hơn.",
         ],
         "why": "Liên quan tới tài sản số bạn đang nắm giữ.",
+        "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=215249",
     },
     "P11": {
         "section": "exclusive",
@@ -321,6 +329,7 @@ NEWS = {
             "Thuế thu nhập cá nhân phải nộp hằng tháng giảm.",
         ],
         "why": "Liên quan tới thu nhập từ lương của bạn và số người phụ thuộc bạn khai.",
+        "source_url": "https://tuoitre.vn/chinh-thuc-nang-giam-tru-gia-canh-len-15-5-trieu-thang-ap-dung-tu-ky-tinh-thue-2026-20251017103939942.htm",
     },
     "P13": {
         "section": "exclusive",
@@ -330,6 +339,7 @@ NEWS = {
             "Giá trị hoàn lại của một số hợp đồng có thể bị ảnh hưởng.",
         ],
         "why": "Liên quan tới hợp đồng bảo hiểm bạn đang có.",
+        "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=206242",
     },
     "P14": {
         "section": "exclusive",
@@ -339,6 +349,7 @@ NEWS = {
             "Một số ưu đãi đầu tư cũ bị thay đổi.",
         ],
         "why": "Liên quan tới cổ phần doanh nghiệp bạn sở hữu: lợi nhuận sau thuế có thể giảm.",
+        "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=209231",
     },
     "P15": {
         "section": "exclusive",
@@ -375,7 +386,7 @@ NEWS = {
             "Lãi suất Mỹ cao thường kéo dòng vốn rời thị trường mới nổi.",
         ],
         "why": "Liên quan tới cổ phiếu và chứng chỉ quỹ bạn đang nắm.",
-        "source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+        "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
     },
     "I01": {
         "section": "local",
@@ -385,6 +396,7 @@ NEWS = {
             "Dự án mới có xu hướng dồn về dọc tuyến.",
         ],
         "why": "Liên quan tới bất động sản của bạn nằm gần tuyến Metro.",
+        "source_url": "https://vnexpress.net/metro-ben-thanh-suoi-tien-van-hanh-4830508.html",
     },
     "I02": {
         "section": "local",
@@ -394,6 +406,7 @@ NEWS = {
             "Tiến độ thực tế còn cần theo dõi.",
         ],
         "why": "Liên quan tới bất động sản của bạn ở khu vực Long Thành.",
+        "source_url": "https://www.vietnamplus.vn/de-xuat-phuong-an-phan-chia-va-lo-trinh-khai-thac-san-bay-long-thanh-post1123930.vnp",
     },
     "I03": {
         "section": "local",
@@ -403,6 +416,7 @@ NEWS = {
             "Bất động sản dọc tuyến được hưởng lợi.",
         ],
         "why": "Liên quan tới bất động sản của bạn dọc tuyến Vành đai 3.",
+        "source_url": "https://tuoitre.vn/pho-chu-tich-ubnd-tphcm-hoang-nguyen-dinh-yeu-cau-thong-xe-17km-doan-tren-cao-vanh-dai-3-vao-thang-11-100261002162541363.htm",
     },
 }
 
