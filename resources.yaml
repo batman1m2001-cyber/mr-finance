@@ -2,7 +2,10 @@
 # Ops name a key (`LLMOp.of(resource="assistant")`), never build a client.
 # Secrets are `${VAR}` here (`${VAR:default}` when optional) and their
 # values live in .env; list every name in .env.example.
+# Who uses each model setting: the agent checklist (src/views/catalogue.py, the Agent page). The setting's
+# name is not its user's: llm:assistant is NOT the assistant (that is llm:copilot).
 
+# Used by: Khai báo qua chat (declaration chat), Đọc sao kê (statement reader) — in demo mode.
 llm:assistant:
   api_type: openai          # openai | azure | vllm | gemini | anthropic
   # unset: the client still builds, and the AI steps take their rule path (docs/PLAN.md D2)
@@ -10,6 +13,8 @@ llm:assistant:
   base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL:gpt-4o-mini}
 
+# Used by: Agent CIO (and the daily trial's grouping), Agent Chính sách, Viết bản tin — llm:cio;
+# Agent Phản biện — llm:challenger.
 # The CIO agent and the challenger (BRD §8): two different models, so their mistakes do not line
 # up. Unset or equal, agent runs are mock (keywords, no model) and say so.
 # The news agents (CIO, challenger) have their own endpoint: in the trial, the Claude Code bridge
@@ -26,14 +31,15 @@ llm:challenger:
   base_url: ${LLM_AGENT_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL_CHALLENGER:not-set}
 
-# The Copilot's router (redesign kit K5, ADR-0012): sees only the scrubbed question, the page and the tool
-# catalogue, and picks a tool. Unset: the keyword router runs instead, labelled as a mock.
+# Used by: OneWealth Copilot, the assistant (the Trợ lý panel), and its helpers — conversation titles, memory,
+# web search, the tool router. Unset: the keyword router runs instead, labelled as a mock.
 llm:copilot:
   api_type: openai
   api_key: ${LLM_API_KEY:not-set}
   base_url: ${LLM_BASE_URL:https://api.openai.com/v1}
   model: ${LLM_MODEL_COPILOT:not-set}
 
+# Used by: Khai báo qua chat, Đọc sao kê — in onprem mode.
 # The bank's own model for the two client steps (reading a statement, the declaring chat) when the Admins set
 # client_ai to onprem (BRD-NFR-08, control/barrier.py): its host must be on client_ai.onprem_hosts, or every call to
 # it is refused. Unset (LLM_ONPREM_MODEL), the two steps take their rules in onprem mode.
@@ -42,3 +48,43 @@ llm:onprem:
   api_key: ${LLM_ONPREM_API_KEY:not-set}
   base_url: ${LLM_ONPREM_BASE_URL:http://localhost:8000/v1}
   model: ${LLM_ONPREM_MODEL:not-set}
+
+# Used by: the assistant's voice (src/voice, docs/VOICE_PLAN.md). The callbot's two speech services
+# (educa-reminder-agent/resources.yaml, copied 2026-10-26), same endpoints and keys.
+# ZipVoice TTS: one sentence → a 16-bit mono WAV at `sample_rate`. 24 kHz, not the callbot's 8 kHz: a browser plays
+# it, and it measured real wideband at the same synthesis time. `speaker_id`/`style_id`: the callbot's voice
+# (GET /speakers on the same host); speed 1.0, not the server's 1.2, for older listeners (VOICE_PLAN V-D5).
+http:tts:
+  url: ${TTS_API_URL:http://192.168.1.212:8086/tts}
+  api_key: ${TTS_API_KEY:}
+  api_key_header: X-API-Key
+  timeout_s: ${TTS_REQUEST_TIMEOUT_S:30.0}
+  options:
+    speaker_id: 4
+    style_id: 1
+    speed: 1.0
+    sample_rate: 24000
+
+# KServe v2 REST gateway in front of the FastConformer model. Audio in: float32 normalised to ±1.0 at 16 kHz.
+# The embedding output is the callbot's speech-vs-noise gate's; the voice does not read it.
+http:stt:
+  url: ${STT_API_URL:https://stt.edupia.com.vn:8010}
+  api_key: ${STT_API_KEY:}
+  api_key_header: X-API-Key
+  timeout_s: ${STT_REQUEST_TIMEOUT_S:30.0}
+  verify_ssl: ${STT_VERIFY_SSL:true}
+  options:
+    model: ${STT_MODEL:fastconformer_asr}
+    version: ${STT_VERSION:}
+    audio_input_name: ${STT_AUDIO_INPUT_NAME:AUDIO_SIGNAL}
+    output_text_name: ${STT_OUTPUT_TEXT_NAME:TRANSCRIPT}
+    output_emb_name: ${STT_OUTPUT_EMB_NAME:EMBEDDING}
+    need_embedding: false
+
+# The voice's VAD (src/voice/_vad.py, the callbot's silero + preprocessing): one thread for every open microphone
+# (the callbot's measure: ~8 live streams per thread before frames queue).
+audio_worker:default:
+  n_workers: 1
+  inbound_maxsize: 4000
+  use_preprocess: true
+  vad_model: models/silero_vad.onnx

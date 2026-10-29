@@ -35,4 +35,7 @@ def build(client_id: str, members: List[Dict[str, Any]]) -> Dict[str, Any]:
         "risk_profile": ((test or {}).get("profile") or {}).get("name"),
         "dependents": dependents,
         "events": events,
+        # what the client said they want, when their file says it (the allocation's assumptions, else its defaults)
+        "retirement_age": me.get("retirement_age"),
+        "legacy_wish": me.get("legacy_wish"),
     }

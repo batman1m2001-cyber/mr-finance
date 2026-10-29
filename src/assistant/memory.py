@@ -24,7 +24,7 @@ from operonx_agents.memory import search
 from assistant import conversations as conv
 from assistant.base import Ctx, Param, Tool, ToolFailed
 from control import barrier, crypto
-from control.roles import ROLE_LABELS
+from control.roles import ROLES
 
 KINDS = {"preference": "Sở thích", "goal": "Mục tiêu", "fact": "Thông tin", "constraint": "Giới hạn"}
 DAY = 86400.0
@@ -181,7 +181,7 @@ def search_history(ctx: Ctx, query: str, limit: int = 20) -> List[Dict[str, Any]
 
 # -- the assistant's tools (registry) ---------------------------------------------------------------------------
 
-EVERYONE = tuple(ROLE_LABELS)
+EVERYONE = ROLES
 
 
 async def _recall(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:

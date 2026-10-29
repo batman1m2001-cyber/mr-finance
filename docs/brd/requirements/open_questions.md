@@ -25,12 +25,17 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 | Q-15 | conflict | §13.1 two-person rule: sentence vs ownership table | resolved for the demo (ADR-0016) |
 | Q-16 | gap | Brief: re-asking the risk test on triggers | open |
 | Q-17 | gap | RM sees only their own families: the demo has one RM and no assignment | resolved (ADR-0020) |
-| Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005) |
+| Q-18 | divergence | 20 mock families (BRD) vs 5 clients + 2 spouses here | resolved (ADR-0005); a 1,000 / 6,500 Private book proposed (ADR-0038) |
 | Q-19 | divergence | The advisory track record is mock and could be read as BR-15 | resolved (labelled; dates fixed) |
 | Q-20 | gap | FR-603 “tab Mục tiêu”: the goal branch is not on the client's Goals/Plan tab | resolved (shown on Kế hoạch) |
 | Q-21 | divergence | The client view exists although the BRD puts client delivery in the pilot phase | resolved (ADR-0008) |
 | Q-22 | divergence | Factor-model parameters are assumed, not estimated | resolved (ADR-0004); estimation blocked |
 | Q-23 | divergence | One process instead of a separate AI zone; no signed inbox | resolved for the demo (ADR-0009) |
+| Q-27 | ambiguity | Whose book the test data is: Private only, its size and amounts | resolved (6,500 Private, ≥ 25 tỷ, Σ 428,000 tỷ; ADR-0038); licence and scope open |
+| Q-28 | ambiguity | Which Liquidity target (A, B or C) is the default; H and the buffer | resolved (A, H = 3 years, 6 months; 2026-10-28) |
+| Q-29 | divergence | Who approves an allocation action: the specialist (FEAT-27) or the CIO | resolved (the CIO, each action; built in P2) |
+| Q-30 | ambiguity | The news evidence thresholds, the level, the horizon, and who sees an unsourced precedent | resolved (8, 10 points, share of net worth, from the frame, CIO only) |
+| Q-31 | ambiguity | ASSET_ALLOCATION_BRD §14 Q3–Q5: the model table, survivor spending, what the client sees | resolved (the CIO's assumption; 2/3, editable; amounts shown) |
 
 ---
 
@@ -119,6 +124,7 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
 
 ### Q-18 — Number of families
 - **Fact:** the BRD's demo has 20 mock families; here 5 clients and 2 spouses (household scope). Ranking and BR-09 work at any count. [ADR-0005](../decisions/ADR-0005-mock-clients-and-prices-public-news.md).
+- **Proposed (2026-10-23):** the demo stays; a second client set, a book of 6,500 Private clients (Santander's clients, SCF households, Techcombank's totals), for the KPIs and NFR-01 ([ADR-0038](../decisions/ADR-0038-a-second-client-set-the-santander-vn-private-book.md), [Q-27](#q-27--whose-book-the-test-data-is)).
 
 ### Q-19 — The advisory track record
 - **Fact:** “Hiệu quả tư vấn” ([SCR-RM-05](../assets/current_ui/SCR-RM-05_desktop-light.jpg)) shows recommendations, accuracy (75 %), money gained/lost, missed news and AI pipeline scores, from `data/advisory.json` (mock, labelled “Dữ liệu giả định cho demo”). Some entries are dated after the demo's date (e.g. 2026-10-24 when the data is as of 2026-10-09).
@@ -183,3 +189,61 @@ product differs from a source, knowingly) · **gap** (required, not built — fo
   CONTENT-01 flow 3, SCOPE-02 (no single-ticker recommendation straight to a client), WF-08. SEC-01 ("least privilege
   by role and assigned families") is the only rule on reading. The reading above follows SEC-01. Still open for
   Compliance to widen or narrow.
+
+### Q-27 — Whose book the test data is
+- **Fact:** the challenge is set in Private Banking ("a Wealth Platform … for private clients"). Our submission
+  (`nop_bai_cuoc_thi.md` §4, §5.1) sizes the product on about 6,500 Private clients (88 % coverage ≈ 5,700) and
+  leaves Priority to a later, reduced version (months 13–24). The BRD's NFR-01 counts 6,500 families.
+- **Fact:** Techcombank Private requires AUM ≥ 23 tỷ or a total relationship value ≥ 25 tỷ, three-month average
+  (techcombank.com; "may change by period"). The owner (2026-10-23): 6,500 Private clients, AUM 428,000 tỷ
+  (≈ 65.8 tỷ each).
+- **Conflict:** the submission's §5.8 assumes 60 tỷ total wealth per client, 35 % at TCB — 21 tỷ at TCB, under the
+  floor and a third of 65.8 tỷ ([TO_DISCUSS D-04](../../TO_DISCUSS.md)).
+- **Fact:** the first draft of [`docs/CLIENT_DATASET_PLAN.md`](../../CLIENT_DATASET_PLAN.md) mapped Santander's
+  PARTICULARES to Priority and drew 15 % Private — a sample-size choice with no source.
+- **Resolution (2026-10-23):** the book is 6,500 Private clients, all Techcombank clients, drawn from Santander's TOP
+  (the real run found enough: 6,500 drawn, none filled); AUM ≥ 25 tỷ each, summing to 428,000 tỷ; the make-up of
+  wealth from a matched SCF household; Priority only as an optional, labelled group
+  ([ADR-0038](../decisions/ADR-0038-a-second-client-set-the-santander-vn-private-book.md)). Owner: product.
+- **Open:** the Santander competition rules (D0); whether 428,000 tỷ is Private only, and its source; the share
+  held at TCB (≈ 35 %, falling with wealth) and the tier cut-offs, giả định; the AUM by product, if Private Banking
+  can give it. Owner: product, Private Banking.
+
+### Q-28 — Which liquidity target is the default
+- **Fact:** ASSET_ALLOCATION_BRD §6.1 computes the Liquidity target three ways on the same cash-flow table: A counts
+  no income (all spending and dated payments over H years); B the lowest point of the flow with all income plus 6
+  months' spending; C the same with certain income only (wages, rent). On K-7F3A they give 19, 8.6 and 16.9 tỷ (`tests/test_allocation.py::test_the_three_liquidity_targets_and_the_ladder_of_k7`).
+- **Consequence:** with B the Liquidity gap is 0.6 tỷ, and most of the first action (sell 11 tỷ of shares)
+  disappears (BRD §11).
+- **As built:** A by default; all three shown on SCR-CL-13; H = 3 years and 6 months' buffer are editable assumptions.
+- **Resolved (2026-10-28):** method A, H = 3 years, 6 months' buffer. A is the safest: it counts no income, so a family
+  that loses its income still has three years of spending in Liquidity. B and C stay on the screen for the RM to
+  compare, and H and the buffer stay editable per family.
+
+### Q-29 — Who approves an allocation action
+- **Fact:** the BRD's AA-N7 sends actions to the specialist (FEAT-27, as built: the RM's **Gửi vào hàng duyệt** puts
+  them in the review queue). The owner's document *Luồng end-to-end mới* §7 has the CIO approve them.
+- **As built:** the review queue (FEAT-27); a BLOCK action never reaches the client. Per-action CIO approval is P2.
+- **Resolved (2026-10-28):** the CIO, one action at a time, as in *Luồng end-to-end mới* §7. Built in P2: the RM
+  sends, the CIO approves or rejects each action on CIO › Phân bổ, and the client sees only the approved ones.
+
+### Q-30 — The news evidence thresholds and who sees what
+- **Fact:** NEWS_EVIDENCE_BRD §14 leaves open: 8 precedents as the minimum for statistics (Q1); 10 points over the
+  base rate to call a direction (Q2); the Cao/Trung bình/Thấp level from the share of net worth held instead of the
+  assumed sensitivity (Q3); the horizon from the statistics or the frame (Q4); the price history for the demo (Q5);
+  whether the client sees an approved precedent with no source (Q6).
+- **As built:** 8 and 10 points (`evidence/catalogue.py`, shown to the CIO under Ngưỡng); VN-Index from the market
+  store; the horizon from the frame; an unsourced precedent is shown without “Nguồn” and its mark only to the CIO.
+- **Resolved (2026-10-28):** Q1 8 precedents and Q2 10 points, as built: below them a type stays qualitative. Q3 the
+  level stays the estimated effect as a share of net worth (High ≥ 1 %, Medium ≥ 0.3 %): it already is a share of net
+  worth, and changing every live screen's level now is not worth it. Q4 the horizon comes from the frame; the
+  statistics show their own windows. Q5 the market store's VN-Index, SJC gold, USD/VND and 10-year yield. Q6 the
+  CIO only: a client or an RM never sees the “chưa có nguồn” mark, and a precedent without a source shows no
+  source line.
+
+### Q-31 — The allocation model table, survivor spending and what the client sees
+- **Fact:** ASSET_ALLOCATION_BRD §14 asks whether the model table, expected returns and loan limits (§7, §8.2) match
+  the bank's advisory policy (Q3); whether 2/3 of today's spending is right once the head of the household is gone
+  (Q4); and whether the client sees the sell/buy amounts or only “lệch mục tiêu” (Q5).
+- **Resolved (2026-10-28):** Q3 the table stays the CIO's assumption (the CIO tilts it; ASSET_ALLOCATION_BRD §7) until the bank gives its
+  own. Q4 2/3, editable per family. Q5 the client sees the amounts, but only of actions the CIO approved (Q-29).

@@ -14,7 +14,7 @@ import {JOB} from "../pages/system.js?v=20261020u1";  // the jobs' names as Hệ
 const LANES = [["sources", "Nguồn"], ["store", "Lưu trữ"], ["ai", "AI"], ["people", "Con người"]];
 const STATE = {ok: ["good", "Ổn"], warn: ["warn", "Cần xem"], bad: ["bad", "Lỗi"], idle: ["", "Chưa chạy"]};
 const SEVERITY = {high: "bad", medium: "warn", low: ""};
-const ROLE = {cio: "CIO", rm: "RM", compliance: "Tuân thủ", admin: "Quản trị", specialist: "Chuyên gia"};
+const ROLE = {cio: "CIO", rm: "RM", admin: "Quản trị", compliance: "Tuân thủ", specialist: "Chuyên gia"};  // the last two: audit rows before OWN-FB-18
 
 export function hint(d) {
   const bad = d.nodes.filter(n => n.state === "bad").length, warn = d.nodes.filter(n => n.state === "warn").length;

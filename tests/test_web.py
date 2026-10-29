@@ -13,8 +13,9 @@ def test_every_routed_page_module_exists_and_is_served():
 
     shell = (WEB / "shell.js").read_text(encoding="utf-8")
     pages = set(re.findall(r'page: "([a-z]+)"', shell))
-    assert {"impact", "today", "inbox", "events", "exposure", "runs", "model", "held", "audit"} <= pages
-    assert {"detail", "holdings", "plan", "risktest", "policy", "advisor", "performance", "perfall"} <= pages  # R3
+    assert {"impact", "events", "exposure", "runs", "model", "held", "audit"} <= pages
+    assert (WEB / "pages" / "inbox.js").is_file()  # no route of its own: the CIO's board draws it (OWN-FB-11)
+    assert {"detail", "holdings", "plan", "risktest", "policy", "advisor", "performance", "perfall", "allocation"} <= pages  # R3; allocation: SCR-CL-13
     client = TestClient(app)
     for page in pages:
         assert (WEB / "pages" / f"{page}.js").is_file(), page

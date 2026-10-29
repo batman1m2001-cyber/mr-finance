@@ -44,7 +44,7 @@ export async function render(box, ctx) {
         <div><h3 class="h2">Bài test khẩu vị rủi ro</h3>
           <p>8–12 câu hỏi tình huống; câu sau phụ thuộc vào câu trả lời trước. Kết quả tách hai điều:
             <b>mức chấp nhận rủi ro</b> (anh/chị muốn chịu bao nhiêu) và <b>khả năng chịu rủi ro</b> (dữ liệu tài chính cho thấy anh/chị có thể chịu bao nhiêu).
-            Hồ sơ lấy mức thấp hơn, và ngưỡng sụt giảm của hồ sơ là ngưỡng trang Tổng quan dùng để đo rủi ro.</p>
+            Hồ sơ lấy mức thấp hơn, và ngưỡng sụt giảm của hồ sơ là ngưỡng trang ${staff ? "Tổng quan" : "Wealth View"} dùng để đo rủi ro.</p>
           <button type="button" class="btn primary" id="risk-start">Bắt đầu cho ${esc(me.name || client)}</button></div></div>`;
     } else if (r.error) {
       body = `<div class="notice bad" role="alert">Không tải được bài test: ${esc(r.error)}</div>
@@ -94,7 +94,7 @@ export async function render(box, ctx) {
   };
 
   box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Mục tiêu & kịch bản</div><h1 class="h1">Khẩu vị rủi ro</h1>
+    <div class="pagehead"><div><div class="eyebrow">${staff ? "Khách hàng" : "Wealth Planning"}</div><h1 class="h1">Risk profile test</h1>
       <p class="lede">Bạn muốn chịu bao nhiêu rủi ro, và dữ liệu cho thấy bạn chịu được bao nhiêu</p></div></div>
     <div class="rbody"></div>`;
   draw();

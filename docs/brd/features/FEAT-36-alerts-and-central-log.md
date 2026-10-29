@@ -42,7 +42,7 @@ read take no model and keep working. Availability itself (99.5 %) is a deploymen
 ## Acceptance and tests
 `tests/test_alerts.py::test_a_feed_that_fails_raises_one_alert_counts_up_and_resolves_when_it_answers`,
 `::test_a_market_series_no_source_answers_raises_an_alert`,
-`::test_a_broken_audit_chain_alerts_compliance_and_admin_and_resolves_when_whole`,
+`::test_a_broken_audit_chain_alerts_the_cio_and_admin_and_resolves_when_whole`,
 `::test_acknowledging_is_for_the_roles_it_is_for_and_is_audited`,
 `::test_with_the_ai_provider_down_computing_runs_and_reads_still_work` (a real refused connection: live mode with
 the provider's address where nothing listens); `tests/test_access.py` (the two routes).

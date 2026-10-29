@@ -22,7 +22,7 @@ CLIENT_NOTE = (
     "Nội dung có sự hỗ trợ của AI, do CIO duyệt kịch bản; đây là ước tính theo mô hình với tham số giả định, "
     "không phải khuyến nghị đầu tư. Liên hệ chuyên viên quan hệ khách hàng nếu cần trao đổi."
 )
-VISIBLE = {"cio": None, "admin": None, "compliance": None, "rm": runs.RM_VISIBLE, "client": ("EFFECTIVE",)}
+VISIBLE = {"cio": None, "admin": None, "rm": runs.RM_VISIBLE, "client": ("EFFECTIVE",)}
 
 
 def family_impact(family_id: str, role: str) -> Dict[str, Any]:
@@ -72,7 +72,7 @@ def family_impact(family_id: str, role: str) -> Dict[str, Any]:
                 pre_review=r["pre_review"],
                 loan_interest_3m=r["loan_interest_3m"],
             )
-        if role in ("cio", "admin", "compliance"):
+        if role in ("cio", "admin"):
             item["postcheck"] = [f for f in run["postcheck"]["findings"] if f["family_id"] in (None, family_id)]
         items.append(item)
     effective = [i for i in items if i["status"] == "EFFECTIVE"]

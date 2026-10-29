@@ -62,26 +62,26 @@ def test_a_code_expires_and_a_short_password_is_refused(on):
 
 
 def test_disable_ends_a_live_session_at_its_next_request_and_enable_restores_it(on):
-    r = accounts.request("disable", "admin2", "Nghỉ việc", person_id="sp_banking")
+    r = accounts.request("disable", "admin2", "Nghỉ việc", person_id="cio2")
     accounts.decide(r["id"], "approve", "admin")
-    assert accounts.disabled("sp_banking")
+    assert accounts.disabled("cio2")
     with pytest.raises(roles.Forbidden, match="đang bị khoá"):
-        roles.user("sp_banking")
-    auth.set_password("sp_banking", "mat-khau-sp-1")
-    assert auth.login("long.vu@tcbwealth.example", "mat-khau-sp-1") is None
-    sp = auth.issue("sp_banking")
-    assert auth.verify(sp) is None  # the open session ends at its next request
-    r = accounts.request("enable", "admin", person_id="sp_banking")
+        roles.user("cio2")
+    auth.set_password("cio2", "mat-khau-cio-1")
+    assert auth.login("ha.le@tcbwealth.example", "mat-khau-cio-1") is None
+    tok = auth.issue("cio2")
+    assert auth.verify(tok) is None  # the open session ends at its next request
+    r = accounts.request("enable", "admin", person_id="cio2")
     accounts.decide(r["id"], "approve", "admin2")
-    assert auth.verify(sp)["id"] == "sp_banking" and auth.login("long.vu@tcbwealth.example", "mat-khau-sp-1")
+    assert auth.verify(tok)["id"] == "cio2" and auth.login("ha.le@tcbwealth.example", "mat-khau-cio-1")
 
 
 def test_a_role_change_is_read_at_the_next_request(on):
-    tok = auth.issue("sp_private")
-    r = accounts.request("role", "admin", person_id="sp_private", role="compliance")
-    assert r["from_label"] == "Chuyên gia" and r["role_label"] == "Tuân thủ"
+    tok = auth.issue("cio2")
+    r = accounts.request("role", "admin", person_id="cio2", role="admin")
+    assert r["from_label"] == "CIO" and r["role_label"] == "Quản trị"
     accounts.decide(r["id"], "approve", "admin2")
-    assert auth.verify(tok)["role"] == "compliance" and roles.user("sp_private")["role"] == "compliance"
+    assert auth.verify(tok)["role"] == "admin" and roles.user("cio2")["role"] == "admin"
 
 
 def test_a_reset_voids_the_old_password_and_hands_a_code(on):
@@ -103,10 +103,10 @@ def test_the_guards(on):
     with pytest.raises(accounts.AccountError, match="Vai trò"):
         add(role="client")
     with pytest.raises(roles.Forbidden):
-        accounts.request("disable", "cio", person_id="sp_global")
-    r = accounts.request("disable", "admin", person_id="sp_global")
+        accounts.request("disable", "cio", person_id="cio2")
+    r = accounts.request("disable", "admin", person_id="cio2")
     with pytest.raises(Conflict, match="đang chờ"):
-        accounts.request("reset", "admin2", person_id="sp_global")
+        accounts.request("reset", "admin2", person_id="cio2")
     with pytest.raises(accounts.AccountError, match="lý do"):
         accounts.decide(r["id"], "reject", "admin2")
     with pytest.raises(roles.Forbidden, match="người đề xuất"):
@@ -137,11 +137,11 @@ def test_a_second_admin_does_not_approve_a_request_about_themselves(on):
 def test_the_demo_personas_are_kept_while_the_demo_accounts_are_on(on, monkeypatch):
     monkeypatch.setenv("MF_DEMO_ACCOUNTS", "on")
     with pytest.raises(accounts.AccountError, match="tài khoản demo"):
-        accounts.request("disable", "admin", person_id="sp_global")
+        accounts.request("disable", "admin", person_id="rm02")
     pid = accounts.decide(add()["id"], "approve", "admin2")["person_id"]  # one added here may change
     assert accounts.request("disable", "admin", person_id=pid)["status"] == "pending"
     d = accounts.read()
-    assert d["demo_protected"] and {p["id"]: p["protected"] for p in d["people"]}["sp_global"]
+    assert d["demo_protected"] and {p["id"]: p["protected"] for p in d["people"]}["rm02"]
     assert not {p["id"]: p["protected"] for p in d["people"]}[pid]
 
 

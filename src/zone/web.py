@@ -30,7 +30,7 @@ async def status(request: Request) -> JSONResponse:
     return JSONResponse(
         {
             "zone": True,
-            "news": len(news_store.inbox(status="all", limit=100000)),
+            "news": news_store.count(status="all"),
             "last_ingest": news_store.last_run(),
             "catalogues": cats,
             "today": agent.made_today(),

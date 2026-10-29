@@ -1,7 +1,9 @@
 """Newsletters, kept (``NL-0001``): DRAFT → PENDING_COMPLIANCE → APPROVED (a preview, never sent) or RETURNED (back
-to the CIO) → … ; WITHDRAWN by the CIO. The author is a CIO; Compliance approves and the approver is never the author
-(BRD-RULE-SEC-04). Distribution: Private and retail clients at the same time by default; Private earlier only with a
-written reason Compliance reads (FR-801). Every step is audited."""
+to the author) → … ; WITHDRAWN by the author. The author is a CIO; another CIO approves (the second pair of eyes
+since there is no Compliance user, OWN-FB-18): the approver is never the author (BRD-RULE-SEC-04), and only the
+author edits, submits or withdraws. The status keeps its name, PENDING_COMPLIANCE, for the letters already kept.
+Distribution: Private and retail clients at the same time by default; Private earlier only with a written reason the
+approver reads (FR-801). Every step is audited."""
 
 from __future__ import annotations
 
@@ -15,7 +17,7 @@ from newsletter import compose
 from research import conflict
 
 EDITABLE = ("DRAFT", "RETURNED")
-NEEDS = {"edit": "cio", "submit": "cio", "withdraw": "cio", "approve": "compliance", "return": "compliance"}
+NEEDS = {"edit": "cio", "submit": "cio", "withdraw": "cio", "approve": "cio", "return": "cio"}
 
 
 def _ts(text: Any) -> float:
@@ -36,7 +38,7 @@ def _distribution(given: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         raise BadRequest("private_early_hours: 0–72 giờ")
     reason = str(g.get("early_reason") or "").strip()
     if early and len(reason) < 20:
-        raise BadRequest("Cho khách Private nhận sớm hơn cần ghi căn cứ từ 20 ký tự để Tuân thủ xem (FR-801)")
+        raise BadRequest("Cho khách Private nhận sớm hơn cần ghi căn cứ từ 20 ký tự để người duyệt xem (FR-801)")
     return {
         "retail_at": at,
         "private_at": at - early * 3600,
@@ -50,6 +52,12 @@ def _next_morning() -> float:
     return time.mktime((lt.tm_year, lt.tm_mon, lt.tm_mday, 8, 0, 0, 0, 0, -1))
 
 
+def _body(text: Any) -> str:
+    """The CIO's own words: paragraphs kept (blank lines between), spaces inside each folded."""
+    paras = [" ".join(p.split()) for p in str(text or "").replace("\r", "").split("\n\n")]
+    return "\n\n".join(p for p in paras if p)
+
+
 def _labels(sections: List[Dict[str, Any]], author: str, letter_conflict: Dict[str, Any]) -> Dict[str, Any]:
     who = roles.users()[author]
     coi = sorted(
@@ -59,7 +67,9 @@ def _labels(sections: List[Dict[str, Any]], author: str, letter_conflict: Dict[s
     return {
         "ai": "Có AI hỗ trợ soạn (CIO duyệt)"
         if any(s["ai"] for s in sections)
-        else "Soạn theo mẫu từ nhận định CIO duyệt",
+        else "Soạn theo mẫu từ nhận định CIO duyệt"
+        if sections
+        else "Bài viết của CIO, không dùng AI",
         "responsible": f"{who['name']} — {who['title']}",
         "time": time.strftime("%H:%M %d/%m/%Y", time.localtime()),
         "not_advice": compose.NOT_ADVICE,
@@ -115,31 +125,42 @@ async def draft(
     mode: str = "template",
     distribution: Optional[Dict[str, Any]] = None,
     conflict_: Any = None,
+    body: str = "",
 ) -> Dict[str, Any]:
-    """A CIO drafts from 1–6 approved views."""
+    """A CIO drafts from 1–6 approved views, or writes an article of their own (a body, no views: their news or a
+    policy note), which goes to Private clients only (OWN-FB-15)."""
     roles.require(by, "cio")
     ids = list(dict.fromkeys(str(v) for v in (view_ids or [])))
-    if not 1 <= len(ids) <= 6:
-        raise BadRequest("Chọn 1–6 nhận định đã duyệt")
-    if mode not in ("template", "agent"):
+    text = _body(body)
+    if len(ids) > 6 or not (ids or text):
+        raise BadRequest("Chọn 1–6 nhận định đã duyệt hoặc viết nội dung bài")
+    if text and not 40 <= len(text) <= 6000:
+        raise BadRequest("Nội dung bài từ 40 đến 6000 ký tự")
+    if not ids:
+        mode = "article"
+    elif mode not in ("template", "agent"):
         raise BadRequest("mode là template hoặc agent")
     try:
         sections = [compose.section(v) for v in ids]
     except (ValueError, KeyError) as exc:
         raise Conflict(str(exc)) from None
-    title = str(title or "").strip() or f"Bản tin thị trường {time.strftime('%d/%m/%Y')}"
+    title = str(title or "").strip() or f"{'Bản tin thị trường' if ids else 'Bài viết'} {time.strftime('%d/%m/%Y')}"
     findings: List[str] = []
-    if mode == "agent":
+    if mode == "article":
+        intro, written_by = "", by
+    elif mode == "agent":
         intro, written_by, findings = await compose.agent_intro(sections)
     else:
         intro, written_by = compose.template_intro(sections), "template"
     try:
-        coi = conflict.declare(conflict_, title, intro, *_section_text(sections), covered=_covered(sections))
+        coi = conflict.declare(conflict_, title, intro, text, *_section_text(sections), covered=_covered(sections))
     except conflict.ConflictError as exc:
         raise BadRequest(str(exc)) from None
     n = {
         "title": title[:200],
         "intro": intro,
+        "body": text,
+        "audience": "all" if ids else "private",
         "sections": sections,
         "view_ids": ids,
         "author": by,
@@ -168,12 +189,14 @@ async def draft(
 
 
 def act(nid: str, action: str, by: str, note: str = "", changes: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """edit / submit / withdraw (the CIO), approve / return (Compliance, never the author)."""
+    """edit / submit / withdraw (the author), approve / return (another CIO, never the author)."""
     if action not in NEEDS:
         raise BadRequest("action là edit, submit, approve, return hoặc withdraw")
     roles.require(by, NEEDS[action])  # who may, before whether the letter exists
     n = get(nid)
     note = str(note or "").strip()
+    if action in ("edit", "submit", "withdraw") and by != n["author"]:
+        raise roles.Forbidden("Chỉ người soạn sửa, gửi duyệt hoặc rút bài; CIO khác là người duyệt")
     if action == "edit":
         if n["status"] not in EDITABLE:
             raise Conflict(f"Chỉ sửa được bản nháp hoặc bản bị trả lại (đang {n['status']})")
@@ -182,6 +205,13 @@ def act(nid: str, action: str, by: str, note: str = "", changes: Optional[Dict[s
             n["title"] = str(ch["title"]).strip()[:200] or n["title"]
         if "intro" in ch:
             n["intro"], n["intro_by"] = " ".join(str(ch["intro"]).split())[:1500], by
+        if "body" in ch:
+            text = _body(ch["body"])
+            if not (text or n["sections"]):
+                raise BadRequest("Bài viết không có nhận định nào cần nội dung")
+            if text and not 40 <= len(text) <= 6000:
+                raise BadRequest("Nội dung bài từ 40 đến 6000 ký tự")
+            n["body"] = text
         if "headings" in ch:  # {view_id: text}: a section's heading, reworded by the CIO
             given = dict(ch["headings"] or {})
             for sec in n["sections"]:
@@ -190,12 +220,13 @@ def act(nid: str, action: str, by: str, note: str = "", changes: Optional[Dict[s
                     sec["heading"] = text
         if "distribution" in ch:
             n["distribution"] = _distribution(ch["distribution"])
-        if {"conflict", "title", "intro", "headings"} & set(ch):
+        if {"conflict", "title", "intro", "body", "headings"} & set(ch):
             try:
                 n["conflict"] = conflict.declare(
                     ch.get("conflict", n["conflict"]),
                     n["title"],
                     n["intro"],
+                    n.get("body", ""),
                     *_section_text(n["sections"]),
                     covered=_covered(n["sections"]),
                 )

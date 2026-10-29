@@ -191,3 +191,13 @@ def test_a_card_balance_is_paid_once_not_every_month():
     paid = [(m["month"], i["amount"]) for m in cal["months"] for i in m["items"] if i["kind"] == "card"]
     assert paid == [("2026-11", 45 * TR)]
     assert not cal["recurring"]
+
+
+def test_a_stock_the_market_file_does_not_have_adds_no_dividend_and_breaks_nothing():
+    mk = fixtures.market()
+    assert "BSR" not in mk["stocks"]
+    rows = [h("stock", 15_085_000, ticker="BSR", qty=700, price=21_550), h("stock", 10 * TR, ticker="FPT", qty=100)]
+    cal = _calendar.build(rows, [], [], "2026-10-09", 12, 500 * TR, mk)
+    labels = {i["label"] for m in cal["months"] for i in m["items"]}
+    assert not any("BSR" in x for x in labels)
+    assert any("FPT" in x for x in labels) == bool(mk["stocks"]["FPT"]["div"])

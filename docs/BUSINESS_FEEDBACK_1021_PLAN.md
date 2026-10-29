@@ -86,7 +86,7 @@ and scored, never applied, never on a client's screen (BRD KPI-05 untouched). Th
   - Buy/sell readings for VN-Index, gold, Bitcoin and USD: "mua"/"bán" when the expected move exceeds a quarter
     of a typical move, else "giữ".
   - Scenarios: the one whose path matched the most scored factors, against the most likely one.
-- **B1.5 replay done (scripts/replay_july.py, out/trial/replay.json, shown on the page and in the business
+- **B1.5 replay done (scripts/replay.py, out/trial/replay.json, shown on the page and in the business
   dashboard https://claude.ai/artifact/4gcoQefYhmEWkfn5FQbUfg).**
   - Input: 3,060 Google News items from VnEconomy, VnExpress, CafeF and Vietstock for 1–20/7. 12 mornings gave
     23 events and 22 drafts, plus 1 agent error. Mondays 13/7 and 20/7 made no event, because the replay takes 24 h
@@ -244,7 +244,7 @@ say that the demo differs.
 ## Backlog (owner, 2026-10-21)
 
 - **Replay a rising market.** July's 19/22 on VN-Index is one call on one fall; a replay of a period when the market
-  rose tests whether the agents call an upturn (about an hour of the subscription, scripts/replay_july.py with
+  rose tests whether the agents call an upturn (about an hour of the subscription, scripts/replay.py with
   other dates).
 - **Why the expected moves are small.** The buy/sell readings are mostly "giữ" while the market moved well past
   that range (VN-Index 3 months: 5/22 right; Bitcoin and USD 0/22): look at the factor model's sizes and the

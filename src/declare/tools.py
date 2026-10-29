@@ -8,12 +8,14 @@ from __future__ import annotations
 
 import json
 from collections import OrderedDict
-from typing import Optional
+from typing import List, Optional
+
+from typing_extensions import TypedDict
 
 from operonx.agents import RunContext, tool
 
 from declare import _rules
-from wealth import store
+from wealth import fixtures, store
 from wealth.money import TR, TY, vnd
 
 #: What each recent run has written, so the same thing said once is recorded once. A model can
@@ -22,10 +24,20 @@ from wealth.money import TR, TY, vnd
 _WRITTEN: "OrderedDict[str, set]" = OrderedDict()
 _KEEP_RUNS = 256
 ALREADY = "Đã ghi mục này trong lượt này rồi — không ghi lại lần nữa."
+KNOWN = "Mục này đã có trong hồ sơ của khách từ trước — không ghi lại lần nữa."
+UPDATED = "Đã cập nhật mục khách khai trước đó (cùng tên), không tạo mục mới."
+#: what a later turn fills in rather than adds (a house's value, given after it was named); gold and people add up
+_FILLED = {"real_estate", "business", "insurance", "crypto", "other", "loan"}
+
+
+def _named(d: dict) -> str:
+    return str(d.get("name") or "").replace("(tự khai)", "").strip().casefold()
 
 
 def _add(ctx: RunContext, kind: str, data: dict) -> Optional[str]:
-    """Write one declaration; ``ALREADY`` (and no write) when this run already wrote the same."""
+    """Write one declaration; ``ALREADY`` (and no write) when this run already wrote the same, ``KNOWN`` when an
+    earlier turn did, ``UPDATED`` when it fills in a chat-declared item of the same class and name (on 2026-10-26
+    "Khoảng 12 tỷ, 95 m2", said after "một căn nhà ở Quận 7", was a second house)."""
     if ctx.run_id:
         seen = _WRITTEN.setdefault(ctx.run_id, set())
         _WRITTEN.move_to_end(ctx.run_id)
@@ -35,6 +47,14 @@ def _add(ctx: RunContext, kind: str, data: dict) -> Optional[str]:
         if key in seen:
             return ALREADY
         seen.add(key)
+    if store.same_profile(ctx.deps, kind, data):
+        return KNOWN
+    if kind == "asset" and data.get("class") in _FILLED:
+        for old in store.profile(ctx.deps, kind):
+            if old.get("via") == "chat" and old.get("class") == data["class"] and _named(old) == _named(data):
+                said = {k: v for k, v in data.items() if v not in (None, 0, "") and k != "name"}
+                store.add_profile(ctx.deps, kind, {**old, **said})  # the same id: written over
+                return UPDATED
     store.add_profile(ctx.deps, kind, {**data, "via": "chat"})
     return None
 
@@ -63,6 +83,13 @@ def declare_property(
     """
     area = _rules.area_of(location)
     value = value_ty * TY if value_ty else (purchase_price_ty * TY if purchase_price_ty and not sqm else None)
+    priced = fixtures.market()["areas"].get(area or "")
+    # with its size in an area we price, the book values it at the area's price (wealth/valuation.py), not as said
+    book = (
+        f" Sổ tài sản định giá theo giá khu vực {priced['name']}: {vnd(sqm * priced['price_sqm'])}."
+        if priced and sqm
+        else ""
+    )
     if dup := _add(
         ctx,
         "asset",
@@ -78,8 +105,8 @@ def declare_property(
             "rental_monthly": (rental_million_per_month or 0) * TR,
         },
     ):
-        return dup
-    return f"Đã ghi: {name} ở {location}" + (f", {vnd(value)}" if value else "")
+        return dup + (book if dup == UPDATED else "")
+    return f"Đã ghi: {name} ở {location}" + (f", {vnd(value)}" if value else "") + ("." + book if book else "")
 
 
 @tool(idempotent=False)
@@ -160,6 +187,32 @@ def declare_income(ctx: RunContext, label: str, million_per_month: float) -> str
     return f"Đã ghi thu nhập: {label}, {million_per_month:g} triệu/tháng"
 
 
+class Field(TypedDict, total=False):
+    """One blank of a form the agent asks with (``hoi_them``)."""
+
+    label: str
+    kind: str
+    options: List[str]
+    unit: str
+
+
+@tool
+def hoi_them(ctx: RunContext, title: str, fields: List[Field]) -> str:
+    """Show the client a short form instead of asking in words: when two or more details needed to record
+    something are missing, or to confirm one thing with a choice (one field of kind "choice", e.g. options
+    ["Đúng, ghi thêm", "Không, trùng rồi"]). Writes nothing; the client's answers come back as their next message.
+
+    Args:
+        title: One short line, what the form is for (e.g. "Căn nhà ở Quận 7").
+        fields: At most 4 blanks, each {label, kind, options, unit}: kind is text, number, money, year or choice;
+            options only for choice; unit as the client would write it ("tỷ", "m²", "triệu/tháng").
+    """
+    return (
+        "Đã hiện biểu mẫu cho khách. Chỉ nói một câu dẫn ngắn; không nhắc lại các câu hỏi trong biểu mẫu, "
+        "không ghi gì cho đến khi khách trả lời."
+    )
+
+
 TOOLS = [
     declare_property,
     declare_gold,
@@ -167,4 +220,5 @@ TOOLS = [
     declare_loan,
     declare_dependent,
     declare_income,
+    hoi_them,
 ]

@@ -53,7 +53,6 @@ def test_news_and_research_stay_with_staff():
     assert [h for h in hits("VN-Index", "cio") if h["kind"] == "news"]
     for role in ("client", "rm"):
         assert not [h for h in hits("VN-Index", role) if h["kind"] in ("news", "research")]
-    assert not [h for h in hits("VN-Index", "compliance") if h["kind"] == "news"]  # nothing held
 
 
 def test_bad_requests_and_the_endpoint():

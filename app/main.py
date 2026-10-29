@@ -11,31 +11,45 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
                     assistant_flow ──► an answer from the role's tools in several steps; writes wait for the person
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
                     · POST /api/assistant/memory ──► the Bộ nhớ page (A4) · 02:30 daily ──► assistant_retention
+                    · POST /api/assistant/attach ──► a file or image, read once (OCR_PLAN)
                     · every 5 min ──► assistant_consolidate (A6) · market and news jobs ──► follow-ups (A6)
+WS   /api/assistant/voice?rate= ──► assistant_voice_flow ──► the assistant by voice: microphone PCM in, captions,
+                    the question and the answer read sentence by sentence out (docs/VOICE_PLAN.md)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
 POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
+POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
+POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} ──► allocation_flow ──► Liquidity, Legacy,
+                    Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
+                    the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
+                    /api/allocation/send ──► an RM sends the actions to the review queue ·
+                    /api/allocation/review ──► the CIO decides each action (Q-29), /api/allocation/queue lists them ·
+                    /api/allocation/override ──► an RM moves an asset to another bucket, with a reason ·
+                    /api/allocation/method ──► the CIO picks ±2-point tilts or Black–Litterman
+POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item's evidence: statistics or the qualitative frame
+                    (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
+                    · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
+                    · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
 POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
-POST /api/review/specialist ──► specialist_flow (certified specialist, G8)
 POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
 every 2 h ──► news_reference: the independent reference's stories, judged collected a day later (KPI-02)
 15:45/16:00/17:30 daily and hourly, `operonx run market_<kind>` ──► the market jobs: public sources into SQLite
      (market_backfill on demand) · GET /api/market[/series] ──► app/web.py (the source registry, the series)
-POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (Compliance)
+POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (a CIO)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
 POST /api/events ──► event_flow · POST /api/events/urgent ──► event_urgent_flow (KPI-01) · POST /api/events/run-agent
      ──► agent_queue_flow, then the agent_worker job ──► cio_agent_flow (agent + challenger)
 POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, newsletter_act_flow (FR-801: the CIO drafts from
-     approved views, Compliance approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
-POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: Compliance adds a document from the Official
-     Gazette, a second person verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
+     approved views, another CIO approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
+POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: a CIO adds a document from the Official
+     Gazette, a second CIO verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
 Every 20 s ──► heartbeat: the minute recorded, availability in business hours (NFR-03)
 Hourly ──► audit_check: the audit chain walked, new rows to write-once segments · POST /api/system/alerts/ack ──►
      alert_ack_flow; GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
@@ -46,10 +60,10 @@ POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/vie
 approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
      run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
      /api/rm/today, /api/audit[/verify] ──► app/web.py
-POST /api/research, /api/research/release, /api/goals/outflow ──► the research and goal-branch flows ·
+POST /api/research, /api/research/release, /api/goals/outflow, /api/goals/suggest ──► the research and goal-branch flows ·
      GET /api/research, /api/goals/regulation ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
-     clients, the specialist team, the advisory track record, the house views, the UI)
+     clients, the RM team, the advisory track record, the house views, the UI)
 
 Each service runs its graph as is: the JSON body fills the graph's parameters, and the reply is
 its outputs (`{"dashboard": ...}`, `{"read": ...}`, ...). Every service and job of the product is
@@ -58,18 +72,30 @@ declared here; operonx.toml only points at `APP`.
 
 import os
 
-from operonx.app import Application, Eval, Service, asgi, env, http
+from operonx.app import Application, Eval, Service, asgi, env, http, websocket
 from operonx.app import schedule as _schedule
 from operonx.app.evals import Gate
 from operonx.app.jobs import Job
 
 from app import web
 from app.http import SecurityHeaders
+from allocation.graph import (
+    allocation_example_flow,
+    allocation_flow,
+    allocation_method_flow,
+    allocation_override_flow,
+    allocation_queue_flow,
+    allocation_review_flow,
+    allocation_send_flow,
+    allocation_tilt_flow,
+    allocation_tilts_flow,
+)
 from apply.graph import recompute_flow, run_decide_flow
 from assistant.graph import (
     assistant_consolidate_flow,
     assistant_conversations_flow,
     assistant_flow,
+    assistant_attach_flow,
     assistant_memory_flow,
     assistant_retention_flow,
     assistant_stream_flow,
@@ -87,8 +113,15 @@ from control.graph import (
 )
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
-from declare.graph import declare_flow
+from declare.graph import declare_flow, declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
+from evidence.graph import (
+    evidence_decide_flow,
+    evidence_draft_decide_flow,
+    evidence_draft_flow,
+    evidence_flow,
+    evidence_type_flow,
+)
 from feed.graph import feed_flow, feed_open_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
@@ -113,8 +146,8 @@ from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
 from people.graph import account_decide_flow, account_request_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
-from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
-from review.graph import propose_flow, recommend_flow, review_flow, specialist_flow
+from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
+from review.graph import propose_flow, recommend_flow, review_flow
 from risk.graph import risk_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
 from search.graph import search_flow
@@ -123,6 +156,7 @@ from statements.graph import sample_flow, statement_flow
 from timeline.graph import timeline_flow
 from trial.graph import trial_daily_flow, trial_score_flow
 from views.graph import agent_eval_flow, agent_queue_flow, agent_worker_flow, decide_flow
+from voice.graph import assistant_voice_flow
 from zone.graph import zone_sync_flow
 
 barrier.install()  # every llm: call of this process passes the client-data barrier (BRD-NFR-08)
@@ -238,6 +272,13 @@ APP = Application(
             "client_id}: the Bộ nhớ page (A4).",
         ),
         Service(
+            "assistant_attach",
+            http("POST", "/api/assistant/attach", port=PORT),
+            graph=assistant_attach_flow,
+            description="POST {file_name, data: base64, role, client_id}: a file or image for the assistant, read "
+            "once and kept 24 hours (docs/OCR_PLAN.md).",
+        ),
+        Service(
             "statement",
             http("POST", "/api/statement", port=PORT),
             graph=statement_flow,
@@ -248,6 +289,13 @@ APP = Application(
             http("POST", "/api/declare", port=PORT),
             graph=declare_flow,
             description="POST {client_id, message, session_id}: one chat turn of declarations.",
+        ),
+        Service(
+            "declare_stream",
+            http("POST", "/api/declare/stream", port=PORT),
+            graph=declare_stream_flow,
+            description="POST the same body as /api/declare, Accept: text/event-stream: the turn as it happens — "
+            "step, text, form (what the agent asks back), then the answer.",
         ),
         Service(
             "risk",
@@ -280,6 +328,90 @@ APP = Application(
             description="POST {client_id, scope?}: every life goal, with its gap, status and actions.",
         ),
         Service(
+            "allocation",
+            http("POST", "/api/allocation", port=PORT),
+            graph=allocation_flow,
+            description="POST {client_id, scope?, method?, assumptions?, role?, whatif?}: three buckets, targets, actions; a what-if.",
+        ),
+        Service(
+            "allocation_example",
+            http("POST", "/api/allocation/example", port=PORT),
+            graph=allocation_example_flow,
+            description="POST {method?, assumptions?, role?}: the BRD's worked example K-7F3A.",
+        ),
+        Service(
+            "allocation_tilt",
+            http("POST", "/api/allocation/tilt", port=PORT),
+            graph=allocation_tilt_flow,
+            description="POST {asset_class, stance, view_id, by, reason?}: a CIO tilts the model portfolio.",
+        ),
+        Service(
+            "allocation_tilts",
+            http("POST", "/api/allocation/tilts", port=PORT),
+            graph=allocation_tilts_flow,
+            description="POST {}: the CIO's tilts in force and the model each level gets.",
+        ),
+        Service(
+            "allocation_send",
+            http("POST", "/api/allocation/send", port=PORT),
+            graph=allocation_send_flow,
+            description="POST {client_id, by, scope?, method?, assumptions?}: the actions to the review queue.",
+        ),
+        Service(
+            "allocation_review",
+            http("POST", "/api/allocation/review", port=PORT),
+            graph=allocation_review_flow,
+            description="POST {item_id, decisions {n: approve|reject}, by, note?}: the CIO decides each action.",
+        ),
+        Service(
+            "allocation_queue",
+            http("POST", "/api/allocation/queue", port=PORT),
+            graph=allocation_queue_flow,
+            description="POST {}: the allocations waiting for the CIO and the last ones decided.",
+        ),
+        Service(
+            "allocation_override",
+            http("POST", "/api/allocation/override", port=PORT),
+            graph=allocation_override_flow,
+            description="POST {client_id, key, bucket, reason, by, scope?}: an RM's bucket override, logged.",
+        ),
+        Service(
+            "allocation_method",
+            http("POST", "/api/allocation/method", port=PORT),
+            graph=allocation_method_flow,
+            description="POST {method: tilt|bl, by}: how the CIO's tilts move every client's model.",
+        ),
+        Service(
+            "evidence",
+            http("POST", "/api/evidence", port=PORT),
+            graph=evidence_flow,
+            description="POST {factor?, role?}: each news item's evidence (statistics or qualitative frame).",
+        ),
+        Service(
+            "evidence_decide",
+            http("POST", "/api/evidence/decide", port=PORT),
+            graph=evidence_decide_flow,
+            description="POST {factor, decision, by, note?}: the CIO approves, returns or rejects a frame.",
+        ),
+        Service(
+            "evidence_draft",
+            http("POST", "/api/evidence/draft", port=PORT),
+            graph=evidence_draft_flow,
+            description="POST {news_id, by, mode?}: the evidence agent drafts one news item's frame for the CIO.",
+        ),
+        Service(
+            "evidence_draft_decide",
+            http("POST", "/api/evidence/draft/decide", port=PORT),
+            graph=evidence_draft_decide_flow,
+            description="POST {news_id, decision, by, note?}: the CIO approves, returns or rejects the agent's draft.",
+        ),
+        Service(
+            "evidence_type",
+            http("POST", "/api/evidence/type", port=PORT),
+            graph=evidence_type_flow,
+            description="POST {event_type? | label?, dates, series?, by}: the CIO adds an event type or its precedent dates.",
+        ),
+        Service(
             "propose",
             http("POST", "/api/review/propose", port=PORT),
             graph=propose_flow,
@@ -289,22 +421,14 @@ APP = Application(
             "decide",
             http("POST", "/api/review/decide", port=PORT),
             graph=review_flow,
-            description="POST {item_id, decision: approved|rejected, note?}: the RM's decision; an approval of a "
-            "family with a certified specialist waits for them (WF-08).",
-        ),
-        Service(
-            "specialist_decide",
-            http("POST", "/api/review/specialist", port=PORT),
-            graph=specialist_flow,
-            description="POST {item_id, decision, note?, by}: the family's certified specialist approves or rejects "
-            "an action recommendation (ROLE-05, WF-08).",
+            description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
         Service(
             "recommend",
             http("POST", "/api/review/recommend", port=PORT),
             graph=recommend_flow,
             description="POST {client_id, title, actions, note?, by}: the RM writes an action recommendation for a "
-            "family; it waits for the family's certified specialist, if any.",
+            "family; it reaches the client at once (the RM's alone, OWN-FB-18).",
         ),
         Service(
             "news_fetch",
@@ -322,7 +446,7 @@ APP = Application(
             "news_release",
             http("POST", "/api/news/release", port=PORT),
             graph=release_flow,
-            description="POST {item_id, by, note}: Compliance releases an item held by the restricted list.",
+            description="POST {item_id, by, note}: a CIO releases an item held by the restricted list.",
         ),
         Service(
             "event",
@@ -371,13 +495,22 @@ APP = Application(
             "research_release",
             http("POST", "/api/research/release", port=PORT),
             graph=research_release_flow,
-            description="POST {item_id, decision: release|reject, by, note}: Compliance, after the release time.",
+            description=(
+                "POST {item_id, decision: release|reject, by, note}: a CIO other than the one who filed it, after the "
+                "release time."
+            ),
         ),
         Service(
             "goal_outflow",
             http("POST", "/api/goals/outflow", port=PORT),
             graph=goal_outflow_flow,
             description="POST {family_id, goal_id, purpose, country?, by}: the RM declares a goal's outflow.",
+        ),
+        Service(
+            "goal_suggest",
+            http("POST", "/api/goals/suggest", port=PORT),
+            graph=goal_suggest_flow,
+            description="POST {family_id, by, mode?}: AI suggests a purpose and country for the undeclared goals (P2).",
         ),
         Service(
             "model_estimate",
@@ -414,7 +547,7 @@ APP = Application(
             "policy_verify",
             http("POST", "/api/policy/verify", port=PORT),
             graph=policy_verify_flow,
-            description="POST {document_id, by, note}: a second Compliance person confirms the source (FR-306).",
+            description="POST {document_id, by, note}: a second CIO confirms the source (FR-306).",
         ),
         Service(
             "policy_status",
@@ -454,6 +587,14 @@ APP = Application(
             graph=job_run_flow,
             description="POST {job, by}: Admin runs a background job now (control/jobs.py RUNNABLE); one at a time.",
         ),
+        Service(
+            "assistant_voice",
+            websocket("/api/assistant/voice", port=PORT),
+            graph=assistant_voice_flow,
+            max_inflight=4000,
+            description="WS ?rate=&silence_ms=: microphone PCM (int16) in; heard, asked, and the answer's sentences "
+            "as WAVs out, from the panel's say frames (the callbot's VAD, STT, TTS).",
+        ),
         Service("web", asgi("/", port=PORT), app=web.app, description="The UI and the sample clients."),
     ],
     jobs=[
@@ -467,7 +608,7 @@ APP = Application(
             schedule=schedule(at="07:00", port=PORT),
             description="07:00 daily: the policy sweep over every client.",
         ),
-        # the assistant's retention (A4): conversations past Compliance's assistant_retention, expired memory items
+        # the assistant's retention (A4): conversations past the CIO's assistant_retention, expired memory items
         Job(
             "assistant_retention",
             graph=assistant_retention_flow,
@@ -586,7 +727,7 @@ APP = Application(
             schedule=schedule(every="1h", port=PORT),
             timeout=600,
             description="Hourly: the audit chain walked and new rows copied to write-once segments; an alert for "
-            "Compliance and Admin when either is broken.",
+            "the CIO and Admin when either is broken.",
         ),
         Job(
             "heartbeat",

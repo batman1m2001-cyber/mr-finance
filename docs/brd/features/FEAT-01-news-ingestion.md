@@ -58,7 +58,7 @@ Outbound HTTPS to the feeds ([integrations](../architecture/integrations.md)). F
 ## Acceptance and tests
 - `tests/test_news.py::test_the_gates`, `::test_classification_by_source_then_words`,
   `::test_the_same_article_is_kept_once`, `::test_one_run_counts_each_source_keeps_refusals_aside_and_survives_a_broken_feed`,
-  `::test_an_item_naming_the_restricted_list_is_held_until_compliance_releases_it`,
+  `::test_an_item_naming_the_restricted_list_is_held_until_the_cio_releases_it`,
   `::test_rss_with_a_bom_cdata_and_html_reads_as_plain_text`, `::test_dates_with_two_digit_years_and_atom_feeds_read`,
   `::test_a_page_that_is_not_a_feed_is_an_error`.
 - `tests/test_schedules.py::test_the_news_is_fetched_every_10_minutes_and_the_other_brd_cadences` (the Jobs as

@@ -5,13 +5,9 @@
 import {esc, get, post} from "../core/core.js";
 import {icon} from "../core/icons.js";
 
+// only the clients' accounts are listed (business feedback 2026-10-29); RM, CIO and Admin sign in with the form
 const GROUPS = [
   ["client", "Khách hàng", "user"],
-  ["rm", "Chuyên viên quan hệ khách hàng (RM)", "users"],
-  ["cio", "Giám đốc đầu tư (CIO)", "activity"],
-  ["compliance", "Tuân thủ", "shield"],
-  ["admin", "Quản trị", "settings"],
-  ["specialist", "Chuyên gia (duyệt khuyến nghị)", "check"],
 ];
 
 export async function render(box, ctx) {
@@ -22,9 +18,9 @@ export async function render(box, ctx) {
       <form class="card signin-card" id="signin-form" autocomplete="on">
         <div class="h2">Đăng nhập</div>
         <div class="small muted">Mỗi người dùng tài khoản của mình: khách hàng thấy gia đình mình, RM thấy các gia đình được giao,
-          CIO, Tuân thủ và Quản trị thấy phần việc của mình.</div>
+          CIO và Quản trị thấy phần việc của mình.</div>
         <label class="fld"><span>Email hoặc mã khách hàng</span>
-          <input name="login" autocomplete="username" required maxlength="120" placeholder="vd. yen.hoang@tcbwealth.example hoặc C01"></label>
+          <input name="login" autocomplete="username" required maxlength="120" placeholder="vd. C01"></label>
         <label class="fld"><span>Mật khẩu</span>
           <input name="password" type="password" autocomplete="current-password" required maxlength="200"></label>
         <div class="row"><button type="submit" class="btn primary">Đăng nhập</button><span class="small bad-text" id="signin-err" role="alert"></span></div>

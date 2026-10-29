@@ -1,4 +1,4 @@
-"""The policy radar's served steps (FR-306): Compliance adds, verifies, updates and summarises a document."""
+"""The policy radar's served steps (FR-306): a CIO adds, a second CIO verifies, updates and summarises a document."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ async def add(item: dict, by: str) -> dict:
 
 @op
 def verify(document_id: str, by: str, note: str = "") -> dict:
-    """POST /api/policy/verify: a second Compliance person confirms the source."""
+    """POST /api/policy/verify: a second CIO confirms the source."""
     return {"document": store.verify(document_id, by, note)}
 
 

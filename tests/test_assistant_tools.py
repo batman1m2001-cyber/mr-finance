@@ -21,7 +21,7 @@ from assistant.tools import PAGES
 from control import roles
 from wealth import store as wealth_store
 
-ROLES = tuple(roles.ROLE_LABELS)
+ROLES = roles.ROLES
 WRITES = sorted(n for n, t in registry.REGISTRY.items() if t.write)
 READS = sorted(n for n, t in registry.REGISTRY.items() if not t.write)
 
@@ -63,23 +63,6 @@ def _review_pending(mp):
 def _feeds(mp):
     mp.setattr("news.ops._get", lambda url, timeout: rss(url, "VN-Index giảm mạnh, khối ngoại bán ròng"))
     return {}
-
-
-def _waiting_for_specialist(mp):
-    from review.graph import recommend_flow
-
-    out = run(
-        base.run_graph(
-            recommend_flow,
-            client_id="C01",
-            title="Tăng dự phòng",
-            actions=["Gửi thêm tiền 12 tháng"],
-            note="",
-            by="rm01",
-        )
-    )
-    assert out["item"]["status"] == "pending_specialist"  # C01 has a certified specialist (G8)
-    return {"item_id": out["item"]["id"], "decision": "approved"}
 
 
 def _an_event(mp):
@@ -145,23 +128,42 @@ def _a_job(mp):
     return {"job": "audit_check"}
 
 
+RECEIPT = {  # a savings receipt and a gold slip, as the reader keeps them (OCR_PLAN O-D2)
+    "kind": "bien_lai", "title": "Biên lai gửi tiết kiệm", "institution": "Vietcombank",
+    "summary": "Gửi 500 triệu kỳ hạn 6 tháng.", "fields": {"Số tiền": "500.000.000 VND"}, "method": "ai",
+    "text": "BIÊN LAI GỬI TIỀN TIẾT KIỆM",
+    "items": [{"type": "deposit", "name": "Tiền gửi 6 tháng", "balance": 500_000_000, "rate": 0.052,
+               "maturity": "2027-04-15"}, {"type": "gold", "qty": 2.0}],
+}  # fmt: skip
+
+
+def _a_file(role, reading=RECEIPT, name="bien-lai.jpg"):
+    def setup(mp):
+        from assistant import attachments
+
+        return {"tep": attachments.put(ctx(role), name, b"\xff\xd8 a photo", reading)}
+
+    return setup
+
+
 SETUP = {  # write → (who asks, what must exist first → the model's arguments)
     "duyet_de_xuat": ("rm", _review_pending),
     "lay_tin": ("cio", _feeds),
     "gui_de_xuat": ("client", lambda mp: {"scenario": "co_phieu", "option": "light"}),
     "ghi_lien_he": ("rm", lambda mp: {"channel": "call", "note": "Hỏi thăm sau tin lãi suất"}),
     "khuyen_nghi": ("rm", lambda mp: {"title": "Tăng dự phòng", "actions": ["Gửi thêm 200 triệu kỳ hạn 12 tháng"]}),
-    "chuyen_gia_duyet": ("specialist", _waiting_for_specialist),
     "danh_dau_khan": ("cio", _an_event),
     "chay_agent_cio": ("cio", lambda mp: {"event_id": _an_event(mp)["event_id"], "mode": ""}),
     "phan_bien_lai": ("cio", _a_failed_challenge),
     "chay_viec_nen": ("admin", _a_job),
-    "yeu_cau_tai_khoan": ("admin", lambda mp: {"kind": "disable", "person": "sp_global"}),
+    "yeu_cau_tai_khoan": ("admin", lambda mp: {"kind": "disable", "person": "cio2"}),
     "da_xem_canh_bao": ("cio", _an_alert),
     "ghi_nho": ("client", lambda mp: {"kind": "preference", "text": "Thích báo cáo ngắn"}),
     "quen": ("client", _an_item),
     "theo_doi": ("client", lambda mp: {"series": "VNINDEX", "op": "below", "level": 1200}),
     "huy_theo_doi": ("client", _a_follow_up),
+    "them_tu_tep": ("client", _a_file("client")),
+    "luu_tai_lieu": ("rm", _a_file("rm")),
 }
 DELETES = ("quen",)  # writes whose effect is an absence
 BUSINESS = (
@@ -175,6 +177,8 @@ BUSINESS = (
     "challenges",
     "job_runs",
     "account_requests",
+    "holdings",
+    "profile",
 )
 
 
@@ -183,6 +187,7 @@ def fingerprint(path):
     the follow-ups)."""
     h = hashlib.sha256(_rows(path, BUSINESS).encode())
     h.update(_rows(path.with_name("assistant.db"), ("operonx_agents_memory", "follow_ups")).encode())
+    h.update(repr(sorted(str(p) for p in (path.with_name("kb") / "blobs").rglob("*"))).encode())  # Tài liệu
     return h.hexdigest()
 
 
@@ -224,8 +229,9 @@ def test_the_catalogue_is_whole():
 def test_the_copilot_keeps_its_thirteen_and_each_desks_reads():
     from copilot.tools import TOOLS
 
-    # the thirteen, plus the staff desks' reads so the fallback answers each role (staff stress D13)
-    assert len(TOOLS) == 26 and all(TOOLS[n] is registry.REGISTRY[n] for n in TOOLS)
+    # the thirteen, plus the staff desks' reads so the fallback answers each role (staff stress D13); Compliance's
+    # and the specialists' desks left with their roles (OWN-FB-18)
+    assert len(TOOLS) == 24 and all(TOOLS[n] is registry.REGISTRY[n] for n in TOOLS)
     assert not any(TOOLS[n].write for n in TOOLS if n not in ("lay_tin", "duyet_de_xuat"))
 
 
@@ -352,7 +358,7 @@ def test_an_agent_write_waits_for_the_person(answer, tmp_path, state):
     assert done.status == "completed"
     tool_msg = next(m for m in llm.requests[-1]["messages"] if m.get("role") == "tool")
     if answer == "approve":
-        assert wealth_store.review(item)["status"] == "pending_specialist"
+        assert wealth_store.review(item)["status"] == "approved"  # the RM's approval is final (OWN-FB-18)
         assert tool_msg["content"].rstrip().endswith("checked after it ran.")  # verified, and the model is told
     else:
         assert wealth_store.review(item)["status"] == "pending"

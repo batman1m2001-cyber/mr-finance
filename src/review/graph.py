@@ -1,12 +1,11 @@
-"""propose_flow puts a simulation's option in the RM queue; review_flow records the RM's decision; specialist_flow
-the certified specialist's (G8); recommend_flow puts the RM's own recommendation in the queue.
+"""propose_flow puts a simulation's option in the RM queue; review_flow records the RM's decision; recommend_flow
+puts the RM's own recommendation in the queue.
 
-All are served as is (POST /api/review/propose, /decide, /specialist, /recommend): the body fills their
-parameters."""
+All are served as is (POST /api/review/propose, /decide, /recommend): the body fills their parameters."""
 
 from operonx import END, START, graph
 
-from review.ops import check_pending, decide, propose, read_decision, read_proposal, recommend, specialist_decide
+from review.ops import check_pending, decide, propose, read_decision, read_proposal, recommend
 
 
 @graph
@@ -24,13 +23,6 @@ def review_flow(item_id, decision, note=None, by=None):
     pending = check_pending(item_id=ask["item_id"])
     done = decide(item_id=pending["item_id"], decision=ask["decision"], note=ask["note"], by=ask["by"])
     START >> ask >> pending >> done >> END
-
-
-@graph
-def specialist_flow(item_id, decision, note=None, by=None):
-    """A certified specialist approves or rejects an action recommendation the RM approved (ROLE-05, WF-08)."""
-    done = specialist_decide(item_id=item_id, decision=decision, note=note, by=by)
-    START >> done >> END
 
 
 @graph

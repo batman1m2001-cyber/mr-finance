@@ -62,7 +62,9 @@ def test_the_panel_names_the_lens_on_screen_after_a_reload_and_a_lens_change(ope
     before the workspace named its lens, and never again."""
     p = open_page(theme="dark")
     p.go("#/client/xem/muc-tieu")
-    p.page.wait_for_function("document.querySelector('#ws-title').textContent.startsWith('Mục tiêu')")
-    p.page.wait_for_function("document.querySelector('#cp-ctx').textContent.startsWith('Đang xem: Mục tiêu')")
+    name = "Wealth Planning"  # the lens's section (ADR-0037)
+    p.page.wait_for_function("(n) => document.querySelector('#ws-title').textContent === n", arg=name)
+    ctx = "(n) => document.querySelector('#cp-ctx').textContent.startsWith(`Đang xem: ${n}`)"
+    p.page.wait_for_function(ctx, arg=name)
     p.go("#/client/xem/rui-ro")  # the bar opens Rủi ro's page now (B3.1); the lens is its address
     p.page.wait_for_function("document.querySelector('#cp-ctx').textContent.startsWith('Đang xem: Rủi ro')")

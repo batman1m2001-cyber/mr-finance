@@ -1,7 +1,7 @@
 """Events, kept: ``EV-2026-0007``, the news they group, who grouped them, and whether they are held.
 
 An event is held (``blocked``) while any of its news names someone on the restricted list and
-Compliance has not released it (BR-04); this is read from the news, so a release unblocks at once.
+the CIO has not released it (BR-04); this is read from the news, so a release unblocks at once.
 """
 
 from __future__ import annotations

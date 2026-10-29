@@ -1,11 +1,11 @@
 /* The workspace's “Bảng số liệu” (UX_TOOLBAR_PLAN T3+T4): the client's dashboard where the graph is — Chi tiết's
-   blocks led by what the business reads first (cash flow over time, allocation with profit against cost, the
-   portfolio's profit and loss), then the month's money in and out (Toàn cảnh's), net worth with its tiers, risk,
-   the reserve and the policy items. It replaces the client's Toàn cảnh and Chi tiết sheets; the drawing is
-   pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
+   blocks led by the overview (net worth with its tiers, allocation with profit against cost, the portfolio's profit
+   and loss), then cash flow over time and the month's money in and out (Toàn cảnh's), risk, the reserve and the
+   policy items (business feedback 2026-10-22: the overview first, cash flow second). It replaces the client's Toàn
+   cảnh and Chi tiết sheets; the drawing is pages/detail.js (ctx.board), which the staff's pages keep using as they are. */
 import {esc} from "../core/core.js";
-import {render} from "../pages/detail.js?v=20261021b3";
-import {href} from "./lenses.js?v=20261021b3";
+import {render} from "../pages/detail.js?v=20261025t3";
+import {href} from "./lenses.js?v=20261025t3";
 
 export function mount(el, {client, scope}) {
   let key = null, board = {}, loading = null;

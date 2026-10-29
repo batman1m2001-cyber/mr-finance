@@ -90,7 +90,7 @@ def test_an_event_groups_news_and_a_restricted_mention_holds_it():
     ok(
         Operon(release_flow, params={"item_id": None, "by": None, "note": None}),
         item_id=held["held"][0],
-        by="compliance",
+        by="cio",
         note="Tin công khai, không liên quan giao dịch",
     )
     assert agent(held["id"])["view"]["status"] == "PENDING_APPROVAL"
@@ -100,7 +100,7 @@ def test_only_the_cio_runs_the_agent_and_decides():
     ev = event(*GOLD)
     assert "không được làm việc này" in str(run(AGENT, event_id=ev["id"], by="rm01")["$errors"])
     view = agent(ev["id"])["view"]
-    assert "không được làm việc này" in str(decide(view["id"], "approve", by="compliance")["$errors"])
+    assert "không được làm việc này" in str(decide(view["id"], "approve", by="admin")["$errors"])
 
 
 # -- the mock agent ----------------------------------------------------------------------------
@@ -266,6 +266,18 @@ def test_approval_is_idempotent_and_once_only():
     assert "cần lý do" in str(decide(v["id"], "withdraw", reason="")["$errors"])
 
 
+def test_a_refused_decision_answers_with_its_reason_not_a_bare_500():
+    # the CIO's page showed "the graph produced no output" when the reason was missing: the refusal carries its status
+    from control.errors import BadRequest, Conflict
+    from views.decide import DecisionError
+
+    assert issubclass(DecisionError, BadRequest) and DecisionError.http_status == 400
+    v = agent(event(*GOLD)["id"])["view"]
+    assert "cần lý do" in str(decide(v["id"], "approve", reason="ok")["$errors"])
+    decide(v["id"], "approve")
+    assert "trạng thái APPROVED" in str(decide(v["id"], "reject", idem_key="late")["$errors"]) and Conflict.http_status == 409
+
+
 def test_return_withdraw_and_supersede():
     ev = event(*GOLD)
     v1 = agent(ev["id"])["view"]
@@ -393,7 +405,7 @@ def test_the_reads():
     assert body["view"]["status"] == "PENDING_APPROVAL" and body["checks"] and body["preview"]
     assert client.get("/api/views/VW-9999-v1").status_code == 404
     status = client.get("/api/agents").json()
-    assert status["mode"] == "mock" and {u["role"] for u in status["users"]} >= {"cio", "rm", "compliance"}
+    assert status["mode"] == "mock" and {u["role"] for u in status["users"]} == {"cio", "rm", "admin"}
     client.post("/api/reset")
     assert client.get("/api/events").json()["events"] == []
 

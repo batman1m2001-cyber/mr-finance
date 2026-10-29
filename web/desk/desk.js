@@ -9,19 +9,33 @@ import {$, esc, get} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {dockFrame} from "../workspace/dock.js?v=20261018m0";
-import {DESKS} from "./roles.js?v=20261021t5";
+import {DESKS} from "./roles.js?v=20261028p2";
 
 export function mount(main, {role, nav, go, client = () => null, setClient = () => {}, user = () => null}) {
   const cfg = DESKS[role];
   const label = (id) => { const n = nav.find(x => x.id === id); return n ? n.label : id; };
-  const pagesOf = (g) => g.nav.flatMap(id => {  // a group's pages, in menu order: a menu item with a sub-menu is its pages
+  /* a group's pages, in menu order: a menu item with a sub-menu is its pages. A page's `tab` puts it under a top tab
+     (its label in the item's `tabs`) with the others of that tab as inner tabs; a `hidden` page opens but has no tab */
+  const pagesOf = (g) => g.nav.flatMap(id => {
     const n = nav.find(x => x.id === id);
     if (!n) return [];
-    return n.sub ? n.sub.map(s => ({key: `${id}/${s.id}`, label: s.label, href: `#/${role}/${id}/${s.id}`})) : [{key: id, label: n.label, href: `#/${role}/${id}`}];
+    if (!n.sub) return [{key: id, label: n.label, href: `#/${role}/${id}`, tab: id, hidden: !!n.hidden && !g.foot}];
+    return n.sub.map(s => ({key: `${id}/${s.id}`, label: s.label, href: `#/${role}/${id}/${s.id}`, tab: s.tab ? `${id}:${s.tab}` : `${id}/${s.id}`,
+      tabLabel: s.tab && n.tabs ? n.tabs[s.tab] : s.label, hidden: !!(s.hidden || n.hidden)}));  // a hidden item hides its pages
   });
-  const groups = cfg.groups.map(g => ({...g, pages: pagesOf(g)}));
+  const tabsOf = (pages) => {  // the top tabs: one per `tab`, opening its first page
+    const out = [];
+    for (const p of pages) {
+      if (p.hidden) continue;
+      const t = out.find(x => x.id === p.tab);
+      if (t) t.pages.push(p);
+      else out.push({id: p.tab, label: p.tabLabel || p.label, href: p.href, pages: [p]});
+    }
+    return out;
+  };
+  const groups = cfg.groups.map(g => { const pages = pagesOf(g); return {...g, pages, tabs: tabsOf(pages)}; });
   const tool = (g, cls = "") => {
-    const first = g.desk ? `#/${role}` : (g.pages[0] || {}).href;
+    const first = g.desk ? `#/${role}` : (g.tabs[0] || g.pages[0] || {}).href;
     return `<a class="ws-tool${cls}" href="${first}" data-tool="${esc(g.id)}" aria-label="${esc(g.label)}" data-tip="${esc(g.tip || g.label)}">
       ${icon(g.icon, {size: 20})}<span class="ws-tool-l">${esc(g.short || g.label)}</span></a>`;
   };
@@ -34,9 +48,11 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
     <section class="ws-center dk-center" aria-labelledby="dk-title">
       <div class="dk-body" id="dk-body"><p class="small muted">Đang tải…</p></div>
       <section class="ws-sheet" id="ws-sheet" hidden aria-labelledby="ws-sheet-t">
-        <header class="ws-sheet-h"><button type="button" class="linkbtn" id="ws-sheet-back">${icon("chevron", {size: 16})} ${esc(cfg.title)}</button>
+        <header class="ws-sheet-h"><button type="button" class="linkbtn" id="ws-sheet-back" aria-label="Về ${esc(cfg.title)}">${icon("chevron", {size: 16})}<span class="dk-back-l"> ${esc(cfg.title)}</span></button>
           <b id="ws-sheet-t"></b><nav class="dk-tabs" id="dk-tabs" aria-label="Các trang trong nhóm"></nav>
           <button type="button" class="iconbtn" id="ws-sheet-x" aria-label="Đóng">✕</button></header>
+        <div class="dk-line" id="dk-line" hidden><nav class="dk-tabs2" id="dk-tabs2" aria-label="Các trang trong mục"></nav>
+          <div class="dk-who" id="dk-who"><span class="small muted dk-who-l">Khách hàng</span></div></div>
         <div class="ws-sheet-b" id="ws-sheet-b"></div>
       </section>
     </section>
@@ -52,6 +68,10 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
     </aside>`;
   main.prepend(root);
   $("#ws-sheet-b", root).appendChild($("#page"));  // the shell's #page is the sheet's body: the pages draw as before
+  // the client picker and Cá nhân / Gia đình sit in the sheet, beside its inner tabs, so the page says whose it is
+  // (OWN-FB-22, -24); the shell still shows or hides them, and they go back to the header with the desk
+  const picker = ["#client-pick", "#scope-wrap"].map(sel => { const el = $(sel); return {el, parent: el.parentNode, next: el.nextSibling}; });
+  for (const {el} of picker) $("#dk-who", root).appendChild(el);
 
   // ── the dock ──────────────────────────────────────────────────────────────────────────────────────
   const tab = (which) => {
@@ -85,7 +105,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
   async function load(again) {
     if (loading && !again) return loading;
     loading = (async () => {
-      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261021t5`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
+      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261028p2`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
       data = got;
       view = mod;
       mod.render($("#dk-body", root), data, api);
@@ -155,10 +175,21 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
       if (!sheet) return;
       const key = target.sub ? `${navId}/${target.sub.id}` : navId;
       const here = group ? group.pages.find(p => p.key === key) : null;
-      $("#ws-sheet-t", root).textContent = here ? here.label : label(navId);
-      const tabs = group && group.pages.length > 1 ? group.pages : [];
+      const tabs = group && group.tabs.length > 1 ? group.tabs : [];
+      const top = here && group ? group.tabs.find(t => t.id === here.tab) : null;
+      const inner = top && top.pages.length > 1 ? top.pages : [];
+      // with tabs, the current tab names the page: no title, the back link only its chevron (OWN-FB-14); a page with
+      // no tab keeps its title over the group's tabs
+      const tabbed = !!top && !!(tabs.length || inner.length);
+      $("#ws-sheet-t", root).textContent = tabbed ? "" : here ? here.label : label(navId);
+      $("#ws-sheet-t", root).hidden = tabbed;
+      root.classList.toggle("dk-tabbed", tabbed);
       const strip = $("#dk-tabs", root);
-      strip.innerHTML = tabs.map(p => `<a href="${p.href}"${p.key === key ? ' aria-current="page"' : ""}>${esc(p.label)}</a>`).join("");
+      strip.innerHTML = tabs.map(t => `<a href="${t.href}"${t === top ? ' aria-current="page"' : ""}>${esc(t.label)}</a>`).join("");
+      const strip2 = $("#dk-tabs2", root);
+      $("#dk-line", root).hidden = !inner.length && $("#client-pick").hidden;  // the shell set the picker for this page
+      strip2.hidden = !inner.length;
+      strip2.innerHTML = inner.map(p => `<a href="${p.href}"${p.key === key ? ' aria-current="page"' : ""}>${esc(p.label)}</a>`).join("");
       const cur = strip.querySelector("[aria-current]");  // the page you are on is in view, not scrolled off
       if (cur) strip.scrollLeft = cur.offsetLeft - strip.offsetLeft - (strip.clientWidth - cur.offsetWidth) / 2;
       edges();
@@ -169,6 +200,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
       document.removeEventListener("keydown", onKey);
       window.removeEventListener("resize", onResize);
       main.appendChild($("#page"));
+      for (const {el, parent, next} of picker) parent.insertBefore(el, next);
       root.remove();
     },
   };

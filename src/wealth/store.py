@@ -114,6 +114,18 @@ def profile(client_id: str, kind: Optional[str] = None) -> List[Dict[str, Any]]:
         return [json.loads(_open("profile", r[0], "data", r[1])) for r in con.execute(q + " order by created", args)]
 
 
+def _said(d: Dict[str, Any]) -> Dict[str, Any]:
+    # what was declared, not how or when: no id, no path (chat, form), no free-text place; an empty field is no detail
+    return {k: v for k, v in d.items() if k not in ("id", "via", "location") and v not in (None, 0, "")}
+
+
+def same_profile(client_id: str, kind: str, data: Dict[str, Any]) -> Optional[str]:
+    """The id of the client's item of this kind with the same details as ``data``, or None: said again in a later turn,
+    the same land is the same land (on 2026-10-10 the demo sentence sent twice counted Đất Long Thành twice, 9 tỷ)."""
+    want = _said(data)
+    return next((d["id"] for d in profile(client_id, kind) if _said(d) == want), None)
+
+
 def created(item_id: str) -> float:
     """When a profile item was added (0 when unknown)."""
     with _db() as con:
@@ -146,17 +158,19 @@ def result(client_id: str, kind: str) -> Optional[Any]:
 # ── the RM queue ─────────────────────────────────────────────────────────
 
 
-def propose(client_id: str, kind: str, title: str, data: Dict[str, Any]) -> str:
+def propose(client_id: str, kind: str, title: str, data: Dict[str, Any], status: str = "pending") -> str:
+    """Into the queue: ``pending`` waits for the RM; ``pending_cio`` (an allocation's actions, Q-29) for the CIO."""
     item_id = f"R-{uuid.uuid4().hex[:8]}"
     with _db() as con:
         con.execute(
-            "insert into reviews values (?, ?, ?, ?, ?, 'pending', null, ?, null)",
+            "insert into reviews values (?, ?, ?, ?, ?, ?, null, ?, null)",
             (
                 item_id,
                 client_id,
                 kind,
                 _seal("reviews", item_id, "title", title),
                 _seal("reviews", item_id, "data", json.dumps(data, ensure_ascii=False)),
+                status,
                 time.time(),
             ),
         )
@@ -165,9 +179,8 @@ def propose(client_id: str, kind: str, title: str, data: Dict[str, Any]) -> str:
 
 def decide(item_id: str, status: str, note: str = "", by: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """The RM's decision, once. With ``by`` (the RM deciding), the item keeps who decided and the decision goes into
-    the audit chain (``review.decide``, BRD-KPI-05); without it, as the queue did before (a test of the old records).
-    The review module decides whether an approval goes on to a specialist (``pending_specialist``)."""
-    if status not in ("approved", "rejected", "pending_specialist"):
+    the audit chain (``review.decide``, BRD-KPI-05); without it, as the queue did before (a test of the old records)."""
+    if status not in ("approved", "rejected"):
         raise ValueError(f"a decision is approved or rejected, not {status!r}")
     if by is None:
         with _db() as con:
@@ -178,7 +191,9 @@ def decide(item_id: str, status: str, note: str = "", by: Optional[str] = None) 
             if not cur.rowcount:
                 return None
         return review(item_id)
-    return move(item_id, "pending", status, by, "review.decide", {"decided_by": by}, note=note)
+    # an item queued for an expert before OWN-FB-18 waits for its RM now: the RM's approval is the last
+    was = "pending_specialist" if (review(item_id) or {}).get("status") == "pending_specialist" else "pending"
+    return move(item_id, was, status, by, "review.decide", {"decided_by": by}, note=note)
 
 
 def move(

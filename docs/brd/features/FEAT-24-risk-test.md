@@ -4,7 +4,7 @@
 |---|---|
 | Type | Existing capability (original brief, docs/PLAN.md); outside the BRD — kept by [ADR-0003](../decisions/ADR-0003-keep-the-capabilities-that-predate-the-brd.md) |
 | Requirements | BRIEF-RISK-01…05 |
-| Users | Client (Mục tiêu & kịch bản → Khẩu vị rủi ro) |
+| Users | Client (Wealth Planning Advisor → **Risk profile test**, since 2026-10-22, [ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md); was Rủi ro → Khẩu vị rủi ro) |
 | Entry points | [SCR-CL-04](../ux/screens/client.md#scr-cl-04--khẩu-vị-rủi-ro-risk-test); `POST /api/risk {client_id, answers}` |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 

@@ -1,0 +1,539 @@
+<title>Kiến trúc OneWealth</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a technical reference — sticky contents rail on the left, one reading column; diagrams carry the BRD's
+   legend (blue = AI, amber = a person decides, grey = data). */
+:root {
+  --bg: #f5f7fa; --surface: #ffffff; --lane: #eef2f6; --fg: #15202b; --muted: #5b6776; --line: #d8dee6;
+  --accent: #1f5f93; --accent-soft: #e4eef7;
+  --ai: #2b6cc4; --ai-bg: #e8f0fb; --human: #b0621c; --human-bg: #fbf0e4; --data: #5d6a79; --data-bg: #eceff3;
+  --ok: #2e7a57; --edge: #7a8796;
+  --display: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1319; --surface: #151c25; --lane: #121922; --fg: #e2e8ef; --muted: #98a4b2; --line: #28323e;
+  --accent: #6ea8dc; --accent-soft: #17283a;
+  --ai: #7fb0ef; --ai-bg: #16263a; --human: #e3a468; --human-bg: #2f2218; --data: #a4aebb; --data-bg: #1c232c;
+  --ok: #6cc39a; --edge: #6d7a89; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0e1319; --surface: #151c25; --lane: #121922; --fg: #e2e8ef; --muted: #98a4b2; --line: #28323e;
+  --accent: #6ea8dc; --accent-soft: #17283a;
+  --ai: #7fb0ef; --ai-bg: #16263a; --human: #e3a468; --human-bg: #2f2218; --data: #a4aebb; --data-bg: #1c232c;
+  --ok: #6cc39a; --edge: #6d7a89; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.65 var(--body); margin: 0; }
+.wrap {
+  max-width: 1180px; margin: 0 auto; padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 48px;
+}
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 24px 56px; } }
+
+/* contents rail */
+nav.toc { position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); align-self: start; font-size: 13px; }
+nav.toc .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 10px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc li { counter-increment: s; }
+nav.toc a { display: flex; gap: 10px; padding: 5px 10px; border-radius: 6px; color: var(--muted); text-decoration: none; }
+nav.toc a::before { content: counter(s, decimal-leading-zero); font: 500 11px/1.9 var(--mono); color: var(--edge); }
+nav.toc a:hover { background: var(--surface); color: var(--fg); }
+nav.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (max-width: 900px) { nav.toc { position: static; } nav.toc ol { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); } }
+
+main { min-width: 0; }
+header.doc { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 8px; }
+.eyebrow { font: 600 11px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 700 34px/1.2 var(--display); letter-spacing: -.015em; margin: 12px 0 10px; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 66ch; margin: 0; font-size: 16px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 18px; font-size: 13px; color: var(--muted); }
+.meta b { color: var(--fg); font-weight: 600; }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 24px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.facts div { padding: 14px 18px; border-left: 1px solid var(--line); }
+.facts div:first-child { border-left: 0; }
+.facts strong { display: block; font: 600 22px/1.2 var(--display); font-variant-numeric: tabular-nums; }
+.facts span { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 640px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .facts div:nth-child(3) { border-left: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+
+section { padding-top: 44px; scroll-margin-top: 16px; }
+h2 { font: 650 22px/1.3 var(--display); letter-spacing: -.01em; margin: 0 0 6px; display: flex; align-items: baseline; gap: 12px; text-wrap: balance; }
+h2 .n { font: 500 13px/1 var(--mono); color: var(--edge); }
+h3 { font: 600 16px/1.4 var(--display); margin: 28px 0 8px; }
+p { margin: 0 0 12px; max-width: 72ch; }
+.sub { color: var(--muted); margin-bottom: 18px; }
+code { font: 13px/1.5 var(--mono); background: var(--data-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+a { color: var(--accent); }
+ul.plain { margin: 0 0 12px; padding-left: 20px; max-width: 72ch; }
+ul.plain li { margin: 4px 0; }
+
+.callout { border: 1px solid var(--line); border-left: 3px solid var(--accent); background: var(--surface); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; max-width: 72ch; }
+.callout strong { color: var(--accent); }
+
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 14px 0 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th { text-align: left; font-weight: 600; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); background: var(--lane); }
+th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; white-space: nowrap; }
+td.w { white-space: normal; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* diagrams */
+figure { margin: 18px 0 8px; }
+.diagram { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px; }
+.diagram svg { display: block; min-width: 860px; width: 100%; height: auto; }
+figcaption { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+svg text { font-family: var(--body); }
+svg .lane { fill: var(--lane); stroke: var(--line); }
+svg .lane-t { font-size: 11px; font-weight: 700; letter-spacing: .08em; fill: var(--fg); }
+svg .lane-s { font-size: 11px; fill: var(--muted); font-family: var(--mono); }
+svg .box { fill: var(--surface); stroke: var(--line); }
+svg .box.ai { fill: var(--ai-bg); stroke: var(--ai); stroke-dasharray: 4 3; }
+svg .box.ctl { fill: var(--human-bg); stroke: var(--human); }
+svg .box.store { fill: var(--data-bg); stroke: var(--data); }
+svg .bt { font-size: 12.5px; font-weight: 600; fill: var(--fg); }
+svg .bs { font-size: 11px; fill: var(--muted); }
+svg .edge { stroke: var(--edge); stroke-width: 1.4; fill: none; }
+svg .edge.ai { stroke: var(--ai); stroke-dasharray: 5 4; }
+svg .ah { fill: var(--edge); }
+svg .ah.ai { fill: var(--ai); }
+svg .el { font-size: 10.5px; fill: var(--muted); font-family: var(--mono); }
+svg .sw-ai { fill: var(--ai-bg); stroke: var(--ai); stroke-dasharray: 4 3; }
+svg .sw-ctl { fill: var(--human-bg); stroke: var(--human); }
+svg .sw-store { fill: var(--data-bg); stroke: var(--data); }
+
+/* the news → family pipeline */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12.5px; color: var(--muted); margin: 6px 0 14px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; border: 1px solid; }
+.k-ai { background: var(--ai-bg); border-color: var(--ai); }
+.k-h { background: var(--human-bg); border-color: var(--human); }
+.k-c { background: var(--surface); border-color: var(--line); }
+.pipe { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; counter-reset: p; }
+@media (max-width: 760px) { .pipe { grid-template-columns: minmax(0, 1fr); } }
+.step { position: relative; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 12px 14px 14px; counter-increment: p; min-width: 0; }
+.step::before { content: counter(p); font: 500 11px/1 var(--mono); color: var(--edge); }
+.step.ai { background: var(--ai-bg); border-color: var(--ai); border-style: dashed; }
+.step.h { background: var(--human-bg); border-color: var(--human); }
+.step b { display: block; font-size: 14px; margin: 6px 0 3px; }
+.step span { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.step .tag { display: inline-block; margin-top: 8px; font: 500 10.5px/1 var(--mono); padding: 4px 6px; border-radius: 4px; background: var(--lane); color: var(--muted); }
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+@media (max-width: 760px) { .outcomes { grid-template-columns: minmax(0, 1fr); } }
+.out { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--surface); font-size: 13px; }
+.out .pill { display: inline-block; font: 600 11px/1 var(--mono); padding: 5px 8px; border-radius: 999px; margin-bottom: 8px; }
+.out.ok .pill { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.out.rm .pill { color: var(--human); background: var(--human-bg); }
+.out.cio .pill { color: var(--ai); background: var(--ai-bg); }
+.out p { margin: 0; color: var(--muted); }
+
+/* request sequence */
+.seq { list-style: none; margin: 14px 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); counter-reset: q; }
+.seq li { display: grid; grid-template-columns: 34px 150px minmax(0, 1fr); gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--line); counter-increment: q; font-size: 13.5px; }
+.seq li:last-child { border-bottom: 0; }
+.seq li::before { content: counter(q); font: 500 12px/1.6 var(--mono); color: var(--edge); }
+.seq .who { font-weight: 600; }
+@media (max-width: 560px) { .seq li { grid-template-columns: 26px minmax(0, 1fr); } .seq li > span:last-child { grid-column: 2; } }
+
+/* assistant modes */
+.modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+@media (max-width: 760px) { .modes { grid-template-columns: minmax(0, 1fr); } }
+.mode { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface); min-width: 0; }
+.mode code { font-size: 12px; }
+.mode b { display: block; margin: 8px 0 4px; font-size: 14px; }
+.mode p { font-size: 13px; color: var(--muted); margin: 0; }
+
+pre.cmd { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font: 12.5px/1.7 var(--mono); margin: 14px 0; }
+pre.cmd .c { color: var(--muted); }
+footer.doc { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Mục lục">
+  <div class="label">Mục lục</div>
+  <ol>
+    <li><a href="#san-pham">Sản phẩm</a></li>
+    <li><a href="#tong-the">Bức tranh tổng thể</a></li>
+    <li><a href="#operonx">Nền tảng operonx</a></li>
+    <li><a href="#thu-muc">Cấu trúc thư mục</a></li>
+    <li><a href="#tinh-nang">Nhóm tính năng</a></li>
+    <li><a href="#luong">Các luồng chính</a></li>
+    <li><a href="#du-lieu">Dữ liệu</a></li>
+    <li><a href="#ai">AI và rào chắn</a></li>
+    <li><a href="#bao-mat">Bảo mật</a></li>
+    <li><a href="#job">Việc nền</a></li>
+    <li><a href="#web">Giao diện web</a></li>
+    <li><a href="#chay">Cấu hình và chạy</a></li>
+    <li><a href="#kiem-thu">Kiểm thử</a></li>
+    <li><a href="#adr">Quyết định</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="doc">
+  <div class="eyebrow">Tài liệu kiến trúc</div>
+  <h1>Kiến trúc OneWealth (Mr. Finance)</h1>
+  <p class="lede">Gom mọi tài sản của một gia đình khách hàng thành một bức tranh, rồi cho biết điều gì đang tác động tới nó.
+    AI soạn kịch bản, máy tính tính con số, con người duyệt trước khi tới gia đình.</p>
+  <div class="meta">
+    <span>Cập nhật <b>29/10/2026</b></span>
+    <span>Nguồn sự thật <b><code>app/main.py</code></b></span>
+    <span>Quy tắc viết mã <b><code>AGENTS.md</code></b></span>
+  </div>
+  <div class="facts">
+    <div><strong class="num">68</strong><span>service (66 POST, 1 websocket, 1 web)</span></div>
+    <div><strong class="num">23</strong><span>job theo lịch, cùng 1 eval</span></div>
+    <div><strong class="num">2</strong><span>tiến trình: chính và vùng AI</span></div>
+    <div><strong class="num">5</strong><span>khóa mô hình trong resources.yaml</span></div>
+  </div>
+</header>
+
+<section id="san-pham">
+  <h2><span class="n">01</span>Sản phẩm làm gì</h2>
+  <p class="sub">Tài sản đến từ ba tầng nguồn: sản phẩm của Techcombank, ngân hàng và công ty chứng khoán khác, và những gì khách tự khai.
+    Sản phẩm chỉ ra các tác động: chính sách, thị trường, hạ tầng, sự kiện đời sống.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Vai trò</th><th>Làm gì</th></tr></thead>
+    <tbody>
+      <tr><td>Khách hàng</td><td class="w">Xem tài sản, dòng tiền, mục tiêu, phân bổ 3 rổ, cảnh báo, kịch bản; khai báo và tải sao kê</td></tr>
+      <tr><td>RM</td><td class="w">Theo dõi các gia đình phụ trách, xem trước tác động lớn, đề xuất và gửi hành động</td></tr>
+      <tr><td>CIO</td><td class="w">Duyệt nhận định do Agent CIO soạn, duyệt phân bổ, bằng chứng, bài viết, nghiên cứu</td></tr>
+      <tr><td>Quản trị</td><td class="w">Vận hành nguồn tin, dữ liệu thị trường, lịch chạy, cấu hình, tài khoản</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="tong-the">
+  <h2><span class="n">02</span>Bức tranh tổng thể</h2>
+  <p class="sub">Một tiến trình chính phục vụ giao diện và mọi API. Vùng AI là tiến trình tùy chọn, không bao giờ thấy dữ liệu khách hàng.</p>
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 1000 500" role="img" aria-labelledby="d1t">
+        <title id="d1t">Sơ đồ thành phần: trình duyệt, tiến trình chính, vùng AI, kho dữ liệu và dịch vụ ngoài</title>
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker>
+          <marker id="ahai" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah ai" d="M0 0L10 5L0 10z"/></marker>
+        </defs>
+
+        <!-- lanes -->
+        <rect class="lane" x="16" y="16" width="230" height="352" rx="10"/>
+        <text class="lane-t" x="32" y="40">TRÌNH DUYỆT</text><text class="lane-s" x="32" y="57">web/ · không build</text>
+        <rect class="lane" x="286" y="16" width="420" height="352" rx="10"/>
+        <text class="lane-t" x="302" y="40">TIẾN TRÌNH CHÍNH</text><text class="lane-s" x="302" y="57">operonx serve · cổng 8030</text>
+        <rect class="lane" x="746" y="16" width="238" height="232" rx="10"/>
+        <text class="lane-t" x="762" y="40">VÙNG AI · TÙY CHỌN</text><text class="lane-s" x="762" y="57">tiến trình riêng · cổng 8040</text>
+
+        <!-- browser -->
+        <rect class="box" x="32" y="72" width="198" height="46" rx="7"/><text class="bt" x="44" y="91">shell.js</text><text class="bs" x="44" y="107">Đăng nhập, vai trò, định tuyến</text>
+        <rect class="box" x="32" y="128" width="198" height="46" rx="7"/><text class="bt" x="44" y="147">workspace/</text><text class="bs" x="44" y="163">Không gian khách hàng</text>
+        <rect class="box" x="32" y="184" width="198" height="46" rx="7"/><text class="bt" x="44" y="203">desk/</text><text class="bs" x="44" y="219">Bàn RM · CIO · Quản trị</text>
+        <rect class="box" x="32" y="240" width="198" height="46" rx="7"/><text class="bt" x="44" y="259">pages/</text><text class="bs" x="44" y="275">39 trang, nạp khi cần</text>
+        <rect class="box" x="32" y="296" width="198" height="46" rx="7"/><text class="bt" x="44" y="315">copilot.js · voice.js</text><text class="bs" x="44" y="331">Trợ lý, giọng nói</text>
+
+        <!-- main process -->
+        <rect class="box ctl" x="302" y="72" width="388" height="46" rx="7"/><text class="bt" x="314" y="91">app/http.py</text><text class="bs" x="314" y="107">Header bảo mật · chặn ghi khác site · no-store cho /api/</text>
+        <rect class="box" x="302" y="130" width="188" height="46" rx="7"/><text class="bt" x="314" y="149">app/web.py</text><text class="bs" x="314" y="165">SignInGate, UI, các API GET</text>
+        <rect class="box" x="502" y="130" width="188" height="46" rx="7"/><text class="bt" x="514" y="149">Service → graph</text><text class="bs" x="514" y="165">66 POST · 1 websocket</text>
+        <rect class="box" x="302" y="188" width="268" height="46" rx="7"/><text class="bt" x="314" y="207">src/&lt;tính năng&gt;/</text><text class="bs" x="314" y="223">graph.py → ops.py → _helpers.py</text>
+        <rect class="box" x="582" y="188" width="108" height="104" rx="7"/><text class="bt" x="594" y="207">23 job</text><text class="bs" x="594" y="223">+ 1 eval</text><text class="bs" x="594" y="247">tin, thị trường</text><text class="bs" x="594" y="263">agent, kiểm toán</text><text class="bs" x="594" y="279">trợ lý, đo lường</text>
+        <rect class="box" x="302" y="246" width="268" height="46" rx="7"/><text class="bt" x="314" y="265">Miền chung</text><text class="bs" x="314" y="281">wealth · engine · control · people</text>
+        <rect class="box ai" x="302" y="306" width="388" height="46" rx="7"/><text class="bt" x="314" y="325">control/barrier.py · rào chắn</text><text class="bs" x="314" y="341">Mọi lời gọi mô hình đi qua đây; chặn định danh khách hàng</text>
+
+        <!-- AI zone -->
+        <rect class="box ai" x="762" y="72" width="206" height="46" rx="7"/><text class="bt" x="774" y="91">zone_news</text><text class="bs" x="774" y="107">Tin công khai · 10 phút</text>
+        <rect class="box ai" x="762" y="128" width="206" height="46" rx="7"/><text class="bt" x="774" y="147">zone_agent</text><text class="bs" x="774" y="163">Agent CIO, ký gói · 15 phút</text>
+        <rect class="box store" x="762" y="184" width="206" height="46" rx="7"/><text class="bt" x="774" y="203">data/zone.db</text><text class="bs" x="774" y="219">Không khách hàng, nhân viên</text>
+
+        <!-- outside -->
+        <rect class="box" x="746" y="268" width="238" height="40" rx="7"/><text class="bt" x="760" y="286">Nguồn công khai</text><text class="bs" x="760" y="300">RSS · sàn · ngân hàng · MSN</text>
+        <rect class="box ai" x="746" y="318" width="238" height="40" rx="7"/><text class="bt" x="760" y="336">Mô hình (resources.yaml)</text><text class="bs" x="760" y="350">llm:cio · challenger · copilot · …</text>
+
+        <!-- stores and people -->
+        <rect class="box" x="16" y="412" width="230" height="56" rx="7"/><text class="bt" x="32" y="436">Người dùng</text><text class="bs" x="32" y="453">Khách hàng · RM · CIO · Quản trị</text>
+        <rect class="box store" x="286" y="412" width="132" height="56" rx="7"/><text class="bt" x="298" y="436">data/state.db</text><text class="bs" x="298" y="453">Trạng thái, nhật ký</text>
+        <rect class="box store" x="430" y="412" width="132" height="56" rx="7"/><text class="bt" x="442" y="436">data/*.json</text><text class="bs" x="442" y="453">Dữ liệu mẫu</text>
+        <rect class="box store" x="574" y="412" width="132" height="56" rx="7"/><text class="bt" x="586" y="436">audit-worm/</text><text class="bs" x="586" y="453">Ghi một lần</text>
+
+        <!-- legend -->
+        <rect class="sw-ai" x="762" y="414" width="12" height="12" rx="2"/><text class="bs" x="782" y="424">AI</text>
+        <rect class="sw-ctl" x="762" y="434" width="12" height="12" rx="2"/><text class="bs" x="782" y="444">Kiểm soát</text>
+        <rect class="sw-store" x="762" y="454" width="12" height="12" rx="2"/><text class="bs" x="782" y="464">Lưu trữ</text>
+
+        <!-- edges -->
+        <path class="edge" d="M131 412V368" marker-end="url(#ah)"/>
+        <path class="edge" d="M246 95H302" marker-end="url(#ah)"/><text class="el" x="256" y="88">fetch</text>
+        <path class="edge" d="M396 118V130" marker-end="url(#ah)"/>
+        <path class="edge" d="M596 118V130" marker-end="url(#ah)"/>
+        <path class="edge" d="M541 176V188" marker-end="url(#ah)"/>
+        <path class="edge" d="M441 234V246" marker-end="url(#ah)"/>
+        <path class="edge" d="M441 292V306" marker-end="url(#ah)"/>
+        <path class="edge" d="M762 151H690" marker-end="url(#ah)"/><text class="el" x="700" y="144">gói ký</text>
+        <path class="edge" d="M690 207H762" marker-end="url(#ah)"/><text class="el" x="694" y="222">zone_sync</text>
+        <path class="edge" d="M690 288H746" marker-end="url(#ah)"/>
+        <path class="edge ai" d="M690 338H746" marker-end="url(#ahai)"/>
+        <path class="edge" d="M352 368V412" marker-end="url(#ah)"/>
+        <path class="edge" d="M496 368V412" marker-end="url(#ah)"/>
+        <path class="edge" d="M640 368V412" marker-end="url(#ah)"/>
+      </svg>
+    </div>
+    <figcaption>Vùng AI gửi về gói đã ký (HMAC) qua <code>POST /api/inbox</code>, và chỉ nhận danh mục đã duyệt cùng nghiên cứu đã phát hành.</figcaption>
+  </figure>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Lớp</th><th>Ở đâu</th><th>Quy tắc</th></tr></thead>
+    <tbody>
+      <tr><td>Trình bày</td><td class="w"><code>web/</code></td><td class="w">Chỉ hiển thị điều server đã quyết; mỗi trang là một module</td></tr>
+      <tr><td>Service</td><td class="w"><code>app/main.py</code>, <code>app/web.py</code>, <code>app/http.py</code></td><td class="w">Một service chạy đúng một graph: thân JSON thành tham số, đầu ra thành câu trả lời</td></tr>
+      <tr><td>Tính năng</td><td class="w"><code>src/&lt;tính năng&gt;/</code></td><td class="w"><code>graph.py</code> chỉ nối dây; không tính năng nào import graph của tính năng khác, trừ <code>consolidate_flow</code></td></tr>
+      <tr><td>Miền chung</td><td class="w"><code>wealth</code>, <code>engine</code>, <code>control</code>, <code>people</code></td><td class="w">Không có graph; <code>engine</code> thuần, không I/O, không AI</td></tr>
+      <tr><td>AI</td><td class="w"><code>views</code>, <code>evidence</code>, <code>policy</code>, <code>assistant</code>, <code>statements</code>, <code>declare</code></td><td class="w">Mô hình lấy theo khóa trong <code>resources.yaml</code>; mọi bước AI có đường quy tắc dự phòng</td></tr>
+      <tr><td>Dữ liệu</td><td class="w"><code>data/*.json</code>, <code>data/state.db</code></td><td class="w">Sửa script sinh dữ liệu, không sửa JSON</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="operonx">
+  <h2><span class="n">03</span>Nền tảng operonx</h2>
+  <p class="sub">operonx 1.30, operonx-agents 0.3, operonx-kb 0.2 trên Python ≥ 3.11, quản lý bằng <code>uv</code>.</p>
+  <pre class="cmd">op  (@op, ops.py)  ──►  graph  (@graph, graph.py, nối bằng &gt;&gt;)  ──►  Service (http · websocket · asgi)
+                                                              ──►  Job (schedule)
+                                                              ──►  Application APP trong app/main.py</pre>
+  <ul class="plain">
+    <li><b>Chữ ký graph là request.</b> <code>POST /api/allocation {client_id, method, whatif}</code> điền tham số của <code>allocation_flow</code> theo tên. Trường lạ hoặc thiếu trường bắt buộc trả <code>400</code> trước khi chạy.</li>
+    <li><b>Lỗi có mã HTTP.</b> <code>BadRequest</code> (400) và <code>Conflict</code> (409) mang thông điệp tiếng Việt tới người dùng; rào chắn AI trả 403; lỗi khác trả 500 kèm trace id.</li>
+    <li><b>Nhánh</b> viết bằng <code>if_(cond, a).else_(b)</code> trong chuỗi <code>&gt;&gt;</code>; mọi <code>@graph</code> ở cấp module.</li>
+    <li><b>Truy vết</b> mỗi lần chạy vào <code>.operonx/runs</code>, xem bằng <code>operonx studio</code>. Các service đọc và trợ lý tắt truy vết: nhanh hơn, và không chép lời người dùng ra đĩa.</li>
+  </ul>
+</section>
+
+<section id="thu-muc">
+  <h2><span class="n">04</span>Cấu trúc thư mục</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Thư mục</th><th>Nội dung</th></tr></thead>
+    <tbody>
+      <tr><td><code>app/</code></td><td class="w"><code>main.py</code> (APP: service, job, eval) · <code>web.py</code> (UI, GET) · <code>http.py</code> (middleware) · <code>zone.py</code> (APP vùng AI)</td></tr>
+      <tr><td><code>src/</code></td><td class="w">Một thư mục cho một tính năng (mục 05)</td></tr>
+      <tr><td><code>web/</code></td><td class="w"><code>shell.js</code> · <code>core/</code> (tokens, i18n, sổ cụm từ) · <code>pages/</code> · <code>desk/</code> · <code>workspace/</code> · <code>charts/</code></td></tr>
+      <tr><td><code>data/</code></td><td class="w">Khách hàng mẫu, mô hình yếu tố, khung bằng chứng, cấu hình tin · <code>state.db</code> · <code>audit-worm/</code></td></tr>
+      <tr><td><code>scripts/</code></td><td class="w"><code>make_fixtures.py</code>, <code>make_factors.py</code>, <code>make_evidence.py</code> · <code>set_password.py</code> · <code>rotate_keys.py</code></td></tr>
+      <tr><td><code>tests/</code></td><td class="w">~90 tệp pytest chạy offline · <code>tests/ui/</code> Playwright</td></tr>
+      <tr><td><code>docs/</code></td><td class="w"><code>brd/</code>: đặc tả sống (yêu cầu → tính năng → màn hình → kiến trúc → kiểm thử) · <code>huong-dan/</code>: hướng dẫn dùng</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="tinh-nang">
+  <h2><span class="n">05</span>Các nhóm tính năng</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Nhóm</th><th>Thư mục</th><th>Vai trò</th></tr></thead>
+    <tbody>
+      <tr><td>Bức tranh tài sản</td><td class="w"><code>consolidate</code></td><td class="w">Graph con mọi bức tranh bắt đầu từ: gom holdings từ ba tầng nguồn, gắn nhãn tin cậy</td></tr>
+      <tr><td></td><td class="w"><code>dashboard</code> <code>overview</code> <code>flows</code> <code>timeline</code> <code>feed</code></td><td class="w">Tổng quan, dòng tiền theo tháng, lịch sử một nút đồ thị, điều quan trọng lúc này</td></tr>
+      <tr><td></td><td class="w"><code>statements</code> <code>declare</code></td><td class="w">Đọc sao kê PDF, Excel, CSV; khai báo qua chat</td></tr>
+      <tr><td>Kế hoạch</td><td class="w"><code>risk</code></td><td class="w">Bài test khẩu vị rủi ro thích ứng: tolerance và capacity ra persona</td></tr>
+      <tr><td></td><td class="w"><code>allocation</code></td><td class="w">Ba rổ Thanh khoản, Di sản, Tăng trưởng (phương pháp A, B, C), what-if, tilt của CIO, hàng duyệt</td></tr>
+      <tr><td></td><td class="w"><code>scenarios</code> <code>procedural</code> <code>impact</code></td><td class="w">Sự kiện đời sống, stress test, mục tiêu; tác động = phơi nhiễm × độ nhạy × xác suất</td></tr>
+      <tr><td>Tin tới gia đình</td><td class="w"><code>news</code> <code>events</code></td><td class="w">Thu RSS trong danh sách trắng, quy tắc nguồn công khai, gom tin thành sự kiện</td></tr>
+      <tr><td></td><td class="w"><code>views</code></td><td class="w">Agent CIO, Agent Phản biện, hàng đợi agent, kiểm tra schema, CIO duyệt, trả lại, bác bỏ</td></tr>
+      <tr><td></td><td class="w"><code>engine</code> <code>apply</code></td><td class="w">Mô hình 15 yếu tố ra dải VND P5–P90 ở ba kỳ hạn; áp dụng cho mọi gia đình, hậu kiểm, xếp hạng</td></tr>
+      <tr><td></td><td class="w"><code>evidence</code> <code>research</code> <code>policy</code> <code>newsletter</code></td><td class="w">Khung bằng chứng, nghiên cứu cần phát hành, văn bản pháp lý, bài viết cho khách</td></tr>
+      <tr><td></td><td class="w"><code>inbox</code> <code>zone</code></td><td class="w">Hộp nhận gói ký từ vùng AI; mã của chính vùng AI</td></tr>
+      <tr><td>Đo lường</td><td class="w"><code>market</code> <code>measure</code> <code>trial</code></td><td class="w">Dữ liệu thị trường theo lịch, chấm dự báo, thử nghiệm hằng ngày</td></tr>
+      <tr><td>Kiểm soát</td><td class="w"><code>people</code> <code>control</code></td><td class="w">Tài khoản, phiên, vai trò, kiểm toán, rào chắn AI, mã hóa, cấu hình hai người, cảnh báo</td></tr>
+      <tr><td></td><td class="w"><code>contacts</code> <code>review</code> <code>desk</code> <code>search</code></td><td class="w">Liên hệ RM, hàng duyệt RM, dữ liệu bàn làm việc, tìm kiếm</td></tr>
+      <tr><td>Trợ lý</td><td class="w"><code>assistant</code> <code>copilot</code> <code>voice</code> <code>explain</code></td><td class="w">Trợ lý nhiều bước theo vai trò, định tuyến câu hỏi, giọng nói, nút “Cách tính”</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="luong">
+  <h2><span class="n">06</span>Các luồng chính</h2>
+
+  <h3>Một yêu cầu đọc của khách hàng</h3>
+  <p>Mọi con số do server tính, trình duyệt chỉ vẽ. Các trang <code>dashboard</code>, <code>feed</code>, <code>goals</code>, <code>alerts</code> đi theo cùng mẫu.</p>
+  <ol class="seq">
+    <li><span class="who">Trình duyệt</span><span><code>POST /api/allocation {client_id, whatif}</code> kèm cookie phiên</span></li>
+    <li><span class="who">app/http.py</span><span>Thêm header bảo mật, từ chối nếu Origin là site khác</span></li>
+    <li><span class="who">Service</span><span>Thân JSON điền tham số của <code>allocation_flow</code></span></li>
+    <li><span class="who">Op đầu tiên</span><span>Kiểm tra phiên, quyền xem gia đình (<code>require_client</code>), giá trị hợp lệ</span></li>
+    <li><span class="who">consolidate_flow</span><span>Gom holdings, hồ sơ, dòng tiền từ dữ liệu mẫu và <code>state.db</code></span></li>
+    <li><span class="who">Engine phân bổ</span><span>Mục tiêu từng rổ, thiếu hụt, hành động, kiểm tra ràng buộc</span></li>
+    <li><span class="who">Trả về</span><span><code>{"allocation": …}</code> với <code>Cache-Control: no-store</code></span></li>
+  </ol>
+
+  <h3>Từ tin tức tới gia đình</h3>
+  <div class="legend"><span><i class="k-ai"></i>AI soạn</span><span><i class="k-h"></i>Con người quyết định</span><span><i class="k-c"></i>Tính toán tất định</span></div>
+  <div class="pipe">
+    <div class="step"><b>Thu tin</b><span>RSS trong danh sách trắng, quy tắc nguồn công khai</span><em class="tag">news_ingest · 10 phút</em></div>
+    <div class="step"><b>Sự kiện</b><span>Tin được gom thành sự kiện trong hộp tin của CIO</span><em class="tag">events</em></div>
+    <div class="step h"><b>Chạy Agent CIO</b><span>CIO bấm; yêu cầu vào hàng đợi, mỗi lúc một lần chạy</span><em class="tag">agent_worker</em></div>
+    <div class="step ai"><b>Agent CIO</b><span>Soạn 2–4 nhánh kịch bản, chỉ từ tin, nghiên cứu đã phát hành, danh mục</span><em class="tag">llm:cio</em></div>
+    <div class="step ai"><b>Agent Phản biện</b><span>Mô hình khác kiểm tra nhận định trước khi tới CIO</span><em class="tag">llm:challenger</em></div>
+    <div class="step h"><b>CIO duyệt</b><span>Duyệt, trả lại hoặc bác bỏ, kèm lý do từ 5 ký tự</span><em class="tag">views/decide.py</em></div>
+    <div class="step"><b>Lần áp dụng</b><span>Snapshot băm SHA-256, engine chạy cho mọi gia đình</span><em class="tag">apply</em></div>
+    <div class="step"><b>Hậu kiểm</b><span>Tập trung, giá cũ, tỷ trọng proxy, quy mô bất thường</span><em class="tag">post-check</em></div>
+  </div>
+  <div class="outcomes">
+    <div class="out ok"><span class="pill">EFFECTIVE</span><p>Kết quả tới trang của gia đình và RM.</p></div>
+    <div class="out rm"><span class="pill">RM xem trước</span><p>P10 ba tháng ≤ −5 % tài sản ròng: RM xem trước khi khách thấy.</p></div>
+    <div class="out cio"><span class="pill">NEEDS_CIO_REVIEW</span><p>Hậu kiểm có lỗi nghiêm trọng: dừng, chờ CIO.</p></div>
+  </div>
+  <p style="margin-top:14px">Lần áp dụng tái lập được tới từng đồng: <code>verify</code> tính lại từ snapshot và so với kết quả đã lưu.
+    Agent không nhận dữ liệu khách hàng; một bài kiểm thử soát mọi prompt để tìm tên, tài khoản, số dư.</p>
+
+  <h3>Trợ lý</h3>
+  <p>Câu hỏi được làm sạch (bỏ tên, số) trước khi định tuyến. Chế độ trả lời phụ thuộc cấu hình <code>client_ai</code> và mô hình có sẵn.</p>
+  <div class="modes">
+    <div class="mode"><code>model</code><b>Mô hình đọc kết quả công cụ</b><p>Agent gọi các công cụ chỉ-đọc của vai trò; thao tác ghi dừng lại chờ người dùng xác nhận.</p></div>
+    <div class="mode"><code>template</code><b>Rào chắn giữ dữ liệu</b><p>Mô hình chỉ thấy câu hỏi đã làm sạch; câu trả lời là văn bản mẫu của từng công cụ.</p></div>
+    <div class="mode"><code>fallback</code><b>Không có mô hình</b><p>Router từ khóa trả lời, nên sự cố AI không làm dừng sản phẩm.</p></div>
+  </div>
+  <p>Trợ lý nhớ hội thoại (gộp vào Bộ nhớ mỗi 5 phút, xóa theo hạn lúc 02:30), nhận tệp và ảnh, và nói, nghe qua websocket <code>/api/assistant/voice</code>.</p>
+</section>
+
+<section id="du-lieu">
+  <h2><span class="n">07</span>Dữ liệu và lưu trữ</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Kho</th><th>Nội dung</th><th>Ghi chú</th></tr></thead>
+    <tbody>
+      <tr><td><code>data/*.json</code></td><td class="w">Khách hàng mẫu, thị trường ngày demo, mô hình yếu tố, khung bằng chứng, cấu hình tin</td><td class="w">Chỉ đọc lúc chạy; sinh lại tất định bằng <code>scripts/make_*.py</code></td></tr>
+      <tr><td><code>data/state.db</code></td><td class="w">Dữ liệu người dùng thêm, sự kiện, nhận định, lần áp dụng, hàng đợi agent, chuỗi thị trường, tài khoản, cấu hình, <code>audit_log</code></td><td class="w">Vài cột để lọc cùng bản ghi đầy đủ ở cột JSON <code>data</code>; mỗi lần ghi là một giao dịch</td></tr>
+      <tr><td><code>audit-worm/</code></td><td class="w">Phân đoạn nhật ký kiểm toán ghi một lần, nối chuỗi</td><td class="w">Job <code>audit_check</code> mỗi giờ</td></tr>
+      <tr><td><code>data/zone.db</code></td><td class="w">Trạng thái riêng của vùng AI</td><td class="w">Không chứa khách hàng hay nhân viên</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><strong>Không gọi nguồn ngoài khi phục vụ request.</strong> Các job thị trường ghi vào bảng <code>market_series</code>; trang chỉ đọc bảng này. Để lên cơ sở dữ liệu ngân hàng, <code>control/pgexport.py</code> ánh xạ SQLite sang PostgreSQL.</div>
+</section>
+
+<section id="ai">
+  <h2><span class="n">08</span>AI và rào chắn dữ liệu</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Khóa resource</th><th>Dùng cho</th><th>Khi chưa cấu hình</th></tr></thead>
+    <tbody>
+      <tr><td><code>llm:cio</code></td><td class="w">Agent CIO, Agent Chính sách, viết bản tin</td><td class="w">Chạy mô phỏng, có ghi rõ</td></tr>
+      <tr><td><code>llm:challenger</code></td><td class="w">Agent Phản biện, phải khác mô hình của CIO</td><td class="w">Chạy mô phỏng</td></tr>
+      <tr><td><code>llm:copilot</code></td><td class="w">Trợ lý, tiêu đề hội thoại, bộ nhớ, router</td><td class="w">Router từ khóa</td></tr>
+      <tr><td><code>llm:assistant</code></td><td class="w">Đọc sao kê, khai báo qua chat (chế độ demo)</td><td class="w">Đường quy tắc</td></tr>
+      <tr><td><code>llm:onprem</code></td><td class="w">Hai bước trên ở chế độ <code>onprem</code></td><td class="w">Đường quy tắc</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Công tắc</th><th>Giá trị</th><th>Tác dụng</th></tr></thead>
+    <tbody>
+      <tr><td><code>MF_AI</code></td><td><code>on · off · auto</code></td><td class="w">Bật, tắt mọi bước AI; <code>auto</code> bật khi có <code>LLM_API_KEY</code></td></tr>
+      <tr><td><code>client_ai</code></td><td><code>demo · onprem · off</code></td><td class="w">Quản trị đặt, hai người duyệt. Ở <code>onprem</code> và <code>off</code>, lời gọi mang định danh khách hàng tới máy ngoài <code>onprem_hosts</code> bị chặn (403), ghi log và kiểm toán</td></tr>
+      <tr><td>Chế độ agent</td><td><code>live · inbox · mock</code></td><td class="w"><code>live</code>: agent chạy trong tiến trình chính, chỉ nhận đầu vào không có dữ liệu khách. <code>inbox</code>: agent chạy ở vùng AI, gửi gói ký về, <code>inbox_import</code> kiểm tra rồi nhập. <code>mock</code>: không gọi mô hình</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="bao-mat">
+  <h2><span class="n">09</span>Bảo mật và kiểm soát</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Cơ chế</th><th>Cách làm</th><th>Mã</th></tr></thead>
+    <tbody>
+      <tr><td>Đăng nhập</td><td class="w">Tài khoản riêng từng người, mật khẩu scrypt có salt; cookie HttpOnly ký HMAC-SHA256</td><td><code>people/auth.py</code></td></tr>
+      <tr><td>Phân quyền</td><td class="w">Mỗi hành động mang <code>by</code> là người đang đăng nhập; dữ liệu gia đình chỉ cho gia đình đó và RM phụ trách</td><td><code>control/roles.py</code></td></tr>
+      <tr><td>Hai người duyệt</td><td class="w">Cấu hình, phát hành nghiên cứu, bài viết, văn bản, tài khoản: người đề xuất không tự duyệt</td><td><code>control/config.py</code></td></tr>
+      <tr><td>Nhật ký kiểm toán</td><td class="w">Append-only, mỗi dòng băm nối dòng trước (HMAC khi có <code>AUDIT_HMAC_KEY</code>), ghi cùng giao dịch với thay đổi</td><td><code>control/audit.py</code></td></tr>
+      <tr><td>WORM</td><td class="w">Phân đoạn ghi một lần, nối chuỗi, đối chiếu từng byte với cơ sở dữ liệu</td><td><code>control/worm.py</code></td></tr>
+      <tr><td>Mã hóa lúc lưu</td><td class="w">AES-256-GCM theo cột, khóa <code>MF_DATA_KEYS</code>, xoay khóa bằng script</td><td><code>control/crypto.py</code></td></tr>
+      <tr><td>HTTP</td><td class="w">CSP chặt, nosniff, không referrer, HSTS qua HTTPS, chặn ghi từ Origin khác</td><td><code>app/http.py</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>Bí mật chỉ nằm trong <code>.env</code>. Trên máy phát triển, <code>MF_AUTH=off</code> hiện lại bộ chuyển vai trò và <code>MF_DEMO_ACCOUNTS=on</code> hiện tài khoản demo trên trang đăng nhập.</p>
+</section>
+
+<section id="job">
+  <h2><span class="n">10</span>Việc nền</h2>
+  <p class="sub">Chạy theo đồng hồ của <code>operonx serve</code>, hoặc chạy tay bằng <code>uv run operonx run &lt;tên&gt;</code>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Nhóm</th><th>Job</th><th>Lịch</th></tr></thead>
+    <tbody>
+      <tr><td>Tin</td><td class="w"><code>news_ingest</code> · <code>news_reference</code></td><td class="num">10 phút · 2 giờ</td></tr>
+      <tr><td>Thị trường</td><td class="w"><code>market_equity</code> · <code>market_flows</code> · <code>market_yields</code> · <code>market_fx</code>, <code>market_world</code> và các chuỗi khác</td><td class="num">15:45 · 16:00 · 17:30 · mỗi giờ</td></tr>
+      <tr><td>Agent</td><td class="w"><code>agent_worker</code> · <code>inbox_import</code> · <code>zone_sync</code></td><td class="num">vài giây · 10 phút</td></tr>
+      <tr><td>Khách hàng</td><td class="w"><code>policy_sweep</code>: cảnh báo cho mọi khách</td><td class="num">07:00</td></tr>
+      <tr><td>Trợ lý</td><td class="w"><code>assistant_consolidate</code> · <code>assistant_retention</code></td><td class="num">5 phút · 02:30</td></tr>
+      <tr><td>Kiểm soát</td><td class="w"><code>heartbeat</code> · <code>audit_check</code></td><td class="num">20 giây · mỗi giờ</td></tr>
+      <tr><td>Đo lường</td><td class="w"><code>accuracy_score</code> · <code>trial_daily</code> · <code>trial_score</code> · <code>agent_eval</code></td><td class="num">hằng ngày</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="web">
+  <h2><span class="n">11</span>Giao diện web</h2>
+  <ul class="plain">
+    <li><b>Không bước build.</b> <code>index.html</code> nạp <code>shell.js</code>; mỗi trang là một ES module nạp động kèm <code>?v=</code> để vượt cache. Tab đang mở giữ module cũ tới khi tải lại.</li>
+    <li><b>Định tuyến bằng hash:</b> <code>#/&lt;vai trò&gt;/&lt;trang&gt;[/&lt;id&gt;]</code>, ví dụ <code>#/cio/nhan-dinh/VW-0001-v1</code>. Shell chỉ hiện trang của vai trò đã đăng nhập.</li>
+    <li><b>Khách hàng</b> có một không gian duy nhất (đồ thị tài sản thường trực, thanh công cụ, dock) dưới bốn mục mang tên của ngân hàng; trang cũ mở thành sheet đè lên.</li>
+    <li><b>Nhân viên</b> làm việc ở bàn của vai trò (<code>desk/roles.js</code>), trợ lý gắn sẵn.</li>
+    <li><b>Ngôn ngữ:</b> chuỗi gốc tiếng Việt; mặc định hiển thị tiếng Anh qua sổ cụm từ <code>core/lang/en.js</code>. Nội dung người dùng gõ không bị dịch.</li>
+    <li><b>Giao diện</b> sáng, tối qua token màu trong <code>core/tokens.css</code>; biểu đồ tự vẽ trong <code>charts/</code>.</li>
+  </ul>
+</section>
+
+<section id="chay">
+  <h2><span class="n">12</span>Cấu hình và chạy</h2>
+  <pre class="cmd">uv sync
+uv run pytest                                  <span class="c"># bộ kiểm thử offline</span>
+uv run operonx serve                           <span class="c"># http://127.0.0.1:8030, cùng mọi job theo lịch</span>
+MF_DEMO_ACCOUNTS=on uv run operonx serve       <span class="c"># hiện tài khoản demo trên trang đăng nhập</span>
+uv run operonx studio                          <span class="c"># xem, chạy, truy vết từng graph</span>
+
+<span class="c"># Vùng AI (tùy chọn, chế độ inbox), cổng 8040</span>
+MF_STATE=data/zone.db MF_DATA=data/zone uv run operonx serve -f operonx.zone.toml</pre>
+  <div class="tbl"><table>
+    <thead><tr><th>Tệp</th><th>Chứa gì</th></tr></thead>
+    <tbody>
+      <tr><td><code>operonx.toml</code></td><td class="w">Trỏ CLI tới <code>app.main:APP</code>, cấu hình truy vết theo service</td></tr>
+      <tr><td><code>operonx.zone.toml</code></td><td class="w">Trỏ tới <code>app.zone:APP</code></td></tr>
+      <tr><td><code>resources.yaml</code></td><td class="w">Mô hình, TTS, STT, VAD theo khóa</td></tr>
+      <tr><td><code>.env</code></td><td class="w">Khóa API, cờ <code>MF_*</code>, khóa ký và mã hóa; không commit</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="kiem-thu">
+  <h2><span class="n">13</span>Kiểm thử</h2>
+  <ul class="plain">
+    <li><b>pytest, offline:</b> gọi op trực tiếp, chạy graph bằng <code>Operon</code> hoặc <code>Job</code>; mô hình luôn là mô hình giả.</li>
+    <li><b>Playwright</b> (<code>tests/ui/</code>) đi qua các trang thật trên server thử.</li>
+    <li><b>Kiểm tra tài liệu:</b> <code>tests/test_brd_docs.py</code> hỏng khi link, ID hay test được trích dẫn trong <code>docs/brd/</code> bị lệch.</li>
+    <li><b>Eval</b> <code>statement_reading</code> và <code>agent_eval</code> chấm các bước AI trên mô hình thật.</li>
+  </ul>
+</section>
+
+<section id="adr">
+  <h2><span class="n">14</span>Những quyết định kiến trúc chính</h2>
+  <p class="sub">Toàn văn trong <code>docs/brd/decisions/</code>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>ADR</th><th>Quyết định</th></tr></thead>
+    <tbody>
+      <tr><td class="num">0002</td><td class="w">Dựng trên operonx, không theo stack minh họa trong BRD</td></tr>
+      <tr><td class="num">0009</td><td class="w">Rào chắn AI bằng đầu vào của graph, trong một tiến trình</td></tr>
+      <tr><td class="num">0011</td><td class="w">Engine tính số thực, chỉ làm tròn tới đồng ở một chỗ</td></tr>
+      <tr><td class="num">0012</td><td class="w">Copilot chỉ định tuyến, không đọc dữ liệu khách</td></tr>
+      <tr><td class="num">0019</td><td class="w">Mỗi trang là một module</td></tr>
+      <tr><td class="num">0020</td><td class="w">Đăng nhập bằng tài khoản riêng</td></tr>
+      <tr><td class="num">0021</td><td class="w">Dữ liệu thị trường qua job theo lịch</td></tr>
+      <tr><td class="num">0022</td><td class="w">Vùng AI là tiến trình thứ hai</td></tr>
+      <tr><td class="num">0035 · 0036</td><td class="w">Không gian khách hàng là một đồ thị; mỗi vai trò nhân viên có bàn làm việc riêng</td></tr>
+      <tr><td class="num">0040</td><td class="w">Trợ lý chỉ truy vấn view chỉ-đọc theo vai trò</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer class="doc">Bản HTML của <code>docs/ARCHITECTURE.md</code>. Tài liệu chi tiết bằng tiếng Anh: <code>docs/brd/architecture/</code> (system_overview, data_flows, api_reference, agent_workflows, assistant, domain_model, bank_migration, integrations).</footer>
+</main>
+</div>

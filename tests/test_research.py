@@ -11,16 +11,23 @@ from starlette.testclient import TestClient
 from news import store as news_store
 from procedural import goals
 from research import store
-from research.graph import goal_outflow_flow, research_release_flow, research_upload_flow
-from research.ops import matches
+from research import suggest
+from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
+from research import ops as research_ops
 
 UPLOAD = Operon(research_upload_flow, params={"item": None, "by": None})
 RELEASE = Operon(research_release_flow, params={"item_id": None, "decision": None, "by": None, "note": None})
 DECLARE = Operon(
     goal_outflow_flow, params={"family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
 )
+SUGGEST = Operon(goal_suggest_flow, params={"family_id": None, "by": None, "mode": None})
 NOTE = "Đã kiểm tra nguồn công khai và xung đột lợi ích"
 TODAY = date(2026, 10, 15)
+
+
+def matches(family_id, today):
+    """The uploaded notes' matches; the evidence frames' plan notes (EV-…) are tested in tests/test_evidence.py."""
+    return [m for m in research_ops.matches(family_id, today) if not m["note_id"].startswith("EV-")]
 
 
 def run(engine, **inputs):
@@ -59,16 +66,16 @@ AML_DRAFT = {
 # -- research ----------------------------------------------------------------------------------
 
 
-def test_a_report_waits_for_compliance_and_then_reaches_the_inbox():
+def test_a_report_waits_for_another_cio_and_then_reaches_the_inbox():
     assert "không được làm việc này" in str(run(UPLOAD, item=report(), by="rm01")["$errors"])
     item = run(UPLOAD, item=report(), by="cio")["item"]
     assert item["status"] == "PENDING_RELEASE"
     assert not [n for n in news_store.inbox() if n.get("research_id") == item["id"]]  # FR-203
     assert "từ 20 ký tự" in str(
-        run(RELEASE, item_id=item["id"], decision="release", by="compliance", note="ok")["$errors"]
+        run(RELEASE, item_id=item["id"], decision="release", by="cio2", note="ok")["$errors"]
     )
-    out = run(RELEASE, item_id=item["id"], decision="release", by="compliance", note=NOTE)["item"]
-    assert out["status"] == "RELEASED" and out["decided_by"] == "compliance"
+    out = run(RELEASE, item_id=item["id"], decision="release", by="cio2", note=NOTE)["item"]
+    assert out["status"] == "RELEASED" and out["decided_by"] == "cio2"
     [n] = [n for n in news_store.inbox() if n.get("research_id") == item["id"]]
     assert n["label"] == "Độc quyền" and n["published"] == item["release_at"]
 
@@ -79,16 +86,16 @@ def test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time():
         store.decide(item["id"], "release", "cio", NOTE)
     future = store.upload(report(release_at="2099-01-01T08:00:00+07:00", report_no="X2"), "cio")
     with pytest.raises(store.ResearchError, match="Chưa tới giờ phát hành"):
-        store.decide(future["id"], "release", "compliance", NOTE)
-    assert store.decide(future["id"], "release", "compliance", NOTE, now=time.time() + 10**10)["status"] == "RELEASED"
+        store.decide(future["id"], "release", "cio2", NOTE)
+    assert store.decide(future["id"], "release", "cio2", NOTE, now=time.time() + 10**10)["status"] == "RELEASED"
 
 
 def test_a_report_naming_the_restricted_list_is_not_released():
     item = store.upload(report(title="Sao Mai Land: rủi ro đáo hạn trái phiếu", report_no="X3"), "cio")
     with pytest.raises(store.ResearchError, match="danh sách hạn chế"):
-        store.decide(item["id"], "release", "compliance", NOTE)
+        store.decide(item["id"], "release", "cio2", NOTE)
     assert (
-        store.decide(item["id"], "reject", "compliance", "Nhắc tổ chức trong danh sách hạn chế")["status"] == "REJECTED"
+        store.decide(item["id"], "reject", "cio2", "Nhắc tổ chức trong danh sách hạn chế")["status"] == "REJECTED"
     )
 
 
@@ -124,7 +131,7 @@ def test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal():
     """BRD §10: Úc study in March 2027, 8 more weeks → milestone 7/12/2026; a draft → remind."""
     note = store.upload(AML_DRAFT, "cio")
     assert not matches("C01", TODAY)  # not released yet
-    store.decide(note["id"], "release", "compliance", NOTE)
+    store.decide(note["id"], "release", "cio2", NOTE)
     assert not [n for n in news_store.inbox(status="all") if n.get("research_id") == note["id"]]  # not a price event
     [m] = matches("C01", TODAY)
     assert (m["milestone"], m["level"], m["declared"]) == ("2026-12-07", "confirm_goal", False)
@@ -137,7 +144,7 @@ def test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal():
 def test_an_issued_rule_close_to_the_milestone_means_contact_now_and_late_rules_are_a_note():
     issued = {**AML_DRAFT, "report_no": "QD-2", "regulation": {**AML_DRAFT["regulation"], "status": "issued"}}
     n = store.upload(issued, "cio")
-    store.decide(n["id"], "release", "compliance", NOTE)
+    store.decide(n["id"], "release", "cio2", NOTE)
     store.declare("C01", "GL-C01-01", "study_abroad", "Úc", "rm01")
     assert matches("C01", TODAY)[0]["level"] == "contact_now"  # milestone 7/12/2026 is 53 days away
     assert (
@@ -150,7 +157,7 @@ def test_an_issued_rule_close_to_the_milestone_means_contact_now_and_late_rules_
 def test_country_limits_and_past_goals():
     other = {**AML_DRAFT, "report_no": "QD-3", "regulation": {**AML_DRAFT["regulation"], "countries": ["Anh"]}}
     n = store.upload(other, "cio")
-    store.decide(n["id"], "release", "compliance", NOTE)
+    store.decide(n["id"], "release", "cio2", NOTE)
     assert matches("C01", TODAY) == []  # Úc is not Anh
     assert (
         goals.goals_of(
@@ -164,7 +171,7 @@ def test_the_reads_and_the_rm_list():
     from app.web import app
 
     n = store.upload(AML_DRAFT, "cio")
-    store.decide(n["id"], "release", "compliance", NOTE)
+    store.decide(n["id"], "release", "cio2", NOTE)
     client = TestClient(app)
     assert client.get("/api/goals/regulation?family_id=C01&role=client").json()["matches"] == []  # nothing declared
     staff = client.get("/api/goals/regulation?family_id=C01").json()
@@ -174,3 +181,46 @@ def test_the_reads_and_the_rm_list():
     assert "không có mục tiêu" in str(
         run(DECLARE, family_id="C01", goal_id="GL-C01-99", purpose="study_abroad", by="rm01")["$errors"]
     )
+
+
+# -- AI gợi ý nhãn (NEWS_EVIDENCE_BRD §7, P2) ----------------------------------------------------
+
+
+def test_only_goals_neither_declared_nor_read_by_the_rule_get_a_suggestion():
+    rows = [
+        {"goal_id": "G1", "label": "Học phí du học (Úc) – Minh An", "date": "2027-08-01"},
+        {"goal_id": "G2", "label": "Gửi tiền cho con bên Canada", "date": "2027-08-01"},
+        {"goal_id": "G3", "label": "Phẫu thuật khớp gối", "date": "2027-08-01"},
+        {"goal_id": "G4", "label": "Chu cấp mẹ", "date": "2027-08-01"},
+    ]
+    left = suggest.unread(rows, {"G4": {"purpose": "other_transfer"}})
+    assert [g["goal_id"] for g in left] == ["G2", "G3"]  # G1 the rule reads, G4 the RM declared
+    got = suggest.mock(left)
+    assert got["G2"]["purpose"] == "support_abroad" and got["G2"]["country"] == "Canada"
+    assert got["G3"] == {"purpose": None, "country": "", "why": "Tên không nói đến nước ngoài"}
+
+
+def test_the_models_answer_is_kept_to_the_known_purposes_and_countries(monkeypatch):
+    from views import agents
+
+    async def model(resource, system, user, max_tokens, run_id=None):
+        assert "khớp gối" in user and "amount" not in user and resource == "cio"
+        return (
+            '{"G2": {"purpose": "support_abroad", "country": "Canada", "why": "gửi tiền cho con"},'
+            ' "G3": {"purpose": "hack", "country": "Atlantis", "why": "x"}}',
+            {"cost_usd": 0.001},
+        )
+
+    monkeypatch.setattr(agents, "call_model", model)
+    rows = [{"goal_id": "G2", "label": "Gửi tiền cho con", "date": "2027-08-01", "amount": 9},
+            {"goal_id": "G3", "label": "Phẫu thuật khớp gối", "date": "2027-08-01"}]
+    got, calls = asyncio.run(suggest.live(rows))
+    assert got["G2"] == {"purpose": "support_abroad", "country": "Canada", "why": "gửi tiền cho con"}
+    assert got["G3"]["purpose"] is None and got["G3"]["country"] == "" and calls == [{"cost_usd": 0.001}]
+
+
+def test_the_rm_asks_for_suggestions_and_nothing_is_kept():
+    out = run(SUGGEST, family_id="C04", by="rm01", mode="mock")
+    assert out["mode"] == "mock" and out["suggestions"]["GL-C04-01"]["purpose"] is None
+    assert store.declared() == {}
+    assert run(SUGGEST, family_id="C04", by="cio01", mode="mock")["$errors"]

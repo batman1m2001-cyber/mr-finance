@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Optional
 from assistant import conversations as conv
 from assistant.base import Ctx, Param, Tool, ToolFailed
 from control import crypto
-from control.roles import ROLE_LABELS
+from control.roles import ROLES
 from wealth.paths import ROOT
 
 OPEN_MAX = 20
@@ -37,7 +37,7 @@ create index if not exists follow_ups_open on follow_ups (status, kind);
 create index if not exists follow_ups_owner on follow_ups (owner, status);
 """
 OPS = {"above": "trên", "below": "dưới"}
-EVERYONE = tuple(ROLE_LABELS)
+EVERYONE = ROLES
 
 
 @lru_cache(maxsize=1)

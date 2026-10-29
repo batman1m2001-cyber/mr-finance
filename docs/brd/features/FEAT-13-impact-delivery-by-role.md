@@ -37,13 +37,13 @@ and not a recommendation.
 `::test_a_held_run_is_hidden_from_rms_until_the_cio_makes_it_effective`,
 `::test_withdrawing_the_view_withdraws_its_runs_and_rms_see_the_label`,
 `::test_fd9_the_client_reads_how_its_number_is_made_by_asset_class_with_no_holding_named`;
-`tests/ui/test_brd_pages.py::test_sec03_every_rm_explanation_page_is_stamped_internal_and_the_clients_are_not`.
+`tests/ui/test_brd_pages.py::test_sec03_the_trace_drawer_and_the_cios_graph_are_stamped_internal_the_rms_sheets_and_the_clients_are_not`.
 
 ## Limitations
 - Nothing is sent to a client (BRD-RULE-SCOPE-05); the client view is an in-app page.
 - Client content names each event's outlets and their count, never a headline (BRD-RULE-CONTENT-02).
-- “Nội bộ” (BRD-RULE-SEC-03) stamps every staff explanation page (advisory, impact, trace, graph, Toàn cảnh,
-  Hôm nay) and none of the client's, checked in a browser.
+- “Nội bộ” (BRD-RULE-SEC-03) stamps the Cách tính (trace) drawer and the CIO's graph; since OWN-FB-23 (owner,
+  2026-10-25) the RM's sheets carry none, and the client's never did, checked in a browser.
 
 ## Conflict-of-interest disclosure (BRD completion F8)
 The client's labels carry `conflicts`: the disclosure of each related-party research item behind the events shown,

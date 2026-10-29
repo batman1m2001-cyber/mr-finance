@@ -6,7 +6,7 @@ Các trang của Quản trị (`#/admin/…`).
 
 Trang đầu của Quản trị: hệ thống như một bản đồ (nguồn → lưu trữ → AI → người dùng), mỗi phần xanh, vàng hay đỏ theo
 lần ghi nhận gần nhất; cảnh báo, việc lỗi, cấu hình chờ duyệt, người dùng theo vai trò (nút Người dùng mở Tài khoản và vai trò), chuỗi nhật ký. Cấu hình do
-vai trò khác sở hữu (ngưỡng của CIO, chứng nhận chuyên gia của Tuân thủ) thì vai trò đó duyệt. Quản trị không xem tài
+vai trò khác sở hữu (ngưỡng, danh sách hạn chế của CIO) thì vai trò đó duyệt. Quản trị không xem tài
 sản hay danh mục của khách.
 
 ## Hệ thống — #/admin/he-thong
@@ -61,4 +61,4 @@ cảnh báo. Nhịp máy chủ, hàng đợi agent, tổng hợp trí nhớ và 
 
 ## Nhật ký — #/admin/nhat-ky
 
-Như trang Nhật ký của Tuân thủ: kiểm tra chuỗi và các dòng mới nhất, tải JSON hoặc CSV.
+Như trang Nhật ký của CIO: kiểm tra chuỗi và các dòng mới nhất, tải JSON hoặc CSV.

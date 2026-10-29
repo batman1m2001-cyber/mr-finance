@@ -2,7 +2,7 @@
    (what happened solid, the forecast lighter, a “Hôm nay” line, ⚠ on a month with a large payment), month
    columns, lines over dates (0–100) and a sparkline. SVG drawn at the width it is shown at; one axis; a tooltip
    on every mark (charts.js::hover). */
-import {esc, vnd} from "../core/core.js";
+import {DECIMAL, esc, vnd} from "../core/core.js";
 import {hover} from "./charts.js";
 
 const NS = "http://www.w3.org/2000/svg";
@@ -143,13 +143,13 @@ export function sparkline(values, label, w = 132, h = 32) {
   const x = (i) => 2 + (w - 4) * i / Math.max(1, values.length - 1);
   const y = (v) => h - 3 - (h - 6) * (v - lo) / span;
   const s = svg("svg", {viewBox: `0 0 ${w} ${h}`, width: w, height: h, class: "mini", role: "img", "aria-label": label});
-  svg("polyline", {points: values.map((v, i) => `${x(i)},${y(v)}`).join(" "), fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round"}, s);
-  svg("circle", {cx: x(values.length - 1), cy: y(values[values.length - 1]), r: 3, fill: "var(--accent)"}, s);
+  svg("polyline", {points: values.map((v, i) => `${x(i)},${y(v)}`).join(" "), fill: "none", stroke: "var(--series)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round"}, s);
+  svg("circle", {cx: x(values.length - 1), cy: y(values[values.length - 1]), r: 3, fill: "var(--series)"}, s);
   return s;
 }
 
 /* Months of spending as the old pages said it: years from 36 months, one decimal below 10. */
 export function monthsText(m) {
-  const vn = (x, d) => x.toFixed(d).replace(".", ",").replace(/,0$/, "");
+  const vn = (x, d) => x.toFixed(d).replace(".", DECIMAL).replace(/,0$/, "");
   return m >= 36 ? vn(m / 12, 0) + " năm" : vn(m, m >= 10 ? 0 : 1) + " tháng";
 }

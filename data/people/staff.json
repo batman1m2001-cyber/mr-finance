@@ -49,20 +49,6 @@
    "hours": "8:00 – 18:00, thứ Hai – thứ Bảy"
   },
   {
-   "id": "compliance",
-   "role": "compliance",
-   "name": "Đỗ Minh Châu",
-   "title": "Tuân thủ (tuyến 2)",
-   "email": "chau.do@tcbwealth.example"
-  },
-  {
-   "id": "compliance2",
-   "role": "compliance",
-   "name": "Vũ Hải Nam",
-   "title": "Tuân thủ (tuyến 2)",
-   "email": "nam.vu@tcbwealth.example"
-  },
-  {
    "id": "admin",
    "role": "admin",
    "name": "Quản trị demo",
@@ -75,121 +61,23 @@
    "name": "Đỗ Minh Khôi",
    "title": "Quản trị (người duyệt thứ hai)",
    "email": "admin2@tcbwealth.example"
-  },
-  {
-   "id": "sp_real_estate",
-   "role": "specialist",
-   "specialty": "real_estate",
-   "name": "Phan Đức Thịnh",
-   "title": "Chuyên gia bất động sản",
-   "title_en": "Real estate specialist",
-   "email": "thinh.phan@tcbwealth.example",
-   "phone": "+84 28 3000 1201",
-   "covers": [
-    "Định giá BĐS (OneHousing)",
-    "Mua, bán, cho thuê",
-    "Vay thế chấp, đòn bẩy BĐS"
-   ]
-  },
-  {
-   "id": "sp_global",
-   "role": "specialist",
-   "specialty": "global",
-   "name": "Lâm Bảo Ngọc",
-   "title": "Chuyên gia đầu tư toàn cầu",
-   "title_en": "Global investment specialist",
-   "email": "ngoc.lam@tcbwealth.example",
-   "phone": "+84 28 3000 1202",
-   "covers": [
-    "Cổ phiếu, trái phiếu, quỹ (TCBS, Techcom Capital)",
-    "Tài sản ở nước ngoài",
-    "Tỷ giá, ngoại tệ"
-   ]
-  },
-  {
-   "id": "sp_insurance",
-   "role": "specialist",
-   "specialty": "insurance",
-   "name": "Đặng Thu Trang",
-   "title": "Chuyên gia bảo hiểm",
-   "title_en": "Insurance specialist",
-   "email": "trang.dang@tcbwealth.example",
-   "phone": "+84 28 3000 1203",
-   "covers": [
-    "Bảo hiểm nhân thọ, sức khỏe",
-    "Bảo vệ khoản vay",
-    "Quỹ học vấn cho con"
-   ]
-  },
-  {
-   "id": "sp_banking",
-   "role": "specialist",
-   "specialty": "banking",
-   "name": "Vũ Hoàng Long",
-   "title": "Chuyên gia ngân hàng",
-   "title_en": "Banking specialist",
-   "email": "long.vu@tcbwealth.example",
-   "phone": "+84 28 3000 1204",
-   "covers": [
-    "Tiền gửi, thẻ, thanh toán",
-    "Tín dụng cá nhân và doanh nghiệp",
-    "Chuyển tiền quốc tế"
-   ]
-  },
-  {
-   "id": "sp_private",
-   "role": "specialist",
-   "specialty": "private",
-   "name": "Trịnh Khánh Linh",
-   "title": "Chuyên gia Private Banking",
-   "title_en": "Private specialist",
-   "email": "linh.trinh@tcbwealth.example",
-   "phone": "+84 28 3000 1205",
-   "covers": [
-    "Thừa kế, chuyển giao tài sản",
-    "Pháp lý, thuế cá nhân",
-    "Quản lý tài sản gia đình"
-   ]
   }
  ],
  "teams": {
   "C01": {
-   "rm": "rm01",
-   "lead": [
-    "sp_global",
-    "sp_insurance",
-    "sp_real_estate"
-   ]
+   "rm": "rm01"
   },
   "C02": {
-   "rm": "rm02",
-   "lead": [
-    "sp_private",
-    "sp_real_estate",
-    "sp_banking"
-   ]
+   "rm": "rm02"
   },
   "C03": {
-   "rm": "rm03",
-   "lead": [
-    "sp_global",
-    "sp_banking"
-   ]
+   "rm": "rm03"
   },
   "C04": {
-   "rm": "rm01",
-   "lead": [
-    "sp_insurance",
-    "sp_private",
-    "sp_banking"
-   ]
+   "rm": "rm01"
   },
   "C05": {
-   "rm": "rm01",
-   "lead": [
-    "sp_real_estate",
-    "sp_banking"
-   ]
+   "rm": "rm01"
   }
  }
 }

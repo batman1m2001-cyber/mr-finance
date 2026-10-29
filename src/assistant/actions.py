@@ -5,8 +5,9 @@ resolved here), then read back by its verifier.
 
 Left to their pages, deliberately: the four-eyes governance decisions (configuration versions, approving CIO
 views, reviewing runs, newsletters, policy documents, research release, the market model), grouping news into
-events, releasing held news and the client's own uploads and risk test. Each needs the person to read evidence on
-that page; the assistant opens the page (``mo_trang``) instead of acting. Starting Agent CIO, re-running the
+events, releasing held news and the client's risk test. Each needs the person to read evidence on that page; the
+assistant opens the page (``mo_trang``) instead of acting. The client's own files are the exception (ADR-0041):
+``them_tu_tep``'s confirm line lists every item and the total, which is that evidence. Starting Agent CIO, re-running the
 challenger and running a background job are not decisions (owner 2026-10-18): they are writes here, on a Xác nhận."""
 
 from __future__ import annotations
@@ -19,10 +20,11 @@ from control.jobs import RUNNABLE
 from wealth import fixtures
 from wealth import store as wealth_store
 
-STAFF = ("rm", "cio", "compliance", "admin", "specialist")
+STAFF = ("rm", "cio", "admin")
 STATUS = {
     "pending": "chờ RM duyệt",
-    "pending_specialist": "chờ chuyên gia duyệt",
+    "pending_cio": "chờ CIO duyệt từng việc",  # an allocation's actions (ASSET_ALLOCATION_BRD Q-29)
+    "pending_specialist": "chờ chuyên gia duyệt",  # kept for items queued before OWN-FB-18
     "approved": "đã duyệt",
     "rejected": "đã từ chối",
 }
@@ -93,12 +95,19 @@ async def search(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     q = str(args.get("q") or "").strip()[:100]
     if not q:
         raise ToolFailed("Cần từ khóa để tìm")
-    hits = (await _graph(search_flow, q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]["hits"]
+    found = (await _graph(search_flow, q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]
+    hits = found["hits"]
     if not hits:
-        return {"text": f"Không tìm thấy gì cho “{q}” trong những gì bạn được xem.", "data": {"hits": 0}}
+        return {"text": f"Không tìm thấy gì cho “{q}” trong những gì bạn được xem.", "data": {"hits": 0, "total": 0}}
+    total = found.get("total", len(hits))  # every match, counted; ``hits`` is at most six of each kind
+    shown = f"{len(hits)} / {total}" if total > len(hits) else str(total)
     return {
-        "text": f"{len(hits)} kết quả cho “{q}”: " + "; ".join(h["label"] for h in hits[:5]) + ".",
-        "data": {"hits": len(hits), "items": [{"label": h["label"], "route": h["route"]} for h in hits[:10]]},
+        "text": f"{shown} kết quả cho “{q}”: " + "; ".join(h["label"] for h in hits[:5]) + ".",
+        "data": {
+            "hits": len(hits),
+            "total": total,
+            "items": [{"label": h["label"], "route": h["route"]} for h in hits[:10]],
+        },
         "card": {
             "kind": "list",
             "items": [{"title": h["label"], "sub": h.get("sub") or "", "route": h["route"]} for h in hits[:8]],
@@ -107,19 +116,13 @@ async def search(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def queue(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """The proposals and recommendations in the queue: the selected client's (client, RM), or those waiting for this
-    specialist."""
-    from people import auth
+    """The proposals and recommendations in the queue: the selected client's (client, RM), or the RM's whole book."""
     from people import store as people
 
     def family(r: Dict[str, Any]) -> str:
         return people.client(r["client_id"]).get("member_of") or r["client_id"]
 
-    if ctx.role == "specialist":  # the families assigned to them, as Bàn chuyên gia reads it, also with sign-in off
-        mine = set(people.families_of_specialist(ctx.user))
-        items = [r for r in wealth_store.reviews(status="pending_specialist")
-                 if family(r) in mine and auth.visible([r["client_id"]])]  # fmt: skip
-    elif ctx.role == "rm" and not ctx.client_id:  # no family picked: the RM's whole book (staff stress test D02)
+    if ctx.role == "rm" and not ctx.client_id:  # no family picked: the RM's whole book (staff stress test D02)
         from desk import reads as desk_reads
 
         book = set(desk_reads.book_of({"id": ctx.user, "role": "rm"}))
@@ -128,14 +131,18 @@ async def queue(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         items = wealth_store.reviews(client_id=_need_client(ctx))
     if not items:
         return {"text": "Không có đề xuất nào trong hàng chờ.", "data": {"items": []}}
-    waiting = [r for r in items if r["status"] in ("pending", "pending_specialist")]
+    waiting = [r for r in items if r["status"] in ("pending", "pending_cio", "pending_specialist")]
     text = f"{len(items)} đề xuất, {len(waiting)} đang chờ. " + " ".join(
         f"{k + 1}) {r['title']} ({_name(r['client_id'])}, mã {r['id']}) — {STATUS.get(r['status'], r['status'])}."
         for k, r in enumerate(items[:4])
     )
     return {
         "text": text,
-        "data": {"items": [{"id": r["id"], "title": r["title"], "status": r["status"]} for r in items[:20]]},
+        "data": {
+            "items": [{"id": r["id"], "title": r["title"], "status": r["status"]} for r in items[:20]],
+            "total": len(items),  # ``reviews`` reads every row (no cap), so its length is the total
+            "waiting": len(waiting),
+        },
         "focus": [f"review:{r['id']}" for r in waiting[:5]],
         "card": {
             "kind": "list",
@@ -154,7 +161,7 @@ async def queue(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def events(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """The CIO's events, newest first: urgent or not, held by Compliance or not."""
+    """The CIO's events, newest first: urgent or not, held for the restricted list or not."""
     from events import store as events_store
 
     evs = events_store.listing()
@@ -194,14 +201,18 @@ async def system_alerts(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
     found = alerts.for_role(ctx.role)
     if not found:
-        return {"text": "Không có cảnh báo hệ thống nào.", "data": {"alerts": []}}
-    opened = [a for a in found if a["status"] == "open"]
-    text = f"{len(found)} cảnh báo hệ thống, {len(opened)} chưa ai xem. " + " ".join(
+        return {"text": "Không có cảnh báo hệ thống nào.", "data": {"alerts": [], "total": 0, "open": 0}}
+    n = alerts.counts(ctx.role)  # counted in the database: ``for_role`` is a page of 50
+    text = f"{n['total']} cảnh báo hệ thống, {n['open']} chưa ai xem. " + " ".join(
         f"{k + 1}) {a['label']}: {a['title']}." for k, a in enumerate(found[:3])
     )
     return {
         "text": text,
-        "data": {"alerts": [{"id": a["id"], "title": a["title"], "status": a["status"]} for a in found[:20]]},
+        "data": {
+            "alerts": [{"id": a["id"], "title": a["title"], "status": a["status"]} for a in found[:20]],
+            "total": n["total"],
+            "open": n["open"],
+        },
         "card": {
             "kind": "list",
             "items": [
@@ -338,17 +349,9 @@ async def recommend(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
             by=ctx.user,
         )
     )["item"]
-    # why it went straight through, or whom it waits for: without it the assistant told the RM an approved
-    # recommendation “may have skipped the specialist” (staff stress test, rm-act-03)
-    if it["status"] == "pending_specialist":
-        from review import specialist as sp
-
-        who = ", ".join(a["name"] for a in sp.approvers(it["client_id"])) or "chuyên gia được giao"
-        why = f" Gia đình có chuyên gia có chứng chỉ được giao, nên khuyến nghị chờ {who} duyệt rồi mới tới khách."
-    elif it["status"] == "approved":
-        why = " Gia đình chưa có chuyên gia có chứng chỉ được giao, nên RM duyệt là đủ: khuyến nghị đã tới khách."
-    else:
-        why = ""
+    # why it went straight through: without it the assistant told the RM an approved recommendation “may have
+    # skipped the specialist” (staff stress test, rm-act-03); there is no specialist step since OWN-FB-18
+    why = " RM duyệt là đủ: khuyến nghị đã tới khách." if it["status"] == "approved" else ""
     return {
         "text": f"Đã gửi khuyến nghị “{it['title']}”: {STATUS.get(it['status'], it['status'])}.{why}",
         "data": {"id": it["id"], "status": it["status"]},
@@ -359,39 +362,6 @@ def verify_recorded(ctx: Ctx, out: Dict[str, Any]):
     """The queue item read back, in the status the write reported."""
     it = wealth_store.review(out["data"]["id"])
     return True if it and it["status"] == out["data"]["status"] else f"đề xuất {out['data']['id']} không như đã báo"
-
-
-def plan_specialist(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    it = _review(args.get("item_id"))
-    if it["status"] != "pending_specialist":
-        raise ToolFailed(f"{it['id']} không chờ chuyên gia duyệt ({STATUS.get(it['status'], it['status'])})")
-    decision = args.get("decision") if args.get("decision") in ("approved", "rejected") else "approved"
-    note = str(args.get("note") or "").strip()[:1000]
-    if decision == "rejected" and len(note) < 10:
-        raise ToolFailed("Từ chối cần lý do từ 10 ký tự")
-    verb = "Duyệt" if decision == "approved" else "Từ chối"
-    return {
-        "summary": f"{verb} khuyến nghị “{it['title']}” của {_name(it['client_id'])}?",
-        "args": {"item_id": it["id"], "decision": decision, "note": note},
-    }
-
-
-async def specialist(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from review.graph import specialist_flow
-
-    it = (
-        await _graph(
-            specialist_flow,
-            item_id=args.get("item_id"),
-            decision=args.get("decision"),
-            note=args.get("note"),
-            by=ctx.user,
-        )
-    )["item"]
-    return {
-        "text": f"Đã ghi: {STATUS.get(it['status'], it['status'])} “{it['title']}”.",
-        "data": {"id": it["id"], "status": it["status"]},
-    }
 
 
 def plan_urgent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -483,7 +453,8 @@ def plan_agent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     except EventError as exc:
         raise ToolFailed(str(exc)) from None
     if ev["blocked"]:
-        raise ToolFailed(f"Sự kiện “{ev['title']}” đang bị giữ chờ Tuân thủ ({', '.join(ev['held'])}): chưa chạy được")
+        held = ", ".join(ev["held"])
+        raise ToolFailed(f"Sự kiện “{ev['title']}” đang bị giữ chờ CIO cho đi tiếp ({held}): chưa chạy được")
     asked = str(args.get("mode") or "") or None
     try:
         mode = agents.resolve_mode(asked)
@@ -741,7 +712,7 @@ CATALOGUE: Dict[str, Tool] = {
         Tool(
             "de_xuat",
             "các đề xuất, khuyến nghị trong hàng chờ và trạng thái của chúng",
-            ("client", "rm", "specialist"),
+            ("client", "rm"),
             queue,
             page="hang-cho",
         ),
@@ -749,7 +720,7 @@ CATALOGUE: Dict[str, Tool] = {
         Tool(
             "canh_bao_he_thong",
             "các cảnh báo hệ thống vai trò này cần xem",
-            ("cio", "compliance", "admin"),
+            ("cio", "admin"),
             system_alerts,
             page="he-thong",
         ),
@@ -790,19 +761,6 @@ CATALOGUE: Dict[str, Tool] = {
             },
             page="duyet",
             plan=plan_recommend,
-            verify=verify_recorded,
-        ),
-        Tool(
-            "chuyen_gia_duyet",
-            "chuyên gia duyệt hoặc từ chối một khuyến nghị đang chờ mình: người dùng nói “duyệt” là decision approved, "
-            "“từ chối” là decision rejected (kèm lý do ở note); gọi ngay, không hỏi lại duyệt hay từ chối",
-            ("specialist",),
-            specialist,
-            write=True,
-            args={"decision": ["approved", "rejected"]},
-            params={"item_id": ITEM, "note": Param(str, "lý do; bắt buộc khi từ chối", "")},
-            page="hang-cho",
-            plan=plan_specialist,
             verify=verify_recorded,
         ),
         Tool(
@@ -874,7 +832,7 @@ CATALOGUE: Dict[str, Tool] = {
             write=True,
             args={
                 "kind": ["add", "role", "disable", "enable", "reset"],
-                "role": ["", "rm", "cio", "compliance", "admin", "specialist"],
+                "role": ["", "rm", "cio", "admin"],
             },  # fmt: skip
             params={
                 "person": Param(str, "tên, email hay mã của nhân viên (không dùng khi thêm tài khoản)", ""),
@@ -890,7 +848,7 @@ CATALOGUE: Dict[str, Tool] = {
         Tool(
             "da_xem_canh_bao",
             "đánh dấu đã xem một cảnh báo hệ thống",
-            ("cio", "compliance", "admin"),
+            ("cio", "admin"),
             ack,
             write=True,
             params={

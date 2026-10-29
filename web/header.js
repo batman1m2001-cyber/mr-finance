@@ -1,7 +1,7 @@
 /* The header (UI redesign R1, R-D5): one search box and a notifications bell, both over existing reads.
    Search: the role's pages (from the shell) and POST /api/search (holdings, goals, clients, events, news,
    research the role may open). The bell: the client's or RM's “Điều đáng chú ý” (POST /api/feed), the CIO's new
-   news, Compliance's held news; first, for every role, a follow-up the person set that fired and they have not
+   news and held news; first, for every role, a follow-up the person set that fired and they have not
    opened (A6, POST /api/assistant/memory follow_ups). Keyboard: “/” focuses search, arrows move, Enter opens, Esc closes. */
 import {$, esc, get, post, read, vnd} from "./core/core.js";
 import {icon} from "./core/icons.js?v=20261016r1";
@@ -37,7 +37,7 @@ export function mount(shell) {
   const run = async () => {
     const q = input.value.trim(), mine = ++seq;
     const role = shell.role();
-    const pages = shell.pages(role).filter(p => fold(p.label).includes(fold(q)))
+    const pages = shell.pages(role).filter(p => fold(`${p.label} ${p.also || ""}`).includes(fold(q)))
       .map(p => ({kind: "page", label: p.label, sub: p.parent || "", route: p.route}));
     hits = pages; at = -1; draw(q);
     if (q.length < 2) return;
@@ -90,28 +90,22 @@ export function mount(shell) {
       else if (role === "client" || role === "rm") {
         const f = (await post("/api/feed", {client_id: client, scope, role})).feed;
         const where = role === "client" ? {impact: "#/client/tin/thi-truong", detail: "#/client/tong-quan/chi-tiet", flow: "#/client/tong-quan/toan-canh"}
-          : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/toan-canh"};
+          : {impact: "#/rm/khach-hang/tac-dong", detail: "#/rm/khach-hang/tong-quan", flow: "#/rm/khach-hang/tong-quan"};
         items = f.items.map(i => ({title: i.title, sub: i.why, tone: SEV[i.severity], route: where[i.link] || where.detail, focus: i.key, high: i.severity === "high"}));
-      } else if (role === "specialist") {  // the action recommendations waiting for this specialist (G8)
-        const q = (await get("/api/review?status=pending_specialist")).items;
-        items = q.map(x => ({title: x.title, sub: x.client_name, tone: "warn", route: "#/specialist/duyet", focus: `review:${x.id}`}));
       } else {
         // staff: the alerts of the kinds the role looks after first (NFR-12), then the role's own queue
-        const al = (await get("/api/system/alerts")).alerts.filter(a => a.status === "open");
+        const sys = await get("/api/system/alerts");  // a page of alerts, and the open ones counted by the server
+        const al = sys.alerts.filter(a => a.status === "open");
         const alerts = al.map(a => ({title: a.title, sub: `${a.label}${a.count > 1 ? ` · ${a.count} lần` : ""}`, tone: SEV[a.severity],
           route: (WHERE[role] || {})[a.kind] || `#/${role}`, alert: a.id}));
         let rest = [], total = 0;
         if (role === "cio") {  // the high-relevance new news, as the desk counts them (“100 liên quan cao”), not all 800
-          const n = (await get("/api/news/inbox?relevance=high&limit=1000")).items;
-          rest = n.slice(0, 8).map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio/hop-tin"}));
-          total = n.length;
-        } else if (role === "compliance") {
-          const n = (await get("/api/news/inbox?held=1")).items.filter(i => i.status !== "released");
-          rest = n.slice(0, 8).map(i => ({title: i.title, sub: "Tin bị giữ", tone: "warn", route: "#/compliance/giu"}));
-          total = n.length;
+          const d = await get("/api/news/inbox?relevance=high&limit=8");
+          rest = d.items.map(i => ({title: i.title, sub: i.outlet || "", tone: "", route: "#/cio"}));
+          total = d.total != null ? d.total : d.items.length;
         }
         items = [...alerts, ...rest];
-        items.total = alerts.length + total;
+        items.total = (sys.open != null ? sys.open : alerts.length) + total;
       }
     } catch (_) { items = []; }
     try {  // the person's own follow-ups that fired (A6): first, until opened
@@ -129,11 +123,10 @@ export function mount(shell) {
   // where an alert's cause is seen, by role (Admin: Hệ thống lists them all)
   const WHERE = {
     admin: {news_feed: "#/admin/he-thong", market_job: "#/admin/du-lieu", agent: "#/admin/he-thong", audit_chain: "#/admin/nhat-ky", inbox: "#/admin/he-thong", zone_sync: "#/admin/he-thong"},
-    cio: {news_feed: "#/cio/hop-tin", market_job: "#/cio/mo-hinh/du-lieu", agent: "#/cio/nhan-dinh", inbox: "#/cio/nhan-dinh"},
-    compliance: {audit_chain: "#/compliance/nhat-ky"},
+    cio: {news_feed: "#/cio", market_job: "#/cio/mo-hinh/du-lieu", agent: "#/cio/nhan-dinh", inbox: "#/cio/nhan-dinh", audit_chain: "#/cio/nhat-ky"},
   };
   const TITLE = {client: "Điều đáng chú ý", rm: "Điều đáng chú ý · khách đang chọn", cio: "Cảnh báo và tin liên quan cao trong hộp tin",
-    compliance: "Cảnh báo và tin đang bị giữ", admin: "Cảnh báo hệ thống", specialist: "Khuyến nghị chờ bạn duyệt"};
+    admin: "Cảnh báo hệ thống"};
   const drawBell = () => {
     bpop.innerHTML = `<div class="pop-head">${TITLE[shell.role()]}</div>${items.length ? items.map((i, n) =>
       `<a class="pop-item" href="${esc(i.route)}" data-b="${n}"><span class="dot ${i.tone}"></span><span class="pop-t"><b>${esc(i.title)}</b><small>${esc(i.sub)}</small></span>${i.alert ? `<button type="button" class="btn sm" data-ack="${esc(i.alert)}" title="Đánh dấu đã xem (ghi vào nhật ký)">Đã xem</button>` : ""}</a>`).join("")

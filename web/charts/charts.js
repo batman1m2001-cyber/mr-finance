@@ -1,7 +1,7 @@
 /* The charts of the new pages: one tooltip, one legend model, thin marks, a 2px surface gap between
    fills, direct labels on the few marks that matter, a table view next to every chart. Colours come
    from the tokens (validated palette); a sign is gain/loss, a series is its slot, never its rank. */
-import {esc, n, vnd, pct} from "../core/core.js";
+import {esc, n, vnd, pct, t as tr} from "../core/core.js";
 import {iconPaths} from "../core/icons.js?v=20261016r1";
 import {track} from "../motion.js?v=20261016r1";
 
@@ -81,9 +81,9 @@ export function fan(box, horizons, opts = {}) {
     [...pts].reverse().map((p, j) => `L${x(pts.length - 1 - j)},${y(p.p10)}`).join("") + "Z";
   el("path", {d: area, fill: "var(--band-2)", stroke: "none"}, svg);
   el("path", {d: path("p5"), fill: "none", stroke: "var(--down)", "stroke-width": 1.5, "stroke-dasharray": "4 4"}, svg);
-  el("path", {d: path("expected"), fill: "none", stroke: "var(--accent)", "stroke-width": 2.5, "stroke-linejoin": "round"}, svg);
+  el("path", {d: path("expected"), fill: "none", stroke: "var(--series)", "stroke-width": 2.5, "stroke-linejoin": "round"}, svg);
   const last = pts[pts.length - 1], lx = x(pts.length - 1) + 8;
-  const labels = [["P90", last.p90, "var(--ink-2)"], [narrow ? "KV" : "Kỳ vọng", last.expected, "var(--accent)"], ["P10", last.p10, "var(--ink-2)"], ["P5", last.p5, "var(--down)"]];
+  const labels = [["P90", last.p90, "var(--ink-2)"], [narrow ? "KV" : "Kỳ vọng", last.expected, "var(--series)"], ["P10", last.p10, "var(--ink-2)"], ["P5", last.p5, "var(--down)"]];
   // keep the direct labels apart
   const ys = labels.map(l => y(l[1]));
   for (let i = 1; i < ys.length; i++) if (ys[i] - ys[i - 1] < 13) ys[i] = ys[i - 1] + 13;
@@ -97,7 +97,7 @@ export function fan(box, horizons, opts = {}) {
   });
   pts.forEach((p, i) => {
     if (!i) return;
-    el("circle", {cx: x(i), cy: y(p.expected), r: 4, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2}, svg);
+    el("circle", {cx: x(i), cy: y(p.expected), r: 4, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2}, svg);
     const hit = el("rect", {x: x(i) - 28, y: pad.t, width: 56, height: height - pad.t - pad.b, fill: "transparent", tabindex: 0}, svg);
     hover(hit, `<b>${esc(p.label)}</b><br>Kỳ vọng ${vnd(p.expected, true)}<br>P90 ${vnd(p.p90, true)} · P50 ${vnd(p.p50, true)}<br>P10 ${vnd(p.p10, true)} · P5 ${vnd(p.p5, true)}`);
   });
@@ -106,7 +106,7 @@ export function fan(box, horizons, opts = {}) {
   box.appendChild(svg);
   const legend = document.createElement("div");
   legend.className = "legend";
-  legend.innerHTML = `<span><i style="background:var(--accent)"></i>Kỳ vọng${narrow ? " (KV)" : ""}</span><span><i style="background:var(--band-2)"></i>P10–P90 (8/10 khả năng)</span><span><i class="dash"></i>P5 (rất xấu, tham khảo)</span>`;
+  legend.innerHTML = `<span><i style="background:var(--series)"></i>Kỳ vọng${narrow ? " (KV)" : ""}</span><span><i style="background:var(--band-2)"></i>P10–P90 (8/10 khả năng)</span><span><i class="dash"></i>P5 (rất xấu, tham khảo)</span>`;
   box.appendChild(legend);
 }
 
@@ -143,7 +143,7 @@ export function timeline(box, t, opts = {}) {
     yTop = axis(Math.min(...vs), Math.max(...vs), pad.t, topH);
     const line = pts.map((p, i) => `${i ? "L" : "M"}${cx(i).toFixed(1)},${yTop(p.value).toFixed(1)}`).join("");
     el("path", {d: `${line}L${cx(n - 1).toFixed(1)},${pad.t + topH}L${cx(0).toFixed(1)},${pad.t + topH}Z`, fill: "var(--band-2)", stroke: "none"}, svg);
-    el("path", {d: line, fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round"}, svg);
+    el("path", {d: line, fill: "none", stroke: "var(--series)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round"}, svg);
   }
   // the bars: the change of each period (a level), or its sum (money in or out)
   const bv = pts.map(p => (flow ? p.value : p.change || 0));
@@ -162,7 +162,7 @@ export function timeline(box, t, opts = {}) {
   }
   // one crosshair over both panels, and a hit strip per period
   const cross = el("line", {y1: pad.t, y2: y0 + barH, stroke: "var(--axis)", "stroke-width": 1, visibility: "hidden"}, svg);
-  const dot = flow ? null : el("circle", {r: 4, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden"}, svg);
+  const dot = flow ? null : el("circle", {r: 4, fill: "var(--series)", stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden"}, svg);
   pts.forEach((p, i) => {
     const hit = el("rect", {x: (cx(i) - cw / 2).toFixed(1), y: pad.t, width: cw.toFixed(2), height: y0 + barH - pad.t, fill: "transparent"}, svg);
     const on = () => {
@@ -196,7 +196,8 @@ export function diverging(box, rows, opts = {}) {
   data.forEach((r, i) => {
     const yy = i * row + 4, w = Math.max(2, Math.abs(r.value) * scale), xx = r.value < 0 ? zero - w : zero;
     const lab = el("text", {x: 0, y: yy + 16, class: "lbl"}, svg);
-    lab.textContent = r.label.length > 22 ? r.label.slice(0, 21) + "…" : r.label;
+    const name = tr(r.label);
+    lab.textContent = name.length > 22 ? name.slice(0, 21) + "…" : name;
     el("rect", {x: xx + (r.value < 0 ? 0 : 1), y: yy + 4, width: Math.max(1, w - 1), height: 18, rx: 4,
       fill: r.color || (r.value < 0 ? "var(--down)" : "var(--up)"), opacity: r.color ? 1 : 0.85}, svg);
     const v = el("text", {x: width, y: yy + 17, "text-anchor": "end", class: "val"}, svg);
@@ -245,7 +246,7 @@ export function heat(box, cols, rows, opts = {}) {
 export function spark(values, w = 96, h = 22) {
   const max = Math.max(1, ...values);
   const pts = values.map((v, i) => `${(i * (w - 2)) / Math.max(1, values.length - 1) + 1},${h - 2 - (v / max) * (h - 4)}`).join(" ");
-  return `<svg class="viz" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Số tin mỗi giờ, 24 giờ qua"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>`;
+  return `<svg class="viz" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Số tin mỗi giờ, 24 giờ qua"><polyline points="${pts}" fill="none" stroke="var(--series)" stroke-width="1.5"/></svg>`;
 }
 
 // ── factor moves of a branch, as a share of one month's usual move ───────────
@@ -370,11 +371,11 @@ export function sankey(box, f, opts = {}) {
     return best ? [best[0], cut(best[1])] : [cut(s)];
   };
   const label = (x, y, anchor, b) => {
-    const ls = lines(b.label, narrow ? 13 : 22, narrow ? 2 : 1), up = (ls.length - 1) * 13;
+    const name = tr(b.label), ls = lines(name, narrow ? 13 : 22, narrow ? 2 : 1), up = (ls.length - 1) * 13;  // English before it wraps
     const t = el("text", {x, y: y - up / 2, "text-anchor": anchor, class: "lbl"}, svg);
     if (ls.length > 1) for (const [i, s] of ls.entries()) el("tspan", {x, dy: i ? 13 : 0}, t).textContent = s;
     else t.textContent = ls[0];
-    if (ls.join(" ").replace(/…$/, "") !== b.label) t.setAttribute("data-full", b.label);
+    if (ls.join(" ").replace(/…$/, "") !== name) t.setAttribute("data-full", name);
     const v = el("text", {x, y: y + 15 + up / 2, "text-anchor": anchor, class: "val"}, svg);
     v.textContent = fmt(b.amount);
     howOn(v, b.rows ? "flow.band" : "flow.left", b.rows ? {rows: String(b.rows.length)} : {total_in: vnd(f.total_in), total_out: vnd(f.total_out)});

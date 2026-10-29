@@ -55,7 +55,7 @@ def test_the_request_carries_the_workspace_checked():
 def test_the_instructions_say_it_and_the_name_only_in_model_mode():
     g = {"lens": "muc-tieu", "selected": PICK, "active": ["vni_30", "rates_up"]}
     model = graph_line(ctx(g, reads=True))
-    assert "Mục tiêu & kịch bản" in model and "“Học phí cho con” (GL:tuition)" in model
+    assert "Wealth Planning" in model and "“Học phí cho con” (GL:tuition)" in model
     assert "VN-Index giảm 30%" in model and "Lãi suất tăng 2%" in model and "lien_ket" in model
     template = graph_line(ctx(g, reads=False))
     assert "Học phí" not in template and "GL:tuition" not in template and "đang chọn một mục tiêu" in template

@@ -162,7 +162,9 @@ def build(
                 "maturity",
                 owner,
             )
-        elif h["class"] == "stock" and d.get("ticker"):
+        elif h["class"] == "stock" and d.get("ticker") in market["stocks"]:
+            # a ticker the market file does not have (read from a client's statement, 2026-10-28: BSR) has no known
+            # dividend: no line, rather than every page that draws cash flow failing
             mk = market["stocks"][d["ticker"]]
             for m in horizon:
                 if int(m[5:7]) in mk["div_months"] and mk["div"]:

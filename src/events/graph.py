@@ -8,7 +8,7 @@ from events.ops import flag_urgent, group
 
 @graph
 def event_flow(news_ids, title=None, by="cio"):
-    """Group news into an event; it is held while any item waits for Compliance (FR-105)."""
+    """Group news into an event; it is held while any item waits for the CIO (FR-105)."""
     made = group(news_ids=news_ids, title=title, by=by)
     START >> made >> END
 

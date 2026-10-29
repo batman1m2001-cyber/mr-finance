@@ -1,7 +1,7 @@
 """The goal branch (BRD §10, FR-601…604): a regulation that does not move prices but can delay a goal
 that sends money abroad. The result is a date, papers and an urgency — never money.
 
-Inputs: regulation notes Compliance released, and each family's active goals (their dated outflows).
+Inputs: regulation notes a CIO released, and each family's active goals (their dated outflows).
 Nothing else: no AML data, no risk rating (§13.2).
 
 - A goal's purpose and destination come from what the RM declared (FR-601). Undeclared, they are
@@ -116,10 +116,17 @@ def level(today: date, need: date, mile: date, note: Dict[str, Any]) -> str:
     return "note"
 
 
+def _dated(message: Optional[str], mile: date) -> Optional[str]:
+    """A note's client message with its ``{milestone}`` filled in as MM/YYYY ("nên chuẩn bị trước tháng 12/2026")."""
+    return message.replace("{milestone}", mile.strftime("%m/%Y")) if message else message
+
+
 def goals_of(client: Dict[str, Any], today: date) -> List[Dict[str, Any]]:
-    """A family's active goals: its dated outflows not yet past (fixtures ``events``)."""
+    """A family's active goals: its dated outflows not yet past (fixtures ``events``); a ``routine`` one (Tết, the
+    yearly premium, the summer trip) is the household's rhythm, not a goal."""
     out = []
-    for i, e in enumerate(sorted(client.get("events", []), key=lambda e: e["date"]), start=1):
+    events = [e for e in client.get("events", []) if not e.get("routine")]
+    for i, e in enumerate(sorted(events, key=lambda e: e["date"]), start=1):
         if e.get("direction") != "out" or e.get("closed"):
             continue
         need = date.fromisoformat(e["date"])
@@ -179,7 +186,7 @@ def match(
                         "level_label": LEVELS[lv],
                         "documents": reg.get("documents", []),
                         # the client reads a message only for a declared goal at remind or contact level
-                        "client_message": reg.get("client_message")
+                        "client_message": _dated(reg.get("client_message"), mile)
                         if dec and lv in ("remind", "contact_now")
                         else None,
                         "rm_hint": reg.get("rm_hint")

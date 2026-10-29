@@ -60,6 +60,13 @@ create table if not exists shadow_forecasts (
   id text primary key, view_id text not null, factor text not null, horizon text not null, origin text not null,
   due text not null, created real not null, scored real, data text not null);
 create index if not exists shadow_forecasts_open on shadow_forecasts (scored, due);
+create table if not exists trial_days (day text primary key, data text not null);
+create table if not exists eval_scores (
+  id text primary key, day text not null, horizon text not null, factor text not null, verdict text not null,
+  scored real, data text not null);
+create index if not exists eval_scores_day on eval_scores (day, horizon);
+create table if not exists eval_snapshots (day text primary key, created real not null, data text not null);
+create table if not exists call_costs (id text primary key, data text not null);
 create table if not exists agent_jobs (
   id text primary key, event_id text not null, status text not null, created real not null, data text not null);
 create index if not exists agent_jobs_open on agent_jobs (status, created);

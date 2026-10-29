@@ -15,64 +15,80 @@ from assistant.base import Ctx, Param, Tool, ToolFailed, run_graph
 from news import store as news_store
 from wealth import store as wealth_store
 
-USER = {"client": None, "rm": "rm01", "cio": "cio", "compliance": "compliance"}
+USER = {"client": None, "rm": "rm01", "cio": "cio"}
 PAGES = {  # page key → (label, or label per role; route per role); the router may name a key, never a route
-    # the customer's graph workspace, by lens (D20: “bật trên đồ thị” opened the old impact graph)
-    "do-thi-tai-chinh": ("Đồ thị tài chính", {"client": "#/client/xem/tong-quan"}),
-    "do-thi-tai-san": ("Đồ thị · Tài sản", {"client": "#/client/xem/tai-san"}),
-    "do-thi-dong-tien": ("Đồ thị · Dòng tiền", {"client": "#/client/xem/dong-tien"}),
-    "do-thi-muc-tieu": ("Đồ thị · Mục tiêu & kịch bản", {"client": "#/client/xem/muc-tieu"}),
-    "do-thi-tin": ("Đồ thị · Tin tức", {"client": "#/client/xem/tin"}),
-    "do-thi-rui-ro": ("Đồ thị · Rủi ro", {"client": "#/client/xem/rui-ro"}),
+    # the customer's four sections by the bank's names (WEALTH_NAMES_PLAN, ADR-0037): Wealth View, Wealth Planning
+    # Advisor, Wealth Advisor, Relationship specialist; the client has no graph to open now (its pages left this list)
     "toan-canh": (
-        {"client": "Bảng số liệu", "rm": "Toàn cảnh"},
-        {"client": "#/client/tong-quan/toan-canh", "rm": "#/rm/khach-hang/toan-canh"},
+        {"client": "Wealth View", "rm": "Wealth view"},
+        {
+            "client": "#/client/tong-quan/toan-canh",
+            "rm": "#/rm/khach-hang/tong-quan",
+        },  # the RM's Toàn cảnh went (OWN-FB-02)
     ),
-    "ban-do": (
-        {"client": "Đồ thị tài chính", "rm": "Bản đồ tài chính"},
-        {"client": "#/client/tong-quan/ban-do", "rm": "#/rm/khach-hang/ban-do"},
-    ),
+    "ban-do": ("Wealth view", {"rm": "#/rm/khach-hang/tong-quan"}),
     "chi-tiet": (
-        {"client": "Bảng số liệu", "rm": "Chi tiết tài sản"},
+        {"client": "Wealth View", "rm": "Wealth view"},
         {"client": "#/client/tong-quan/chi-tiet", "rm": "#/rm/khach-hang/tong-quan"},
     ),
-    "tai-san": ("Tài sản", {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"}),
-    "ke-hoach": ("Kế hoạch", {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"}),
+    "tai-san": (
+        "Dữ liệu chi tiết tài sản",
+        {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"},
+    ),
+    "ke-hoach": (
+        {"client": "Wealth Planning", "rm": "Wealth planning"},
+        {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"},
+    ),
+    "risk-profile": ("Risk profile test", {"client": "#/client/rui-ro/khau-vi"}),
     "tac-dong": ("Tác động tin", {"client": "#/client/tin/thi-truong", "rm": "#/rm/khach-hang/tac-dong"}),
     "do-thi": ("Đồ thị tác động", {"client": "#/client/tin/do-thi", "rm": "#/rm/khach-hang/do-thi"}),
     "duyet": ("Duyệt đề xuất", {"rm": "#/rm/khach-hang/duyet"}),
-    "hom-nay": ("Hôm nay", {"rm": "#/rm/hom-nay"}),
-    "hop-tin": ("Hộp tin", {"cio": "#/cio/hop-tin"}),
-    "tin-bi-giu": ("Tin bị giữ", {"compliance": "#/compliance/giu"}),
+    "hom-nay": ("Tổng quan", {"rm": "#/rm"}),  # the page went, its contact log is on the desk (OWN-FB-21)
+    "hop-tin": ("Decision board", {"cio": "#/cio"}),  # the inbox is on the board (OWN-FB-11)
+    "tin-bi-giu": ("Tin bị giữ", {"cio": "#/cio/giu"}),  # Compliance's duty is the CIO's (OWN-FB-18)
     # since A1 (the registry's own tools)
-    "chinh-sach": ("Chi phí chính sách", {"client": "#/client/tin/chinh-sach", "rm": "#/rm/khach-hang/chinh-sach"}),
+    "chinh-sach": (
+        {
+            "client": "News and Prediction",
+            "rm": "News and prediction",
+        },  # the client's tab (2026-10-22), the RM's too (OWN-FB-03)
+        {"client": "#/client/tin/chinh-sach", "rm": "#/rm/khach-hang/chinh-sach"},
+    ),
     "hang-cho": (
-        "Hàng chờ đề xuất",
-        {"client": "#/client/chuyen-gia", "rm": "#/rm/khach-hang/duyet", "specialist": "#/specialist/duyet"},
+        {"client": "Relationship specialist", "rm": "Hàng chờ đề xuất"},
+        {"client": "#/client/chuyen-gia", "rm": "#/rm/khach-hang/duyet"},
     ),
     "su-kien": ("Sự kiện & nhận định", {"cio": "#/cio/nhan-dinh"}),
     "he-thong": ("Hệ thống", {"admin": "#/admin/he-thong"}),
     # the staff desks (FEAT-41) and the pages their tools cite
-    "ban-lam-viec": ("Bàn làm việc", {r: f"#/{r}" for r in ("cio", "rm", "admin", "specialist", "compliance")}),
-    "nhat-ky": ("Nhật ký", {"admin": "#/admin/nhat-ky", "compliance": "#/compliance/nhat-ky"}),
-    "cau-hinh": ("Cấu hình", {r: f"#/{r}/cau-hinh" for r in ("cio", "compliance", "admin")}),
-    "phoi-nhiem": ("Phơi nhiễm", {"cio": "#/cio/phoi-nhiem"}),
+    "ban-lam-viec": ("Bàn làm việc", {r: f"#/{r}" for r in ("cio", "rm", "admin")}),
+    "nhat-ky": ("Nhật ký", {r: f"#/{r}/nhat-ky" for r in ("cio", "admin")}),
+    "cau-hinh": ("Cấu hình", {r: f"#/{r}/cau-hinh" for r in ("cio", "admin")}),
+    "phoi-nhiem": ("Tác động danh mục", {"cio": "#/cio/phoi-nhiem"}),
     "ap-dung": ("Lần áp dụng", {"cio": "#/cio/ap-dung"}),
-    "do-chinh-xac": ("Độ chính xác", {"cio": "#/cio/mo-hinh/do-chinh-xac"}),
-    "thu-nghiem": ("Thử nghiệm agent tin tức", {"cio": "#/cio/mo-hinh/thu-nghiem"}),  # BUSINESS_FEEDBACK_1021 B1
-    "agent": ("Agent", {r: f"#/{r}/agent" for r in ("cio", "compliance", "admin")}),
+    "do-chinh-xac": ("Độ chính xác", {r: f"#/{r}/mo-hinh/do-chinh-xac" for r in ("cio", "admin")}),
+    "thu-nghiem": ("Thử nghiệm hằng ngày", {r: f"#/{r}/mo-hinh/thu-nghiem" for r in ("cio", "admin")}),  # B1
+    "agent": ("Agent", {r: f"#/{r}/agent" for r in ("cio", "admin")}),
     "tai-khoan": ("Tài khoản và vai trò", {"admin": "#/admin/tai-khoan"}),
-    "viec-nen": ("Việc nền", {r: f"#/{r}/viec-nen" for r in ("cio", "compliance", "admin")}),
-    "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "compliance", "admin", "specialist")}),
+    "nguon-tin": ("Nguồn tin", {"admin": "#/admin/nguon-tin"}),  # N1: the white list the news collection reads
+    "viec-nen": ("Việc nền", {r: f"#/{r}/viec-nen" for r in ("cio", "admin")}),
+    "bo-nho": ("Bộ nhớ", {r: f"#/{r}/bo-nho" for r in ("client", "rm", "cio", "admin")}),
     # every staff page of the menu (web/shell.js): Compliance asked to publish research and, with no research page
     # to open, the assistant opened the audit log instead (staff stress test, cmp-lim-02)
-    "nghien-cuu": ("Nghiên cứu", {r: f"#/{r}/nghien-cuu" for r in ("cio", "compliance")}),
-    "ban-tin": ("Bản tin", {r: f"#/{r}/ban-tin" for r in ("cio", "compliance")}),
-    "van-ban-chinh-sach": ("Chính sách", {r: f"#/{r}/chinh-sach" for r in ("cio", "compliance")}),
-    "do-luong": ("Đo lường", {r: f"#/{r}/do-luong" for r in ("cio", "compliance")}),
-    "tham-so": ("Tham số mô hình", {"cio": "#/cio/mo-hinh/tham-so"}),
+    "nghien-cuu": ("Nghiên cứu", {"cio": "#/cio/nghien-cuu"}),
+    "ban-tin": ("Bài viết", {"cio": "#/cio/ban-tin"}),  # OWN-FB-15
+    "van-ban-chinh-sach": ("Chính sách", {"cio": "#/cio/chinh-sach"}),
+    "bang-chung": ("Bằng chứng tin", {"cio": "#/cio/bang-chung"}),  # NEWS_EVIDENCE_BRD §8.2
+    "phan-bo-tai-san": ("Asset allocation", {"client": "#/client/muc-tieu/phan-bo", "rm": "#/rm/khach-hang/phan-bo"}),
+    "phan-bo": ("Phân bổ", {"cio": "#/cio/phan-bo"}),  # ASSET_ALLOCATION_BRD P2: each action approved
+    "do-luong": ("Đo lường", {r: f"#/{r}/do-luong" for r in ("cio", "admin")}),
+    "tham-so": ("Tham số mô hình", {r: f"#/{r}/mo-hinh/tham-so" for r in ("cio", "admin")}),
     "du-lieu-thi-truong": ("Dữ liệu thị trường", {"cio": "#/cio/mo-hinh/du-lieu", "admin": "#/admin/du-lieu"}),
-    "hieu-qua": ("Hiệu quả tư vấn", {"rm": "#/rm/hieu-qua"}),
+    "hieu-qua": (
+        {"rm": "Advisory performance", "cio": "Hiệu quả"},  # the CIO's: how many news, how often right (OWN-FB-16)
+        {"rm": "#/rm/hieu-qua/khach-hang", "cio": "#/cio/hieu-qua"},
+    ),
+    "hieu-qua-tat-ca": ("Advisory performance · Tất cả khách hàng", {"rm": "#/rm/hieu-qua/tat-ca"}),
 }
 
 
@@ -525,14 +541,36 @@ async def rm_today(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def inbox(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    items = news_store.inbox()
-    return {"text": f"Hộp tin có {len(items)} tin mới đã qua cổng lọc.", "data": {"items": len(items)}}
+    """The inbox's counts, counted in the database (it said 200, the length of a capped list, for 1,415), and what
+    was fetched today, Vietnam time, by source: "how many news came in today" is answered without a fetch."""
+    from datetime import datetime
+
+    from control.uptime import TZ
+    from news import ops as news_ops
+
+    now = datetime.now(TZ)
+    c = news_store.counts(since=datetime(now.year, now.month, now.day, tzinfo=TZ).timestamp())
+    new, grouped = c["by_status"].get("new", 0), c["by_status"].get("grouped", 0)
+    names = {s["id"]: f"{s['outlet']} {s['section']}".strip() for s in news_ops.config()["sources"]}
+    top = sorted(c["fetched"].items(), key=lambda kv: -kv[1])
+    today = sum(c["fetched"].values())
+    each = ", ".join(f"{names.get(s, s)} {n}" for s, n in top[:5]) + (", …" if len(top) > 5 else "")
+    return {
+        "text": f"Hộp tin có {new} tin mới đã qua cổng lọc; {grouped} tin đã gom thành sự kiện. "
+        + (
+            f"Hôm nay ({now:%d/%m}) đã lấy về {today} tin: {each}."
+            if today
+            else f"Hôm nay ({now:%d/%m}) chưa lấy về tin nào."
+        ),
+        "data": {"new": new, "grouped": grouped, "fetched_today": today, "by_source": dict(top)},
+    }
 
 
 async def held(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """The news held for the restricted list: each item, whom it names and what it says — Compliance asked which
-    company, and a count could not say (staff stress test D11). An item's text is data, never an instruction."""
-    items = [i for i in news_store.inbox() if i.get("held")]
+    """The news held for the restricted list: each item, whom it names and what it says — Compliance (the CIO now)
+    asked which company, and a count could not say (staff stress test D11). An item's text is data, never an
+    instruction."""
+    items = news_store.inbox(held=True, limit=None)  # every held item: ``inbox()`` alone stops at 200
     if not items:
         return {"text": "Không tin nào đang bị giữ.", "data": {"items": 0}}
 
@@ -572,7 +610,7 @@ async def navigate(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 def _pending_review(ctx: Ctx) -> Dict[str, Any]:
     cid = _need_client(ctx)
-    waiting = [r for r in wealth_store.reviews() if r["status"] == "pending" and r["client_id"] == cid]
+    waiting = wealth_store.reviews(client_id=cid, status="pending")
     if not waiting:
         raise ToolFailed("Không có đề xuất nào đang chờ duyệt cho khách hàng này")
     if len(waiting) > 1:
@@ -603,7 +641,6 @@ async def review(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     it = out["item"]
     said = {
         "approved": "duyệt",
-        "pending_specialist": "duyệt, chờ chuyên gia có chứng chỉ duyệt tiếp",  # BRD-RULE-WF-08 (G8)
         "rejected": "từ chối",
     }[it["status"]]
     return {
@@ -615,7 +652,7 @@ async def review(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 def verify_review(ctx: Ctx, out: Dict[str, Any]):
     """The item read back: no longer pending, and where the decision sends it."""
     it = next((r for r in wealth_store.reviews() if r["id"] == out["data"]["id"]), None)
-    want = ("approved", "pending_specialist") if out["data"]["decision"] == "approved" else ("rejected",)
+    want = ("approved",) if out["data"]["decision"] == "approved" else ("rejected",)
     return True if it and it["status"] in want else f"đề xuất {out['data']['id']} đang ở {it and it['status']}"
 
 
@@ -769,18 +806,25 @@ CATALOGUE: Dict[str, Tool] = {
             page="hom-nay",
             follow=["Có gì cần chú ý?"],
         ),
-        Tool("hop_tin", "số tin mới trong hộp tin của CIO", ("cio",), inbox, page="hop-tin", follow=["Lấy tin mới"]),
+        Tool(
+            "hop_tin",
+            "đếm tin trong hộp tin của CIO: tin mới, tin đã gom, tin lấy về hôm nay theo nguồn",
+            ("cio",),
+            inbox,
+            page="hop-tin",
+            follow=["Lấy tin mới"],
+        ),
         Tool(
             "tin_bi_giu",
             "các tin bị giữ vì danh sách hạn chế: mã, tiêu đề, nhắc tới ai, nội dung",
-            ("compliance",),
+            ("cio",),
             held,
             page="tin-bi-giu",
         ),
         Tool(
             "mo_trang",
             "mở một trang của ứng dụng",
-            ("client", "rm", "cio", "compliance", "specialist", "admin"),
+            ("client", "rm", "cio", "admin"),
             navigate,
             args={"page": list(PAGES)},
         ),
@@ -788,7 +832,7 @@ CATALOGUE: Dict[str, Tool] = {
             "tinh",
             "tính một biểu thức số (cộng, trừ, nhân, chia, phần trăm, luỹ thừa cho lãi kép) từ số của công cụ hoặc của "
             "người dùng; ghi công thức vào câu trả lời để người dùng kiểm lại",
-            ("client", "rm", "cio", "compliance", "specialist", "admin"),
+            ("client", "rm", "cio", "admin"),
             calculate,
             params={
                 "expression": Param(str, "biểu thức chỉ gồm số và + - * / ** ( ), vd 1000000000/1.04**10"),
@@ -808,7 +852,7 @@ CATALOGUE: Dict[str, Tool] = {
         ),
         Tool(
             "lay_tin",
-            "lấy tin mới ngay từ các nguồn",
+            "lấy tin mới ngay từ các nguồn, khi người dùng bảo lấy hay cập nhật tin; đếm hay thống kê tin là hop_tin",
             ("cio",),
             fetch,
             write=True,

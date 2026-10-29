@@ -2,8 +2,11 @@
 
 A rule returns hits ``{"exposure", "sensitivity", "raw", "affected", "message"}``: ``exposure`` is
 what the client holds in harm's way (VND), ``sensitivity`` how much of it moves, ``raw`` the move
-in VND (negative: a loss; for a yearly cost, one year of it), ``message`` the line the client reads.
-The alert's impact is ``raw × probability``.
+in VND (negative: a loss; for a yearly cost, one year of it), ``message`` the line the client reads. A number known
+from a contract or a rule, not estimated, rides along as ``certain`` ``{"amount", "per"}`` (NEWS_EVIDENCE_BRD N1).
+The alert's impact is ``raw × probability``. A rule whose holdings move by their own sensitivity says so with
+``weights`` (holding name → its share of ``raw``); otherwise ``by_class`` splits ``raw`` over the affected
+holdings by value (OWN-FB-17).
 """
 
 from __future__ import annotations
@@ -102,6 +105,7 @@ def sector(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
             "sensitivity": raw / exposure,
             "raw": raw,
             "affected": [h["name"] for h in rows],
+            "weights": {h["name"]: h["value"] * weight(h) for h in rows},
             "message": f"Nắm giữ {vnd(exposure)} cổ phiếu, trái phiếu ngành {f['rule']['sector']}: tác động lan sang cả ngành, "
             f"ước tính {vnd(raw, signed=True)}.",
         }
@@ -260,6 +264,7 @@ def pit_relief(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
             "message": f"Giảm trừ gia cảnh tăng ({'bản thân' + (f' và {deps} người phụ thuộc' if deps else '')}): "
             f"thu nhập thực nhận tăng khoảng "
             f"{vnd(yearly / 12)}/tháng.",
+            "certain": {"amount": yearly / 12, "per": "tháng"},
         }
     ]
 
@@ -314,12 +319,13 @@ def rates(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
                 "affected": [h["name"] for h in loans],
                 "message": f"Khoản vay lãi thả nổi {vnd(owed)}: chi phí lãi tăng {vnd(owed * move)}/năm "
                 f"(khoảng {vnd(owed * move / 12)}/tháng).",
+                "certain": {"amount": -owed * move / 12, "per": "tháng"},
             }
         )
     bonds = _assets(hs, "bond")
     if bonds:
         exposure = sum(h["value"] for h in bonds)
-        raw = -sum(h["value"] * (h["detail"].get("duration") or 1) * move for h in bonds)
+        raw = -sum(h["value"] * (h["detail"].get("duration") or 1) * move for h in bonds)  # one class: no weights
         out.append(
             {
                 "exposure": exposure,
@@ -349,6 +355,52 @@ def area(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
     ]
 
 
+def plans(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
+    """No price moves: the family's plans that send money abroad (its plan labels, src/evidence/labels) take more
+    steps. Nothing in VND."""
+    mine = profile.get("labels") or {}
+    got = [f"plan:{p}" for p in f["rule"]["purposes"] if f"plan:{p}" in mine]
+    if not got:
+        return []
+    names = [n for lb in got for n in mine[lb]["from"]]
+    return [
+        {
+            "exposure": 0,
+            "sensitivity": 0.0,
+            "raw": 0.0,
+            "affected": names,
+            "message": f"Kế hoạch chuyển tiền ra nước ngoài ({', '.join(names)}): thủ tục có thể lâu hơn và cần thêm giấy tờ; "
+            "không ảnh hưởng giá tài sản.",
+        }
+    ]
+
+
+def stat(f: Dict, hs: H, profile: Dict, mk: Dict) -> List[Hit]:
+    """The holdings move by the median of what the series did after the past events (the statistics branch); with
+    too few measured, nothing is estimated."""
+    from evidence import frames
+
+    rows = [h for h in hs if h["kind"] == "asset" and h["class"] in f["rule"]["classes"]]
+    if not rows:
+        return []
+    s = frames.stats(frames.data()["frames"][f["id"]]) or {}
+    move = s.get("median") if s.get("enough") else 0.0
+    exposure = sum(h["value"] for h in rows)
+    weight = lambda h: (h["detail"].get("beta") or 1.0) if h["class"] == "stock" else 1.0  # noqa: E731
+    raw = sum(h["value"] * move * weight(h) for h in rows)
+    return [
+        {
+            "exposure": exposure,
+            "sensitivity": raw / exposure,
+            "raw": raw,
+            "affected": [h["name"] for h in rows],
+            "weights": {h["name"]: h["value"] * weight(h) for h in rows},
+            "message": f"{vnd(exposure)} cổ phiếu, chứng chỉ quỹ: sau các lần Fed tăng lãi suất trước đây, VN-Index thường "
+            "giảm trong tuần sau đó (xem bằng chứng).",
+        }
+    ]
+
+
 RULES: Dict[str, Callable[..., List[Hit]]] = {
     "second_property": second_property,
     "transfer_tax": transfer_tax,
@@ -366,7 +418,30 @@ RULES: Dict[str, Callable[..., List[Hit]]] = {
     "business": business,
     "rates": rates,
     "area": area,
+    "plans": plans,
+    "stat": stat,
 }
+
+
+def by_class(hit: Hit, hs: H, amount: float) -> Dict[str, int]:
+    """``amount`` (the alert's impact) split by asset class over the holdings the hit touches: by each holding's
+    weight when the rule gives one, else by value. Nothing held (a payment ahead, the salary): ``outflow`` or
+    ``income``. Rounded so the parts add up to ``round(amount)``."""
+    named = {h["name"]: h for h in hs}
+    weights: Dict[str, float] = {}
+    for name in hit["affected"]:
+        h = named.get(name)
+        if h is None:
+            continue
+        cls = h["class"]
+        weights[cls] = weights.get(cls, 0.0) + abs((hit.get("weights") or {}).get(name, h["value"]))
+    total = sum(weights.values())
+    if not total:
+        return {("income" if amount > 0 else "outflow"): round(amount)}
+    parts = {c: round(amount * w / total) for c, w in sorted(weights.items(), key=lambda kv: -kv[1])}
+    top = next(iter(parts))
+    parts[top] += round(amount) - sum(parts.values())  # the rounding lands on the largest part
+    return parts
 
 
 def severity(pct_of_net_worth: float) -> str:

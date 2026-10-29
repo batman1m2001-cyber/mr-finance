@@ -1,14 +1,14 @@
-/* CIO and Tuân thủ · Đo lường (F3): the monthly measurement reports, read from what the product records —
+/* CIO and Admin · Đo lường (F3): the monthly measurement reports, read from what the product records —
    misses with causes (MEAS-03), rubber-stamping (MEAS-05), news to RM (KPI-01, WF-09), inbox and agent timing
    (NFR-02), availability in business hours (NFR-03), recommendations reviewed and logged (KPI-05), RM contacts from a
    signal (KPI-06), high-level alerts the client opened (KPI-07), the business effect against a control group
    (MEAS-06). GET /api/measure. */
-import {esc, get, n as how, num, pct} from "../core/core.js";
+import {LOCALE, esc, get, n as how, num, pct} from "../core/core.js";
 
-const n1 = (x) => x == null ? "—" : Number(x).toLocaleString("vi-VN", {maximumFractionDigits: 1});
+const n1 = (x) => x == null ? "—" : Number(x).toLocaleString(LOCALE, {maximumFractionDigits: 1});
 const met = (share, inputs) => share == null ? "—" : `<span class="${share >= 1 ? "good-text" : share === 0 ? "bad-text" : ""}">${how(pct(share, false, 0), "measure.on_time", inputs)}</span>`;
 
-const stamp = (t) => new Date(t * 1000).toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"});
+const stamp = (t) => new Date(t * 1000).toLocaleString(LOCALE, {timeZone: "Asia/Ho_Chi_Minh", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"});
 
 function empty(text) { return `<p class="muted small">${text}</p>`; }
 
@@ -20,7 +20,7 @@ export async function render(box) {
   const d = await get("/api/measure");
   const m = d.misses, r = d.rubber_stamp, s = d.speed, t = d.timing, a = d.availability, im = d.important, u = s.urgent;
   const rv = d.reviewed, ct = d.contacts, op = d.opens, ef = d.effect;
-  const n2 = (x, d) => x == null ? "—" : Number(x).toLocaleString("vi-VN", {maximumFractionDigits: d});
+  const n2 = (x, d) => x == null ? "—" : Number(x).toLocaleString(LOCALE, {maximumFractionDigits: d});
   const EFFECT = [["contacts", "Liên hệ mỗi gia đình mỗi tháng", (x) => n2(x, 2)], ["goals", "Mục tiêu “Đạt”", (x) => x == null ? "—" : pct(x, false, 0)],
     ["actions", "Khuyến nghị hành động được duyệt mỗi gia đình", (x) => n2(x, 2)]];
   const cell = (x, f, q, group) => x == null ? "—" : how(f(x), "measure.control_effect", {quarter: q, group});
@@ -85,7 +85,7 @@ export async function render(box) {
     </section>
 
     <section class="panel mt"><h3>Liên hệ bắt đầu từ tín hiệu hệ thống <span class="hint">BRD-KPI-06 · mục tiêu ≥ ${how(pct(ct.target, false, 0), "measure.contact_signal_share")}</span></h3>
-      <p class="small">RM ghi mỗi lần liên hệ khách ở trang Hôm nay, kèm tín hiệu khởi đầu (gia đình cần xem trước, việc theo mục tiêu) hoặc không. Tín hiệu được kiểm khi ghi. Hành vi thật của RM chỉ đo được khi thí điểm.</p>
+      <p class="small">RM ghi mỗi lần liên hệ khách ở Tổng quan (Ghi liên hệ), kèm tín hiệu khởi đầu (gia đình cần xem trước, việc theo mục tiêu) hoặc không. Tín hiệu được kiểm khi ghi. Hành vi thật của RM chỉ đo được khi thí điểm.</p>
       ${ct.by_month.length ? `<div class="scrollx"><table class="table"><thead><tr><th>Tháng</th><th class="num">Liên hệ</th><th class="num">Từ tín hiệu</th><th class="num">Tỷ lệ</th></tr></thead><tbody>
         ${ct.by_month.map(x => `<tr><td>${esc(x.month)}</td><td class="num">${x.contacts}</td><td class="num">${x.from_signal}</td>
           <td class="num"><span class="${x.share >= ct.target ? "good-text" : "bad-text"}">${how(pct(x.share, false, 0), "measure.contact_signal_share", {month: x.month, contacts: x.contacts, from_signal: x.from_signal})}</span></td></tr>`).join("")}

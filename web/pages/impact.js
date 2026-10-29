@@ -1,7 +1,7 @@
 /* Tác động tin: what the approved news does to this family — one hero number, the band over time,
    where it comes from, and each event with its status. Client: asset classes only, with the labels
    flow 2 requires. RM: also factors, holdings, the pre-review flag and "cách tính". */
-import {internal, ASSET_CLASS, CLASS_COLOR, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
+import {LOCALE, ASSET_CLASS, HORIZON, drawer, empty, esc, get, n as how, pct, post, runBadge, signClass, toast, vnd, when, $} from "../core/core.js";
 import {diverging, fan} from "../charts/charts.js";
 import {names, openTrace} from "./trace.js";
 
@@ -32,7 +32,7 @@ export async function render(box, ctx) {
   let sel = [...effective].sort((a, b) => Math.abs(b.horizons["3m"].expected) - Math.abs(a.horizons["3m"].expected))[0] || items[0];
   const flagged = staff && effective.some(i => i.pre_review);
 
-  box.innerHTML = `${staff ? internal() : ""}
+  box.innerHTML = `
     <div class="cols">
       <div class="panel hero-panel c5">
         <div class="eyebrow">Tác động tin · 3 tháng tới</div>
@@ -77,7 +77,8 @@ export async function render(box, ctx) {
     for (const r of box.querySelectorAll("[data-tl]")) r.classList.toggle("on", r.dataset.tl === it.run_id);
     drawGoals($("#goal-impact", box), it);
   };
-  diverging($("#by-class", box), Object.entries(classes).map(([k, v]) => ({label: ASSET_CLASS[k] || k, value: v, color: CLASS_COLOR[k]})),
+  // a gain or a loss, as its figure is written (a class colour read as a loss on the orange of Cổ phiếu)
+  diverging($("#by-class", box), Object.entries(classes).map(([k, v]) => ({label: ASSET_CLASS[k] || k, value: v})),
     {label: "Đóng góp theo nhóm tài sản"});
   $("#events", box).innerHTML = items.map(i => {
     const e = i.horizons["3m"].expected;
@@ -138,12 +139,31 @@ function goalsPanel(g, staff) {
   return `<div class="panel c12"><h3>Mục tiêu và quy định <span class="hint">nhánh mục tiêu: mốc thời gian và hồ sơ, không phải tiền</span></h3>
     ${rows.length ? rows.map(m => `<div style="padding:6px 0"><span class="badge ${LEVEL[m.level]}">${esc(m.level_label)}</span> <b>${esc(m.goal)}</b> · ${esc(m.note_title)} · mốc <span class="num">${esc(m.milestone)}</span><div class="small muted" data-explains>${esc(m.rm_hint || "")}</div></div>`).join("") : '<div class="small muted">Chưa có ghi chú quy định nào khớp mục tiêu của gia đình này.</div>'}
     <details class="more" style="margin-top:8px"><summary>Khai dòng tiền ra nước ngoài cho mục tiêu (RM)</summary>
+      ${goalsList.some(x => !x.declared) ? `<div class="row" style="margin:6px 0;gap:8px;align-items:center"><button type="button" class="btn sm" data-suggest>Gợi ý bằng AI</button>
+        <span class="small muted">AI đọc tên mục tiêu chưa khai và điền sẵn; bấm Lưu để xác nhận.</span></div>` : ""}
       ${goalsList.map(x => `<div class="row" style="margin:6px 0"><span style="min-width:220px"><b>${esc(x.label)}</b><div class="small muted">${esc(x.date)}${x.declared ? ` · đã khai: ${esc((g.purposes || {})[x.declared.purpose] || x.declared.purpose)} ${esc(x.declared.country || "")}` : " · chưa khai"}</div></span>
         <select data-purpose="${esc(x.goal_id)}">${opts}</select><input data-country="${esc(x.goal_id)}" placeholder="Nước đến" style="width:110px;padding:6px 9px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
-        <button type="button" class="btn sm" data-declare="${esc(x.goal_id)}">Lưu</button></div>`).join("")}</details></div>`;
+        <button type="button" class="btn sm" data-declare="${esc(x.goal_id)}">Lưu</button><span class="small muted" data-hint="${esc(x.goal_id)}"></span></div>`).join("")}</details></div>`;
 }
 
 function wireGoals(box, ctx, client) {
+  const ask = box.querySelector("[data-suggest]");
+  if (ask) ask.onclick = async () => {
+    ask.disabled = true;
+    try {
+      const r = await post("/api/goals/suggest", {family_id: client, by: ctx.user});
+      Object.entries(r.suggestions).forEach(([id, s]) => {
+        const hint = box.querySelector(`[data-hint="${CSS.escape(id)}"]`);
+        if (s.purpose) {
+          box.querySelector(`[data-purpose="${CSS.escape(id)}"]`).value = s.purpose;
+          box.querySelector(`[data-country="${CSS.escape(id)}"]`).value = s.country;
+        }
+        if (hint) hint.innerHTML = `<span class="badge assumed">${s.purpose ? "gợi ý AI" : "AI: không chuyển ra nước ngoài"}</span> <span data-explains>${esc(s.why)}</span>`;
+      });
+      toast(Object.keys(r.suggestions).length ? "Đã điền gợi ý; kiểm tra rồi bấm Lưu" : "Không có mục tiêu nào cần gợi ý");
+    } catch (e) { toast(e.message); }
+    ask.disabled = false;
+  };
   box.querySelectorAll("[data-declare]").forEach(b => {
     b.onclick = async () => {
       const id = b.dataset.declare;
@@ -180,7 +200,7 @@ async function openHow(runId, client) {
   try {
     const d = await get(`/api/families/${encodeURIComponent(client)}/how?run=${encodeURIComponent(runId)}`);
     const UNIT = {pct: "%", bp: " điểm cơ bản", pp: " điểm %", sd: " độ lệch chuẩn"};
-    const n = d.number, mv = (m) => `${m.move > 0 ? "+" : "−"}${Math.abs(m.move).toLocaleString("vi-VN", {maximumFractionDigits: m.unit === "bp" ? 0 : 1})}${UNIT[m.unit] || ""}`;
+    const n = d.number, mv = (m) => `${m.move > 0 ? "+" : "−"}${Math.abs(m.move).toLocaleString(LOCALE, {maximumFractionDigits: m.unit === "bp" ? 0 : 1})}${UNIT[m.unit] || ""}`;
     body.setAttribute("data-explains", "");
     body.innerHTML = `
       <div class="eyebrow">${esc(d.event)} · giá ngày ${esc(d.run.price_date)} · CIO duyệt ${when(d.approved)}</div>

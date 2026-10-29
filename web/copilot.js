@@ -21,33 +21,35 @@
    panel there; undock() hides it again (no route without a dock, signed out). Docked, a
    question goes to POST /api/assistant/stream: each real event of the turn (a tool starting and ending, the model's
    words, a write waiting) shows in the panel as it happens and goes to onEvent, which the graph draws (OWN-GW-06…10);
-   a stream that breaks is said, never papered over. */
-import {$, esc, followedIds, post, stream, workspaceContext} from "./core/core.js";
-import {icon} from "./core/icons.js?v=20261017s1";
+   a stream that breaks is said, never papered over.
+
+   Files (OCR_PLAN O5): the paperclip (the camera on a phone), a paste into the box or a drop on the panel attaches up
+   to three files. An image is shrunk in the browser to 2,000 px, JPEG 0.85, before it leaves (O-D1); each goes to
+   POST /api/assistant/attach once, and its chip says “đang đọc…” and then what it is. Gửi waits for the readings and
+   sends their ids with the words, or with none: a file alone is a question (O-D5). */
+import {LOCALE, DECIMAL, $, english, esc, followedIds, post, stream, workspaceContext} from "./core/core.js";
+import {icon} from "./core/icons.js?v=20261027v1";
 import {progress} from "./charts/mini.js?v=20261016r2";
 import {after, focus, present} from "./motion.js?v=20261016r1";
+import {voice} from "./voice.js?v=20261026v1";
 
-const DESK = new Set(["cio", "compliance", "admin"]);  // A7: the panel links to the Agent page's map
-const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", compliance: "Tuân thủ", specialist: "Chuyên gia", admin: "Quản trị"};
+const DESK = new Set(["cio", "admin"]);  // A7: the panel links to the Agent page's map
+const ROLE_LABEL = {client: "Khách hàng", rm: "RM", cio: "CIO", admin: "Quản trị"};
 const START = {
   client: ["Tài sản của tôi thế nào?", "Vì sao tin này ảnh hưởng tới tôi?", "Tạo kịch bản VN-Index giảm mạnh", "Có gì cần chú ý?"],
-  rm: ["Sổ khách hàng có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
-  cio: ["Có gì chờ tôi duyệt?", "Phơi nhiễm lớn nhất ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
-  compliance: ["Có gì chờ Tuân thủ?", "Có bao nhiêu tin bị giữ?", "Chuỗi nhật ký còn nguyên không?", "Cấu hình nào chờ duyệt?"],
-  specialist: ["Khuyến nghị nào đang chờ tôi duyệt?", "Hồ sơ của gia đình này thế nào?", "Chứng chỉ của tôi còn hiệu lực không?"],
+  rm: ["Tổng quan có gì cần làm?", "Hôm nay cần gọi ai?", "Điều tra tin lớn nhất", "Duyệt đề xuất đang chờ"],
+  cio: ["Có gì chờ tôi duyệt?", "Tác động lớn nhất tới tài sản ở đâu?", "Lần áp dụng nào đang hiệu lực?", "Hộp tin có bao nhiêu tin?"],
   admin: ["Hệ thống có gì bất thường?", "Chuỗi nhật ký còn nguyên không?", "Có cảnh báo hệ thống nào?", "Cấu hình nào chờ duyệt?"],
 };
 // what each role's own assistant is for (FEAT-41): the line before the first question, and the box's hint
 const INTRO = {
   client: "Hỏi về tài sản, dòng tiền, mục tiêu hay tin tác động của khách hàng đang chọn.",
   rm: "Hỏi về sổ khách hàng của bạn — ai cần gọi trước, đề xuất chờ duyệt, liên hệ — hay tài sản, dòng tiền, tin tác động của khách hàng đang chọn.",
-  cio: "Hỏi về việc chờ bạn quyết định, phơi nhiễm, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
-  compliance: "Hỏi về tin bị giữ, nghiên cứu và bản tin chờ duyệt, chính sách hay chuỗi nhật ký.",
+  cio: "Hỏi về việc chờ bạn quyết định, tin bị giữ, tác động tới tài sản, lần áp dụng, hộp tin hay độ chính xác của mô hình.",
   admin: "Hỏi về tình trạng hệ thống, nguồn dữ liệu, cảnh báo, cấu hình chờ duyệt hay chuỗi nhật ký.",
-  specialist: "Hỏi về khuyến nghị chờ bạn duyệt và hồ sơ của gia đình được giao.",
 };
-const ASK = {client: "Hỏi về tài sản, dòng tiền, tin…", rm: "Hỏi về sổ khách hàng, khách đang chọn…", cio: "Hỏi về nhận định, phơi nhiễm, tin…",
-  compliance: "Hỏi về tin bị giữ, bản tin, nhật ký…", admin: "Hỏi về hệ thống, cảnh báo, cấu hình…", specialist: "Hỏi về khuyến nghị, hồ sơ khách…"};
+const ASK = {client: "Hỏi về tài sản, dòng tiền, tin…", rm: "Hỏi về sổ khách hàng, khách đang chọn…", cio: "Hỏi về nhận định, tác động, tin…",
+  admin: "Hỏi về hệ thống, cảnh báo, cấu hình…"};
 const MODE = {  // how the answer was written: the badge and the line under the form
   model: (a) => [`mô hình ${String(a.model || "").split("/").pop()}`.trim(), "Mô hình đọc kết quả công cụ của ứng dụng (chế độ demo) và viết câu trả lời; số liệu lấy từ công cụ. Không phải khuyến nghị đầu tư."],
   template: () => ["mẫu cố định", "Mô hình chỉ thấy câu hỏi đã che tên và số, không thấy số liệu; câu trả lời ghép từ kết quả công cụ theo mẫu. Không phải khuyến nghị đầu tư."],
@@ -57,6 +59,33 @@ const BADGE = {failed: ["bad", "Không thực hiện được"], forbidden: ["ba
 const STATE = {idle: "Sẵn sàng", busy: "Đang xử lý", ok: "Đã trả lời", error: "Không thực hiện được", pending: "Chờ bạn xác nhận"};
 const FOR = {ok: "ok", pending: "pending", failed: "error", forbidden: "error", unknown: "idle"};
 const STEP = {ok: "✓", failed: "✕", declined: "–", forbidden: "✕"};
+const MAX_FILES = 3, MAX_BYTES = 5 * 1024 * 1024, LONG_SIDE = 2000;  // as the server checks (assistant/attachments.py)
+const ACCEPT = "image/*,.pdf,.xlsx,.xlsm,.csv,.txt,.docx,.pptx,.md,.html,.htm";
+
+// an image as it is sent: at most 2,000 px on its long side, JPEG 0.85 (a screenshot of 3 MB becomes ~300 KB); anything
+// else as it is. Returns {name, data (base64), thumb (a small data URL, images only)}
+const b64 = (blob) => new Promise((ok, no) => {
+  const r = new FileReader();
+  r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = () => no(r.error); r.readAsDataURL(blob);
+});
+async function prepare(file) {
+  if (!/^image\/(jpeg|png|webp|heic|heif|gif|bmp)$/.test(file.type)) return {name: file.name || "tep", data: await b64(file), thumb: null};
+  const img = await createImageBitmap(file).catch(() => { throw new Error("Không mở được ảnh này; hãy gửi ảnh JPEG hoặc PNG"); });
+  const k = Math.min(1, LONG_SIDE / Math.max(img.width, img.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  const g = c.getContext("2d");
+  g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);  // a transparent screenshot reads on white, not black
+  g.drawImage(img, 0, 0, c.width, c.height);
+  const blob = await new Promise((ok) => c.toBlob(ok, "image/jpeg", 0.85));
+  const t = document.createElement("canvas"), tk = 96 / Math.max(c.width, c.height);
+  t.width = Math.max(1, Math.round(c.width * tk)); t.height = Math.max(1, Math.round(c.height * tk));
+  t.getContext("2d").drawImage(c, 0, 0, t.width, t.height);
+  const stem = (file.name || "anh").replace(/\.[^.]+$/, "") || "anh";
+  return {name: `${stem === "image" ? "anh-dan" : stem}.jpg`, data: await b64(blob), thumb: t.toDataURL("image/jpeg", 0.8)};
+}
+const fileHtml = (f, x) => `<span class="cp-file ${f.st || ""}"${f.title ? ` title="${esc(f.title)}"` : ""}>${f.thumb ? `<img src="${f.thumb}" alt="">` : `<i>${icon("file", {size: 16})}</i>`}
+  <span class="cp-file-t"><b>${esc(f.name)}</b>${f.note != null ? `<small>${esc(f.note)}</small>` : ""}</span>${x != null ? `<button type="button" class="linkbtn" data-unfile="${x}" title="Bỏ tệp này">${icon("x", {size: 14})}<span class="sr-only">Bỏ tệp ${esc(f.name)}</span></button>` : ""}</span>`;
 
 function context() {
   const role = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "client";
@@ -64,7 +93,7 @@ function context() {
   const scope = (document.querySelector("[data-scope][aria-pressed=true]") || {dataset: {scope: "personal"}}).dataset.scope;
   const graph = role === "client" ? workspaceContext.get() : null;  // the Customer's workspace (F10)
   return {role: ROLE_LABEL[role] ? role : "client", client_id: client, scope, route: location.hash, goals: client ? followedIds(client) : null,
-    ...(graph ? {graph} : {})};
+    ...(graph ? {graph} : {}), ...(english ? {lang: "en"} : {})};  // the answer's language (LANGUAGE_PLAN L4)
 }
 
 const RESUME_S = 24 * 3600;  // the latest conversation is picked up again when it moved within a day
@@ -126,6 +155,16 @@ function meta(m) {
   return bits || src ? `<div class="cp-meta">${bits ? `<div>${esc(bits)}</div>` : ""}${src}</div>` : "";
 }
 
+// “Cách tính” of an answer's queries (ADR-0040), collapsed: each one's SQL, its rows and when it ran
+const vnNum = (x) => Number(x || 0).toLocaleString(LOCALE);
+function how(m) {
+  const qs = (m.steps || []).filter(s => s.query && s.query.sql);
+  if (!qs.length) return "";
+  const rows = (q) => `${q.shown < q.total ? `${vnNum(q.shown)} / ` : ""}${vnNum(q.total)} dòng`;
+  return `<details class="cp-how small muted mt"><summary>Cách tính</summary>${qs.map(({query: q}) => `<div class="cp-q">
+    <pre class="cp-sql">${esc(q.sql)}</pre><div>${rows(q)} · ${esc((q.tables || []).join(", ") || "—")} · số liệu lúc ${esc(q.as_of || "—")}</div></div>`).join("")}</details>`;
+}
+
 export function mount() {
   const panel = document.createElement("aside");
   panel.className = "cp-panel"; panel.hidden = true;
@@ -137,8 +176,16 @@ export function mount() {
     <div class="cp-ctx small muted" id="cp-ctx"></div>
     <div class="cp-msgs" id="cp-msgs" aria-live="polite"></div>
     <div class="cp-sugg" id="cp-sugg"></div>
-    <form class="cp-form" id="cp-form"><input id="cp-q" autocomplete="off" maxlength="2000" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
-      <button type="submit" class="btn sm">Gửi</button></form>
+    <div class="cp-voice" id="cp-voice" hidden data-vs="off"><span class="cp-orb" id="cp-orb" aria-hidden="true">${icon("mic", {size: 22})}</span>
+      <div class="cp-voice-t"><b id="cp-vs" aria-live="polite"></b><span class="cp-cap" id="cp-cap"></span></div>
+      <button type="button" class="btn sm ghostbtn" id="cp-vstop" hidden>Dừng</button></div>
+    <div class="cp-vwhy small" id="cp-vwhy" hidden></div>
+    <div class="cp-files" id="cp-files" hidden></div>
+    <form class="cp-form" id="cp-form"><button type="button" class="cp-clip" id="cp-clip" title="Đính kèm ảnh hoặc tệp: biên lai, sao kê, hoá đơn… (hoặc dán, kéo thả vào đây)">${icon("clip", {size: 18})}<span class="sr-only">Đính kèm tệp</span></button>
+      <input type="file" id="cp-file" accept="${ACCEPT}" multiple hidden>
+      <input id="cp-q" autocomplete="off" maxlength="2000" placeholder="Hỏi về tài sản, dòng tiền, tin…" aria-label="Câu hỏi">
+      <button type="button" class="cp-mic" id="cp-mic" aria-pressed="false" title="Nói với trợ lý">${icon("mic", {size: 20})}<span class="sr-only">Nói với trợ lý</span></button>
+      <button type="submit" class="btn sm" id="cp-send">Gửi</button></form>
     <div class="cp-foot small muted" id="cp-foot">Trợ lý chỉ dùng các chức năng sẵn có của ứng dụng; việc ghi luôn chờ bạn xác nhận. Không phải khuyến nghị đầu tư.</div>`;
   document.body.append(panel);
   dropOld();
@@ -146,6 +193,7 @@ export function mount() {
   let cid = null, resumed = false, listing = null;  // the conversation on screen; the history list when it shows
   let sess = null, poll = 0;  // the session on screen as the server names it; the timer following a running turn
   let docked = false, live = null, run = null;  // run: the turn in flight, as its events tell it
+  let files = [];  // attached, not yet sent: {key, name, thumb, st: reading|ok|bad, id, note}
 
   // the panel's state, set only by what the request did
   const setState = (st) => {
@@ -169,7 +217,11 @@ export function mount() {
       $("#cp-q", panel).placeholder = ASK[role] || ASK.client;
       if (had && !panel.hidden) { draw(); sugg(); resume(); }
     }
-    const page = (docked ? document.querySelector("#ws-sheet:not([hidden]) #ws-sheet-t") || document.querySelector("#ws-title, #dk-title") || {}
+    // a sheet with tabs has no title of its own (OWN-FB-14): its current tab, the inner one first, names the page
+    const sheet = docked && document.querySelector("#ws-sheet:not([hidden])");
+    const titled = sheet && ["#ws-sheet-t", "#dk-tabs2 [aria-current]", "#dk-tabs [aria-current]"].map(q => sheet.querySelector(q))
+      .find(e => e && e.textContent.trim() && !e.closest("[hidden]"));
+    const page = (docked ? titled || document.querySelector("#ws-title, #dk-title") || {}
       : document.querySelector("#subnav:not([hidden]) [aria-current=page]") || document.querySelector("#nav [aria-current=page]") || {}).textContent || "";
     const name = (($("#client") || {}).selectedOptions || [])[0];
     $("#cp-ctx", panel).textContent = `Đang xem: ${page.trim() || "—"} · ${ROLE_LABEL[role]}${["client", "rm"].includes(role) && name ? " · " + name.textContent.split("·")[0].trim() : ""}`;
@@ -186,12 +238,12 @@ export function mount() {
     if (listing) { drawList(box); box.scrollTop = 0; return; }
     const fresh = (i) => (i >= shown ? " cp-in" : "");
     box.innerHTML = msgs.length ? msgs.map((m, i) => m.me
-      ? `<div class="cp-me${fresh(i)}">${esc(m.text)}</div>`
+      ? `<div class="cp-me${m.voice ? " cp-said" : ""}${fresh(i)}">${m.voice ? `<i class="cp-said-i" title="Câu hỏi bằng giọng nói">${icon("mic", {size: 14})}</i>` : ""}${(m.files || []).length ? `<div class="cp-me-files">${m.files.map(f => fileHtml(f)).join("")}</div>` : ""}${m.text ? `<span>${esc(m.text)}</span>` : ""}</div>`
       : m.status === "running"  // a turn still answering on the server (the page was reloaded): what has run so far
       ? `<div class="cp-bot cp-think" data-running><span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span> Vẫn đang trả lời…${(m.steps || []).length ? `<div class="cp-steps small">${m.steps.map(x => `<span class="chip ${x.status === "ok" ? "" : "bad"}">${esc(x.label || x.tool)} ${STEP[x.status] || ""}</span>`).join(" ")}</div>` : ""}</div>`
       : `<div class="cp-bot${fresh(i)}${m.status === "failed" || m.status === "forbidden" ? " cp-err" : ""}">${BADGE[m.status] ? `<span class="badge ${BADGE[m.status][0]}">${BADGE[m.status][1]}</span> ` : ""}${m.mode === "model" ? prose(m.text) : esc(m.text)}
           ${(m.waits || []).length > 1 ? `<ul class="cp-notes">${m.waits.map(w => `<li>${esc(w.summary)}</li>`).join("")}</ul>` : ""}
-          ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) : ""}
+          ${(m.cards || []).map(card).join("")}${m.status === "ok" ? meta(m) + how(m) : ""}
           ${(m.steps || []).length > 1 || m.status === "interrupted" || (m.steps || []).some(s => s.status !== "ok") ? `<div class="cp-steps small muted">Các bước: ${m.steps.map(s => `<span class="chip ${s.status === "ok" ? "" : "bad"}" title="${esc(s.text || "")}">${esc(s.label || s.tool)} ${STEP[s.status] || ""}</span>`).join(" ")}</div>` : ""}
           ${(m.confirm || (m.waits || []).length) && !m.done ? `<div class="row mt"><button type="button" class="btn sm" data-ok="${i}">Xác nhận</button><button type="button" class="btn sm ghostbtn" data-no="${i}">Huỷ</button></div>` : ""}
           ${(m.citations || []).length || m.here ? `<div class="mt row">${m.here ? `<button type="button" class="linkbtn small" data-here="${i}">Chỉ trên trang</button>` : ""}${(m.citations || []).filter(c => !(m.here && c.route === location.hash)).map(c => `<a class="small" data-ev="${i}" href="${esc(c.route)}">Mở ${esc(c.label)} →</a>`).join("")}</div>` : ""}
@@ -214,7 +266,7 @@ export function mount() {
   // written, its words below as they come. The sentences are the server's (assistant/progress.py): never a tool's
   // id, its arguments or its result.
   const STEP_ST = {run: "đang chạy", ok: "xong", bad: "không thực hiện được"};
-  const secs = (ms) => `${(ms / 1000).toFixed(1).replace(".", ",")} s`;
+  const secs = (ms) => `${(ms / 1000).toFixed(1).replace(".", DECIMAL)} s`;
   const liveHtml = () => {
     const dots = `<span class="cp-dots" aria-hidden="true"><i></i><i></i><i></i></span>`;
     const row = (st, label, ms) => `<li class="cp-prog-r ${st}"><span class="cp-prog-i" aria-hidden="true">${st === "run" ? dots : st === "ok" ? "✓" : "✕"}</span><span>${esc(label)}<span class="sr-only"> · ${STEP_ST[st]}</span></span>${ms != null ? `<span class="cp-prog-t">${secs(ms)}</span>` : ""}</li>`;
@@ -248,10 +300,11 @@ export function mount() {
         if (e.type === "step" && e.phase === "start") {
           const name = e.label || "một chức năng";  // a server without the sentences: the step's panel name
           run.text = "";
+          if (body.voice) vc.drop();
           run.steps.push({id: e.call_id, st: "run", at: performance.now(), run: e.doing || `Đang dùng: ${name}`, ok: e.done || name, bad: e.failed || `Không thực hiện được: ${name}`});
         }
         else if (e.type === "step" && e.phase === "end") { const x = run.steps.find(s => s.id === e.call_id && s.st === "run"); if (x) { x.st = e.ok ? "ok" : "bad"; x.ms = e.ms; } }
-        else if (e.type === "text") run.text += e.text;
+        else if (e.type === "text") { run.text += e.text; if (body.voice) vc.say(e.text); }
         else if (e.type === "wait") run.waiting = true;
         else if (e.type === "answer") answer = e.assistant;
         else if (e.type === "error") broke = e.text;
@@ -294,6 +347,7 @@ export function mount() {
       }
     } catch (e) { m = {status: "failed", text: docked && live ? e.message : `Không gọi được trợ lý: ${e.message}`}; }
     busy = false;
+    if (body.voice) vc.end(m.text);  // the rest of the answer, or all of it when no words streamed
     mode(m);
     msgs.push(m);
     setState(FOR[m.status] || "error");
@@ -301,12 +355,82 @@ export function mount() {
     else m.here = show(m) > 0;  // on this page: mark it now, and keep a button to mark it again
     draw(); sugg(m.suggest);
   };
-  const send = (q) => {
+  // spoken: the question came from the microphone; the answer is then written for listening (V-D8) and read aloud
+  const send = (q, spoken = false) => {
     q = String(q || "").trim();
-    if (!q || busy) return;
-    msgs.push({me: true, text: q}); $("#cp-q", panel).value = "";
-    call({message: q});
+    const ready = files.filter(f => f.st === "ok");
+    if ((!q && !ready.length) || busy || files.some(f => f.st === "reading")) return false;
+    msgs.push({me: true, text: q, voice: spoken, files: ready.map(f => ({name: f.name, thumb: f.thumb, note: f.note}))}); $("#cp-q", panel).value = "";
+    files = []; drawFiles();
+    call({message: q, ...(spoken ? {voice: true} : {}), ...(ready.length ? {attachments: ready.map(f => f.id)} : {})});
+    return true;
   };
+
+  // talking (docs/VOICE_PLAN.md): the bar above the form says what the voice is doing, in words large enough to
+  // read from arm's length; the caption is what was heard, then the sentence being read
+  const VS = {connecting: "Đang mở micro…", listening: "Mời bạn nói…", thinking: "Đang tìm câu trả lời…", speaking: "Đang đọc câu trả lời"};
+  const bar = $("#cp-voice", panel), cap = $("#cp-cap", panel), why = $("#cp-vwhy", panel);
+  const vc = voice({
+    onState(st, reason) {
+      bar.hidden = st === "off"; bar.dataset.vs = st;
+      $("#cp-vs", panel).textContent = VS[st] || "";
+      $("#cp-vstop", panel).hidden = st !== "speaking";
+      $("#cp-mic", panel).setAttribute("aria-pressed", String(st !== "off"));
+      if (st === "listening" || st === "off") { cap.textContent = ""; bar.style.setProperty("--lvl", 0); }
+      // the speech services hear and speak Vietnamese only (LANGUAGE_PLAN L5): in English the bar says so
+      const note = reason || (english && st !== "off" ? "Voice works in Vietnamese only: a spoken question is answered in Vietnamese." : "");
+      why.hidden = !note; why.textContent = note;
+    },
+    onHeard(text) { cap.textContent = `${cap.textContent} ${text}`.trim(); },
+    onAsked(text) { cap.textContent = ""; return send(text, true); },
+    onSpeak(text) { if (text) cap.textContent = text; },
+    onLevel(level) { bar.style.setProperty("--lvl", Math.min(1, level * 8).toFixed(2)); },
+  });
+  $("#cp-mic", panel).onclick = () => { why.hidden = true; if (vc.active()) vc.close(); else vc.start(); };
+  $("#cp-vstop", panel).onclick = () => vc.stop();
+
+  // -- files (O5): attach, read once on the server, show what each is; × takes one back ------------------------------
+  let fileKey = 0;
+  const drawFiles = () => {
+    const box = $("#cp-files", panel);
+    box.hidden = !files.length;
+    box.innerHTML = files.map(f => fileHtml(f, f.key)).join("");
+    for (const b of box.querySelectorAll("[data-unfile]")) b.onclick = () => { files = files.filter(f => f.key !== Number(b.dataset.unfile)); drawFiles(); };
+    const reading = files.some(f => f.st === "reading");
+    const send = $("#cp-send", panel);
+    send.disabled = reading; send.title = reading ? "Đang đọc tệp…" : "";
+    $("#cp-clip", panel).disabled = files.length >= MAX_FILES;
+  };
+  const addFiles = async (list) => {
+    for (const file of [...list]) {
+      if (files.length >= MAX_FILES) { alert(`Mỗi câu hỏi kèm tối đa ${MAX_FILES} tệp.`); break; }
+      const f = {key: ++fileKey, name: file.name || "anh-dan.png", thumb: null, st: "reading", note: "đang đọc…"};
+      files.push(f); drawFiles();
+      (async () => {
+        try {
+          const got = await prepare(file);
+          Object.assign(f, {name: got.name, thumb: got.thumb}); drawFiles();
+          if (got.data.length * 3 / 4 > MAX_BYTES) throw new Error("Tệp quá 5 MB.");
+          const c = context();
+          const a = (await post("/api/assistant/attach", {role: c.role, client_id: c.client_id, file_name: got.name, data: got.data})).attachment;
+          Object.assign(f, {id: a.id, st: "ok", note: a.label + (a.items ? ` · ${a.items} khoản` : ""), title: a.summary || ""});
+        } catch (e) { Object.assign(f, {st: "bad", note: e.message || "Không đọc được tệp"}); }
+        if (files.includes(f)) drawFiles();
+      })();
+    }
+  };
+  $("#cp-clip", panel).onclick = () => $("#cp-file", panel).click();
+  $("#cp-file", panel).onchange = (e) => { addFiles(e.target.files); e.target.value = ""; };
+  $("#cp-q", panel).addEventListener("paste", (e) => {
+    const got = [...(e.clipboardData || {}).files || []];
+    if (got.length) { e.preventDefault(); addFiles(got); }
+  });
+  panel.addEventListener("dragover", (e) => { if ([...e.dataTransfer.types].includes("Files")) { e.preventDefault(); panel.classList.add("cp-drop"); } });
+  panel.addEventListener("dragleave", (e) => { if (!panel.contains(e.relatedTarget)) panel.classList.remove("cp-drop"); });
+  panel.addEventListener("drop", (e) => {
+    panel.classList.remove("cp-drop");
+    if (e.dataTransfer.files.length) { e.preventDefault(); addFiles(e.dataTransfer.files); }
+  });
   const answers = (m, v) => Object.fromEntries(m.waits.map(w => [w.id, v]));
   const confirmIt = (i) => {
     const m = msgs[i]; m.done = true; msgs.push({me: true, text: "Xác nhận"});
@@ -526,6 +650,7 @@ export function mount() {
     undock() {
       if (!docked) return;
       docked = false; live = null;
+      vc.close();
       panel.classList.remove("cp-docked");
       document.body.appendChild(panel);
       panel.hidden = true;

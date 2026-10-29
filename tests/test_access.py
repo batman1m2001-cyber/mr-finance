@@ -5,8 +5,7 @@ called signed out (401), by each person it refuses (403, never a 500), and by ea
 route the app serves that is not in the matrix fails the test, so a new one needs a decision here.
 
 The people: two customers (C01's family, and C02, another family), the RM assigned to C01 (rm01) and one who is
-not (rm03), the CIO, Compliance and Admin, and two specialists: sp_global, assigned to C01 and certified, and
-sp_banking, assigned to other families (G8).
+not (rm03), two CIOs (the second pair of eyes since OWN-FB-18 retired Compliance and the specialists) and Admin.
 """
 
 import pytest
@@ -18,13 +17,14 @@ from control import config
 from people import auth
 from wealth import store
 
-PEOPLE = ("C01", "C02", "rm01", "rm03", "cio", "compliance", "admin", "sp_global", "sp_banking")
+PEOPLE = ("C01", "C02", "rm01", "rm03", "cio", "cio2", "admin")
 ALL = set(PEOPLE)
-FAMILY = {"C01", "rm01", "cio", "compliance", "admin", "sp_global"}  # who may see C01's family (ROLE-02, ROLE-05)
-STAFF = {"rm01", "rm03", "cio", "compliance", "admin"}
-DESK = {"cio", "compliance", "admin"}  # the news-impact desk and those who check it
-HOME = {"C02": "C02", "rm03": "C03", "sp_banking": "C02"}  # a family each person may see (C01 otherwise)
-ROLE = {"C01": "client", "C02": "client", "rm01": "rm", "rm03": "rm", "sp_global": "rm", "sp_banking": "rm"}
+CIO = {"cio", "cio2"}
+FAMILY = {"C01", "rm01", "admin"} | CIO  # who may see C01's family (ROLE-02)
+STAFF = {"rm01", "rm03", "admin"} | CIO
+DESK = {"admin"} | CIO  # the news-impact desk and those who check it
+HOME = {"C02": "C02", "rm03": "C03"}  # a family each person may see (C01 otherwise)
+ROLE = {"C01": "client", "C02": "client", "rm01": "rm", "rm03": "rm"}
 
 # -- reads (app/web.py) -----------------------------------------------------------------------------
 READS = {
@@ -43,20 +43,14 @@ READS = {
     "/api/model": STAFF,
     "/api/model/estimate": STAFF,
     "/api/agents": STAFF,
-    "/api/desk": {
-        "cio",
-        "rm01",
-        "rm03",
-        "admin",
-        "sp_global",
-        "sp_banking",
-        "compliance",
-    },  # FEAT-41: each its own desk
+    "/api/desk": STAFF,  # FEAT-41: each its own desk
     "/api/agents/catalogue": DESK,
     "/api/agents/map": DESK,  # A7
     "/api/agents/map/assistant": DESK,
     "/api/news/inbox": DESK,
     "/api/news/config": DESK,
+    "/api/news/sources": {"admin"},  # Nguồn tin (N1)
+    "/api/news/sources/test?url=http://x": {"admin"},  # refused as http, before any fetch
     "/api/events": DESK,
     "/api/events/EV-0000": DESK,
     "/api/views/VW-0000": DESK,
@@ -67,20 +61,23 @@ READS = {
     "/api/config": DESK,
     "/api/config/CF-thresholds-v1": DESK,
     "/api/accuracy": DESK,
+    "/api/trial": DESK,
+    "/api/trial/move/ES-0000": DESK,
+    "/api/trial/replay/2026-07": DESK,
     "/api/measure": DESK,
-    "/api/research": {"cio", "compliance"},
-    "/api/newsletters": {"cio", "compliance"},
-    "/api/newsletters/NL-0000": {"cio", "compliance"},
-    "/api/policy": {"cio", "compliance"},
-    "/api/policy/PD-0000": {"cio", "compliance"},
-    "/api/market": {"cio", "admin"},
-    "/api/market/series?id=VNINDEX": {"cio", "admin"},
-    "/api/audit": {"compliance", "admin"},
-    "/api/audit/verify": {"compliance", "admin"},
-    "/api/audit/export": {"compliance", "admin"},
+    "/api/research": CIO,
+    "/api/newsletters": CIO,
+    "/api/newsletters/NL-0000": CIO,
+    "/api/policy": CIO,
+    "/api/policy/PD-0000": CIO,
+    "/api/market": DESK,
+    "/api/market/series?id=VNINDEX": DESK,
+    "/api/audit": DESK,
+    "/api/audit/verify": DESK,
+    "/api/audit/export": DESK,
     "/api/system": {"admin"},
     "/api/accounts": {"admin"},  # Tài khoản và vai trò (Q-25)
-    "/api/jobs": DESK,  # Việc nền: Admin runs the jobs, the CIO the agents, Compliance reads
+    "/api/jobs": DESK,  # Việc nền: Admin runs the jobs, the CIO the agents
     "/api/system/alerts": DESK,  # the bell: each role its kinds of alert
     "/api/rm/today": {"rm01", "rm03"},
 }
@@ -108,39 +105,39 @@ def actions(vid, item):
         ("/api/search", {"q": "tiền", "role": "AS", "client_id": "HOME"}, ALL),
         ("/api/copilot", {"question": "Tổng tài sản?", "role": "AS", "client_id": "HOME"}, ALL),
         ("/api/review/decide", {"item_id": item, "decision": "approved", "note": "ok", "by": "BY"}, {"rm01"}),
-        ("/api/config/decide", {"version_id": vid, "action": "reject", "by": "BY", "note": "x"}, {"cio"}),
-        ("/api/config/propose", {"kind": "thresholds", "data": "THR", "by": "BY", "note": "x"}, {"cio"}),
-        ("/api/news/ingest", {}, {"cio"}),
-        ("/api/news/dismiss", {"ids": ["NW-0"], "by": "BY"}, {"cio"}),
-        ("/api/news/release", {"item_id": "NW-0", "by": "BY", "note": "x" * 20}, {"compliance"}),
-        ("/api/events", {"news_ids": ["NW-0"], "by": "BY"}, {"cio"}),
-        ("/api/events/run-agent", {"event_id": "EV-0000", "by": "BY"}, {"cio"}),
-        ("/api/events/urgent", {"event_id": "EV-0000", "urgent": True, "reason": "x", "by": "BY"}, {"cio"}),
-        ("/api/views/decide", {"view_id": "VW-0000", "action": "approve", "by": "BY"}, {"cio"}),
-        ("/api/runs/recompute", {"run": "AR-0000", "by": "BY"}, {"cio"}),
-        ("/api/runs/decide", {"run": "AR-0000", "action": "withdraw", "by": "BY", "reason": "x"}, {"cio"}),
-        ("/api/research", {"item": {"title": "x"}, "by": "BY"}, {"cio"}),
+        ("/api/config/decide", {"version_id": vid, "action": "reject", "by": "BY", "note": "x"}, CIO),
+        ("/api/config/propose", {"kind": "thresholds", "data": "THR", "by": "BY", "note": "x"}, CIO),
+        ("/api/news/ingest", {}, CIO),
+        ("/api/news/dismiss", {"ids": ["NW-0"], "by": "BY"}, CIO),
+        ("/api/news/release", {"item_id": "NW-0", "by": "BY", "note": "x" * 20}, CIO),
+        ("/api/events", {"news_ids": ["NW-0"], "by": "BY"}, CIO),
+        ("/api/events/run-agent", {"event_id": "EV-0000", "by": "BY"}, CIO),
+        ("/api/events/urgent", {"event_id": "EV-0000", "urgent": True, "reason": "x", "by": "BY"}, CIO),
+        ("/api/views/decide", {"view_id": "VW-0000", "action": "approve", "by": "BY"}, CIO),
+        ("/api/runs/recompute", {"run": "AR-0000", "by": "BY"}, CIO),
+        ("/api/runs/decide", {"run": "AR-0000", "action": "withdraw", "by": "BY", "reason": "x"}, CIO),
+        ("/api/research", {"item": {"title": "x"}, "by": "BY"}, CIO),
         (
             "/api/research/release",
             {"item_id": "RS-0", "decision": "release", "by": "BY", "note": "x" * 20},
-            {"compliance"},
+            CIO,
         ),
-        ("/api/newsletters", {"view_ids": ["VW-0000"], "by": "BY"}, {"cio"}),
-        ("/api/newsletters/act", {"newsletter_id": "NL-0000", "action": "approve", "by": "BY"}, {"compliance"}),
-        ("/api/policy", {"item": {"title": "x"}, "by": "BY"}, {"compliance"}),
-        ("/api/policy/verify", {"document_id": "PD-0000", "by": "BY", "note": "x" * 20}, {"compliance"}),
+        ("/api/newsletters", {"view_ids": ["VW-0000"], "by": "BY"}, CIO),
+        ("/api/newsletters/act", {"newsletter_id": "NL-0000", "action": "approve", "by": "BY"}, CIO),
+        ("/api/policy", {"item": {"title": "x"}, "by": "BY"}, CIO),
+        ("/api/policy/verify", {"document_id": "PD-0000", "by": "BY", "note": "x" * 20}, CIO),
         (
             "/api/policy/status",
             {"document_id": "PD-0000", "status": "issued", "by": "BY", "note": "x" * 10},
-            {"compliance"},
+            CIO,
         ),
-        ("/api/policy/summarise", {"document_id": "PD-0000", "by": "BY"}, {"compliance"}),
+        ("/api/policy/summarise", {"document_id": "PD-0000", "by": "BY"}, CIO),
         ("/api/rm/contacts", {"family_id": "C01", "channel": "call", "by": "BY"}, {"rm01"}),
         ("/api/feed/open", {"client_id": "C01", "key": "feed:x"}, {"C01"}),
         ("/api/review/recommend", {"client_id": "C01", "title": "x", "actions": ["y"], "by": "BY"}, {"rm01"}),
-        ("/api/review/specialist", {"item_id": item, "decision": "approved", "by": "BY"}, {"sp_global"}),
         ("/api/goals/outflow", {"family_id": "C01", "goal_id": "G1", "purpose": "học", "by": "BY"}, {"rm01"}),
-        ("/api/model/estimate", {"by": "BY"}, {"cio"}),
+        ("/api/goals/suggest", {"family_id": "C01", "by": "BY"}, {"rm01"}),
+        ("/api/model/estimate", {"by": "BY"}, CIO),
         ("/api/market/load", {"by": "BY", "since": "2026-01-01"}, {"admin"}),
         ("/api/system/alerts/ack", {"alert_id": "AL-0", "by": "BY"}, DESK),
         ("/api/jobs/run", {"job": "audit_check", "by": "BY"}, {"admin"}),
@@ -234,7 +231,7 @@ def test_every_action_as_every_person(http):
 def test_a_refusal_says_why_in_the_persons_language(http):
     r = as_(http, "rm03").post("/api/dashboard", json={"client_id": "C01"})
     assert r.status_code == 403 and "không được xem dữ liệu" in r.json()["error"]
-    r = as_(http, "compliance").get("/api/market")
+    r = as_(http, "rm01").get("/api/market")
     assert r.status_code == 403 and r.json()["error"] == "Chỉ CIO, Quản trị mở được mục này"
     r = as_(http, "C01").post("/api/news/ingest", json={})
     assert r.status_code == 403 and "cần vai trò: CIO" in r.json()["error"]

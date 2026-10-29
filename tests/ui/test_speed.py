@@ -19,8 +19,8 @@ def test_a_page_seen_before_draws_at_once_and_then_shows_the_new_answer(open_pag
     p.go("#/cio/cau-hinh")
     rows = p.page.locator("#page tr").count()
     p.go("#/cio/nhan-dinh")
-    proposal = {"kind": "control_group", "data": CONTROL, "by": "compliance"}
-    api(base_url, "/api/config/propose", proposal, who="compliance")
+    proposal = {"kind": "control_group", "data": CONTROL, "by": "cio"}
+    api(base_url, "/api/config/propose", proposal, who="cio")
     waiting = held(p.page, "**/api/config")
     p.page.evaluate("location.hash = '#/cio/cau-hinh'")
     p.page.wait_for_function("(n) => document.querySelectorAll('#page tr').length === n", arg=rows)
@@ -64,12 +64,12 @@ def test_the_scope_switch_says_whose_assets_and_hides_for_one_person(open_page):
     assert not p.problems()
 
 
-def test_the_app_opens_dark_unless_light_was_chosen(browser, base_url):
-    ctx = browser.new_context(color_scheme="light")
+def test_the_app_opens_light_unless_dark_was_chosen(browser, base_url):
+    ctx = browser.new_context(color_scheme="dark")  # whatever the system's scheme (2026-10-21: light for everyone)
     page = ctx.new_page()
     page.goto(base_url + "/")
-    assert page.evaluate("document.documentElement.dataset.theme") == "dark"
-    page.evaluate("localStorage.setItem('mf.theme', 'light')")
-    page.reload()
     assert page.evaluate("document.documentElement.dataset.theme") == "light"
+    page.evaluate("localStorage.setItem('mf.theme', 'dark')")
+    page.reload()
+    assert page.evaluate("document.documentElement.dataset.theme") == "dark"
     ctx.close()

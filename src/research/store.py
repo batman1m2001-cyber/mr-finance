@@ -1,7 +1,7 @@
 """Research items: a report, a house view or a regulation note, uploaded by the research side and
-released (or rejected) by Compliance (FR-201…204, BR-03, F13).
+released (or rejected) by a second CIO (FR-201…204, BR-03, F13).
 
-- Release needs: a Compliance user other than the uploader (separation of duties), a note of at
+- Release needs: a CIO other than the uploader (separation of duties), a note of at
   least 20 characters, the release time reached (nothing is read before it is public), no mention
   of the restricted list, and — for a regulation note — no forbidden wording (FR-604).
 - A released report or house view enters the CIO's inbox as an exclusive news item; a regulation
@@ -102,10 +102,10 @@ def decide(rid: str, decision: str, by: str, note: str, now: Optional[float] = N
     if item["status"] != "PENDING_RELEASE":
         raise ResearchError(f"{rid} đã {item['status']}")
     if by == item["uploaded_by"]:
-        raise ResearchError("Người phát hành phải khác người nạp")
+        raise ResearchError("Người phát hành phải khác người nạp: cần một CIO khác")
     note = str(note or "").strip()
     if len(note) < 20:
-        raise ResearchError("Ghi chú của Tuân thủ cần từ 20 ký tự")
+        raise ResearchError("Ghi chú phát hành cần từ 20 ký tự")
     if decision == "release":
         if (now or time.time()) < item["release_at"]:
             raise ResearchError("Chưa tới giờ phát hành: không nạp trước khi công bố")

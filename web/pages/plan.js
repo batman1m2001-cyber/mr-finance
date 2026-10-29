@@ -1,11 +1,11 @@
-/* Kế hoạch — Wealth Planning Advisor (SCR-CL-03; UI redesign R3, was the pre-redesign “scenarios” tab). Life goals
+/* Kế hoạch — Wealth Planning (SCR-CL-03; UI redesign R3, was the pre-redesign “scenarios” tab). Life goals
    by stage of life (POST /api/goals), decisions and stress tests (GET /api/scenarios), one picked and simulated on
    the client's own holdings (POST /api/scenario): its status, the money needed against what is there, how it
    tracked this month and year, the actions ranked by how much they close the gap, the assumptions (edit and run
    again), before/after, and two options that can be sent to the RM (POST /api/review/propose). A wealth view on
    top sums the followed goals and the cash flow; after a decision or stress test it shows the picture after it.
    Regulation notes on the goals (FR-603) as the viewer may read them. Followed goals are kept in this browser. */
-import {internal, $, esc, get, n as how, pct, post, vnd} from "../core/core.js";
+import {$, esc, get, n as how, pct, post, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {progress} from "../charts/mini.js?v=20261016r2";
 import {cashSeries, cashflow, monthsText} from "../charts/money.js?v=20261016r4";
@@ -21,7 +21,7 @@ const UNIT = {"tỷ": 1e9, "triệu": 1e6, "%": 0.01, "": 1, "USD": 1};
 const GOAL = {on_track: ["good", "Đúng tiến độ", "var(--good)"], at_risk: ["warn", "Cần chú ý", "var(--warning)"],
   off_track: ["bad", "Chậm tiến độ", "var(--critical)"], none: ["", "Chưa theo dõi", "var(--other)"]};
 const RANK = {on_track: 0, at_risk: 1, off_track: 2};
-const QUEUE = {pending: ["ai", "Chờ RM duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
+const QUEUE = {pending: ["ai", "Chờ RM duyệt"], pending_cio: ["ai", "Chờ CIO duyệt"], pending_specialist: ["warn", "Chờ chuyên gia có chứng chỉ duyệt"],
   approved: ["good", "Đã duyệt"], rejected: ["bad", "Từ chối"]};
 const STAGE_ICON = {young: "user", family: "users", mid: "business", retire: "savings"};
 const plans = {};  // per client, for this page's life: the pick, the last result, what was sent
@@ -59,8 +59,8 @@ export async function render(box, ctx) {
     st.result = null;
   }
 
-  box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Kế hoạch · <span lang="en">Wealth Planning Advisor</span></div><h1 class="h1">Kế hoạch tài chính</h1>
+  box.innerHTML = `
+    <div class="pagehead"><div><div class="eyebrow">${staff ? "Kế hoạch" : "Wealth Planning"}</div><h1 class="h1">Kế hoạch tài chính</h1>
       <p class="lede">Tư vấn kế hoạch tài chính theo mốc đời · mô phỏng trên chính tài sản của bạn</p></div></div>
     <div id="mini"></div><div id="reg"></div>
     <div class="plangrid mt"><div class="panel" id="list"></div><div id="panel"></div></div>`;
@@ -199,7 +199,7 @@ export async function render(box, ctx) {
         <div class="kpi"><div class="k">Tháng này · kỳ vọng</div><div class="v">${how(vnd(m.expected, true), "track.expected", ex)}</div><div class="s">lãi ${how(pct(t.rate, false, 0), "track.expected", ex)}/năm${t.saving ? ` + để dành ${how(vnd(t.saving), "track.expected", ex)}/tháng` : ""}</div></div>
         <div class="kpi"><div class="k">Hụt / vượt so với kỳ vọng</div><div class="v">${sign(m.short, "track.short", {actual: vnd(m.actual, true), expected: vnd(m.expected, true)})}</div><div class="s">từ đầu năm: ${pc(t.ytd.actual_pct)} so với kỳ vọng ${how(pct(t.ytd.expected_pct, true), "track.expected", ex)}</div></div>
       </div>
-      <table class="table mt"><thead><tr><th>Mốc</th><th class="r">Nguồn cho mục tiêu</th><th class="r">Chênh lệch mục tiêu</th><th class="r">Thay đổi</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="scrollx mt"><table class="table"><thead><tr><th>Mốc</th><th class="r">Nguồn cho mục tiêu</th><th class="r">Chênh lệch mục tiêu</th><th class="r">Thay đổi</th></tr></thead><tbody>${rows}</tbody></table></div>
       ${t.movers.length ? `<div class="subhead mt">Biến động lớn tháng này trong nguồn</div>${t.movers.map(x => `<div class="kv"><span><span class="legend-dot" style="background:${x.change >= 0 ? "var(--in)" : "var(--out)"}"></span> ${esc(x.name)}</span><b>${how(vnd(x.change, true), "track.mover")} <span class="muted">${how(pct(x.pct, true), "track.mover")}</span></b></div>`).join("")}` : ""}
       <p class="small muted mt">Toàn danh mục đầu tư từ đầu năm ${how(pct(pf.ytd_return, true), "perf.ytd_return")} so với ${esc(pf.benchmark_name)} ${how(pct(pf.benchmark_ytd, true), "perf.benchmark_ytd", {benchmark: pf.benchmark_name})}:
         <span class="${pf.vs_benchmark >= 0 ? "up" : "down"}">${pf.vs_benchmark >= 0 ? "hơn" : "kém"} ${how(pct(Math.abs(pf.vs_benchmark)), "perf.vs_benchmark", {mine: pct(pf.ytd_return, true), bench: pct(pf.benchmark_ytd, true)})}</span>.</p></div>`;

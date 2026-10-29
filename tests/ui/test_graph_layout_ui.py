@@ -18,7 +18,7 @@ AUDIT = r"""() => {
   const nodes = [...document.querySelectorAll('.wnode:not(.off):not(.gone)')].filter(shown);
   const discs = nodes.map(n => { const r = n.querySelector('.wcore').getBoundingClientRect(); return {id: n.dataset.n,
     x: r.left + r.width / 2, y: r.top + r.height / 2, r: r.width / 2}; });
-  const labels = nodes.flatMap(n => [...n.querySelectorAll('.wlbl, .wfig, .wtag, .wme-l, .wme-v, .wme-s')]
+  const labels = nodes.flatMap(n => [...n.querySelectorAll('.wlbl, .wfig, .wtag, .wme-v')]
     .filter(t => t.textContent.trim() && +getComputedStyle(t).opacity > 0.4 && shown(t))
     .map(t => { const r = t.getBoundingClientRect(); return {id: n.dataset.n, l: r.left, t: r.top, r: r.right, b:
       r.bottom}; })).filter(b => b.r > b.l);

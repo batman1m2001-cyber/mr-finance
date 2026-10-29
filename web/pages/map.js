@@ -4,7 +4,7 @@
    the data comes from. From POST /api/overview: every edge names the records it was read from. Select a node to
    light its links and read them; a node opens its page; an event opens its path on Đồ thị tác động. The list view
    is the same graph as rows (the default on a phone). */
-import {internal, n as how, $, esc, followedIds, pct, post, signClass, vnd} from "../core/core.js";
+import {LOCALE, internal, n as how, $, esc, followedIds, pct, post, signClass, t as tr, vnd} from "../core/core.js";
 import {CLASS_ICON, icon, iconPaths} from "../core/icons.js?v=20261016r1";
 import {hover} from "../charts/charts.js";
 
@@ -30,7 +30,7 @@ const mk = (tag, attrs, parent) => {
   if (parent) parent.appendChild(n);
   return n;
 };
-const short = (s, n) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
+const short = (s, n) => ((s = tr(s)).length > n ? s.slice(0, n - 1) + "…" : s);  // cut in the viewer's language
 
 export async function render(box, ctx) {
   const client = ctx.client(), scope = ctx.scope(), staff = ctx.role !== "client";
@@ -121,7 +121,7 @@ export async function render(box, ctx) {
         n.kind === "goal" && `Cần <b>${how(vnd(n.need), "goal.need")}</b> · đang có ${how(vnd(n.have), "goal.have")} · ${n.gap > 0 ? `thiếu ${how(vnd(n.gap), "goal.gap", {need: vnd(n.need), have: vnd(n.have)})}` : "đủ"}${n.by ? ` · mốc ${esc(n.by)}` : ""}`,
         n.kind === "risk" && `${fig(n, vnd(Math.abs(n.value)))} · <span data-explains>${esc(n.detail)}</span>`,
         n.kind === "alert" && `Tác động ước tính <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b> · xác suất ${how(pct(n.probability, false, 0), "policy.probability")} · ${esc(n.status_label)}`,
-        n.kind === "event" && `Tác động kỳ vọng 3 tháng <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b>${n.approved_at ? ` · CIO duyệt ${new Date(n.approved_at * 1000).toLocaleDateString("vi-VN")}` : ""}`,
+        n.kind === "event" && `Tác động kỳ vọng 3 tháng <b class="${signClass(n.value)}">${fig(n, vnd(n.value, true))}</b>${n.approved_at ? ` · CIO duyệt ${new Date(n.approved_at * 1000).toLocaleDateString(LOCALE)}` : ""}`,
         n.kind === "event" && n.outlets && n.outlets.length && `Nguồn: ${n.outlets.map(esc).join(", ")}`,
         n.kind === "alert" && n.source_text && `Nguồn: ${esc(n.source_text)}`,
       ].filter(Boolean);
@@ -177,8 +177,8 @@ export async function render(box, ctx) {
     const svg = mk("svg", {class: "viz mapsvg", viewBox: `0 0 ${W} ${H}`, role: "group", "aria-label": "Bản đồ tài chính"});
     const defs = mk("defs", {}, svg);
     const grad = mk("radialGradient", {id: "m-me"}, defs);
-    mk("stop", {offset: "0", "stop-color": "#8b76ff"}, grad);
-    mk("stop", {offset: "1", "stop-color": "#4a36c4"}, grad);
+    mk("stop", {offset: "0", "stop-color": "#7a5444"}, grad);
+    mk("stop", {offset: "1", "stop-color": "#59392c"}, grad);
     for (const e of es) {
       const a = pos[e.from], b = pos[e.to];
       if (!a || !b) continue;

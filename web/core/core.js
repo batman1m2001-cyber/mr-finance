@@ -1,6 +1,8 @@
 /* The shared core of the new pages: the API client, number formats, small DOM helpers and the
    components every page uses (states, badges, drawer, toast). Business rules live on the server:
    pages receive status, severity and labels already decided. */
+import {english, t as tr} from "./i18n.js?v=20261028p2";
+export {english, lang, setLang, t} from "./i18n.js?v=20261028p2";
 
 // ── api ──────────────────────────────────────────────────────────────────────
 // What a page read is kept for the tab: going back to a page draws it at once from what it had, while the same reads
@@ -133,22 +135,25 @@ function errorText(out) {
   return out.detail ? String(out.detail) : "";
 }
 
-// ── formats (Vietnamese) ─────────────────────────────────────────────────────
+// ── formats (the viewer's language: “1,25 tỷ” / “1.25 bn”) ───────────────────
 const TY = 1e9, TR = 1e6;
+const [DOT, COMMA] = english ? [",", "."] : [".", ","];  // thousands, decimals
+export const LOCALE = english ? "en-US" : "vi-VN", DECIMAL = COMMA;  // for toLocaleString and hand-made decimals
+const UNITS = english ? [" bn", " mn", " k", " ₫"] : [" tỷ", " triệu", " nghìn", " đ"];
 const vn = (x, d) => {
   let s = x.toFixed(d).replace(".", ",");
   if (s.includes(",")) s = s.replace(/0+$/, "").replace(/,$/, "");
   const [int, frac] = s.split(",");
-  return int.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (frac ? "," + frac : "");
+  return int.replace(/\B(?=(\d{3})+(?!\d))/g, DOT) + (frac ? COMMA + frac : "");
 };
 export function vnd(a, signed) {
   if (a == null || Number.isNaN(a)) return "—";
   const sign = signed && a > 0 ? "+" : a < 0 ? "−" : "";
   const x = Math.abs(a);
-  if (x >= TY) return sign + vn(x / TY, x < 10 * TY ? 2 : 1) + " tỷ";
-  if (x >= TR) return sign + vn(x / TR, x >= 100 * TR ? 0 : 1) + " triệu";
-  if (x >= 1e3) return sign + vn(x / 1e3, x >= 1e5 ? 0 : 1) + " nghìn";  // as src/wealth/money.py: “192 nghìn”
-  return sign + vn(x, 0) + " đ";
+  if (x >= TY) return sign + vn(x / TY, x < 10 * TY ? 2 : 1) + UNITS[0];
+  if (x >= TR) return sign + vn(x / TR, x >= 100 * TR ? 0 : 1) + UNITS[1];
+  if (x >= 1e3) return sign + vn(x / 1e3, x >= 1e5 ? 0 : 1) + UNITS[2];  // as src/wealth/money.py: “192 nghìn”
+  return sign + vn(x, 0) + UNITS[3];
 }
 export function pct(x, signed, digits) {
   if (x == null || Number.isNaN(x)) return "—";
@@ -158,7 +163,7 @@ export function pct(x, signed, digits) {
 export function num(x, d) { return x == null ? "—" : (x < 0 ? "−" : "") + vn(Math.abs(x), d == null ? 0 : d); }
 // a name cut to k characters at a word boundary, with “…”; never half a word (the full name goes in a title)
 export function words(s, k) {
-  s = String(s || "");
+  s = tr(String(s || ""));  // cut in the viewer's language
   if (s.length <= k) return s;
   const c = s.slice(0, k - 1), sp = s[k - 1] === " " ? c.length : c.lastIndexOf(" ");
   return (sp > 0 ? c.slice(0, sp) : c).replace(/[\s,.;:(–-]+$/, "") + "…";
@@ -172,10 +177,10 @@ export function when(ts) {
 export function ago(ts) {
   if (!ts) return "—";
   const s = Math.max(0, Date.now() / 1000 - ts);
-  if (s < 90) return "vừa xong";
-  if (s < 3600) return `${Math.round(s / 60)} phút trước`;
-  if (s < 86400) return `${Math.round(s / 3600)} giờ trước`;
-  return `${Math.round(s / 86400)} ngày trước`;
+  if (s < 90) return english ? "just now" : "vừa xong";
+  const [n, u] = s < 3600 ? [Math.round(s / 60), "phút"] : s < 86400 ? [Math.round(s / 3600), "giờ"] : [Math.round(s / 86400), "ngày"];
+  if (!english) return `${n} ${u} trước`;
+  return `${n} ${{"phút": "min", "giờ": "h", "ngày": n === 1 ? "day" : "days"}[u]} ago`;
 }
 export const signClass = (x) => (x > 0 ? "up" : x < 0 ? "down" : "flat");
 

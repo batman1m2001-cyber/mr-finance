@@ -54,7 +54,8 @@ def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
     for lens in ("tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro", "tong-quan"):
         p.go(f"#/client/xem/{lens}")
         shown[lens] = p.page.locator(".wnode:not(.off)").count()
-        assert p.page.get_attribute(f'[data-tool="{lens}"]', "aria-current") is not None
+        if lens in ("muc-tieu", "tin", "tong-quan"):  # a lens that is one of the four sections lights it (ADR-0037)
+            assert p.page.get_attribute(f'[data-tool="{lens}"]', "aria-current") is not None
     assert same(p) and shown["tong-quan"] > shown["muc-tieu"]
     # OWN-GW-15: by default only the spokes of “My Wealth”; no node on another, no label on another
     ends = p.page.eval_on_selector_all(".ws-edges .wedge", "es => es.map(e => e.dataset.e.split('>'))")
@@ -71,8 +72,8 @@ def test_one_page_the_graph_survives_lenses_and_sheets(open_page):
     p.page.wait_for_timeout(600)  # the nodes' move (transform transition) has ended
     assert p.page.locator(".wnode.dim").count() > 0 and p.page.evaluate(CLEAR) == [0, 0]
     p.page.click('.wnode[data-n="CL:stock"] .wcore')
-    p.go("#/client/tai-san")  # an old address: its page as a sheet over the Tài sản lens
-    assert p.page.is_visible("#ws-sheet") and p.page.inner_text("#ws-sheet-t") == "Tài sản"
+    p.go("#/client/tai-san")  # an old address: its page, Dữ liệu chi tiết tài sản (ADR-0037)
+    assert p.page.is_visible("#ws-sheet") and p.page.inner_text("#ws-sheet-t") == "Dữ liệu chi tiết tài sản"
     assert p.page.locator("#ws-sheet #page .holdings, #ws-sheet #page table, #ws-sheet #page .card").count() > 0
     p.go("#/client/xem/tai-san")  # back on the graph (a page is not closed by Escape now, B3.1): the same graph
     assert p.page.is_hidden("#ws-sheet") and same(p)
@@ -92,13 +93,14 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     assert p.page.text_content('.wnode[data-n="SC:vni_30"] .wfig').startswith("nếu xảy ra −")
     assert p.page.text_content(".wme-v") == me  # a scenario never changes the actual net worth
     # the strip: the Toàn cảnh cards; a card opens its lens at its section of the Bảng số liệu, the client's
-    # dashboard (UX_TOOLBAR_PLAN T3+T4): cash flow first, allocation with profit and loss, the month's flows; folding
+    # dashboard (UX_TOOLBAR_PLAN T3+T4): the overview first (net worth, allocation with its debts), then cash flow and
+    # the month's flows; folding
     # is remembered
     assert p.page.locator(".scard").count() == 5
     p.page.click('.scard[data-part="month"] .pc-head')
     p.page.wait_for_selector("#ws-cashview #d-month .sankey")
     assert p.page.is_hidden("#ws-canvas") and p.page.get_attribute('#ws-view [data-v="money"]', "aria-pressed") == "true"
-    assert p.page.eval_on_selector_all("#ws-cashview .cols > .panel", "ps => ps.map(p => p.id).slice(0, 4)") == ["d-cash", "d-alloc", "d-pnl", "d-month"]
+    assert p.page.eval_on_selector_all("#ws-cashview .cols > .panel", "ps => ps.map(p => p.id).slice(0, 5)") == ["d-nw", "d-alloc", "d-cash", "d-month", "d-risk"]
     assert "Lãi/lỗ" in p.page.inner_text("#d-alloc") and p.page.is_visible("#ws-cashview #cash svg")
     p.page.wait_for_function("location.hash === '#/client/xem/dong-tien'")
     p.page.click('#ws-cashview [data-months="24"]')
@@ -107,8 +109,10 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     assert p.page.is_visible("#ws-canvas") and p.page.is_hidden("#ws-cashview")
     p.page.click('.scard[data-focus="kpi:risk"] .pc-head')
     p.page.wait_for_function("location.hash === '#/client/xem/rui-ro'")
-    p.page.wait_for_function(  # the risk section at the top of the view
-        "Math.abs(document.querySelector('#d-risk').getBoundingClientRect().top - document.querySelector('#ws-cashview').getBoundingClientRect().top) < 30")
+    p.page.wait_for_function(  # the risk section scrolled into the view (the last row now: at its top, or the view at its end)
+        "() => { const r = document.querySelector('#d-risk').getBoundingClientRect(), v = document.querySelector('#ws-cashview');"
+        " const w = v.getBoundingClientRect(); return Math.abs(r.top - w.top) < 30"
+        " || (r.top >= w.top && r.bottom <= w.bottom + 2 && v.scrollTop + v.clientHeight >= v.scrollHeight - 2); }")
     p.page.click('#ws-view [data-v="graph"]')
     # Toàn cảnh's and Chi tiết's old addresses open it too, never a sheet
     p.go("#/client/tong-quan/chi-tiet")
@@ -165,7 +169,7 @@ def test_keyboard_and_phone(open_page):
     p.page.focus('[data-tool="tong-quan"]')
     p.page.keyboard.press("ArrowDown")
     p.page.keyboard.press("Enter")
-    p.page.wait_for_function("location.hash === '#/client/tai-san'")  # the bar leads to the section's page (B3.1)
+    p.page.wait_for_function("location.hash === '#/client/muc-tieu/ke-hoach'")  # the next section's page (ADR-0037)
     p.go("#/client/xem/tai-san")
     p.page.locator(".wnode.k-class").first.focus()
     p.page.keyboard.press("Enter")
@@ -186,6 +190,28 @@ def test_keyboard_and_phone(open_page):
     assert phone.page.evaluate(on_top) == "cp-q"
     assert not phone.problems()  # no sideways scroll, no error
 
+
+VIEW = "document.querySelector('.ws-world').getAttribute('transform')"
+
+
+def test_the_wheel_moves_the_graph_and_ctrl_wheel_zooms_it(open_page):
+    """A wheel scrolls the view as a page would (the owner's habit: it zoomed before); Ctrl + wheel, or a trackpad's
+    pinch (a wheel with ctrlKey), zooms."""
+    p = open_page()
+    p.go("#/client/xem/tong-quan")
+    p.page.wait_for_selector(".wnode.k-family")
+    box = p.page.locator(".ws-svg").bounding_box()
+    p.page.mouse.move(box["x"] + box["width"] * 0.3, box["y"] + box["height"] * 0.3)
+    before = p.page.evaluate(VIEW)
+    p.page.mouse.wheel(0, 200)
+    p.page.wait_for_function(f"{VIEW} !== {before!r}")
+    moved = p.page.evaluate(VIEW)
+    assert moved.endswith("scale(1.000)") and moved != before  # moved, not zoomed
+    p.page.keyboard.down("Control")
+    p.page.mouse.wheel(0, -100)
+    p.page.keyboard.up("Control")
+    p.page.wait_for_function(f"{VIEW} !== {moved!r}")
+    assert p.page.evaluate(VIEW).endswith("scale(1.120)")  # one notch in
 
 TIMED = """(() => { const real = window.fetch;
   window.fetch = (url, opts) => {
@@ -280,8 +306,8 @@ def test_the_dataflow_follows_the_stream_and_only_the_stream(open_page):
     assert st["hot"] >= 1 and st["bad"] == 4 and st["focusing"] and not st["writing"]
     p.page.mouse.click(
         *p.page.evaluate(
-            "(() => { const r = document.querySelector('.ws-svg').getBoundingClientRect();"
-            " return [r.left + 12, r.bottom - 12]; })()"
+            "() => { const r = document.querySelector('.ws-svg').getBoundingClientRect();"
+            " return [r.left + 12, r.bottom - 12]; }"
         )
     )
     p.page.wait_for_function("!document.querySelector('.ws-svg').classList.contains('focusing')")

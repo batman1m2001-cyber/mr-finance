@@ -32,7 +32,7 @@ def test_a_proposal_changes_nothing_until_a_second_owner_approves_it():
 
 def test_wrong_owner_wrong_content_and_a_second_pending_are_refused():
     with pytest.raises(roles.Forbidden):
-        config.propose("restricted", [{"name": "X", "ticker": "X", "aliases": []}], "cio")  # Compliance owns it
+        config.propose("restricted", [{"name": "X", "ticker": "X", "aliases": []}], "admin")  # the CIO owns it
     with pytest.raises(ValueError):
         config.propose("thresholds", {"pre_review_pct": 0.3}, "cio")
     with pytest.raises(ValueError, match="giống"):
@@ -47,8 +47,8 @@ def test_one_person_kinds_and_rejection():
     v = config.propose("news_sources", sources[:-1], "admin", "Bỏ một nguồn")
     assert config.decide(v["id"], "approve", "admin")["status"] == "ACTIVE"  # Admin, two-person: no
     assert len(config.data("news_sources")) == len(sources) - 1
-    r = config.propose("restricted", config.data("restricted")[:1], "compliance")
-    assert config.decide(r["id"], "reject", "compliance2", "Chưa đủ căn cứ")["status"] == "REJECTED"
+    r = config.propose("restricted", config.data("restricted")[:1], "cio")
+    assert config.decide(r["id"], "reject", "cio2", "Chưa đủ căn cứ")["status"] == "REJECTED"
     assert len(config.data("restricted")) == 3
 
 
@@ -56,8 +56,8 @@ def test_the_restricted_list_in_force_holds_the_news():
     rows = config.data("restricted") + [
         {"name": "Hưng Thịnh Phát (mock)", "ticker": "HTP", "aliases": ["hưng thịnh phát"]}
     ]
-    v = config.propose("restricted", rows, "compliance", "Thêm HTP")
-    config.decide(v["id"], "approve", "compliance2")
+    v = config.propose("restricted", rows, "cio", "Thêm HTP")
+    config.decide(v["id"], "approve", "cio2")
     out = ingest(
         {"vneconomy_tc": feed(("Hưng Thịnh Phát chậm trả nợ", "https://vneconomy.vn/htp.htm", "", rfc(NOW - 60)))}
     )
@@ -108,7 +108,6 @@ def test_the_endpoints():
             "price_sources",
             "ticker_map",
             "rm_assignment",
-            "certifications",
             "control_group",
             "assistant_retention",
             "ai_mode",

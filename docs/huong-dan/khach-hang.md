@@ -3,63 +3,39 @@
 Các trang của khách hàng (`#/client/…`). RM cũng thấy phần lớn các trang này trong mục “Khách hàng”, cho gia đình
 đang chọn.
 
-## Đồ thị tài chính (màn hình chính) — #/client/xem/tong-quan
+## Wealth View — #/client/tong-quan
 
-Màn hình chính của khách hàng là một đồ thị luôn hiện (địa chỉ cũ Bản đồ tài chính, `#/client/tong-quan/ban-do`,
-cũng mở nó): bức tranh toàn bộ tài chính dưới dạng sơ đồ. **Vòng tròn lớn ở giữa là bạn**: con số trong vòng là tài sản
-ròng (tổng tài sản trừ nợ). Ở chế độ **Gia đình** vẫn chỉ có một vòng, là tổng của cả nhà; chữ cái đầu trên viền một
-khoản cho biết khoản đó của thành viên nào (một số nếu nhiều người cùng có). Quanh vòng là các nhóm: lớp tài sản, tiền
-vào và tiền ra, thanh khoản dự phòng, mục tiêu, rủi ro, kịch bản, tin và chính sách.
+Màn hình chính của khách hàng.
 
-- **Góc nhìn** (thanh công cụ): Tổng quan, Tài sản (`#/client/xem/tai-san`), Dòng tiền (`…/dong-tien`), Mục tiêu &
-  kịch bản (`…/muc-tieu`), Tin tức (`…/tin`), Rủi ro (`…/rui-ro`). Mỗi góc nhìn làm nổi các loại liên quan; đồ
-  thị không đổi chỗ.
-- **Đường nối**: nét liền là tiền và các khoản thực tế đã ghi nhận (càng dày càng nhiều tiền); **nét đứt là ước
-  tính** (tin, chính sách, rủi ro: “có thể ảnh hưởng”); **chấm chấm là giả định** (kịch bản, nhãn “giả định”, “nếu
-  xảy ra”). Ước tính và giả định không bao giờ được cộng vào tài sản ròng. Chú thích ở góc đồ thị nhắc lại ba loại.
-- **Nhóm trên vòng**: các mục cùng loại nằm liền nhau, nối bằng một sợi mờ cùng màu; chỗ sợi đứt là sang nhóm khác.
-  Tên nhóm và số mục (“Tài sản · 7”) hiện ở khoảng trống giữa hai mục khi đủ chỗ.
-- **Bấm một nút hoặc một đường** để xem ở ô Thông tin: số tiền, mỗi tháng, mức chắc chắn, từ bản ghi nào. Trong góc
-  nhìn Tài sản, chọn một lớp tài sản để mở các khoản của nó.
-- **Nguồn dữ liệu** không nằm trên vòng: chọn một lớp tài sản, ô Thông tin ghi “Nguồn: TCBS · 4 khoản …”; bấm tên
-  nguồn để xem các khoản lấy từ nguồn đó. Ở góc nhìn Tài sản, khi chưa chọn gì, ô Thông tin liệt kê mọi nguồn và nguồn
-  nào đã kết nối.
-- **Kịch bản**: bật ở góc nhìn Mục tiêu & kịch bản. Kịch bản đang bật có một đường giả định về phía bạn; chọn nó để
-  thấy nó chạm tới lớp tài sản và mục tiêu nào. Bật kịch bản không đổi số liệu đã lưu.
-- **Trợ lý** (thẻ Trợ lý cạnh ô Thông tin) biết bạn đang ở góc nhìn nào và đang chọn gì: hỏi “mục này là gì?” là hỏi
-  về mục đang chọn. Các mục trợ lý đang đọc sáng lên trên đồ thị.
-- **Ô Thông tin khi chưa chọn gì**: ở Tổng quan là **Điều đáng chú ý** (tin, mục tiêu, ngưỡng và thay đổi có thể ảnh
-  hưởng tới bạn, quan trọng trước, kèm lý do và nguồn); ở các góc nhìn khác là danh sách các mục của góc nhìn đó.
-- **Trang của góc nhìn**: dưới tiêu đề là nút mở các trang riêng (Tài sản, Kế hoạch, Khẩu vị rủi ro ở Rủi ro, Tác
-  động tin, Đồ thị tác động, Chi phí chính sách) và nút mở phần số liệu của góc nhìn trong Bảng số liệu. Trang riêng mở
-  thành một tấm phủ trên đồ thị; đóng lại thì đồ thị vẫn như cũ.
-- **Cách xem**: Đồ thị, Danh sách, hoặc **Bảng số liệu** (xem dưới).
-- **Tổng quan nhanh** (dải thẻ dưới đồ thị): tài sản ròng, dòng tiền tháng, phân bổ, rủi ro, thanh khoản dự phòng. Bấm
-  một thẻ để mở góc nhìn của nó, ngay tại phần số liệu đó trong Bảng số liệu.
+Thanh bên trái có bốn mục, đúng tên của ngân hàng: **Wealth View**, **Wealth Planning Advisor**, **Headline News** và
+**Relationship specialist**. Wealth View có hai thẻ: **Wealth view** (trang này) và **Dữ liệu chi tiết tài sản**.
+Wealth Planning Advisor có hai thẻ: **Wealth planning advisor** (kế hoạch) và **Risk profile test** (bài test khẩu vị
+rủi ro). Headline News có hai thẻ: **News and Prediction** (chi phí chính sách) và **Đồ thị tác động**.
 
-## Bảng số liệu — #/client/tong-quan/chi-tiet
+Wealth view là toàn bộ bức tranh tài chính của bạn ở một trang, mọi con số ở một chỗ (các địa chỉ cũ — Toàn cảnh
+`#/client/tong-quan/toan-canh`, Chi tiết `#/client/tong-quan/chi-tiet`, Dòng tiền `#/client/dong-tien`, đồ thị tài
+chính trước đây `#/client/xem/…` và `#/client/tong-quan/ban-do` — đều mở trang này hoặc trang của mục đó). Khách hàng
+không còn trang đồ thị: nhìn Wealth view là đủ. Theo thứ tự:
 
-Nút **Bảng số liệu** ở Cách xem. Mọi con số ở một chỗ, thay cho hai trang Toàn cảnh và Chi tiết trước đây (địa
-chỉ cũ `#/client/tong-quan/toan-canh` và `#/client/tong-quan/chi-tiet` mở bảng này). Theo thứ tự:
-
-- **Dòng tiền**: 6 tháng qua và dự báo 12/24/36 tháng, các khoản phải trả lớn và các khoản định kỳ tìm thấy trong giao
-  dịch.
+- **Tài sản ròng** (tổng tài sản trừ nợ, so với tháng trước, ngày số liệu, các thành viên được tính) và **tài sản theo
+  nguồn dữ liệu**: tại hệ sinh thái Techcombank, lưu ký bên ngoài, bạn tự quản lý; bấm một nhóm để xem từng nguồn.
 - **Phân bổ tài sản** với lãi / lỗ từng nhóm so với giá vốn, và **lãi / lỗ danh mục** (đã chốt, chưa chốt, lợi nhuận
   từ đầu năm so với VN-Index).
+- **Dòng tiền**: 6 tháng qua và dự báo 12/24/36 tháng, các khoản phải trả lớn và các khoản định kỳ tìm thấy trong giao
+  dịch.
 - **Tiền vào và ra trong tháng**: chọn tháng; biểu đồ dòng chảy từ nguồn tiền vào (lương, cổ tức…) sang các nhóm chi và
   phần còn lại; ba tỷ lệ (tỷ lệ để dành, tiền ra trên tiền vào, nhóm chi lớn nhất) và bảng chi tiết. Bấm một dải để
   xem các giao dịch tạo nên nó. Tháng không có giao dịch hiện “Không có giao dịch trong tháng này.”
-- **Tài sản ròng** (tài sản, nợ, ngày số liệu, các thành viên được tính) và tài sản theo nguồn dữ liệu.
 - **Rủi ro**: mức sụt giảm chấp nhận so với ước tính khi căng thẳng, cảnh báo tập trung.
 - **Thanh khoản dự phòng** (quỹ khẩn cấp): tiền và tài sản rút được ngay, đủ chi bao nhiêu tháng so với mốc an toàn 6
   tháng.
 - **Chính sách và dự án** nổi bật. Chưa làm bài kiểm tra rủi ro thì ngưỡng lấy theo hồ sơ.
 
-Mục tiêu đang theo dõi ở góc nhìn Mục tiêu & kịch bản và trang Kế hoạch.
+Mục tiêu đang theo dõi ở Wealth Planning Advisor.
 
-## Tài sản — #/client/tai-san
+## Dữ liệu chi tiết tài sản — #/client/tai-san
 
-Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: **Đã xác thực** (từ ngân hàng), **Từ sao
+Thẻ thứ hai của Wealth View. Mọi tài sản và khoản nợ, nhóm theo loại, mỗi khoản có nguồn và mức tin cậy: **Đã xác thực** (từ ngân hàng), **Từ sao
 kê**, **Bạn tự khai**; ngày và giá mua, giá vốn, giá trị hiện tại, lãi / lỗ; cuối bảng là tổng tài sản, nợ và tài sản
 ròng.
 
@@ -68,26 +44,40 @@ ròng.
 - **Bổ sung tài sản**: gõ một câu như “Tôi có căn hộ ở Thủ Đức khoảng 5 tỷ”; ứng dụng trả lời đã ghi gì và bảng có thêm
   dòng.
 
-## Kế hoạch — #/client/muc-tieu/ke-hoach
+## Wealth Planning Advisor — #/client/muc-tieu/ke-hoach
 
-Cố vấn kế hoạch tài sản: các chỉ số tổng (tài sản ròng, lãi / lỗ danh mục, mục tiêu đã đủ tiền, dòng tiền ròng 12
+Kế hoạch tài chính, cố vấn kế hoạch tài sản: các chỉ số tổng (tài sản ròng, lãi / lỗ danh mục, mục tiêu đã đủ tiền, dòng tiền ròng 12
 tháng), số cần so với số có cho từng mục tiêu và số tiền cần để dành mỗi tháng.
 
 - **Mục tiêu cuộc sống**: nhóm theo gia đình và con cái, tích lũy, hưu trí và chuyển giao, quỹ dự phòng, quyết định và
   kịch bản căng thẳng. Chọn một mục để xem trạng thái (cần / có / thiếu), theo dõi so với dự kiến, **Việc cần làm** xếp
   theo thứ tự, **Chi tiết tính toán** (sửa giả định rồi **Chạy lại**, bảng trước / sau) và phương án nhẹ / mạnh.
-- **Gửi chuyên gia duyệt**: gửi một việc hay phương án tới RM; theo dõi ở trang Chuyên gia.
+- **Gửi chuyên gia duyệt**: gửi một việc hay phương án tới RM; theo dõi ở Relationship specialist.
 - **Lưu ý quy định cho mục tiêu**: quy định mới có liên quan tới mục tiêu của bạn, mức độ và mốc cần chuẩn bị.
 
-## Khẩu vị rủi ro — #/client/rui-ro/khau-vi
+## Risk profile test — #/client/rui-ro/khau-vi
 
-Bài kiểm tra khẩu vị rủi ro: bấm “Bắt đầu”, trả lời 8–12 câu tình huống (câu sau tùy câu trước, có thanh tiến độ và
+Thẻ thứ hai của Wealth Planning Advisor: bài kiểm tra khẩu vị rủi ro: bấm “Bắt đầu”, trả lời 8–12 câu tình huống (câu sau tùy câu trước, có thanh tiến độ và
 nút “← Câu trước”). Kết quả: mức chịu đựng rủi ro và khả năng chịu rủi ro trên năm mức, câu giải thích khi hai mức
-khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở phần Rủi ro của Bảng số liệu.
+khác nhau, hình mẫu nhà đầu tư và ngưỡng sụt giảm mới — ngưỡng này được dùng ở phần Rủi ro của Wealth View.
+
+## News and Prediction — #/client/tin/chinh-sach
+
+Thẻ đầu của Headline News (trước đây là Chi phí chính sách). Chính sách (lãi suất, thuế, quy định…) có thể làm bạn mất hay được bao nhiêu: **Tác động lên tài sản ròng** theo từng
+chính sách (lọc tất cả / rủi ro / cơ hội), nhận định của các nhà nghiên cứu khớp với tài sản của bạn (dữ liệu giả
+định), và từng thẻ chính sách: mức độ, tình trạng pháp lý, tác động có xác suất, cách tính (giá trị × độ nhạy × xác
+suất) và nguồn.
+
+## Đồ thị tác động — #/client/tin/do-thi
+
+Thẻ thứ hai của Headline News. Tin nào chạm tới tiền của bạn, qua đường nào, tới mục tiêu nào — đọc từ trái sang phải qua bảy cột: Tin, Sự kiện,
+Kịch bản, Yếu tố, Tài sản, Gia đình, Mục tiêu. Bấm một nút để làm sáng đường đi của nó; bấm lần nữa hoặc “Bỏ chọn” để
+bỏ. Chọn một sự kiện mở bảng tác động: hướng, kịch bản chính, các nhóm tài sản và mục tiêu trước → sau. Có nút chuyển
+“Đồ thị / Danh sách” và bộ lọc theo loại.
 
 ## Tác động tin — #/client/tin/thi-truong
 
-Sau khi CIO duyệt một nhận định về tin thị trường và hậu kiểm đạt, trang này cho biết tài sản của bạn có thể thay đổi
+Không còn là một thẻ: trang mở từ chuông, từ “Điều đáng chú ý” và từ liên kết “Tác động của tin” trên Wealth View. Sau khi CIO duyệt một nhận định về tin thị trường và hậu kiểm đạt, trang này cho biết tài sản của bạn có thể thay đổi
 bao nhiêu trong 3 tháng tới, dải dao động rộng hay hẹp và đến từ đâu — theo nhóm tài sản, không nêu mã cổ phiếu, không
 phải khuyến nghị.
 
@@ -100,22 +90,8 @@ phải khuyến nghị.
 
 Chưa có tin nào được duyệt thì trang báo tác động sẽ hiện khi có.
 
-## Đồ thị tác động — #/client/tin/do-thi
+## Relationship specialist — #/client/chuyen-gia
 
-Tin nào chạm tới tiền của bạn, qua đường nào, tới mục tiêu nào — đọc từ trái sang phải qua bảy cột: Tin, Sự kiện,
-Kịch bản, Yếu tố, Tài sản, Gia đình, Mục tiêu. Bấm một nút để làm sáng đường đi của nó; bấm lần nữa hoặc “Bỏ chọn” để
-bỏ. Chọn một sự kiện mở bảng tác động: hướng, kịch bản chính, các nhóm tài sản và mục tiêu trước → sau. Có nút chuyển
-“Đồ thị / Danh sách” và bộ lọc theo loại.
-
-## Chi phí chính sách — #/client/tin/chinh-sach
-
-Chính sách (lãi suất, thuế, quy định…) có thể làm bạn mất hay được bao nhiêu: **Tác động lên tài sản ròng** theo từng
-chính sách (lọc tất cả / rủi ro / cơ hội), nhận định của các nhà nghiên cứu khớp với tài sản của bạn (dữ liệu giả
-định), và từng thẻ chính sách: mức độ, tình trạng pháp lý, tác động có xác suất, cách tính (giá trị × độ nhạy × xác
-suất) và nguồn.
-
-## Chuyên gia — #/client/chuyen-gia
-
-Chuyên viên quan hệ khách hàng của bạn (tên, liên hệ — dữ liệu demo) và **Hàng chờ chuyên gia duyệt**: các phương án
-bạn đã gửi từ Kế hoạch, đang chờ hay đã được duyệt / từ chối kèm ghi chú. Trang này chỉ để xem; RM và chuyên gia quyết
+Chuyên gia của bạn: chuyên viên quan hệ khách hàng (tên, liên hệ — dữ liệu demo) và **Hàng chờ chuyên gia duyệt**: các phương án
+bạn đã gửi từ Wealth Planning Advisor, đang chờ hay đã được duyệt / từ chối kèm ghi chú. Trang này chỉ để xem; RM quyết
 định ở trang của họ.

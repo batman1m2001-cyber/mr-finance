@@ -12,65 +12,79 @@
    graph, drawn into #page as before. A staff role with a desk (FEAT-41, ADR-0036: desk/roles.js) works the same way:
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
-import {$, $$, esc, explainOn, failed, howAudience, keep, loading} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261018q1";
+import {$, $$, esc, explainOn, failed, howAudience, keep, lang, loading, setLang} from "./core/core.js";
+import {mount as mountCopilot} from "./copilot.js?v=20261028p2";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
-import {mount as mountHeader} from "./header.js?v=20261020u1";
-import {LENSES, SHEETS, lensRoute} from "./workspace/lenses.js?v=20261021b3";
-import {DESKS} from "./desk/roles.js?v=20261021t5";
+import {mount as mountHeader} from "./header.js?v=20261025t3";
+import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261025t3";
+import {DESKS} from "./desk/roles.js?v=20261028p2";
 
 const ROLES = {
   client: {
     label: "Khách hàng", user: null, clientPick: true,
     nav: [
-      {id: "tong-quan", label: "Tổng quan", sub: [
-        {id: "toan-canh", label: "Bảng số liệu", page: "pulse"}, {id: "ban-do", label: "Đồ thị tài chính", page: "map"},
-        {id: "chi-tiet", label: "Bảng số liệu", page: "detail"}]},  // both open the workspace's Bảng số liệu (T4)
-      {id: "tai-san", label: "Tài sản", page: "holdings"},
-      {id: "muc-tieu", label: "Mục tiêu & kịch bản", sub: [{id: "ke-hoach", label: "Kế hoạch", page: "plan"}]},
-      {id: "rui-ro", label: "Rủi ro", sub: [{id: "khau-vi", label: "Khẩu vị rủi ro", page: "risktest"}]},
-      {id: "tin", label: "Tin tức", sub: [
-        {id: "thi-truong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"}, {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}]},
-      {id: "chuyen-gia", label: "Chuyên gia", page: "advisor"},
+      // the client's addresses; the workspace draws them (web/workspace/lenses.js), under the bank's four names
+      {id: "tong-quan", label: "Wealth View", sub: [
+        {id: "toan-canh", label: "Wealth view", page: "pulse"}, {id: "ban-do", label: "Wealth view", page: "map"},
+        {id: "chi-tiet", label: "Wealth view", page: "detail"}]},  // all three open the dashboard (T4; the graph is off)
+      {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings"},
+      {id: "muc-tieu", label: "Wealth Planning", sub: [{id: "ke-hoach", label: "Wealth planning", page: "plan"},
+        {id: "phan-bo", label: "Asset allocation", page: "allocation"}]},
+      {id: "rui-ro", label: "Risk profile test", sub: [{id: "khau-vi", label: "Risk profile test", page: "risktest"}]},
+      {id: "tin", label: "Wealth Advisor", sub: [
+        {id: "chinh-sach", label: "News and Prediction", page: "policy"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
+        {id: "thi-truong", label: "Tác động tin", page: "impact"}]},  // no tab now; the bell's and the feed's evidence opens it
+      {id: "chuyen-gia", label: "Relationship specialist", page: "advisor"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   rm: {
     label: "RM", user: "rm01",
     nav: [
-      {id: "ban", label: "Sổ khách hàng", desk: true},  // FEAT-41: the RM's desk (SCR-RM-07)
-      {id: "hom-nay", label: "Hôm nay", page: "today"},
-      {id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [
-        {id: "tac-dong", label: "Tác động tin", page: "impact"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
-        {id: "toan-canh", label: "Toàn cảnh", page: "pulse"}, {id: "ban-do", label: "Bản đồ tài chính", page: "map"},
-        {id: "tong-quan", label: "Chi tiết tài sản", page: "detail"},
-        {id: "tai-san", label: "Tài sản", page: "holdings"}, {id: "ke-hoach", label: "Kế hoạch", page: "plan"},
-        {id: "chinh-sach", label: "Chi phí chính sách", page: "policy"}, {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "performance"},
-        {id: "duyet", label: "Duyệt đề xuất", page: "advisor"}]},
-      {id: "hieu-qua", label: "Hiệu quả tư vấn", page: "perfall"},
+      {id: "ban", label: "Tổng quan", desk: true},  // FEAT-41: the RM's desk (SCR-RM-07); OWN-FB-21: Hôm nay's contact log is on it
+      // OWN-FB-02…06: four tabs, two of them with inner tabs (web/desk/desk.js); `hidden` pages open, with no tab
+      {id: "khach-hang", label: "Khách hàng", clientPick: true,
+        tabs: {wealth: "Wealth view", plan: "Wealth planning", news: "Wealth advisor", perf: "Advisory performance"}, sub: [
+          {id: "tong-quan", label: "Tổng quan", page: "detail", tab: "wealth"},
+          {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings", tab: "wealth"},
+          {id: "ke-hoach", label: "Wealth planning", page: "plan", tab: "plan"},
+          {id: "phan-bo", label: "Asset allocation", page: "allocation", tab: "plan"},  // ASSET_ALLOCATION_BRD: the three buckets
+          {id: "chinh-sach", label: "News and prediction", page: "policy", tab: "news"},
+          {id: "do-thi", label: "Đồ thị tác động", page: "graph", tab: "news"},
+          {id: "hieu-qua", label: "Khách hàng này", page: "performance", tab: "perf"},
+          {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall", tab: "perf", noPick: true},  // every client: no picker
+          {id: "tac-dong", label: "Tác động tin", page: "impact", hidden: true},  // the desk's and the bell's evidence
+          {id: "duyet", label: "Duyệt đề xuất", page: "advisor", hidden: true}]},  // the desk's "Đề xuất chờ duyệt"
+      {id: "hieu-qua", label: "Advisory performance", clientPick: true, sub: [
+        {id: "khach-hang", label: "Khách hàng này", page: "performance"}, {id: "tat-ca", label: "Tất cả khách hàng", page: "perfall", noPick: true}]},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
   cio: {
     label: "CIO", user: "cio",
     nav: [
-      {id: "ban", label: "Bàn quyết định", desk: true},  // FEAT-41: the CIO's desk (SCR-CIO-15)
-      {id: "hop-tin", label: "Hộp tin", page: "inbox"},
-      {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events"},
-      {id: "phoi-nhiem", label: "Phơi nhiễm", page: "exposure"},
-      {id: "ap-dung", label: "Lần áp dụng", page: "runs"},
+      {id: "ban", label: "Decision board", desk: true},  // FEAT-41: the CIO's desk (SCR-CIO-15); the inbox is on it (OWN-FB-11)
+      {id: "nhan-dinh", label: "Sự kiện & nhận định", page: "events", hidden: true},  // every decision row opens one
+      {id: "giu", label: "Tin bị giữ", page: "held", hidden: true},  // OWN-FB-18: Compliance's held news is the CIO's
+      {id: "phoi-nhiem", label: "Tác động danh mục", page: "exposure"},
+      {id: "bang-chung", label: "Bằng chứng tin", page: "evidence"},  // NEWS_EVIDENCE_BRD §8.2: every frame and its review
+      {id: "phan-bo", label: "Phân bổ", page: "rebalance"},  // ASSET_ALLOCATION_BRD P2: each action approved, the model, the RMs' bucket moves
       {id: "do-thi", label: "Đồ thị lần áp dụng", page: "graph"},
-      {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
-      {id: "ban-tin", label: "Bản tin", page: "newsletter"},
-      {id: "chinh-sach", label: "Chính sách", page: "radar"},
-      {id: "mo-hinh", label: "Mô hình", sub: [
+      {id: "ap-dung", label: "Lần áp dụng", page: "runs", hidden: true},  // a run waiting for review opens here
+      {id: "ban-tin", label: "Bài viết", page: "newsletter"},  // OWN-FB-15: the CIO's articles, for Private clients
+      {id: "nghien-cuu", label: "Nghiên cứu", page: "research", hidden: true},
+      {id: "chinh-sach", label: "Chính sách", page: "radar", hidden: true},
+      {id: "hieu-qua", label: "Hiệu quả", page: "cioperf"},  // OWN-FB-16: how many news, how often right
+      // OWN-FB-16: Mô hình and AI are Admin's; the addresses stay for links already sent
+      {id: "mo-hinh", label: "Mô hình", hidden: true, sub: [
         {id: "tham-so", label: "Tham số", page: "model"}, {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
         {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"},
-        {id: "thu-nghiem", label: "Thử nghiệm agent tin tức", page: "trial"}]},  // BUSINESS_FEEDBACK_1021_PLAN B1
-      {id: "do-luong", label: "Đo lường", page: "measure"},
-      {id: "agent", label: "Agent", page: "agents"},
-      {id: "viec-nen", label: "Việc nền", page: "jobs"},
-      {id: "cau-hinh", label: "Cấu hình", page: "config"},
+        {id: "thu-nghiem", label: "Thử nghiệm hằng ngày", page: "trial"}]},
+      {id: "do-luong", label: "Đo lường", page: "measure", hidden: true},
+      {id: "agent", label: "Agent", page: "agents", hidden: true},
+      {id: "viec-nen", label: "Việc nền", page: "jobs", hidden: true},
+      {id: "cau-hinh", label: "Cấu hình", page: "config", hidden: true},
+      {id: "nhat-ky", label: "Nhật ký", page: "audit"},  // OWN-FB-18: the chain, as Compliance read it
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
@@ -80,35 +94,16 @@ const ROLES = {
       {id: "ban", label: "Vận hành", desk: true},  // FEAT-41: Admin's desk (SCR-ADM-02)
       {id: "he-thong", label: "Hệ thống", page: "system"},
       {id: "du-lieu", label: "Dữ liệu thị trường", page: "market"},
+      {id: "nguon-tin", label: "Nguồn tin", page: "sources"},  // N1: the white list the collection reads
       {id: "cau-hinh", label: "Cấu hình", page: "config"},
       {id: "tai-khoan", label: "Tài khoản và vai trò", page: "accounts"},
-      {id: "agent", label: "Agent", page: "agents"},
-      {id: "viec-nen", label: "Việc nền", page: "jobs"},
-      {id: "nhat-ky", label: "Nhật ký", page: "audit"},
-      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
-    ],
-  },
-  specialist: {
-    label: "Chuyên gia", user: "sp_global",
-    nav: [
-      {id: "ban", label: "Bàn chuyên gia", desk: true},  // FEAT-41: the Expert's desk (SCR-SP-02)
-      {id: "duyet", label: "Duyệt khuyến nghị", page: "specialist"},
-      {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
-    ],
-  },
-  compliance: {
-    label: "Tuân thủ", user: "compliance",
-    nav: [
-      {id: "ban", label: "Bàn kiểm soát", desk: true},  // FEAT-41: Compliance's desk (SCR-CMP-06)
-      {id: "giu", label: "Tin bị giữ", page: "held"},
-      {id: "nghien-cuu", label: "Nghiên cứu", page: "research"},
-      {id: "ban-tin", label: "Bản tin", page: "newsletter"},
-      {id: "chinh-sach", label: "Chính sách", page: "radar"},
+      {id: "mo-hinh", label: "Mô hình", sub: [  // OWN-FB-16: from the CIO's rail
+        {id: "tham-so", label: "Tham số", page: "model"}, {id: "do-chinh-xac", label: "Độ chính xác", page: "accuracy"},
+        {id: "thu-nghiem", label: "Thử nghiệm hằng ngày", page: "trial"}]},
       {id: "do-luong", label: "Đo lường", page: "measure"},
-      {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "agent", label: "Agent", page: "agents"},
       {id: "viec-nen", label: "Việc nền", page: "jobs"},
-      {id: "cau-hinh", label: "Cấu hình", page: "config"},
+      {id: "nhat-ky", label: "Nhật ký", page: "audit"},
       {id: "bo-nho", label: "Bộ nhớ", page: "memory", hidden: true},  // A4: linked from the header and the panel
     ],
   },
@@ -118,6 +113,15 @@ let leaving = false;
 window.addEventListener("pagehide", () => { leaving = true; });
 window.addEventListener("beforeunload", () => { leaving = true; });
 const pages = {};  // page name → its module (a promise)
+
+// addresses whose page moved (OWN-FB-02, -11, -21): the address bar gets the page that took its place
+const MOVED = {"rm/khach-hang/toan-canh": "rm/khach-hang/tong-quan", "rm/khach-hang/ban-do": "rm/khach-hang/tong-quan",
+  "cio/hop-tin": "cio", "rm/hom-nay": "rm"};
+function moved() {
+  const path = location.hash.replace(/^#\/?/, "");
+  const from = Object.keys(MOVED).find(k => path === k || path.startsWith(`${k}/`));
+  if (from) history.replaceState(null, "", `#/${MOVED[from]}`);
+}
 
 function parse(hash) {
   const parts = (hash || "").replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
@@ -148,15 +152,24 @@ export function go(hash, focus) {
   else location.hash = hash;
 }
 
-// every page of a role, for the header search: label, its parent's label, its route
+// the client's pages by their former names too: the tabs carry the bank's English names (ADR-0037), a client still types these
+const ALSO = {"#/client/tong-quan": "Tổng quan Toàn cảnh Dòng tiền", "#/client/tai-san": "Tài sản", "#/client/muc-tieu/ke-hoach": "Kế hoạch tài chính Mục tiêu",
+  "#/client/muc-tieu/phan-bo": "Phân bổ tài sản Ba giỏ Thanh khoản Di sản Tăng trưởng",
+  "#/client/rui-ro/khau-vi": "Khẩu vị rủi ro Rủi ro", "#/client/tin/chinh-sach": "Chi phí chính sách Tin tức", "#/client/chuyen-gia": "Relationship specialist"};
+
+// every page of a role, for the header search: label, its parent's label, its route (and other names it answers to)
 function pagesFor(role) {
-  if (role === "client") {  // the workspace: its lenses, then the views that open as sheets
-    return [...LENSES.map(l => ({label: l.label, parent: "Đồ thị", route: lensRoute(l.id)})),
-      ...Object.values(SHEETS).map(s => ({label: s.label, parent: s.lens ? "Xem đầy đủ" : "", route: s.route}))];
+  if (role === "client") {  // the workspace: its four sections and their tabs (WEALTH_NAMES_PLAN)
+    return TOOLBAR.flatMap(t => {
+      const tabs = SECTIONS[t.id].tabs;
+      return tabs.length > 1 ? tabs.map(([label, route]) => ({label, parent: t.label, route, also: ALSO[route]}))
+        : [{label: t.label, parent: "", route: t.href, also: ALSO[t.href]}];
+    });
   }
   const out = [];
   for (const n of ROLES[role].nav) {
-    if (n.sub) for (const s of n.sub) out.push({label: s.label, parent: n.label, route: `#/${role}/${n.id}/${s.id}`});
+    if (n.hidden && n.id !== "bo-nho") continue;  // a page with no tab is found where it is linked from, not here
+    if (n.sub) for (const s of n.sub.filter(x => !x.hidden)) out.push({label: s.label, parent: n.label, route: `#/${role}/${n.id}/${s.id}`});
     else out.push({label: n.label, parent: "", route: `#/${role}/${n.id}`});
   }
   return out;
@@ -167,7 +180,7 @@ let header = null, copilot = null;
 let ws = null, wsLoad = null;
 async function workspace() {
   if (ws) return ws;
-  wsLoad ||= import("./workspace/workspace.js?v=20261021b3");
+  wsLoad ||= import("./workspace/workspace.js?v=20261025t3");
   const mod = await wsLoad;
   if (!ws) {
     ws = mod.mount($("#main"), {client, scope, go});
@@ -188,7 +201,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261021t5");
+  dkLoad ||= import("./desk/desk.js?v=20261028p2");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});
@@ -215,22 +228,24 @@ function drawChrome(rt) {
   const sub = $("#subnav");
   if (rt.nav.sub) {
     sub.hidden = false;
-    sub.innerHTML = rt.nav.sub.map(s =>
+    sub.innerHTML = rt.nav.sub.filter(s => !s.hidden || s === rt.sub).map(s =>
       `<a href="#/${rt.role}/${rt.nav.id}/${s.id}" ${s === rt.sub ? 'aria-current="page"' : ""}>${esc(s.label)}</a>`).join("");
   } else {
     sub.hidden = true;
     sub.innerHTML = "";
   }
-  const pick = r.clientPick || rt.nav.clientPick;
+  const pick = (r.clientPick || rt.nav.clientPick) && !(rt.sub && rt.sub.noPick);
   $("#client-pick").hidden = !pick || (state.me && state.me.role === "client");
   scopeSwitch(pick);
   if (state.me) {
     $("#whoami").innerHTML = `<span class="me"><b>${esc(state.me.name)}</b><span class="me-title">${esc(state.me.title || r.label)}</span>
       <a class="linkbtn" href="#/${rt.role}/bo-nho"${rt.nav.id === "bo-nho" ? ' aria-current="page"' : ""}>Bộ nhớ</a>
       <button type="button" class="linkbtn" id="signout">Đăng xuất</button>
-      <button type="button" class="linkbtn me-theme" id="me-theme">Giao diện sáng / tối</button></span>`;
+      <button type="button" class="linkbtn me-theme" id="me-theme">Giao diện sáng / tối</button>
+      <div class="seg langpick me-lang" role="group" aria-label="Ngôn ngữ"><button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="vi" lang="vi">VI</button></div></span>`;
     $("#signout").onclick = signOut;
     $("#me-theme").onclick = theme;
+    langPick();
     // a phone: the name row is a popover behind the initials (tokens.css .meopen)
     const words = String(state.me.name || "").trim().split(/\s+/).filter(Boolean);
     $("#me-open").textContent = words.length > 1 ? words[0][0] + words[words.length - 1][0] : (words[0] || "?").slice(0, 2);
@@ -245,6 +260,7 @@ function drawChrome(rt) {
 
 async function route() {
   if (state.auth && !state.me) return signInPage();
+  moved();
   const rt = parse(location.hash);
   const want = (location.hash.replace(/^#\/?/, "").split("/")[0]) || "";
   if (state.me && want !== state.me.role) { location.replace(`#/${state.me.role}`); return; }
@@ -252,9 +268,9 @@ async function route() {
   howAudience.staff = rt.role !== "client";
   state.route = rt;
   localStore("mf.role", rt.role);
-  // the client's calmer look (B3.3): light unless the person chose dark; the staff's desks as they were
+  // light for everyone unless the person chose dark (index.html sets it before the first paint); B3.3's calmer type
+  // stays the client's
   document.body.dataset.role = rt.role;
-  if (!localStore("mf.theme")) document.documentElement.dataset.theme = rt.role === "client" ? "light" : "dark";
   drawChrome(rt);
   if (header) header.refresh();
   let target = rt.sub || rt.nav;
@@ -301,7 +317,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261021b3`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261028p2`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
@@ -367,6 +383,14 @@ function ctx(rt) {
     isCurrent: (seq) => seq === state.seq,
     setClient,
   };
+}
+
+// EN | VI: the one switch (docs/LANGUAGE_PLAN.md L1); picking reloads the page in that language
+function langPick() {
+  for (const b of $$(".langpick button")) {
+    b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+    b.onclick = () => { if (b.dataset.lang !== lang) setLang(b.dataset.lang); };
+  }
 }
 
 function theme() {
@@ -449,7 +473,7 @@ function signInPage() {
   $("#whoami").innerHTML = "";
   const box = document.createElement("div");
   $("#page").replaceChildren(box);
-  import("./pages/signin.js?v=20261016r5").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
+  import("./pages/signin.js?v=20261025t3").then(mod => mod.render(box, {demo: state.demo, signedIn: () => { location.hash = ""; location.reload(); }}))
     .catch(e => { box.innerHTML = failed(e); });
 }
 
@@ -466,6 +490,7 @@ async function start() {
   state.me = me.user || null;
   if (state.me && ROLES[state.me.role]) ROLES[state.me.role].user = state.me.id;
   $("#theme").onclick = theme;
+  langPick();
   const meOpen = $("#me-open"), top = $(".shell-top");
   const meShow = (on) => { top.classList.toggle("me-shown", on); meOpen.setAttribute("aria-expanded", String(on)); };
   meOpen.onclick = (e) => { e.stopPropagation(); meShow(!top.classList.contains("me-shown")); };
@@ -485,7 +510,7 @@ async function start() {
   copilot = mountCopilot();
   await Promise.all([
     pickers(),
-    state.me && (state.me.role === "client" || state.me.role === "specialist") ? null  // the staff list: desk and RMs
+    state.me && state.me.role === "client" ? null  // the staff list: desk and RMs
       : fetch("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
   ]);
   await route();

@@ -35,14 +35,32 @@ def client_pages():
 
 
 def test_every_customer_page_has_an_entry_point():
-    # OWN-GW-13: no capability is lost — each page of the old menu opens as a sheet; the map page is the graph itself,
-    # Toàn cảnh and Chi tiết are the Bảng số liệu (UX_TOOLBAR_PLAN T3+T4); Bộ nhớ is opened from the header (T2)
+    # OWN-GW-13: no capability is lost — each page of the old menu opens as a sheet; the map page is the graph itself
+    # (hidden from the client, ADR-0037), Toàn cảnh and Chi tiết are the dashboard (UX_TOOLBAR_PLAN T3+T4); Bộ nhớ is
+    # opened from the header (T2)
     sheets = lenses("Object.values(L.SHEETS).map(s => s.page)")
     assert client_pages() - {"map", "pulse", "detail"} == set(sheets)
     board = lenses('[L.resolve(["tong-quan", "toan-canh"]), L.resolve(["tong-quan", "chi-tiet"])]')
     assert [b["part"] for b in board] == ["month", "nw"] and not any(b["sheet"] for b in board)
-    toolbar = lenses("L.TOOLBAR.map(t => t.id)")
-    assert toolbar == ["tong-quan", "tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro", "chuyen-gia"]
+
+
+def test_the_menu_is_the_banks_four_sections():
+    """Business feedback 2 (WEALTH_NAMES_PLAN, ADR-0037, OWN-WN-01…06): four sections by the bank's names, each with
+    the tabs it asked for, and every sheet under one of them."""
+    toolbar = lenses("L.TOOLBAR.map(t => [t.id, t.label])")
+    assert toolbar == [["tong-quan", "Wealth View"], ["muc-tieu", "Wealth Planning"], ["tin", "Wealth Advisor"],
+                       ["chuyen-gia", "Relationship specialist"]]  # fmt: skip
+    tabs = lenses("Object.fromEntries(L.TOOLBAR.map(t => [t.id, L.SECTIONS[t.id].tabs.map(x => x[0])]))")
+    assert tabs == {"tong-quan": ["Wealth view", "Dữ liệu chi tiết tài sản"],
+                    "muc-tieu": ["Wealth planning", "Asset allocation", "Risk profile test"],
+                    "tin": ["News and Prediction", "Đồ thị tác động"],  # business, 2026-10-22
+                    "chuyen-gia": ["Relationship specialist"]}  # fmt: skip
+    homes = lenses("L.TOOLBAR.map(t => L.SECTIONS[t.id].home)")
+    assert homes == ["#/client/tong-quan", "#/client/muc-tieu/ke-hoach", "#/client/tin/chinh-sach",
+                     "#/client/chuyen-gia"]  # fmt: skip
+    # nothing a client clicks leads to the graph: no tab names it, no tab's address is a lens of its own
+    routes = lenses("Object.values(L.SECTIONS).flatMap(s => s.tabs.map(x => x[1]))")
+    assert not [r for r in routes if r.startswith("#/client/xem/") or r.endswith("/ban-do")]
 
 
 def test_old_addresses_open_their_page_over_its_lens():
@@ -50,15 +68,18 @@ def test_old_addresses_open_their_page_over_its_lens():
       L.resolve([]), L.resolve(["tong-quan"]), L.resolve(["tong-quan", "ban-do"]), L.resolve(["xem", "rui-ro"]),
       L.resolve(["xem", "nope"]), L.resolve(["tai-san"]), L.resolve(["tin", "do-thi", "EV-1"]), L.resolve(["muc-tieu"]),
       L.resolve(["muc-tieu", "khau-vi"]), L.resolve(["chuyen-gia"]), L.resolve(["bo-nho"]), L.resolve(["what"])]""")
-    assert got[0] == {"lens": None, "sheet": None, "param": None}  # #/client keeps the lens on screen
-    assert got[1]["lens"] == got[2]["lens"] == "tong-quan" and got[1]["sheet"] is got[2]["sheet"] is None
-    assert got[3] == {"lens": "rui-ro", "sheet": None, "param": None}
+    home = {"lens": "tong-quan", "sheet": None, "param": None, "home": True}  # Wealth View (B3.1, ADR-0037)
+    assert got[0] == got[1] == got[2] == got[11] == home  # ban-do: the former Đồ thị tài chính tab; an unknown one
+    assert got[3] == {"lens": "rui-ro", "sheet": None, "param": None}  # the graph's own address, linked from nowhere
     assert got[4]["lens"] == "tong-quan" and got[4]["sheet"] is None
-    assert got[5] == {"lens": "tai-san", "sheet": "tai-san", "param": None}
+    assert got[5] == {"lens": "tong-quan", "sheet": "tai-san", "param": None}  # Dữ liệu chi tiết tài sản (Wealth View)
     assert got[6] == {"lens": "tin", "sheet": "do-thi", "param": "EV-1"}
-    assert got[7]["sheet"] == "ke-hoach" and got[8] == {"lens": "rui-ro", "sheet": "khau-vi", "param": None}
-    assert got[9]["sheet"] == "chuyen-gia" and got[9]["lens"] is None  # Experts keep their own view (OWN-GW-05)
-    assert got[10]["sheet"] == "bo-nho" and got[11]["sheet"] is None
+    assert got[7]["sheet"] == "ke-hoach" and got[8] == {"lens": "muc-tieu", "sheet": "khau-vi", "param": None}
+    assert got[9]["sheet"] == "chuyen-gia" and got[9]["lens"] is None  # Relationship specialist, its own view
+    assert got[10]["sheet"] == "bo-nho"
+    cash = lenses('[L.resolve(["dong-tien"]), L.resolve(["rui-ro", "khau-vi"])]')
+    assert cash[0] == {"lens": "tong-quan", "sheet": None, "param": None, "part": "cash"}  # Dòng tiền: in Wealth View
+    assert cash[1] == {"lens": "muc-tieu", "sheet": "khau-vi", "param": None}  # Risk profile test, in WPA
 
 
 def test_every_route_the_server_builds_for_a_customer_resolves():

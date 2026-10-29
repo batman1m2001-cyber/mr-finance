@@ -37,7 +37,7 @@ def test_every_client_and_every_acting_staff_member_has_an_account_and_dependent
     have = {a["id"] for a in auth.accounts()}
     people = store.everyone()
     assert have == {p["id"] for p in people if p["role"] in auth.ACCOUNT_ROLES}
-    assert {"C01", "C01S", "rm01", "rm03", "cio2", "compliance", "admin", "sp_global"} <= have  # specialists: G8
+    assert {"C01", "C01S", "rm01", "rm03", "cio", "cio2", "admin", "admin2"} <= have
     assert not have & {p["id"] for p in people if p["role"] == "dependent"}
 
 
@@ -81,16 +81,16 @@ def test_without_a_demo_password_nobody_signs_in_with_one(http, monkeypatch):
 def test_the_demo_account_list_opens_only_when_switched_on(http, monkeypatch):
     listed = http.get("/api/auth/accounts").json()["accounts"]
     assert {a["role"] for a in listed} == set(auth.ACCOUNT_ROLES)
-    assert http.post("/api/auth/demo", json={"id": "compliance2"}).json()["user"]["role"] == "compliance"
+    assert http.post("/api/auth/demo", json={"id": "cio2"}).json()["user"]["role"] == "cio"
     monkeypatch.setenv("MF_DEMO_ACCOUNTS", "off")
     assert http.get("/api/auth/accounts").json()["accounts"] == []
     assert http.post("/api/auth/demo", json={"id": "cio"}).status_code == 403
-    assert http.post("/api/auth/demo", json={"id": "sp_global"}).status_code == 403
+    assert http.post("/api/auth/demo", json={"id": "rm01"}).status_code == 403
 
 
 def test_a_sign_in_is_in_the_audit_chain(http):
     http.post("/api/auth/demo", json={"id": "cio"})
-    as_(http, "compliance")
+    as_(http, "admin")
     rows = http.get("/api/audit").json()["rows"]
     assert any(r["action"] == "auth.sign_in" and r["actor"] == "cio" for r in rows)
 

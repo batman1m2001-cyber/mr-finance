@@ -37,7 +37,7 @@ Upload: role `cio`. Release/reject: role `compliance`, a different user from the
 (`research_upload_flow`, `research_release_flow`); read `GET /api/research` in `app/web.py`.
 
 ## Acceptance and tests
-`tests/test_research.py::test_a_report_waits_for_compliance_and_then_reaches_the_inbox`,
+`tests/test_research.py::test_a_report_waits_for_another_cio_and_then_reaches_the_inbox`,
 `::test_the_uploader_cannot_release_and_nothing_goes_out_before_its_time`,
 `::test_a_report_naming_the_restricted_list_is_not_released`, `::test_a_regulation_note_with_aml_wording_is_refused`,
 `::test_the_brd_example_draft_aml_rule_and_a_study_abroad_goal` (a released note stays out of the inbox).

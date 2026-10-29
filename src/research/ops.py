@@ -16,15 +16,15 @@ from wealth import fixtures
 
 @op
 def upload(item: dict, by: str) -> dict:
-    """A report, house view or regulation note, waiting for Compliance."""
+    """A report, house view or regulation note, waiting for another CIO to release it."""
     roles.require(by, "cio")
     return {"item": store.upload(item or {}, by)}
 
 
 @op
 def release(item_id: str, decision: str, by: str, note: str = "") -> dict:
-    """Compliance releases (after the release time) or rejects, with a note."""
-    roles.require(by, "compliance")
+    """A CIO other than the one who uploaded it releases (after the release time) or rejects, with a note."""
+    roles.require(by, "cio")
     return {"item": store.decide(str(item_id), str(decision), by, note)}
 
 
@@ -39,8 +39,38 @@ def declare_outflow(family_id: str, goal_id: str, purpose: str, by: str, country
     return {"declared": store.declare(family_id, goal_id, purpose, country, by)}
 
 
+@op
+async def suggest_goals(family_id: str, by: str, mode: str = "") -> dict:
+    """AI gợi ý nhãn (NEWS_EVIDENCE_BRD §7, P2): a purpose and country for each goal the RM has not declared and the
+    rule cannot read; nothing is kept until the RM saves it as a declaration."""
+    from control.errors import BadRequest, Conflict
+    from research import suggest
+    from views import agents
+
+    roles.require(by, "rm")
+    if family_id not in fixtures.client_ids():
+        raise BadRequest(f"không có gia đình {family_id}")
+    rows = suggest.unread(goals.goals_of(fixtures.client(family_id), date.today()), store.declared())
+    if not rows:
+        return {"suggestions": {}, "mode": "none", "cost_usd": None}
+    try:
+        run_mode = agents.resolve_mode(mode or None)
+    except agents.AgentError as exc:
+        raise Conflict(str(exc)) from None
+    if run_mode == "mock":
+        return {"suggestions": suggest.mock(rows), "mode": "mock", "cost_usd": None}
+    try:
+        got, calls = await suggest.live(rows)
+    except (agents.AgentError, ValueError) as exc:
+        raise Conflict(f"Agent gợi ý nhãn lỗi: {exc}") from None
+    return {"suggestions": got, "mode": "live", "cost_usd": sum(c.get("cost_usd") or 0 for c in calls) or None}
+
+
 def matches(family_id: Optional[str] = None, today: Optional[date] = None) -> List[Dict[str, Any]]:
-    """Released regulation notes × active goals (computed on read: deterministic, from what is kept)."""
+    """Released regulation notes and the approved plan frames (NEWS_EVIDENCE_BRD Ví dụ 4) × active goals (computed
+    on read: deterministic, from what is kept)."""
+    from evidence import frames
+
     ids = [family_id] if family_id else auth.visible(fixtures.client_ids())
     fams = {fid: fixtures.client(fid) for fid in ids}
-    return goals.match(store.released_notes(), fams, store.declared(), today or date.today())
+    return goals.match(store.released_notes() + frames.notes(), fams, store.declared(), today or date.today())

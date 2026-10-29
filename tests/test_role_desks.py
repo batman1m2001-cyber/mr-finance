@@ -21,6 +21,7 @@ from assistant import registry
 from assistant.base import Ctx, execute
 from control import roles
 from desk import reads as desk_reads
+from events import store as events
 from news import store as news
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,28 +77,26 @@ def test_every_page_of_the_menu_is_in_exactly_one_rail_group(role):
 
 def test_the_rm_keeps_every_page_it_had():
     # the RM's menu before the desk, page for page; the ten client pages stay under Khách hàng
-    assert menu("rm") == ["ban", "hom-nay", "khach-hang", "hieu-qua", "bo-nho"]
+    assert menu("rm") == ["ban", "khach-hang", "hieu-qua", "bo-nho"]  # Hôm nay went, its contact log is on the desk (OWN-FB-21)
     shell = (WEB / "shell.js").read_text(encoding="utf-8")
-    block = shell.split('{id: "khach-hang", label: "Khách hàng", clientPick: true, sub: [', 1)[1].split("]}", 1)[0]
-    pages = ["tac-dong", "do-thi", "toan-canh", "ban-do", "tong-quan", "tai-san", "ke-hoach", "chinh-sach", "hieu-qua"]
-    assert re.findall(r'id: "([a-z-]+)"', block) == pages + ["duyet"]
+    block = shell.split('{id: "khach-hang", label: "Khách hàng", clientPick: true,', 1)[1].split("]},", 1)[0]
+    pages = ["tong-quan", "tai-san", "ke-hoach", "phan-bo", "chinh-sach", "do-thi", "hieu-qua", "tat-ca"]  # OWN-FB-02…06
+    # phan-bo: ASSET_ALLOCATION_BRD's three buckets (SCR-CL-13)
+    assert re.findall(r'id: "([a-z-]+)"', block) == pages + ["tac-dong", "duyet"]
 
 
-def test_the_specialist_keeps_every_page_it_had():
-    assert menu("specialist") == ["ban", "duyet", "bo-nho"]
-
-
-def test_compliance_keeps_every_page_it_had():
-    before = ["giu", "nghien-cuu", "ban-tin", "chinh-sach", "do-luong", "nhat-ky", "agent", "cau-hinh", "bo-nho"]
-    added = {"viec-nen"}  # owner 2026-10-18: Việc nền (docs/OWNER_BACKLOG_1018_PLAN.md A)
-    assert [p for p in menu("compliance") if p not in added] == ["ban"] + before and added <= set(menu("compliance"))
+def test_no_retired_role_has_a_menu_or_a_desk():
+    # OWN-FB-18: Compliance and the specialists are retired; their pages are the CIO's
+    assert not {"compliance", "specialist"} & (set(desks()) | set(desk_reads.BUILD))
 
 
 def test_admin_keeps_every_page_it_had():
     added = {"viec-nen", "tai-khoan"}  # owner 2026-10-18: Việc nền, Tài khoản và vai trò (Q-25)
+    added |= {"mo-hinh", "do-luong"}  # OWN-FB-16: Mô hình and Đo lường move from the CIO
+    added |= {"nguon-tin"}  # N1 (NEWS_OPS_PLAN): Nguồn tin
     kept = [p for p in menu("admin") if p not in added]
     assert kept == ["ban", "he-thong", "du-lieu", "cau-hinh", "agent", "nhat-ky", "bo-nho"]
-    assert {"viec-nen"} <= set(menu("admin"))
+    assert added <= set(menu("admin"))
 
 
 def test_the_cio_keeps_every_page_it_had():
@@ -105,7 +104,13 @@ def test_the_cio_keeps_every_page_it_had():
     before = ["hop-tin", "nhan-dinh", "phoi-nhiem", "ap-dung", "do-thi", "nghien-cuu", "ban-tin", "chinh-sach"]
     before += ["mo-hinh", "do-luong", "agent", "cau-hinh", "bo-nho"]
     added = {"viec-nen"}  # owner 2026-10-18: Việc nền (docs/OWNER_BACKLOG_1018_PLAN.md A)
-    assert [p for p in menu("cio") if p not in added] == ["ban"] + before and added <= set(menu("cio"))
+    added |= {"hieu-qua"}  # OWN-FB-16: the CIO's Hiệu quả
+    added |= {"giu", "nhat-ky"}  # OWN-FB-18: Compliance's held news and audit chain
+    added |= {"bang-chung"}  # NEWS_EVIDENCE_BRD §8.2: every news frame and the CIO's review
+    added |= {"phan-bo"}  # ASSET_ALLOCATION_BRD P2: the allocations waiting for the CIO, the model, the bucket moves
+    gone = {"hop-tin"}  # OWN-FB-11: the inbox is on the board
+    assert set(before) - gone <= set(menu("cio")) and added <= set(menu("cio")) and not gone & set(menu("cio"))
+    assert set(menu("cio")) == set(before) - gone | added | {"ban"}
 
 
 # -- the desk is the role's own -----------------------------------------------------------------------------------
@@ -138,7 +143,7 @@ def test_with_sign_in_the_session_says_whose_desk_and_the_query_cannot_change_it
     assert rm["role"] == "rm" and sorted(f["id"] for f in rm["families"]) == ["C01", "C04", "C05"]
     assert [f["id"] for f in client.get("/api/desk", headers=as_("rm03")).json()["families"]] == ["C03"]
     assert client.get("/api/desk?role=cio", headers=as_("admin")).json()["role"] == "admin"
-    for who in ("rm01", "compliance", "admin", "sp_global"):  # no desk yet, or their own: never the CIO's
+    for who in ("rm01", "admin", "admin2"):  # their own desk: never the CIO's
         r = client.get("/api/desk?role=cio", headers=as_(who))
         assert r.status_code == 403 or r.json()["role"] != "cio", who
 
@@ -169,13 +174,26 @@ def test_the_cio_desk_counts_what_the_cio_pages_count():
     bars = [(f["id"], f["value"]) for f in d["exposure"]["factors"]]
     assert bars and all(total[i] == v for i, v in bars)
     assert [abs(v) for _, v in bars] == sorted((abs(v) for _, v in bars), reverse=True)
-    assert all(x["route"].startswith("#/cio/") for x in d["decide"] + d["events"])
+    assert all(x["route"].startswith("#/cio/") for x in d["decide"])
 
 
 def test_an_empty_desk_is_still_a_desk():
     d = desk_reads.desk("cio", {"id": "cio", "role": "cio"})
     assert d["exposure"] is None and d["decide"] == []
-    assert [s["id"] for s in d["pipeline"]] == ["news", "events", "views", "runs", "families", "rm"]
+    assert [s["id"] for s in d["pipeline"]] == ["news", "views", "runs", "families", "rm"]  # OWN-FB-07
+
+
+def test_a_decision_says_its_level_and_group_and_a_scenario_is_named_by_its_news():
+    view, run = approved(*MARKET)
+    ev, waiting = pending_view("Lãi suất liên ngân hàng tăng")
+    d = desk_reads.desk("cio", {"id": "cio", "role": "cio"})
+    row = next(x for x in d["decide"] if x["id"] == waiting["id"])
+    held = events.get(ev["id"])
+    best = max((i["relevance"] for i in held["news"] if i.get("relevance")), key=desk_reads.REL_RANK.get, default=None)
+    assert row["level"] == best and row["group"] == held["type"]  # OWN-FB-09
+    assert row["scope"] in ("domestic", "intl", "both") and row["outlets"]  # OWN-FB-10: the filters' fields
+    sc = d["scenarios"][0]  # OWN-FB-12: named by its news, never the run's id
+    assert sc["run_id"] == run["id"] and sc["event"] == events.get(run["event_id"])["title"] != run["id"]
 
 
 def test_the_rm_desk_is_hom_nay_the_queue_and_the_contacts_of_the_rms_own_families():
@@ -227,9 +245,8 @@ def test_the_cio_assistant_says_the_desks_numbers():
 
 
 DESK_TOOLS = {"ban_quyet_dinh": ("cio",), "phoi_nhiem": ("cio",), "lan_ap_dung": ("cio",), "do_chinh_xac": ("cio",),
-              "so_khach_hang": ("rm",), "van_hanh": ("admin",), "chuoi_nhat_ky": ("admin", "compliance"),
-              "cau_hinh_cho_duyet": ("admin", "compliance"), "ban_chuyen_gia": ("specialist",),
-              "ho_so_khach": ("specialist",), "ban_kiem_soat": ("compliance",)}  # fmt: skip
+              "so_khach_hang": ("rm",), "van_hanh": ("admin",), "chuoi_nhat_ky": ("admin", "cio"),
+              "cau_hinh_cho_duyet": ("admin", "cio")}  # fmt: skip
 
 
 @pytest.mark.parametrize("name", sorted(DESK_TOOLS))
@@ -260,8 +277,7 @@ def test_the_agents_beneath_the_desk_are_untouched():
     from views import graph
 
     assert graph.cio_agent_flow and graph.decide_flow
-    d = desk_reads.desk("cio", {"id": "cio", "role": "cio"})
-    assert {"mode", "models"} <= set(d["agents"])
+    assert {"agent_nen"} <= set(registry.REGISTRY) and registry.REGISTRY["agent_nen"].roles == ("cio", "admin")
 
 
 # -- Admin · Vận hành (M3) -------------------------------------------------------------------------------------------
@@ -314,205 +330,28 @@ def test_the_chain_and_the_configuration_tools_read_what_their_pages_read():
 
     with db.tx() as con:
         count = audit.verify(con)["count"]
-    for role in ("admin", "compliance"):
+    for role in ("admin", "cio"):
         got = asyncio.run(execute(registry.REGISTRY["chuoi_nhat_ky"], ctx(role), {}))
         assert got["data"]["ok"] and got["data"]["count"] >= count
     assert asyncio.run(execute(registry.REGISTRY["cau_hinh_cho_duyet"], ctx("admin"), {}))["data"]["waiting"] == 0
     config.propose("thresholds", {**config.data("thresholds"), "pre_review_pct": -0.07}, "cio2", "thử")
-    got = asyncio.run(execute(registry.REGISTRY["cau_hinh_cho_duyet"], ctx("compliance"), {}))
+    got = asyncio.run(execute(registry.REGISTRY["cau_hinh_cho_duyet"], ctx("cio"), {}))
     assert got["data"]["waiting"] == 1 and "cio2" in got["text"]
 
 
-# -- Expert · Bàn chuyên gia (M4) --------------------------------------------------------------------------------------
-
-
 def recommendation(cid, title, by="rm01"):
-    """An RM's recommendation for ``cid``, stored as the RM's write stores it: it waits for a certified specialist."""
-    from review import specialist
+    """An RM's recommendation for ``cid``, stored as the RM's write stores it: the RM's alone, approved at once."""
     from wealth import store as reviews
 
     item = reviews.propose(
         cid, "rm_note", title, {"option": {"title": title, "actions": ["Bán bớt cổ phiếu"]}, "author": by}
     )
-    return reviews.decide(item, "pending_specialist" if specialist.approvers(cid) else "approved", "Khách đồng ý.", by)
-
-
-def page_waiting(client, who):
-    """What Duyệt khuyến nghị lists as waiting for ``who`` (web/pages/specialist.js over GET /api/review)."""
-    q = client.get("/api/review", headers=who).json()
-    me = q["certificate"] and next(
-        a["id"] for a in sum(q["approvers"].values(), []) if a["certificate"] == q["certificate"]["certificate"]
-    )
-    mine = {c for c, a in q["approvers"].items() if any(x["id"] == me for x in a)}
-    return sorted(x["id"] for x in q["items"] if x["status"] == "pending_specialist" and x["family_id"] in mine)
-
-
-def test_the_expert_desk_is_what_duyet_khuyen_nghi_lists_for_each_specialist(monkeypatch):
-    from app.web import app
-    from people import auth
-    from people import store as people
-
-    c01, c04 = recommendation("C01", "Giảm cổ phiếu ngân hàng"), recommendation("C04", "Mua bảo hiểm sức khoẻ")
-    assert c01["status"] == c04["status"] == "pending_specialist"
-    monkeypatch.setenv("MF_AUTH", "on")
-    client = TestClient(app)
-    for who in ("sp_global", "sp_real_estate", "sp_insurance", "sp_banking", "sp_private"):
-        h = {"cookie": f"{auth.COOKIE}={auth.issue(who)}"}
-        d = client.get("/api/desk?role=cio", headers=h).json()
-        assert d["role"] == "specialist" and d["me"] == who
-        assert [f["id"] for f in d["families"]] == people.families_of_specialist(who), who  # their families alone
-        assert sorted(x["id"] for x in d["waiting"]) == (page_waiting(client, h) if d["certificate"] else []), who
-    h = lambda who: {"cookie": f"{auth.COOKIE}={auth.issue(who)}"}  # noqa: E731
-    ins = client.get("/api/desk", headers=h("sp_insurance")).json()
-    assert [x["id"] for x in ins["waiting"]] == [c01["id"], c04["id"]]  # oldest first
-    assert ins["waiting"][0]["rm"] == "rm01" and ins["waiting"][0]["rm_note"] == "Khách đồng ý."
-    assert [x["id"] for x in client.get("/api/desk", headers=h("sp_private")).json()["waiting"]] == [c04["id"]]
-    # assigned to C01 but no certificate in force: the family is theirs to read, not to decide (BRD-RULE-ROLE-05)
-    re_ = client.get("/api/desk", headers=h("sp_real_estate")).json()
-    assert re_["certificate"] is None and re_["waiting"] == [] and not any(f["approves"] for f in re_["families"])
-
-
-def test_without_sign_in_the_expert_desk_is_the_page_users(monkeypatch):
-    from app.web import app
-
-    recommendation("C01", "Giảm cổ phiếu ngân hàng")
-    client = TestClient(app)
-    d = client.get("/api/desk?role=specialist&user=sp_global").json()
-    assert d["me"] == "sp_global" and d["certificate"] and len(d["waiting"]) == 1
-    anyone = client.get("/api/desk?role=specialist").json()
-    assert anyone["me"] is None and anyone["certificate"] is None and anyone["waiting"] == []
-
-
-def test_a_decision_on_the_desk_is_the_existing_write_and_moves_the_item(monkeypatch):
-    from operonx.app import Application
-
-    from people import auth
-
-    item = recommendation("C01", "Giảm cổ phiếu ngân hàng")
-    monkeypatch.setenv("MF_AUTH", "on")
-    h = {"cookie": f"{auth.COOKIE}={auth.issue('sp_global')}"}
-    say = lambda decision, note: {"item_id": item["id"], "decision": decision, "note": note, "by": "sp_global"}  # noqa: E731
-    with TestClient(Application.find(str(ROOT)).asgi()) as client:  # the served app: the write is a served flow
-        short = client.post("/api/review/specialist", json=say("rejected", "ngắn"), headers=h)
-        assert short.status_code >= 400 and "10" in short.text  # the note rule, unchanged
-        assert (
-            client.post("/api/review/specialist", json=say("approved", ""), headers=h).json()["item"]["status"]
-            == "approved"
-        )
-        d = client.get("/api/desk", headers=h).json()
-    assert d["waiting"] == [] and [(x["id"], x["status"]) for x in d["decided"]] == [(item["id"], "approved")]
-
-
-def test_the_expert_assistant_says_the_queue_and_reads_only_an_assigned_family():
-    from assistant.base import ToolFailed
-
-    item = recommendation("C01", "Giảm cổ phiếu ngân hàng")
-    d = desk_reads.desk("specialist", {"id": "sp_global", "role": "specialist"})
-    said = asyncio.run(execute(registry.REGISTRY["ban_chuyen_gia"], ctx("specialist"), {}))
-    assert said["data"] == {"waiting": len(d["waiting"]), "certified": True, "families": ["C01", "C03"]}
-    assert item["id"] in said["text"] and d["certificate"]["certificate"] in said["text"]
-    one = asyncio.run(execute(registry.REGISTRY["ho_so_khach"], ctx("specialist"), {}))  # one family waits: C01
-    assert one["data"] == {"family": "C01"} and "C01" in one["text"]
-    with pytest.raises(ToolFailed):  # C02 is not sp_global's
-        asyncio.run(execute(registry.REGISTRY["ho_so_khach"], ctx("specialist"), {"gia_dinh": "C02"}))
-
-
-# -- Compliance · Bàn kiểm soát (M5) -----------------------------------------------------------------------------------
-
-
-def controls_waiting():
-    """One of each thing waiting for Compliance, through the writes the existing tests use: news naming the
-    restricted list (held), research uploaded, a letter sent for approval, a policy document added, configuration
-    proposed."""
-    from test_news import NOW as NEWS_NOW
-    from test_news import feed, ingest, rfc
-    from test_newsletter import approved_view, draft
-    from test_research import report
-
-    from control import config
-    from newsletter import store as letters
-    from policy import store as policy
-    from research import store as research
-
-    ingest(
-        {
-            "vneconomy_tc": feed(
-                ("Sao Mai Land chậm trả lãi trái phiếu", "https://vneconomy.vn/sml.htm", "", rfc(NEWS_NOW - 60))
-            )
-        },
-        now=NEWS_NOW,
-    )
-    research.upload(report(), "cio")
-    letters.act(draft([approved_view()])["id"], "submit", "cio")
-    item = {"source_url": "https://www.sbv.gov.vn/du-thao-1", "title": "Dự thảo Thông tư sửa đổi", "status": "draft",
-            "number": "x/2026/TT-NHNN"}  # fmt: skip
-    policy.add(item, "compliance")
-    config.propose("thresholds", {**config.data("thresholds"), "pre_review_pct": -0.07}, "cio2", "thử")
-
-
-def test_the_compliance_desk_counts_what_each_control_page_counts(monkeypatch):
-    from app.web import app
-    from people import auth
-
-    controls_waiting()
-    monkeypatch.setenv("MF_AUTH", "on")
-    client = TestClient(app)
-    h = {"cookie": f"{auth.COOKIE}={auth.issue('compliance')}"}
-    d = client.get("/api/desk?role=cio", headers=h).json()
-    assert d["role"] == "compliance"
-    wait = {c["id"]: c["steps"][0]["count"] for c in d["controls"]}
-    held = client.get("/api/news/inbox?held=1", headers=h).json()["items"]
-    research = client.get("/api/research", headers=h).json()["items"]
-    letters = client.get("/api/newsletters", headers=h).json()["newsletters"]
-    docs = client.get("/api/policy", headers=h).json()["documents"]
-    cfg = client.get("/api/system", headers={"cookie": f"{auth.COOKIE}={auth.issue('admin')}"}).json()["config_waiting"]
-    assert (
-        wait
-        == {
-            "held": len(held),
-            "research": sum(r["status"] == "PENDING_RELEASE" for r in research),
-            "letters": sum(n["status"] == "PENDING_COMPLIANCE" for n in letters),
-            "policy": sum(1 for x in docs if not x.get("verified") and x["status"] != "dropped"),
-            "config": len(cfg),
-        }
-        == {"held": 1, "research": 1, "letters": 1, "policy": 1, "config": 1}
-    )
-    assert len(d["queue"]) == 5 and [x["at"] for x in d["queue"]] == sorted(x["at"] for x in d["queue"])
-    assert {x["control"] for x in d["queue"]} == set(wait) and all(
-        x["route"].startswith("#/compliance/") for x in d["queue"]
-    )
-    assert d["chain"]["ok"] and d["chain"]["count"] == client.get("/api/audit/verify", headers=h).json()["count"]
-
-
-def test_the_compliance_desk_is_compliances_alone(monkeypatch):
-    from app.web import app
-    from people import auth
-
-    monkeypatch.setenv("MF_AUTH", "on")
-    client = TestClient(app)
-    for who in ("cio", "rm01", "admin", "sp_global"):  # each their own desk, never Compliance's
-        assert (
-            client.get("/api/desk?role=compliance", headers={"cookie": f"{auth.COOKIE}={auth.issue(who)}"}).json()[
-                "role"
-            ]
-            != "compliance"
-        )
-    with pytest.raises(roles.Forbidden):
-        desk_reads.desk("client", {"id": "C01", "role": "client"})
-
-
-def test_the_compliance_assistant_says_what_waits_and_each_control():
-    controls_waiting()
-    d = desk_reads.desk("compliance", {"id": "compliance", "role": "compliance"})
-    said = asyncio.run(execute(registry.REGISTRY["ban_kiem_soat"], ctx("compliance"), {}))
-    each = {c["id"]: c["steps"][0]["count"] for c in d["controls"]}
-    assert said["data"] == {"waiting": len(d["queue"]), "controls": each, "chain_ok": True}
-    assert {"held", "research", "letters", "policy", "config"} <= set(said["focus"]) and "Sao Mai Land" in said["text"]
+    return reviews.decide(item, "approved", "Khách đồng ý.", by)
 
 
 SIGNED = {"ban_quyet_dinh": "cio", "phoi_nhiem": "cio", "lan_ap_dung": "cio", "do_chinh_xac": "cio",
-          "so_khach_hang": "rm01", "van_hanh": "admin", "chuoi_nhat_ky": "compliance", "cau_hinh_cho_duyet": "admin",
-          "ban_chuyen_gia": "sp_global", "ho_so_khach": "sp_global", "ban_kiem_soat": "compliance"}  # fmt: skip
+          "so_khach_hang": "rm01", "van_hanh": "admin", "chuoi_nhat_ky": "cio",
+          "cau_hinh_cho_duyet": "admin"}  # fmt: skip
 
 
 @pytest.mark.parametrize("name", sorted(SIGNED))

@@ -38,7 +38,6 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "gui_de_xuat": ("Đang chuẩn bị gửi đề xuất để bạn xác nhận", "Đã xử lý đề xuất"),
     "ghi_lien_he": ("Đang chuẩn bị ghi liên hệ để bạn xác nhận", "Đã xử lý liên hệ"),
     "khuyen_nghi": ("Đang chuẩn bị khuyến nghị để bạn xác nhận", "Đã xử lý khuyến nghị"),
-    "chuyen_gia_duyet": ("Đang chuẩn bị duyệt khuyến nghị để bạn xác nhận", "Đã xử lý khuyến nghị"),
     "danh_dau_khan": ("Đang chuẩn bị đánh dấu sự kiện để bạn xác nhận", "Đã xử lý sự kiện"),
     "chay_agent_cio": ("Đang chuẩn bị chạy Agent CIO để bạn xác nhận", "Đã xử lý Agent CIO"),
     "phan_bien_lai": ("Đang chuẩn bị chạy lại Agent Phản biện để bạn xác nhận", "Đã xử lý Agent Phản biện"),
@@ -48,6 +47,8 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "da_xem_canh_bao": ("Đang chuẩn bị đánh dấu cảnh báo để bạn xác nhận", "Đã xử lý cảnh báo"),
     "nho_lai": ("Đang xem những điều bạn nhờ ghi nhớ", "Đã xem bộ nhớ"),
     "ghi_nho": ("Đang chuẩn bị ghi nhớ để bạn xác nhận", "Đã xử lý việc ghi nhớ"),
+    "them_tu_tep": ("Đang chuẩn bị ghi các khoản của tệp để bạn xác nhận", "Đã xử lý việc ghi từ tệp"),
+    "luu_tai_lieu": ("Đang chuẩn bị lưu tệp vào Tài liệu để bạn xác nhận", "Đã xử lý việc lưu tệp"),
     "quen": ("Đang chuẩn bị quên một điều để bạn xác nhận", "Đã xử lý việc quên"),
     "tim_lich_su": ("Đang tìm trong các cuộc trò chuyện trước", "Đã tìm trong lịch sử"),
     "doc_lai_phien": ("Đang đọc lại các lượt trước", "Đã đọc lại các lượt trước"),
@@ -65,11 +66,9 @@ SAYS: Dict[str, Tuple[str, str]] = {
     "so_khach_hang": ("Đang xem sổ khách hàng của bạn", "Đã xem sổ khách hàng của bạn"),
     "van_hanh": ("Đang xem tình trạng vận hành", "Đã xem tình trạng vận hành"),
     "agent_nen": ("Đang xem các agent và việc nền", "Đã xem các agent và việc nền"),
-    "ban_kiem_soat": ("Đang xem các chốt kiểm soát", "Đã xem các chốt kiểm soát"),
-    "ban_chuyen_gia": ("Đang xem khuyến nghị chờ bạn duyệt", "Đã xem khuyến nghị chờ bạn duyệt"),
-    "ho_so_khach": ("Đang xem hồ sơ gia đình", "Đã xem hồ sơ gia đình"),
     "chuoi_nhat_ky": ("Đang kiểm tra chuỗi nhật ký", "Đã kiểm tra chuỗi nhật ký"),
     "cau_hinh_cho_duyet": ("Đang xem cấu hình chờ duyệt", "Đã xem cấu hình chờ duyệt"),
+    "truy_van": ("Đang đếm và lọc trong dữ liệu bạn được xem", "Đã truy vấn dữ liệu"),
 }
 MONTH = re.compile(r"(?:(\d{4})-)?(0?[1-9]|1[0-2])")  # “2026-09”, or the month alone (“09”: the latest with data)
 

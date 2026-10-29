@@ -32,9 +32,7 @@ def test_every_kind_of_person_is_a_row():
     assert set(kinds) == {
         ("staff", "cio"),
         ("staff", "rm"),
-        ("staff", "compliance"),
         ("staff", "admin"),
-        ("staff", "specialist"),
         ("client", "client"),
         ("dependent", "dependent"),
     }
@@ -49,7 +47,6 @@ def test_a_familys_team_is_the_one_the_advisory_record_had_and_its_rm_is_an_rm_u
         team = store.team(cid)
         old = adv.team(cid)
         assert {k: v for k, v in team["rm"].items() if k != "id"} == old["rm"]
-        assert [{k: v for k, v in s.items() if k != "person_id"} for s in team["specialists"]] == old["specialists"]
         rm = roles.require(team["rm"]["id"], "rm")
         assert rm["name"] == team["rm"]["name"]
         assert store.assigned_rm(cid) == team["rm"]["id"]
@@ -63,9 +60,9 @@ def test_a_household_member_has_their_familys_rm():
             assert store.assigned_rm(cid) == store.assigned_rm(head)
 
 
-def test_the_specialists_act_in_the_app_since_g8():
-    """Specialists approve action recommendations for the families assigned to them (BRD-RULE-ROLE-05)."""
-    assert store.staff("specialist")
+def test_no_retired_role_acts_in_the_app():
+    """Compliance and the specialists are retired (OWN-FB-18): every user is a seeded CIO, RM or Admin."""
+    assert not store.staff("specialist") and not store.staff("compliance")
     assert set(roles.users()) == {p["id"] for p in store.staff()}
 
 

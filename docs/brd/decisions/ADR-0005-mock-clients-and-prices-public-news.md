@@ -17,3 +17,4 @@ The project uses no Techcombank data. A demo must run anywhere (docs/PLAN.md D1)
 ## Consequences
 
 - Ranking and BR-09 run over 7 people, not the BRD's 20 families or the bank's 6,500 (Q-18); NFR-01's scale is untested.
+- A second client set for KPIs and scale, a Private book converted from public data, is proposed in [ADR-0038](ADR-0038-a-second-client-set-the-santander-vn-private-book.md); these five stay the demo.

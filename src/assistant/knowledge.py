@@ -30,8 +30,7 @@ from assistant.base import Ctx
 from wealth.paths import ROOT
 
 GUIDE = ROOT / "docs" / "huong-dan"
-ROLE_OF = {"chung": "all", "khach-hang": "client", "rm": "rm", "cio": "cio", "tuan-thu": "compliance",
-           "quan-tri": "admin", "chuyen-gia": "specialist"}  # fmt: skip
+ROLE_OF = {"chung": "all", "khach-hang": "client", "rm": "rm", "cio": "cio", "quan-tri": "admin"}
 MAX_BYTES = 5 * 1024 * 1024
 KINDS = (".txt", ".md", ".html", ".htm", ".docx", ".pptx", ".xlsx", ".pdf")
 ROUTE = re.compile(r"#/[\w…/-]+")
@@ -274,9 +273,9 @@ async def _web(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 def _catalogue():
     from assistant.base import Param, Tool
-    from control.roles import ROLE_LABELS
+    from control.roles import ROLES
 
-    everyone = tuple(ROLE_LABELS)
+    everyone = ROLES
     return {
         t.name: t
         for t in [

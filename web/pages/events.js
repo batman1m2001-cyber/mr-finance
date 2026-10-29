@@ -5,6 +5,7 @@ import {moves, probBar, slot} from "../charts/charts.js";
 
 const STEPS = [["DRAFTING", "Agent soạn"], ["PENDING_CHALLENGE", "Phản biện"], ["PENDING_APPROVAL", "CIO duyệt"], ["APPROVED", "Đã duyệt"]];
 const SIZE = {S: "nhỏ", M: "vừa", L: "lớn"};
+const MIN_REASON = 5;  // a decision's reason, as views/decide.py asks it
 const UNIT = {pct: "%", bp: " đcb", pp: " điểm %", sd: " độ lệch chuẩn"};
 const TARGET_TYPE = {asset_class: "Loại tài sản", sector: "Ngành", ticker: "Mã", fx: "Tỷ giá"};
 const target = (r) => (r.target_type === "asset_class" ? ASSET_CLASS[r.target] || r.target : r.target);
@@ -40,9 +41,9 @@ async function renderEvent(box, ctx, id) {
     <div class="cols">
       <div class="panel c7"><h3>Tin nguồn <span class="hint">${ev.news.length} tin</span></h3>
         ${ev.news.map(n => `<div style="margin:8px 0"><a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer" data-quote>${esc(n.title)}</a>
-          <div class="small muted">${esc(n.outlet)} · ${esc(n.label)} · ${when(n.published)}${n.held ? ' · <span class="badge bad">bị giữ chờ Tuân thủ</span>' : ""}</div></div>`).join("")}</div>
+          <div class="small muted">${esc(n.outlet)} · ${esc(n.label)} · ${when(n.published)}${n.held ? ' · <span class="badge bad">bị giữ chờ CIO cho đi tiếp</span>' : ""}</div></div>`).join("")}</div>
       <div class="panel c5"><h3>Agent CIO</h3>
-        ${ev.blocked ? `<div class="notice bad">Sự kiện đang bị giữ vì tin nhắc tới tổ chức trong danh sách hạn chế. Tuân thủ cần cho phép trước khi chạy agent.</div>` : `
+        ${ev.blocked ? `<div class="notice bad">Sự kiện đang bị giữ vì tin nhắc tới tổ chức trong danh sách hạn chế. Một CIO cần cho tin đi tiếp (trang Tin bị giữ) trước khi chạy agent.</div>` : `
         <div class="small">Chế độ hiện có: ${agents.mode === "live" ? `<span class="badge ai">Trực tiếp</span> ${esc(agents.models.cio)} soạn, ${esc(agents.models.challenger)} phản biện`
           : agents.mode === "inbox" ? `<span class="badge ai">Hộp chờ</span> nhận định đến từ vùng AI, qua hộp chờ có chữ ký` : `<span class="badge">Mô phỏng</span> theo từ khóa, không gọi AI`}</div>
         ${agents.mode === "inbox" ? "" : `<div class="row" style="margin-top:12px"><button type="button" class="btn primary" id="run" ${busy ? "disabled" : ""}>${busy ? "Agent đang chạy…" : "Chạy Agent CIO"}</button></div>`}
@@ -159,10 +160,12 @@ async function renderView(box, ctx, id) {
       <div class="panel c5"><h3>Điều kiện duyệt${decided ? ` <span class="hint">đã quyết: ${esc(viewLabel(v.status))}</span>` : ""}</h3>
         <div class="list">${checks.map(c => `<div class="check"><span class="${c.ok ? "up" : "down"}" aria-hidden="true">${c.ok ? "✓" : "✕"}</span><div><div>${esc(c.label)}</div>${c.ok ? "" : `<div class="small muted">${esc(c.detail)}</div>`}</div></div>`).join("")}</div>
         ${v.status === "PENDING_APPROVAL" || v.status === "PENDING_CHALLENGE" ? `
-        <label class="field" style="margin-top:12px">Lý do (bắt buộc)<textarea id="reason" placeholder="Ví dụ: Đồng ý kịch bản; nhánh căng thẳng giữ để đo rủi ro"></textarea></label>
+        <label class="field" style="margin-top:12px">Lý do (bắt buộc, từ ${MIN_REASON} ký tự)<textarea id="reason" placeholder="Ví dụ: Đồng ý kịch bản; nhánh căng thẳng giữ để đo rủi ro"></textarea></label>
+        <p class="small down" id="reason-err" role="alert" hidden></p>
         <div class="row" style="margin-top:10px"><button type="button" class="btn primary" data-act="approve" ${allOk ? "" : "disabled"}>Duyệt và áp dụng</button>
-          <button type="button" class="btn" data-act="return">Trả lại agent</button><button type="button" class="btn danger" data-act="reject">Bác</button></div>` : ""}
-        ${v.status === "APPROVED" ? `<label class="field" style="margin-top:12px">Lý do thu hồi<textarea id="reason"></textarea></label>
+          <button type="button" class="btn" data-act="return">Trả lại agent</button><button type="button" class="btn danger" data-act="reject">Bác bỏ</button></div>` : ""}
+        ${v.status === "APPROVED" ? `<label class="field" style="margin-top:12px">Lý do thu hồi (từ ${MIN_REASON} ký tự)<textarea id="reason"></textarea></label>
+          <p class="small down" id="reason-err" role="alert" hidden></p>
           <div class="row" style="margin-top:10px"><button type="button" class="btn danger" data-act="withdraw">Thu hồi nhận định</button></div>` : ""}
       </div>
       <div class="panel c12" id="scen"><h3>Kịch bản <span class="hint">CIO chọn cú sốc lõi và cỡ; máy suy ra phần còn lại</span>
@@ -193,6 +196,7 @@ async function renderView(box, ctx, id) {
             v.status === "PENDING_APPROVAL" ? `<div class="row" style="margin-top:6px;gap:6px"><input data-resp="${esc(f.id)}" placeholder="Trả lời (từ 10 ký tự)" style="flex:1;min-width:160px;padding:6px 9px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink)">
               <button type="button" class="btn sm" data-answer="${esc(f.id)}" data-decision="accept">Chấp nhận</button><button type="button" class="btn sm" data-answer="${esc(f.id)}" data-decision="reject">Bác</button></div>` : ""}
         </div>`).join("") || '<div class="small muted">Không có phát hiện.</div>' : ""}</div>
+      ${v.status === "APPROVED" ? `<div class="panel c12" id="tilt"><h3>Nghiêng danh mục mô hình <span class="hint">±2 điểm mỗi lần, tối đa ±5; phần chênh vào tiền chờ đầu tư</span></h3><div class="small muted">Đang tải…</div></div>` : ""}
       ${d.application_runs.length ? `<div class="panel c12"><h3>Lần áp dụng</h3>${d.application_runs.map(r => `<div class="row spread" style="margin:6px 0"><a href="#/cio/ap-dung/${esc(r.id)}">${esc(r.id)}</a><span>${runBadge(r.status, r.status_label)} <span class="num ${signClass(r.totals && r.totals.expected_3m)}">${r.totals ? how(vnd(r.totals.expected_3m, true), "run.expected_3m", {families: String(r.families || "")}) : ""}</span> ${r.totals ? `· ${r.totals.pre_review} gia đình cần RM xem trước` : ""}</span></div>`).join("")}</div>` : ""}
     </div>` : ""}
     <div class="panel flat" style="margin-top:16px"><details class="more"><summary>Vết chạy agent (từng bước)</summary>
@@ -213,16 +217,32 @@ async function renderView(box, ctx, id) {
       })), {metric: "scenario.move", inputs: {branch: b.name}});
     });
   }
+  const tiltBox = box.querySelector("#tilt");
+  if (tiltBox) drawTilt(tiltBox, v, ctx);
+  // a refused decision keeps the page as it is (what was typed stays) and says why; a done one reloads it
   const act = async (body, msg) => {
-    try { await post("/api/views/decide", {view_id: v.id, by: ctx.user, ...body}); toast(msg); } catch (e) { toast(e.message); }
+    try { await post("/api/views/decide", {view_id: v.id, by: ctx.user, ...body}); } catch (e) { toast(e.message); return false; }
+    toast(msg);
     ctx.go(location.hash);
+    return true;
   };
   box.querySelectorAll("[data-act]").forEach(b => {
     b.onclick = async () => {
-      const reason = (box.querySelector("#reason") || {value: ""}).value.trim();
-      b.disabled = true;
+      const field = box.querySelector("#reason"), err = box.querySelector("#reason-err");
+      const reason = (field || {value: ""}).value.trim();
+      if (field && reason.length < MIN_REASON) {  // the server asks for it too (views/decide.py): say so here, before sending
+        err.textContent = `Nhập lý do (từ ${MIN_REASON} ký tự) trước khi bấm “${b.textContent.trim()}”.`;
+        err.hidden = false;
+        field.focus();
+        return;
+      }
+      if (err) err.hidden = true;
+      const all = box.querySelectorAll("[data-act]"), was = [...all].map(x => x.disabled);
+      all.forEach(x => { x.disabled = true; });
       const msg = {approve: "Đã duyệt; máy đã tính cho mọi gia đình", return: "Đã trả lại agent", reject: "Đã bác", withdraw: "Đã thu hồi"}[b.dataset.act];
-      await act({action: b.dataset.act, reason, idem_key: `${b.dataset.act}:${v.id}:${v.content_hash.slice(0, 12)}`}, msg);
+      if (!await act({action: b.dataset.act, reason, idem_key: `${b.dataset.act}:${v.id}:${v.content_hash.slice(0, 12)}`}, msg)) {
+        all.forEach((x, i) => { x.disabled = was[i]; });
+      }
     };
   });
   box.querySelectorAll("[data-answer]").forEach(b => {
@@ -259,4 +279,26 @@ async function renderView(box, ctx, id) {
         edits: {scenarios: {...cur.scenarios, branches}}}, "Đã lưu bản sửa; phản biện chạy lại");
     };
   }
+}
+
+/* ASSET_ALLOCATION_BRD: from an approved view the CIO tilts a class of the model portfolio; level 3 shows the effect */
+async function drawTilt(panel, v, ctx) {
+  const t = await post("/api/allocation/tilts", {});
+  const mine = Object.fromEntries(t.tilts.filter(x => x.view_id === v.id).map(x => [x.asset_class, x.stance]));
+  const lv = t.model[3].classes;
+  const p = (x) => pct(x, false, 0);
+  panel.innerHTML = `${panel.querySelector("h3").outerHTML}<table class="table"><thead><tr><th>Loại tài sản</th><th>Nhận định này</th><th class="r">Mức rủi ro 3</th></tr></thead><tbody>${t.classes.map(c => `
+    <tr><td>${esc(c.label)}</td>
+      <td><div class="seg" role="group" aria-label="${esc(c.label)}">${t.stances.map(s => `<button type="button" data-cls="${c.id}" data-stance="${s.id}" aria-pressed="${(mine[c.id] || "neutral") === s.id}">${esc(s.label)}</button>`).join("")}</div></td>
+      <td class="r num">${lv[c.id].tilt ? `${how(p(lv[c.id].base), "alloc.model", {level: 3})} → <b>${how(p(lv[c.id].target), "alloc.model", {level: 3})}</b>` : how(p(lv[c.id].target), "alloc.model", {level: 3})}</td></tr>`).join("")}</tbody></table>`;
+  panel.querySelectorAll("[data-stance]").forEach(b => {
+    b.onclick = async () => {
+      if (b.getAttribute("aria-pressed") === "true") return;
+      try {
+        await post("/api/allocation/tilt", {asset_class: b.dataset.cls, stance: b.dataset.stance, view_id: v.id, by: ctx.user});
+        toast("Đã cập nhật danh mục mô hình");
+      } catch (e) { toast(e.message); }
+      drawTilt(panel, v, ctx);
+    };
+  });
 }

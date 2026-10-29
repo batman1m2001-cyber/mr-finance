@@ -69,6 +69,38 @@ def test_impact_is_exposure_times_sensitivity_times_probability():
         assert a["source"] and a["status_label"]
 
 
+def test_each_alert_says_how_soon_and_business_equity_only_says_good_or_bad():
+    """The chart shows a level and a horizon, not VND; an item that moves only business equity is good or bad news."""
+    for cid in fixtures.client_ids():
+        for a in report(cid)["alerts"]:
+            assert a["horizon"] in ("1w", "1m", "3m", ">3m") and a["horizon_label"], (cid, a["id"])
+    (p14,) = [a for a in report("C02")["alerts"] if a["factor"] == "P14"]
+    assert p14["sign_only"] and not p14["opportunity"]
+    assert not any(a["sign_only"] for a in report("C01")["alerts"])  # stocks, gold, property, deposits: graded
+    # in VND: gold and bonds only, and the exchange rate; a stock, a property or a mixed hit is a level
+    vnd = {a["factor"]: a["in_vnd"] for a in report("C01")["alerts"]}
+    assert vnd["P09"] and vnd["P06"] and vnd["M02"] and vnd["P11"]
+    assert not (vnd["I01"] or vnd["P08"] or vnd["P04"] or vnd["P12"])
+
+
+def test_each_alert_splits_by_asset_class_and_the_parts_add_up_to_its_impact():
+    """OWN-FB-17: a sector hit splits by each holding's own sensitivity (a bond moves 0.3 of a stock at beta 1);
+    a hit on no holding (the salary, a payment ahead) is its own part; every client's parts add to the row."""
+    rows = [
+        h("stock", 1 * TY, sector="Ngân hàng", beta=1.0, name="CP"),
+        h("bond", 1 * TY, sector="Ngân hàng", name="TP"),
+    ]
+    f = {"rule": {"type": "sector", "sector": "Ngân hàng", "sensitivity": -0.1}}
+    (hit,) = _rules.sector(f, rows, {}, fixtures.market())
+    parts = _rules.by_class(hit, rows, hit["raw"])
+    assert parts == {"stock": round(-0.1 * TY), "bond": round(-0.1 * TY * 0.3)}
+    assert abs(parts["stock"] / parts["bond"] - 1 / 0.3) < 1e-6
+    assert _rules.by_class({"affected": ["Thu nhập từ lương"]}, rows, 5e6) == {"income": 5_000_000}
+    for cid in fixtures.client_ids():
+        for a in report(cid)["alerts"]:
+            assert sum(a["by_class"].values()) == a["impact"], (cid, a["id"])
+
+
 def test_every_client_gets_alerts_largest_first_and_the_latest_is_kept():
     for cid in fixtures.client_ids():
         r = report(cid)

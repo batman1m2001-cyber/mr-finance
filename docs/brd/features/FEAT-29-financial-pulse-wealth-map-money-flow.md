@@ -5,7 +5,7 @@
 | Type | Extension (redesign kit), built 2026-10-16 (plan phase K2); board look 2026-10-16 (UI redesign R2) |
 | Requirements | KIT-UX-01, KIT-UX-02, KIT-UX-03, KIT-UX-06, KIT-UX-07, OWN-UI-01; keeps BRIEF-DASH-01…07 |
 | Users | Client, RM |
-| Entry points | [SCR-CL-08](../ux/screens/client.md#scr-cl-08--toàn-cảnh-pulse-wealth-map-money-flow) — client Tổng quan → Toàn cảnh, RM Khách hàng → Toàn cảnh; `POST /api/flows` |
+| Entry points | [SCR-CL-08](../ux/screens/client.md#scr-cl-08--toàn-cảnh-pulse-wealth-map-money-flow) — client: its blocks are on Wealth View → Wealth view since 2026-10-22 ([ADR-0037](../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md); the Wealth Map is not a client tab); RM Khách hàng → Toàn cảnh; `POST /api/flows` |
 | Plan | [docs/REDESIGN_KIT_PLAN.md](../../REDESIGN_KIT_PLAN.md) phase **K2**, decision D4 |
 | Status | see [traceability](../requirements/requirements_traceability.md) §4 |
 
@@ -43,9 +43,9 @@ donut, gauge, progress); styles `.kpis`, `.pcard`, `.contrib`, `.ratios`, `.wmap
 
 ## Acceptance and tests
 `tests/test_flows.py` (bands = rows to the dong, C01 09/2026 = 30.0 tr left, default month, family adds the
-spouse, bad requests refused, endpoint). `tests/ui/test_pulse.py` (3): the class split, donut parts, goals and
-feed items equal the APIs' (and the split sums to the month change); a picked band flows three times, pauses
-with a hidden tab and ends; reduced motion picks without dots. Plus the route sweep at 1440 and 390 px.
+spouse, bad requests refused, endpoint). The Toàn cảnh page and its browser tests (`tests/ui/test_pulse.py`) were
+retired by OWN-FB-02 (2026-10-24): no role reaches it, its cards are in the Bảng số liệu
+(`tests/ui/test_graph_workspace_ui.py`) and the assistant's marks moved to Tổng quan (`tests/ui/test_copilot_ui.py`).
 
 ## Limitations
 - Months are the fixtures' 12 (10/2025–09/2026); flows of statement uploads and declarations are not included

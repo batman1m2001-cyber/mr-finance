@@ -17,14 +17,7 @@ ROUTE = {
     "cio": "#/cio",
     "rm": "#/rm",
     "admin": "#/admin",
-    "specialist": "#/specialist",
-    "compliance": "#/compliance",
 }  # each role's desk address; a page's address is its menu id under it
-
-
-def _late(job: Dict[str, Any]) -> bool:
-    """A job failing now: its last error came after its last success (as Dữ liệu thị trường says it)."""
-    return bool(job.get("last_error_at")) and (not job.get("last_ok") or job["last_error_at"] > job["last_ok"])
 
 
 def _event_title(event_id: str) -> str:
@@ -36,24 +29,79 @@ def _event_title(event_id: str) -> str:
         return event_id
 
 
+REL_RANK = {"high": 3, "medium": 2, "low": 1}
+
+
+def _signal(ev: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """What a decision row says of its news (OWN-FB-09, 10): the impact level (the highest relevance of its news),
+    the news group (the event's type), its outlets and whether they are domestic, international or both."""
+    if not ev:
+        return {"level": None, "group": None, "sources": [], "scope": None}
+    items = ev.get("news") or []
+    level = max(
+        (i.get("relevance") for i in items if i.get("relevance")), key=lambda r: REL_RANK.get(r, 0), default=None
+    )
+    kinds = {i.get("kind") for i in items if i.get("kind")} or set(ev.get("kinds") or [])
+    return {
+        "level": level,
+        "group": ev.get("type"),
+        "sources": sorted({i["source"] for i in items if i.get("source")}),
+        "outlets": sorted({i["outlet"] for i in items if i.get("outlet")}),
+        "scope": "both" if len(kinds) > 1 else next(iter(kinds), None),
+    }
+
+
+def _scenario(r: Dict[str, Any], names: Dict[str, str]) -> Dict[str, Any]:
+    """An effective run as the CIO's desk names it (OWN-FB-12): a scenario, by its news and its date, never its id."""
+    from events import store as events
+
+    total = r["exposure"]["total"]
+    top = sorted((f for f in total if total[f]), key=lambda f: -abs(total[f]))[:6]
+    try:
+        ev = events.get(r["event_id"])
+    except Exception:  # an event the store no longer has
+        ev = None
+    return {
+        "run_id": r["id"],
+        "event": ev["title"] if ev else r["event_id"],
+        "group": ev.get("type") if ev else None,
+        "date": r.get("price_date"),
+        "created": r["created"],
+        "expected_3m": r["totals"]["expected_3m"],
+        "families": r["families"],
+        "pre_review": r["totals"]["pre_review"],
+        "factors": [{"id": f, "name": names.get(f, f), "value": total[f]} for f in top],
+        "ranking": [
+            {
+                k: x[k]
+                for k in ("family_id", "name", "expected_3m", "expected_3m_pct", "p10_3m", "p10_3m_pct", "pre_review")
+                if k in x
+            }  # fmt: skip
+            for x in r.get("ranking") or []
+        ],
+        "route": f"#/cio/phoi-nhiem/{r['id']}",
+    }
+
+
 def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """Bàn quyết định (SCR-CIO-15): the news-to-family pipeline, what waits for the CIO's decision, the exposure of
-    the latest effective run, the events, the model's data and the agents beneath the desk (FEAT-04, 05)."""
+    """Decision board (SCR-CIO-15, OWN-FB-07…13): the news-to-family pipeline, what waits for the CIO's decision
+    (each row with its level, news group, outlets and scope), and the scenarios in force with the families ranked.
+    The inbox is drawn on the board by its own read (GET /api/news/inbox)."""
     from control import config
     from engine import default_model
     from events import store as events
-    from market import factors as market_factors
-    from market import store as market_store
-    from measure import forecasts
     from news import store as news
     from newsletter import store as letters
+    from policy import store as policy
+    from research import store as research
     from views import ops as view_ops
 
     me = (viewer or {}).get("id") or "cio"
     names = {f.id: f.name for f in default_model().factors}
 
-    fresh = news.inbox(status="new", limit=5000)
-    high = [i for i in fresh if i.get("relevance") == "high"]
+    fresh_n = news.count(status="new")  # counted in the database: a page of rows is never the total
+    high_n = news.count(status="new", relevance="high")
+    high = news.inbox(status="new", relevance="high", limit=5)
 
     evs = events.listing()
     states = []
@@ -61,6 +109,7 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         vs = view_ops.event_views(ev["id"])
         latest = max(vs, key=lambda v: v["version"]) if vs else None
         states.append({"event": ev, "views": vs, "latest": latest})
+    by_id = {s["event"]["id"]: s["event"] for s in states}
     waiting_views = [s for s in states if s["latest"] and s["latest"]["status"] == "PENDING_APPROVAL"]
     no_view = [s for s in states if not s["views"] and not s["event"].get("blocked")]
     held = [s for s in states if s["event"].get("blocked")]
@@ -80,75 +129,79 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     for s in waiting_views:
         v = s["latest"]
         decide.append({"kind": "view", "id": v["id"], "title": s["event"]["title"], "status": "Chờ CIO duyệt",
-                       "at": v["created"], "route": f"#/cio/nhan-dinh/{v['id']}"})  # fmt: skip
+                       "at": v["created"], "route": f"#/cio/nhan-dinh/{v['id']}", **_signal(s["event"])})  # fmt: skip
     for r in review:
         decide.append({"kind": "run", "id": r["id"], "title": _event_title(r["event_id"]), "status": r["status_label"],
-                       "at": r["created"], "route": f"#/cio/ap-dung/{r['id']}"})  # fmt: skip
+                       "at": r["created"], "route": f"#/cio/ap-dung/{r['id']}",
+                       **_signal(by_id.get(r["event_id"]))})  # fmt: skip
     for k in config.overview():
         p = k["pending"]
         if p and k["owner"] == "cio":
             mine = p.get("proposed_by") == me and k["two_person"]
             decide.append({"kind": "config", "id": p["id"], "title": k["label"],
                            "status": "Chờ một CIO khác duyệt" if mine else "Chờ CIO duyệt",
-                           "at": p["created"], "route": "#/cio/cau-hinh"})  # fmt: skip
+                           "at": p["created"], "route": "#/cio/cau-hinh", **_signal(None)})  # fmt: skip
+    # OWN-FB-18: what waited for Compliance waits for the CIO now; a CIO never approves their own (four eyes)
     for n in letters.listing():
-        if n["status"] == "RETURNED":
-            decide.append({"kind": "letter", "id": n["id"], "title": n.get("title") or n["id"],
-                           "status": "Tuân thủ trả lại", "at": n["created"],
-                           "route": f"#/cio/ban-tin/{n['id']}"})  # fmt: skip
+        if n["status"] == "RETURNED" and n.get("author") == me:
+            status = "Bị trả lại"
+        elif n["status"] == "PENDING_COMPLIANCE":
+            status = "Chờ CIO khác duyệt" if n.get("author") == me else "Chờ bạn duyệt"
+        else:
+            continue
+        decide.append({"kind": "letter", "id": n["id"], "title": n.get("title") or n["id"], "status": status,
+                       "at": n["created"], "route": f"#/cio/ban-tin/{n['id']}", **_signal(None)})  # fmt: skip
+    for i in news.inbox(status="all", held=True, limit=None):
+        decide.append({"kind": "held", "id": i["id"], "title": i["title"], "status": "Tin bị giữ",
+                       "at": i.get("published") or i.get("ingested"), "route": "#/cio/giu", **_signal(None),
+                       "outlets": [i["outlet"]] if i.get("outlet") else []})  # fmt: skip
+    for r in research.listing():
+        if r["status"] == "PENDING_RELEASE":
+            mine = r.get("uploaded_by") == me
+            decide.append({"kind": "research", "id": r["id"], "title": r["title"],
+                           "status": "Chờ CIO khác phát hành" if mine else "Chờ phát hành", "at": r["created"],
+                           "route": "#/cio/nghien-cuu", **_signal(None)})  # fmt: skip
+    for x in policy.radar()["documents"]:
+        if not x.get("verified") and x["status"] != "dropped":
+            mine = x.get("added_by") == me
+            decide.append({"kind": "policy", "id": x["id"], "title": x["title"],
+                           "status": "Chờ CIO khác xác nhận nguồn" if mine else "Chờ xác nhận nguồn",
+                           "at": x["created"], "route": f"#/cio/chinh-sach/{x['id']}", **_signal(None)})  # fmt: skip
+    from allocation import ops as allocation  # ASSET_ALLOCATION_BRD P2 (Q-29): an RM's allocation waits for each action's yes
+
+    for r in allocation.read_queue()["waiting"]:
+        decide.append({"kind": "allocation", "id": r["id"], "title": r["title"],
+                       "status": "Chờ duyệt phân bổ", "at": r["created"], "route": "#/cio/phan-bo",
+                       **_signal(None)})  # fmt: skip
     for s in no_view:
         ev = s["event"]
         decide.append({"kind": "event", "id": ev["id"], "title": ev["title"], "status": "Chưa có nhận định",
-                       "at": ev["created"], "route": f"#/cio/nhan-dinh/{ev['id']}"})  # fmt: skip
+                       "at": ev["created"], "route": f"#/cio/nhan-dinh/{ev['id']}", **_signal(ev)})  # fmt: skip
     decide.sort(key=lambda x: -(x["at"] or 0))
 
+    scenarios = [_scenario(r, names) for r in effective]  # newest first, as Tác động danh mục opens them
     exposure = None
-    if effective:
-        r = effective[0]  # the newest effective run, as Phơi nhiễm opens it
-        total = r["exposure"]["total"]
-        top = sorted((f for f in total if total[f]), key=lambda f: -abs(total[f]))[:6]
-        exposure = {
-            "run_id": r["id"],
-            "event": _event_title(r["event_id"]),
-            "expected_3m": r["totals"]["expected_3m"],
-            "families": r["families"],
-            "pre_review": r["totals"]["pre_review"],
-            "factors": [{"id": f, "name": names.get(f, f), "value": total[f]} for f in top],
-            "worst": [
-                {
-                    "family_id": x["family_id"],
-                    "name": x["name"],
-                    "expected_3m_pct": x["expected_3m_pct"],
-                    "pre_review": x["pre_review"],
-                }
-                for x in (r.get("ranking") or [])[:3]
-            ],
-            "route": f"#/cio/phoi-nhiem/{r['id']}",
-        }
-
-    factors = market_factors.factor_series()
-    real = [
-        f
-        for f in factors
-        if f.get("series") and f.get("months") is not None and not f["provenance"].startswith("Giả định")
-    ]
-    late = [{"job": j, "error": h.get("last_error")} for j, h in market_store.job_health().items() if _late(h)]
-    rows = forecasts.all_rows()
-    waiting = [x for x in rows if x.get("scored") is None]
+    if scenarios:
+        x = scenarios[0]
+        exposure = {**{k: x[k] for k in ("run_id", "event", "expected_3m", "families", "pre_review", "factors",
+                                          "route")},
+                    "worst": x["ranking"][:3]}  # fmt: skip
 
     stage = lambda *a: dict(zip(("id", "label", "count", "unit", "waits", "note", "route"), a))  # noqa: E731
+    # OWN-FB-08: no Sự kiện stage; the events are counted in Tin's note, their views in Nhận định
     pipeline = [
-        stage("news", "Tin", len(fresh), "tin mới", len(high), f"{len(high)} liên quan cao", "#/cio/hop-tin"),
-        stage("events", "Sự kiện", len(evs), "sự kiện", len(no_view) + len(held),
-              f"{len(no_view)} chưa có nhận định" + (f" · {len(held)} bị giữ" if held else ""), "#/cio/nhan-dinh"),
-        stage("views", "Nhận định", sum(len(s["views"]) for s in states), "phiên bản", len(waiting_views),
-              f"{len(waiting_views)} chờ CIO duyệt", "#/cio/nhan-dinh"),
+        stage("news", "Tin", fresh_n, "tin mới", high_n,
+              f"{high_n} liên quan cao · {len(evs)} sự kiện" + (f" · {len(held)} bị giữ" if held else ""),
+              "#/cio"),
+        stage("views", "Nhận định", sum(len(s["views"]) for s in states), "phiên bản",
+              len(waiting_views) + len(no_view),
+              f"{len(waiting_views)} chờ CIO duyệt · {len(no_view)} sự kiện chưa có nhận định", "#/cio/nhan-dinh"),
         stage("runs", "Lần áp dụng", len(effective), "đang hiệu lực", len(review) + len(computing),
               f"{len(review)} chờ CIO xem lại" + (f" · {len(computing)} đang tính" if computing else ""),
               "#/cio/ap-dung"),
         stage("families", "Gia đình", len(families), "gia đình được tính", len(flagged),
-              f"{len(flagged)} chạm ngưỡng RM xem trước", "#/cio/phoi-nhiem"),
-        stage("rm", "RM", len(rm_families), "gia đình RM cần xem trước", 0, "trên trang Hôm nay của RM",
+              f"{len(flagged)} chạm ngưỡng RM xem trước", "#/cio/phoi-nhiem"),  # the frame "đến khách hàng"
+        stage("rm", "RM", len(rm_families), "gia đình RM cần xem trước", 0, "trên trang Tổng quan của RM",
               "#/cio/do-thi"),
     ]  # fmt: skip
     return {
@@ -157,30 +210,21 @@ def cio(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         "pipeline": pipeline,
         "decide": decide,
         "exposure": exposure,
-        "events": [
-            {"id": s["event"]["id"], "title": s["event"]["title"], "type": s["event"].get("type"),
-             "status": s["latest"]["status"] if s["latest"] else None, "blocked": bool(s["event"].get("blocked")),
-             "created": s["event"]["created"], "route": f"#/cio/nhan-dinh/{s['event']['id']}"}  # fmt: skip
-            for s in sorted(states, key=lambda s: -s["event"]["created"])[:6]
-        ],
-        "model": {
-            "factors_real": len(real),
-            "factors": len(factors),
-            "late_jobs": late,
-            "forecasts": len(rows),
-            "forecasts_waiting": len(waiting),
-            "next_due": min((x["due"] for x in waiting), default=None),
-        },
-        "agents": view_ops.agent_status(),
+        "scenarios": scenarios,
+        "held": len(held),
         # what Thông tin lists for a stage picked on the pipeline (short; the page has the rest)
         "items": {
             "news": [{"id": i["id"], "title": i["title"], "sub": f"{i['outlet']} · {i.get('label') or ''}".strip(" ·"),
-                      "route": "#/cio/hop-tin"} for i in high[:5]],
+                      "route": "#/cio"} for i in high[:5]],
+            "views": [{"id": s["event"]["id"], "title": s["event"]["title"],
+                       "sub": "chờ CIO duyệt" if s in waiting_views else "chưa có nhận định",
+                       "route": f"#/cio/nhan-dinh/{(s['latest'] or s['event'])['id']}"}
+                      for s in waiting_views + no_view][:8],
             "runs": [{"id": r["id"], "title": _event_title(r["event_id"]), "value": r["totals"]["expected_3m"],
-                      "sub": f"{r['id']} · {r['families']} gia đình · {r['totals']['pre_review']} chạm ngưỡng",
+                      "sub": f"{r['families']} gia đình · {r['totals']['pre_review']} chạm ngưỡng",
                       "route": f"#/cio/ap-dung/{r['id']}"} for r in effective[:5]],
             "families": [{"id": f, "title": name_of.get(f, f), "sub": "chạm ngưỡng RM xem trước"} for f in flagged],
-            "rm": [{"id": f, "title": name_of.get(f, f), "sub": "trên trang Hôm nay của RM"} for f in rm_families],
+            "rm": [{"id": f, "title": name_of.get(f, f), "sub": "trên trang Tổng quan của RM"} for f in rm_families],
         },
     }  # fmt: skip
 
@@ -434,158 +478,7 @@ def admin(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     }
 
 
-def specialist(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """Bàn chuyên gia (SCR-SP-02): what Duyệt khuyến nghị reads (GET /api/review) — the recommendations an RM approved
-    for a family assigned to this specialist, whose certificate is in force, waiting for them (BRD-RULE-ROLE-05,
-    WF-08, G8); what they decided; their families. The family's picture beside a recommendation is read on the screen
-    through the reads a specialist may already make (POST /api/dashboard, /api/goals; Q-26), not composed here."""
-    from people import auth
-    from people import store as people
-    from review import specialist as sp
-    from wealth import store as reviews
-
-    v = viewer or {}
-    me = v.get("id") if v.get("role") == "specialist" else None
-    if v.get("families") is not None:
-        fams = list(v["families"])
-    elif me:
-        fams = people.families_of_specialist(me)
-    else:
-        fams = people.client_ids()
-    fams = auth.visible(sorted(fams))
-    approves = {f for f in fams if any(a["id"] == me for a in sp.approvers(f))} if me else set()
-    heads = {c: people.client(c).get("member_of") or c for c in people.client_ids(True)}
-    rows = reviews.reviews()  # newest first
-    waiting = [r for r in rows if r["status"] == "pending_specialist" and heads.get(r["client_id"]) in approves]
-    decided = [r for r in rows if me and r["data"].get("specialist_by") == me]
-
-    def item(r: Dict[str, Any]) -> Dict[str, Any]:
-        d = r["data"]
-        return {
-            "id": r["id"], "family_id": heads.get(r["client_id"], r["client_id"]), "client_id": r["client_id"],
-            "name": people.client(r["client_id"])["name"], "kind": r["kind"], "title": r["title"],
-            "actions": list((d.get("option") or {}).get("actions") or []), "rm": d.get("decided_by"),
-            "rm_note": r.get("note"), "status": r["status"], "created": r["created"], "decided": r.get("decided"),
-            "note": d.get("specialist_note"),
-        }  # fmt: skip
-
-    def family(f: str) -> Dict[str, Any]:
-        c = people.client(f)
-        return {"id": f, "name": c["name"], "segment": c.get("segment"), "approves": f in approves,
-                "waiting": sum(1 for r in waiting if heads.get(r["client_id"]) == f)}  # fmt: skip
-
-    return {
-        "role": "specialist",
-        "as_of": time.time(),
-        "me": me,
-        "certificate": sp.certificate(me) if me else None,
-        "families": [family(f) for f in fams],
-        "waiting": [item(r) for r in reversed(waiting)],  # oldest first: it has waited longest
-        "decided": [item(r) for r in decided[:8]],
-    }
-
-
-def compliance(viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """Bàn kiểm soát (SCR-CMP-06): each control Compliance owns as a flow with what waits at each step — news held for
-    the restricted list → released with a reason (BR-04); research waiting → released or rejected by another person
-    after its release time (BR-03); letters waiting → approved or returned (FR-801); policy documents added → verified
-    by a second person → summarised by the policy agent (FR-306); configuration waiting (FR-701); the audit chain
-    (FR-702) — from the stores those pages read, and one queue of what waits for Compliance, oldest first."""
-    from control import alerts as control_alerts
-    from control import audit, config, db, worm
-    from news import store as news
-    from newsletter import store as letters
-    from policy import store as policy
-    from research import store as research
-
-    now = time.time()
-    items = news.inbox(status="all", limit=5000)
-    held = [i for i in items if i["held"]]
-    cleared = [i for i in items if i.get("cleared")]
-    notes = research.listing()
-    r_wait = [r for r in notes if r["status"] == "PENDING_RELEASE"]
-    nls = letters.listing()
-    l_wait = [n for n in nls if n["status"] == "PENDING_COMPLIANCE"]
-    docs = policy.radar()["documents"]
-    unverified = [d for d in docs if not d.get("verified") and d["status"] != "dropped"]
-    verified = [d for d in docs if d.get("verified")]
-    summarised = [d for d in verified if d.get("summary")]
-    cfg = [k for k in config.overview() if k.get("pending")]
-    with db.tx() as con:
-        chain, copy = audit.verify(con), worm.verify(con)
-
-    def step(label, count, waits=False):
-        return {"label": label, "count": count, "waits": waits}
-
-    def item(control, id, title, sub, at, route, ready=True):
-        return {"control": control, "id": id, "title": title, "sub": sub, "at": at, "route": route, "ready": ready}
-
-    def control(id, label, rule, page, steps, rows):
-        return {"id": id, "label": label, "rule": rule, "route": f"#/compliance/{page[0]}", "page": page[1],
-                "steps": steps, "items": rows}  # fmt: skip
-
-    def research_item(r):
-        early = "" if now >= r["release_at"] else " · chưa tới giờ phát hành"
-        sub = f"{r.get('report_no') or r['kind']} · nạp bởi {r.get('uploaded_by') or '—'}{early}"
-        ready = now >= r["release_at"]
-        return item("research", r["id"], r["title"], sub, r["created"], "#/compliance/nghien-cuu", ready)
-
-    def config_item(k):
-        v = k["pending"]
-        sub = f"đề xuất bởi {v.get('proposed_by') or '—'} · {k['owner_label']} duyệt"
-        sub += " · cần người thứ hai" if k["two_person"] else ""
-        return item("config", v["id"], k["label"], sub, (v.get("history") or [{}])[0].get("at") or now,
-                    "#/compliance/cau-hinh")  # fmt: skip
-
-    def held_item(i):
-        sub = f"{i.get('outlet') or i.get('source')} · nhắc tới {', '.join(i.get('restricted') or [])}"
-        return item("held", i["id"], i["title"], sub, i.get("published") or now, "#/compliance/giu")
-
-    def letter_item(n):
-        return item("letters", n["id"], n.get("title") or n["id"], f"soạn bởi {n.get('author') or '—'}", n["created"],
-                    f"#/compliance/ban-tin/{n['id']}")  # fmt: skip
-
-    def policy_item(x):
-        sub = f"{policy.STATUS.get(x['status'], x['status'])} · thêm bởi {x.get('added_by') or '—'}"
-        return item("policy", x["id"], x["title"], sub, x["created"], f"#/compliance/chinh-sach/{x['id']}")
-
-    released = sum(r["status"] == "RELEASED" for r in notes)
-    rejected = sum(r["status"] == "REJECTED" for r in notes)
-    approved = sum(n["status"] == "APPROVED" for n in nls)
-    returned = sum(n["status"] == "RETURNED" for n in nls)
-    controls = [
-        control("held", "Tin bị giữ", "BRD-BR-04", ("giu", "Tin bị giữ"),
-                [step("Đang giữ", len(held), True), step("Đã cho phép", len(cleared))], [held_item(i) for i in held]),
-        control("research", "Nghiên cứu", "BRD-BR-03", ("nghien-cuu", "Nghiên cứu"),
-                [step("Chờ phát hành", len(r_wait), True), step("Đã phát hành", released), step("Từ chối", rejected)],
-                [research_item(r) for r in r_wait]),
-        control("letters", "Bản tin", "BRD-FR-801", ("ban-tin", "Bản tin"),
-                [step("Chờ duyệt", len(l_wait), True), step("Đã duyệt", approved), step("Bị trả lại", returned)],
-                [letter_item(n) for n in l_wait]),
-        control("policy", "Chính sách", "BRD-FR-306", ("chinh-sach", "Chính sách"),
-                [step("Chờ xác nhận", len(unverified), True), step("Đã xác nhận", len(verified)),
-                 step("Đã tóm tắt", len(summarised))], [policy_item(x) for x in unverified]),
-        control("config", "Cấu hình", "BRD-FR-701", ("cau-hinh", "Cấu hình"), [step("Chờ duyệt", len(cfg), True)],
-                [config_item(k) for k in cfg]),
-    ]  # fmt: skip
-    queue = sorted((x for c in controls for x in c["items"]), key=lambda x: x["at"])
-    return {
-        "role": "compliance",
-        "as_of": now,
-        "controls": controls,
-        "queue": queue,
-        "chain": {
-            "ok": chain["ok"],
-            "count": chain["count"],
-            "broken_at": chain.get("broken_at"),
-            "reason": chain.get("reason"),
-        },
-        "worm": copy,
-        "alerts": control_alerts.for_role("compliance"),
-    }
-
-
-BUILD = {"cio": cio, "rm": rm, "admin": admin, "specialist": specialist, "compliance": compliance}
+BUILD = {"cio": cio, "rm": rm, "admin": admin}
 
 
 def desk(role: str, viewer: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

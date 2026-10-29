@@ -14,12 +14,13 @@ import pydantic
 from operonx_agents import RunContext
 from operonx_agents import tool as agent_tool
 
-from assistant import actions, desktools, followups, graphtools, knowledge, memory, tools
+from assistant import actions, alloctools, dataroom, desktools, filetools, followups, graphtools, knowledge, memory, tools
 from assistant.base import Ctx, Tool, allowed
 
 REGISTRY: Dict[str, Tool] = {**tools.CATALOGUE}
 for _name, _t in {**actions.CATALOGUE, **memory.CATALOGUE, **knowledge.CATALOGUE, **followups.CATALOGUE,
-                  **graphtools.CATALOGUE, **desktools.CATALOGUE}.items():  # fmt: skip
+                  **graphtools.CATALOGUE, **desktools.CATALOGUE, **dataroom.CATALOGUE, **filetools.CATALOGUE,
+                  **alloctools.CATALOGUE}.items():  # fmt: skip
     assert _name not in REGISTRY, f"two tools named {_name!r}"
     REGISTRY[_name] = _t
 LABELS = {  # what a step is called in the panel ("Các bước")
@@ -49,7 +50,6 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "gui_de_xuat": "Gửi đề xuất",
     "ghi_lien_he": "Ghi liên hệ",
     "khuyen_nghi": "Khuyến nghị",
-    "chuyen_gia_duyet": "Chuyên gia duyệt",
     "danh_dau_khan": "Đánh dấu khẩn",
     "chay_agent_cio": "Chạy Agent CIO",
     "phan_bien_lai": "Chạy lại Agent Phản biện",
@@ -68,20 +68,24 @@ LABELS = {  # what a step is called in the panel ("Các bước")
     "theo_doi": "Đặt theo dõi",
     "theo_doi_cua_toi": "Việc theo dõi của bạn",
     "huy_theo_doi": "Huỷ theo dõi",
-    "ban_quyet_dinh": "Bàn quyết định",
+    "ban_quyet_dinh": "Decision board",
     "phoi_nhiem": "Phơi nhiễm",
     "lan_ap_dung": "Lần áp dụng",
     "do_chinh_xac": "Độ chính xác",
-    "so_khach_hang": "Sổ khách hàng",
+    "so_khach_hang": "Tổng quan",
     "van_hanh": "Vận hành",
     "agent_nen": "Agent và việc nền",
-    "ban_kiem_soat": "Bàn kiểm soát",
-    "ban_chuyen_gia": "Bàn chuyên gia",
-    "ho_so_khach": "Hồ sơ khách",
     "chuoi_nhat_ky": "Chuỗi nhật ký",
     "cau_hinh_cho_duyet": "Cấu hình chờ duyệt",
+    "truy_van": "Truy vấn dữ liệu",
+    "them_tu_tep": "Ghi từ tệp",
+    "luu_tai_lieu": "Lưu vào Tài liệu",
+    "phan_bo_tai_san": "Phân bổ tài sản",
+    "phan_bo_cho_duyet": "Phân bổ chờ duyệt",
+    "loai_su_kien": "Loại sự kiện",
+    "goi_y_nhan_muc_tieu": "Gợi ý nhãn mục tiêu",
 }
-DEMO_USER = {**tools.USER, "admin": "admin", "specialist": "sp_global"}  # who acts when sign-in is off
+DEMO_USER = {**tools.USER, "admin": "admin"}  # who acts when sign-in is off
 
 
 def for_role(role: str) -> List[Tool]:
@@ -189,8 +193,12 @@ def _agent_tool(tool: Tool, role: str):
 
     call.__signature__, call.__annotations__, call.__doc__ = _signature(tool, role)
     call.__name__ = call.__qualname__ = tool.name
+    # truy_van: its description and the role's data catalog (tables, columns, definitions, examples), lines kept — the
+    # docstring's summary would be joined into one paragraph
+    described = tool.description + "\n\n" + tool.reference(role) if tool.reference is not None else None
     return agent_tool(
         call,
+        description=described,
         approval="always" if tool.write else "never",
         idempotent=not tool.write,
         readonly=not tool.write,

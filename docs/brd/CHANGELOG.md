@@ -2,6 +2,122 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-29 — UI/UX feedback round 4 (owner, “Sửa UI UX”): Wealth Planning Advisor is Wealth Planning, Headline News
+  is Wealth Advisor. Wealth view: assets, debt and net worth as three tiles; Portfolio gain / loss and Chính sách và dự
+  án left; allocation full width, its groups by liquidity (cash and deposits first) and each debt under them with the
+  totals. Dữ liệu chi tiết tài sản: no purchase price; two columns, the debt against each asset (its secured loan, or
+  the margin loan split over the shares) and what is repaid on it monthly; groups by liquidity. News and Prediction:
+  no Wealth Check; each item's direction only (no amount or bar, not even on hover); three sections — Tin quốc tế, Tin
+  trong nước, Nội dung độc quyền (laws and the house views) — each card a three-line summary, why it matters, its
+  precedents and its source linked (`summary`, `why`, `section`, `source_url` on each alert); no “(cần kiểm tra)”.
+  Sign-in lists only the clients' demo accounts. English throughout for the news, house views and holding names.
+  — OWN-WN-06, SCR-CL-01, SCR-CL-02, SCR-CL-06
+- 2026-10-29 — UI/UX feedback round 3 (owner): Phân bổ tài sản's part titles stay frozen while scrolling; the
+  priorities fold to one line each, the first open with its figure and action; the calculation tables colour each
+  row by its role. — SCR-CL-13
+- 2026-10-29 — UI/UX feedback ver2 (owner, “Sửa UI-UX ver2”): Phân bổ tài sản in four numbered parts — the overview
+  (net worth, liquidity, the profile folded, the three risk numbers explained), the financial priorities (issue,
+  cause, deadline, action), the buckets with icons, changes classed by what they do, Growth from one source with the
+  rebalance before/after, Legacy's price drop step by step and four ways to close the gap, and a what-if
+  (`POST /api/allocation` `whatif`) comparing the three goals. The cash-flow table counts a dated inflow (a bonus)
+  with all income; C01 gets the year's rhythm (Tết, premium, trip, school fees, bonus) marked `routine`, not goals.
+  — SCR-CL-13
+- 2026-10-29 — UI/UX feedback (owner, “Chỉnh UI-UX”): Phân bổ tài sản opens on a client profile (children, plans,
+  income, retirement, risk appetite / capacity / limit); the three buckets are tabs, each with Cách tính first (every
+  figure with its source; Thanh khoản's cash-flow chart and one line-by-line table; with and without income side by
+  side) then Cân nhắc thay đổi; News and Prediction drops the formula line, shows precedents in the bar's tip and on
+  each card (the card's Bằng chứng button gone). — SCR-CL-13, SCR-CL-06
+- 2026-10-28 — Two owner BRDs registered and built (P0 + P1): **news as evidence** — each news item shows direction ·
+  time · evidence, by statistics (n and the base rate) or a CIO-approved qualitative frame; the agent drafts frames
+  from real news for the CIO (Bằng chứng tin); **asset allocation** — three buckets (Thanh khoản, Di sản, Tăng trưởng),
+  their targets and checked actions by formula, the CIO's tilts, the RM's send; OWN-NE-01…12, OWN-AA-01…13 verified;
+  Q-28…Q-30 open. — FEAT-44, FEAT-45, SCR-CL-13, SCR-CIO-16, docs/NEWS_EVIDENCE_BRD.md, docs/ASSET_ALLOCATION_BRD.md
+
+- 2026-10-27 — News impact chart (owner): each row shows its level and horizon (Cao · 1 tháng; horizons 1 tuần to
+  3 tháng, assumed per factor) instead of VND, with a horizon filter; gold, bonds and the exchange rate keep their VND
+  estimate; an item on business equity only says Tích cực / Tiêu cực; the cards the same. — FEAT-25, SCR-CL-06
+
+- 2026-10-27 — Talking to the assistant (owner): a microphone in the panel; the callbot's VAD, STT and TTS; the
+  question is asked 1.18 s after the person stops, the answer read sentence by sentence, Dừng; typed turns unchanged.
+  iPhone app 1.2.0 asks for the microphone. — FEAT-43, FEAT-32, docs/VOICE_PLAN.md
+- 2026-10-26 — Bổ sung tài sản streams its reply (`/api/declare/stream`), no longer reloads the page, answers in one or two human sentences and asks back at most one question or one form a turn; details given later fill in the same item; a long message wraps in its bubble (the header's `.me` kept it on one line) — FEAT-23.
+- 2026-10-26 — A scanned PDF is read to its 10th page (was 3); a longer scan's summary says "Đọc 10/N trang đầu.".
+  12-page scan: pages 1–10 in one call, 10 s, US$0.0024. — FEAT-42, huong-dan/chung, docs/OCR_PLAN.md
+- 2026-10-26 — Any document to the assistant (owner): paste, attach or photograph a statement, receipt, bill or
+  asset description; read once on the client model, a file alone routes itself, saved behind Xác nhận with every
+  item and the total. Gate: 5/5 roughened documents read as written (US$0.0034), four screens. — ADR-0041, FEAT-42,
+  owner_requirements DOC, requirements_traceability §5, FEAT-22, FEAT-32, huong-dan/chung, docs/OCR_PLAN.md
+- 2026-10-25 — Business feedback 7 (owner): the RM's desk is Tổng quan (“Khách hàng đang quản lý”, the net worth
+  coloured), no Hôm nay (contact log in Thông tin), the client picker inside the Khách hàng and Advisory performance
+  sheets, no “Nội bộ” on the RM's sheets (BRD-RULE-SEC-03 narrowed). — OWN-FB-19…25, business_rules, FEAT-13,
+  requirements_traceability, docs/BUSINESS_FEEDBACK_7_PLAN.md
+- 2026-10-24 — Business feedback 6 (owner): the RM's and the CIO's desks reorganised (nested tabs, Decision board
+  with the inbox in it, plain words on impact, Mô hình and AI to Admin), the client's impact bars by asset class, and
+  no Compliance or Expert account (their duties the CIO's, four eyes kept). Planned. — owner_requirements FB,
+  requirements_traceability §5, docs/BUSINESS_FEEDBACK_6_PLAN.md
+- 2026-10-24 — The data room's eval (D5): 90 questions, 30 per role, gold answers from the database; Haiku 5.5
+  89/90, p95 5.3 s, US$0.003 a turn; Sonnet 5.5 measured (15/15, US$0.06 a turn, no forced tool call), so Haiku
+  stays; totals computed in SQL, the recount's result says not to guess why, one catalog ambiguity fixed. —
+  OWN-DA-07, OWN-DA-08, requirements_traceability §0 and §5
+- 2026-10-24 — Measuring the news agents (owner): each ingest run's funnel, status and sources, the days by
+  collection time; the scenario agents' moves scored at 3d and 1w (precision, recall, direction, coverage, event
+  recall), valued in VND on the simulated book, labelled simulated; cost per model call, never 0 when missing; the
+  trial page in View A and View B with a drill-down per move. — owner_requirements EV, requirements_traceability §5,
+  docs/AGENT_EVALUATION_PLAN.md
+- 2026-10-24 — The data room wired in (D4): `truy_van` in the registry for the five roles with a room, with the
+  role's catalog; three queries a turn; an audit row per query; “Cách tính” (SQL, rows, table, time), closed; the
+  template with `client_ai` off; the re-count rule, and a question naming a number the last answer did not say must
+  call a tool (`tool_choice`): the rule alone did not make Haiku 5.5 count again. — OWN-DA-03, OWN-DA-05…07,
+  requirements_traceability §5
+- 2026-10-24 — The data catalog (D3): what the assistant reads before it writes SQL, per role: every table and column
+  of the room with its meaning, unit and allowed values, shared rules, the pages' definitions and 12–18 examples
+  each; a test fails on an undocumented column and runs every example in its room. — OWN-DA-04,
+  requirements_traceability §5
+- 2026-10-24 — The data room (D2): `truy_van`'s SQL runs on TEMP tables built for the role and person (copies, not
+  views: a CTE named like a view passed the authorizer as that view), read-only under the authorizer, 2 s, 200 rows
+  with the total; 54 adversarial and positive tests. — OWN-DA-02, OWN-DA-03, requirements_traceability §5
+- 2026-10-24 — Totals are counts (D1): the inbox page says 1.417 (was 300) and “40 / 1.417”; alerts, search,
+  the CIO desk's Tin stage and the held-news tool count in the database. — OWN-DA-01, requirements_traceability §5
+- 2026-10-24 — The assistant reads the data itself (owner): totals are counts; one tool, `truy_van`, a SQL
+  `select` on role-scoped read-only views under SQLite's authorizer, with a catalog, "Cách tính", an audit entry
+  and an eval gate; amends `Param`'s rule for that tool. Planned (D0). — ADR-0040, owner_requirements DA,
+  requirements_traceability §5, docs/ASSISTANT_DATA_PLAN.md
+- 2026-10-23 — The test book built (D2–D3): `scripts/make_santander_vn.py` matches the 6,500 Santander clients to
+  SCF 2022 households and writes them in the fixtures' schema; all valued by `wealth.valuation`, Σ AUM 428,000 tỷ,
+  share at TCB 35 %, 58.7 % with over half their wealth in one class; calibration in `data/calibration/`. Proposed.
+  — ADR-0038, docs/CLIENT_DATASET_PLAN.md
+- 2026-10-23 — The test book (Q-27): 6,500 Private clients, all Techcombank's, from Santander's TOP clients
+  (behaviour), matched SCF 2022 households (make-up of wealth) and the owner's totals (≥ 25 tỷ each, Σ AUM 428,000
+  tỷ); the demo's five families kept; D1's sampler run on the real file (6,500 drawn, all TOP; the first 1,000 a
+  subset). The submission's 21 tỷ-at-TCB assumption raised (TO_DISCUSS D-04). Proposed. — ADR-0038, ADR-0005,
+  requirements/open_questions.md (Q-18, Q-27), decisions/README.md, docs/CLIENT_DATASET_PLAN.md, docs/TO_DISCUSS.md
+- 2026-10-23 — The Private palette (business feedback 5): gold #c8a45d marks the main action with dark-brown words;
+  brown #59392c the ink of links, tabs and selections; light grey and sand surfaces; champagne in dark. Replaces the
+  black-and-red reading of feedback 4. OWN-WN-11. — sources/owner_requests/2026-10-23_business_feedback_5.md,
+  owner_requirements.md, requirements_traceability.md, ux/design_system.md
+- 2026-10-22 — The colour tone (business feedback 4, after Techcombank Private; the owner: red and black, not
+  painful): Techcombank red marks the main action only — a primary button, Hỏi trợ lý, the bell's count; the rest
+  stays black, white and greys. OWN-WN-11. — sources/owner_requests/2026-10-22_business_feedback_4.md,
+  owner_requirements.md, requirements_traceability.md, ux/design_system.md
+- 2026-10-22 — Headline News (business feedback 3): Chi phí chính sách is News and Prediction, the first tab; Đồ thị
+  tác động second; Tác động tin is no tab (its address stays: the bell's and the feed's evidence). OWN-WN-10.
+  — ADR-0037, sources/owner_requests/2026-10-22_business_feedback_3.md, owner_requirements.md,
+  requirements_traceability.md, ux/information_architecture.md, ux/screens/client.md, ux/screen_inventory.md, FEAT-25.
+- 2026-10-22 — The client's menu by the bank's names (business feedback 2, nine items):
+  - four sections: Wealth View (Wealth view · Dữ liệu chi tiết tài sản), Wealth Planning Advisor (Wealth planning
+    advisor · Risk profile test), Headline News, Relationship specialist;
+  - Dòng tiền and Rủi ro leave the menu (on Wealth view; the risk test is Risk profile test);
+  - the graph is hidden from the client (no tab, search hit or assistant page; its own address kept, unlinked);
+  - Wealth view opens on net worth and sources, cash flow second; every old address still opens its page;
+  - the Wealth Check's ahead/behind line is green/red (every KPI's had been grey);
+  - the assistant's pages, router and the user guide use the same names. OWN-WN-01…09.
+  — ADR-0037, sources/owner_requests/2026-10-22_business_feedback_2.md, owner_requirements.md,
+  requirements_traceability.md, ux/information_architecture.md, ux/screens/client.md, ux/screen_inventory.md,
+  ux/user_journeys.md, FEAT-21, 24, 25, 28, 29, 40, docs/WEALTH_NAMES_PLAN.md, docs/huong-dan/khach-hang.md
+
+- 2026-10-22 — One checklist of the agents (owner): eight parts that call a model, one name each, the three
+  evaluations named. — docs/AGENT_CHECKLIST.md, docs/AGENT_CHECKLIST_PLAN.md
+
 - 2026-10-20 — Money on the graph's edges and a node's timeline (owner: “move the money to the edge … with +/−”, “a timeline chart … by day / month / year”, “create data for years”):
   - every money spoke shows its signed change over Ngày · Tháng · Năm (Tháng = Tổng quan's month change);
   - an estimate's spoke shows its own figure in grey (owner);

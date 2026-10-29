@@ -1,10 +1,10 @@
 /* Việc nền (owner 2026-10-18, docs/OWNER_BACKLOG_1018_PLAN.md A): the agents and the background jobs on one page, for
-   the CIO, Admin and Compliance (GET /api/jobs). Agent: the mode and today's budget, each agent's runs, the queue of
+   the CIO and Admin (GET /api/jobs). Agent: the mode and today's budget, each agent's runs, the queue of
    “Chạy Agent CIO” requests; the CIO starts Agent CIO on an event with no view yet (POST /api/events/run-agent) and
    re-runs a failed challenger (POST /api/views/decide, action challenge). Lịch chạy: each job's clock and last run;
-   Admin runs one now (POST /api/jobs/run). Lần chạy tay: who ran what. Compliance reads it without buttons. The
+   Admin runs one now (POST /api/jobs/run). Lần chạy tay: who ran what. The
    assistant does the same writes on a Xác nhận. Rows are lists (.item), so a phone reads them as they are. */
-import {ago, esc, get, post, toast} from "../core/core.js";
+import {LOCALE, ago, esc, get, post, toast} from "../core/core.js";
 import {JOB} from "./system.js?v=20261020u1";
 
 const MODE = {live: "Mô hình thật", mock: "Mô phỏng", inbox: "Hộp chờ (vùng AI)"};
@@ -26,7 +26,7 @@ export async function render(box, ctx) {
   const failing = d.jobs.filter(j => j.last && !j.last.ok).length;
   const waiting = a.queue.filter(j => j.status === "queued" || j.status === "running").length;
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">${cio ? "CIO" : admin ? "Quản trị" : "Tuân thủ"}</div>
+    <div class="pagehead"><div><div class="eyebrow">${cio ? "CIO" : "Quản trị"}</div>
       <h1 class="h1">Việc nền</h1>
       <p class="lede">Agent ${esc(MODE[st.mode] || st.mode)} · ${waiting ? `${waiting} lần chạy đang chờ` : "không lần chạy nào chờ"}
         · ${d.jobs.length} việc theo lịch${failing ? ` · <span class="bad-text">${failing} đang lỗi</span>` : ""}.
@@ -35,7 +35,7 @@ export async function render(box, ctx) {
 
     <section class="panel" id="jobs-agents"><div class="h3">Agent</div>
       <p class="small muted">Chế độ ${esc(MODE[st.mode] || st.mode)}${st.models ? ` · ${esc([st.models.cio, st.models.challenger].filter(Boolean).join(" · "))}` : ""}
-        · hôm nay ${Number(b.used_today || 0).toLocaleString("vi-VN")} / ${Number(b.daily || 0).toLocaleString("vi-VN")} token.
+        · hôm nay ${Number(b.used_today || 0).toLocaleString(LOCALE)} / ${Number(b.daily || 0).toLocaleString(LOCALE)} token.
         Nhận định ra là bản nháp: qua Agent Phản biện, rồi CIO duyệt ở trang Sự kiện &amp; nhận định.</p>
       <div class="list">${a.health.map(h => `<div class="item"><span class="badge ${h.failed ? "bad" : "good"}">${h.failed ? `${h.failed} lỗi` : "ổn"}</span>
         <div><div class="t">${esc(AGENT[h.agent] || h.agent)}</div><div class="m">${h.runs} lần trong 7 ngày · gần nhất ${esc(ago(h.last))}${h.last_error ? ` · ${esc(h.last_error)}` : ""}</div></div><span></span></div>`).join("")

@@ -1,26 +1,87 @@
-/* Chi phí chính sách (SCR-CL-06; UI redesign R3, was the pre-redesign “alerts” tab; FEAT-25). On top a wealth
-   check: the return this year against the benchmark, the followed goals behind, and what to do first (the full
-   plan is on Kế hoạch). Then what each policy, macro and infrastructure item does to net worth — impact =
-   holding × sensitivity × probability, the probability by legal status — as diverging bars that filter to risks
-   or opportunities; the house views (mock research-house forecasts) matched to the client's holdings; and one
-   card per item, grouped by kind. Data: POST /api/alerts, POST /api/dashboard, POST /api/goals, GET /api/views. */
-import {internal, esc, followedIds, get, n as how, pct, post, vnd} from "../core/core.js";
+/* News and Prediction (SCR-CL-06; was Chi phí chính sách, FEAT-25). What moves the client's wealth, read as news
+   (business feedback 2026-10-29): on top every item with its direction — positive, negative or neutral — and when
+   it takes effect, no amount, not even on hover — filtered by how soon and by direction; then the items in three sections: global
+   news (world and macro), local news (Vietnam, its infrastructure) and exclusive contents (laws at every stage, and
+   the house views' analysis). Each card is a short summary, why it matters to someone who holds what it touches,
+   its precedents and its source, each linked to the article or document. Each item opens its evidence (NEWS_EVIDENCE_BRD §8.2): the statistics
+   or the qualitative frame, and for the CIO the review. Data: POST /api/alerts, POST /api/dashboard, GET /api/views,
+   POST /api/evidence. */
+import {closeDrawer, drawer, esc, get, n as how, pct, post, toast, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {hover} from "../charts/charts.js";
 
-const SEV = {high: ["bad", "cao"], medium: ["warn", "trung bình"], low: ["", "thấp"]};
-const KIND = {
-  policy: ["Policy headlines", "Chính sách, pháp luật", "scale"],
-  macro: ["Market & macro headlines", "Thị trường, lãi suất, tỷ giá", "activity"],
-  infrastructure: ["Infrastructure headlines", "Hạ tầng, quy hoạch", "building"],
-};
+const SECTIONS = [
+  ["global", "Tin quốc tế", "Tin thế giới và vĩ mô toàn cầu", "activity"],
+  ["local", "Tin trong nước", "Việt Nam, hạ tầng và thị trường trong nước", "building"],
+  ["exclusive", "Nội dung độc quyền", "Luật và chính sách (dự thảo, đã ban hành, đang thực hiện) và phân tích chuyên sâu", "scale"],
+];
 const STANCE = {positive: ["good", "Tích cực"], neutral: ["", "Trung tính"], cautious: ["warn", "Thận trọng"]};
-const RANK = {on_track: 0, at_risk: 1, off_track: 2};
-const view = {filter: "all", allViews: false};  // for this page's life
+const DIR = {positive: ["good", "Tích cực"], negative: ["bad", "Tiêu cực"], neutral: ["", "Trung tính"]};
+const view = {filter: "all", horizon: "all", allViews: false};  // for this page's life
+const HORIZON = [["all", "Mọi thời gian"], ["1w", "1 tuần"], ["1m", "1 tháng"], ["3m", "3 tháng"], [">3m", "Trên 3 tháng"]];
+const TONE = {positive: "good", negative: "bad", unclear: ""};
+const certain = (c, a) => `${how(vnd(c.amount, true), "policy.certain", {event: a.title})}/${esc(c.per)} · ${esc(c.from)}`;
+// an item's direction: its approved evidence's, else the sign of its impact; nothing to say either way is neutral
+const dir = (a) => {
+  const e = a.evidence && a.evidence.direction;
+  if (e === "unclear" || (!e && !a.impact)) return "neutral";
+  return e ? (e === "positive" ? "positive" : "negative") : a.opportunity ? "positive" : "negative";
+};
+// how soon it takes effect (the evidence's time, else the item's horizon); an item on business equity alone has none
+const when = (a) => (a.sign_only ? "" : (a.evidence && a.evidence.timeframe_label) || a.horizon_label || "");
+// its direction and when it takes effect: “Tiêu cực · 3 tháng” (business feedback 2026-10-29)
+const dirPill = (a) => `<span class="pill ${DIR[dir(a)][0]}"><span>${DIR[dir(a)][1]}</span>${when(a) ? ` · <span>${esc(when(a))}</span>` : ""}</span>`;  // each its own phrase in English
+const linked = (html, url) => (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${html}</a>` : html);
 
-const sevPill = (a) => (a.opportunity
-  ? `<span class="pill good">Cơ hội · ${SEV[a.severity][1]}</span>`
-  : `<span class="pill ${SEV[a.severity][0]}">Rủi ro · ${SEV[a.severity][1]}</span>`);
+// the evidence panel: why, through what, what changes, what to watch, the precedents (or the measured moves) folded;
+// the CIO also reads the internal headline, the notes, which precedents have no source, and decides
+// also the CIO's list of frames (web/pages/evidence.js), with no alert: ``a`` is then {factor, title}
+export async function openFrame(a, ctx, again) {
+  const body = drawer(a.title, `<p class="small muted">Đang tải…</p>`);
+  let ev;
+  try { ({evidence: ev} = await post("/api/evidence", {factor: a.factor, role: ctx.role})); }
+  catch (e) { body.innerHTML = `<div class="notice bad" role="alert">${esc(e.message)}</div>`; return; }
+  const f = ev.frames[0], cio = ev.role === "cio";
+  if (!f) { body.innerHTML = `<p class="muted">Tin này chưa có bằng chứng được duyệt.</p>`; return; }
+  const mine = f.targets.filter(t => (a.labels || []).includes(t.label)).map(t => t.name);
+  const pc = (x) => pct(x, true, 1);
+  const precedents = f.stats
+    ? `<details><summary>Các lần đo (${f.stats.n})</summary><table class="table"><tbody>${f.stats.moves.map(m =>
+        `<tr><td>${esc(m.date)}</td><td class="${m.change >= 0 ? "up" : "down"}">${pc(m.change)}</td></tr>`).join("")}</tbody></table></details>`
+    : f.precedents.length
+      ? `<details><summary>Tiền lệ (${f.precedents.length})</summary>${f.precedents.map(p => `<div class="small mt-xs" data-explains>
+          <b>${esc(p.event)}</b> — ${esc(p.outcome)}<div class="muted">Khác lần này: ${esc(p.difference)}</div>
+          ${p.source ? `<div class="muted">Nguồn: ${esc(p.source)}</div>` : cio ? `<span class="pill warn">chưa có nguồn</span>` : ""}</div>`).join("")}</details>`
+      : `<p class="small muted">Chưa có tiền lệ</p>`;
+  const review = cio ? `<div class="panel mt">
+      <div class="row tight"><b>Duyệt của CIO</b><span class="pill ${f.review.status === "approved" ? "good" : "warn"}">${esc(f.review.label)}</span>
+        ${f.unsourced ? `<span class="pill warn">${f.unsourced} tiền lệ chưa có nguồn</span>` : ""}</div>
+      ${f.headline ? `<p class="small mt-xs" data-explains>Tiêu đề nội bộ: ${esc(f.headline)}</p>` : ""}
+      ${f.notes.map(x => `<p class="small muted" data-explains>${esc(x)}</p>`).join("")}
+      ${f.review.note ? `<p class="small muted" data-explains>Ghi chú: ${esc(f.review.note)}</p>` : ""}
+      <label class="field mt-xs"><span>Ghi chú</span><input id="ev-note" placeholder="Không bắt buộc" maxlength="300"></label>
+      <div class="row tight mt-xs">${[["approve", "Duyệt"], ["return", "Trả lại agent"], ["reject", "Từ chối"]].map(([k, t]) =>
+        `<button type="button" class="btn sm" data-decide="${k}">${t}</button>`).join("")}</div></div>` : "";
+  body.innerHTML = `<div class="row tight"><span class="pill ${TONE[f.direction]}">${esc(f.direction_label)}</span><span class="chip">${esc(f.timeframe_label)}</span>
+      <span class="chip">${esc(f.label)}</span><span class="chip">${f.branch === "statistics" ? "Thống kê" : "Định tính"}</span></div>
+    ${f.stats ? `<p class="small mt" data-explains>${esc(f.stats.sentence)}</p>` : ""}
+    <p class="small mt" data-explains>${esc(f.mechanism)}</p>
+    ${a.certain ? `<div class="kv"><span>Chắc chắn nếu xảy ra</span><b>${certain(a.certain, a)}</b></div>` : ""}
+    <div class="kv"><span>Qua</span><b>${f.channels.map(esc).join(", ")}</b></div>
+    <div class="kv"><span>Cái thay đổi</span><b>${f.changes.map(esc).join(", ")}</b></div>
+    ${mine.length ? `<div class="kv"><span>Khớp với</span><b>${mine.map(esc).join(", ")}</b></div>` : ""}
+    <div class="kv"><span>Theo dõi</span><b data-explains>${esc(f.watch)}</b></div>
+    <div class="mt">${precedents}</div>${review}`;
+  for (const b of body.querySelectorAll("[data-decide]")) b.onclick = async () => {
+    b.disabled = true;
+    try {
+      const {review: r} = await post("/api/evidence/decide", {factor: a.factor, decision: b.dataset.decide, by: ctx.user, note: body.querySelector("#ev-note").value});
+      toast(r.label);
+      closeDrawer();
+      again();
+    } catch (e) { toast(e.message); b.disabled = false; }
+  };
+}
 
 // which of the client's holdings a house view is about
 function touches(v, holdings) {
@@ -32,81 +93,89 @@ function touches(v, holdings) {
   });
 }
 
+
+// an item's precedents, each linked to its own source when it has one (or the statistics' sentence)
+function precedents(e) {
+  if (!e) return "";
+  if (e.sentence) return `<div class="nblock"><div class="nhead">Thống kê</div><p class="small" data-explains>${esc(e.sentence)}</p></div>`;
+  const ps = e.precedents || [];
+  if (!ps.length) return "";
+  return `<div class="nblock"><div class="nhead">Tiền lệ (${ps.length})</div><ul class="nprec">${ps.map(p =>
+    `<li class="small">${linked(`<b>${esc(p.event)}</b>`, p.url)}<div class="muted" data-explains>${esc(p.outcome)}</div></li>`).join("")}</ul></div>`;
+}
+
 export async function render(box, ctx) {
-  const client = ctx.client(), scope = ctx.scope(), staff = ctx.role !== "client";
-  const [{report: rep}, {dashboard: d}, gout, vs] = await Promise.all([
+  const client = ctx.client(), scope = ctx.scope();
+  const [{report: rep}, {dashboard: d}, vs] = await Promise.all([
     post("/api/alerts", {client_id: client, scope}),
     post("/api/dashboard", {client_id: client, scope}),
-    post("/api/goals", {client_id: client, scope}).catch(() => ({goals: []})),
     get("/api/views").catch((e) => ({error: e.message})),
   ]);
-  const planHref = staff ? ctx.href("khach-hang", "ke-hoach") : ctx.href("muc-tieu", "ke-hoach");
+  const again = () => render(box, ctx);
+  // one item per news: a rule that hits twice (a loan and a bond) is one row and one card naming both
+  const items = [];
+  for (const a of rep.alerts) {
+    const had = items.find(x => x.factor === a.factor);
+    if (had) had.affected = [...new Set([...had.affected, ...a.affected])];
+    else items.push({...a, affected: [...a.affected]});
+  }
+  const keep = (a) => view.filter === "all" || dir(a) === view.filter;
 
-  // ── the wealth check ──────────────────────────────────────────────
-  const pf = d.performance, rk = d.risk, behind = pf.vs_benchmark < 0;
-  const worst = d.holdings.filter(h => h.kind === "asset" && ["stock", "fund"].includes(h.class) && h.cost)
-    .map(h => ({name: h.name, ret: (h.value - h.cost) / h.cost, value: h.value, cost: h.cost})).sort((a, b) => a.ret - b.ret)[0];
-  const set = followedIds(client);
-  const goals = gout.goals.filter(g => (set ? set.includes(g.id) : g.followed));
-  const short = goals.filter(g => g.goal.gap > 0 && g.goal.status !== "on_track");
-  const gap = short.reduce((a, g) => a + g.goal.gap, 0);
-  const first = [...short].sort((a, b) => RANK[b.goal.status] - RANK[a.goal.status] || b.goal.gap - a.goal.gap)[0];
-  const acts = [];
-  if (behind && worst && worst.ret < pf.benchmark_ytd) acts.push(`Xem lại ${esc(worst.name)} (${how(pct(worst.ret, true), "holding.pnl", {value: vnd(worst.value), cost: vnd(worst.cost)})} so với giá vốn)`);
-  if (rk.status !== "ok") acts.push(`Giảm điểm nóng: mức sụt giảm ước tính ${how(pct(rk.current), "risk.current")} so với ngưỡng ${how(pct(rk.limit, false, 0), "risk.limit")}`);
-  if (first && first.goal.actions[0]) acts.push(`${esc(first.title)}: <span data-explains>${esc(first.goal.actions[0].text)}</span>`);
-
-  box.innerHTML = `${staff ? internal() : ""}
-    <div class="pagehead"><div><div class="eyebrow">Tin tức</div><h1 class="h1">Chi phí chính sách</h1>
-      <p class="lede">Chính sách, vĩ mô và hạ tầng đang làm tài sản ròng ${rep.scope === "family" ? "gia đình" : "của bạn"} tăng hay giảm bao nhiêu</p></div></div>
+  box.innerHTML = `
+    <div class="pagehead"><div><div class="eyebrow">Wealth Advisor</div><h1 class="h1">News and Prediction</h1></div></div>
     <div class="cols">
-      <div class="panel c12" data-focus="policy:check">
-        <h3>Kiểm tra tài sản <span class="hint">chênh lệch mục tiêu và hiệu quả so với benchmark</span></h3>
-        <div class="kpis three">
-          <div class="kpi"><div class="k">Lợi nhuận từ đầu năm</div><div class="v">${how(pct(pf.ytd_return, true), "perf.ytd_return")}</div>
-            <div class="s ${behind ? "down" : "up"}">${behind ? "▼ kém" : "▲ hơn"} ${esc(pf.benchmark_name)} ${how(pct(Math.abs(pf.vs_benchmark)), "perf.vs_benchmark", {mine: pct(pf.ytd_return, true), bench: pct(pf.benchmark_ytd, true)})} <span class="muted">(${esc(pf.benchmark_name)} ${how(pct(pf.benchmark_ytd, true), "perf.benchmark_ytd", {benchmark: pf.benchmark_name})})</span></div></div>
-          <div class="kpi"><div class="k">Mục tiêu đang theo dõi</div><div class="v">${goals.length ? `${short.length}/${goals.length}` : "—"}</div>
-            <div class="s muted">${short.length ? `cần chú ý · thiếu tổng ${how(vnd(gap), "goals.gap_total", {count: String(short.length)})}` : goals.length ? "đều đúng tiến độ" : "chưa đặt mục tiêu"}</div></div>
-          <div class="kpi"><div class="k">Việc nên làm trước</div>
-            ${acts.length ? `<ol class="ul">${acts.slice(0, 3).map(a => `<li>${a}</li>`).join("")}</ol>` : `<p class="muted">Không có việc gấp.</p>`}</div>
-        </div>
-        <a class="btn sm mt" href="${planHref}">Mở Kế hoạch tài chính ${icon("arrow", {size: 14})}</a>
-      </div>
       <div class="panel c12" id="impact"></div>
-      <div class="c12" id="views"></div>
       <div class="notice warn c12" data-explains>${icon("alert", {size: 15})} ${esc(rep.note)}</div>
       <div class="c12" id="sections"></div>
     </div>`;
 
+  // every item and its direction only: no bar, no amount (business feedback 2026-10-29)
   const drawImpact = () => {
-    const f = view.filter;
-    const list = rep.alerts.filter(a => f === "all" || (f === "opp" ? a.opportunity : !a.opportunity));
-    const maxAbs = Math.max(1, ...rep.alerts.map(a => Math.abs(a.impact)));
-    const pin = (a) => ({exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, true, 2), probability: pct(a.probability, false, 0)});
+    const hz = view.horizon;
+    const list = items.filter(a => keep(a) && (hz === "all" || (!a.sign_only && a.horizon === hz)));
     const el = box.querySelector("#impact");
-    el.innerHTML = `<h3>Tác động lên tài sản ròng <span class="hint">${rep.scope === "family" ? "gia đình" : "cá nhân"} · tài sản ròng ${how(vnd(rep.net_worth), "net_worth")}</span></h3>
-      <p class="small muted">Tác động (VND) = Mức nắm giữ × Độ nhạy × Xác suất xảy ra · xác suất theo trạng thái: dự thảo thấp, đang lấy ý kiến trung bình, đã thông qua cao.</p>
-      <div class="row spread"><div class="legend"><span><i style="background:var(--out)"></i>Rủi ro (giảm tài sản)</span><span><i style="background:var(--in)"></i>Cơ hội (tăng tài sản)</span></div>
-        <div class="seg" role="group" aria-label="Lọc">${[["all", "Tất cả"], ["risk", "Rủi ro"], ["opp", "Cơ hội"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${f === k}">${t}</button>`).join("")}</div></div>
-      <div class="dbars mt">${list.slice(0, 10).map(a => `<div class="dbar" tabindex="0" data-a="${esc(a.id)}" data-focus="policy:${esc(a.id)}"><span class="dl" data-explains>${esc(a.title)}</span>
-        <span class="dt"><span class="dneg">${a.impact < 0 ? `<span style="width:${Math.abs(a.impact) / maxAbs * 100}%"></span>` : ""}</span><span class="dpos">${a.impact > 0 ? `<span style="width:${a.impact / maxAbs * 100}%"></span>` : ""}</span></span>
-        <span class="dv ${a.impact >= 0 ? "up" : "down"}">${how(vnd(a.impact, true), "policy.impact", pin(a))}</span></div>`).join("") || `<p class="muted">Không có mục nào.</p>`}</div>`;
+    el.innerHTML = `<h3>Tác động lên tài sản ròng <span class="hint">${rep.scope === "family" ? "gia đình" : "cá nhân"}</span></h3>
+      <div class="row tight"><div class="seg" role="group" aria-label="Lọc theo thời gian">${HORIZON.map(([k, t]) => `<button type="button" data-hz="${k}" aria-pressed="${hz === k}">${t}</button>`).join("")}</div>
+        <div class="seg" role="group" aria-label="Lọc">${[["all", "Tất cả"], ["negative", "Tiêu cực"], ["positive", "Tích cực"], ["neutral", "Trung tính"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${view.filter === k}">${t}</button>`).join("")}</div></div>
+      <div class="nrows mt">${list.map(a => `<div class="nrow" tabindex="0" data-a="${esc(a.id)}" data-focus="policy:${esc(a.id)}"><span data-explains>${esc(a.title)}</span>${dirPill(a)}</div>`).join("") || `<p class="muted">Không có mục nào.</p>`}</div>`;
     for (const b of el.querySelectorAll("[data-af]")) b.onclick = () => { view.filter = b.dataset.af; drawImpact(); drawSections(); };
+    for (const b of el.querySelectorAll("[data-hz]")) b.onclick = () => { view.horizon = b.dataset.hz; drawImpact(); };
     for (const row of el.querySelectorAll("[data-a]")) {
-      const a = rep.alerts.find(x => x.id === row.dataset.a);
-      hover(row, `<b>${esc(a.title)}</b><div data-explains>${esc(a.message)}</div><div class="row"><span>Tác động</span><span>${how(vnd(a.impact, true), "policy.impact", pin(a))}</span></div>`);
+      const a = items.find(x => x.id === row.dataset.a);
+      row.onclick = () => openFrame(a, ctx, again);
+      row.onkeydown = (e) => { if (e.key === "Enter") openFrame(a, ctx, again); };
+      hover(row, () => `<b>${esc(a.title)}</b>
+        <div class="row"><span>Tác động</span><span>${DIR[dir(a)][1]}</span></div>
+        ${when(a) ? `<div class="row"><span>Thời gian</span><span>${esc(when(a))}</span></div>` : ""}
+        ${a.affected.length ? `<div class="row"><span>Khoản liên quan</span><span>${a.affected.map(esc).join(", ")}</span></div>` : ""}
+        <div class="small muted">Bấm để xem bằng chứng</div>`);
     }
   };
 
-  const drawViews = () => {
-    const el = box.querySelector("#views");
-    if (vs.error) { el.innerHTML = `<div class="notice bad" role="alert">Không tải được house views: ${esc(vs.error)}</div>`; return; }
+  // one item as a news card: summary, why it matters to you, precedents, source (business feedback 2026-10-29)
+  const card = (a) => {
+    const src = a.source_url, sum = a.summary || [];  // the article or document itself, never a search
+    return `<div class="panel acard" data-focus="policy:${esc(a.id)}">
+      <div class="row tight">${dirPill(a)}</div>
+      <h4 data-explains>${esc(a.title)}</h4>
+      ${sum.length
+        ? `<div class="nblock"><div class="nhead tab">Tóm tắt</div><ul class="nsum">${sum.map(s => `<li data-explains>${esc(s)}</li>`).join("")}</ul></div>`
+        : `<p class="small" data-explains>${esc(a.message)}</p>`}
+      ${a.why || a.affected.length ? `<div class="nblock"><div class="nhead">Ý nghĩa với bạn</div>${a.why ? `<p class="small" data-explains>${esc(a.why)}</p>` : ""}
+        ${a.affected.length ? `<div class="row tight">${a.affected.map(x => `<span class="chip">${esc(x)}</span>`).join("")}</div>` : ""}</div>` : ""}
+      ${precedents(a.evidence)}
+      <div class="small muted mt-xs"><span>Trích nguồn:</span> ${linked(`<span data-explains>${esc(a.source)}</span>`, src)}</div></div>`;
+  };
+
+  // the house views (mock research-house forecasts) matched to the client's holdings: the analysis in Exclusive contents
+  const views = () => {
+    if (vs.error) return `<div class="notice bad" role="alert">Không tải được house views: ${esc(vs.error)}</div>`;
     const rows = vs.views.map(v => {
       const hit = touches(v, d.holdings);
       return {v, hit, exposure: hit.reduce((a, h) => a + h.value, 0)};
     }).sort((a, b) => (b.hit.length > 0) - (a.hit.length > 0) || b.exposure - a.exposure);
     const mine = rows.filter(r => r.hit.length).length;
-    const card = ({v, hit, exposure}) => {
+    const vcard = ({v, hit, exposure}) => {
       const [tone, text] = STANCE[v.stance] || STANCE.neutral;
       return `<div class="panel vcard${hit.length ? "" : " far"}">
         <div class="row tight"><b>${esc(v.house)}</b><span class="chip">${esc(v.kind)}</span><span class="small muted">${esc(v.date)}</span>
@@ -114,43 +183,33 @@ export async function render(box, ctx) {
         <div data-quote><h4>${esc(v.title)}</h4>
         <p class="small">${esc(v.summary)}</p>
         <div class="kv"><span>Dự báo / mục tiêu</span><b>${esc(v.target)}</b></div></div>
-        <div class="kv"><span>Chủ đề · kỳ hạn</span><b>${esc(v.topic)} · ${esc(v.horizon)}</b></div>
+        <div class="kv"><span>Chủ đề · kỳ hạn</span><b><span>${esc(v.topic)}</span> · <span>${esc(v.horizon)}</span></b></div>
         <div class="kv"><span>Liên quan danh mục của bạn</span><b>${hit.length
           ? `${hit.slice(0, 4).map(h => esc(h.name)).join(", ")}${hit.length > 4 ? ` +${hit.length - 4}` : ""} · ${hit.some(h => h.kind === "asset") ? how(vnd(exposure), "view.exposure", {count: String(hit.length)}) : "khoản nợ"}`
           : `<span class="muted">không trực tiếp</span>`}</b></div></div>`;
     };
-    el.innerHTML = `<div class="sechead"><h2 class="h2">House views</h2><span class="small muted">Dự báo từ quỹ, công ty chứng khoán, hãng tin và nghiên cứu nội bộ ·
+    return `<div class="sechead mt"><h3 class="h3">House views</h3><span class="small muted">Dự báo từ quỹ, công ty chứng khoán, hãng tin và nghiên cứu nội bộ ·
         ${rows.length} góc nhìn · <b>${mine}</b> liên quan danh mục của bạn</span></div>
-      <div class="cards2">${(view.allViews ? rows : rows.slice(0, 2)).map(card).join("")}</div>
+      <div class="cards2">${(view.allViews ? rows : rows.slice(0, 2)).map(vcard).join("")}</div>
       ${rows.length > 2 ? `<button type="button" class="btn sm mt" id="views-more">${view.allViews ? "Thu gọn" : `Xem thêm ${rows.length - 2} góc nhìn khác`}</button>` : ""}
-      <p class="small muted mt-xs">${icon("info", {size: 14})} ${esc(vs.note)}</p>`;
-    const more = el.querySelector("#views-more");
-    if (more) more.onclick = () => { view.allViews = !view.allViews; drawViews(); };
+      <p class="small muted mt-xs">${icon("info", {size: 14})} <span>${esc(vs.note)}</span></p>`;
   };
 
   const drawSections = () => {
-    const f = view.filter;
-    const list = rep.alerts.filter(a => f === "all" || (f === "opp" ? a.opportunity : !a.opportunity));
-    const pin = (a) => ({exposure: vnd(a.exposure), sensitivity: pct(a.sensitivity, true, 2), probability: pct(a.probability, false, 0)});
-    const card = (a) => `<div class="panel acard" data-focus="policy:${esc(a.id)}">
-        <div class="row tight">${sevPill(a)}<span class="chip">${esc(a.status_label)}</span></div>
-        <h4 data-explains>${esc(a.title)}</h4>
-        <p class="small" data-explains>${esc(a.message)}</p>
-        <div class="kv"><span>Tác động ước tính (đã tính xác suất)</span><b class="${a.impact >= 0 ? "up" : "down"}">${how(vnd(a.impact, true), "policy.impact", pin(a))} · ${how(pct(a.impact_pct, true, 2), "policy.impact", pin(a))} tài sản ròng</b></div>
-        <div class="kv"><span>Mức nắm giữ × Độ nhạy × Xác suất</span><b>${how(vnd(a.exposure), "policy.exposure", {count: String(a.affected.length)})} × ${how(pct(a.sensitivity, true, 2), "policy.sensitivity")} × ${how(pct(a.probability, false, 0), "policy.probability")}</b></div>
-        <div class="kv"><span>Khoản bị ảnh hưởng</span><b>${a.affected.map(esc).join(", ")}</b></div>
-        <div class="small muted mt-xs" data-explains>Nguồn: ${esc(a.source)}</div></div>`;
-    box.querySelector("#sections").innerHTML = Object.entries(KIND).map(([k, [en, vi, ic]]) => {
-      const items = list.filter(a => a.kind === k);
-      if (!items.length) return "";
-      const net = items.reduce((t, a) => t + a.impact, 0);
-      return `<section class="mt"><div class="sechead"><h2 class="h2"><span class="ic-chip sm">${icon(ic, {size: 14})}</span> ${en}</h2>
-        <span class="small muted">${vi} · ${items.length} tin · tổng tác động <b class="${net >= 0 ? "up" : "down"}">${how(vnd(net, true), "policy.net", {count: String(items.length)})}</b></span></div>
-        <div class="cards2">${items.map(card).join("")}</div></section>`;
+    const list = items.filter(keep);
+    const el = box.querySelector("#sections");
+    el.innerHTML = SECTIONS.map(([k, name, sub, ic]) => {
+      const items = list.filter(a => a.section === k);
+      const extra = k === "exclusive" ? views() : "";
+      if (!items.length && !extra) return "";
+      return `<section class="mt"><div class="sechead"><h2 class="h2"><span class="ic-chip sm">${icon(ic, {size: 14})}</span> ${name}</h2>
+        <span class="small muted">${sub} · ${items.length} tin</span></div>
+        ${items.length ? `<div class="cards2">${items.map(card).join("")}</div>` : ""}${extra}</section>`;
     }).join("");
+    const more = el.querySelector("#views-more");
+    if (more) more.onclick = () => { view.allViews = !view.allViews; drawSections(); };
   };
 
   drawImpact();
-  drawViews();
   drawSections();
 }

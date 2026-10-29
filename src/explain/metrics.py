@@ -280,12 +280,6 @@ metric(
     limit="Ngưỡng",
 )
 metric(
-    "perf.realized_ytd",
-    "Lãi/lỗ đã chốt từ đầu năm",
-    "Đã chốt = lãi/lỗ của các lệnh bán từ 1/1 theo sao kê chứng khoán (TCBS), cộng các thành viên khi xem cả gia đình.",
-    "src/consolidate/ops.py::tcbs",
-)
-metric(
     "perf.unrealized",
     "Lãi/lỗ chưa chốt",
     "Chưa chốt = Σ (giá trị hôm nay − giá vốn) của cổ phiếu, quỹ, trái "
@@ -313,14 +307,6 @@ metric(
     D + "performance",
     mine="Danh mục",
     bench="Chỉ số",
-)
-metric(
-    "perf.class",
-    "Lãi/lỗ theo loại",
-    "Theo loại = Σ (giá trị − giá vốn) của các khoản cùng loại có giá vốn; phần trăm = lãi/lỗ ÷ giá vốn của loại.",
-    D + "performance",
-    value="Giá trị",
-    cost="Giá vốn",
 )
 metric(
     "class.return",
@@ -533,35 +519,6 @@ metric(
 
 # ── Chi phí chính sách (client) ──────────────────────────────────────────────────────────────────────────
 metric(
-    "policy.exposure",
-    "Mức chịu tác động",
-    "Mức chịu tác động = cộng giá trị hôm nay các khoản mà chính sách chạm "
-    "tới (theo loại tài sản, khu vực, ngành hoặc mã trong quy tắc của chính sách).",
-    "src/impact/ops.py::score",
-    count="Số khoản",
-)
-metric(
-    "policy.sensitivity",
-    "Độ nhạy",
-    "Độ nhạy = phần giá trị dịch chuyển nếu chính sách xảy ra, theo quy tắc của "
-    "chính sách (thuế, phí, chênh lệch giá, vùng dự án…); câu mô tả của mục nêu căn cứ.",
-    "src/impact/ops.py::score",
-)
-metric(
-    "policy.net",
-    "Tổng tác động của một nhóm tin",
-    "Tổng = cộng tác động ước tính (đã tính xác suất) của các mục trong nhóm đang hiển thị.",
-    "web/pages/policy.js::drawSections",
-    count="Số tin",
-)
-metric(
-    "goals.gap_total",
-    "Tổng còn thiếu của các mục tiêu cần chú ý",
-    "Tổng = Σ phần còn thiếu của các mục tiêu đang theo dõi chưa đúng tiến độ.",
-    "web/pages/policy.js::render",
-    count="Số mục tiêu",
-)
-metric(
     "view.exposure",
     "Phần danh mục liên quan một góc nhìn",
     "Liên quan = cộng giá trị hôm nay các khoản thuộc mã, khu vực hoặc loại tài sản mà góc nhìn nói tới.",
@@ -642,18 +599,10 @@ metric(
     A,
 )
 metric(
-    "threshold.pre_review",
-    "Ngưỡng RM xem trước",
-    "Một thiết lập (Cấu hình → ngưỡng, CIO sửa, có phê duyệt): gia "
-    "đình có kịch bản xấu 3 tháng (P10) bằng hoặc thấp hơn ngưỡng này, tính theo tài sản ròng, được đưa vào danh sách "
-    "RM xem trước.",
-    "src/apply/reads.py::rm_today",
-)
-metric(
     "impact.p10_3m",
     "Kịch bản xấu 3 tháng (P10)",
-    "P10 = mốc 10% của phân bố tác động 3 tháng (10% khả năng thấp "
-    "hơn), tính theo tài sản ròng; trong danh sách là sự kiện có P10 xấu nhất của gia đình.",
+    "P10: 1 trong 10 khả năng kết quả 3 tháng xấu hơn mức này (mốc 10% "
+    "của phân bố tác động), tính theo tài sản ròng; trong danh sách là sự kiện có P10 xấu nhất của gia đình.",
     "src/engine/scenario.py::evaluate",
     event="Sự kiện",
 )
@@ -664,7 +613,7 @@ metric(
     A,
 )
 
-# ── Đo lường, Agent (CIO, Tuân thủ, Admin) ──────────────────────────────────────────────────────────────
+# ── Đo lường, Agent (CIO, Admin) ────────────────────────────────────────────────────────────────────
 R = "src/measure/reports.py::"
 metric(
     "measure.no_edit",
@@ -711,7 +660,7 @@ metric(
     "measure.contact_signal_share",
     "Liên hệ bắt đầu từ tín hiệu hệ thống",
     "Tỷ lệ = số liên hệ RM ghi là bắt đầu từ một tín hiệu ÷ tổng số liên hệ RM ghi trong tháng. Tín hiệu: một dòng ở "
-    "Hôm nay (gia đình cần xem trước sau một lần áp dụng, hoặc việc theo mục tiêu do quy định mới), được kiểm khi ghi. "
+    "Tổng quan của RM (gia đình cần xem trước sau một lần áp dụng, hoặc việc theo mục tiêu do quy định mới), được kiểm khi ghi. "
     "Mục tiêu ≥ 50 %.",
     "src/contacts/store.py::share",
     month="Tháng",
@@ -733,7 +682,7 @@ metric(
     "measure.control_effect",
     "Hiệu quả kinh doanh: có và không có công cụ",
     "Chênh lệch = trung bình nhóm có công cụ − trung bình nhóm đối chứng, theo quý; khoảng tin cậy 90 % = chênh lệch ± "
-    "1,645 × sai số chuẩn (Welch). Nhóm đối chứng: tỷ lệ gia đình do Tuân thủ cấu hình (mặc định 10 %), rút trong từng "
+    "1,645 × sai số chuẩn (Welch). Nhóm đối chứng: tỷ lệ gia đình do CIO cấu hình (mặc định 10 %), rút trong từng "
     "tầng (phân khúc × RM) theo seed; RM không nhận tín hiệu nào cho họ, khách vẫn được phục vụ đủ. Chỉ số: liên hệ "
     "mỗi gia đình mỗi tháng, tỷ lệ mục tiêu “Đạt” sau lần áp dụng cuối quý, khuyến nghị hành động được duyệt mỗi gia "
     "đình. Dưới hai gia đình một nhóm thì không tính khoảng.",
@@ -938,6 +887,141 @@ metric(
     "Một thiết lập, không phải kết quả tính: mục tiêu KPI-02 của BRD, đọc từ nguồn đối chiếu tin.",
     "src/news/reference.py::coverage",
 )
+# ── the agents' evaluation (AGENT_EVALUATION_PLAN E5): View A and View B of the trial page ─────────────────────
+E = "src/trial/evaluate.py::"
+F = "src/trial/finance.py::"
+metric(
+    "collect.relevant",
+    "Tin liên quan danh mục",
+    "Tỷ lệ = số tin giữ lại trong ngày (theo giờ thu thập) có mức liên quan cao hoặc vừa và không bị giữ lại ÷ số tin "
+    "giữ lại trong ngày.",
+    "src/news/monitor.py::days",
+    hits="Tin liên quan",
+    n="Tin giữ lại",
+)
+metric(
+    "collect.portfolio",
+    "Tin tác động danh mục",
+    "Số tin thu trong ngày (theo giờ thu thập) thuộc một sự kiện đã có lần áp dụng RM xem được (hiệu lực, đã thay hoặc "
+    "đã rút) với ít nhất một gia đình có kỳ vọng 3 tháng khác 0. Số này tăng sau ngày thu, khi nhận định được duyệt.",
+    "src/news/monitor.py::reached",
+    families="Gia đình chạm tới",
+)
+metric(
+    "collect.portfolio_draft",
+    "Tin tác động danh mục (nháp thử nghiệm)",
+    "Số tin thu trong ngày (theo giờ thu thập) thuộc một sự kiện thử nghiệm mà bản nháp của agent, nếu được duyệt, "
+    "chạm tới ít nhất một gia đình: phơi nhiễm 3 tháng của gia đình chốt sáng hôm đó × biến động kỳ vọng của bản nháp "
+    "khác 0. Không ai duyệt bản nháp thử nghiệm; số này tăng sau ngày thu, khi buổi sáng kế tiếp dùng tin.",
+    "src/news/monitor.py::drafted",
+    families="Gia đình chạm tới",
+)
+metric(
+    "collect.skipped",
+    "Tin quá cũ",
+    "Tin đọc được nhưng đăng trước lúc thu quá max_age_days ngày (data/news_config.json, hiện 7), bỏ qua: tin cũ "
+    "không phải sự kiện mới. Đọc = quá cũ + trùng + mới.",
+    "src/news/rules.py::gate",
+)
+metric(
+    "collect.duration",
+    "Thời gian lấy tin trong ngày",
+    "Tổng thời gian chạy của các lần lấy tin trong ngày, chỉ các lần có ghi thời gian (từ 24/10/2026); số lần có ghi "
+    "đứng bên cạnh.",
+    "src/news/monitor.py::days",
+    runs="Lần có ghi thời gian",
+)
+metric(
+    "eval.precision",
+    "Độ chính xác của agent",
+    "Một biến động là một yếu tố, một kỳ hạn, từ giá đóng cửa trước một buổi sáng; nhiều bản nháp cùng nói về nó được "
+    "chấm một lần. Agent “nói” khi kỳ vọng vượt ¼ biến động thường của kỳ; biến động lớn khi thị trường đi quá 1 lần "
+    "biến động thường (data/evaluation.json). Tỷ lệ = số lần nói đúng hướng và thị trường đi đủ mạnh ÷ số lần nói. "
+    "Chờ chấm, loại ra và không chấm được không tính.",
+    E + "rates",
+    hits="Đúng",
+    n="Số lần agent nói",
+)
+metric(
+    "eval.recall",
+    "Độ phủ biến động lớn",
+    "Tỷ lệ = số biến động lớn agent nói đúng ÷ số biến động lớn trong các buổi sáng agent đã chạy (đúng + sai hướng + "
+    "không nói). Buổi sáng không chạy được đếm riêng.",
+    E + "rates",
+    hits="Đúng",
+    n="Biến động lớn",
+)
+metric(
+    "eval.call_direction",
+    "Đúng hướng khi agent ra tín hiệu",
+    "Chỉ các lần agent nói tăng hoặc giảm (đúng hoặc sai, thị trường có đi). Tỷ lệ = số lần thị trường đi đúng chiều agent "
+    "nói, mạnh hay yếu ÷ số lần nói. Bên cạnh: cách đoán ngây thơ tốt nhất trên cùng các lần đó (luôn nói tăng, hoặc "
+    "luôn nói giảm — chọn sau khi biết kết quả) và xác suất tung đồng xu đúng được bằng chừng ấy lần.",
+    E + "call_direction",
+    hits="Đúng chiều",
+    n="Số lần agent nói",
+)
+metric(
+    "eval.event_recall",
+    "Tin quan trọng vào sự kiện",
+    "Tin quan trọng của nguồn đối chiếu (từ hai báo trở lên) mà ta đã thu trong khoảng của một buổi sáng. Tỷ lệ = số "
+    "tin trong số đó nằm trong một sự kiện của buổi sáng ÷ số tin đó.",
+    E + "event_recall",
+    hits="Vào sự kiện",
+    n="Tin quan trọng",
+)
+metric(
+    "eval.move",
+    "Biến động của yếu tố",
+    "Biến động của yếu tố từ giá đóng cửa trước buổi sáng (gốc) đến ngày đến hạn, theo đơn vị của yếu tố.",
+    E + "judge_move",
+    unit="Đơn vị",
+)
+metric(
+    "eval.vnd_effect",
+    "Tác động lên danh mục mô phỏng",
+    "Tác động = độ nhạy của danh mục gia đình với yếu tố (VND mỗi đơn vị, chụp buổi sáng đó, từ hệ số tải của mô hình) "
+    "× biến động thực tế. Mô phỏng, không phải lãi lỗ thật.",
+    F + "value",
+)
+metric(
+    "eval.vnd_correct",
+    "Giá trị các lần gọi đúng (mô phỏng)",
+    "Với mỗi lần agent nói đúng: |độ nhạy × biến động thực tế|, cộng qua các gia đình — nếu gia đình làm theo toàn bộ. "
+    "Không chứng minh agent gây ra lãi.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_incorrect",
+    "Thiệt của các lần gọi sai (mô phỏng)",
+    "Với mỗi lần agent nói sai: −|độ nhạy × biến động thực tế|, cộng qua các gia đình — nếu gia đình làm theo toàn bộ.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_net",
+    "Ròng mô phỏng",
+    "Ròng = giá trị các lần gọi đúng − thiệt của các lần gọi sai. Cơ hội bỏ lỡ không trừ vào ròng. Dự báo chờ chấm, "
+    "loại ra hoặc không có ảnh chụp danh mục không tính.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_warning",
+    "Cảnh báo giảm đúng (mô phỏng)",
+    "Các lần gọi đúng mà biến động làm danh mục gia đình giảm (độ nhạy × biến động < 0): giá trị của lời cảnh báo.",
+    F + "_totals",
+    n="Số lần",
+)
+metric(
+    "eval.vnd_missed",
+    "Cơ hội bỏ lỡ (mô phỏng)",
+    "Với mỗi biến động lớn agent không nói: |độ nhạy × biến động thực tế|, cộng qua các gia đình. Hiện bên cạnh, không "
+    "trừ vào ròng.",
+    F + "_totals",
+    n="Số lần",
+)
 metric(
     "scenario.move",
     "Biến động của một yếu tố trong kịch bản",
@@ -1008,4 +1092,109 @@ metric(
     "Tỷ lệ = giá trị các khoản mà tác động phải ước bằng một đại diện (bất động sản, cổ phần tư nhân: không có giá "
     "thị trường hằng ngày) ÷ tổng tài sản. Phần này càng lớn, ước tính càng kém chắc chắn.",
     "src/apply/run.py::compute",
+)
+# ── ASSET_ALLOCATION_BRD: the three buckets (web/pages/allocation.js) and the CIO's tilts (web/pages/events.js) ──
+metric(
+    "alloc.liquidity",
+    "Giỏ Thanh khoản",
+    "Đang có = tiền mặt + tiền gửi của hộ. Cần = phần âm sâu nhất của dòng tiền cộng dồn trong số năm của giả định "
+    "(chi đều + khoản lớn đã lên lịch + trả nợ, trừ thu nhập theo cách tính: A không tính thu nhập, B tính đủ, C chỉ "
+    "phần chắc chắn) + đệm số tháng chi tiêu của giả định. Thiếu = cần − đang có; dư = đang có − cần.",
+    "src/allocation/_cashflow.py::table",
+    method="Cách tính",
+)
+metric(
+    "alloc.legacy",
+    "Giỏ Di sản",
+    "Đang có = bất động sản + cổ phần doanh nghiệp + giá trị bảo hiểm (khoảng thấp khi giá giảm theo mức trong giả "
+    "định). Sàn = nợ còn lại + chi tiêu gia đình (chi đều một năm × phần người ở lại) đến khi con nhỏ nhất đủ tuổi + "
+    "học phí còn lại + mong muốn để lại. Thiếu = sàn − đang có (khoảng: theo giá thấp và giá hiện tại).",
+    "src/allocation/_engine.py::legacy",
+)
+metric(
+    "alloc.growth",
+    "Giỏ Tăng trưởng",
+    "Giá trị = cổ phiếu + quỹ + trái phiếu + vàng + tài sản mã hóa của hộ, sau khi đã bù giỏ Thanh khoản. Mô hình = "
+    "lợi nhuận kỳ vọng của danh mục mục tiêu theo mức rủi ro (mỗi loại × tỷ trọng mục tiêu, sau nghiêng của CIO).",
+    "src/allocation/_model.py::expected_return",
+)
+metric(
+    "alloc.retirement",
+    "Nghỉ hưu: cần, dự kiến đạt, lợi nhuận cần",
+    "Cần khi nghỉ = chi tiêu một năm × (1 + lạm phát)^số năm đến khi nghỉ × bội số rút. Dự kiến đạt = giỏ Tăng trưởng "
+    "và tiết kiệm mỗi năm cộng lãi theo lợi nhuận mô hình. Lợi nhuận cần = mức nhỏ nhất (bước 0,1%) để đạt đủ. "
+    "Thiếu = cần − dự kiến đạt; tiết kiệm thêm = khoản mỗi tháng bù đủ phần thiếu.",
+    "src/allocation/_engine.py::retirement",
+)
+metric(
+    "alloc.action",
+    "Số tiền của một việc nên trao đổi",
+    "Bù Thanh khoản: phần thiếu của giỏ, lấy theo thứ tự trong 'Cách bù phần thiếu'. Mua / bán: phần chênh giữa tỷ "
+    "trọng mục tiêu và hiện tại của giỏ Tăng trưởng. Di sản: phần thiếu so với sàn (khoảng theo giá).",
+    "src/allocation/_engine.py::actions",
+)
+metric(
+    "alloc.cashflow",
+    "Dòng tiền theo năm",
+    "Mỗi năm: thu nhập − chi đều − khoản lớn đã lên lịch − trả nợ = ròng. Đáy = mức cộng dồn thấp nhất. Đệm = chi tiêu "
+    "một tháng × số tháng đệm. Lãi vay tăng: dư nợ thả nổi × mức tăng ÷ 12 mỗi tháng.",
+    "src/allocation/_cashflow.py::table",
+)
+metric(
+    "alloc.ladder",
+    "Bậc thang Thanh khoản",
+    "Phần cần của giỏ chia theo lúc dùng: khoản lớn sắp đến hạn ở bậc ngắn, đệm chi tiêu ở bậc linh hoạt.",
+    "src/allocation/_engine.py::ladder",
+)
+metric(
+    "alloc.rebalance",
+    "Mô hình Tăng trưởng: hiện tại, mục tiêu, mua / bán",
+    "Hiện tại = giá trị mỗi loại ÷ giỏ Tăng trưởng. Mục tiêu = tỷ trọng mô hình của mức rủi ro ± nghiêng của CIO "
+    "(trong ngoặc). Mua / bán = (mục tiêu − hiện tại) × giỏ Tăng trưởng.",
+    "src/allocation/_engine.py::rebalance",
+)
+metric(
+    "alloc.worst",
+    "Lỗ khi thị trường xấu",
+    "Σ giá trị mỗi loại × mức giảm của loại đó trong kịch bản xấu (data/model_portfolio.json) ÷ tổng giỏ Tăng trưởng; "
+    "trước và sau khi cân lại.",
+    "src/allocation/_engine.py::worst",
+)
+metric(
+    "alloc.reconcile",
+    "Đối chiếu ba giỏ",
+    "Tổng tài sản − nợ = tài sản ròng; ba giỏ cộng lại (trừ nợ) phải bằng tài sản ròng.",
+    "src/allocation/_engine.py::allocate",
+)
+metric(
+    "alloc.model",
+    "Tỷ trọng mô hình của một loại tài sản",
+    "Tỷ trọng gốc của mức rủi ro + nghiêng của CIO (±2 điểm mỗi lần, tối đa ±5); phần chênh vào tiền chờ đầu tư.",
+    "src/allocation/_model.py::tilted",
+    level="Mức rủi ro",
+)
+metric(
+    "alloc.bl",
+    "Tỷ trọng mô hình theo Black–Litterman",
+    "Tỷ trọng gốc của mức rủi ro là điểm xuất phát; mỗi lần CIO Tăng / Giảm một loại là một nhận định cộng / trừ "
+    "1 điểm % lợi nhuận năm cho loại đó; kết quả giữ trong ±5 điểm mỗi loại và trong khoảng cho phép, phần chênh vào "
+    "tiền chờ đầu tư. Độ biến động và tương quan là giả định của CIO (data/model_portfolio.json).",
+    "src/allocation/_model.py::black_litterman",
+    level="Mức rủi ro",
+)
+metric(
+    "alloc.eleven",
+    "Theo 11 loại tài sản",
+    "Đang có = giá trị mọi tài sản (hoặc khoản vay) của loại đó trong hộ, ở mọi giỏ. Trong Tăng trưởng = phần nằm "
+    "trong giỏ Tăng trưởng. Mục tiêu = tỷ trọng mô hình của nhóm × tỷ lệ chia của CIO × giỏ Tăng trưởng; loại không "
+    "thuộc giỏ Tăng trưởng không có mục tiêu.",
+    "src/allocation/_model.py::eleven",
+)
+metric(
+    "policy.certain",
+    "Số tiền chắc chắn nếu tin xảy ra",
+    "Theo hợp đồng hoặc quy định, không ước tính (NEWS_EVIDENCE_BRD N1). Giảm trừ gia cảnh: phần thuế thu nhập cá "
+    "nhân bớt đi mỗi năm ÷ 12. Lãi suất: dư nợ lãi thả nổi × mức thay đổi lãi suất ÷ 12. Có hiệu lực từ kỳ ghi bên cạnh.",
+    "src/impact/_rules.py::rates",
+    event="Sự kiện",
 )

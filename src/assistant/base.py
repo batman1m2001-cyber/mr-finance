@@ -44,11 +44,16 @@ class Ctx:
     trail: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)  # this request's tool results, by call id
     asked: set = field(default_factory=set)  # call ids of the writes a resumed request answers
     graph: Dict[str, Any] = field(default_factory=dict)  # the workspace: lens, what is picked, active scenarios (F10)
+    queries: int = 0  # truy_van calls in this request (ADR-0040: at most three a turn)
+    recount: bool = False  # the person disputes a number of the last answer: this turn counts again (§3.5)
+    lang: str = "vi"  # the page's language: "en" answers in English, unless asked by voice (docs/LANGUAGE_PLAN.md L4–L5)
+    voice: bool = False  # asked by voice, the answer read aloud (docs/VOICE_PLAN.md V-D8): short, no tables
 
 
 @dataclass
 class Param:
-    """A free argument the model fills: typed and bounded by the tool, never a path, a query language or a URL."""
+    """A free argument the model fills: typed and bounded by the tool, never a path, a query language or a URL — with
+    one exception, ``truy_van``'s ``sql`` (ADR-0040), bounded by the data room it runs in (``assistant.dataroom``)."""
 
     type: Any
     description: str
@@ -76,6 +81,7 @@ class Tool:
     timeout: float = 30.0
     cost: str = "free"
     kind: str = "read"
+    reference: Optional[Callable[[str], str]] = None  # read with the description, per role (truy_van's catalog)
 
     def __post_init__(self):
         if self.write:

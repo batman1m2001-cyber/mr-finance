@@ -28,8 +28,6 @@ COPILOT = (
     "su_kien",
     "canh_bao_he_thong",
     "agent_nen",
-    "ban_chuyen_gia",
-    "ban_kiem_soat",
     "chuoi_nhat_ky",
     "cau_hinh_cho_duyet",
     "van_hanh",

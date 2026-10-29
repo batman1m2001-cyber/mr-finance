@@ -1,13 +1,13 @@
 """Versioned, owned configuration (BRD FR-701, §13.1, ADR-0016): propose, then approve.
 
-Kinds (BRD-RULE-SEC-05): the factor model, alert thresholds and return assumptions (CIO); the restricted list,
-forbidden phrases and data-sharing consent (Compliance); the news sources, the market data sources and the ticker
-map (Admin); the agents' prompts and models (Admin). Version 1 of each is the file shipped in data/ (or the
-defaults in code; for the models, what the deployment set in .env); every change is a new version that is
-PROPOSED, then APPROVED (it becomes ACTIVE and the one before SUPERSEDED) or REJECTED, by a user of the owner's
-role. Where §13.1 and F14 ask for two people, the approver must not be the proposer. A prompt or model proposal
-is approved only after the fixed eval set passed on it (MEAS-07, ``views.evalset``, the ``agent_eval`` job). Every
-step is in the audit chain, and the content of each version is hashed.
+Kinds (BRD-RULE-SEC-05): the factor model, alert thresholds and return assumptions (CIO); the restricted list, forbidden
+phrases and data-sharing consent (Compliance's until OWN-FB-18, the CIO's now); the news sources, the market data
+sources and the ticker map (Admin); the agents' prompts and models (Admin). Version 1 of each is the file shipped in
+data/ (or the defaults in code; for the models, what the deployment set in .env); every change is a new version that is
+PROPOSED, then APPROVED (it becomes ACTIVE and the one before SUPERSEDED) or REJECTED, by a user of the owner's role.
+Where §13.1 and F14 ask for two people, the approver must not be the proposer. A prompt or model proposal is approved
+only after the fixed eval set passed on it (MEAS-07, ``views.evalset``, the ``agent_eval`` job). Every step is in the
+audit chain, and the content of each version is hashed.
 """
 
 from __future__ import annotations
@@ -206,7 +206,7 @@ def _check_related(data: Any) -> None:
         raise ValueError("mỗi tên là chuỗi 2–80 ký tự")
 
 
-# the bank and its group (BRD §14 CONTENT-03 names “tổ chức liên quan tới TCB hoặc TCBS”); Compliance keeps the list
+# the bank and its group (BRD §14 CONTENT-03 names “tổ chức liên quan tới TCB hoặc TCBS”); the CIO keeps the list
 RELATED = ["Techcombank", "TCB", "TCBS", "Techcom Securities", "Techcom Capital", "Techcom Life"]
 
 
@@ -229,40 +229,6 @@ def _check_assignment(data: Any) -> None:
     bad = sorted(f"{f}: {r}" for f, r in data.items() if r not in rms)
     if bad:
         raise ValueError(f"không phải RM: {bad}")
-
-
-# Who may approve action recommendations (BRD-RULE-ROLE-05, WF-08; BRD_REMAINING_PLAN G8, G-D7): a specialist with a
-# certificate in force. Demo values, not real certificates; two specialists are left uncertified on purpose.
-CERTIFICATIONS = {
-    "sp_global": {"certificate": "CFA (demo)", "issuer": "CFA Institute", "valid_until": "2027-12-31"},
-    "sp_insurance": {
-        "certificate": "Tư vấn bảo hiểm nhân thọ (demo)",
-        "issuer": "Bộ Tài chính",
-        "valid_until": "2027-06-30",
-    },
-    "sp_private": {"certificate": "CFP (demo)", "issuer": "FPSB", "valid_until": "2028-03-31"},
-}
-
-
-def _check_certifications(data: Any) -> None:
-    from datetime import date
-
-    from people import store
-
-    if not isinstance(data, dict):
-        raise ValueError("cần {mã chuyên gia: {certificate, issuer, valid_until}}")
-    specialists = {p["id"] for p in store.staff("specialist")}
-    for sid, c in data.items():
-        if sid not in specialists:
-            raise ValueError(f"{sid!r} không phải chuyên gia")
-        if not isinstance(c, dict) or not str(c.get("certificate") or "").strip() or len(str(c["certificate"])) > 100:
-            raise ValueError(f"{sid}: cần tên chứng chỉ (tối đa 100 ký tự)")
-        if not str(c.get("issuer") or "").strip():
-            raise ValueError(f"{sid}: cần nơi cấp")
-        try:
-            date.fromisoformat(str(c.get("valid_until")))
-        except ValueError:
-            raise ValueError(f"{sid}: valid_until là ngày YYYY-MM-DD") from None
 
 
 # The control group (BRD-RULE-MEAS-06; BRD_REMAINING_PLAN G9, G-D8): a share of the families, stratified, drawn
@@ -344,28 +310,28 @@ KINDS: Dict[str, Dict[str, Any]] = {
     },
     "restricted": {
         "label": "Danh sách hạn chế",
-        "owner": "compliance",
+        "owner": "cio",
         "two_person": True,
         "base": _file("news_config.json", "restricted"),
         "check": _check_restricted,
     },
     "forbidden_phrases": {
         "label": "Cụm từ cấm",
-        "owner": "compliance",
+        "owner": "cio",
         "two_person": False,
         "base": _forbidden_base,
         "check": _check_forbidden,
     },
     "consent": {
         "label": "Đồng ý chia sẻ dữ liệu",
-        "owner": "compliance",
+        "owner": "cio",
         "two_person": False,
         "base": lambda: json.loads(json.dumps(CONSENT)),
         "check": _check_consent,
     },
     "related_parties": {
         "label": "Bên liên quan (xung đột lợi ích)",
-        "owner": "compliance",
+        "owner": "cio",
         "two_person": False,
         "base": lambda: list(RELATED),
         "check": _check_related,
@@ -398,23 +364,16 @@ KINDS: Dict[str, Dict[str, Any]] = {
         "base": _assignment_base,
         "check": _check_assignment,
     },
-    "certifications": {
-        "label": "Chứng nhận chuyên gia",
-        "owner": "compliance",
-        "two_person": True,
-        "base": lambda: json.loads(json.dumps(CERTIFICATIONS)),
-        "check": _check_certifications,
-    },
     "control_group": {
         "label": "Nhóm đối chứng",
-        "owner": "compliance",
+        "owner": "cio",
         "two_person": True,
         "base": lambda: json.loads(json.dumps(CONTROL_GROUP)),
         "check": _check_control_group,
     },
     "assistant_retention": {
         "label": "Lưu giữ hội thoại với trợ lý",
-        "owner": "compliance",
+        "owner": "cio",
         "two_person": True,
         "base": lambda: {"archive_days": 365},  # a conversation is deleted this long after its last turn (A4)
         "check": _check_assistant_retention,

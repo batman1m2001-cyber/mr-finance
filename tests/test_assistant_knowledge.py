@@ -51,14 +51,14 @@ def mem(action, role="client", client_id="C01", **kw):
 
 def test_the_guide_answers_from_the_role_pages_with_the_page_to_open():
     out = tool("huong_dan", ctx("client"), q="quỹ khẩn cấp của tôi đủ dùng bao lâu")
-    assert "Bảng số liệu" in out["text"] and "6 tháng" in out["text"]  # the client's dashboard (UX_TOOLBAR_PLAN T4)
-    assert out["evidence"] == {"label": "Bảng số liệu", "route": "#/client/tong-quan/chi-tiet"}
-    assert out["sources"][0] == "Hướng dẫn sử dụng · Bảng số liệu"
+    assert "Wealth View" in out["text"] and "6 tháng" in out["text"]  # the client's dashboard (WEALTH_NAMES_PLAN)
+    assert out["evidence"] == {"label": "Wealth View", "route": "#/client/tong-quan"}
+    assert out["sources"][0] == "Hướng dẫn sử dụng · Wealth View"
     cio = tool("huong_dan", ctx("cio"), q="gộp tin thành sự kiện")
     routes = [p["route"] for p in cio["data"]["passages"] if p["route"]]
     assert routes and all(r.startswith("#/cio/") for r in routes)  # the CIO's pages, never a client's
-    mine = tool("huong_dan", ctx("compliance"), q="làm sao để trợ lý quên điều nó nhớ")
-    assert mine["evidence"]["route"] == "#/compliance/bo-nho"  # the shared page, at the person's own address
+    mine = tool("huong_dan", ctx("admin"), q="làm sao để trợ lý quên điều nó nhớ")
+    assert mine["evidence"]["route"] == "#/admin/bo-nho"  # the shared page, at the person's own address
 
 
 def test_the_guide_is_synced_once_and_an_unchanged_file_is_skipped():

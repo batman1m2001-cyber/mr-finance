@@ -1,11 +1,14 @@
 """The ingest steps: fetch every white-listed feed, pass each item through the gates, sort it,
-keep it; and the inbox actions (dismiss, Compliance's release of a held item)."""
+keep it; and the inbox actions (dismiss, the release of a held item)."""
 
 from __future__ import annotations
 
 import asyncio
+import ipaddress
 import json
+import socket
 import time
+import urllib.parse
 import urllib.request
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
@@ -39,6 +42,48 @@ def _get(url: str, timeout: float) -> bytes:
         return resp.read(rss.MAX_BYTES + 1)
 
 
+def _public(url: str) -> str:
+    """The host of an https ``url`` whose every address is public, or ValueError (the Nguồn tin test, N1)."""
+    u = urllib.parse.urlsplit(url)
+    if u.scheme != "https" or not u.hostname:
+        raise ValueError("chỉ thử url https")
+    try:
+        addrs = {a[4][0] for a in socket.getaddrinfo(u.hostname, u.port or 443, proto=socket.IPPROTO_TCP)}
+    except OSError as exc:
+        raise ValueError(f"không tìm thấy máy chủ {u.hostname}: {exc}") from None
+    for a in addrs:
+        ip = ipaddress.ip_address(a.split("%", 1)[0])
+        if not ip.is_global or ip.is_multicast:
+            raise ValueError(f"{u.hostname} trỏ về địa chỉ nội bộ {ip}: không thử")
+    return u.hostname
+
+
+class _Checked(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        _public(newurl)  # a redirect may not lead inside either
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def probe(url: str) -> Dict[str, Any]:
+    """Read one feed now, keep nothing: its item count and newest title, or why it failed (N1)."""
+    t0 = time.time()
+    try:
+        _public(url)
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        timeout = float(config()["gates"]["fetch_timeout_s"])
+        with urllib.request.build_opener(_Checked).open(req, timeout=timeout) as resp:
+            items = rss.parse(resp.read(rss.MAX_BYTES + 1))
+    except Exception as exc:  # noqa: BLE001 — the answer is the reason, for the Admin
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"[:300], "ms": round((time.time() - t0) * 1000)}
+    newest = max(items, key=lambda i: i.published or 0, default=None)
+    return {
+        "ok": True,
+        "items": len(items),
+        "newest": {"title": newest.title, "published": newest.published} if newest else None,
+        "ms": round((time.time() - t0) * 1000),
+    }
+
+
 @op
 async def fetch(feeds: Optional[dict] = None, now: Optional[float] = None) -> dict:
     """Every approved source's feed, at once. ``feeds`` ({source id: XML}) replaces the network
@@ -67,8 +112,9 @@ async def fetch(feeds: Optional[dict] = None, now: Optional[float] = None) -> di
         except Exception as exc:  # noqa: BLE001 — one dead feed must not stop the others
             return {"source": src["id"], "items": [], "error": f"{type(exc).__name__}: {exc}"[:200]}
 
+    started = time.time()
     fetched = await asyncio.gather(*(one(s) for s in sources))
-    return {"fetched": list(fetched), "at": at}
+    return {"fetched": list(fetched), "at": at, "started": started}
 
 
 @op
@@ -126,9 +172,60 @@ def screen(fetched: list, at: float) -> dict:
     return {"rows": rows, "counts": counts}
 
 
+NO_TIME = "Tin không có giờ công bố"  # rules.gate's reason
+
+
+def run_summary(
+    kept: List[Dict[str, Any]], dup: int, counts: Dict[str, Any], at: float, started: Optional[float] = None
+) -> Dict[str, Any]:
+    """The run's record (AGENT_EVALUATION_PLAN §2.1). The funnel: fetched = too old + duplicates + unique;
+    unique = refused + retained; relevant ⊆ retained, the agents' candidate rule (medium or high, not restricted).
+    ``at`` is the collection time every item gets as ``ingested``; ``started``/``finished`` the wall clock."""
+    from trial import segments
+
+    finished = time.time()
+    retained = [r for r in kept if r["status"] == "new"]
+    attempted = len(counts)
+    failed = sorted(sid for sid, c in counts.items() if c.get("error"))
+    configured = sum(1 for s in config()["sources"] if s.get("approved"))
+    fetched = sum(int(c.get("fetched") or 0) for c in counts.values())
+    skipped = sum(int(c.get("skipped") or 0) for c in counts.values())
+    by_category: Dict[str, int] = {k: 0 for k in (*segments.FAMILIES, "unclassified")}
+    for r in retained:
+        by_category[segments.family_of_item(r) or "unclassified"] += 1
+    return {
+        "at": at,
+        "started": started,
+        "finished": finished,
+        "duration_s": round(finished - started, 2) if started else None,
+        "status": "failed" if attempted == 0 or len(failed) == attempted else "partial" if failed else "ok",
+        "configured": configured,
+        "attempted": attempted,
+        "succeeded": attempted - len(failed),
+        "failed": len(failed),
+        "failed_sources": {sid: counts[sid]["error"] for sid in failed},
+        "fetched": fetched,
+        "skipped": skipped,
+        "duplicates": dup,
+        "unique": len(kept),
+        "added": len(retained),  # the inbox's new items: “retained” (the strip has read “added” since FEAT-01)
+        "retained": len(retained),
+        "refused": len(kept) - len(retained),
+        "relevant": sum(1 for r in retained if r.get("relevance") in ("high", "medium") and not r.get("restricted")),
+        "held": sum(1 for r in retained if r.get("restricted")),
+        "by_category": by_category,
+        "missing": {
+            "published": sum(1 for r in kept if r.get("refused_reason") == NO_TIME),
+            "summary": sum(1 for r in retained if not (r.get("summary") or "").strip()),
+            "category": by_category["unclassified"],
+        },
+        "sources": counts,
+    }
+
+
 @op
-def keep(rows: list, counts: dict, at: float) -> dict:
-    """The new items kept, and the run recorded for the feed-health strip."""
+def keep(rows: list, counts: dict, at: float, started: Optional[float] = None) -> dict:
+    """The new items kept, and the run recorded: the feed-health strip and the collection monitor."""
     kept, dup = store.add(rows)
     for sid, c in counts.items():  # a feed that failed raises an alert; one that answered resolves it (NFR-12)
         if c.get("error"):
@@ -136,14 +233,7 @@ def keep(rows: list, counts: dict, at: float) -> dict:
         else:
             alerts.resolve("news_feed", sid)
     added = [r["id"] for r in kept if r["status"] == "new"]
-    summary = {
-        "at": at,
-        "added": len(added),
-        "refused": len(kept) - len(added),
-        "duplicates": dup,
-        "held": sum(1 for r in kept if r["status"] == "new" and r.get("restricted")),
-        "sources": counts,
-    }
+    summary = run_summary(kept, dup, counts, at, started)
     store.record_run(summary)
     return {"ingest": {**summary, "ids": added}}
 
@@ -157,8 +247,9 @@ def dismiss(ids: list, by: str = "cio", note: str = "") -> dict:
 
 @op
 def release(item_id: str, by: str, note: str) -> dict:
-    """Compliance releases a held item; the note is required, and kept with who and when."""
-    roles.require(by, "compliance")
+    """The CIO releases a held item (Compliance's step before OWN-FB-18); the note is required, and kept with who
+    and when."""
+    roles.require(by, "cio")
     if not str(note or "").strip():
         raise ValueError("Cần ghi chú lý do cho phép")
     if not store.clear_hold(str(item_id), by=str(by), note=str(note).strip()):

@@ -1,31 +1,14 @@
 """declare_flow: one chat turn — the agent records what the client says (when AI is on), or the
-rules do — and what the turn added to their profile."""
+rules do — and what the turn added to their profile. declare_stream_flow: the same turn said as it happens
+(POST /api/declare/stream, Accept: text/event-stream)."""
 
 from operonx import END, START, graph
-from operonx.agents import Agent, AgentOp, Model, UsageLimits
+from operonx.agents import AgentOp
+from operonx.app.serve import egress, ingress
 from operonx.core.ops import if_
 
-from declare.ops import agent_answer, ai_mode, chat_session, check_request, recorded, rule_declare
-from declare.tools import TOOLS
-
-DECLARER = Agent(
-    name="declarer",
-    model=Model("assistant", deadline=45),
-    instructions=(
-        "Bạn là trợ lý của Mr. Finance, giúp khách hàng tự khai tài sản và hoàn cảnh gia đình mà "
-        "ngân hàng chưa thấy: bất động sản ngoài hệ thống, vàng, cổ phần doanh nghiệp, bảo hiểm, "
-        "khoản nợ bên ngoài, người phụ thuộc, thu nhập khác. Với mỗi điều khách nói, gọi đúng công cụ "
-        "để ghi lại; tiền tính bằng tỷ hoặc triệu như khách nói. Không đoán con số khách không nói. "
-        "Sau khi ghi, trả lời ngắn gọn bằng tiếng Việt: liệt kê những gì đã ghi và hỏi thêm thông tin "
-        "còn thiếu (ví dụ diện tích hoặc giá trị hiện tại của một căn nhà). Không đưa lời khuyên đầu tư. "
-        'Xưng "em", gọi khách hàng là "anh/chị", nhất quán trong mọi câu. Trả lời bằng văn bản thường: '
-        'khung chat không hiển thị markdown, nên không dùng **, #, hay bảng; liệt kê bằng dấu gạch đầu dòng "- ".'
-    ),
-    tools=TOOLS,
-    limits=UsageLimits(turns=6, tool_calls=12),
-)
-# the same agent on the bank's own model, for client_ai = onprem (BRD-NFR-08, control/barrier.py)
-DECLARER_ONPREM = DECLARER.clone(model=Model("onprem", deadline=45))
+from declare.agent import DECLARER, DECLARER_ONPREM
+from declare.ops import agent_answer, ai_mode, chat_session, check_request, recorded, rule_declare, stream_declare
 
 
 @graph
@@ -63,3 +46,12 @@ def declare_flow(client_id, message, session_id=None):
     said >> turn
     rules >> turn
     turn >> END
+
+
+@graph
+def declare_stream_flow():
+    """The body is the one request (as POST /api/declare takes it); every event of the turn goes back at once."""
+    src = ingress()
+    ev = stream_declare(item=src["item"])
+    out = egress(item=ev["event"])
+    START >> src >> ev >> out >> END

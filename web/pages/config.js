@@ -2,14 +2,14 @@
    The owner's role proposes; a user of the same role approves — another person where §13.1 asks for two. Everyone
    acts as themselves (signed in). A prompt or model proposal shows the fixed eval set's result: it is approved only
    when the set passed (MEAS-07). */
-import {esc, get, n as how, post, toast, when} from "../core/core.js";
+import {LOCALE, esc, get, n as how, post, toast, when} from "../core/core.js";
 
 const STATUS = {ACTIVE: ["good", "Đang áp dụng"], PROPOSED: ["warn", "Chờ duyệt"], SUPERSEDED: ["", "Đã thay"], REJECTED: ["bad", "Từ chối"]};
 const LABEL = {pre_review_pct: "RM xem trước khi P10 3 tháng ≤ (tỷ lệ tài sản ròng)", concentration_share: "Hậu kiểm: một tài sản chiếm >",
   modelled_share: "Hậu kiểm: phần tính theo mô hình >", implausible_share: "Hậu kiểm: tác động 3 tháng >",
   safe: "Tiền gửi 12 tháng", growth: "Danh mục cân bằng, dài hạn", inflation: "Lạm phát", withdrawal: "Tỷ lệ rút an toàn",
   rental_yield: "Lợi suất cho thuê BĐS", best_deposit: "Lãi tiền gửi tốt nhất"};
-const pc = (x) => `${(x * 100).toLocaleString("vi-VN", {maximumFractionDigits: 2})} %`;
+const pc = (x) => `${(x * 100).toLocaleString(LOCALE, {maximumFractionDigits: 2})} %`;
 const MODE = {live: "Chạy thật trong TCB (live)", inbox: "Hộp chờ: vùng AI chạy, TCB nhập gói đã ký", mock: "Mô phỏng, không gọi mô hình"};
 const CLIENT_AI = {demo: "Demo: hai bước của khách gọi mô hình bên ngoài (ADR-0018)",
   onprem: "Trong ngân hàng: hai bước của khách gọi llm:onprem; dữ liệu khách không ra ngoài",
@@ -87,7 +87,7 @@ export async function render(box, ctx) {
             <textarea data-edit rows="${["thresholds", "return_assumptions", "models"].includes(k.kind) ? 7 : 12}" style="width:100%;font-family:monospace;font-size:12px;margin-top:8px">${esc(JSON.stringify(a.data, null, 1))}</textarea>
             <div class="row mt"><input data-note placeholder="Lý do" style="flex:1"><button type="button" class="btn sm" data-propose>Gửi đề xuất</button></div></details>`
           : own ? `<div class="small muted mt">Đề xuất từ trang Mô hình (ước lượng) hoặc qua <code>POST /api/config/propose</code>.</div>` : ""}
-        <details class="more mt"><summary>Lịch sử (${k.versions.length})</summary><table class="table"><tbody>${k.versions.map(v => `<tr><td>v${v.version}</td><td><span class="badge ${(STATUS[v.status] || [""])[0]}">${(STATUS[v.status] || ["", v.status])[1]}</span></td><td class="small">${esc(v.proposed_by || "")}${v.decided_by ? " → " + esc(v.decided_by) : ""}${v.eval && v.eval.status === "done" ? ` · đánh giá ${v.eval.passed ? "đạt" : "không đạt"}` : ""}</td><td class="small muted">${v.created ? when(v.created) : "tệp gốc"}</td></tr>`).join("")}</tbody></table></details>
+        <details class="more mt"><summary>Lịch sử (${k.versions.length})</summary><div class="scrollx"><table class="table"><tbody>${k.versions.map(v => `<tr><td>v${v.version}</td><td><span class="badge ${(STATUS[v.status] || [""])[0]}">${(STATUS[v.status] || ["", v.status])[1]}</span></td><td class="small">${esc(v.proposed_by || "")}${v.decided_by ? " → " + esc(v.decided_by) : ""}${v.eval && v.eval.status === "done" ? ` · đánh giá ${v.eval.passed ? "đạt" : "không đạt"}` : ""}</td><td class="small muted">${v.created ? when(v.created) : "tệp gốc"}</td></tr>`).join("")}</tbody></table></div></details>
       </div>`;
     }).join("")}</div>`;
   for (const b of box.querySelectorAll("[data-decide]")) b.onclick = async () => {

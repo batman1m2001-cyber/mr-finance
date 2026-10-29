@@ -91,7 +91,7 @@ CLIENTS = {
     "C05": {"rm": "hcm", "lead": ["real_estate", "banking"], "scale": 0.3},
 }
 
-AGENTS = [
+AGENTS = [  # the owner's names (OWN-FB-06)
     {"id": "news", "name": "AI News Reader", "name_vi": "AI đọc báo, tổng hợp tin"},
     {"id": "impact", "name": "AI Impact Assessor", "name_vi": "AI đánh giá tác động lên danh mục"},
     {"id": "planner", "name": "AI Planning Advisor", "name_vi": "AI tư vấn kế hoạch và hành động"},

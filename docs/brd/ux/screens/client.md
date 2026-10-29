@@ -8,6 +8,24 @@ Shared by every client screen: the shell (role switcher, client picker, Cá nhâ
 footer disclaimer ([information architecture](../information_architecture.md#the-shell)). The RM sees SCR-CL-01,
 02, 03 and 06 inside “Khách hàng” in staff mode.
 
+**Where each screen sits now (2026-10-22, [ADR-0037](../../decisions/ADR-0037-the-clients-four-sections-carry-the-banks-names.md)).**
+The client's menu is the bank's four sections ([business feedback 2](../../sources/owner_requests/2026-10-22_business_feedback_2.md));
+the screens below keep their IDs, routes and content, and a client page's heading is its section and tab:
+
+| Section (rail) | Tab | Screen | Route |
+|---|---|---|---|
+| Wealth View | Wealth view | SCR-CL-01 + SCR-CL-08's month flows, one dashboard: net worth and sources, allocation, P&L, cash flow, the month, risk, reserve, policy | `#/client/tong-quan` (also `…/toan-canh`, `…/chi-tiet`, `…/ban-do`, `#/client/dong-tien` at its cash flow) |
+| Wealth View | Dữ liệu chi tiết tài sản | SCR-CL-02 | `#/client/tai-san` |
+| Wealth Planning Advisor | Wealth planning advisor | SCR-CL-03 | `#/client/muc-tieu/ke-hoach` |
+| Wealth Planning Advisor | Risk profile test | SCR-CL-04 | `#/client/rui-ro/khau-vi` |
+| Headline News | News and Prediction · Đồ thị tác động | SCR-CL-06 (titled “News and Prediction”), CL-09 | `#/client/tin/chinh-sach`, `…/do-thi` |
+| — (no tab, feedback 3) | Tác động tin | SCR-CL-05 | `#/client/tin/thi-truong`: the bell's and the feed's evidence |
+| Relationship specialist | — | SCR-CL-07 (titled “Relationship specialist”) | `#/client/chuyen-gia` |
+| — (hidden from the client) | — | SCR-CL-11, SCR-CL-12 (the graph) | only `#/client/xem/<lens>`, linked from nowhere |
+
+News and Prediction's Wealth Check line reads green when ahead of VN-Index and red when behind (business item 6;
+every KPI's ahead/behind line had been grey).
+
 ---
 
 ## SCR-CL-01 — Tổng quan (overview)
@@ -190,10 +208,19 @@ a footnote with what stays unallocated (BR-08); runs stored before F10 show the 
 | Screenshot | [desktop](../../assets/current_ui/SCR-CL-06_desktop-light.jpg), [phone](../../assets/current_ui/SCR-CL-06_phone-light.jpg) |
 
 **Layout.** “Kiểm tra tài sản” (Wealth check until 2026-10-20; YTD return vs benchmark, goals tracked, required actions, link to the planning
-advisor); **Tác động lên tài sản ròng** (diverging bars per policy, filter all / risks / opportunities, the formula);
+advisor); **Tác động lên tài sản ròng** (diverging bars per policy, filter all / risks / opportunities and by horizon, the
+formula; since 2026-10-27 each row ends in its horizon and, for gold, bonds and the exchange rate, its VND
+estimate, else its level, “Cao · 1 tháng”, and an item on business equity only in “Tích cực” / “Tiêu cực”; the
+cards the same);
 **House views** (8 mock research-house views matched to holdings, 2 shown + “Xem thêm”); the mock-data and
-legal-status notes; **Policy headlines** — one card per policy with level, legal status, the impact (with
+legal-status notes; **Policy headlines** — one card per policy with level, horizon, legal status, the impact (with
 probability), holding × sensitivity × probability, the holdings touched, the source line.
+
+**Since 2026-10-29 (feedback Chỉnh UI-UX).** The formula line under “Tác động lên tài sản ròng” is gone (each number
+still opens its formula). A bar's tip lists its precedents in brief (two, then “… và N tiền lệ khác”; the measured
+sentence on the statistics branch). Each card shows its precedents itself — event, outcome, source — in a box that
+scrolls inside the card when long; the card's “Bằng chứng” button is gone (the bar still opens the whole frame). The
+alert's `evidence` carries `precedents` and `sentence` (`src/evidence/frames.py::summary`).
 
 **DEF-01 (fixed 2026-10-15).** The “Wealth check” card was squeezed into an 18 px column at 1440 px: the new pages'
 `.check` checklist rule (`web/core/tokens.css`) also matched this legacy card. The rule is now scoped to `#page-new`.
@@ -338,8 +365,8 @@ events and policy items by impact, or the selected node — figures, “Mở r�
 selection lights its links and hides the other labels. News edges are dashed (“có thể ảnh hưởng”). Phones open on
 the list.
 
-**Tests.** `tests/test_overview.py`; `tests/ui/test_pages.py::test_the_overview_graph_selects_expands_and_opens_pages`,
-`tests/ui/test_pages.py::test_the_overview_graph_is_a_list_on_a_phone`.
+**Tests.** `tests/test_overview.py`. The RM's page view of this graph (Bản đồ) was retired by OWN-FB-02 (2026-10-24)
+with its two browser tests; the Customer's graph is the workspace (`tests/ui/test_graph_workspace_ui.py`).
 
 ---
 
@@ -374,3 +401,55 @@ and the dock stays reachable. (A full-screen sheet covered the dock, so the assi
 sheet was open.) Every animation has a still equivalent under reduced motion. Colour is never the only carrier of certainty (line style and a word).
 
 **Tests.** Planned in FEAT-40 “Acceptance”.
+
+## SCR-CL-13 — Phân bổ tài sản (Asset allocation)
+
+| | |
+|---|---|
+| Route | client `#/client/muc-tieu/phan-bo` (Wealth Planning Advisor → Asset allocation); RM `#/rm/khach-hang/phan-bo` (the client's Wealth planning advisor tab) |
+| Generation | new (ASSET_ALLOCATION_BRD, 2026-10-28) |
+| Feature | [FEAT-44](../../features/FEAT-44-asset-allocation.md) |
+| Requirements | OWN-AA-01…13 |
+| Data | `POST /api/allocation` {client_id, scope, method, assumptions, role, whatif?}; `POST /api/allocation/send` (RM) |
+
+**Journey.** The client sees what must stay ready, what they want to leave and what the rest must earn, and what to
+change; the RM opens the same page, checks each action and sends them to the specialist.
+
+**Layout (since 2026-10-29, feedback Chỉnh UI-UX ver2).** Four numbered parts.
+**01 · Tổng quan tài chính** — net worth (assets − debt) and liquidity (have, need, gap) in two figures; how many of the
+three goals are met; the client in one line (age, children, retirement, risk level, drawdown limit); folded, the
+profile with the three risk numbers each said for what it is: the level used to allocate (the lower of appetite and
+capacity), risk appetite (what the client wants), risk capacity (what the finances allow), the drawdown limit.
+**02 · Ưu tiên tài chính** — “Tôi cần làm gì ngay bây giờ?”: each problem with its issue, cause, deadline and proposed
+action, the most urgent first (Liquidity short → before the largest dated payment; the portfolio's bad-market loss
+above the limit; the Legacy gap → now; retirement → a long-term decision); a click opens that bucket.
+**03 · Ba giỏ tài sản** — the tabs carry an icon and what the bucket is for; Growth's tile says the assumed and the
+needed return and that the shortfall is in nominal prices at the retirement year. Each tab: **Cách tính** then
+**Cân nhắc thay đổi**, each change classed **Cần xử lý** (a threat to a goal or the risk limit), **Cân nhắc** (a better
+structure) or **Quyết định dài hạn**, never by its amount; the suitability check stays beside it.
+Thanh khoản: the two ways side by side; the 36-month chart (scheduled payments and the year-end bonus move it); the
+line-by-line table folded. Tăng trưởng: one source for every figure — assets today, what moves to Liquidity, the
+long-term capital, the yearly net cash flow, the assumed return, the expected value at retirement, the target, the
+needed return, the extra contribution; the rebalance before and after (now, target, trade, after) with where the
+money comes from, the bad-market loss before and after, and why it still suits a long-term goal. Di sản: the need,
+the bucket reconciled to what the family would receive (secured debt, insurance), the price-drop case step by step
+(the property's value, the drop, what is left, the gap), and four ways to close the gap side by side (keep, save,
+insure, both) with the monthly cost, what is covered today and what is left in N years.
+**04 · Kịch bản** — “Nếu thay đổi, kết quả sẽ ra sao?”: move money between Growth and Liquidity, change monthly
+spending, retire at another age; the same request with `whatif` {move, spending_change} (and `retirement_age`);
+the three goals now and in the scenario side by side, the change coloured, and why, folded.
+Folded at the end: the reconciliation, the assumptions (editable), for staff the bucket moves. Every figure opens how
+it is worked out.
+**Since round 3 (2026-10-29).** Each part's eyebrow and title stay frozen at the top while the part scrolls. The
+priorities are folded, one line each (number, short title, one line); the first is open with its class and deadline,
+the one figure that says it, the recommended action, the cause and “Xem cách tính & giả định” (opens the bucket). The
+how-it-is-worked-out tables colour each row by its role — gold an asset, brown a result, navy a target or a need,
+slate a rate, green added, orange-red taken away or short — with a thin bar of the same colour before the label.
+
+**Interaction.** A tile opens its tab; changing an assumption or the method recomputes; the RM's **Gửi vào hàng duyệt**
+sends every bucket's actions to the review queue and says so.
+
+**Responsive / a11y.** Phone: the tiles stack, the action list stays one column, the tables scroll sideways in their
+panel. Status is a word and a colour, never colour alone.
+
+**Tests.** `tests/test_allocation.py`; the route in `tests/ui/test_routes.py::test_every_route_renders_without_errors`.

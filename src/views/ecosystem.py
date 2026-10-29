@@ -41,7 +41,14 @@ GROUPS = [
 
 # the assistant's tools, by the module that holds them (every registry tool is in exactly one: a test checks)
 TOOL_FAMILIES = {
-    "tools_app": ("assistant.tools", "assistant.actions", "assistant.graphtools", "assistant.desktools"),
+    "tools_app": (
+        "assistant.tools",
+        "assistant.actions",
+        "assistant.graphtools",
+        "assistant.desktools",
+        "assistant.dataroom",
+        "assistant.filetools",
+    ),
     "tools_memory": ("assistant.memory",),
     "tools_knowledge": ("assistant.knowledge",),
     "tools_follow": ("assistant.followups",),
@@ -49,9 +56,9 @@ TOOL_FAMILIES = {
 
 NODES: List[Dict[str, Any]] = [
     {"id": "person", "group": "person", "label": "Người dùng", "icon": "user",
-     "does": "Hỏi trợ lý, xác nhận mọi việc ghi; CIO chạy Agent CIO, Tuân thủ yêu cầu tóm tắt chính sách; nhận "
+     "does": "Hỏi trợ lý, xác nhận mọi việc ghi; CIO chạy Agent CIO và yêu cầu tóm tắt chính sách; nhận "
              "thông báo theo dõi ở chuông."},
-    {"id": "assistant", "group": "front", "label": "Trợ lý OneWealth", "icon": "sparkles", "model": "copilot",
+    {"id": "assistant", "group": "front", "label": "OneWealth Copilot", "icon": "sparkles", "model": "copilot",
      "does": "Hiểu câu hỏi, gọi công cụ của vai trò qua nhiều bước, dừng chờ người xác nhận trước khi ghi, trả lời "
              "kèm trang, nguồn và ngày (A2).",
      "reads": "kết quả công cụ khi client_ai cho phép; nếu không, chỉ câu hỏi đã che và trạng thái công cụ"},
@@ -60,7 +67,8 @@ NODES: List[Dict[str, Any]] = [
              "để sản phẩm không dừng vì AI (NFR-03).",
      "reads": "câu hỏi đã che tên và số"},
     {"id": "tools_app", "group": "front", "label": "Công cụ của ứng dụng", "icon": "layers",
-     "does": "Chạy đúng đồ thị mà các trang chạy: tổng quan, dòng tiền, tác động, đề xuất, sự kiện, cảnh báo…"},
+     "does": "Chạy đúng đồ thị mà các trang chạy: tổng quan, dòng tiền, tác động, đề xuất, sự kiện, cảnh báo…; "
+             "đếm, lọc bằng truy_van trên phòng dữ liệu chỉ đọc của vai trò (ADR-0040)."},
     {"id": "tools_memory", "group": "front", "label": "Trí nhớ", "icon": "history",
      "does": "Nhớ, sửa, quên những gì người dùng bảo và xác nhận; tìm lại hội thoại cũ (A4)."},
     {"id": "tools_follow", "group": "front", "label": "Theo dõi", "icon": "bell",
@@ -103,7 +111,7 @@ NODES: List[Dict[str, Any]] = [
      "does": "Mỗi 5 phút: hội thoại nhàn rỗi 15 phút → tối đa 5 mục trí nhớ, kiểm như người dùng tự bảo nhớ (A6).",
      "reads": "hội thoại của chính người đó, chỉ nơi mô hình được đọc"},
     {"id": "retention", "group": "background", "label": "Lưu giữ", "icon": "clock", "jobs": ("assistant_retention",),
-     "does": "02:30 hằng ngày: xoá hội thoại quá hạn lưu giữ của Tuân thủ và mục trí nhớ hết hạn (A4)."},
+     "does": "02:30 hằng ngày: xoá hội thoại quá hạn lưu giữ (CIO cấu hình) và mục trí nhớ hết hạn (A4)."},
 ]  # fmt: skip
 
 EDGES: List[Dict[str, str]] = [
@@ -149,7 +157,7 @@ EDGES: List[Dict[str, str]] = [
     {"from": "news", "to": "cio", "label": "tin của sự kiện", "code": "src/views/ops.py::gather"},
     {"from": "cio", "to": "challenger", "label": "phản biện trước khi duyệt", "code": "src/views/ops.py::review"},
     {"from": "cio", "to": "state", "label": "nhận định chờ CIO duyệt", "code": "src/views/ops.py::save_view"},
-    {"from": "person", "to": "policy", "label": "Tuân thủ: tóm tắt một văn bản",
+    {"from": "person", "to": "policy", "label": "CIO: tóm tắt một văn bản",
      "code": "app/main.py::policy_summarise_flow"},
     {"from": "policy", "to": "state", "label": "tóm tắt, trích điều khoản", "code": "src/policy/agent.py::summarise"},
 ]  # fmt: skip

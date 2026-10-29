@@ -9,21 +9,21 @@ Nhập e-mail hoặc mã khách hàng và mật khẩu rồi bấm Đăng nhập
 đăng nhập hoặc mật khẩu”, không nói sai phần nào. Chưa đăng nhập thì không thấy gì của ứng dụng: không menu, không
 chọn gia đình, không trợ lý.
 
-Trên bản demo công khai có mục **Tài khoản demo**: danh sách tài khoản theo vai trò (khách hàng, RM, CIO, Tuân thủ,
-Quản trị, Chuyên gia), bấm một lần là vào. Sau khi đăng nhập, góc trên hiện tên, chức danh và nút **Đăng xuất**; menu
+Trên bản demo công khai có mục **Tài khoản demo**: danh sách tài khoản theo vai trò (khách hàng, RM, CIO,
+Quản trị), bấm một lần là vào. Sau khi đăng nhập, góc trên hiện tên, chức danh và nút **Đăng xuất**; menu
 chỉ có các trang của vai trò mình, mở địa chỉ trang của vai trò khác sẽ quay về trang của mình.
 
 ## Thanh trên cùng — mọi trang
 
 - **Ô tìm kiếm** (phím tắt `/`): tìm tài sản, mục tiêu, tin tức hay tên trang rồi mở thẳng.
-- **Chọn khách hàng** (RM, chuyên gia và nhân viên): chọn gia đình đang xem. Khách hàng không có ô này.
+- **Chọn khách hàng** (RM và nhân viên): chọn gia đình đang xem. Khách hàng không có ô này.
 - **Cá nhân / Gia đình**: xem số liệu của riêng mình hay của cả gia đình (các thành viên cùng hộ). Dấu “?” bên cạnh
   giải thích hai chế độ.
 - **Chuông**: các cảnh báo mới dành cho mình.
 - **Nút sáng / tối**: đổi giao diện; mặc định là giao diện tối.
 - **Bộ nhớ** (cạnh Đăng xuất): mở trang Bộ nhớ của trợ lý.
 
-## Trợ lý OneWealth (Copilot) — nút ✦ góc dưới bên phải, mọi trang
+## OneWealth Copilot (Trợ lý) — nút ✦ góc dưới bên phải, mọi trang
 
 Bấm ✦ để mở khung trợ lý. Hỏi bằng tiếng Việt về số liệu của mình, về trang đang xem hay cách làm một việc trong ứng
 dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu bạn đang ở trang nào, vai trò nào, khách hàng nào.
@@ -33,6 +33,11 @@ dụng; Enter để gửi. Dòng “Đang xem” cho biết trợ lý hiểu b�
 - **Việc làm thay đổi dữ liệu** (lưu mục tiêu, gửi đề xuất, ghi nhớ…) luôn hiện **Xác nhận / Huỷ** trước; không xác
   nhận thì không có gì được ghi. Sau khi làm, trợ lý đọc lại để kiểm tra rồi mới báo xong.
 - Việc trợ lý không làm được, nó nói thẳng và gợi ý việc nó làm được.
+- **Gửi tài liệu cho trợ lý** (khách hàng và RM): bấm 📎 cạnh Gửi (trên điện thoại có thể chụp ảnh), dán ảnh chụp
+  màn hình vào ô nhập, hoặc kéo tệp vào khung — ảnh, PDF (cả bản scan, đọc 10 trang đầu), Excel, CSV, Word; tối đa 3 tệp một lần. Thẻ
+  tệp hiện *đang đọc…* rồi loại giấy tờ (“Biên lai · Vietcombank”). Có thể hỏi bất cứ điều gì về tệp, hoặc gửi tệp
+  không kèm chữ: trợ lý nói đó là gì, các số chính, và đề nghị ghi vào tài sản hay lưu vào Tài liệu. Dòng xác nhận
+  liệt kê từng khoản và tổng; chỉ bấm **Xác nhận** mới được ghi. Tệp được mã hoá và tự xoá sau 24 giờ.
 - **Cuộc trò chuyện** được lưu trên máy chủ: mở lại trên thiết bị khác vẫn thấy. Nút đồng hồ liệt kê các cuộc trò
   chuyện; **+ Mới** bắt đầu cuộc mới. Cuộc dài thì phần cũ được tóm tắt để trợ lý vẫn nhớ, khung báo khi việc này xảy ra.
 - Nội dung trợ lý viết không phải khuyến nghị đầu tư.
@@ -51,7 +56,7 @@ Những điều bạn đã nhờ trợ lý ghi nhớ và các cuộc trò chuy�
   tiền, tỷ lệ, số tài khoản, số thẻ hay thông tin của người ngoài gia đình.
 - **Các cuộc trò chuyện**: **Mở** để mở lại trong khung trợ lý, **Xoá** để xoá hẳn. Ô tìm kiếm tìm trong mọi tin nhắn
   của bạn (không cần gõ dấu), mỗi kết quả cho biết cuộc trò chuyện, ai nói và lúc nào.
-- Cuộc trò chuyện được giữ theo chính sách lưu giữ của Tuân thủ (mặc định 365 ngày kể từ lượt cuối) rồi tự xoá. Mục
+- Cuộc trò chuyện được giữ theo chính sách lưu giữ do CIO cấu hình (mặc định 365 ngày kể từ lượt cuối) rồi tự xoá. Mục
   đã xoá là xoá hẳn, không khôi phục được.
 
 ## Cách tính — nút cạnh các con số

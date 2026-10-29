@@ -1,7 +1,7 @@
 """The monthly measurement reports (BRD §16.3, §15, §2; BRD_COMPLETION_PLAN F3), read from what the product records.
 
 - **Misses (MEAS-03).** Important news (relevance “high”: our reading of “important”, Q-07) that never became an
-  event, by cause: dismissed by the CIO, held for Compliance, or still in the inbox a day later. Events that did
+  event, by cause: dismissed by the CIO, held for the CIO, or still in the inbox a day later. Events that did
   not reach families, by cause: no view, the view not approved (its status), or approved with no application run.
 - **Rubber-stamping (MEAS-05).** For each approval: the CIO's time from the view being ready for approval to the
   approval, and whether the CIO approved it without an edit.
@@ -90,7 +90,7 @@ def misses(now: Optional[float] = None) -> Dict[str, Any]:
         if n["status"] in ("grouped", "refused"):
             continue
         if n["held"]:
-            cause = "Giữ lại chờ Tuân thủ"
+            cause = "Giữ lại chờ CIO"
         elif n["status"] == "dismissed":
             note = next(
                 (h.get("note") for h in reversed(n["data"].get("history", [])) if h["status"] == "dismissed"), ""

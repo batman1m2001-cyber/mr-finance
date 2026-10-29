@@ -24,23 +24,11 @@ START = {
     **HELP,
     "cio": [
         "Có gì chờ tôi duyệt?",
-        "Phơi nhiễm lớn nhất ở đâu?",
+        "Tác động lớn nhất tới tài sản ở đâu?",
         "Độ chính xác của mô hình?",
         "Hộp tin có bao nhiêu tin?",
     ],
-    "rm": ["Sổ khách hàng có gì cần làm?", *HELP["rm"][:3]],
-    "specialist": [
-        "Khuyến nghị nào đang chờ tôi duyệt?",
-        "Hồ sơ của gia đình này thế nào?",
-        "Chứng chỉ của tôi còn hiệu lực không?",
-        "Tìm khách hàng",
-    ],
-    "compliance": [
-        "Có gì chờ Tuân thủ?",
-        "Có bao nhiêu tin bị giữ?",
-        "Chuỗi nhật ký còn nguyên không?",
-        "Cấu hình nào chờ duyệt?",
-    ],
+    "rm": ["Tổng quan có gì cần làm?", *HELP["rm"][:3]],
     "admin": [
         "Hệ thống có gì bất thường?",
         "Chuỗi nhật ký còn nguyên không?",
@@ -62,11 +50,13 @@ def check_request(
     approvals: dict = None,
     conversation_id: str = None,
     graph: dict = None,
+    attachments: list = None,
+    lang: str = None,
 ) -> dict:
-    """Who asks (a customer always as client), what (≤ 2,000 characters), in which conversation (none: a new one),
-    or which parked writes they answer; what the workspace shows them (``graph``)."""
+    """Who asks (a customer always as client), what (≤ 2,000 characters, and up to three of their files), in which
+    conversation (none: a new one), or which parked writes they answer; what the workspace shows them (``graph``)."""
     return {"request": request_of(message, role, client_id, scope, route, goals, turn_id, approvals, conversation_id,
-                                  graph)}  # fmt: skip
+                                  graph, attachments, lang=lang)}  # fmt: skip
 
 
 LENSES = {"tong-quan", "tai-san", "dong-tien", "muc-tieu", "tin", "rui-ro"}
@@ -103,8 +93,9 @@ def graph_of(g: Any) -> Dict[str, Any]:
 
 
 def request_of(message=None, role=None, client_id=None, scope=None, route=None, goals=None, turn_id=None,
-               approvals=None, conversation_id=None, graph=None) -> dict:  # fmt: skip
+               approvals=None, conversation_id=None, graph=None, attachments=None, voice=None, lang=None) -> dict:  # fmt: skip
     message = str(message or "").strip()
+    ids = [str(x) for x in (attachments if isinstance(attachments, list) else [])]
     if len(message) > 2000:
         raise ValueError("Câu hỏi dài quá 2.000 ký tự")
     answers = {str(k): str(v) for k, v in (approvals or {}).items()}
@@ -112,9 +103,9 @@ def request_of(message=None, role=None, client_id=None, scope=None, route=None, 
         raise ValueError("Trả lời là approve hoặc deny")
     if answers and not turn_id:
         raise ValueError("Thiếu turn_id của việc đang chờ")
-    if not message and not answers:
+    if not message and not answers and not ids:
         raise ValueError("Hãy nhập câu hỏi")
-    return {
+    r = {
         **who(role, client_id, scope),
         "message": message,
         "route": str(route or ""),
@@ -123,7 +114,21 @@ def request_of(message=None, role=None, client_id=None, scope=None, route=None, 
         "approvals": answers,
         "conversation_id": str(conversation_id or "") or None,
         "graph": graph_of(graph),
+        "files": [],
+        "voice": voice is True,
+        "lang": "en" if lang == "en" else "vi",  # the answer's language (docs/LANGUAGE_PLAN.md L4)
     }
+    if ids and not answers:  # the files' readings (OCR_PLAN O-D4): the model reads them, the panel shows the names
+        from assistant import attachments as att
+
+        if len(ids) > att.MAX_FILES:
+            raise ValueError(f"Mỗi câu hỏi kèm tối đa {att.MAX_FILES} tệp")
+        files = [att.get(context(r), i) for i in dict.fromkeys(ids)]
+        r["files"] = [{"id": f["id"], "name": f["name"], "kind": f["reading"]["kind"]} for f in files]
+        r["asked"] = att.compose(files, message, turns.model_reads())
+        r["said"] = message  # the person's own words: what the keyword path routes on, never the files' names
+        r["message"] = att.shown(files, message)
+    return r
 
 
 def who(role: Optional[str], client_id: Optional[str], scope: Optional[str] = None) -> Dict[str, Any]:
@@ -145,6 +150,8 @@ def context(r: Dict[str, Any]) -> Ctx:
         reads=turns.model_reads(),
         route=r["route"],
         graph=r.get("graph") or {},
+        voice=bool(r.get("voice")),
+        lang=r.get("lang") or "vi",
     )
 
 
@@ -155,8 +162,15 @@ async def fallback_events(r: Dict[str, Any], why: str):
         yield {"type": "result", "result": {"status": "failed", "mode": "fallback", "why": why, "steps": [],
                "text": "Không còn việc nào chờ xác nhận: trợ lý đang chạy chế độ dự phòng, hãy hỏi lại."}}  # fmt: skip
         return
-    seen = scrub(r["message"])
+    seen = scrub(r.get("said", r["message"]))
     got = router.keyword(seen, r["route"], r["role"])
+    if r.get("files") and not got["tool"]:  # a file and no command: what it is, from its reading (our text, no model)
+        from assistant import attachments as att
+
+        text = att.described([att.get(context(r), f["id"]) for f in r["files"]])
+        yield {"type": "result", "result": {"status": "ok", "mode": "fallback", "why": why, "seen": seen,
+               "text": text, "steps": []}}  # fmt: skip
+        return
     known = got["tool"] in registry.REGISTRY
     if known:
         label, nodes = registry.LABELS.get(got["tool"], got["tool"]), stream.nodes_for(got["tool"], got["args"])
@@ -261,7 +275,7 @@ async def _turn(r: Dict[str, Any], ctx: Ctx, cid: Optional[str], done, fall, clo
         events = (
             turns.resume_events(ctx, r["turn_id"], r["approvals"])
             if r["approvals"]
-            else turns.run_events(ctx, r["message"], cid)
+            else turns.run_events(ctx, r.get("asked") or r["message"], cid)
         )
         async for ev in events:
             if isinstance(ev, dict):
@@ -368,7 +382,8 @@ def finish(r: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     return out
 
 
-FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id", "graph")
+FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id", "graph",
+          "attachments", "voice", "lang")
 
 
 @op
@@ -520,8 +535,31 @@ async def memory_page(
 
 
 @op
+async def attach(role: str = None, client_id: str = None, file_name: str = None, data: str = None) -> dict:
+    """A file or image given to the panel (OCR_PLAN O1): checked, read once by the client model, kept 24 hours with
+    its reading. Answers what the chip shows (``attachments.view``); audited with the size and kind, not the text.
+    ``file_name``, not ``name``: the serve layer passes ``name`` to every graph."""
+    from pathlib import Path
+
+    from assistant import attachments
+
+    r = {**who(role, client_id), "message": "", "route": "", "followed": None}
+    ctx = context(r)
+    name = Path(str(file_name or "")).name[:120]
+    raw = attachments.check(name, data)
+    reading = await attachments.read(name, raw)
+    fid = attachments.put(ctx, name, raw, reading)
+    actor = auth.acting_id(registry.DEMO_USER.get(r["role"])) or f"client:{r['client_id'] or '-'}"
+    with db.tx() as con:
+        audit.append(con, actor, "assistant.attach", fid, {"role": r["role"], "client_id": r["client_id"],
+                     "bytes": len(raw), "kind": reading["kind"], "items": len(reading["items"]),
+                     "method": reading["method"]})  # fmt: skip
+    return {"attachment": attachments.view(attachments.get(ctx, fid))}
+
+
+@op
 async def retention_sweep() -> dict:
-    """Compliance's retention: conversations past ``assistant_retention`` and expired items deleted (A4)."""
+    """The CIO's retention: conversations past ``assistant_retention`` and expired items deleted (A4)."""
     from assistant.retention import sweep
 
     return {"swept": await sweep()}
