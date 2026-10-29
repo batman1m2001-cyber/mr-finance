@@ -1,7 +1,8 @@
 """The cash-flow table of the next H years and the three liquidity targets (ASSET_ALLOCATION_BRD §6.1).
 
 Month by month from the month after ``as_of``: income (all of it, and the certain part), living costs, debt
-service, and every dated outflow of the client's ``events``. Three targets come out of it:
+service, every dated outflow of the client's ``events`` and every dated inflow (a bonus: counted with all income,
+never as certain). Three targets come out of it:
 
 - A (no income): every recurring cost + every dated outflow of the H years;
 - C (certain income only): |the cumulative line's trough| with certain income + a buffer of N months of costs;
@@ -78,13 +79,22 @@ def table(
     dated += [{**p, "date": f"{p['month']}-28"} for p in principal_due(loans, months)]
     dated.sort(key=lambda d: d["date"])
     by_month = {m: sum(d["amount"] for d in dated if d["month"] == m) for m in months}
+    dated_in = sorted(
+        (
+            {"month": str(e["date"])[:7], "date": e["date"], "amount": float(e["amount"]), "label": e.get("label", "")}
+            for e in profile.get("events") or []
+            if e.get("direction") == "in" and str(e.get("date") or "")[:7] in months
+        ),
+        key=lambda d: d["date"],
+    )
+    in_month = {m: sum(d["amount"] for d in dated_in if d["month"] == m) for m in months}
 
     rows, cum_full, cum_certain = [], 0.0, 0.0
     for i, m in enumerate(months):
         out = by_month[m]
-        cum_full += income - recurring - out
+        cum_full += income + in_month[m] - recurring - out
         cum_certain += certain - recurring - out
-        rows.append({"month": m, "dated": out, "cum": cum_full, "cum_certain": cum_certain, "i": i})
+        rows.append({"month": m, "dated": out, "dated_in": in_month[m], "cum": cum_full, "cum_certain": cum_certain, "i": i})
     trough = min(rows, key=lambda r: r["cum"])
     trough_c = min(rows, key=lambda r: r["cum_certain"])
     buffer = buffer_months * recurring
@@ -98,23 +108,28 @@ def table(
     for y in range(years):
         part = months[12 * y : 12 * (y + 1)]
         out = sum(by_month[m] for m in part)
+        bonus = sum(in_month[m] for m in part)
         yearly.append(
             {
                 "year": y + 1,
                 "from": part[0],
                 "to": part[-1],
-                "income": income * 12,
+                "income": income * 12 + bonus,
                 "recurring": recurring * 12,
                 "dated": out,
-                "net": (income - recurring) * 12 - out,
+                "net": (income - recurring) * 12 + bonus - out,
             }
         )
     floating = [loan for loan in loans if (loan.get("detail") or {}).get("rate_type") == "floating"]
     shock_month = sum(loan["value"] for loan in floating) * rate_shock / 12
     return {
-        "months": [{"month": r["month"], "cum": r["cum"], "cum_certain": r["cum_certain"], "dated": r["dated"]} for r in rows],
+        "months": [
+            {"month": r["month"], "cum": r["cum"], "cum_certain": r["cum_certain"], "dated": r["dated"], "dated_in": r["dated_in"]}
+            for r in rows
+        ],
         "years": yearly,
         "dated": dated,
+        "dated_in": dated_in,
         "income_monthly": income,
         "income_certain_monthly": certain,
         "living_monthly": living,

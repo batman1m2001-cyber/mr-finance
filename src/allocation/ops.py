@@ -43,9 +43,23 @@ def _assumptions(assumptions: Any) -> Dict[str, Any]:
     return assumptions
 
 
+def _whatif(whatif: Any) -> Dict[str, float]:
+    if whatif in (None, ""):
+        return {}
+    if not isinstance(whatif, dict):
+        raise BadRequest("whatif là một object {move, spending_change}")
+    unknown = sorted(set(whatif) - set(_engine.WHATIF))
+    if unknown:
+        raise BadRequest(f"không có thay đổi {', '.join(unknown)}")
+    try:
+        return {k: float(v) for k, v in whatif.items() if v not in (None, "")}
+    except (TypeError, ValueError):
+        raise BadRequest("mỗi thay đổi của kịch bản là một số (đồng)") from None
+
+
 @op
-def check_request(client_id: str = None, scope: str = None, method: str = None, assumptions: dict = None) -> dict:
-    """What a caller sent, checked: a family they may see, a method A/B/C, known assumptions."""
+def check_request(client_id: str = None, scope: str = None, method: str = None, assumptions: dict = None, whatif: dict = None) -> dict:
+    """What a caller sent, checked: a family they may see, a method A/B/C, known assumptions, a what-if's changes."""
     from people import auth
 
     client_id = str(client_id or "")
@@ -57,6 +71,7 @@ def check_request(client_id: str = None, scope: str = None, method: str = None, 
         "scope": scope or "family",
         "method": _method(method),
         "assumptions": _assumptions(assumptions),
+        "whatif": _whatif(whatif),
     }
 
 
@@ -122,9 +137,10 @@ def _for(role: Optional[str], out: Dict[str, Any]) -> Dict[str, Any]:
 
 
 @op
-def allocate(case: dict, method: str = "A", assumptions: dict = None, role: str = None) -> dict:
-    """The three buckets, their targets and gaps, the fill, the rebalance, the goals and the checked actions."""
-    return {"allocation": _for(role, _engine.allocate(case, method, assumptions))}
+def allocate(case: dict, method: str = "A", assumptions: dict = None, role: str = None, whatif: dict = None) -> dict:
+    """The three buckets, their targets and gaps, the fill, the rebalance, the goals and the checked actions; with
+    ``whatif``, the same on the changed case (a scenario: money moved between Growth and Liquidity, spending)."""
+    return {"allocation": _for(role, _engine.allocate(case, method, assumptions, whatif))}
 
 
 @op

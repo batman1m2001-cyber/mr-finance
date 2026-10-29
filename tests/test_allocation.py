@@ -23,7 +23,7 @@ from views.schema import forbidden_words
 from wealth import fixtures, store
 from wealth.money import TY, TR
 
-FLOW = Operon(allocation_flow, params={"client_id": None, "scope": None, "method": None, "assumptions": None, "role": None})
+FLOW = Operon(allocation_flow, params={"client_id": None, "scope": None, "method": None, "assumptions": None, "role": None, "whatif": None})
 EXAMPLE = Operon(allocation_example_flow, params={"method": None, "assumptions": None, "role": None})
 TILT = Operon(allocation_tilt_flow, params={"asset_class": None, "stance": None, "view_id": None, "by": None, "reason": None})
 TILTS = Operon(allocation_tilts_flow, params={})
@@ -356,3 +356,38 @@ def test_a_holding_finds_its_eleven_class_from_its_detail():
     assert _model.eleven_class(h("loan", "liability", currency="USD")) == "usd_loan"
     assert _model.eleven_class(h("loan", "liability", rate_type="floating")) == "floating_loan"
     assert _model.eleven_class(h("loan", "liability", rate_type="fixed")) is None
+
+
+# ── Chỉnh UI-UX ver2: a dated inflow, the what-if, the Legacy options ─────
+
+
+def test_a_dated_inflow_counts_with_all_income_never_as_certain():
+    c = case()
+    base = _engine.allocate(c, "B")["cashflow"]
+    c["profile"]["events"] = c["profile"]["events"] + [{"date": "2027-01-20", "direction": "in", "amount": 2 * TY, "label": "Thưởng"}]
+    more = _engine.allocate(c, "B")["cashflow"]
+    assert more["dated_in"][0]["label"] == "Thưởng" and more["targets"]["A"] == base["targets"]["A"]
+    assert more["targets"]["C"] == base["targets"]["C"] and more["targets"]["B"] <= base["targets"]["B"]
+    assert sum(y["income"] for y in more["years"]) == sum(y["income"] for y in base["years"]) + 2 * TY
+
+
+def test_a_what_if_keeps_the_moved_money_in_liquidity_and_says_what_it_costs_growth():
+    a = ok(FLOW, client_id="C01", scope="family", method="C")["allocation"]
+    b = ok(FLOW, client_id="C01", scope="family", method="C", whatif={"move": 500 * TR})["allocation"]
+    assert b["whatif"] == {"move": 500 * TR}
+    assert b["liquidity"]["have"] == a["liquidity"]["have"] + 500 * TR
+    assert round(a["growth"]["rebalance"]["total"] - b["growth"]["rebalance"]["total"]) == 500 * TR  # not swept back
+    assert b["retirement"]["reach"] < a["retirement"]["reach"]
+    less = ok(FLOW, client_id="C01", scope="family", method="C", whatif={"spending_change": -10 * TR})["allocation"]
+    assert less["retirement"]["short"] < a["retirement"]["short"] and less["legacy"]["gap"] < a["legacy"]["gap"]
+    assert "không có thay đổi" in str(run(FLOW, client_id="C01", whatif={"nope": 1})["$errors"])
+
+
+def test_the_legacy_gap_comes_with_four_ways_to_close_it(k7):
+    leg = k7["legacy"]
+    assert leg["estate"] > 0 and leg["years"] >= 0
+    if leg["gap"] > 0:
+        o = {x["id"]: x for x in leg["options"]}
+        assert list(o) == ["keep", "save", "insure", "mix"]
+        assert o["keep"]["monthly"] == 0 and o["insure"]["left_now"] == 0 and o["save"]["left_now"] > 0
+        assert o["insure"]["monthly"] < o["save"]["monthly"] < o["mix"]["monthly"]

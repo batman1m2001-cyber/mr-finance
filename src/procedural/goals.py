@@ -122,9 +122,11 @@ def _dated(message: Optional[str], mile: date) -> Optional[str]:
 
 
 def goals_of(client: Dict[str, Any], today: date) -> List[Dict[str, Any]]:
-    """A family's active goals: its dated outflows not yet past (fixtures ``events``)."""
+    """A family's active goals: its dated outflows not yet past (fixtures ``events``); a ``routine`` one (Tết, the
+    yearly premium, the summer trip) is the household's rhythm, not a goal."""
     out = []
-    for i, e in enumerate(sorted(client.get("events", []), key=lambda e: e["date"]), start=1):
+    events = [e for e in client.get("events", []) if not e.get("routine")]
+    for i, e in enumerate(sorted(events, key=lambda e: e["date"]), start=1):
         if e.get("direction") != "out" or e.get("closed"):
             continue
         need = date.fromisoformat(e["date"])

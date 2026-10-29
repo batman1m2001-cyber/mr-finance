@@ -13,14 +13,15 @@ from consolidate.graph import consolidate_flow
 
 
 @graph
-def allocation_flow(client_id, scope="family", method="A", assumptions=None, role=None):
-    """Liquidity, Legacy and Growth for a client: each target, the gap, the fill and the rebalance, checked."""
-    ask = check_request(client_id=client_id, scope=scope, method=method, assumptions=assumptions)
+def allocation_flow(client_id, scope="family", method="A", assumptions=None, role=None, whatif=None):
+    """Liquidity, Legacy and Growth for a client: each target, the gap, the fill and the rebalance, checked; with
+    ``whatif``, the same for a scenario (money moved between Growth and Liquidity, spending changed)."""
+    ask = check_request(client_id=client_id, scope=scope, method=method, assumptions=assumptions, whatif=whatif)
     held = consolidate_flow(client_id=ask["client_id"], scope=ask["scope"])
     made = case_of(
         client_id=ask["client_id"], members=held["members"], holdings=held["holdings"], transactions=held["transactions"]
     )
-    out = allocate(case=made["case"], method=ask["method"], assumptions=ask["assumptions"], role=role)
+    out = allocate(case=made["case"], method=ask["method"], assumptions=ask["assumptions"], role=role, whatif=ask["whatif"])
     START >> ask >> held >> made >> out >> END
 
 

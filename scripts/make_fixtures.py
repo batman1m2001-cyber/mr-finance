@@ -139,7 +139,26 @@ def client_c01(rng):
              "premium_annual": 60 * TR, "premium_month": 3},
         ],
         "events": [{"date": "2027-03-15", "direction": "out", "amount": 1_800 * TR, "label": "Học phí du học (Úc) – Minh An", "category": "school"},
-                   {"date": "2027-03-31", "direction": "out", "amount": 85 * TR, "label": "Quyết toán thuế TNCN 2026", "category": "tax"}],
+                   {"date": "2027-03-31", "direction": "out", "amount": 85 * TR, "label": "Quyết toán thuế TNCN 2026", "category": "tax"},
+                   # the year's rhythm (feedback Chỉnh UI-UX ver2): Tết, the insurance premium, the summer trip, the
+                   # school's start-of-year fees, the car; the year-end bonus in. Moves the cash flow a little each month;
+                   # ``routine``: the household's rhythm, not a goal (procedural.goals skips it)
+                   {"date": "2027-01-20", "direction": "in", "amount": 360 * TR, "label": "Thưởng cuối năm 2026", "category": "bonus", "routine": True},
+                   {"date": "2027-02-05", "direction": "out", "amount": 80 * TR, "label": "Chi Tết Đinh Mùi 2027", "category": "family", "routine": True},
+                   {"date": "2027-06-15", "direction": "out", "amount": 48 * TR, "label": "Phí bảo hiểm nhân thọ năm", "category": "insurance", "routine": True},
+                   {"date": "2027-07-10", "direction": "out", "amount": 120 * TR, "label": "Du lịch hè gia đình", "category": "travel", "routine": True},
+                   {"date": "2027-08-20", "direction": "out", "amount": 150 * TR, "label": "Phí đầu năm học trường quốc tế (2 con)", "category": "school", "routine": True},
+                   {"date": "2027-11-12", "direction": "out", "amount": 30 * TR, "label": "Bảo dưỡng, đăng kiểm xe", "category": "car", "routine": True},
+                   {"date": "2028-01-20", "direction": "in", "amount": 380 * TR, "label": "Thưởng cuối năm 2027", "category": "bonus", "routine": True},
+                   {"date": "2028-01-25", "direction": "out", "amount": 90 * TR, "label": "Chi Tết Mậu Thân 2028", "category": "family", "routine": True},
+                   {"date": "2028-03-31", "direction": "out", "amount": 70 * TR, "label": "Quyết toán thuế TNCN 2027", "category": "tax", "routine": True},
+                   {"date": "2028-06-15", "direction": "out", "amount": 48 * TR, "label": "Phí bảo hiểm nhân thọ năm", "category": "insurance", "routine": True},
+                   {"date": "2028-07-08", "direction": "out", "amount": 100 * TR, "label": "Du lịch hè gia đình", "category": "travel", "routine": True},
+                   {"date": "2028-08-20", "direction": "out", "amount": 160 * TR, "label": "Phí đầu năm học trường quốc tế (2 con)", "category": "school", "routine": True},
+                   {"date": "2029-01-20", "direction": "in", "amount": 400 * TR, "label": "Thưởng cuối năm 2028", "category": "bonus", "routine": True},
+                   {"date": "2029-02-10", "direction": "out", "amount": 95 * TR, "label": "Chi Tết Kỷ Dậu 2029", "category": "family", "routine": True},
+                   {"date": "2029-06-15", "direction": "out", "amount": 48 * TR, "label": "Phí bảo hiểm nhân thọ năm", "category": "insurance", "routine": True},
+                   {"date": "2029-08-20", "direction": "out", "amount": 170 * TR, "label": "Phí đầu năm học trường quốc tế (2 con)", "category": "school", "routine": True}],
         "behaviour": [{"date": "2026-04-15", "market_move": -0.06, "action": "hold", "note": "Giữ nguyên danh mục khi VN-Index giảm 6%"}],
         "samples": ["vps_C01.csv"],
     }

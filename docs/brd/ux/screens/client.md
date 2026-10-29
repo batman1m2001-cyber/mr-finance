@@ -410,27 +410,36 @@ sheet was open.) Every animation has a still equivalent under reduced motion. Co
 | Generation | new (ASSET_ALLOCATION_BRD, 2026-10-28) |
 | Feature | [FEAT-44](../../features/FEAT-44-asset-allocation.md) |
 | Requirements | OWN-AA-01…13 |
-| Data | `POST /api/allocation` {client_id, scope, method, assumptions, role}; `POST /api/allocation/send` (RM) |
+| Data | `POST /api/allocation` {client_id, scope, method, assumptions, role, whatif?}; `POST /api/allocation/send` (RM) |
 
 **Journey.** The client sees what must stay ready, what they want to leave and what the rest must earn, and what to
 change; the RM opens the same page, checks each action and sends them to the specialist.
 
-**Layout (since 2026-10-29, feedback Chỉnh UI-UX).** **Hồ sơ khách hàng**: age and occupation, the children and
-their ages, the large plans ahead (e.g. Học phí du học (Úc) – Minh An), income and spending a month (the certain part),
-retirement age and year (“Nghỉ hưu sớm” under 60), risk appetite, risk capacity and the drawdown limit — from the risk
-test, else simulated from the file with a link to the test. Then the three bucket tiles (Thanh khoản, Tăng trưởng,
-Di sản: have, target, gap) are the page's tabs. Each tab shows **Cách tính** first, every figure with its source in a
-few words, then **Cân nhắc thay đổi** (was “Việc nên trao đổi”) for that bucket — Thanh khoản with the loans, Tăng
-trưởng with retirement — each action with its bucket, amount, why and check (Bị chặn only for the RM).
-Thanh khoản: the two ways side by side — **Tính đủ thu nhập** (B, and C “chỉ tính thu nhập chắc chắn” inside it) and
-**Không tính thu nhập** (A) — each with its target and gap and a button to use it for the actions; the 36-month cash
-flow chart (a tip per month lists income, living costs, loan payments and the dated payments); one table of every
-line (income, living costs, loan payments, each dated payment such as 1,8 tỷ học phí du học – Minh An) with source,
-when and amount; folded: Bậc thang Thanh khoản, Cách bù phần thiếu. Tăng trưởng: Nghỉ hưu as one table with sources,
-the model's rebalance, folded the 11 classes. Di sản: one table — the floor's lines, the wish, what is there (which
-assets, secured debt, insured sum), the price-drop case, the gap — and how to fill it. Below the tabs: **Giả định và
-đối chiếu** (the reconciliation with sources, the assumptions to edit, for staff the bucket moves). Every figure opens
-how it is worked out.
+**Layout (since 2026-10-29, feedback Chỉnh UI-UX ver2).** Four numbered parts.
+**01 · Tổng quan tài chính** — net worth (assets − debt) and liquidity (have, need, gap) in two figures; how many of the
+three goals are met; the client in one line (age, children, retirement, risk level, drawdown limit); folded, the
+profile with the three risk numbers each said for what it is: the level used to allocate (the lower of appetite and
+capacity), risk appetite (what the client wants), risk capacity (what the finances allow), the drawdown limit.
+**02 · Ưu tiên tài chính** — “Tôi cần làm gì ngay bây giờ?”: each problem with its issue, cause, deadline and proposed
+action, the most urgent first (Liquidity short → before the largest dated payment; the portfolio's bad-market loss
+above the limit; the Legacy gap → now; retirement → a long-term decision); a click opens that bucket.
+**03 · Ba giỏ tài sản** — the tabs carry an icon and what the bucket is for; Growth's tile says the assumed and the
+needed return and that the shortfall is in nominal prices at the retirement year. Each tab: **Cách tính** then
+**Cân nhắc thay đổi**, each change classed **Cần xử lý** (a threat to a goal or the risk limit), **Cân nhắc** (a better
+structure) or **Quyết định dài hạn**, never by its amount; the suitability check stays beside it.
+Thanh khoản: the two ways side by side; the 36-month chart (scheduled payments and the year-end bonus move it); the
+line-by-line table folded. Tăng trưởng: one source for every figure — assets today, what moves to Liquidity, the
+long-term capital, the yearly net cash flow, the assumed return, the expected value at retirement, the target, the
+needed return, the extra contribution; the rebalance before and after (now, target, trade, after) with where the
+money comes from, the bad-market loss before and after, and why it still suits a long-term goal. Di sản: the need,
+the bucket reconciled to what the family would receive (secured debt, insurance), the price-drop case step by step
+(the property's value, the drop, what is left, the gap), and four ways to close the gap side by side (keep, save,
+insure, both) with the monthly cost, what is covered today and what is left in N years.
+**04 · Kịch bản** — “Nếu thay đổi, kết quả sẽ ra sao?”: move money between Growth and Liquidity, change monthly
+spending, retire at another age; the same request with `whatif` {move, spending_change} (and `retirement_age`);
+the three goals now and in the scenario side by side, the change coloured, and why, folded.
+Folded at the end: the reconciliation, the assumptions (editable), for staff the bucket moves. Every figure opens how
+it is worked out.
 
 **Interaction.** A tile opens its tab; changing an assumption or the method recomputes; the RM's **Gửi vào hàng duyệt**
 sends every bucket's actions to the review queue and says so.

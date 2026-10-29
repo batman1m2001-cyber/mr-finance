@@ -24,6 +24,7 @@ LIQUID = ("cash", "deposit")
 LEGACY = ("real_estate", "business", "insurance")
 GROWTH = ("stock", "fund", "bond", "gold", "crypto")
 DEBT = ("loan", "card")
+WHATIF = ("move", "spending_change")  # what a scenario may change (what_if)
 
 ASSUMPTIONS = {
     "horizon_years": 3,
@@ -156,6 +157,9 @@ def legacy(case: Dict[str, Any], s: Dict[str, Any], cash: Dict[str, Any], loans:
     return {
         "floor": floor,
         "floor_rows": floor_rows,
+        "years": years,  # until the youngest child is ``child_until``: how long the family would need the floor
+        "estate": estate,  # the real estate the price-drop case applies to (§6.2's range)
+        "held": held,
         "wish": wish,
         "target": target,
         "have": have,
@@ -167,6 +171,60 @@ def legacy(case: Dict[str, Any], s: Dict[str, Any], cash: Dict[str, Any], loans:
         "gap_high": max(0.0, target - low) if low is not None else None,
         "fill_with": "Bảo hiểm có người thụ hưởng hoặc tiết kiệm; không bán tài sản Di sản",
     }
+
+
+SAFE_RATE = 0.05  # a deposit's yearly rate, assumed, for money set aside for Legacy (it is not invested for growth)
+TERM_PREMIUM = 0.006  # a term-life cover's yearly premium per đồng insured, assumed (a healthy client in their forties)
+
+
+def legacy_options(leg: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """How to close the Legacy gap, side by side (feedback Chỉnh UI-UX ver2): keep as is, save for it, insure it,
+    or both. Each says what it costs a month, how much of the gap it covers today and what is left in N years."""
+    high = leg.get("gap_high") if leg.get("gap_high") is not None else leg["gap"]
+    if high <= 0:
+        return []
+    years = leg["years"] or 10
+    n, r = years * 12, SAFE_RATE / 12
+    save = high * r / ((1 + r) ** n - 1)  # a month's saving that reaches the gap in n months at the deposit rate
+    premium = high * TERM_PREMIUM / 12
+    return [
+        {"id": "keep", "label": "Giữ nguyên danh mục", "monthly": 0.0, "covered_now": 0.0, "left_now": high, "left_later": high,
+         "built": 0.0, "note": "Không tốn thêm; nếu rủi ro xảy ra hôm nay, gia đình thiếu toàn bộ phần này"},
+        {"id": "save", "label": "Tiết kiệm riêng cho Di sản", "monthly": save, "covered_now": 0.0, "left_now": high, "left_later": 0.0,
+         "built": high, "note": f"Đủ sau {years} năm với lãi tiền gửi {pct(SAFE_RATE, digits=0)}/năm (giả định); trước đó vẫn hở"},
+        {"id": "insure", "label": "Bảo hiểm tử kỳ có người thụ hưởng", "monthly": premium, "covered_now": high, "left_now": 0.0,
+         "left_later": 0.0, "built": 0.0, "note": f"Bảo vệ ngay; phí khoảng {pct(TERM_PREMIUM, digits=1)} số tiền bảo hiểm mỗi năm (giả định), không tích lũy"},
+        {"id": "mix", "label": "Kết hợp: bảo hiểm giảm dần + tiết kiệm", "monthly": save + premium / 2, "covered_now": high, "left_now": 0.0,
+         "left_later": 0.0, "built": high, "note": f"Bảo hiểm che phần thiếu hôm nay và giảm dần khi tiền tiết kiệm lớn lên; sau {years} năm có sẵn khoản tích lũy"},
+    ]
+
+
+def what_if(case: Dict[str, Any], change: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """A scenario on the case (feedback Chỉnh UI-UX ver2): ``move`` đồng from Growth to Liquidity (negative: back to
+    Growth), each holding of the bucket it leaves cut in proportion; ``spending_change`` đồng a month more (or less,
+    negative) of living costs. The engine then runs on the changed case as on any other."""
+    if not change:
+        return case
+    holdings = [dict(h) for h in case["holdings"]]
+    over = dict(case.get("overrides") or {})
+    move = float(change.get("move") or 0)
+    if move:
+        source = "growth" if move > 0 else "liquidity"
+        pool = [h for h in holdings if bucket_of(h, over) == source]
+        total = sum(h["value"] for h in pool)
+        amount = min(abs(move), total)
+        if amount > 0:
+            for h in pool:
+                h["value"] *= 1 - amount / total
+            holdings.append({"key": "whatif:move", "kind": "asset", "class": "cash", "name": "Chuyển trong kịch bản", "value": amount, "detail": {}})
+            over["whatif:move"] = {"bucket": "liquidity" if move > 0 else "growth", "reason": "Kịch bản"}
+            if move > 0:
+                case = {**case, "pinned": amount}  # kept in Liquidity on purpose: never swept back as excess
+    profile = dict(case["profile"])
+    spend = float(change.get("spending_change") or 0)
+    if spend:
+        profile["spending_monthly"] = max(0.0, float(profile.get("spending_monthly") or 0) + spend)
+    return {**case, "holdings": holdings, "overrides": over, "profile": profile}
 
 
 # ── Growth target: the return the long-term goal needs (§6.3) ────────────
@@ -185,8 +243,8 @@ def _savings(case: Dict[str, Any], cash: Dict[str, Any], s: Dict[str, Any], n: i
     out = {m: 0.0 for m in months}
     for e in case["profile"].get("events") or []:
         m = str(e.get("date") or "")[:7]
-        if e.get("direction") == "out" and m in out:
-            out[m] += float(e["amount"])
+        if e.get("direction") in ("out", "in") and m in out:
+            out[m] += float(e["amount"]) * (1 if e["direction"] == "out" else -1)  # a dated inflow (a bonus) is a negative outflow
     net = (cash["income_monthly"] - cash["recurring_monthly"]) * 12
     years = [net - sum(out[m] for m in months[12 * y : 12 * (y + 1)]) for y in range(H, n)]
     return sum(years) / len(years)
@@ -276,7 +334,7 @@ def fill(
     """Wait, sell or borrow to bring Liquidity to its target; the sells come from the most overweight class first."""
     cfg = _model.data()
     shortfall = max(0.0, target - have)
-    excess = max(0.0, have - target)
+    excess = max(0.0, have - float(case.get("pinned") or 0) - target)  # a scenario's pinned money is not excess
     g0 = sum(growth.values())  # the excess is already in it, as cash waiting to be invested
     surplus = cash["income_monthly"] - cash["recurring_monthly"]
     first = _cashflow.next_outflow(cash)
@@ -461,9 +519,12 @@ def existing_loans(case, loans, s, expected, liquidity_before, liquidity_after, 
 # ── the whole picture ────────────────────────────────────────────────────
 
 
-def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def allocate(
+    case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict[str, Any]] = None, whatif: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     if method not in _cashflow.METHODS:
         raise ValueError(f"method is one of {', '.join(_cashflow.METHODS)}, not {method!r}")
+    case = what_if(case, whatif)
     p, risk, holdings = case["profile"], case["risk"], case["holdings"]
     s = settings(p, assumptions)
     level = int(risk["level"])
@@ -484,7 +545,7 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
         c = _model.model_class(h, level)
         growth[c] = growth.get(c, 0.0) + h["value"]
     model = _model.model_for(level, case.get("tilts") or [], case.get("model_method") or "tilt")
-    excess = max(0.0, have - target)
+    excess = max(0.0, have - float(case.get("pinned") or 0) - target)  # a scenario's pinned money is not excess
     if excess:
         growth["cash"] = growth.get("cash", 0.0) + excess
     filled = fill(case, cash, target, have, growth, model, loans)
@@ -496,6 +557,7 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
     liquidity_after = have - excess + filled["shortfall"] - filled["still_short"]
     goal = retirement(case, s, cash, re_["total"], expected)
     leg = legacy(case, s, cash, loans)
+    leg["options"] = legacy_options(leg)
     loan_rows = existing_loans(case, loans, s, expected, have, liquidity_after, target)
 
     assets = sum(h["value"] for h in holdings if h["kind"] == "asset")
@@ -503,6 +565,7 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
     concentrated = [h for h in holdings if h["kind"] == "asset" and assets and h["value"] / assets > _model.data()["concentration"]]
     out = {
         "as_of": case["as_of"],
+        "whatif": whatif or None,
         "client": {
             **{k: p.get(k) for k in ("client_id", "name", "age", "occupation", "segment", "persona_hint")},
             # the page's short profile (feedback Chỉnh UI-UX): the children and their ages, the large plans, the income

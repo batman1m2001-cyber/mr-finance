@@ -23,7 +23,7 @@ POST /api/risk      {client_id, answers} ──► risk_flow ──► the next 
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
-POST /api/allocation {client_id, scope?, method?, assumptions?, role?} ──► allocation_flow ──► Liquidity, Legacy,
+POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} ──► allocation_flow ──► Liquidity, Legacy,
                     Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
                     the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
                     /api/allocation/send ──► an RM sends the actions to the review queue ·
@@ -331,7 +331,7 @@ APP = Application(
             "allocation",
             http("POST", "/api/allocation", port=PORT),
             graph=allocation_flow,
-            description="POST {client_id, scope?, method?, assumptions?, role?}: three buckets, targets, actions.",
+            description="POST {client_id, scope?, method?, assumptions?, role?, whatif?}: three buckets, targets, actions; a what-if.",
         ),
         Service(
             "allocation_example",

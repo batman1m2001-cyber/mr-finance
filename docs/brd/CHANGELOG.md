@@ -2,6 +2,13 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-29 — UI/UX feedback ver2 (owner, “Sửa UI-UX ver2”): Phân bổ tài sản in four numbered parts — the overview
+  (net worth, liquidity, the profile folded, the three risk numbers explained), the financial priorities (issue,
+  cause, deadline, action), the buckets with icons, changes classed by what they do, Growth from one source with the
+  rebalance before/after, Legacy's price drop step by step and four ways to close the gap, and a what-if
+  (`POST /api/allocation` `whatif`) comparing the three goals. The cash-flow table counts a dated inflow (a bonus)
+  with all income; C01 gets the year's rhythm (Tết, premium, trip, school fees, bonus) marked `routine`, not goals.
+  — SCR-CL-13
 - 2026-10-29 — UI/UX feedback (owner, “Chỉnh UI-UX”): Phân bổ tài sản opens on a client profile (children, plans,
   income, retirement, risk appetite / capacity / limit); the three buckets are tabs, each with Cách tính first (every
   figure with its source; Thanh khoản's cash-flow chart and one line-by-line table; with and without income side by

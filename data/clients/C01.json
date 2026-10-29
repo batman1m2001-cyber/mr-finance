@@ -974,6 +974,134 @@
    "amount": 85000000,
    "label": "Quyết toán thuế TNCN 2026",
    "category": "tax"
+  },
+  {
+   "date": "2027-01-20",
+   "direction": "in",
+   "amount": 360000000,
+   "label": "Thưởng cuối năm 2026",
+   "category": "bonus",
+   "routine": true
+  },
+  {
+   "date": "2027-02-05",
+   "direction": "out",
+   "amount": 80000000,
+   "label": "Chi Tết Đinh Mùi 2027",
+   "category": "family",
+   "routine": true
+  },
+  {
+   "date": "2027-06-15",
+   "direction": "out",
+   "amount": 48000000,
+   "label": "Phí bảo hiểm nhân thọ năm",
+   "category": "insurance",
+   "routine": true
+  },
+  {
+   "date": "2027-07-10",
+   "direction": "out",
+   "amount": 120000000,
+   "label": "Du lịch hè gia đình",
+   "category": "travel",
+   "routine": true
+  },
+  {
+   "date": "2027-08-20",
+   "direction": "out",
+   "amount": 150000000,
+   "label": "Phí đầu năm học trường quốc tế (2 con)",
+   "category": "school",
+   "routine": true
+  },
+  {
+   "date": "2027-11-12",
+   "direction": "out",
+   "amount": 30000000,
+   "label": "Bảo dưỡng, đăng kiểm xe",
+   "category": "car",
+   "routine": true
+  },
+  {
+   "date": "2028-01-20",
+   "direction": "in",
+   "amount": 380000000,
+   "label": "Thưởng cuối năm 2027",
+   "category": "bonus",
+   "routine": true
+  },
+  {
+   "date": "2028-01-25",
+   "direction": "out",
+   "amount": 90000000,
+   "label": "Chi Tết Mậu Thân 2028",
+   "category": "family",
+   "routine": true
+  },
+  {
+   "date": "2028-03-31",
+   "direction": "out",
+   "amount": 70000000,
+   "label": "Quyết toán thuế TNCN 2027",
+   "category": "tax",
+   "routine": true
+  },
+  {
+   "date": "2028-06-15",
+   "direction": "out",
+   "amount": 48000000,
+   "label": "Phí bảo hiểm nhân thọ năm",
+   "category": "insurance",
+   "routine": true
+  },
+  {
+   "date": "2028-07-08",
+   "direction": "out",
+   "amount": 100000000,
+   "label": "Du lịch hè gia đình",
+   "category": "travel",
+   "routine": true
+  },
+  {
+   "date": "2028-08-20",
+   "direction": "out",
+   "amount": 160000000,
+   "label": "Phí đầu năm học trường quốc tế (2 con)",
+   "category": "school",
+   "routine": true
+  },
+  {
+   "date": "2029-01-20",
+   "direction": "in",
+   "amount": 400000000,
+   "label": "Thưởng cuối năm 2028",
+   "category": "bonus",
+   "routine": true
+  },
+  {
+   "date": "2029-02-10",
+   "direction": "out",
+   "amount": 95000000,
+   "label": "Chi Tết Kỷ Dậu 2029",
+   "category": "family",
+   "routine": true
+  },
+  {
+   "date": "2029-06-15",
+   "direction": "out",
+   "amount": 48000000,
+   "label": "Phí bảo hiểm nhân thọ năm",
+   "category": "insurance",
+   "routine": true
+  },
+  {
+   "date": "2029-08-20",
+   "direction": "out",
+   "amount": 170000000,
+   "label": "Phí đầu năm học trường quốc tế (2 con)",
+   "category": "school",
+   "routine": true
   }
  ],
  "behaviour": [

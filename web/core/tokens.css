@@ -1743,3 +1743,31 @@ body[data-role="client"] .ws-page { min-height: 44px; font-size: 15px; }
 .who > div { min-width: 0; }
 .who .k { font-size: 12px; color: var(--ink-2); font-weight: 600; }
 .who .v { font-weight: 650; }
+/* Phân bổ tài sản ver2 (feedback Chỉnh UI-UX ver2): four numbered parts, the overview's two figures, the priorities,
+   the bucket tabs with their icon and purpose, before/after tables, the what-if */
+.sec-eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.sec-title { font-size: 22px; font-weight: 750; letter-spacing: -.01em; margin: 4px 0 2px; }
+.sec-sub { color: var(--ink-2); margin: 0 0 12px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.stat { background: var(--surface-2); border-radius: var(--radius-s); padding: 14px 16px; min-width: 0; }
+.stat .k { color: var(--ink-2); font-size: 13px; }
+.stat .v { font-size: 28px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 6px 0 2px; }
+.risk3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.prio { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.prio > li { border: 1px solid var(--hair); border-radius: var(--radius-s); padding: 12px 14px; cursor: pointer; background: var(--surface); }
+.prio > li:hover, .prio > li:focus-visible { border-color: var(--axis); outline: none; }
+.prio > li.first { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.prio .pnum { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 999px; background: var(--surface-3); font-size: 12px; font-weight: 700; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 6px 16px; margin: 8px 0 0; }
+.pgrid dt { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; }
+.pgrid dd { margin: 2px 0 0; }
+.btabs .bhead { display: flex; gap: 10px; align-items: flex-start; }
+.btabs .bname { font-weight: 700; }
+.btabs .kpi .v { margin-top: 10px; }
+.alloc-acts { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+.table.cmp td:not(:first-child) { white-space: nowrap; }
+.notes p { margin: 6px 0; }
+.whatif { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px 20px; align-items: end; }
+.whatif .field > span:first-child { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.whatif input[type="range"] { width: 100%; accent-color: var(--ink); }
+.whatif .range-ends { display: flex; justify-content: space-between; }
