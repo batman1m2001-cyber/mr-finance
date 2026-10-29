@@ -15,6 +15,7 @@ import copy
 import time
 from typing import Any, Dict, List, Optional
 
+from control.errors import BadRequest
 from engine import ScenarioError, default_model
 from engine.scenario import Branch, validate
 from events import store as events
@@ -35,8 +36,9 @@ TO = {"approve": "APPROVED", "return": "REWORK_REQUESTED", "reject": "REJECTED",
 MIN_REASON = 5
 
 
-class DecisionError(ValueError):
-    pass
+class DecisionError(BadRequest):
+    """A CIO decision refused for what it carries (no reason, a bad edit): answered 400 with the message, so the
+    page can say why (a plain ValueError answered "the graph produced no output")."""
 
 
 def checks(view: Dict[str, Any]) -> List[Dict[str, Any]]:

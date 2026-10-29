@@ -266,6 +266,18 @@ def test_approval_is_idempotent_and_once_only():
     assert "cần lý do" in str(decide(v["id"], "withdraw", reason="")["$errors"])
 
 
+def test_a_refused_decision_answers_with_its_reason_not_a_bare_500():
+    # the CIO's page showed "the graph produced no output" when the reason was missing: the refusal carries its status
+    from control.errors import BadRequest, Conflict
+    from views.decide import DecisionError
+
+    assert issubclass(DecisionError, BadRequest) and DecisionError.http_status == 400
+    v = agent(event(*GOLD)["id"])["view"]
+    assert "cần lý do" in str(decide(v["id"], "approve", reason="ok")["$errors"])
+    decide(v["id"], "approve")
+    assert "trạng thái APPROVED" in str(decide(v["id"], "reject", idem_key="late")["$errors"]) and Conflict.http_status == 409
+
+
 def test_return_withdraw_and_supersede():
     ev = event(*GOLD)
     v1 = agent(ev["id"])["view"]

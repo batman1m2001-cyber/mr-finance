@@ -4717,4 +4717,10 @@ export default {
 "Các đề xuất đúng khi giả định của mô hình được xác nhận: mức rủi ro đang giả lập.":"These hold once the model's assumptions are confirmed: the risk level is simulated.",
 "Chi tiêu gia đình đến khi con nhỏ tự lập, học phí còn lại và nợ.":"Family spending until the youngest is independent, school fees still to pay and debt.",
 "Vốn đầu tư dài hạn và dòng tiền ròng chưa đủ cho chi tiêu khi nghỉ.":"Long-term capital and net cash flow do not yet cover spending in retirement.",
+// the CIO's decision: the reason asked before sending
+"Lý do (bắt buộc, từ {0} ký tự)":"Reason (required, at least {0} characters)",
+"Lý do thu hồi (từ {0} ký tự)":"Reason to withdraw (at least {0} characters)",
+"Nhập lý do (từ {0} ký tự) trước khi bấm “{1}”.":"Enter a reason (at least {0} characters) before clicking “{1}”.",
+"“{0}” cần lý do (từ {1} ký tự)":"“{0}” needs a reason (at least {1} characters)",
+"Bác bỏ":"Reject",
 };

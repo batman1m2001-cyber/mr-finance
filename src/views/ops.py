@@ -13,6 +13,7 @@ from operonx import op
 
 from apply import run as apply_run
 from control import roles
+from control.errors import BadRequest, Conflict
 from engine import default_model
 from events import store as events
 from measure import forecasts
@@ -223,14 +224,14 @@ async def decide_view(
     """One CIO action on a view (FR-304)."""
     roles.require(by, "cio")
     if action not in decide.ACTIONS:
-        raise ValueError(f"action là một trong {', '.join(decide.ACTIONS)}")
+        raise BadRequest(f"action là một trong {', '.join(decide.ACTIONS)}")
     if idem_key:
         old = vstore.find_decision(idem_key)
         if old is not None:
             return {"result": public(old["view_id"]), "decision": {**old, "repeated": True}}
     v = vstore.get(str(view_id))
     if v["status"] not in decide.FROM[action]:
-        raise ValueError(f"Không thể {action} khi nhận định ở trạng thái {v['status']}")
+        raise Conflict(f"Không thể {action} khi nhận định ở trạng thái {v['status']}")
     if action == "edit":
         reason = decide._require_reason(reason, action)
         v = decide.apply_edit(v, edits or {}, by, reason)
@@ -246,7 +247,7 @@ async def decide_view(
     if action == "approve":
         failed = [c for c in decide.checks(v) if not c["ok"]]
         if failed:
-            raise ValueError("Chưa duyệt được: " + "; ".join(f"{c['label']} ({c['detail']})" for c in failed))
+            raise Conflict("Chưa duyệt được: " + "; ".join(f"{c['label']} ({c['detail']})" for c in failed))
     dec = vstore.add_decision(
         v["id"], action, idem_key, {"by": by, "reason": reason, "content_hash": v.get("content_hash")}
     )

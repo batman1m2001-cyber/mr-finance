@@ -5,6 +5,7 @@ import {moves, probBar, slot} from "../charts/charts.js";
 
 const STEPS = [["DRAFTING", "Agent soạn"], ["PENDING_CHALLENGE", "Phản biện"], ["PENDING_APPROVAL", "CIO duyệt"], ["APPROVED", "Đã duyệt"]];
 const SIZE = {S: "nhỏ", M: "vừa", L: "lớn"};
+const MIN_REASON = 5;  // a decision's reason, as views/decide.py asks it
 const UNIT = {pct: "%", bp: " đcb", pp: " điểm %", sd: " độ lệch chuẩn"};
 const TARGET_TYPE = {asset_class: "Loại tài sản", sector: "Ngành", ticker: "Mã", fx: "Tỷ giá"};
 const target = (r) => (r.target_type === "asset_class" ? ASSET_CLASS[r.target] || r.target : r.target);
@@ -159,10 +160,12 @@ async function renderView(box, ctx, id) {
       <div class="panel c5"><h3>Điều kiện duyệt${decided ? ` <span class="hint">đã quyết: ${esc(viewLabel(v.status))}</span>` : ""}</h3>
         <div class="list">${checks.map(c => `<div class="check"><span class="${c.ok ? "up" : "down"}" aria-hidden="true">${c.ok ? "✓" : "✕"}</span><div><div>${esc(c.label)}</div>${c.ok ? "" : `<div class="small muted">${esc(c.detail)}</div>`}</div></div>`).join("")}</div>
         ${v.status === "PENDING_APPROVAL" || v.status === "PENDING_CHALLENGE" ? `
-        <label class="field" style="margin-top:12px">Lý do (bắt buộc)<textarea id="reason" placeholder="Ví dụ: Đồng ý kịch bản; nhánh căng thẳng giữ để đo rủi ro"></textarea></label>
+        <label class="field" style="margin-top:12px">Lý do (bắt buộc, từ ${MIN_REASON} ký tự)<textarea id="reason" placeholder="Ví dụ: Đồng ý kịch bản; nhánh căng thẳng giữ để đo rủi ro"></textarea></label>
+        <p class="small down" id="reason-err" role="alert" hidden></p>
         <div class="row" style="margin-top:10px"><button type="button" class="btn primary" data-act="approve" ${allOk ? "" : "disabled"}>Duyệt và áp dụng</button>
-          <button type="button" class="btn" data-act="return">Trả lại agent</button><button type="button" class="btn danger" data-act="reject">Bác</button></div>` : ""}
-        ${v.status === "APPROVED" ? `<label class="field" style="margin-top:12px">Lý do thu hồi<textarea id="reason"></textarea></label>
+          <button type="button" class="btn" data-act="return">Trả lại agent</button><button type="button" class="btn danger" data-act="reject">Bác bỏ</button></div>` : ""}
+        ${v.status === "APPROVED" ? `<label class="field" style="margin-top:12px">Lý do thu hồi (từ ${MIN_REASON} ký tự)<textarea id="reason"></textarea></label>
+          <p class="small down" id="reason-err" role="alert" hidden></p>
           <div class="row" style="margin-top:10px"><button type="button" class="btn danger" data-act="withdraw">Thu hồi nhận định</button></div>` : ""}
       </div>
       <div class="panel c12" id="scen"><h3>Kịch bản <span class="hint">CIO chọn cú sốc lõi và cỡ; máy suy ra phần còn lại</span>
@@ -216,16 +219,30 @@ async function renderView(box, ctx, id) {
   }
   const tiltBox = box.querySelector("#tilt");
   if (tiltBox) drawTilt(tiltBox, v, ctx);
+  // a refused decision keeps the page as it is (what was typed stays) and says why; a done one reloads it
   const act = async (body, msg) => {
-    try { await post("/api/views/decide", {view_id: v.id, by: ctx.user, ...body}); toast(msg); } catch (e) { toast(e.message); }
+    try { await post("/api/views/decide", {view_id: v.id, by: ctx.user, ...body}); } catch (e) { toast(e.message); return false; }
+    toast(msg);
     ctx.go(location.hash);
+    return true;
   };
   box.querySelectorAll("[data-act]").forEach(b => {
     b.onclick = async () => {
-      const reason = (box.querySelector("#reason") || {value: ""}).value.trim();
-      b.disabled = true;
+      const field = box.querySelector("#reason"), err = box.querySelector("#reason-err");
+      const reason = (field || {value: ""}).value.trim();
+      if (field && reason.length < MIN_REASON) {  // the server asks for it too (views/decide.py): say so here, before sending
+        err.textContent = `Nhập lý do (từ ${MIN_REASON} ký tự) trước khi bấm “${b.textContent.trim()}”.`;
+        err.hidden = false;
+        field.focus();
+        return;
+      }
+      if (err) err.hidden = true;
+      const all = box.querySelectorAll("[data-act]"), was = [...all].map(x => x.disabled);
+      all.forEach(x => { x.disabled = true; });
       const msg = {approve: "Đã duyệt; máy đã tính cho mọi gia đình", return: "Đã trả lại agent", reject: "Đã bác", withdraw: "Đã thu hồi"}[b.dataset.act];
-      await act({action: b.dataset.act, reason, idem_key: `${b.dataset.act}:${v.id}:${v.content_hash.slice(0, 12)}`}, msg);
+      if (!await act({action: b.dataset.act, reason, idem_key: `${b.dataset.act}:${v.id}:${v.content_hash.slice(0, 12)}`}, msg)) {
+        all.forEach((x, i) => { x.disabled = was[i]; });
+      }
     };
   });
   box.querySelectorAll("[data-answer]").forEach(b => {
