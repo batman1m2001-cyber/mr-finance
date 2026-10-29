@@ -48,11 +48,14 @@ const range = (a, b, metric) => m(b && Math.round(b) !== Math.round(a) ? `${vnd(
 const ym = (s) => (s ? `${s.slice(5, 7)}/${s.slice(0, 4)}` : "");
 const more = (title, body, open) => `<details class="more mt"${open ? " open" : ""}><summary>${esc(title)}</summary>${body}</details>`;
 const table = (head, rows, cls = "") => `<div class="scrollx"><table class="table ${cls}"><thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
-  <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  <tbody>${rows.map(r => `<tr${r.tone ? ` class="t-${r.tone}"` : ""}>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+// a row with a role the table colours (feedback round 3): asset, minus, plus, rate, result, target, gap
+const T = (tone, ...cells) => Object.assign(cells, {tone});
 const src = (s) => `<span class="small muted" data-explains>${s}</span>`;  // where a figure comes from: a few words, no formula
 const names = (xs, k = 3) => esc(xs.slice(0, k).join(", ")) + (xs.length > k ? ` +${xs.length - k}` : "");
+// a numbered part: its eyebrow and title stay frozen at the top while the part scrolls under them (feedback round 3)
 const section = (n, eyebrow, title, sub, body, id = "") => `<section class="panel mt sec"${id ? ` id="${id}"` : ""}>
-  <div class="sec-eyebrow">${n} · ${esc(eyebrow)}</div><h2 class="sec-title">${esc(title)}</h2>
+  <div class="sec-head"><div class="sec-eyebrow">${n} · ${esc(eyebrow)}</div><h2 class="sec-title">${esc(title)}</h2></div>
   ${sub ? `<p class="sec-sub">${sub}</p>` : ""}${body}</section>`;
 const kindOf = (x, a) => {  // what an action does, by its bucket and kind (feedback ver2: never by its amount)
   if (x.bucket === "liquidity") return x.kind === "move" ? "improve" : "urgent";
@@ -103,8 +106,10 @@ function overview(a, ctx, staff) {
     ${more("Xem hồ sơ khách hàng", profile)}`);
 }
 
-// ── 02 · the priorities: what to do now, with cause, deadline and action ───────────────────────────────
+// ── 02 · the priorities: what to do now — one line each, folded; the first open (feedback round 3) ───────
 
+// a priority: its short title, the one figure that says it, one line under it; open, the action, the cause and a
+// link to the bucket that works it out
 function priorities(a) {
   const liq = a.liquidity, cf = a.cashflow, ret = a.retirement, leg = a.legacy, gr = a.growth, dd = a.risk.drawdown_limit;
   const act = (b) => a.actions.find(x => x.bucket === b);
@@ -112,41 +117,51 @@ function priorities(a) {
   const out = [];
   if (liq.short > 0) {
     const x = act("liquidity");
-    out.push({kind: "urgent", tab: "liquidity", title: `Bổ sung ${vnd(liq.short)} dự phòng thanh khoản trước khi phân bổ thêm vốn dài hạn`,
-      issue: `Thanh khoản có ${vnd(liq.have)}, cần ${vnd(liq.target)} cho ${cf.horizon_years} năm tới (${a.method_label.toLowerCase()})`,
-      cause: big ? `Khoản chi lớn nhất: ${esc(big.label)} ${vnd(big.amount)} (${ym(big.month)}); đáy dòng tiền ${ym(cf.trough.month)}` : `Chi thường xuyên vượt thu nhập`,
-      when: big ? `Trước ${ym(big.month)}` : `Trong 3 tháng`, action: x ? `${esc(x.what)}${x.amount ? ` · ${vnd(x.amount)}` : ""}` : "Xếp bậc thang tiền gửi"});
+    out.push({kind: "urgent", tab: "liquidity", when: big ? `Trước ${ym(big.month)}` : "Trong 3 tháng", title: "Lập quỹ dự phòng thanh khoản",
+      figure: `Thiếu ${m(vnd(liq.short), "alloc.liquidity", {method: a.method_label})}`,
+      line: `Chi tiêu ${cf.horizon_years} năm tới, ${esc(a.method_label.toLowerCase())}: cần ${vnd(liq.target)}, có ${vnd(liq.have)}`,
+      action: `Dành tiền cho các khoản chi gần trước khi đưa thêm vốn vào đầu tư dài hạn${x ? `: ${esc(x.what.toLowerCase())}${x.amount ? ` · ${vnd(x.amount)}` : ""}` : ""}.`,
+      cause: big ? `Khoản chi lớn nhất: ${esc(big.label)} ${vnd(big.amount)} (${ym(big.month)}).` : "Chi thường xuyên vượt thu nhập."});
   }
   if (gr.worst_before.share > (dd || 1)) {
-    out.push({kind: "urgent", tab: "growth", title: `Đưa rủi ro danh mục về dưới ngưỡng ${pct(dd, false, 0)}`,
-      issue: `Khi thị trường xấu, danh mục có thể lỗ ${pct(gr.worst_before.share)}`, cause: "Tỷ trọng cổ phiếu và vàng cao hơn mô hình",
-      when: "Trong quý này", action: gr.worst_after.share > dd
-        ? `Tái cân bằng theo mô hình (lỗ khi thị trường xấu còn ${pct(gr.worst_after.share)}, vẫn trên ngưỡng): xem lại mức rủi ro với chuyên viên`
-        : `Tái cân bằng theo mô hình: lỗ khi thị trường xấu còn ${pct(gr.worst_after.share)}`});
+    out.push({kind: "urgent", tab: "growth", when: "Trong quý này", title: "Giảm rủi ro sụt giảm của danh mục",
+      figure: `Có thể lỗ ${m(pct(gr.worst_before.share), "alloc.worst")}`, line: `Khi thị trường xấu · ngưỡng chịu được dưới ${pct(dd, false, 0)}`,
+      action: gr.worst_after.share > dd
+        ? `Tái cân bằng theo mô hình (lỗ còn ${pct(gr.worst_after.share)}, vẫn trên ngưỡng), rồi xem lại mức rủi ro với chuyên viên.`
+        : `Tái cân bằng theo mô hình: lỗ khi thị trường xấu còn ${pct(gr.worst_after.share)}.`,
+      cause: "Tỷ trọng cổ phiếu và vàng cao hơn mô hình."});
   }
   if (leg.gap > 0) {
     const ins = (leg.options || []).find(o => o.id === "insure");
-    out.push({kind: "urgent", tab: "legacy", title: `Bảo vệ gia đình trước khoản hở ${range(leg.gap, leg.gap_high, "alloc.legacy")}`,
-      issue: `Nếu rủi ro xảy ra, gia đình cần ${vnd(leg.target)} nhưng giỏ Di sản có ${range(leg.have_low, leg.have, "alloc.legacy")}`,
-      cause: `Chi tiêu gia đình đến khi con nhỏ tự lập và học phí còn lại`, when: "Ngay: rủi ro không báo trước",
-      action: ins ? `Bảo hiểm có người thụ hưởng, khoảng ${vnd(ins.monthly)}/tháng (so sánh 4 phương án ở giỏ Di sản)` : esc(leg.fill_with)});
+    out.push({kind: "urgent", tab: "legacy", when: "Ngay: rủi ro không báo trước", title: "Bảo vệ nghĩa vụ tài chính của gia đình",
+      figure: `Có thể thiếu ${range(leg.gap, leg.gap_high, "alloc.legacy")}`, line: `Gia đình cần ${vnd(leg.target)}, giỏ Di sản có ${vnd(leg.have)}`,
+      action: ins ? `Bảo hiểm có người thụ hưởng, khoảng ${vnd(ins.monthly)}/tháng; so sánh 4 phương án ở giỏ Di sản.` : `${esc(leg.fill_with)}.`,
+      cause: "Chi tiêu gia đình đến khi con nhỏ tự lập, học phí còn lại và nợ."});
   }
   if (ret.status === "short") {
-    out.push({kind: "long", tab: "growth", title: `Quyết định lại mục tiêu nghỉ hưu năm ${ret.year}`,
-      issue: `Dự kiến đạt ${vnd(ret.reach)}, cần ${vnd(ret.need)} (giá năm ${ret.year})`,
-      cause: `Lợi suất cần ${ret.required != null ? pct(ret.required) : "trên 30%"}/năm, mô hình giả định ${pct(ret.expected)}/năm`,
-      when: `Còn ${ret.years} năm`, action: `Thử ở phần 04: tiết kiệm thêm, giảm chi hoặc nghỉ muộn hơn`});
+    out.push({kind: "long", tab: "growth", when: `Còn ${ret.years} năm`, title: "Xem lại mục tiêu nghỉ hưu",
+      figure: `${ret.year} · dự kiến ${m(vnd(ret.reach), "alloc.retirement")} so với cần ${m(vnd(ret.need), "alloc.retirement")}`,
+      line: `Lợi suất cần ${ret.required != null ? pct(ret.required) : "trên 30%"}/năm, mô hình giả định ${pct(ret.expected)}/năm`,
+      action: "Thử ở phần 04: tiết kiệm thêm, giảm chi hoặc nghỉ muộn hơn.", cause: "Vốn đầu tư dài hạn và dòng tiền ròng chưa đủ cho chi tiêu khi nghỉ."});
   }
-  if (liq.excess > 0) out.push({kind: "improve", tab: "liquidity", title: `Đưa ${vnd(liq.excess)} tiền dư sang giỏ Tăng trưởng`,
-    issue: `Thanh khoản dư so với nhu cầu ${cf.horizon_years} năm`, cause: "Tiền nằm chờ, lợi suất thấp", when: "Khi thuận tiện", action: "Chuyển sang tiền chờ đầu tư"});
+  if (liq.excess > 0) out.push({kind: "improve", tab: "liquidity", when: "Khi thuận tiện", title: "Đưa tiền dư sang giỏ Tăng trưởng",
+    figure: `Dư ${m(vnd(liq.excess), "alloc.liquidity")}`, line: `So với nhu cầu ${cf.horizon_years} năm tới`,
+    action: "Chuyển sang tiền chờ đầu tư.", cause: "Tiền nằm chờ, lợi suất thấp."});
   out.sort((x, y) => RANK[x.kind] - RANK[y.kind]);
+  const count = (k) => out.filter(p => p.kind === k).length;
+  const sub = [`${out.length} ưu tiên`, count("urgent") ? `${count("urgent")} việc cần xử lý ngay` : "",
+    count("improve") ? `${count("improve")} việc nên cân nhắc` : "", count("long") ? `${count("long")} quyết định dài hạn` : ""].filter(Boolean).join(" · ");
   const sim = a.risk.source === "simulated";
-  return section("02", "Ưu tiên tài chính", "Tôi cần làm gì ngay bây giờ?",
-    out.length ? `${out.length} việc, việc cấp bách nhất trước${sim ? " · các đề xuất đúng khi giả định của mô hình được xác nhận (mức rủi ro đang giả lập)" : ""}` : "",
-    out.length ? `<ol class="prio">${out.map((p, i) => `<li class="${i ? "" : "first"}" data-goto="${p.tab}" tabindex="0">
-        <div class="row tight"><span class="pnum">${i + 1}</span><span class="pill ${KIND[p.kind][0]}">${KIND[p.kind][1]}</span><b>${p.title}</b></div>
-        <dl class="pgrid small"><div><dt>Vấn đề</dt><dd data-explains>${p.issue}</dd></div><div><dt>Nguyên nhân</dt><dd data-explains>${p.cause}</dd></div>
-          <div><dt>Thời hạn</dt><dd>${p.when}</dd></div><div><dt>Hành động đề xuất</dt><dd data-explains>${p.action}</dd></div></dl></li>`).join("")}</ol>`
+  return section("02", "Ưu tiên tài chính", "Tôi cần làm gì ngay bây giờ?", out.length ? sub : "",
+    out.length ? `<div class="prio">${out.map((p, i) => `<details class="pitem"${i ? "" : " open"}>
+        <summary><span class="pnum">${i + 1}</span><span class="pmain">
+          <span class="pmeta"><span class="pill ${KIND[p.kind][0]}">${KIND[p.kind][1]}</span><span class="small muted">${esc(p.when)}</span></span>
+          <span class="ptitle">${esc(p.title)}</span><span class="pfig">${p.figure}</span><span class="small muted pline" data-explains>${p.line}</span></span>
+          <span class="pchev" aria-hidden="true">${icon("chevron", {size: 18})}</span></summary>
+        <div class="pbody"><div class="pact">Hành động đề xuất</div><p data-explains>${p.action}</p>
+          <p class="small muted" data-explains>${p.cause}</p>
+          <button type="button" class="linkish" data-goto="${p.tab}">Xem cách tính &amp; giả định ${icon("arrow", {size: 13})}</button></div></details>`).join("")}</div>
+      ${sim ? `<p class="small muted mt-xs">Các đề xuất đúng khi giả định của mô hình được xác nhận: mức rủi ro đang giả lập.</p>` : ""}`
       : `<p class="muted">Ba giỏ đều đủ: không có việc gấp.</p>`);
 }
 
@@ -187,8 +202,8 @@ function liquidity(a) {
     </div>
     <h3 class="mt">Dòng tiền ${cf.horizon_years} năm tới <span class="hint">di chuột vào từng tháng để xem các khoản</span></h3>
     <div id="alloc-cash" class="mt-xs"></div>
-    ${more(`Từng khoản dòng tiền (${lines.length})`, table(["Khoản", "Nguồn", "Khi nào", "Số tiền"], [...lines.map(([k, s, w, v]) => [k, s, esc(w), m(vnd(v, true), "alloc.cashflow")]),
-      ["<b>Ròng</b>", src("Thu nhập trừ mọi khoản chi"), esc(`${ym(cf.months[0].month)}–${ym(cf.months[n - 1].month)}`), `<b>${m(vnd(net, true), "alloc.cashflow")}</b>`]]) + sum)}
+    ${more(`Từng khoản dòng tiền (${lines.length})`, table(["Khoản", "Nguồn", "Khi nào", "Số tiền"], [...lines.map(([k, s, w, v]) => T(v < 0 ? "minus" : "plus", k, s, esc(w), m(vnd(v, true), "alloc.cashflow"))),
+      T(net < 0 ? "gap" : "result", "<b>Ròng</b>", src("Thu nhập trừ mọi khoản chi"), esc(`${ym(cf.months[0].month)}–${ym(cf.months[n - 1].month)}`), `<b>${m(vnd(net, true), "alloc.cashflow")}</b>`)]) + sum)}
     ${more("Bậc thang Thanh khoản", table(["Khoản", "Dùng cho", "Số tiền"], liq.ladder.map(r => [esc(r.what), esc(r.when), m(vnd(r.amount), "alloc.ladder")])))}
     ${more("Cách bù phần thiếu", table(["Cách bù", "Chi phí", "Được?", "Vì sao"], a.fill.options.map(o =>
       [esc(o.label), `<span data-explains>${esc(o.cost || "")}</span>`, o.id === a.fill.chosen ? `<span class="pill good">Đã chọn</span>` : o.ok ? "Có" : "Không", `<span data-explains>${esc(o.why)}</span>`])))}`;
@@ -214,19 +229,19 @@ function growth(a) {
   const now = a.buckets.growth.value, g1 = gr.rebalance.total, moved = now - g1;
   const nominal = ret.year ? ` (năm ${ret.year}, giá danh nghĩa, lạm phát ${pct(s.inflation, false, 0)}/năm)` : "";
   const rows = ret.status === "retired" ? [["Nghỉ hưu", "Đã nghỉ", src(`Tuổi nghỉ hưu ${s.retirement_age} (giả định) · nay ${c.age} tuổi`)]] : [
-    ["<b>Tài sản hiện tại</b>", m(vnd(now), "alloc.growth"), src("Giỏ Tăng trưởng hôm nay")],
-    ...(Math.round(moved) ? [[moved > 0 ? "Chuyển sang Thanh khoản" : "Nhận tiền dư từ Thanh khoản", m(vnd(-moved, true), "alloc.growth"),
-      src(moved > 0 ? "Bán để bù giỏ Thanh khoản (phần 02, việc số 1)" : "Thanh khoản dư so với nhu cầu, chuyển sang chờ đầu tư")],
-      ["Vốn đầu tư dài hạn", m(vnd(g1), "alloc.growth"), src(`${vnd(now)} ${moved > 0 ? "−" : "+"} ${vnd(Math.abs(moved))}: con số dùng cho mọi phép tính dưới đây`)]] : []),
-    ["Dòng tiền ròng mỗi năm (từ năm thứ " + (s.horizon_years + 1) + ")", `${m(vnd(ret.saving_yearly, true), "alloc.retirement")}/năm`,
-      src(ret.saving_yearly < 0 ? "Thu nhập thấp hơn chi tiêu: mỗi năm rút bớt từ danh mục" : "Thu nhập trừ chi tiêu, cộng thêm vào danh mục mỗi năm")],
-    ["Lợi suất giả định", `${m(pct(ret.expected), "alloc.growth")}/năm`, src(`Mô hình mức rủi ro ${a.risk.level} · ${esc(a.risk.name)}`)],
-    ["<b>Giá trị dự kiến khi nghỉ hưu</b>", `<b>${m(vnd(ret.reach), "alloc.retirement")}</b>`, src(`Vốn đầu tư dài hạn và dòng tiền ròng, sau ${ret.years} năm ở lợi suất giả định`)],
-    ["<b>Mục tiêu cần đạt</b>", `<b>${m(vnd(ret.need), "alloc.retirement")}</b>`, src(`Chi tiêu nay ${vnd(ret.spend_now)}/năm, tăng theo lạm phát đến ${ret.year}, × ${s.withdraw_multiple} năm chi`)],
-    ["Lợi suất cần để đạt mục tiêu", ret.required != null ? `${m(pct(ret.required), "alloc.retirement")}/năm` : "Trên 30%/năm", src("Lợi suất mà giá trị dự kiến bằng mục tiêu")],
+    T("asset", "<b>Tài sản hiện tại</b>", m(vnd(now), "alloc.growth"), src("Giỏ Tăng trưởng hôm nay")),
+    ...(Math.round(moved) ? [T(moved > 0 ? "minus" : "plus", moved > 0 ? "Chuyển sang Thanh khoản" : "Nhận tiền dư từ Thanh khoản", m(vnd(-moved, true), "alloc.growth"),
+      src(moved > 0 ? "Bán để bù giỏ Thanh khoản (phần 02, việc số 1)" : "Thanh khoản dư so với nhu cầu, chuyển sang chờ đầu tư")),
+      T("asset", "Vốn đầu tư dài hạn", m(vnd(g1), "alloc.growth"), src(`${vnd(now)} ${moved > 0 ? "−" : "+"} ${vnd(Math.abs(moved))}: con số dùng cho mọi phép tính dưới đây`))] : []),
+    T(ret.saving_yearly < 0 ? "minus" : "plus", "Dòng tiền ròng mỗi năm (từ năm thứ " + (s.horizon_years + 1) + ")", `${m(vnd(ret.saving_yearly, true), "alloc.retirement")}/năm`,
+      src(ret.saving_yearly < 0 ? "Thu nhập thấp hơn chi tiêu: mỗi năm rút bớt từ danh mục" : "Thu nhập trừ chi tiêu, cộng thêm vào danh mục mỗi năm")),
+    T("rate", "Lợi suất giả định", `${m(pct(ret.expected), "alloc.growth")}/năm`, src(`Mô hình mức rủi ro ${a.risk.level} · ${esc(a.risk.name)}`)),
+    T("result", "<b>Giá trị dự kiến khi nghỉ hưu</b>", `<b>${m(vnd(ret.reach), "alloc.retirement")}</b>`, src(`Vốn đầu tư dài hạn và dòng tiền ròng, sau ${ret.years} năm ở lợi suất giả định`)),
+    T("target", "<b>Mục tiêu cần đạt</b>", `<b>${m(vnd(ret.need), "alloc.retirement")}</b>`, src(`Chi tiêu nay ${vnd(ret.spend_now)}/năm, tăng theo lạm phát đến ${ret.year}, × ${s.withdraw_multiple} năm chi`)),
+    T("rate", "Lợi suất cần để đạt mục tiêu", ret.required != null ? `${m(pct(ret.required), "alloc.retirement")}/năm` : "Trên 30%/năm", src("Lợi suất mà giá trị dự kiến bằng mục tiêu")),
     ...(ret.status === "short" ? [
-      ["<b>Thiếu</b>", `<b>${m(vnd(ret.short), "alloc.retirement")}</b>`, src("Mục tiêu cần đạt trừ giá trị dự kiến")],
-      ["Khoản đóng góp bổ sung cần thêm", `${m(vnd(ret.extra_monthly), "alloc.retirement")}/tháng`, src(`Ngoài dòng tiền ròng ở trên, góp thêm mỗi tháng trong ${ret.saving_years} năm để bù phần thiếu`)],
+      T("gap", "<b>Thiếu</b>", `<b>${m(vnd(ret.short), "alloc.retirement")}</b>`, src("Mục tiêu cần đạt trừ giá trị dự kiến")),
+      T("target", "Khoản đóng góp bổ sung cần thêm", `${m(vnd(ret.extra_monthly), "alloc.retirement")}/tháng`, src(`Ngoài dòng tiền ròng ở trên, góp thêm mỗi tháng trong ${ret.saving_years} năm để bù phần thiếu`)),
       ["Hoặc nghỉ muộn", ret.delay.enough ? `${ret.delay.enough} năm` : "Lùi 10 năm vẫn chưa đủ", src("Giữ nguyên mọi thứ khác, lùi năm nghỉ")]] : []),
   ];
   const rr = gr.rebalance.rows, total = gr.rebalance.total || 1;
@@ -261,21 +276,21 @@ function legacy(a) {
   const adjust = leg.have - (book - leg.secured);  // insurance at its payout, not its cash value
   const drop = leg.drop ? leg.estate * leg.drop.drop : 0;
   const rows = [
-    ...leg.floor_rows.map(r => [esc(r.label), src(r.how ? esc(r.how) : loans.length ? esc(loans.join(", ")) : "Các khoản vay đang có"), m(vnd(r.amount), "alloc.legacy")]),
-    ["<b>Gia đình cần (sàn Di sản)</b>", src("Cộng ba khoản trên"), `<b>${m(vnd(leg.floor), "alloc.legacy")}</b>`],
-    ...(leg.wish ? [["Mong muốn để lại", src("Khách hàng khai; mục tiêu là số lớn hơn"), m(vnd(leg.wish), "alloc.legacy")]] : []),
-    ["Tài sản trong giỏ Di sản", src(held.length ? names(held) : "—"), m(vnd(book), "alloc.legacy")],
-    ...(leg.secured ? [["Trừ nợ thế chấp trên các tài sản này", src(loans.length ? esc(loans[0]) : ""), m(vnd(-leg.secured, true), "alloc.legacy")]] : []),
-    ...(Math.round(adjust) ? [[adjust > 0 ? "Bảo hiểm tính theo số tiền chi trả" : "Không tính bảo hiểm chưa có người thụ hưởng",
-      src(adjust > 0 ? "Số tiền gia đình nhận thay cho giá trị hoàn lại" : "Chưa chỉ định người thụ hưởng: gia đình chưa chắc nhận được"), m(vnd(adjust, true), "alloc.legacy")]] : []),
-    ["<b>Đang có (giá hôm nay)</b>", src("Phần gia đình nhận được"), `<b>${m(vnd(leg.have), "alloc.legacy")}</b>`],
-    ["<b>Thiếu nếu giá giữ nguyên</b>", src(`Mục tiêu ${vnd(leg.target)} trừ phần đang có`), leg.gap > 0 ? `<b>${m(vnd(leg.gap), "alloc.legacy")}</b>` : `<span class="pill good">Đủ</span>`],
+    ...leg.floor_rows.map(r => T("target", esc(r.label), src(r.how ? esc(r.how) : loans.length ? esc(loans.join(", ")) : "Các khoản vay đang có"), m(vnd(r.amount), "alloc.legacy"))),
+    T("target", "<b>Gia đình cần (sàn Di sản)</b>", src("Cộng ba khoản trên"), `<b>${m(vnd(leg.floor), "alloc.legacy")}</b>`),
+    ...(leg.wish ? [T("target", "Mong muốn để lại", src("Khách hàng khai; mục tiêu là số lớn hơn"), m(vnd(leg.wish), "alloc.legacy"))] : []),
+    T("asset", "Tài sản trong giỏ Di sản", src(held.length ? names(held) : "—"), m(vnd(book), "alloc.legacy")),
+    ...(leg.secured ? [T("minus", "Trừ nợ thế chấp trên các tài sản này", src(loans.length ? esc(loans[0]) : ""), m(vnd(-leg.secured, true), "alloc.legacy"))] : []),
+    ...(Math.round(adjust) ? [T(adjust > 0 ? "plus" : "minus", adjust > 0 ? "Bảo hiểm tính theo số tiền chi trả" : "Không tính bảo hiểm chưa có người thụ hưởng",
+      src(adjust > 0 ? "Số tiền gia đình nhận thay cho giá trị hoàn lại" : "Chưa chỉ định người thụ hưởng: gia đình chưa chắc nhận được"), m(vnd(adjust, true), "alloc.legacy"))] : []),
+    T("result", "<b>Đang có (giá hôm nay)</b>", src("Phần gia đình nhận được"), `<b>${m(vnd(leg.have), "alloc.legacy")}</b>`),
+    T(leg.gap > 0 ? "gap" : "plus", "<b>Thiếu nếu giá giữ nguyên</b>", src(`Mục tiêu ${vnd(leg.target)} trừ phần đang có`), leg.gap > 0 ? `<b>${m(vnd(leg.gap), "alloc.legacy")}</b>` : `<span class="pill good">Đủ</span>`),
   ];
   const stress = leg.drop ? table(["Bước", "Giá trị", "Nguồn"], [
-    ["Bất động sản trong giỏ Di sản (giá hôm nay)", m(vnd(leg.estate), "alloc.legacy"), src("Chỉ phần bất động sản chịu kịch bản; bảo hiểm và tài sản khác giữ nguyên")],
-    [`Giảm ${pct(leg.drop.drop, false, 0)}`, m(vnd(-drop, true), "alloc.legacy"), src(`${vnd(leg.estate)} × ${pct(leg.drop.drop, false, 0)} · ${esc(leg.drop.note || "giả định")}${leg.drop.period ? `, như giai đoạn ${esc(leg.drop.period)}` : ""}`)],
-    ["Đang có sau kịch bản", m(vnd(leg.have_low), "alloc.legacy"), src(`${vnd(leg.have)} − ${vnd(drop)}`)],
-    ["<b>Thiếu nếu giá giảm</b>", `<b>${m(vnd(leg.gap_high), "alloc.legacy")}</b>`, src(`Mục tiêu ${vnd(leg.target)} − ${vnd(leg.have_low)}`)],
+    T("asset", "Bất động sản trong giỏ Di sản (giá hôm nay)", m(vnd(leg.estate), "alloc.legacy"), src("Chỉ phần bất động sản chịu kịch bản; bảo hiểm và tài sản khác giữ nguyên")),
+    T("minus", `Giảm ${pct(leg.drop.drop, false, 0)}`, m(vnd(-drop, true), "alloc.legacy"), src(`${vnd(leg.estate)} × ${pct(leg.drop.drop, false, 0)} · ${esc(leg.drop.note || "giả định")}${leg.drop.period ? `, như giai đoạn ${esc(leg.drop.period)}` : ""}`)),
+    T("result", "Đang có sau kịch bản", m(vnd(leg.have_low), "alloc.legacy"), src(`${vnd(leg.have)} − ${vnd(drop)}`)),
+    T("gap", "<b>Thiếu nếu giá giảm</b>", `<b>${m(vnd(leg.gap_high), "alloc.legacy")}</b>`, src(`Mục tiêu ${vnd(leg.target)} − ${vnd(leg.have_low)}`)),
   ]) : "";
   const opts = leg.options || [], base = opts.length ? opts[0].left_now : 0, years = leg.years || 10;
   const options = opts.length ? `<h3 class="mt">Bốn cách khép khoản thiếu <span class="hint">tính trên phần thiếu khi giá giảm: ${vnd(base)}</span></h3>
@@ -437,14 +452,9 @@ export async function render(box, ctx) {
     b.onclick = (e) => { if (!e.target.closest(".how-n")) openTab(b.dataset.tab); };  // a figure opens its formula, not the tab
     b.onkeydown = (e) => { if ((e.key === "Enter" || e.key === " ") && e.target === b) { e.preventDefault(); openTab(b.dataset.tab); } };
   });
-  box.querySelectorAll("[data-goto]").forEach(li => {  // a priority opens its bucket's tab and scrolls to it
-    const go = (e) => {
-      if (e.target.closest(".how-n, a")) return;
-      st.tab = li.dataset.goto;
-      render(box, ctx).then(() => $("#alloc-buckets", box)?.scrollIntoView({behavior: "smooth", block: "start"}));
-    };
-    li.onclick = go;
-    li.onkeydown = (e) => { if (e.key === "Enter") go(e); };
+  box.querySelectorAll("[data-goto]").forEach(b => b.onclick = () => {  // a priority opens its bucket's tab and scrolls to it
+    st.tab = b.dataset.goto;
+    render(box, ctx).then(() => $("#alloc-buckets", box)?.scrollIntoView({behavior: "smooth", block: "start"}));
   });
   box.querySelectorAll("[data-method]").forEach(b => b.onclick = () => { st.method = b.dataset.method; st.scResult = null; render(box, ctx); });
   const ex = $("[data-example]", box);

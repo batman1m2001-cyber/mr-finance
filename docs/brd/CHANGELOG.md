@@ -2,6 +2,9 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-29 — UI/UX feedback round 3 (owner): Phân bổ tài sản's part titles stay frozen while scrolling; the
+  priorities fold to one line each, the first open with its figure and action; the calculation tables colour each
+  row by its role. — SCR-CL-13
 - 2026-10-29 — UI/UX feedback ver2 (owner, “Sửa UI-UX ver2”): Phân bổ tài sản in four numbered parts — the overview
   (net worth, liquidity, the profile folded, the three risk numbers explained), the financial priorities (issue,
   cause, deadline, action), the buckets with icons, changes classed by what they do, Growth from one source with the

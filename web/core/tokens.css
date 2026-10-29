@@ -1771,3 +1771,37 @@ body[data-role="client"] .ws-page { min-height: 44px; font-size: 15px; }
 .whatif .field > span:first-child { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .whatif input[type="range"] { width: 100%; accent-color: var(--ink); }
 .whatif .range-ends { display: flex; justify-content: space-between; }
+/* round 3: each part's title frozen at the top of the sheet while the part scrolls; the priorities folded; a
+   table's rows coloured by their role (private-banking palette: gold for assets, brown for results, navy for targets,
+   slate for rates, the money colours for what is added, taken away and short) */
+.sec-head { position: sticky; top: -18px; z-index: 3; background: var(--surface); margin: -20px -22px 0; padding: 16px 22px 8px;
+  border-radius: var(--radius) var(--radius) 0 0; border-bottom: 1px solid transparent; }
+.sec-head .sec-title { margin-bottom: 0; }
+.sec .sec-sub { margin-top: 6px; }
+.prio .pitem { border: 1px solid var(--hair); border-radius: var(--radius-s); background: var(--surface); }
+.prio .pitem[open] { border-color: var(--brand-red); box-shadow: 0 0 0 1px var(--brand-red); }
+.prio summary { list-style: none; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 14px; cursor: pointer; }
+.prio summary::-webkit-details-marker { display: none; }
+.prio .pnum { width: 30px; height: 30px; border-radius: 8px; font-size: 14px; }
+.prio .pmain { display: grid; gap: 2px; min-width: 0; }
+.prio .pmeta { display: none; gap: 8px; align-items: center; }
+.prio .pitem[open] .pmeta { display: flex; }
+.prio .ptitle { font-weight: 650; }
+.prio .pfig { display: none; font-size: 20px; font-weight: 750; letter-spacing: -.01em; margin-top: 4px; }
+.prio .pitem[open] .pfig { display: block; }
+.prio .pchev { color: var(--muted); transition: transform var(--dur-1) var(--ease-out); }
+.prio .pitem[open] .pchev { transform: rotate(180deg); }
+.prio .pbody { border-top: 1px solid var(--hair); margin: 0 14px; padding: 10px 0 14px 42px; }
+.prio .pbody p { margin: 4px 0; }
+.prio .pact { font-weight: 650; font-size: 13.5px; }
+@media (max-width: 560px) { .prio .pbody { padding-left: 0; } }
+.table tr[class^="t-"] td:first-child { box-shadow: inset 3px 0 0 var(--tone); }
+.table tr[class^="t-"] td:not(:first-child):not(:has(.muted)) { color: var(--tone); font-variant-numeric: tabular-nums; }
+.table tr.t-asset { --tone: var(--brand-red); }
+.table tr.t-minus { --tone: var(--down); }
+.table tr.t-plus { --tone: var(--up); }
+.table tr.t-rate { --tone: var(--flat); }
+.table tr.t-result { --tone: var(--ink-2); background: var(--surface-2); }
+.table tr.t-target { --tone: var(--t1); }
+.table tr.t-gap { --tone: var(--critical); }
+.table tr.t-gap td:first-child, .table tr.t-result td:first-child { font-weight: 650; }

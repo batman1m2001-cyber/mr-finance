@@ -440,6 +440,11 @@ spending, retire at another age; the same request with `whatif` {move, spending_
 the three goals now and in the scenario side by side, the change coloured, and why, folded.
 Folded at the end: the reconciliation, the assumptions (editable), for staff the bucket moves. Every figure opens how
 it is worked out.
+**Since round 3 (2026-10-29).** Each part's eyebrow and title stay frozen at the top while the part scrolls. The
+priorities are folded, one line each (number, short title, one line); the first is open with its class and deadline,
+the one figure that says it, the recommended action, the cause and “Xem cách tính & giả định” (opens the bucket). The
+how-it-is-worked-out tables colour each row by its role — gold an asset, brown a result, navy a target or a need,
+slate a rate, green added, orange-red taken away or short — with a thin bar of the same colour before the label.
 
 **Interaction.** A tile opens its tab; changing an assumption or the method recomputes; the RM's **Gửi vào hàng duyệt**
 sends every bucket's actions to the review queue and says so.
