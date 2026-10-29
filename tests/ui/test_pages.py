@@ -70,25 +70,34 @@ def test_a_proposal_is_approved_by_the_rm_and_the_client_sees_it(open_page):
     assert not p.problems()
 
 
+def _direction(a):
+    """An item's direction as News and Prediction shows it: its evidence's, else its impact's sign."""
+    e = (a.get("evidence") or {}).get("direction")
+    if e == "unclear" or (not e and not a["impact"]):
+        return "neutral"
+    return ("positive" if e == "positive" else "negative") if e else ("positive" if a["opportunity"] else "negative")
+
+
 def test_the_policy_filter_keeps_one_side(open_page, base_url):
     p = open_page()
     p.go("#/client/tin/chinh-sach")
     rep = api(base_url, "/api/alerts", {"client_id": "C01", "scope": "personal"})["report"]
-    assert p.page.locator("#sections .acard").count() == len(rep["alerts"])
-    p.page.click("[data-af=opp]")
-    opp = [a for a in rep["alerts"] if a["opportunity"]]
-    assert p.page.locator("#sections .acard").count() == len(opp)
-    assert p.page.locator("#impact .dbar").count() == min(10, len(opp))
-    # each row ends in its level and horizon (Cao · 1 tháng), an opportunity's pill green
-    assert p.page.locator("#impact .dv .pill").count() == p.page.locator("#impact .dv .pill.good").count() > 0
-    assert all(" · " in v for v in p.page.locator("#impact .dv").all_inner_texts())
-    p.page.click("[data-af=risk]")
-    assert p.page.locator("#impact .dv .pill.good").count() == 0
+    items = list({a["factor"]: a for a in reversed(rep["alerts"])}.values())  # one per news, its largest hit
+    assert p.page.locator("#sections .acard").count() == len(items)
+    assert p.page.locator("#impact .nrow").count() == len(items)
+    p.page.click("[data-af=positive]")
+    pos = [a for a in items if _direction(a) == "positive"]
+    assert p.page.locator("#sections .acard").count() == len(pos)
+    # each row ends in its direction only (business feedback 2026-10-29): no amount, no horizon, a positive one green
+    assert p.page.locator("#impact .nrow .pill").count() == p.page.locator("#impact .nrow .pill.good").count() == len(pos) > 0
+    assert all(" · " not in v for v in p.page.locator("#impact .nrow .pill").all_inner_texts())
+    p.page.click("[data-af=negative]")
+    assert p.page.locator("#impact .nrow .pill.good").count() == 0
     p.page.click("[data-hz='1w']")  # the horizon filter: only what lands within a week
-    week = [a["id"] for a in rep["alerts"] if not a["opportunity"] and a["horizon"] == "1w"]
+    week = [a["id"] for a in items if _direction(a) == "negative" and a["horizon"] == "1w"]
     # by id: the titles show in the page's language
-    shown = [r.get_attribute("data-a") for r in p.page.locator("#impact .dbar").all()]
-    assert set(shown) == set(week) if len(week) <= 10 else set(shown) <= set(week)
+    shown = [r.get_attribute("data-a") for r in p.page.locator("#impact .nrow").all()]
+    assert set(shown) == set(week)
     assert not p.problems()
 
 

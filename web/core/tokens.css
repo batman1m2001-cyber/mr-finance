@@ -657,6 +657,14 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(23, 18, 58, .12); }
 .nwhero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 28px; align-items: start; }
 @media (max-width: 900px) { .nwhero { grid-template-columns: minmax(0, 1fr); } }
+/* Wealth view's head: assets, debt and net worth, one large tile each (business feedback 2026-10-29) */
+.nwtiles { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.35fr); gap: 12px; }
+.nwtile { background: var(--surface-2); border: 1px solid var(--hair); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+.nwtile .k { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.nwtile .v { font-size: 30px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; margin: 8px 0 4px; font-variant-numeric: tabular-nums; }
+.nwtile.main { background: var(--surface); border-color: var(--axis); box-shadow: 0 0 0 1px var(--axis) inset; }
+@media (max-width: 1200px) { .nwtile .v { font-size: 24px; } }
+@media (max-width: 560px) { .nwtiles { grid-template-columns: minmax(0, 1fr); } }
 .hero-v { font-size: 44px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin: 6px 0 4px; font-variant-numeric: tabular-nums; }
 @media (max-width: 560px) { .hero-v { font-size: 34px; } }
 .kv { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 13px; color: var(--ink-2); align-items: baseline; }
@@ -693,6 +701,9 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
 .subhead { text-transform: none; letter-spacing: normal; color: var(--ink); }
 .allocgrid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
 .allocgrid .table td:first-child { white-space: nowrap; }
+.allocgrid .subrow th { padding-top: 16px; text-align: left; border-bottom: 1px solid var(--axis); }
+.allocgrid tfoot td { font-weight: 600; border-top: 1px solid var(--axis); }
+.allocgrid tfoot .total td { font-size: 15px; }
 .allocbox { container-type: inline-size; }
 @container (max-width: 600px) { .allocgrid { grid-template-columns: minmax(0, 1fr); } }  /* by the panel's width: half a row at 1280 is too narrow */
 .table td.r, .table th.r { white-space: nowrap; }
@@ -775,6 +786,23 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
   box-shadow: 0 0 0 2px var(--surface); }
 .rlabels { display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; font-size: 11px; }
 .dbars { display: grid; gap: 6px; }
+/* News and Prediction (business feedback 2026-10-29): each item and its direction only, two columns on a wide page */
+.nrows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 2px; }
+@media (max-width: 900px) { .nrows { grid-template-columns: minmax(0, 1fr); } }
+.nrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px; border-radius: 8px;
+  border-bottom: 1px solid var(--hair); font-size: 14px; color: var(--ink-2); cursor: pointer; min-width: 0; }
+.nrow > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nrow .pill { flex: none; }
+.nrow:hover, .nrow:focus-visible { background: var(--surface-2); }
+/* a news card's blocks: the summary under a tab-like heading (as a wire service shows it), why it matters, precedents */
+.nblock { margin-top: 12px; }
+.nhead { font-size: 12.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 6px; }
+.nhead.tab { display: inline-block; font-size: 14px; color: var(--ink); padding-bottom: 4px; border-bottom: 3px solid var(--ink); }
+.nblock .nhead.tab + .nsum { border-top: 1px solid var(--hair); margin-top: -1px; padding-top: 8px; }
+.nsum { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; line-height: 1.45; }
+.nprec { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.acard a { color: inherit; text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--axis); }
+.acard a:hover { text-decoration-color: currentColor; }
 .dbar { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 104px; gap: 10px; align-items: center; font-size: 13px;
   padding: 2px 4px; border-radius: 6px; }
 .dbar:hover, .dbar:focus-visible { background: var(--surface-2); }

@@ -1,7 +1,8 @@
 /* Tài sản (SCR-CL-02): every holding and debt, and adding more (UI redesign R3; was the pre-redesign “sources”
    tab). A statement upload (PDF, Excel, CSV, or a sample) read by POST /api/statement (FEAT-22), a declaration chat
    streamed by POST /api/declare/stream (FEAT-23; the agent may ask back with a form or a choice), and the book: every holding grouped by asset class, with source and trust, when
-   and at what it was bought, cost, value, and profit against cost (deposits: interest accrued to the price date).
+   it was bought, cost, value, profit against cost (deposits: interest accrued to the price date), and what is owed
+   against it and paid on that each month (business feedback 2026-10-29; the purchase price column left).
    The last read and the chat are kept for this browser tab, per client; a turn that records something redraws the
    book only, not the page. */
 import {$, esc, get, n as how, pct, post, stream, vnd} from "../core/core.js";
@@ -11,17 +12,18 @@ const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 
   "Tôi có 2 con, 14 tuổi và 10 tuổi", "Tôi có 20% cổ phần công ty Hoa Sen trị giá 5 tỷ"];
 const TRUST = {verified: ["good", "Đã xác thực"], statement: ["ai", "Từ sao kê"], declared: ["warn", "Bạn tự khai"]};
 const METHOD = {ai: "AI đọc", rules: "Đọc theo mẫu"};
+// the groups by how soon each turns into cash, the quickest first (business feedback 2026-10-29), the debts last
 const BOOK = [
-  {id: "real_estate", label: "Bất động sản", color: "var(--s1)", classes: ["real_estate"]},
+  {id: "cash", label: "Tiền mặt & tài khoản thanh toán", color: "var(--s3)", classes: ["cash"]},
+  {id: "deposit", label: "Tiền gửi tiết kiệm", color: "var(--s3)", classes: ["deposit"]},
   {id: "stock", label: "Cổ phiếu", color: "var(--s2)", classes: ["stock"]},
   {id: "fund", label: "Chứng chỉ quỹ", color: "var(--s5)", classes: ["fund"]},
-  {id: "bond", label: "Trái phiếu", color: "var(--s7)", classes: ["bond"]},
-  {id: "deposit", label: "Tiền gửi tiết kiệm", color: "var(--s3)", classes: ["deposit"]},
-  {id: "cash", label: "Tiền mặt & tài khoản thanh toán", color: "var(--s3)", classes: ["cash"]},
   {id: "gold", label: "Vàng", color: "var(--s4)", classes: ["gold"]},
-  {id: "business", label: "Cổ phần doanh nghiệp", color: "var(--s6)", classes: ["business"]},
-  {id: "insurance", label: "Bảo hiểm", color: "var(--other)", classes: ["insurance"]},
+  {id: "bond", label: "Trái phiếu", color: "var(--s7)", classes: ["bond"]},
   {id: "crypto", label: "Tài sản số", color: "var(--s8)", classes: ["crypto"]},
+  {id: "insurance", label: "Bảo hiểm", color: "var(--other)", classes: ["insurance"]},
+  {id: "business", label: "Cổ phần doanh nghiệp", color: "var(--s6)", classes: ["business"]},
+  {id: "real_estate", label: "Bất động sản", color: "var(--s1)", classes: ["real_estate"]},
   {id: "debt", label: "Khoản nợ", color: "var(--critical)", classes: ["loan", "card"], debt: true, icon: "loan"},
 ];
 const UNIT = {stock: "cp", bond: "TP", fund: "CCQ", gold: "lượng"};
@@ -35,27 +37,23 @@ const keep = (k, v) => {
   return null;
 };
 
-// what one row says: bought when, at what, cost, profit (null where the source does not know); note and price are HTML
+// what one row says: bought when, cost, profit (null where the source does not know); the note is HTML
 function bookRow(h, asOf, srcName) {
   const d = h.detail || {};
-  const r = {bought: "", price: "", cost: h.cost, pnl: null, ret: null, note: "", why: {}};
+  const r = {bought: "", cost: h.cost, pnl: null, ret: null, note: "", why: {}};
   const price = (text) => how(text, "holding.price", {price_date: day(asOf)});
   const terms = (text) => how(text, "holding.terms", {source: srcName});
-  const paid = (text) => how(text, "holding.buy_price", {source: srcName});
   if (h.class === "stock" || h.class === "bond") {
     r.bought = day(d.bought);
-    if (d.avg_price) r.price = paid(`${num(d.avg_price)} đ/${UNIT[h.class]}`);
     r.note = `${num(d.qty)} ${UNIT[h.class]} · giá nay ${price(`${num(d.price)} đ`)}`;
     if (h.class === "bond") r.note += ` · coupon ${terms(pct(d.coupon))}/năm · đáo hạn ${day(d.maturity)}`;
     r.why = {qty: `${num(d.qty)} ${UNIT[h.class]}`, buy_price: d.avg_price ? `${num(d.avg_price)} đ` : null};
   } else if (h.class === "fund") {
     r.bought = day(d.bought);
-    if (d.avg_nav) r.price = paid(`${num(d.avg_nav)} đ/CCQ`);
     r.note = `${num(d.units)} CCQ · NAV nay ${price(`${num(d.nav)} đ`)}`;
     r.why = {qty: `${num(d.units)} CCQ`, buy_price: d.avg_nav ? `${num(d.avg_nav)} đ` : null};
   } else if (h.class === "real_estate") {
     r.bought = d.purchase_year ? `Năm ${d.purchase_year}` : "";
-    if (h.cost) r.price = paid(vnd(h.cost));
     r.note = [d.sqm ? `${num(d.sqm)} m²` : "", esc(d.area_name || ""), d.rental_monthly ? `cho thuê ${terms(vnd(d.rental_monthly))}/tháng` : ""].filter(Boolean).join(" · ");
     r.why = {buy_price: h.cost ? vnd(h.cost) : null};
   } else if (h.class === "deposit") {
@@ -85,6 +83,31 @@ function bookRow(h, asOf, srcName) {
   }
   return r;
 }
+// what is owed against each asset (business feedback 2026-10-29): a loan on the asset it is secured on (its collateral),
+// the broker's margin loan spread over the shares held there by value; with what is paid each month (a margin loan:
+// its interest). asset key → {debt, pay, interest}
+function debtsOf(holdings) {
+  const out = new Map();
+  const add = (k, debt, pay, interest) => {
+    const o = out.get(k) || {debt: 0, pay: 0, interest: false};
+    out.set(k, {debt: o.debt + debt, pay: o.pay + pay, interest: o.interest || interest});
+  };
+  for (const l of holdings.filter(h => h.kind === "liability")) {
+    const dd = l.detail || {};
+    if (dd.collateral) {
+      const a = holdings.find(h => h.kind === "asset" && h.owner === l.owner && h.key.split(":").pop() === dd.collateral);
+      if (a) add(a.key, l.value, dd.monthly_payment || 0, false);
+    } else if (l.class === "loan" && l.source === "tcbs") {
+      const held = holdings.filter(h => h.kind === "asset" && h.owner === l.owner && h.source === "tcbs" && h.class === "stock");
+      const total = held.reduce((t, h) => t + h.value, 0);
+      const pay = dd.monthly_payment || Math.round(l.value * (dd.rate || 0) / 12);
+      for (const h of held) add(h.key, l.value * h.value / total, pay * h.value / total, !dd.monthly_payment);
+    }
+  }
+  return out;
+}
+const debtCell = (v) => (v ? `<span class="down">−${how(vnd(v), "liabilities.total")}</span>` : `<span class="muted">—</span>`);
+const payCell = (v, interest) => (v ? `${how(vnd(v), "holding.terms")}${interest ? `<div class="small muted">tiền lãi</div>` : ""}` : `<span class="muted">—</span>`);
 const pnlCell = (pnl, ret, accrued, inputs = {}) => {
   if (pnl == null) return `<span class="muted">—</span>`;
   const tone = pnl >= 0 ? "up" : "down";
@@ -220,7 +243,8 @@ export async function render(box, ctx) {
     const groups = BOOK.map(g => ({...g, rows: d.holdings.filter(h => g.classes.includes(h.class))}))
       .concat([{id: "other", label: "Khác", color: "var(--other)", rows: d.holdings.filter(h => !known.has(h.class))}])
       .filter(g => g.rows.length);
-    const cols = family ? 8 : 7;
+    const cols = family ? 9 : 8;
+    const owed = debtsOf(d.holdings);
     const body = groups.map(g => {
       const rows = g.rows.map(h => ({h, r: bookRow(h, d.as_of, srcRaw(h))}));
       const total = rows.reduce((a, x) => a + x.h.value, 0);
@@ -228,33 +252,38 @@ export async function render(box, ctx) {
       const pnl = priced.length ? priced.reduce((a, x) => a + x.r.pnl, 0) : null;
       const cost = priced.reduce((a, x) => a + (x.r.cost || 0), 0);
       const open = !closed[g.id];
+      const gdebt = rows.reduce((a, x) => a + ((owed.get(x.h.key) || {}).debt || 0), 0);
+      const gpay = rows.reduce((a, x) => a + (g.debt ? (x.h.detail || {}).monthly_payment || 0 : (owed.get(x.h.key) || {}).pay || 0), 0);
       const head = `<tr class="grouprow" data-group="${g.id}" tabindex="0" aria-expanded="${open}">
-        <td colspan="${cols - 3}"><span class="caret" aria-hidden="true">${icon("chevron", {size: 14})}</span>
+        <td colspan="${cols - 5}"><span class="caret" aria-hidden="true">${icon("chevron", {size: 14})}</span>
           <span class="ic-chip sm" style="--tone:${g.color}">${icon(g.icon || CLASS_ICON[g.id] || "wallet", {size: 12})}</span>
           <b>${esc(g.label)}</b> <span class="muted small">${rows.length} khoản${g.debt ? "" : ` · ${how(pct(total / assets, false, total / assets < 0.1 ? 1 : 0), "class.share", {value: vnd(total), assets: vnd(d.net_worth.assets)})} tài sản`}</span></td>
         <td class="r">${cost && !g.debt ? how(vnd(cost), "holding.cost", {qty: `${priced.length} khoản`}) : ""}</td><td class="r"><b>${g.debt ? "−" : ""}${how(vnd(total), g.debt ? "liabilities.total" : "class.value", {count: String(rows.length)})}</b></td>
-        <td class="r">${g.debt ? "" : pnlCell(pnl, pnl != null && cost ? pnl / cost : null, false, {value: vnd(priced.reduce((a, x) => a + x.h.value, 0)), cost: vnd(cost)})}</td></tr>`;
-      const lines = open ? rows.map(({h, r}) => `<tr>
+        <td class="r">${g.debt ? "" : pnlCell(pnl, pnl != null && cost ? pnl / cost : null, false, {value: vnd(priced.reduce((a, x) => a + x.h.value, 0)), cost: vnd(cost)})}</td>
+        <td class="r">${gdebt ? debtCell(gdebt) : ""}</td><td class="r">${gpay ? payCell(gpay) : ""}</td></tr>`;
+      const lines = open ? rows.map(({h, r}) => { const o = owed.get(h.key) || {}; return `<tr>
         ${family ? `<td class="wide">${esc(h.owner_name)}</td>` : ""}
         <td><div>${esc(h.name)}</div>${r.note ? `<div class="small muted">${r.note}</div>` : ""}<div class="small muted narrow-only">${family ? esc(h.owner_name) + " · " : ""}${src(h)}</div></td>
         <td class="wide"><div>${src(h)}</div><span class="pill ${(TRUST[h.trust] || [""])[0]}">${(TRUST[h.trust] || ["", h.trust])[1]}</span></td>
         <td class="nowrap">${r.bought || `<span class="muted">—</span>`}</td>
-        <td class="r wide">${r.price || `<span class="muted">—</span>`}</td>
         <td class="r">${r.cost != null && h.kind === "asset" ? how(vnd(r.cost), "holding.cost", r.why) : `<span class="muted">—</span>`}</td>
         <td class="r">${h.kind === "liability" ? "−" : ""}${how(vnd(h.value), "holding.value", {source: srcRaw(h), price_date: day(d.as_of)})}</td>
-        <td class="r">${h.kind === "liability" ? `<span class="muted">—</span>` : pnlCell(r.pnl, r.ret, r.accrued, {value: vnd(h.value), cost: r.cost != null ? vnd(r.cost) : null, ...r.why})}</td></tr>`).join("") : "";
+        <td class="r">${h.kind === "liability" ? `<span class="muted">—</span>` : pnlCell(r.pnl, r.ret, r.accrued, {value: vnd(h.value), cost: r.cost != null ? vnd(r.cost) : null, ...r.why})}</td>
+        <td class="r">${h.kind === "liability" ? `<span class="muted">—</span>` : debtCell(o.debt)}</td>
+        <td class="r">${h.kind === "liability" ? payCell((h.detail || {}).monthly_payment) : payCell(o.pay, o.interest)}</td></tr>`; }).join("") : "";
       return `<tbody>${head}${lines}</tbody>`;
     }).join("");
     const nw = d.net_worth;
-    const foot = (label, v, cls = "") => `<tr class="${cls}"><td colspan="${cols - 2}">${label}</td><td class="r">${v}</td><td></td></tr>`;
+    const pays = d.holdings.filter(h => h.kind === "liability").reduce((a, h) => a + ((h.detail || {}).monthly_payment || 0), 0);
+    const foot = (label, v, cls = "", pay = "") => `<tr class="${cls}"><td colspan="${cols - 4}">${label}</td><td class="r">${v}</td><td></td><td></td><td class="r">${pay}</td></tr>`;
     $("#book", box).innerHTML = `<h3>Tất cả tài sản và khoản nợ <span class="hint">${d.holdings.length} khoản · ${groups.length} nhóm · bấm tên nhóm để thu gọn</span></h3>
       <div class="scrollx"><table class="table book">
         <thead><tr>${family ? `<th class="wide">Chủ sở hữu</th>` : ""}<th>Khoản</th><th class="wide">Nguồn · độ tin cậy</th><th>Ngày mua</th>
-          <th class="r wide">Giá mua</th><th class="r">Giá vốn</th><th class="r">Giá trị hiện tại</th><th class="r">Lãi / lỗ</th></tr></thead>
+          <th class="r">Giá vốn</th><th class="r">Giá trị hiện tại</th><th class="r">Lãi / lỗ</th><th class="r">Nợ vay trên tài sản</th><th class="r">Trả nợ / tháng</th></tr></thead>
         ${body}
-        <tfoot>${foot("Tổng tài sản", how(vnd(nw.assets), "assets.total"))}${foot("Tổng nợ", "−" + how(vnd(nw.liabilities), "liabilities.total"))}${foot("<b>Tài sản ròng</b>", `<b>${how(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</b>`, "total")}</tfoot>
+        <tfoot>${foot("Tổng tài sản", how(vnd(nw.assets), "assets.total"))}${foot("Tổng nợ", "−" + how(vnd(nw.liabilities), "liabilities.total"), "", pays ? payCell(pays) : "")}${foot("<b>Tài sản ròng</b>", `<b>${how(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</b>`, "total")}</tfoot>
       </table></div>
-      <p class="footnote">Giá vốn: tổng số tiền đã bỏ ra · lãi/lỗ so với giá vốn, chưa trừ thuế phí · tiền gửi: lãi dồn tích đến ${esc(day(d.as_of))} · “—”: nguồn chưa cung cấp.</p>`;
+      <p class="footnote">Giá vốn: tổng số tiền đã bỏ ra · lãi/lỗ so với giá vốn, chưa trừ thuế phí · tiền gửi: lãi dồn tích đến ${esc(day(d.as_of))} · nợ vay trên tài sản: khoản vay thế chấp bằng tài sản đó, hoặc vay ký quỹ chia theo giá trị cổ phiếu · “—”: nguồn chưa cung cấp.</p>`;
     for (const row of box.querySelectorAll("[data-group]")) {
       const flip = () => { closed[row.dataset.group] = !closed[row.dataset.group]; keep("mf.book.closed", closed); drawBook(); };
       row.onclick = flip;

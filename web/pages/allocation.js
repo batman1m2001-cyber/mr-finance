@@ -413,7 +413,7 @@ export async function render(box, ctx) {
   const rc = a.reconcile, bsum = Object.entries(a.buckets).map(([b, x]) => `${BUCKET[b]} ${vnd(x.value)}`).join(" + ");
   box.innerHTML = `
     <div class="pagehead"><div>
-      <div class="eyebrow">Wealth Planning Advisor${a.example ? ` · Ví dụ ${esc(a.example.id)}` : ""}</div>
+      <div class="eyebrow">Wealth Planning${a.example ? ` · Ví dụ ${esc(a.example.id)}` : ""}</div>
       <h1 class="h1">Phân bổ tài sản</h1>
       <p class="lede">Ba giỏ: tiền cần dùng, phần để lại cho gia đình, phần đầu tư cho tương lai.</p>
     </div></div>

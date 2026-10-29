@@ -20,14 +20,14 @@ def test_the_rms_client_is_four_tabs_two_with_inner_tabs_and_no_title_over_them(
     p = open_page()
     p.go("#/rm/khach-hang/tai-san")
     p.page.wait_for_selector("#dk-tabs a")
-    four = ["Wealth view", "Wealth planning advisor", "Headline news", "Advisory performance"]
+    four = ["Wealth view", "Wealth planning", "Wealth advisor", "Advisory performance"]
     assert [t for t, _ in tabs(p)] == four
     assert tabs(p)[0][1] and tabs(p, "#dk-tabs2") == [["Tổng quan", False], ["Dữ liệu chi tiết tài sản", True]]
     assert p.page.is_hidden("#ws-sheet-t") and p.page.is_hidden("#ws-sheet-back .dk-back-l")  # OWN-FB-14
     p.go("#/rm/khach-hang/do-thi")
     assert [t for t, cur in tabs(p, "#dk-tabs2") if cur] == ["Đồ thị tác động"]
     p.go("#/rm/khach-hang/ke-hoach")  # ASSET_ALLOCATION_BRD: the plan tab now holds the allocation too
-    assert tabs(p, "#dk-tabs2") == [["Wealth planning advisor", True], ["Asset allocation", False]]
+    assert tabs(p, "#dk-tabs2") == [["Wealth planning", True], ["Asset allocation", False]]
     for gone, now in (("toan-canh", "tong-quan"), ("ban-do", "tong-quan")):
         p.go(f"#/rm/khach-hang/{gone}")
         assert p.page.url.endswith(f"#/rm/khach-hang/{now}"), gone

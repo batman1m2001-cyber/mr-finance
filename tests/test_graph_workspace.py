@@ -48,11 +48,11 @@ def test_the_menu_is_the_banks_four_sections():
     """Business feedback 2 (WEALTH_NAMES_PLAN, ADR-0037, OWN-WN-01…06): four sections by the bank's names, each with
     the tabs it asked for, and every sheet under one of them."""
     toolbar = lenses("L.TOOLBAR.map(t => [t.id, t.label])")
-    assert toolbar == [["tong-quan", "Wealth View"], ["muc-tieu", "Wealth Planning Advisor"], ["tin", "Headline News"],
+    assert toolbar == [["tong-quan", "Wealth View"], ["muc-tieu", "Wealth Planning"], ["tin", "Wealth Advisor"],
                        ["chuyen-gia", "Relationship specialist"]]  # fmt: skip
     tabs = lenses("Object.fromEntries(L.TOOLBAR.map(t => [t.id, L.SECTIONS[t.id].tabs.map(x => x[0])]))")
     assert tabs == {"tong-quan": ["Wealth view", "Dữ liệu chi tiết tài sản"],
-                    "muc-tieu": ["Wealth planning advisor", "Asset allocation", "Risk profile test"],
+                    "muc-tieu": ["Wealth planning", "Asset allocation", "Risk profile test"],
                     "tin": ["News and Prediction", "Đồ thị tác động"],  # business, 2026-10-22
                     "chuyen-gia": ["Relationship specialist"]}  # fmt: skip
     homes = lenses("L.TOOLBAR.map(t => L.SECTIONS[t.id].home)")

@@ -42,7 +42,7 @@ STATES = {
     "/khach-hang/toan-canh": [(".crow[data-g]", 1)],
     "/khach-hang/ban-do": [('[data-v="list"]', 1), ("[data-n]", 1)],
     "/muc-tieu/ke-hoach": [("[data-sim]", 99)],
-    "/tin/chinh-sach": [('[data-af="opp"]', 1), ("#views-more", 1)],
+    "/tin/chinh-sach": [('[data-af="positive"]', 1), ("#views-more", 1)],
     "/mo-hinh/thu-nghiem": [('[data-view="b"]', 1)],  # AGENT_EVALUATION_PLAN E5: View B
 }
 # route → a link to a detail page, opened and scanned (an event's view, a run, a newsletter, a policy document)

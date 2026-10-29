@@ -18,7 +18,7 @@ from wealth import store as wealth_store
 USER = {"client": None, "rm": "rm01", "cio": "cio"}
 PAGES = {  # page key → (label, or label per role; route per role); the router may name a key, never a route
     # the customer's four sections by the bank's names (WEALTH_NAMES_PLAN, ADR-0037): Wealth View, Wealth Planning
-    # Advisor, Headline News, Relationship specialist; the client has no graph to open now (its pages left this list)
+    # Advisor, Wealth Advisor, Relationship specialist; the client has no graph to open now (its pages left this list)
     "toan-canh": (
         {"client": "Wealth View", "rm": "Wealth view"},
         {
@@ -36,7 +36,7 @@ PAGES = {  # page key → (label, or label per role; route per role); the router
         {"client": "#/client/tai-san", "rm": "#/rm/khach-hang/tai-san"},
     ),
     "ke-hoach": (
-        {"client": "Wealth Planning Advisor", "rm": "Wealth planning advisor"},
+        {"client": "Wealth Planning", "rm": "Wealth planning"},
         {"client": "#/client/muc-tieu/ke-hoach", "rm": "#/rm/khach-hang/ke-hoach"},
     ),
     "risk-profile": ("Risk profile test", {"client": "#/client/rui-ro/khau-vi"}),

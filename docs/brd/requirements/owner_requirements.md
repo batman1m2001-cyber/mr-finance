@@ -171,7 +171,7 @@ xếp layout dọc theo bản mới": the names, not the old look.
 | OWN-WN-03 | No Dòng tiền menu item: it is on Wealth view (its address opens Wealth view at its cash flow) | item 4 | documented |
 | OWN-WN-04 | No Đồ thị tài chính tab: nothing a client clicks, searches or asks leads to the graph | items 1, 7 | documented |
 | OWN-WN-05 | Wealth Planning Advisor's tabs are Wealth planning advisor (Kế hoạch, unchanged) and Risk profile test (the risk test) | items 5, 8 | documented |
-| OWN-WN-06 | Tin tức is named Headline News; its Wealth Check reads green when ahead of the benchmark, red when behind, as the old one | item 6 | documented |
+| OWN-WN-06 | Tin tức is named Wealth Advisor (Headline News until 2026-10-29); News and Prediction reads as news: no Wealth Check, each item's direction only (no amount), three sections (global, local, exclusive), each card a summary, why it matters, precedents and source linked | item 6; UI/UX round 4 (2026-10-29) | documented |
 | OWN-WN-07 | Wealth view opens on the overview (net worth and its sources, allocation, P&L); cash flow second | item 0 | documented |
 | OWN-WN-08 | Every old client address still opens its page, under its new section | ADR-0037 §2 | documented |
 | OWN-WN-09 | The assistant and the user guide use the same names | ADR-0037 §5 | documented |

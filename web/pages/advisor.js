@@ -58,7 +58,7 @@ export async function render(box, ctx) {
       <p class="lede">${staff ? "Phương án khách hàng gửi từ Kế hoạch, chờ RM duyệt" : "Chuyên viên quan hệ khách hàng phụ trách bạn"}</p></div></div>
     ${team}
     <div class="sechead mt"><h2 class="h2">Hàng chờ duyệt</h2><span class="small muted">Hàng chờ ${staff ? "RM" : "chuyên gia"} duyệt · <b>${pending.length}</b> đang chờ ·
-      mọi khuyến nghị từ Wealth Planning Advisor đều là mô phỏng cho đến khi ${staff ? "RM" : "chuyên gia"} duyệt</span></div>
+      mọi khuyến nghị từ Wealth Planning đều là mô phỏng cho đến khi ${staff ? "RM" : "chuyên gia"} duyệt</span></div>
     <div class="cards2">${pending.map(item).join("") || `<div class="panel muted">Không có đề xuất nào đang chờ.</div>`}</div>
     ${staff ? `<form class="panel mt" id="recommend" autocomplete="off"><h3>Khuyến nghị cho gia đình <span class="hint">RM viết · đến khách ngay</span></h3>
         <label class="small">Tiêu đề <input name="title" maxlength="200" style="width:100%" placeholder="Ví dụ: Cơ cấu lại tiền gửi"></label>

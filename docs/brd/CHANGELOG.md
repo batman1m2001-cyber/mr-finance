@@ -2,6 +2,16 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-29 — UI/UX feedback round 4 (owner, “Sửa UI UX”): Wealth Planning Advisor is Wealth Planning, Headline News
+  is Wealth Advisor. Wealth view: assets, debt and net worth as three tiles; Portfolio gain / loss and Chính sách và dự
+  án left; allocation full width, its groups by liquidity (cash and deposits first) and each debt under them with the
+  totals. Dữ liệu chi tiết tài sản: no purchase price; two columns, the debt against each asset (its secured loan, or
+  the margin loan split over the shares) and what is repaid on it monthly; groups by liquidity. News and Prediction:
+  no Wealth Check; each item's direction only (no amount or bar, not even on hover); three sections — Tin quốc tế, Tin
+  trong nước, Nội dung độc quyền (laws and the house views) — each card a three-line summary, why it matters, its
+  precedents and its source linked (`summary`, `why`, `section`, `source_url` on each alert); no “(cần kiểm tra)”.
+  Sign-in lists only the clients' demo accounts. English throughout for the news, house views and holding names.
+  — OWN-WN-06, SCR-CL-01, SCR-CL-02, SCR-CL-06
 - 2026-10-29 — UI/UX feedback round 3 (owner): Phân bổ tài sản's part titles stay frozen while scrolling; the
   priorities fold to one line each, the first open with its figure and action; the calculation tables colour each
   row by its role. — SCR-CL-13

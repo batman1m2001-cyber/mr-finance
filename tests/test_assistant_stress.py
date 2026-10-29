@@ -298,7 +298,7 @@ def test_d19_d20_one_way_of_address_and_the_graph_is_a_page_to_open():
     assert "gọi người dùng là “bạn”" in turn.RULES and "không dùng “anh/chị”" in turn.RULES  # D19 again in T2
     assert not [k for k, (_, r) in PAGES.items() if r.get("client", "").startswith("#/client/xem/")]
     out = run(registry.REGISTRY["mo_trang"].run(ctx(), {"page": "ke-hoach"}))
-    assert out["navigate"] == "#/client/muc-tieu/ke-hoach" and out["text"] == "Mở trang Wealth Planning Advisor."
+    assert out["navigate"] == "#/client/muc-tieu/ke-hoach" and out["text"] == "Mở trang Wealth Planning."
 
 
 def test_d21_the_proposal_options_are_named_in_vietnamese_to_the_model():

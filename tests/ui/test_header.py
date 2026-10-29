@@ -18,7 +18,7 @@ def test_search_opens_a_holding_a_page_and_a_client(open_page):
     p.page.fill("#q", "kế hoạch")  # its former name finds it under the bank's name (ADR-0037)
     p.page.wait_for_selector("#q-results .pop-head")
     assert p.page.inner_text("#q-results .pop-head") == "Trang"
-    assert "Wealth planning advisor" in p.page.inner_text("#q-results .pop-item")
+    assert "Wealth planning" in p.page.inner_text("#q-results .pop-item")
     p.page.click("#q-results .pop-item")
     p.page.wait_for_function("location.hash === '#/client/muc-tieu/ke-hoach'")
     p.go("#/rm")

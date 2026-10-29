@@ -93,14 +93,14 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     assert p.page.text_content('.wnode[data-n="SC:vni_30"] .wfig').startswith("nếu xảy ra −")
     assert p.page.text_content(".wme-v") == me  # a scenario never changes the actual net worth
     # the strip: the Toàn cảnh cards; a card opens its lens at its section of the Bảng số liệu, the client's
-    # dashboard (UX_TOOLBAR_PLAN T3+T4): the overview first (net worth, allocation with profit and loss), then cash flow and
+    # dashboard (UX_TOOLBAR_PLAN T3+T4): the overview first (net worth, allocation with its debts), then cash flow and
     # the month's flows; folding
     # is remembered
     assert p.page.locator(".scard").count() == 5
     p.page.click('.scard[data-part="month"] .pc-head')
     p.page.wait_for_selector("#ws-cashview #d-month .sankey")
     assert p.page.is_hidden("#ws-canvas") and p.page.get_attribute('#ws-view [data-v="money"]', "aria-pressed") == "true"
-    assert p.page.eval_on_selector_all("#ws-cashview .cols > .panel", "ps => ps.map(p => p.id).slice(0, 5)") == ["d-nw", "d-alloc", "d-pnl", "d-cash", "d-month"]
+    assert p.page.eval_on_selector_all("#ws-cashview .cols > .panel", "ps => ps.map(p => p.id).slice(0, 5)") == ["d-nw", "d-alloc", "d-cash", "d-month", "d-risk"]
     assert "Lãi/lỗ" in p.page.inner_text("#d-alloc") and p.page.is_visible("#ws-cashview #cash svg")
     p.page.wait_for_function("location.hash === '#/client/xem/dong-tien'")
     p.page.click('#ws-cashview [data-months="24"]')
@@ -109,8 +109,10 @@ def test_the_inspector_the_strip_and_a_hypothetical_scenario(open_page):
     assert p.page.is_visible("#ws-canvas") and p.page.is_hidden("#ws-cashview")
     p.page.click('.scard[data-focus="kpi:risk"] .pc-head')
     p.page.wait_for_function("location.hash === '#/client/xem/rui-ro'")
-    p.page.wait_for_function(  # the risk section at the top of the view
-        "Math.abs(document.querySelector('#d-risk').getBoundingClientRect().top - document.querySelector('#ws-cashview').getBoundingClientRect().top) < 30")
+    p.page.wait_for_function(  # the risk section scrolled into the view (the last row now: at its top, or the view at its end)
+        "() => { const r = document.querySelector('#d-risk').getBoundingClientRect(), v = document.querySelector('#ws-cashview');"
+        " const w = v.getBoundingClientRect(); return Math.abs(r.top - w.top) < 30"
+        " || (r.top >= w.top && r.bottom <= w.bottom + 2 && v.scrollTop + v.clientHeight >= v.scrollHeight - 2); }")
     p.page.click('#ws-view [data-v="graph"]')
     # Toàn cảnh's and Chi tiết's old addresses open it too, never a sheet
     p.go("#/client/tong-quan/chi-tiet")
@@ -304,7 +306,7 @@ def test_the_dataflow_follows_the_stream_and_only_the_stream(open_page):
     assert st["hot"] >= 1 and st["bad"] == 4 and st["focusing"] and not st["writing"]
     p.page.mouse.click(
         *p.page.evaluate(
-            "(() => { const r = document.querySelector('.ws-svg').getBoundingClientRect();"
+            "() => { const r = document.querySelector('.ws-svg').getBoundingClientRect();"
             " return [r.left + 12, r.bottom - 12]; })()"
         )
     )

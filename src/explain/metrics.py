@@ -280,12 +280,6 @@ metric(
     limit="Ngưỡng",
 )
 metric(
-    "perf.realized_ytd",
-    "Lãi/lỗ đã chốt từ đầu năm",
-    "Đã chốt = lãi/lỗ của các lệnh bán từ 1/1 theo sao kê chứng khoán (TCBS), cộng các thành viên khi xem cả gia đình.",
-    "src/consolidate/ops.py::tcbs",
-)
-metric(
     "perf.unrealized",
     "Lãi/lỗ chưa chốt",
     "Chưa chốt = Σ (giá trị hôm nay − giá vốn) của cổ phiếu, quỹ, trái "
@@ -313,14 +307,6 @@ metric(
     D + "performance",
     mine="Danh mục",
     bench="Chỉ số",
-)
-metric(
-    "perf.class",
-    "Lãi/lỗ theo loại",
-    "Theo loại = Σ (giá trị − giá vốn) của các khoản cùng loại có giá vốn; phần trăm = lãi/lỗ ÷ giá vốn của loại.",
-    D + "performance",
-    value="Giá trị",
-    cost="Giá vốn",
 )
 metric(
     "class.return",
@@ -375,14 +361,6 @@ metric(
     "ngày định giá, từ dữ liệu thị trường; không tính lại.",
     "src/wealth/valuation.py::stock",
     price_date="Giá ngày",
-)
-metric(
-    "holding.buy_price",
-    "Giá mua bình quân",
-    "Giá mua bình quân một đơn vị như nguồn báo (sao kê, công ty chứng "
-    "khoán, quỹ) hoặc khách hàng khai; với bất động sản là số tiền đã bỏ ra khi mua.",
-    "src/wealth/valuation.py::stock",
-    source="Nguồn",
 )
 metric(
     "holding.cost",
@@ -532,35 +510,6 @@ metric(
 )
 
 # ── Chi phí chính sách (client) ──────────────────────────────────────────────────────────────────────────
-metric(
-    "policy.exposure",
-    "Mức chịu tác động",
-    "Mức chịu tác động = cộng giá trị hôm nay các khoản mà chính sách chạm "
-    "tới (theo loại tài sản, khu vực, ngành hoặc mã trong quy tắc của chính sách).",
-    "src/impact/ops.py::score",
-    count="Số khoản",
-)
-metric(
-    "policy.sensitivity",
-    "Độ nhạy",
-    "Độ nhạy = phần giá trị dịch chuyển nếu chính sách xảy ra, theo quy tắc của "
-    "chính sách (thuế, phí, chênh lệch giá, vùng dự án…); câu mô tả của mục nêu căn cứ.",
-    "src/impact/ops.py::score",
-)
-metric(
-    "policy.net",
-    "Tổng tác động của một nhóm tin",
-    "Tổng = cộng tác động ước tính (đã tính xác suất) của các mục trong nhóm đang hiển thị.",
-    "web/pages/policy.js::drawSections",
-    count="Số tin",
-)
-metric(
-    "goals.gap_total",
-    "Tổng còn thiếu của các mục tiêu cần chú ý",
-    "Tổng = Σ phần còn thiếu của các mục tiêu đang theo dõi chưa đúng tiến độ.",
-    "web/pages/policy.js::render",
-    count="Số mục tiêu",
-)
 metric(
     "view.exposure",
     "Phần danh mục liên quan một góc nhìn",

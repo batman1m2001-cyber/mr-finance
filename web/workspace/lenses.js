@@ -5,7 +5,7 @@
    its numbers a section of the Bảng số liệu (part); Toàn cảnh and Chi tiết are that dashboard now (UX_TOOLBAR_PLAN
    T3+T4), so their addresses open it.
    The classic app (BUSINESS_FEEDBACK_1021_PLAN B3.1): the bar leads to each section's page, Toàn cảnh is the home
-   page. The bank's names (WEALTH_NAMES_PLAN, ADR-0037): four sections — Wealth View, Wealth Planning Advisor, Headline
+   page. The bank's names (WEALTH_NAMES_PLAN, ADR-0037): four sections — Wealth View, Wealth Planning, Headline
    News, Relationship specialist — and the graph hidden from the client: no tab, search hit or assistant page leads to
    it, and its former tab's address opens Wealth View; only its own unlinked address `#/client/xem/<lens>` still opens
    it, so the kept code stays tested and can come back. Every older address still opens its page. */
@@ -29,7 +29,7 @@ export const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 // the dedicated views: each an existing page module, at its old address (ADR-0035 §3)
 export const SHEETS = {
   "tai-san": {page: "holdings", label: "Dữ liệu chi tiết tài sản", route: "#/client/tai-san", lens: "tong-quan", nav: ["tai-san"]},
-  "ke-hoach": {page: "plan", label: "Wealth planning advisor", route: "#/client/muc-tieu/ke-hoach", lens: "muc-tieu", nav: ["muc-tieu", "ke-hoach"]},
+  "ke-hoach": {page: "plan", label: "Wealth planning", route: "#/client/muc-tieu/ke-hoach", lens: "muc-tieu", nav: ["muc-tieu", "ke-hoach"]},
   "phan-bo": {page: "allocation", label: "Asset allocation", route: "#/client/muc-tieu/phan-bo", lens: "muc-tieu", nav: ["muc-tieu", "phan-bo"]},
   "khau-vi": {page: "risktest", label: "Risk profile test", route: "#/client/rui-ro/khau-vi", lens: "muc-tieu", nav: ["rui-ro", "khau-vi"]},
   "thi-truong": {page: "impact", label: "Tác động tin", route: "#/client/tin/thi-truong", lens: "tin", nav: ["tin", "thi-truong"]},
@@ -51,8 +51,8 @@ export const SECTIONS = {
 // the header and the assistant's panel open it, and its address still works.
 export const TOOLBAR = [
   {id: "tong-quan", label: "Wealth View", icon: "map", tip: "Wealth View: tài sản ròng, phân bổ, dòng tiền và từng khoản", href: SECTIONS["tong-quan"].home},
-  {id: "muc-tieu", label: "Wealth Planning Advisor", icon: "target", tip: "Wealth Planning Advisor: kế hoạch theo mục tiêu và bài test rủi ro", href: SECTIONS["muc-tieu"].home},
-  {id: "tin", label: "Headline News", icon: "news", tip: "Headline News: tin, sự kiện và chính sách tác động tới tài sản", href: SECTIONS["tin"].home},
+  {id: "muc-tieu", label: "Wealth Planning", icon: "target", tip: "Wealth Planning: kế hoạch theo mục tiêu và bài test rủi ro", href: SECTIONS["muc-tieu"].home},
+  {id: "tin", label: "Wealth Advisor", icon: "news", tip: "Wealth Advisor: tin, sự kiện và chính sách tác động tới tài sản", href: SECTIONS["tin"].home},
   {id: "chuyen-gia", label: "Relationship specialist", icon: "users", tip: "Relationship specialist: chuyên viên phụ trách bạn", href: SECTIONS["chuyen-gia"].home, sheet: true},
 ];
 export const SECTION_NAME = Object.fromEntries(TOOLBAR.map(t => [t.id, t.label]));

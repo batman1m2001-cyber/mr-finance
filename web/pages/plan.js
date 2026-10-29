@@ -1,4 +1,4 @@
-/* Kế hoạch — Wealth Planning Advisor (SCR-CL-03; UI redesign R3, was the pre-redesign “scenarios” tab). Life goals
+/* Kế hoạch — Wealth Planning (SCR-CL-03; UI redesign R3, was the pre-redesign “scenarios” tab). Life goals
    by stage of life (POST /api/goals), decisions and stress tests (GET /api/scenarios), one picked and simulated on
    the client's own holdings (POST /api/scenario): its status, the money needed against what is there, how it
    tracked this month and year, the actions ranked by how much they close the gap, the assumptions (edit and run
@@ -60,7 +60,7 @@ export async function render(box, ctx) {
   }
 
   box.innerHTML = `
-    <div class="pagehead"><div><div class="eyebrow">${staff ? "Kế hoạch" : "Wealth Planning Advisor"}</div><h1 class="h1">Kế hoạch tài chính</h1>
+    <div class="pagehead"><div><div class="eyebrow">${staff ? "Kế hoạch" : "Wealth Planning"}</div><h1 class="h1">Kế hoạch tài chính</h1>
       <p class="lede">Tư vấn kế hoạch tài chính theo mốc đời · mô phỏng trên chính tài sản của bạn</p></div></div>
     <div id="mini"></div><div id="reg"></div>
     <div class="plangrid mt"><div class="panel" id="list"></div><div id="panel"></div></div>`;

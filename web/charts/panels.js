@@ -16,15 +16,31 @@ const GROUP_ICON = {"Bất động sản": "home", "Cổ phiếu": "stock", "Ti�
   "Cổ phần DN": "business", "Trái phiếu": "bond", "Tài sản số": "crypto", "Bảo hiểm": "shield"};
 export const PAST = 6;
 
-/* allocation: a donut and the table with profit against cost, into ``el`` */
+// how soon each group turns into cash, the quickest first (business feedback 2026-10-29: cash and deposits lead)
+const LIQUIDITY = ["Tiền & tiền gửi", "Cổ phiếu", "Chứng chỉ quỹ", "Vàng", "Trái phiếu", "Tài sản số", "Bảo hiểm", "Cổ phần DN", "Bất động sản"];
+const liquidity = (g) => (LIQUIDITY.includes(g) ? LIQUIDITY.indexOf(g) : LIQUIDITY.length);
+
+/* allocation: a donut and the table with profit against cost, the groups by liquidity, then each debt and the totals,
+   into ``el`` */
 export function drawAlloc(el, d) {
-  const rows = d.allocation, assets = d.net_worth.assets;
+  const rows = [...d.allocation].sort((a, b) => liquidity(a.group) - liquidity(b.group)), assets = d.net_worth.assets;
+  const debts = (d.holdings || []).filter(h => h.kind === "liability").sort((a, b) => b.value - a.value);
+  const nw = d.net_worth;
+  const debtRow = (h) => {
+    const pay = (h.detail || {}).monthly_payment;
+    return `<tr><td><span class="ic-chip sm" style="--tone:var(--critical)">${icon(h.class === "card" ? "card" : "loan", {size: 12})}</span> ${esc(h.name)}${pay ? `<div class="small muted"><span>Trả nợ / tháng</span>: ${n(vnd(pay), "holding.terms")}</div>` : ""}</td>
+      <td class="r down">−${n(vnd(h.value), "holding.value")}</td><td class="r">${n(pct(h.value / (assets || 1), false, 1), "class.share", {value: vnd(h.value), assets: vnd(assets)})}</td><td class="r"><span class="muted">—</span></td></tr>`;
+  };
   el.innerHTML = `<div class="allocbox"><div class="allocgrid"><div class="center">${donut(rows.map(a => ({key: a.group, value: a.value, color: GROUP_COLOR[a.group] || "var(--other)", label: `${a.group}: ${vnd(a.value)}, ${pct(a.share)}`})),
       {size: 148, stroke: 20, center: vnd(rows.reduce((x, a) => x + a.value, 0)), sub: "tài sản", label: "Phân bổ tài sản", how: nAttrs("assets.total")})}</div>
     <div class="scrollx"><table class="table"><thead><tr><th>Loại tài sản</th><th class="r">Giá trị</th><th class="r">Tỷ trọng</th><th class="r">Lãi/lỗ</th></tr></thead><tbody>
     ${rows.map(a => `<tr><td><span class="ic-chip sm" style="--tone:${GROUP_COLOR[a.group] || "var(--other)"}">${icon(GROUP_ICON[a.group] || "wallet", {size: 12})}</span> ${esc(a.group)}</td>
       <td class="r">${n(vnd(a.value), "class.value")}</td><td class="r"><b>${n(pct(a.share, false, a.share < 0.1 ? 1 : 0), "class.share", {value: vnd(a.value), assets: vnd(assets)})}</b></td>
-      <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${n(pct(a.return, true), "class.return", {pnl: vnd(a.pnl, true)})}</span>`}</td></tr>`).join("")}</tbody></table></div></div></div>`;
+      <td class="r">${a.return == null ? `<span class="muted" title="Chưa có giá vốn">—</span>` : `<span class="${a.return >= 0 ? "up" : "down"}" title="${vnd(a.pnl, true)} so với giá vốn">${n(pct(a.return, true), "class.return", {pnl: vnd(a.pnl, true)})}</span>`}</td></tr>`).join("")}</tbody>
+    ${debts.length ? `<tbody><tr class="subrow"><th colspan="4">Khoản nợ <span class="muted small">tỷ trọng: % tổng tài sản</span></th></tr>${debts.map(debtRow).join("")}</tbody>` : ""}
+    <tfoot><tr><td>Tổng tài sản</td><td class="r">${n(vnd(nw.assets), "assets.total")}</td><td></td><td></td></tr>
+      <tr><td>Tổng nợ</td><td class="r">${nw.liabilities ? "−" : ""}${n(vnd(nw.liabilities), "liabilities.total")}</td><td></td><td></td></tr>
+      <tr class="total"><td><b>Tài sản ròng</b></td><td class="r"><b>${n(vnd(nw.value), "net_worth", {assets: vnd(nw.assets), liabilities: vnd(nw.liabilities)})}</b></td><td></td><td></td></tr></tfoot></table></div></div></div>`;
   for (const s of el.querySelectorAll(".seg")) {
     const a = rows.find(x => x.group === s.dataset.key);
     if (a) hover(s, `<b>${esc(a.group)}</b><br>${vnd(a.value)} · ${pct(a.share)}`);

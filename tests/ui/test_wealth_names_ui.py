@@ -2,11 +2,13 @@
 OWN-WN-01…08): four sections with the tabs the business asked for, each page's heading its section, the Wealth
 Check coloured, every old address on its page — and nothing on screen leading to the graph."""
 
+import re
+
 SECTIONS = [  # rail item, its home, its tabs (label, current at the home)
     ("tong-quan", "Wealth View", "#/client/tong-quan", [["Wealth view", True], ["Dữ liệu chi tiết tài sản", False]]),
-    ("muc-tieu", "Wealth Planning Advisor", "#/client/muc-tieu/ke-hoach",
-     [["Wealth planning advisor", True], ["Asset allocation", False], ["Risk profile test", False]]),
-    ("tin", "Headline News", "#/client/tin/chinh-sach", [["News and Prediction", True], ["Đồ thị tác động", False]]),
+    ("muc-tieu", "Wealth Planning", "#/client/muc-tieu/ke-hoach",
+     [["Wealth planning", True], ["Asset allocation", False], ["Risk profile test", False]]),
+    ("tin", "Wealth Advisor", "#/client/tin/chinh-sach", [["News and Prediction", True], ["Đồ thị tác động", False]]),
     ("chuyen-gia", "Relationship specialist", "#/client/chuyen-gia", []),
 ]  # fmt: skip
 TABS = """(sel) => [...document.querySelectorAll(sel + ' a')].filter(a => a.offsetParent)
@@ -33,9 +35,9 @@ def test_the_four_sections_their_tabs_and_headings(open_page):
     # the second tab of each two-tab section: its own page, the section still lit, the heading its section and name
     for route, tool, head in [
         ("#/client/tai-san", "tong-quan", ["Wealth View", "Dữ liệu chi tiết tài sản"]),
-        ("#/client/rui-ro/khau-vi", "muc-tieu", ["Wealth Planning Advisor", "Risk profile test"]),
-        ("#/client/muc-tieu/ke-hoach", "muc-tieu", ["Wealth Planning Advisor", "Kế hoạch tài chính"]),
-        ("#/client/tin/chinh-sach", "tin", ["Headline News", "News and Prediction"]),
+        ("#/client/rui-ro/khau-vi", "muc-tieu", ["Wealth Planning", "Risk profile test"]),
+        ("#/client/muc-tieu/ke-hoach", "muc-tieu", ["Wealth Planning", "Kế hoạch tài chính"]),
+        ("#/client/tin/chinh-sach", "tin", ["Wealth Advisor", "News and Prediction"]),
         ("#/client/chuyen-gia", "chuyen-gia", ["", "Relationship specialist"]),
     ]:
         p.go(route)
@@ -77,23 +79,20 @@ def test_every_old_address_opens_its_page_and_none_the_graph(open_page):
     assert not p.problems()
 
 
-def test_the_wealth_check_line_is_coloured(open_page):
-    """Business item 6 ("đổ màu như này"): ahead of VN-Index green, behind red — the line had been grey because
-    `.kpi .s` outranked `.up` / `.down` (on every page)."""
+def test_news_and_prediction_reads_as_news(open_page):
+    """Business feedback 2026-10-29: no asset check on top, no amount next to an item (nor in its tip), and the items in
+    three sections — global, local, exclusive — each card a summary with its source linked."""
     p = open_page()
     p.go("#/client/tin/chinh-sach")
-    line = p.page.wait_for_selector("[data-focus='policy:check'] .kpi .s.up, [data-focus='policy:check'] .kpi .s.down")
-    cls = line.get_attribute("class")
-    colour = line.evaluate("el => getComputedStyle(el).color")
-    want = p.page.evaluate(
-        "(c) => { const s = document.createElement('span'); s.className = c; document.body.append(s);"
-        " const v = getComputedStyle(s).color; s.remove(); return v; }",
-        "up" if " up" in f" {cls}" else "down",
-    )
-    grey = p.page.evaluate(
-        "() => { const s = document.createElement('span'); s.style.color = 'var(--ink-2)'; document.body.append(s); const v = getComputedStyle(s).color; s.remove(); return v; }"  # noqa: E501
-    )
-    assert colour == want and colour != grey
+    p.page.wait_for_selector("#sections .acard")
+    assert p.page.locator("[data-focus='policy:check']").count() == 0
+    rows = p.page.locator("#impact .nrow").all_inner_texts()
+    assert rows and not any(re.search(r"\d\s?(mn|bn|tỷ|triệu)", r) for r in rows)
+    heads = p.page.locator("#sections .sechead .h2").all_inner_texts()
+    assert len(heads) == 3, heads
+    assert p.page.locator("#sections .acard .nsum li").count() >= 3
+    assert p.page.locator("#sections .acard a[href^='http']").count() > 0
+    assert "kiểm tra" not in p.page.inner_text("#sections")
     assert not p.problems()
 
 

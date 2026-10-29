@@ -12,8 +12,8 @@ import {icon} from "../core/icons.js?v=20261016r1";
 import {contact} from "./contact.js?v=20261025t3";
 
 const TONE = {3: "bad", 2: "warn", 1: "human", 0: ""};
-const PAGES = [["khach-hang/tong-quan", "Wealth view"], ["khach-hang/ke-hoach", "Wealth planning advisor"],
-  ["khach-hang/chinh-sach", "Headline news"], ["khach-hang/hieu-qua", "Advisory performance"], ["khach-hang/tac-dong", "Tác động tin"]];
+const PAGES = [["khach-hang/tong-quan", "Wealth view"], ["khach-hang/ke-hoach", "Wealth planning"],
+  ["khach-hang/chinh-sach", "Wealth advisor"], ["khach-hang/hieu-qua", "Advisory performance"], ["khach-hang/tac-dong", "Tác động tin"]];
 
 export function hint(d) {
   const soon = d.families.filter(f => f.level >= 2).length;

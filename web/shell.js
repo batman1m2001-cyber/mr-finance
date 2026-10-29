@@ -28,10 +28,10 @@ const ROLES = {
         {id: "toan-canh", label: "Wealth view", page: "pulse"}, {id: "ban-do", label: "Wealth view", page: "map"},
         {id: "chi-tiet", label: "Wealth view", page: "detail"}]},  // all three open the dashboard (T4; the graph is off)
       {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings"},
-      {id: "muc-tieu", label: "Wealth Planning Advisor", sub: [{id: "ke-hoach", label: "Wealth planning advisor", page: "plan"},
+      {id: "muc-tieu", label: "Wealth Planning", sub: [{id: "ke-hoach", label: "Wealth planning", page: "plan"},
         {id: "phan-bo", label: "Asset allocation", page: "allocation"}]},
       {id: "rui-ro", label: "Risk profile test", sub: [{id: "khau-vi", label: "Risk profile test", page: "risktest"}]},
-      {id: "tin", label: "Headline News", sub: [
+      {id: "tin", label: "Wealth Advisor", sub: [
         {id: "chinh-sach", label: "News and Prediction", page: "policy"}, {id: "do-thi", label: "Đồ thị tác động", page: "graph"},
         {id: "thi-truong", label: "Tác động tin", page: "impact"}]},  // no tab now; the bell's and the feed's evidence opens it
       {id: "chuyen-gia", label: "Relationship specialist", page: "advisor"},
@@ -44,10 +44,10 @@ const ROLES = {
       {id: "ban", label: "Tổng quan", desk: true},  // FEAT-41: the RM's desk (SCR-RM-07); OWN-FB-21: Hôm nay's contact log is on it
       // OWN-FB-02…06: four tabs, two of them with inner tabs (web/desk/desk.js); `hidden` pages open, with no tab
       {id: "khach-hang", label: "Khách hàng", clientPick: true,
-        tabs: {wealth: "Wealth view", plan: "Wealth planning advisor", news: "Headline news", perf: "Advisory performance"}, sub: [
+        tabs: {wealth: "Wealth view", plan: "Wealth planning", news: "Wealth advisor", perf: "Advisory performance"}, sub: [
           {id: "tong-quan", label: "Tổng quan", page: "detail", tab: "wealth"},
           {id: "tai-san", label: "Dữ liệu chi tiết tài sản", page: "holdings", tab: "wealth"},
-          {id: "ke-hoach", label: "Wealth planning advisor", page: "plan", tab: "plan"},
+          {id: "ke-hoach", label: "Wealth planning", page: "plan", tab: "plan"},
           {id: "phan-bo", label: "Asset allocation", page: "allocation", tab: "plan"},  // ASSET_ALLOCATION_BRD: the three buckets
           {id: "chinh-sach", label: "News and prediction", page: "policy", tab: "news"},
           {id: "do-thi", label: "Đồ thị tác động", page: "graph", tab: "news"},

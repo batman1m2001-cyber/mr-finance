@@ -90,6 +90,11 @@ def score(holdings: list, profile: dict) -> dict:
                     "message": hit["message"],
                     "affected": hit["affected"],
                     "source": f["source"],
+                    "source_url": f.get("source_url"),
+                    # how News and Prediction reads it: its section, a short summary, why it matters to the holder
+                    "section": f.get("section", "exclusive"),
+                    "summary": f.get("summary", []),
+                    "why": f.get("why", ""),
                     "evidence": ev and {k: v for k, v in ev.items() if k not in ("targets", "certain_from")},
                     "labels": _labels(ev, mine, hit),
                     "certain": certain and {"amount": round(certain["amount"]), "per": certain["per"], "from": ev["certain_from"]},
