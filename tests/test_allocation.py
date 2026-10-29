@@ -164,7 +164,8 @@ def test_a_client_with_no_risk_test_gets_the_nearest_level_simulated():
     r = ops.risk_of("C03", 0.30)
     assert r["source"] == "simulated" and r["level"] == 4
     store.put_result("C03", "risk", {"taken": "2026-10-01", "profile": {"level": 2, "name": "Thận trọng"}})
-    assert ops.risk_of("C03", 0.30) == {"level": 2, "name": "Thận trọng", "source": "test", "at": "2026-10-01"}
+    assert ops.risk_of("C03", 0.30) == {"level": 2, "name": "Thận trọng", "source": "test", "at": "2026-10-01",
+                                         "tolerance": "Thận trọng", "capacity": "Thận trọng"}
 
 
 @pytest.mark.parametrize("cid", ["C01", "C02", "C03", "C04", "C05"])

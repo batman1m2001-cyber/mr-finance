@@ -106,6 +106,24 @@ function touches(v, holdings) {
   });
 }
 
+// an alert's precedents (or its measured moves) in brief: two lines in the chart's tip, every one on its card (scrolling
+// inside the card when long); the whole frame stays one click away on the chart
+function brief(e) {
+  const ps = e.precedents || [];
+  if (e.sentence) return `<hr><div data-explains>${esc(e.sentence)}</div>`;
+  if (!ps.length) return "";
+  return `<hr><div class="muted">Tiền lệ</div>${ps.slice(0, 2).map(p => `<div data-explains>• ${esc(p.event)}</div>`).join("")}
+    ${ps.length > 2 ? `<div class="muted">… và ${ps.length - 2} tiền lệ khác</div>` : ""}`;
+}
+function precedents(e) {
+  const ps = (e && e.precedents) || [];
+  if (!e) return "";
+  if (e.sentence) return `<div class="kv"><span>Thống kê</span><b data-explains>${esc(e.sentence)}</b></div>`;
+  if (!ps.length) return "";
+  return `<div class="prec mt-xs"><div class="small muted">Tiền lệ (${ps.length})</div>${ps.map(p => `<div class="small" data-explains>
+      <b>${esc(p.event)}</b> — ${esc(p.outcome)}${p.source ? `<span class="muted"> · Nguồn: ${esc(p.source)}</span>` : ""}</div>`).join("")}</div>`;
+}
+
 // the parts the bars show, one entry per colour (a payment ahead and the salary share the grey; the tip names each)
 function legend(alerts) {
   const by = new Map();
@@ -178,7 +196,6 @@ export async function render(box, ctx) {
     const maxAbs = Math.max(1, ...rep.alerts.map(a => Math.abs(a.impact)));
     const el = box.querySelector("#impact");
     el.innerHTML = `<h3>Tác động lên tài sản ròng <span class="hint">${rep.scope === "family" ? "gia đình" : "cá nhân"} · tài sản ròng ${how(vnd(rep.net_worth), "net_worth")}</span></h3>
-      <p class="small muted" data-explains>Mức tác động theo phần tài sản ròng bị ảnh hưởng (Mức nắm giữ × Độ nhạy × Xác suất xảy ra): cao từ 1%, trung bình từ 0,3%, thấp dưới 0,3% · tin về vàng, trái phiếu và tỷ giá ghi số tiền ước tính · thời gian là khi tác động dự kiến đến (giả định) · cổ phần doanh nghiệp chỉ ghi tích cực hay tiêu cực.</p>
       <div class="row spread"><div class="legend"><span class="muted">← Rủi ro · Cơ hội →</span>${legend(list.slice(0, 10))}</div>
         <div class="row tight"><div class="seg" role="group" aria-label="Lọc theo thời gian">${HORIZON.map(([k, t]) => `<button type="button" data-hz="${k}" aria-pressed="${hz === k}">${t}</button>`).join("")}</div>
         <div class="seg" role="group" aria-label="Lọc">${[["all", "Tất cả"], ["risk", "Rủi ro"], ["opp", "Cơ hội"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${f === k}">${t}</button>`).join("")}</div></div></div>
@@ -200,7 +217,7 @@ export async function render(box, ctx) {
           ? `<div class="row"><span>Tác động</span><span>${a.opportunity ? "Tích cực" : "Tiêu cực"}</span></div>`
           : `<div class="row"><span>${a.in_vnd ? "Tác động" : "Mức tác động"}</span><span>${a.in_vnd ? how(vnd(a.impact, true), "policy.impact", pin(a)) : LEVEL[a.severity]}</span></div>
              <div class="row"><span>Thời gian</span><span>trong ${esc(a.horizon_label)}</span></div>`}
-        ${a.evidence ? `<div class="row"><span>Bằng chứng</span><span>${esc(a.evidence.label)}</span></div>` : ""}
+        ${a.evidence ? `<div class="row"><span>Bằng chứng</span><span>${esc(a.evidence.label)}</span></div>${brief(a.evidence)}` : ""}
         <div class="small muted">Bấm để xem bằng chứng</div>`);
     }
   };
@@ -248,8 +265,8 @@ export async function render(box, ctx) {
         ${a.sign_only ? "" : `<div class="kv"><span>Thời gian</span><b>trong ${esc(a.horizon_label)}</b></div>`}`}
         <div class="kv"><span>Khoản bị ảnh hưởng</span><b>${a.affected.map(esc).join(", ")}</b></div>
         ${a.certain ? `<div class="kv"><span>Chắc chắn nếu xảy ra</span><b>${certain(a.certain, a)}</b></div>` : ""}
-        <div class="row spread mt-xs"><span class="small muted" data-explains>Nguồn: ${esc(a.source)}</span>
-          <button type="button" class="btn sm" data-ev="${esc(a.id)}">Bằng chứng</button></div></div>`;
+        ${precedents(a.evidence)}
+        <div class="small muted mt-xs" data-explains>Nguồn: ${esc(a.source)}</div></div>`;
     box.querySelector("#sections").innerHTML = Object.entries(KIND).map(([k, [en, vi, ic]]) => {
       const items = list.filter(a => a.kind === k);
       if (!items.length) return "";
@@ -258,7 +275,6 @@ export async function render(box, ctx) {
         <span class="small muted">${vi} · ${items.length} tin · tổng tác động <b class="${net >= 0 ? "up" : "down"}">${how(vnd(net, true), "policy.net", {count: String(items.length)})}</b></span></div>
         <div class="cards2">${items.map(card).join("")}</div></section>`;
     }).join("");
-    for (const b of box.querySelectorAll("#sections [data-ev]")) b.onclick = () => openFrame(rep.alerts.find(x => x.id === b.dataset.ev), ctx, again);
   };
 
   drawImpact();

@@ -503,7 +503,24 @@ def allocate(case: Dict[str, Any], method: str = "A", assumptions: Optional[Dict
     concentrated = [h for h in holdings if h["kind"] == "asset" and assets and h["value"] / assets > _model.data()["concentration"]]
     out = {
         "as_of": case["as_of"],
-        "client": {k: p.get(k) for k in ("client_id", "name", "age", "occupation")},
+        "client": {
+            **{k: p.get(k) for k in ("client_id", "name", "age", "occupation", "segment", "persona_hint")},
+            # the page's short profile (feedback Chỉnh UI-UX): the children and their ages, the large plans, the income
+            "dependents": [
+                {"name": d.get("name"), "relation": d.get("relation"), "age": as_of.year - d["birth_year"] if d.get("birth_year") else None}
+                for d in p.get("dependents") or []
+            ],
+            "plans": [
+                {"label": e.get("label", ""), "date": e.get("date"), "amount": float(e.get("amount") or 0)}
+                for e in p.get("events") or []
+                if e.get("direction") == "out" and str(e.get("date") or "") >= str(as_of)
+            ],
+            "income_monthly": cash["income_monthly"],
+            "income_certain_monthly": cash["income_certain_monthly"],
+            "spending_monthly": cash["living_monthly"],
+            "retirement_age": s["retirement_age"],
+            "retirement_year": goal.get("year"),
+        },
         "risk": {**risk, "drawdown_limit": p.get("drawdown_limit")},
         "method": method,
         "method_label": _cashflow.METHOD_LABELS[method],

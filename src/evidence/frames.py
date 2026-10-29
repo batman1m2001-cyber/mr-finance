@@ -125,6 +125,9 @@ def summary(fid: str) -> Optional[Dict[str, Any]]:
         "label": label(f),
         "certain_from": f.get("certain_from"),
         "targets": f["targets"],
+        # the precedents in brief, for the chart's tip and the card (the full frame stays behind /api/evidence)
+        "precedents": [{k: p[k] for k in ("event", "outcome", "source")} for p in f.get("precedents") or []],
+        "sentence": (f.get("stats") or {}).get("sentence"),
     }
 
 

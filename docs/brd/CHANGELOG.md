@@ -2,6 +2,11 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-10-29 — UI/UX feedback (owner, “Chỉnh UI-UX”): Phân bổ tài sản opens on a client profile (children, plans,
+  income, retirement, risk appetite / capacity / limit); the three buckets are tabs, each with Cách tính first (every
+  figure with its source; Thanh khoản's cash-flow chart and one line-by-line table; with and without income side by
+  side) then Cân nhắc thay đổi; News and Prediction drops the formula line, shows precedents in the bar's tip and on
+  each card (the card's Bằng chứng button gone). — SCR-CL-13, SCR-CL-06
 - 2026-10-28 — Two owner BRDs registered and built (P0 + P1): **news as evidence** — each news item shows direction ·
   time · evidence, by statistics (n and the base rate) or a CIO-approved qualitative frame; the agent drafts frames
   from real news for the CIO (Bằng chứng tin); **asset allocation** — three buckets (Thanh khoản, Di sản, Tăng trưởng),

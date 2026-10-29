@@ -216,6 +216,12 @@ cards the same);
 legal-status notes; **Policy headlines** — one card per policy with level, horizon, legal status, the impact (with
 probability), holding × sensitivity × probability, the holdings touched, the source line.
 
+**Since 2026-10-29 (feedback Chỉnh UI-UX).** The formula line under “Tác động lên tài sản ròng” is gone (each number
+still opens its formula). A bar's tip lists its precedents in brief (two, then “… và N tiền lệ khác”; the measured
+sentence on the statistics branch). Each card shows its precedents itself — event, outcome, source — in a box that
+scrolls inside the card when long; the card's “Bằng chứng” button is gone (the bar still opens the whole frame). The
+alert's `evidence` carries `precedents` and `sentence` (`src/evidence/frames.py::summary`).
+
 **DEF-01 (fixed 2026-10-15).** The “Wealth check” card was squeezed into an 18 px column at 1440 px: the new pages'
 `.check` checklist rule (`web/core/tokens.css`) also matched this legacy card. The rule is now scoped to `#page-new`.
 
@@ -409,14 +415,25 @@ sheet was open.) Every animation has a still equivalent under reduced motion. Co
 **Journey.** The client sees what must stay ready, what they want to leave and what the rest must earn, and what to
 change; the RM opens the same page, checks each action and sends them to the specialist.
 
-**Layout.** The method switch (A, B, C). Three bucket tiles (Thanh khoản, Di sản, Tăng trưởng: have, target, gap).
-The actions, numbered, each with its bucket, amount, why, the view behind it and its check (Phù hợp, Cần lưu ý with
-the warning; Bị chặn only for the RM). Folded under them: Dòng tiền (by year, the three targets), Bậc thang Thanh
-khoản, Cách bù phần thiếu (wait, sell, borrow), Mô hình Tăng trưởng (with the CIO's tilts), Di sản, Nghỉ hưu, Giả
-định (editable), Đối chiếu. Every figure opens how it is worked out.
+**Layout (since 2026-10-29, feedback Chỉnh UI-UX).** **Hồ sơ khách hàng**: age and occupation, the children and
+their ages, the large plans ahead (e.g. Học phí du học (Úc) – Minh An), income and spending a month (the certain part),
+retirement age and year (“Nghỉ hưu sớm” under 60), risk appetite, risk capacity and the drawdown limit — from the risk
+test, else simulated from the file with a link to the test. Then the three bucket tiles (Thanh khoản, Tăng trưởng,
+Di sản: have, target, gap) are the page's tabs. Each tab shows **Cách tính** first, every figure with its source in a
+few words, then **Cân nhắc thay đổi** (was “Việc nên trao đổi”) for that bucket — Thanh khoản with the loans, Tăng
+trưởng with retirement — each action with its bucket, amount, why and check (Bị chặn only for the RM).
+Thanh khoản: the two ways side by side — **Tính đủ thu nhập** (B, and C “chỉ tính thu nhập chắc chắn” inside it) and
+**Không tính thu nhập** (A) — each with its target and gap and a button to use it for the actions; the 36-month cash
+flow chart (a tip per month lists income, living costs, loan payments and the dated payments); one table of every
+line (income, living costs, loan payments, each dated payment such as 1,8 tỷ học phí du học – Minh An) with source,
+when and amount; folded: Bậc thang Thanh khoản, Cách bù phần thiếu. Tăng trưởng: Nghỉ hưu as one table with sources,
+the model's rebalance, folded the 11 classes. Di sản: one table — the floor's lines, the wish, what is there (which
+assets, secured debt, insured sum), the price-drop case, the gap — and how to fill it. Below the tabs: **Giả định và
+đối chiếu** (the reconciliation with sources, the assumptions to edit, for staff the bucket moves). Every figure opens
+how it is worked out.
 
-**Interaction.** Changing an assumption or the method recomputes; the RM's **Gửi vào hàng duyệt** sends the actions to
-the review queue and says so.
+**Interaction.** A tile opens its tab; changing an assumption or the method recomputes; the RM's **Gửi vào hàng duyệt**
+sends every bucket's actions to the review queue and says so.
 
 **Responsive / a11y.** Phone: the tiles stack, the action list stays one column, the tables scroll sideways in their
 panel. Status is a word and a colour, never colour alone.

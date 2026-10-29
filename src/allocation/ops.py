@@ -80,9 +80,10 @@ def risk_of(client_id: str, drawdown_limit: float) -> Dict[str, Any]:
     test = store.result(client_id, "risk")
     if test and (test.get("profile") or {}).get("level"):
         p = test["profile"]
-        return {"level": int(p["level"]), "name": p["name"], "source": "test", "at": test.get("taken")}
+        return {"level": int(p["level"]), "name": p["name"], "source": "test", "at": test.get("taken"),
+                "tolerance": test.get("tolerance_name") or p["name"], "capacity": test.get("capacity_name") or p["name"]}
     p = min(_bank.PROFILES, key=lambda x: (abs(x["drawdown_limit"] - float(drawdown_limit or 0.15)), x["level"]))
-    return {"level": p["level"], "name": p["name"], "source": "simulated", "at": None}
+    return {"level": p["level"], "name": p["name"], "source": "simulated", "at": None, "tolerance": p["name"], "capacity": p["name"]}
 
 
 def tilts() -> List[Dict[str, Any]]:
