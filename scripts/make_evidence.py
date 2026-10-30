@@ -443,7 +443,11 @@ PRECEDENT_URLS = {
 def main() -> None:
     en: Dict[str, str] = dict(CATALOGUE_EN)
     frames = {}
+    from make_factors import INVENTED  # the demo-only items are not news, so they have no evidence either
+
     for fid, f in FRAMES.items():
+        if fid in INVENTED:
+            continue
         frames[fid] = {"factor": fid, "branch": f.get("branch", "qualitative"), **_split(f, en)}
         for p in frames[fid].get("precedents") or []:
             p["url"] = PRECEDENT_URLS.get(p["event"])

@@ -142,19 +142,6 @@ def test_a_plan_label_read_from_a_goals_name_is_inferred():
     assert labels.match(["asset:gold", "plan:study_abroad"], got) == ["plan:study_abroad"]
 
 
-def test_example_4_a_plan_frame_reaches_the_goal_and_the_client_only_once_declared():
-    """Ví dụ 4: tighter transfers abroad → plan:study_abroad → C01's study in Úc → an RM task; the client reads a
-    message (dated MM/YYYY, no AML wording) only after the RM declares the goal."""
-    ev = [m for m in research_ops.matches("C01", TODAY) if m["note_id"] == "EV-P15"]
-    assert [(m["level"], m["declared"], m["client_message"]) for m in ev] == [("confirm_goal", False, None)]
-    run(DECLARE, family_id="C01", goal_id=ev[0]["goal_id"], purpose="study_abroad", country="Úc", by="rm01")
-    (m,) = [m for m in research_ops.matches("C01", TODAY) if m["note_id"] == "EV-P15"]
-    assert m["declared"] and m["level"] in ("remind", "contact_now") and m["rm_hint"]
-    month = date.fromisoformat(m["milestone"]).strftime("%m/%Y")
-    assert f"tháng {month}" in m["client_message"] and "{milestone}" not in m["client_message"]
-    assert not goals.forbidden_words(m["client_message"]) and "rửa tiền" not in m["client_message"].lower()
-
-
 def test_only_the_cio_sees_the_headline_the_review_and_the_unsourced_precedents():
     rm = run(READ, role="rm")["evidence"]
     p01 = next(f for f in rm["frames"] if f["factor"] == "P01")

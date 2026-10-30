@@ -106,26 +106,6 @@
     }
    ]
   },
-  "P04": {
-   "factor": "P04",
-   "branch": "qualitative",
-   "event_type": "sector_policy",
-   "channels": [
-    "lãi suất",
-    "tín dụng"
-   ],
-   "mechanism": "Chính sách ảnh hưởng biên lợi nhuận ngân hàng, lợi nhuận ngành giảm thì giá cổ phiếu ngân hàng chịu áp lực.",
-   "targets": [
-    "sector:Ngân hàng"
-   ],
-   "direction": "negative",
-   "changes": [
-    "giá"
-   ],
-   "timeframe": "3m",
-   "watch": "Nội dung chính thức của dự thảo và lợi nhuận quý của các ngân hàng.",
-   "precedents": []
-  },
   "P05": {
    "factor": "P05",
    "branch": "qualitative",
@@ -287,27 +267,6 @@
    "watch": "Danh sách sàn được cấp phép và điều kiện mở tài khoản.",
    "precedents": []
   },
-  "P11": {
-   "factor": "P11",
-   "branch": "qualitative",
-   "event_type": "fx_transfer_rule",
-   "channels": [
-    "tỷ giá",
-    "pháp lý"
-   ],
-   "mechanism": "Hạn mức và thủ tục chuyển tiền cho du học sinh thay đổi, ảnh hưởng chi phí và thời điểm chuyển tiền.",
-   "targets": [
-    "plan:study_abroad"
-   ],
-   "direction": "negative",
-   "changes": [
-    "chi phí",
-    "thủ tục"
-   ],
-   "timeframe": "1-3m",
-   "watch": "Dự thảo thông tư ngoại hối của NHNN.",
-   "precedents": []
-  },
   "P12": {
    "factor": "P12",
    "branch": "qualitative",
@@ -383,75 +342,6 @@
    "timeframe": ">3m",
    "watch": "Tờ khai thuế bổ sung năm đầu áp dụng.",
    "precedents": []
-  },
-  "M01": {
-   "factor": "M01",
-   "branch": "qualitative",
-   "event_type": "sbv_rate_hike",
-   "channels": [
-    "lãi suất",
-    "tín dụng"
-   ],
-   "mechanism": "Lãi suất điều hành tăng làm lãi vay thả nổi tăng ở kỳ điều chỉnh tới và giá trái phiếu đang giữ giảm.",
-   "targets": [
-    "loan:floating",
-    "asset:bond"
-   ],
-   "direction": "negative",
-   "changes": [
-    "chi phí",
-    "giá"
-   ],
-   "timeframe": "1m",
-   "watch": "Thông báo lãi suất của NHNN và lãi suất cơ sở của ngân hàng cho vay.",
-   "precedents": [
-    {
-     "event": "NHNN tăng lãi suất điều hành 1 điểm % (22/09/2022)",
-     "outcome": "VN-Index từ 1.214,7 xuống 1.126,1 điểm sau một tuần; lãi vay mua nhà tăng trong các tháng sau.",
-     "difference": "Năm 2022 có thêm sức ép tỷ giá và khủng hoảng trái phiếu doanh nghiệp.",
-     "source": "Chuỗi VN-Index trong kho dữ liệu thị trường",
-     "url": "https://www.sggp.org.vn/ngan-hang-nha-nuoc-tang-lai-suat-dieu-hanh-post652216.html"
-    },
-    {
-     "event": "NHNN tăng lãi suất điều hành lần hai, 1 điểm % (24/10/2022)",
-     "outcome": "VN-Index tăng từ 986,2 lên 1.027,9 điểm sau một tuần, rồi xuống 911,9 điểm ngày 15/11/2022.",
-     "difference": "Thị trường đã giảm sâu trước đó.",
-     "source": "Chuỗi VN-Index trong kho dữ liệu thị trường",
-     "url": "https://tuoitre.vn/plo/ngan-hang-nha-nuoc-tiep-tuc-tang-lai-suat-dieu-hanh-109704701.htm"
-    }
-   ],
-   "certain_from": "từ kỳ điều chỉnh lãi tới"
-  },
-  "M02": {
-   "factor": "M02",
-   "branch": "qualitative",
-   "event_type": "usd_vnd_rise",
-   "channels": [
-    "tỷ giá"
-   ],
-   "mechanism": "Tỷ giá USD/VND tăng làm khoản chi bằng ngoại tệ sắp tới tốn thêm tiền đồng.",
-   "targets": [
-    "plan:study_abroad",
-    "plan:emigrate",
-    "plan:support_abroad",
-    "plan:invest_abroad",
-    "plan:property_abroad"
-   ],
-   "direction": "negative",
-   "changes": [
-    "chi phí"
-   ],
-   "timeframe": "1w",
-   "watch": "Tỷ giá trung tâm và tỷ giá ngân hàng niêm yết.",
-   "precedents": [
-    {
-     "event": "Tỷ giá USD/VND năm 2022",
-     "outcome": "Từ 22.640 cuối 2021 lên đỉnh 24.660 ngày 11/11/2022, rồi về 23.410 cuối năm.",
-     "difference": "Năm 2022 Fed tăng lãi suất nhanh nhất trong nhiều thập kỷ.",
-     "source": "Chuỗi USD/VND trong kho dữ liệu thị trường",
-     "url": "https://www.vietnamplus.vn/nhin-lai-mot-nam-cstt-2022-ban-linh-duong-dau-voi-song-lon-post842246.vnp"
-    }
-   ]
   },
   "M03": {
    "factor": "M03",
@@ -561,35 +451,6 @@
    "timeframe": ">3m",
    "watch": "Tiến độ thông xe từng đoạn.",
    "precedents": []
-  },
-  "P15": {
-   "factor": "P15",
-   "branch": "qualitative",
-   "event_type": "outbound_transfer_control",
-   "headline": "Tin về rửa tiền qua kênh chuyển tiền ra nước ngoài",
-   "channels": [
-    "pháp lý"
-   ],
-   "mechanism": "Có thể dẫn đến thắt chặt thủ tục chuyển tiền ra nước ngoài.",
-   "targets": [
-    "plan:study_abroad",
-    "plan:emigrate",
-    "plan:support_abroad"
-   ],
-   "direction": "negative",
-   "changes": [
-    "thủ tục"
-   ],
-   "timeframe": "1-3m",
-   "watch": "Dự thảo thông tư của NHNN về ngoại hối.",
-   "precedents": [],
-   "client_message": "Việc chuyển tiền ra nước ngoài cho kế hoạch của gia đình có thể cần thêm thời gian và giấy tờ; nên chuẩn bị trước tháng {milestone}.",
-   "rm_hint": "Rà giấy tờ chứng minh mục đích chuyển tiền (thư nhập học, hóa đơn học phí) cùng khách.",
-   "documents": [
-    "Thư nhập học hoặc giấy tờ mục đích",
-    "Hóa đơn học phí, chi phí"
-   ],
-   "prep_weeks": 8
   }
  }
 }

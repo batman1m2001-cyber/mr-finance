@@ -54,7 +54,7 @@ def test_a_rate_rise_costs_a_floating_loan_and_bonds_by_duration():
         h("loan", 2 * TY, kind="liability", rate_type="floating", name="Vay"),
         h("bond", 1 * TY, duration=2.0, name="TP"),
     ]
-    loan, bond = _rules.rates(factor("M01"), rows, {}, fixtures.market())
+    loan, bond = _rules.rates({"rule": {"type": "rates", "move": 0.005}}, rows, {}, fixtures.market())
     assert loan["raw"] == -2 * TY * 0.005 and bond["raw"] == -1 * TY * 2.0 * 0.005
 
 
@@ -79,8 +79,8 @@ def test_each_alert_says_how_soon_and_business_equity_only_says_good_or_bad():
     assert not any(a["sign_only"] for a in report("C01")["alerts"])  # stocks, gold, property, deposits: graded
     # in VND: gold and bonds only, and the exchange rate; a stock, a property or a mixed hit is a level
     vnd = {a["factor"]: a["in_vnd"] for a in report("C01")["alerts"]}
-    assert vnd["P09"] and vnd["P06"] and vnd["M02"] and vnd["P11"]
-    assert not (vnd["I01"] or vnd["P08"] or vnd["P04"] or vnd["P12"])
+    assert vnd["P09"] and vnd["P06"]
+    assert not (vnd["I01"] or vnd["P08"] or vnd["P12"])
 
 
 def test_each_alert_splits_by_asset_class_and_the_parts_add_up_to_its_impact():
