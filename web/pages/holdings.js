@@ -5,7 +5,7 @@
    against it and paid on that each month (business feedback 2026-10-29; the purchase price column left).
    The last read and the chat are kept for this browser tab, per client; a turn that records something redraws the
    book only, not the page. */
-import {$, esc, get, n as how, pct, post, stream, vnd} from "../core/core.js";
+import {$, esc, get, n as how, num as count, pct, post, stream, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
 
 const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
@@ -56,7 +56,7 @@ function bookRow(h, asOf, srcName) {
     r.why = {qty: `${num(d.units)} CCQ`, buy_price: d.avg_nav ? `${num(d.avg_nav)} đ` : null};
   } else if (h.class === "real_estate") {
     r.bought = d.purchase_year ? `Năm ${d.purchase_year}` : "";
-    r.note = [d.sqm ? `${num(d.sqm)} m²` : "", esc(d.area_name || ""), d.rental_monthly ? `cho thuê ${terms(vnd(d.rental_monthly))}/tháng` : ""].filter(Boolean).join(" · ");
+    r.note = [d.sqm ? `${count(d.sqm)} m²` : "", esc(d.area_name || ""), d.rental_monthly ? `cho thuê ${terms(vnd(d.rental_monthly))}/tháng` : ""].filter(Boolean).join(" · ");
     r.why = {buy_price: h.cost ? vnd(h.cost) : null};
   } else if (h.class === "deposit") {
     r.bought = day(d.opened);

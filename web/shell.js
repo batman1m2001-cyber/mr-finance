@@ -1,4 +1,4 @@
-/* The shell: roles, navigation, routing, the client picker and scope, theme, demo reset. Each role sees its own
+/* The shell: roles, navigation, routing, the client picker and scope, theme. Each role sees its own
    pages (docs/NEWS_IMPACT_PLAN.md §5); every page is a module in pages/ rendered into #page (ADR-0019). The
    address is the route: #/cio/nhan-dinh/VW-0001-v1.
 
@@ -13,11 +13,11 @@
    its desk — the frame, the role's own centre, the docked assistant — is `#/<role>` (menu entry `ban`), and every
    other menu address opens its page, unchanged, as a sheet over it. */
 import {$, $$, esc, explainOn, failed, howAudience, keep, lang, loading, setLang} from "./core/core.js";
-import {mount as mountCopilot} from "./copilot.js?v=20261028p2";
+import {mount as mountCopilot} from "./copilot.js?v=20261030f5";
 import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261025t3";
 import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261025t3";
-import {DESKS} from "./desk/roles.js?v=20261028p2";
+import {DESKS} from "./desk/roles.js?v=20261030f5";
 
 const ROLES = {
   client: {
@@ -201,7 +201,7 @@ let dk = null, dkRole = null, dkLoad = null;
 async function desk(role) {
   if (dk && dkRole === role) return dk;
   leaveDesk();
-  dkLoad ||= import("./desk/desk.js?v=20261028p2");
+  dkLoad ||= import("./desk/desk.js?v=20261030f5");
   const mod = await dkLoad;
   if (!dk) {
     dk = mod.mount($("#main"), {role, nav: ROLES[role].nav, go, client, setClient, user: () => (state.me ? state.me.id : ROLES[role].user)});
@@ -317,7 +317,7 @@ async function route() {
 
 // a page module, imported once; a failed import is asked again next time
 function page(name) {
-  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261028p2`).catch((e) => { delete pages[name]; throw e; });
+  if (!pages[name]) pages[name] = import(`./pages/${name}.js?v=20261030f5`).catch((e) => { delete pages[name]; throw e; });
   return pages[name];
 }
 
@@ -454,18 +454,6 @@ async function pickers() {
   }
 }
 
-// “Làm lại demo”: the server forgets what was uploaded, declared, tested and proposed; this browser forgets the
-// followed goals and what each page kept for the tab; the page loads again from nothing
-async function reset() {
-  if (!confirm("Xóa mọi dữ liệu đã tải lên, đã khai, bài test, mục tiêu và hàng chờ duyệt để làm lại demo?")) return;
-  await fetch("/api/reset", {method: "POST", headers: {"content-type": "application/json"}, body: "{}"});
-  try {
-    for (const k of Object.keys(localStorage)) if (k.startsWith("mf.goals.")) localStorage.removeItem(k);
-    for (const k of Object.keys(sessionStorage)) if (k.startsWith("mf.")) sessionStorage.removeItem(k);
-  } catch (_) { /* private mode */ }
-  location.reload();
-}
-
 function signInPage() {
   document.body.classList.add("signed-out");
   $("#nav").innerHTML = "";
@@ -497,8 +485,7 @@ async function start() {
   document.addEventListener("click", (e) => { if (!e.target.closest("#whoami")) meShow(false); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") meShow(false); });
   window.addEventListener("hashchange", () => meShow(false));
-  if (state.auth && !state.me) { $("#reset").hidden = true; signInPage(); return; }
-  $("#reset").onclick = reset;
+  if (state.auth && !state.me) { signInPage(); return; }
   $("#roles").addEventListener("click", (e) => {
     const b = e.target.closest("[data-role]");
     if (b) go(`#/${b.dataset.role}`);

@@ -37,8 +37,7 @@ export async function render(box, ctx) {
       "Khi một nhận định được duyệt và có hiệu lực, đồ thị cho thấy tin đi tới tài sản và mục tiêu của gia đình thế nào.")}</div>`;
     return;
   }
-  const narrow = (box.clientWidth || window.innerWidth) < 760;
-  const state = {view: narrow ? "list" : "graph", hidden: new Set(), sel: null};
+  const state = {view: "graph", hidden: new Set(), sel: null};
   const byId = Object.fromEntries(g.nodes.map(n => [n.id, n]));
   const src = (e) => e.sources.map(s => `${SRC[s.type] || s.type} ${esc(s.id)}`).join(" · ");
   const val = (e) => (e.value == null ? "" : how(vnd(e.value, true), "impact.edge"));
@@ -50,13 +49,11 @@ export async function render(box, ctx) {
       ${cio ? `<div class="row tight"><label class="small muted" for="g-run">Lần áp dụng</label><select id="g-run">${g.runsList.map(r => `<option value="${esc(r.id)}" ${r.id === g.run_id ? "selected" : ""}>${esc(r.id)} · ${esc(r.status_label)}</option>`).join("")}</select>
         <a class="btn sm" href="#/cio/ap-dung/${esc(g.run_id)}">Mở lần áp dụng</a></div>` : ""}
       <div class="row" style="gap:6px;flex-wrap:wrap">
-        <div class="seg" role="group" aria-label="Cách xem"><button type="button" data-v="graph">Đồ thị</button><button type="button" data-v="list">Danh sách</button></div>
-        <span class="small muted" style="margin-left:8px">Hiện:</span>
+        <span class="small muted">Hiện:</span>
         ${g.columns.map(c => `<button type="button" class="chip" data-k="${c.kind}" aria-pressed="true"><i style="display:inline-block;width:9px;height:9px;border-radius:3px;background:${COLOR[c.kind]};margin-right:6px"></i>${esc(c.label)}</button>`).join("")}
       </div>
       <div id="g-body" class="mt"></div>
       <div id="g-detail" class="mt"></div>
-      <div class="footnote">${esc(g.note)}</div>
     </div>`;
 
   const visible = (n) => !state.hidden.has(n.kind);

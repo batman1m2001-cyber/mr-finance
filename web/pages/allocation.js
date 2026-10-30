@@ -73,7 +73,7 @@ function overview(a, ctx, staff) {
   const plans = (c.plans || []).filter(p => p.amount >= 500e6);
   const done = [liq.short <= 0, a.retirement.status !== "short", a.legacy.gap <= 0].filter(Boolean).length;
   const line = [`${esc(c.name || "")}${c.age ? `, ${c.age} tuổi` : ""}`,
-    kids.length ? `${kids.length} con (${kids.map(d => `${d.age} tuổi`).join(", ")})` : "",
+    kids.length ? `${kids.length} con (${kids.map(d => d.age).join(", ")} tuổi)` : "",
     `nghỉ hưu ${s.retirement_age} tuổi${c.retirement_year ? ` (${c.retirement_year})` : ""}`,
     `rủi ro ${r.level}/5 · ${esc(r.name)}`, r.drawdown_limit != null ? `ngưỡng sụt giảm ${pct(r.drawdown_limit, false, 0)}` : ""].filter(Boolean);
   const test = ctx.role === "client" ? "#/client/muc-tieu/khau-vi" : ctx.href("khach-hang", "ke-hoach");
@@ -121,7 +121,7 @@ function priorities(a) {
       figure: `Thiếu ${m(vnd(liq.short), "alloc.liquidity", {method: a.method_label})}`,
       line: `Chi tiêu ${cf.horizon_years} năm tới, ${esc(a.method_label.toLowerCase())}: cần ${vnd(liq.target)}, có ${vnd(liq.have)}`,
       action: `Dành tiền cho các khoản chi gần trước khi đưa thêm vốn vào đầu tư dài hạn${x ? `: ${esc(x.what.toLowerCase())}${x.amount ? ` · ${vnd(x.amount)}` : ""}` : ""}.`,
-      cause: big ? `Khoản chi lớn nhất: ${esc(big.label)} ${vnd(big.amount)} (${ym(big.month)}).` : "Chi thường xuyên vượt thu nhập."});
+      cause: big ? `Khoản chi lớn nhất: ${esc(big.label)}, ${vnd(big.amount)} (${ym(big.month)}).` : "Chi thường xuyên vượt thu nhập."});
   }
   if (gr.worst_before.share > (dd || 1)) {
     out.push({kind: "urgent", tab: "growth", when: "Trong quý này", title: "Giảm rủi ro sụt giảm của danh mục",
