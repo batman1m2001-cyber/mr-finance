@@ -182,7 +182,7 @@ export async function render(box, ctx) {
           <span class="pill ${tone}" style="margin-left:auto">${text}</span></div>
         <div data-quote><h4>${esc(v.title)}</h4>
         <div class="nblock"><div class="nhead tab">Tóm tắt</div><ul class="nsum">${(v.points || [v.summary]).map(s => `<li>${esc(s)}</li>`).join("")}
-          <li>Dự báo: ${esc(v.target)} (${esc(v.horizon)})</li></ul></div></div>
+          <li>Con số chính: ${esc(v.target)} (${esc(v.horizon)})</li></ul></div></div>
         <div class="nblock"><div class="nhead">Ý nghĩa với bạn</div>${hit.length
           ? `<p class="small">${hit.some(h => h.kind === "asset") ? `Bạn đang giữ <b>${how(vnd(exposure), "view.exposure", {count: String(hit.length)})}</b> trong các khoản này.` : "Khoản vay của bạn chịu tác động trực tiếp."}</p>
             <div class="row tight">${hit.map(h => `<span class="chip">${esc(h.name)}</span>`).join("")}</div>`

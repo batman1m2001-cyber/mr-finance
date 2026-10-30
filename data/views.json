@@ -1,47 +1,53 @@
 {
- "as_of": "2026-10-09",
- "note": "Dữ liệu giả định cho demo: tên tổ chức để minh họa, nội dung, con số và ngày không phải báo cáo thật. Thay bằng báo cáo gốc trước khi trình bày.",
+ "as_of": "2026-10-30",
+ "note": "Tóm tắt từ báo cáo và bài báo đã công bố; bấm tên nguồn để đọc bản gốc.",
  "views": [
   {
    "id": "V01",
    "house": "Dragon Capital",
    "kind": "Quỹ đầu tư",
-   "date": "2026-10-02",
-   "horizon": "Đến cuối 2027",
+   "date": "2026-07-13",
+   "horizon": "12 tháng",
    "topic": "Thị trường cổ phiếu",
-   "title": "Nâng hạng mở đường cho dòng vốn ngoại quay lại nhóm vốn hóa lớn",
+   "title": "Ngân hàng, tiêu dùng, vật liệu dẫn dắt lợi nhuận nửa cuối 2026",
    "stance": "positive",
-   "target": "VN-Index 1.850 điểm",
-   "summary": "Kỳ vọng dòng vốn ETF và quỹ chủ động vào nhóm ngân hàng, công nghệ, bán lẻ; ưu tiên doanh nghiệp tăng trưởng lợi nhuận trên 15%/năm.",
+   "target": "Lợi nhuận toàn thị trường 2026 +23%",
+   "points": [
+    "Ngân hàng, hàng tiêu dùng và vật liệu có tăng trưởng lợi nhuận mạnh nhất nửa cuối 2026.",
+    "Nâng hạng FTSE Russell từ tháng 9/2026 có thể kéo về 1,5–2 tỷ USD vốn thụ động trong 12 tháng.",
+    "P/E dự phóng 2026 khoảng 11,7 lần, khoảng 10 lần nếu bỏ bốn mã nhóm Vingroup."
+   ],
+   "url": "https://theinvestor.vn/three-stock-groups-to-offer-strong-earnings-growth-in-h2-d19518.html",
    "touches": {
     "tickers": [
-     "FPT",
      "TCB",
      "VCB",
      "MBB",
+     "HPG",
      "MWG"
     ],
     "classes": [
      "fund"
     ]
    },
-   "points": [
-    "Dòng vốn ETF và quỹ chủ động được kỳ vọng vào nhóm ngân hàng, công nghệ, bán lẻ.",
-    "Ưu tiên doanh nghiệp tăng trưởng lợi nhuận trên 15%/năm."
-   ],
-   "url": "https://www.dragoncapital.com.vn"
+   "summary": "Ngân hàng, hàng tiêu dùng và vật liệu có tăng trưởng lợi nhuận mạnh nhất nửa cuối 2026. Nâng hạng FTSE Russell từ tháng 9/2026 có thể kéo về 1,5–2 tỷ USD vốn thụ động trong 12 tháng. P/E dự phóng 2026 khoảng 11,7 lần, khoảng 10 lần nếu bỏ bốn mã nhóm Vingroup."
   },
   {
    "id": "V02",
    "house": "SSI Research",
    "kind": "Công ty chứng khoán",
-   "date": "2026-09-28",
-   "horizon": "12 tháng",
+   "date": "2026-06-10",
+   "horizon": "Nửa cuối 2026",
    "topic": "Ngân hàng",
-   "title": "Ngân hàng: tăng trưởng tín dụng 15%, biên lãi ròng chịu áp lực nhẹ",
+   "title": "Ngân hàng nửa cuối 2026: tín dụng chậm lại, biên lãi phân hóa",
    "stance": "neutral",
-   "target": "TCB 32.000 · VCB 98.000",
-   "summary": "Lợi nhuận ngành dự báo tăng 14% năm 2027; nợ xấu bất động sản là rủi ro chính. Khuyến nghị nắm giữ nhóm ngân hàng tư nhân lớn.",
+   "target": "Biên lãi ngân hàng tư nhân −0,1 điểm %",
+   "points": [
+    "Tín dụng nửa cuối năm chậm lại vì ngân hàng phải giữ trong hạn mức được giao.",
+    "Biên lãi ròng ngân hàng tư nhân giảm khoảng 0,1 điểm %, ngân hàng quốc doanh tăng khoảng 0,08 điểm %.",
+    "Thu phí từ tài trợ thương mại, bảo lãnh trở thành động lực lợi nhuận lớn hơn."
+   ],
+   "url": "https://vir.com.vn/banks-face-diverging-fortunes-in-second-half-of-2026-155591.html",
    "touches": {
     "tickers": [
      "TCB",
@@ -49,154 +55,150 @@
      "MBB"
     ]
    },
-   "points": [
-    "Lợi nhuận ngành dự báo tăng 14% năm 2027.",
-    "Nợ xấu bất động sản là rủi ro chính.",
-    "Khuyến nghị nắm giữ nhóm ngân hàng tư nhân lớn."
-   ],
-   "url": "https://www.ssi.com.vn"
+   "summary": "Tín dụng nửa cuối năm chậm lại vì ngân hàng phải giữ trong hạn mức được giao. Biên lãi ròng ngân hàng tư nhân giảm khoảng 0,1 điểm %, ngân hàng quốc doanh tăng khoảng 0,08 điểm %. Thu phí từ tài trợ thương mại, bảo lãnh trở thành động lực lợi nhuận lớn hơn."
   },
   {
    "id": "V03",
-   "house": "SHS Research",
+   "house": "Shinhan Securities",
    "kind": "Công ty chứng khoán",
-   "date": "2026-10-05",
-   "horizon": "6 tháng",
-   "topic": "Thép, vật liệu",
-   "title": "Thép: giá phục hồi chậm, thuế chống bán phá giá hỗ trợ thị phần nội địa",
-   "stance": "neutral",
-   "target": "HPG 29.000",
-   "summary": "Sản lượng Dung Quất 2 giúp HPG tăng trưởng, nhưng giá thép thế giới còn yếu; biên lợi nhuận cải thiện từ quý 2/2027.",
+   "date": "2026-08-21",
+   "horizon": "12 tháng",
+   "topic": "Thép",
+   "title": "HPG: giá chưa phản ánh giá trị nội tại",
+   "stance": "positive",
+   "target": "HPG 35.900 (Mua)",
+   "points": [
+    "Nửa đầu 2026 đạt 52% kế hoạch doanh thu và 70% kế hoạch lợi nhuận.",
+    "Sản lượng HRC từ Dung Quất 2 hỗ trợ tăng trưởng nửa cuối năm.",
+    "Nhu cầu thép trong nước phục hồi, phòng vệ thương mại và xây dựng hạ tầng hỗ trợ."
+   ],
+   "url": "https://shinhansec.com.vn/en/research-center/2901/hpgbuytp-vnd-35900-65-price-has-yet-to-reflect-intrinsic-value.html",
    "touches": {
     "tickers": [
      "HPG"
     ]
    },
-   "points": [
-    "Sản lượng Dung Quất 2 giúp HPG tăng trưởng.",
-    "Giá thép thế giới còn yếu.",
-    "Biên lợi nhuận cải thiện từ quý 2/2027."
-   ],
-   "url": "https://www.shs.com.vn"
+   "summary": "Nửa đầu 2026 đạt 52% kế hoạch doanh thu và 70% kế hoạch lợi nhuận. Sản lượng HRC từ Dung Quất 2 hỗ trợ tăng trưởng nửa cuối năm. Nhu cầu thép trong nước phục hồi, phòng vệ thương mại và xây dựng hạ tầng hỗ trợ."
   },
   {
    "id": "V04",
-   "house": "Bloomberg Economics",
-   "kind": "Hãng tin, kinh tế học",
-   "date": "2026-10-07",
-   "horizon": "Quý 4/2026 – Quý 2/2027",
-   "topic": "Vàng, tỷ giá",
-   "title": "Vàng thế giới đi ngang sau đỉnh; Fed cắt lãi suất chậm hơn kỳ vọng",
-   "stance": "cautious",
-   "target": "Vàng 2.450 – 2.600 USD/oz",
-   "summary": "Đồng USD mạnh lại khi Fed giữ lãi suất lâu hơn; vàng khó lập đỉnh mới trong ngắn hạn. Chênh lệch vàng miếng trong nước có thể thu hẹp thêm.",
+   "house": "J.P. Morgan",
+   "kind": "Ngân hàng đầu tư",
+   "date": "2026-02-25",
+   "horizon": "Đến cuối 2026",
+   "topic": "Vàng",
+   "title": "Giá vàng có thể lên 6.300 USD/oz cuối 2026",
+   "stance": "positive",
+   "target": "Vàng 6.300 USD/oz",
+   "points": [
+    "Ngân hàng trung ương dự kiến mua khoảng 755 tấn vàng năm 2026.",
+    "Quỹ ETF vàng dự kiến mua thêm khoảng 250 tấn, nhu cầu vàng miếng và xu trên 1.200 tấn/năm.",
+    "Nguồn cung từ mỏ phản ứng chậm, hỗ trợ giá."
+   ],
+   "url": "https://www.kitco.com/news/article/2026-02-25/gold-price-will-rise-22-above-current-level-reach-6300-year-end-2026-jp",
    "touches": {
     "classes": [
      "gold"
     ]
    },
-   "points": [
-    "Đồng USD mạnh lại khi Fed giữ lãi suất lâu hơn.",
-    "Vàng khó lập đỉnh mới trong ngắn hạn.",
-    "Chênh lệch vàng miếng trong nước có thể thu hẹp thêm."
-   ],
-   "url": "https://www.bloomberg.com/economics"
+   "summary": "Ngân hàng trung ương dự kiến mua khoảng 755 tấn vàng năm 2026. Quỹ ETF vàng dự kiến mua thêm khoảng 250 tấn, nhu cầu vàng miếng và xu trên 1.200 tấn/năm. Nguồn cung từ mỏ phản ứng chậm, hỗ trợ giá."
   },
   {
    "id": "V05",
-   "house": "Techcombank Research",
-   "kind": "Nghiên cứu nội bộ",
-   "date": "2026-10-08",
-   "horizon": "12 tháng",
+   "house": "VNDirect Research",
+   "kind": "Công ty chứng khoán",
+   "date": "2026-09-30",
+   "horizon": "Đến đầu 2027",
    "topic": "Lãi suất",
-   "title": "Lãi suất tiết kiệm đã chạm đáy; lãi vay thả nổi có thể tăng 0,5–1 điểm",
+   "title": "Lãi suất neo cao đến đầu 2027",
    "stance": "cautious",
-   "target": "Tiết kiệm 12 tháng 5,0–5,5%",
-   "summary": "Thanh khoản hệ thống thu hẹp cuối năm; nên khóa kỳ hạn dài cho tiền gửi và xem lại khoản vay thả nổi lớn.",
+   "target": "Lãi suất giảm rõ hơn từ đầu 2027",
+   "points": [
+    "Lạm phát gần mục tiêu 4,5%, nhu cầu vốn hạ tầng lớn và thanh khoản chưa phục hồi bền vững.",
+    "Tháng 8, lãi suất huy động 6–12 tháng cao nhất 8%, lãi vay bình quân 10,7%.",
+    "Fed tăng lãi suất thêm có thể nới rộng chênh lệch với tiền đồng."
+   ],
+   "url": "https://vietnamnews.vn/economy/1800866/viet-nam-rates-likely-to-stay-high-until-early-2027.html",
    "touches": {
     "classes": [
      "deposit",
      "loan"
     ]
    },
-   "points": [
-    "Thanh khoản hệ thống thu hẹp cuối năm.",
-    "Nên khóa kỳ hạn dài cho tiền gửi.",
-    "Xem lại khoản vay thả nổi lớn."
-   ],
-   "url": "https://techcombank.com"
+   "summary": "Lạm phát gần mục tiêu 4,5%, nhu cầu vốn hạ tầng lớn và thanh khoản chưa phục hồi bền vững. Tháng 8, lãi suất huy động 6–12 tháng cao nhất 8%, lãi vay bình quân 10,7%. Fed tăng lãi suất thêm có thể nới rộng chênh lệch với tiền đồng."
   },
   {
    "id": "V06",
-   "house": "VNDirect Research",
-   "kind": "Công ty chứng khoán",
-   "date": "2026-09-30",
-   "horizon": "12 tháng",
+   "house": "CBRE Việt Nam",
+   "kind": "Tư vấn bất động sản",
+   "date": "2026-07-07",
+   "horizon": "Quý 2/2026",
    "topic": "Bất động sản TP.HCM",
-   "title": "Căn hộ khu Đông TP.HCM: giá tăng chậm lại, thanh khoản cải thiện nhờ Metro số 1",
+   "title": "Giá căn hộ sơ cấp TP.HCM tăng 16% so với cùng kỳ",
    "stance": "positive",
-   "target": "Giá căn hộ +6–8%/năm",
-   "summary": "Nguồn cung mới hạn chế giữ giá; khu Thảo Điền, Thủ Đức hưởng lợi từ hạ tầng. Đất nền vùng ven còn chờ tiến độ sân bay Long Thành.",
+   "target": "Sơ cấp 76 triệu đồng/m²",
+   "points": [
+    "Giá sơ cấp trung bình khoảng 76 triệu đồng/m², tăng 8% so với quý trước.",
+    "Giá căn hộ thứ cấp 62 triệu đồng/m², tăng 26% so với cùng kỳ.",
+    "Gần 6.600 căn mở bán mới, gần 80% ở khu Bình Dương cũ, hấp thụ 90%."
+   ],
+   "url": "https://voh.com.vn/kinh-te/quy-2-gia-bat-dong-san-nha-o-tai-tphcm-tang-nhe-bat-dong-san-cong-nghiep-di-ngang-659319.html",
    "touches": {
     "classes": [
      "real_estate"
     ],
     "areas": [
      "thao_dien",
-     "vinhomes_grand_park",
-     "long_thanh"
+     "vinhomes_grand_park"
     ]
    },
-   "points": [
-    "Nguồn cung mới hạn chế giữ giá.",
-    "Khu Thảo Điền, Thủ Đức hưởng lợi từ hạ tầng.",
-    "Đất nền vùng ven còn chờ tiến độ sân bay Long Thành."
-   ],
-   "url": "https://www.vndirect.com.vn"
+   "summary": "Giá sơ cấp trung bình khoảng 76 triệu đồng/m², tăng 8% so với quý trước. Giá căn hộ thứ cấp 62 triệu đồng/m², tăng 26% so với cùng kỳ. Gần 6.600 căn mở bán mới, gần 80% ở khu Bình Dương cũ, hấp thụ 90%."
   },
   {
    "id": "V07",
-   "house": "Techcom Capital",
-   "kind": "Quỹ đầu tư",
-   "date": "2026-10-01",
-   "horizon": "12 tháng",
-   "topic": "Trái phiếu",
-   "title": "Trái phiếu doanh nghiệp: chọn lọc tổ chức phát hành, tránh nhóm BĐS đòn bẩy cao",
-   "stance": "neutral",
-   "target": "Lợi suất kỳ vọng 7–8,5%",
-   "summary": "Áp lực đáo hạn 2027 tập trung ở nhóm bất động sản; ưu tiên trái phiếu ngân hàng và quỹ trái phiếu đa dạng hóa.",
+   "house": "FiinGroup",
+   "kind": "Dữ liệu tài chính",
+   "date": "2026-07-31",
+   "horizon": "Nửa cuối 2026",
+   "topic": "Trái phiếu doanh nghiệp",
+   "title": "Áp lực đáo hạn trái phiếu nửa cuối 2026, đỉnh vào tháng 12",
+   "stance": "cautious",
+   "target": "192.500 tỷ đồng đến hạn",
+   "points": [
+    "Khoảng 192.500 tỷ đồng gốc và lãi trái phiếu đến hạn nửa cuối 2026.",
+    "Bất động sản chiếm khoảng 61.200 tỷ đồng, 62,5% phần đến hạn của nhóm phi tài chính.",
+    "Phát hành mới chưa đủ bù phần đáo hạn, thị trường tiếp tục thu hẹp."
+   ],
+   "url": "https://vietnamnews.vn/economy/1796564/corporate-bond-maturities-ease-in-q3-but-funding-pressure-persists-in-h2.html",
    "touches": {
     "classes": [
      "bond"
     ]
    },
-   "points": [
-    "Áp lực đáo hạn 2027 tập trung ở nhóm bất động sản.",
-    "Ưu tiên trái phiếu ngân hàng và quỹ trái phiếu đa dạng hóa."
-   ],
-   "url": "https://www.techcomcapital.com.vn"
+   "summary": "Khoảng 192.500 tỷ đồng gốc và lãi trái phiếu đến hạn nửa cuối 2026. Bất động sản chiếm khoảng 61.200 tỷ đồng, 62,5% phần đến hạn của nhóm phi tài chính. Phát hành mới chưa đủ bù phần đáo hạn, thị trường tiếp tục thu hẹp."
   },
   {
    "id": "V08",
-   "house": "Bloomberg Intelligence",
-   "kind": "Hãng tin, kinh tế học",
-   "date": "2026-09-25",
+   "house": "BSC Research",
+   "kind": "Công ty chứng khoán",
+   "date": "2026-09-07",
    "horizon": "12 tháng",
    "topic": "Công nghệ",
-   "title": "Dịch vụ CNTT châu Á: đơn hàng AI giữ tăng trưởng hai chữ số",
+   "title": "FPT: kết quả kinh doanh đúng kỳ vọng",
    "stance": "positive",
-   "target": "Doanh thu ngành +18%",
-   "summary": "Nhu cầu chuyển đổi số và AI từ Nhật, Mỹ giữ đà; rủi ro chính là tỷ giá Yên và chi phí nhân sự.",
+   "target": "FPT 90.600 (Mua)",
+   "points": [
+    "Nửa đầu 2026 lợi nhuận tăng 14%, doanh thu tăng 12,6% so với cùng kỳ.",
+    "Giá trị hợp đồng mới ký tăng 32,3%, thị trường Nhật tăng 25%.",
+    "P/E 2026 khoảng 12 lần, thấp hơn nhiều mức trung bình 5 năm 19–20 lần."
+   ],
+   "url": "https://www.bsc.com.vn/en/bao-cao/15861-x-stock-fpt-90600-27-business-results-in-line-with-expectations",
    "touches": {
     "tickers": [
      "FPT"
     ]
    },
-   "points": [
-    "Nhu cầu chuyển đổi số và AI từ Nhật, Mỹ giữ đà.",
-    "Rủi ro chính là tỷ giá Yên và chi phí nhân sự."
-   ],
-   "url": "https://www.bloomberg.com/professional/products/bloomberg-terminal/research/bloomberg-intelligence/"
+   "summary": "Nửa đầu 2026 lợi nhuận tăng 14%, doanh thu tăng 12,6% so với cùng kỳ. Giá trị hợp đồng mới ký tăng 32,3%, thị trường Nhật tăng 25%. P/E 2026 khoảng 12 lần, thấp hơn nhiều mức trung bình 5 năm 19–20 lần."
   }
  ]
 }

@@ -3,7 +3,7 @@
 Each factor has a status (dự thảo / lấy ý kiến / đã thông qua → a probability), a source line,
 and a rule (src/impact/_rules.py) that finds which holdings it touches and how much. Statuses and
 numbers are a snapshot for the demo: the brief says to re-check every item's legal status before
-showing it, and the UI says so too. Items marked (giả định) are assumptions, not news.
+showing it, and the UI says so too. Items invented for the demo (INVENTED) are left out.
 
     uv run python scripts/make_factors.py
 """
@@ -429,8 +429,13 @@ TIMEFRAMES = {"1w": "1 tuần", "1m": "1 tháng", "1-3m": "1–3 tháng", "3m": 
 HORIZON = {"1w": "1w", "1m": "1m", "1-3m": "3m", "3m": "3m", ">3m": ">3m"}
 
 
+# items written for the demo rather than taken from a source: not shown as news (business feedback 5, 2026-10-30)
+INVENTED = {"P04", "P11", "P15", "M01", "M02"}
+
+
 def main() -> None:
     frames = json.loads(EVIDENCE.read_text(encoding="utf-8"))["frames"]
+    FACTORS[:] = [f for f in FACTORS if f["id"] not in INVENTED]
     for f in FACTORS:
         tf = frames[f["id"]]["timeframe"]
         f["probability"] = STATUS[f["status"]]

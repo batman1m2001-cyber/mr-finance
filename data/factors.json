@@ -76,30 +76,6 @@
    "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=211189&classid=1&typegroupid=3"
   },
   {
-   "id": "P04",
-   "kind": "policy",
-   "title": "Dự thảo ảnh hưởng nhóm ngân hàng quốc doanh (giả định)",
-   "status": "draft",
-   "source": "Giả định cho demo: chính sách tác động biên lợi nhuận ngành ngân hàng",
-   "rule": {
-    "type": "sector",
-    "sector": "Ngân hàng",
-    "sensitivity": -0.08
-   },
-   "probability": 0.2,
-   "status_label": "Dự thảo",
-   "horizon": "3m",
-   "horizon_label": "3 tháng",
-   "opportunity": false,
-   "section": "exclusive",
-   "summary": [
-    "Giả định cho demo: một dự thảo chính sách làm giảm biên lợi nhuận nhóm ngân hàng.",
-    "Lợi nhuận ngành giảm sẽ gây áp lực lên giá cổ phiếu ngân hàng.",
-    "Mới ở giai đoạn dự thảo."
-   ],
-   "why": "Liên quan nếu bạn nắm cổ phiếu ngân hàng hoặc quỹ có tỷ trọng ngân hàng."
-  },
-  {
    "id": "P05",
    "kind": "policy",
    "title": "Giới hạn sở hữu cổ phần ngân hàng (Luật Các TCTD 2024)",
@@ -258,29 +234,6 @@
    "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=215249"
   },
   {
-   "id": "P11",
-   "kind": "policy",
-   "title": "Quy định ngoại hối, chuyển tiền du học",
-   "status": "consultation",
-   "source": "Giả định cho demo: hạn mức và thủ tục chuyển tiền cho du học sinh thay đổi (phí, chuyển sớm)",
-   "rule": {
-    "type": "study_abroad",
-    "fx_move": 0.01
-   },
-   "probability": 0.5,
-   "status_label": "Đang lấy ý kiến / dự kiến",
-   "horizon": "3m",
-   "horizon_label": "1–3 tháng",
-   "opportunity": false,
-   "section": "exclusive",
-   "summary": [
-    "Giả định cho demo: hạn mức và thủ tục chuyển tiền cho du học sinh thay đổi.",
-    "Phí chuyển tiền có thể tăng và cần chuyển sớm hơn.",
-    "Đang lấy ý kiến."
-   ],
-   "why": "Liên quan tới kế hoạch học phí ở nước ngoài của gia đình bạn."
-  },
-  {
    "id": "P12",
    "kind": "policy",
    "title": "Thuế thu nhập cá nhân: tăng mức giảm trừ gia cảnh",
@@ -353,79 +306,6 @@
    ],
    "why": "Liên quan tới cổ phần doanh nghiệp bạn sở hữu: lợi nhuận sau thuế có thể giảm.",
    "source_url": "https://vanban.chinhphu.vn/?pageid=27160&docid=209231"
-  },
-  {
-   "id": "P15",
-   "kind": "policy",
-   "title": "Có thể thắt chặt thủ tục chuyển tiền ra nước ngoài",
-   "status": "draft",
-   "source": "Tin tổng hợp về kiểm soát chuyển tiền ra nước ngoài (giả định cho demo)",
-   "rule": {
-    "type": "plans",
-    "purposes": [
-     "study_abroad",
-     "emigrate",
-     "support_abroad"
-    ]
-   },
-   "probability": 0.2,
-   "status_label": "Dự thảo",
-   "horizon": "3m",
-   "horizon_label": "1–3 tháng",
-   "opportunity": false,
-   "section": "exclusive",
-   "summary": [
-    "Tin tổng hợp cho thấy thủ tục chuyển tiền ra nước ngoài có thể bị thắt chặt.",
-    "Chưa có văn bản chính thức.",
-    "Giả định cho demo."
-   ],
-   "why": "Liên quan tới kế hoạch chi tiêu ở nước ngoài của gia đình bạn: du học, định cư, hỗ trợ người thân."
-  },
-  {
-   "id": "M01",
-   "kind": "macro",
-   "title": "Lãi suất điều hành tăng 0,5%",
-   "status": "consultation",
-   "source": "Kịch bản giả định cho demo",
-   "rule": {
-    "type": "rates",
-    "move": 0.005
-   },
-   "probability": 0.5,
-   "status_label": "Đang lấy ý kiến / dự kiến",
-   "horizon": "1m",
-   "horizon_label": "1 tháng",
-   "opportunity": false,
-   "section": "local",
-   "summary": [
-    "Kịch bản giả định: Ngân hàng Nhà nước tăng lãi suất điều hành 0,5 điểm.",
-    "Lãi vay thả nổi tăng theo ở kỳ điều chỉnh tới.",
-    "Lãi tiền gửi mới cũng có thể tăng."
-   ],
-   "why": "Liên quan tới khoản vay lãi suất thả nổi và tiền gửi của bạn."
-  },
-  {
-   "id": "M02",
-   "kind": "macro",
-   "title": "Tỷ giá USD/VND tăng 3%",
-   "status": "consultation",
-   "source": "Kịch bản giả định cho demo",
-   "rule": {
-    "type": "study_abroad",
-    "fx_move": 0.03
-   },
-   "probability": 0.5,
-   "status_label": "Đang lấy ý kiến / dự kiến",
-   "horizon": "1w",
-   "horizon_label": "1 tuần",
-   "opportunity": false,
-   "section": "global",
-   "summary": [
-    "Kịch bản giả định: tỷ giá USD/VND tăng 3%.",
-    "Đồng USD mạnh lên khi Fed giữ lãi suất cao lâu hơn.",
-    "Các khoản chi bằng ngoại tệ tính ra tiền đồng sẽ tăng."
-   ],
-   "why": "Liên quan tới các khoản chi bằng ngoại tệ của gia đình bạn, như học phí ở nước ngoài."
   },
   {
    "id": "M03",
