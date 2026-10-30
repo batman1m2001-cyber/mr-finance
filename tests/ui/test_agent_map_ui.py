@@ -18,7 +18,7 @@ def test_the_map_draws_what_the_endpoint_says_and_opens_a_run(open_page):
     m = p.ctx.request.get(f"{p.base}/api/agents/map").json()
     assert p.page.locator(".eco-node").count() == len(m["nodes"])
     assert p.page.locator(".eco-wire").count() == len(m["edges"])
-    assert "Danh mục agent" in p.page.inner_text("#page")  # the catalogue stays, below
+    assert "Danh sách agent" in p.page.inner_text("#page")  # the catalogue stays, below
 
     p.page.hover("[data-node='assistant']")
     lit = p.page.locator(".eco-wire.on").count()

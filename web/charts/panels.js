@@ -35,7 +35,7 @@ export function drawAlloc(el, d) {
   const total = rows.reduce((x, a) => x + a.value, 0) || 1;
   const head = (cls, label) => `<tr class="secrow ${cls}"><th colspan="4">${label} <span class="small">tỷ trọng: % tổng tài sản</span></th></tr>`;
   el.innerHTML = `<div class="allocbox">
-    <div class="stack100" role="img" aria-label="Phân bổ tài sản">${rows.map(a => `<span class="sb" data-key="${esc(a.group)}" style="flex:${a.value / total} 1 0;background:${GROUP_COLOR[a.group] || "var(--other)"}">${a.value / total >= 0.08 ? `<span>${esc(a.group)}</span> <b>${pct(a.share, false, 0)}</b>` : ""}</span>`).join("")}</div>
+    <div class="stack100" role="img" aria-label="Phân bổ tài sản">${rows.map(a => `<span class="sb" data-key="${esc(a.group)}" style="flex:${a.value / total} 1 0;background:${GROUP_COLOR[a.group] || "var(--other)"}">${a.value / total >= 0.08 ? `<span>${esc(a.group)}</span> <b>${n(pct(a.share, false, 0), "class.share", {value: vnd(a.value), assets: vnd(assets)})}</b>` : ""}</span>`).join("")}</div>
     <div class="legend mt-xs">${rows.map(a => `<span><i style="background:${GROUP_COLOR[a.group] || "var(--other)"}"></i>${esc(a.group)}</span>`).join("")}</div>
     <div class="scrollx mt"><table class="table alloctable"><thead><tr><th>Loại tài sản</th><th class="r">Giá trị hiện tại</th><th class="r">Tỷ trọng</th><th class="r">Lãi/lỗ</th></tr></thead>
     <tbody>${head("asset", "Tài sản")}

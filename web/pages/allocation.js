@@ -78,14 +78,14 @@ function overview(a, ctx, staff) {
     `rủi ro ${r.level}/5 · ${esc(r.name)}`, r.drawdown_limit != null ? `ngưỡng sụt giảm ${pct(r.drawdown_limit, false, 0)}` : ""].filter(Boolean);
   const test = ctx.role === "client" ? "#/client/muc-tieu/khau-vi" : ctx.href("khach-hang", "ke-hoach");
   const cell = (k, v, sub) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div>${sub ? `<div class="small muted" data-explains>${sub}</div>` : ""}</div>`;
-  const profile = `<div class="who mt-xs">
+  const profile = `<div class="who mt-xs" data-explains>
       ${cell("Các con", kids.length ? kids.map(d => `${esc(d.name || "Con")} (${d.age} tuổi)`).join("<br>") : "Không khai")}
       ${cell("Kế hoạch lớn", plans.length ? plans.map(p => `${esc(p.label)} · ${ym(p.date)} · ${vnd(p.amount)}`).join("<br>") : "Chưa có")}
       ${cell("Thu nhập / chi tiêu mỗi tháng", `${vnd(c.income_monthly)} / ${vnd(c.spending_monthly)}`, `Chắc chắn ${vnd(c.income_certain_monthly)}/tháng (lương, lương hưu, tiền thuê)`)}
       ${cell("Nghề nghiệp", esc([c.occupation, c.segment].filter(Boolean).join(" · ")))}
     </div>
     <h3 class="mt">Rủi ro: ba con số, ba ý nghĩa</h3>
-    <div class="who risk3">
+    <div class="who risk3" data-explains>
       ${cell("Mức rủi ro dùng để phân bổ", `${r.level}/5 · ${esc(r.name)}`, "Mức thấp hơn giữa khẩu vị và khả năng: quyết định mô hình danh mục")}
       ${cell("Khẩu vị rủi ro", esc(r.tolerance || r.name), "Mức khách hàng muốn chấp nhận, từ câu trả lời bài test")}
       ${cell("Khả năng chịu rủi ro", esc(r.capacity || r.name), "Mức tài chính cho phép: thu nhập, nghĩa vụ, thời gian đến mục tiêu")}
@@ -97,12 +97,12 @@ function overview(a, ctx, staff) {
   return section("01", "Tổng quan tài chính", "Sức khỏe tài chính tổng thể", "Tài sản ròng · Tài sản thanh khoản · Nợ · Mức độ hoàn thành các mục tiêu", `
     <div class="stats">
       <div class="stat"><div class="k">Tài sản ròng</div><div class="v">${m(vnd(rc.net_worth), "alloc.reconcile")}</div>
-        <div class="small muted">Tài sản ${vnd(rc.assets)} − nợ ${vnd(rc.debts)}</div></div>
+        <div class="small muted" data-explains>Tài sản ${vnd(rc.assets)} − nợ ${vnd(rc.debts)}</div></div>
       <div class="stat"><div class="k">Thanh khoản</div><div class="v">${m(vnd(liq.have), "alloc.liquidity", {method: a.method_label})}</div>
-        <div class="small muted">Cần ${vnd(liq.target)} (${esc(a.method_label.toLowerCase())}) · ${liq.short > 0 ? `thiếu ${vnd(liq.short)}` : "đủ"}</div></div>
+        <div class="small muted" data-explains>Cần ${vnd(liq.target)} (${esc(a.method_label.toLowerCase())}) · ${liq.short > 0 ? `thiếu ${vnd(liq.short)}` : "đủ"}</div></div>
     </div>
     <div class="row tight mt-xs small"><span class="chip">${icon("target", {size: 13})} ${done}/3 mục tiêu đủ</span>
-      <span class="muted">${line.join(" · ")}</span></div>
+      <span class="muted" data-explains>${line.join(" · ")}</span></div>
     ${more("Xem hồ sơ khách hàng", profile)}`);
 }
 
@@ -322,7 +322,7 @@ function buckets(a, st, staff) {
   const tiles = {
     liquidity: [liq.have, `Cần ${m(vnd(liq.target), "alloc.liquidity", {method: a.method_label})} · ${esc(a.method_label.toLowerCase())}`, gap(liq.short, liq.excess)],
     growth: [a.buckets.growth.value, `Lợi suất giả định ${m(pct(gr.expected), "alloc.growth")}/năm · cần ${m(pct(ret.required), "alloc.retirement")}/năm`,
-      ret.status === "short" ? `<span class="pill warn">Thiếu ${m(vnd(ret.short), "alloc.retirement")} khi nghỉ hưu ${ret.year}</span><div class="small muted mt-xs">Giá danh nghĩa, lạm phát ${pct(s.inflation, false, 0)}/năm</div>`
+      ret.status === "short" ? `<span class="pill warn">Thiếu ${m(vnd(ret.short), "alloc.retirement")} khi nghỉ hưu ${ret.year}</span><div class="small muted mt-xs" data-explains>Giá danh nghĩa, lạm phát ${pct(s.inflation, false, 0)}/năm</div>`
         : `<span class="pill good">Đủ cho nghỉ hưu</span>`],
     legacy: [leg.have, `Cần ${m(vnd(leg.target), "alloc.legacy")} · sàn ${m(vnd(leg.floor), "alloc.legacy")}`,
       leg.gap > 0 ? `<span class="pill warn">Thiếu ${range(leg.gap, leg.gap_high, "alloc.legacy")}</span>` : `<span class="pill good">Đủ</span>`],

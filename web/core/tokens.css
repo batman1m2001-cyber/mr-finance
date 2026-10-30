@@ -808,9 +808,13 @@ html[data-hidden] *, html[data-hidden] *::after { animation-play-state: paused !
   box-shadow: 0 0 0 2px var(--surface); }
 .rlabels { display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; font-size: 11px; }
 .dbars { display: grid; gap: 6px; }
-/* News and Prediction (business feedback 2026-10-29): each item and its direction only, two columns on a wide page */
-.nrows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 2px; }
+/* News and Prediction (business feedback 2026-10-29): each item and its direction only; one column per section —
+   global, local, exclusive (business feedback 6, 2026-10-30) — stacked on a narrow page */
+.nrows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 24px; row-gap: 16px; align-items: start; }
 @media (max-width: 900px) { .nrows { grid-template-columns: minmax(0, 1fr); } }
+.ncol { display: grid; row-gap: 2px; min-width: 0; }
+.ncol > h4 { margin: 0 0 4px; padding: 0 8px; font-size: 13px; color: var(--ink-3); font-weight: 600; }
+.ncol .nrow > span:first-child { white-space: normal; }
 .nrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px; border-radius: 8px;
   border-bottom: 1px solid var(--hair); font-size: 14px; color: var(--ink-2); cursor: pointer; min-width: 0; }
 .nrow > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -5166,4 +5166,14 @@ export default {
 "Giá trị hợp đồng mới ký tăng 32,3%, thị trường Nhật tăng 25%.":"New contract value rose 32.3%; Japan grew 25%.",
 "P/E 2026 khoảng 12 lần, thấp hơn nhiều mức trung bình 5 năm 19–20 lần.":"2026 P/E is about 12x, well below the 5-year average of 19–20x.",
 "Trái phiếu doanh nghiệp":"Corporate bonds",
+/* business feedback 6 (2026-10-30): three news columns */
+"Tin độc quyền":"Exclusive news",
+"Đang xem ba nhóm tài sản và khoảng thiếu":"Looking at your three asset buckets and their gaps",
+"Đã xem ba nhóm tài sản":"Looked at your three asset buckets",
+"Đang xem các phân bổ chờ duyệt":"Looking at allocations waiting for approval",
+"Đã xem các phân bổ chờ duyệt":"Looked at allocations waiting for approval",
+"Đang xem các loại sự kiện và tiền lệ":"Looking at event types and their precedents",
+"Đã xem các loại sự kiện và tiền lệ":"Looked at event types and their precedents",
+"Đang gợi ý mục đích cho các mục tiêu":"Suggesting a purpose for each goal",
+"Đã gợi ý mục đích cho các mục tiêu":"Suggested a purpose for each goal",
 };

@@ -1,7 +1,7 @@
 /* CIO · Bằng chứng tin (NEWS_EVIDENCE_BRD §8.2): every news frame, the ones not approved and the ones with precedents
    lacking a source first. A row opens the same panel the client and the RM see, with the CIO's review under it. */
 import {esc, post, pct, toast} from "../core/core.js";
-import {openFrame} from "./policy.js?v=20261030f7";
+import {openFrame} from "./policy.js?v=20261030f8";
 
 const TONE = {positive: "good", negative: "bad", unclear: ""};
 const BRANCH = {statistics: "Thống kê", qualitative: "Định tính"};

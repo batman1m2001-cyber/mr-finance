@@ -48,6 +48,7 @@ TOOL_FAMILIES = {
         "assistant.desktools",
         "assistant.dataroom",
         "assistant.filetools",
+        "assistant.alloctools",
     ),
     "tools_memory": ("assistant.memory",),
     "tools_knowledge": ("assistant.knowledge",),

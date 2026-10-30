@@ -76,7 +76,7 @@ def test_the_cio_decision_board_and_its_rail(open_page):
     assert p.page.url.endswith("#/cio")
     assert rail(p) == ["Decision board", "Tác động", "Nội dung", "Hiệu quả", "Nhật ký", "Bộ nhớ"]  # OWN-FB-13, 16
     p.go("#/cio/phoi-nhiem")
-    assert [t for t, _ in tabs(p)] == ["Tác động danh mục", "Đồ thị lần áp dụng"]  # OWN-FB-14
+    assert [t for t, _ in tabs(p)] == ["Tác động danh mục", "Phân bổ", "Đồ thị lần áp dụng"]  # OWN-FB-14; Phân bổ: allocation P2
     p.go("#/cio/ban-tin")
     assert "Viết bài mới" in p.page.inner_text("#page") and p.page.locator("textarea[name=body]").count() == 1
     p.go("#/cio/hieu-qua")
