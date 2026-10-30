@@ -24,7 +24,12 @@
     "classes": [
      "fund"
     ]
-   }
+   },
+   "points": [
+    "Dòng vốn ETF và quỹ chủ động được kỳ vọng vào nhóm ngân hàng, công nghệ, bán lẻ.",
+    "Ưu tiên doanh nghiệp tăng trưởng lợi nhuận trên 15%/năm."
+   ],
+   "url": "https://www.dragoncapital.com.vn"
   },
   {
    "id": "V02",
@@ -43,7 +48,13 @@
      "VCB",
      "MBB"
     ]
-   }
+   },
+   "points": [
+    "Lợi nhuận ngành dự báo tăng 14% năm 2027.",
+    "Nợ xấu bất động sản là rủi ro chính.",
+    "Khuyến nghị nắm giữ nhóm ngân hàng tư nhân lớn."
+   ],
+   "url": "https://www.ssi.com.vn"
   },
   {
    "id": "V03",
@@ -60,7 +71,13 @@
     "tickers": [
      "HPG"
     ]
-   }
+   },
+   "points": [
+    "Sản lượng Dung Quất 2 giúp HPG tăng trưởng.",
+    "Giá thép thế giới còn yếu.",
+    "Biên lợi nhuận cải thiện từ quý 2/2027."
+   ],
+   "url": "https://www.shs.com.vn"
   },
   {
    "id": "V04",
@@ -77,7 +94,13 @@
     "classes": [
      "gold"
     ]
-   }
+   },
+   "points": [
+    "Đồng USD mạnh lại khi Fed giữ lãi suất lâu hơn.",
+    "Vàng khó lập đỉnh mới trong ngắn hạn.",
+    "Chênh lệch vàng miếng trong nước có thể thu hẹp thêm."
+   ],
+   "url": "https://www.bloomberg.com/economics"
   },
   {
    "id": "V05",
@@ -95,7 +118,13 @@
      "deposit",
      "loan"
     ]
-   }
+   },
+   "points": [
+    "Thanh khoản hệ thống thu hẹp cuối năm.",
+    "Nên khóa kỳ hạn dài cho tiền gửi.",
+    "Xem lại khoản vay thả nổi lớn."
+   ],
+   "url": "https://techcombank.com"
   },
   {
    "id": "V06",
@@ -117,7 +146,13 @@
      "vinhomes_grand_park",
      "long_thanh"
     ]
-   }
+   },
+   "points": [
+    "Nguồn cung mới hạn chế giữ giá.",
+    "Khu Thảo Điền, Thủ Đức hưởng lợi từ hạ tầng.",
+    "Đất nền vùng ven còn chờ tiến độ sân bay Long Thành."
+   ],
+   "url": "https://www.vndirect.com.vn"
   },
   {
    "id": "V07",
@@ -134,7 +169,12 @@
     "classes": [
      "bond"
     ]
-   }
+   },
+   "points": [
+    "Áp lực đáo hạn 2027 tập trung ở nhóm bất động sản.",
+    "Ưu tiên trái phiếu ngân hàng và quỹ trái phiếu đa dạng hóa."
+   ],
+   "url": "https://www.techcomcapital.com.vn"
   },
   {
    "id": "V08",
@@ -151,7 +191,12 @@
     "tickers": [
      "FPT"
     ]
-   }
+   },
+   "points": [
+    "Nhu cầu chuyển đổi số và AI từ Nhật, Mỹ giữ đà.",
+    "Rủi ro chính là tỷ giá Yên và chi phí nhân sự."
+   ],
+   "url": "https://www.bloomberg.com/professional/products/bloomberg-terminal/research/bloomberg-intelligence/"
   }
  ]
 }

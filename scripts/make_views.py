@@ -125,6 +125,32 @@ VIEWS = [
 ]
 
 
+# the card reads as a news card (business feedback 5, 2026-10-30): a few bullet points and the house's own research page
+POINTS = {
+    "V01": ["Dòng vốn ETF và quỹ chủ động được kỳ vọng vào nhóm ngân hàng, công nghệ, bán lẻ.", "Ưu tiên doanh nghiệp tăng trưởng lợi nhuận trên 15%/năm."],
+    "V02": ["Lợi nhuận ngành dự báo tăng 14% năm 2027.", "Nợ xấu bất động sản là rủi ro chính.", "Khuyến nghị nắm giữ nhóm ngân hàng tư nhân lớn."],
+    "V03": ["Sản lượng Dung Quất 2 giúp HPG tăng trưởng.", "Giá thép thế giới còn yếu.", "Biên lợi nhuận cải thiện từ quý 2/2027."],
+    "V04": ["Đồng USD mạnh lại khi Fed giữ lãi suất lâu hơn.", "Vàng khó lập đỉnh mới trong ngắn hạn.", "Chênh lệch vàng miếng trong nước có thể thu hẹp thêm."],
+    "V05": ["Thanh khoản hệ thống thu hẹp cuối năm.", "Nên khóa kỳ hạn dài cho tiền gửi.", "Xem lại khoản vay thả nổi lớn."],
+    "V06": ["Nguồn cung mới hạn chế giữ giá.", "Khu Thảo Điền, Thủ Đức hưởng lợi từ hạ tầng.", "Đất nền vùng ven còn chờ tiến độ sân bay Long Thành."],
+    "V07": ["Áp lực đáo hạn 2027 tập trung ở nhóm bất động sản.", "Ưu tiên trái phiếu ngân hàng và quỹ trái phiếu đa dạng hóa."],
+    "V08": ["Nhu cầu chuyển đổi số và AI từ Nhật, Mỹ giữ đà.", "Rủi ro chính là tỷ giá Yên và chi phí nhân sự."],
+}
+URLS = {
+    "Dragon Capital": "https://www.dragoncapital.com.vn",
+    "SSI Research": "https://www.ssi.com.vn",
+    "SHS Research": "https://www.shs.com.vn",
+    "Bloomberg Economics": "https://www.bloomberg.com/economics",
+    "Techcombank Research": "https://techcombank.com",
+    "VNDirect Research": "https://www.vndirect.com.vn",
+    "Techcom Capital": "https://www.techcomcapital.com.vn",
+    "Bloomberg Intelligence": "https://www.bloomberg.com/professional/products/bloomberg-terminal/research/bloomberg-intelligence/",
+}
+for _v in VIEWS:
+    _v["points"] = POINTS[_v["id"]]
+    _v["url"] = URLS[_v["house"]]
+
+
 def main() -> None:
     OUT.write_text(
         json.dumps(

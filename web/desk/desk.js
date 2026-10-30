@@ -9,7 +9,7 @@ import {$, esc, get} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {reduced} from "../motion.js?v=20261016r1";
 import {dockFrame} from "../workspace/dock.js?v=20261018m0";
-import {DESKS} from "./roles.js?v=20261030f5";
+import {DESKS} from "./roles.js?v=20261030f6";
 
 export function mount(main, {role, nav, go, client = () => null, setClient = () => {}, user = () => null}) {
   const cfg = DESKS[role];
@@ -105,7 +105,7 @@ export function mount(main, {role, nav, go, client = () => null, setClient = () 
   async function load(again) {
     if (loading && !again) return loading;
     loading = (async () => {
-      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261030f5`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
+      const [mod, got] = await Promise.all([import(`./${cfg.view}.js?v=20261030f6`), get(`/api/desk?role=${role}${user() ? `&user=${encodeURIComponent(user())}` : ""}`)]);  // the session decides when signed in
       data = got;
       view = mod;
       mod.render($("#dk-body", root), data, api);

@@ -50,7 +50,7 @@ export async function openFrame(a, ctx, again) {
         `<tr><td>${esc(m.date)}</td><td class="${m.change >= 0 ? "up" : "down"}">${pc(m.change)}</td></tr>`).join("")}</tbody></table></details>`
     : f.precedents.length
       ? `<details><summary>Tiền lệ (${f.precedents.length})</summary>${f.precedents.map(p => `<div class="small mt-xs" data-explains>
-          <b>${esc(p.event)}</b> — ${esc(p.outcome)}<div class="muted">Khác lần này: ${esc(p.difference)}</div>
+          <b>${esc(p.event)}</b> — <span>${esc(p.outcome)}</span><div class="muted">Khác lần này: ${esc(p.difference)}</div>
           ${p.source ? `<div class="muted">Nguồn: ${esc(p.source)}</div>` : cio ? `<span class="pill warn">chưa có nguồn</span>` : ""}</div>`).join("")}</details>`
       : `<p class="small muted">Chưa có tiền lệ</p>`;
   const review = cio ? `<div class="panel mt">
@@ -181,12 +181,13 @@ export async function render(box, ctx) {
         <div class="row tight"><b>${esc(v.house)}</b><span class="chip">${esc(v.kind)}</span><span class="small muted">${esc(v.date)}</span>
           <span class="pill ${tone}" style="margin-left:auto">${text}</span></div>
         <div data-quote><h4>${esc(v.title)}</h4>
-        <p class="small">${esc(v.summary)}</p>
-        <div class="kv"><span>Dự báo / mục tiêu</span><b>${esc(v.target)}</b></div></div>
-        <div class="kv"><span>Chủ đề · kỳ hạn</span><b><span>${esc(v.topic)}</span> · <span>${esc(v.horizon)}</span></b></div>
-        <div class="kv"><span>Liên quan danh mục của bạn</span><b>${hit.length
-          ? `${hit.slice(0, 4).map(h => esc(h.name)).join(", ")}${hit.length > 4 ? ` +${hit.length - 4}` : ""} · ${hit.some(h => h.kind === "asset") ? how(vnd(exposure), "view.exposure", {count: String(hit.length)}) : "khoản nợ"}`
-          : `<span class="muted">không trực tiếp</span>`}</b></div></div>`;
+        <div class="nblock"><div class="nhead tab">Tóm tắt</div><ul class="nsum">${(v.points || [v.summary]).map(s => `<li>${esc(s)}</li>`).join("")}
+          <li>Dự báo: ${esc(v.target)} (${esc(v.horizon)})</li></ul></div></div>
+        <div class="nblock"><div class="nhead">Ý nghĩa với bạn</div>${hit.length
+          ? `<p class="small">${hit.some(h => h.kind === "asset") ? `Bạn đang giữ <b>${how(vnd(exposure), "view.exposure", {count: String(hit.length)})}</b> trong các khoản này.` : "Khoản vay của bạn chịu tác động trực tiếp."}</p>
+            <div class="row tight">${hit.map(h => `<span class="chip">${esc(h.name)}</span>`).join("")}</div>`
+          : `<p class="small muted">Không tác động trực tiếp tới danh mục của bạn.</p>`}</div>
+        <div class="small muted mt-xs"><span>Trích nguồn:</span> ${linked(esc(v.house), v.url)}</div></div>`;
     };
     return `<div class="sechead mt"><h3 class="h3">House views</h3><span class="small muted">Dự báo từ quỹ, công ty chứng khoán, hãng tin và nghiên cứu nội bộ ·
         ${rows.length} góc nhìn · <b>${mine}</b> liên quan danh mục của bạn</span></div>
