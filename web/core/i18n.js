@@ -16,7 +16,7 @@ export function setLang(l) {
 }
 
 // the evidence frames' own book (written by scripts/make_evidence.py) sits beside the pages' one
-const book = english ? {...(await import("./lang/en_evidence.js?v=20261030f8")).default, ...(await import("./lang/en.js?v=20261030f8")).default} : {};
+const book = english ? {...(await import("./lang/en_evidence.js?v=20261030f9")).default, ...(await import("./lang/en.js?v=20261030f9")).default} : {};
 
 // ── the book, indexed ───────────────────────────────────────────────────────
 const VI = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i;

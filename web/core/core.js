@@ -1,8 +1,8 @@
 /* The shared core of the new pages: the API client, number formats, small DOM helpers and the
    components every page uses (states, badges, drawer, toast). Business rules live on the server:
    pages receive status, severity and labels already decided. */
-import {english, t as tr} from "./i18n.js?v=20261030f8";
-export {english, lang, setLang, t} from "./i18n.js?v=20261030f8";
+import {english, t as tr} from "./i18n.js?v=20261030f9";
+export {english, lang, setLang, t} from "./i18n.js?v=20261030f9";
 
 // ── api ──────────────────────────────────────────────────────────────────────
 // What a page read is kept for the tab: going back to a page draws it at once from what it had, while the same reads

@@ -138,10 +138,13 @@ export async function render(box, ctx) {
       <div class="row tight"><div class="seg" role="group" aria-label="Lọc theo thời gian">${HORIZON.map(([k, t]) => `<button type="button" data-hz="${k}" aria-pressed="${hz === k}">${t}</button>`).join("")}</div>
         <div class="seg" role="group" aria-label="Lọc">${[["all", "Tất cả"], ["negative", "Tiêu cực"], ["positive", "Tích cực"], ["neutral", "Trung tính"]].map(([k, t]) => `<button type="button" data-af="${k}" aria-pressed="${view.filter === k}">${t}</button>`).join("")}</div></div>
       <div class="nrows mt">${SECTIONS.map(([k, name]) => {
-        const col = list.filter(a => a.section === k);
-        return `<div class="ncol"><h4>${k === "exclusive" ? "Tin độc quyền" : name} <span class="hint">${col.length}</span></h4>${col.map(a => `<div class="nrow" tabindex="0" data-a="${esc(a.id)}" data-focus="policy:${esc(a.id)}"><span data-explains>${esc(a.title)}</span>${dirPill(a)}</div>`).join("") || `<p class="small muted">Không có mục nào.</p>`}</div>`;
+        // three per column so the columns stay even; the rest behind a button (business feedback 6, 2026-10-30)
+        const col = list.filter(a => a.section === k), open = view.openCols?.[k], shown = open ? col : col.slice(0, 3);
+        return `<div class="ncol"><h4>${k === "exclusive" ? "Tin độc quyền" : name} <span class="hint">${col.length}</span></h4>${shown.map(a => `<div class="nrow" tabindex="0" data-a="${esc(a.id)}" data-focus="policy:${esc(a.id)}"><span data-explains>${esc(a.title)}</span>${dirPill(a)}</div>`).join("") || `<p class="small muted">Không có mục nào.</p>`}
+          ${col.length > 3 ? `<button type="button" class="btn sm ghost" style="justify-self:start;margin-top:4px" data-col="${k}">${open ? "Thu gọn" : `Xem thêm ${col.length - 3} tin`}</button>` : ""}</div>`;
       }).join("")}</div>`;
     for (const b of el.querySelectorAll("[data-af]")) b.onclick = () => { view.filter = b.dataset.af; drawImpact(); drawSections(); };
+    for (const b of el.querySelectorAll("[data-col]")) b.onclick = () => { view.openCols = {...view.openCols, [b.dataset.col]: !view.openCols?.[b.dataset.col]}; drawImpact(); };
     for (const b of el.querySelectorAll("[data-hz]")) b.onclick = () => { view.horizon = b.dataset.hz; drawImpact(); };
     for (const row of el.querySelectorAll("[data-a]")) {
       const a = items.find(x => x.id === row.dataset.a);

@@ -5176,4 +5176,6 @@ export default {
 "Đã xem các loại sự kiện và tiền lệ":"Looked at event types and their precedents",
 "Đang gợi ý mục đích cho các mục tiêu":"Suggesting a purpose for each goal",
 "Đã gợi ý mục đích cho các mục tiêu":"Suggested a purpose for each goal",
+// impact columns show three rows, the rest behind a button (2026-10-30)
+"Xem thêm {0} tin":"Show {0} more",
 };
