@@ -2,13 +2,13 @@
 title: One flow per feature (93 → about 15)
 status: in_progress
 phases:
-  - {id: FF0, title: Pin every route's contract and the startup time, status: done}
+  - {id: FF0, title: "Pin every route's contract and the startup time", status: done}
   - {id: FF1, title: "operonx: a route's body contract of its own (upstream)", status: open}
-  - {id: FF2, title: Jobs and thin handlers — market data, admin, housekeeping, evaluation, zone, status: done}
-  - {id: FF3, title: Domain features — allocation, evidence, policy, research + newsletter, status: open}
-  - {id: FF4, title: Events and client features — news + events + impact, agent review, client data in, goals + scenarios, status: open}
-  - {id: FF5, title: Pages and the assistant (AgentOp with memory), status: open}
-  - {id: FF6, title: Count, docs, full suite, status: open}
+  - {id: FF2, title: "Jobs and thin handlers — market data, admin, housekeeping, evaluation, zone", status: done}
+  - {id: FF3, title: "Domain features — allocation, evidence, policy, research + newsletter", status: open}
+  - {id: FF4, title: "Events and client features — news + events + impact, agent review, client data in, goals + scenarios", status: open}
+  - {id: FF5, title: "Pages and the assistant (AgentOp with memory)", status: open}
+  - {id: FF6, title: "Count, docs, full suite", status: open}
 rows: []
 updated: 2026-11-01
 ---
