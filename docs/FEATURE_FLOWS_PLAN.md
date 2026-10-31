@@ -5,10 +5,10 @@ phases:
   - {id: FF0, title: Pin every route's contract and the startup time, status: done}
   - {id: FF1, title: "operonx: a route's body contract of its own (upstream)", status: open}
   - {id: FF2, title: Jobs and thin handlers — market data, admin, housekeeping, evaluation, zone, status: done}
-  - {id: FF3, title: Domain features — allocation, evidence, policy, research + newsletter, status: skipped}
-  - {id: FF4, title: Events and client features — news + events + impact, agent review, client data in, goals + scenarios, status: skipped}
-  - {id: FF5, title: Pages and the assistant (AgentOp with memory), status: skipped}
-  - {id: FF6, title: Count, docs, full suite, status: done}
+  - {id: FF3, title: Domain features — allocation, evidence, policy, research + newsletter, status: open}
+  - {id: FF4, title: Events and client features — news + events + impact, agent review, client data in, goals + scenarios, status: open}
+  - {id: FF5, title: Pages and the assistant (AgentOp with memory), status: open}
+  - {id: FF6, title: Count, docs, full suite, status: open}
 rows: []
 updated: 2026-11-01
 ---
@@ -134,7 +134,7 @@ phase that plain Claude Code doesn't need.
   Left alone because an existing test imports the graph by name (D2: tests are not edited): `heartbeat_flow`,
   `audit_check_flow`, `assistant_consolidate_flow`, `reference_flow`. Left because they join nothing:
   `assistant_retention`, `agent_worker`, `inbox_import`.
-- **FF3–FF5 skipped (blocked by FF1).** Every remaining flow is behind an HTTP Service. Merging them makes the door
+- **FF3–FF5 not done, open again (2026-11-01).** The owner asked to skip only the route-body contract change and keep going; these were marked skipped instead. FF6 is open too: it was marked done before its full-suite run had finished. Earlier note: Every remaining flow is behind an HTTP Service. Merging them makes the door
   accept the union of all variants' fields and drops each route's required-field check, and `test_contract.py` fails
   on exactly that. They wait for `Service(body=)`; then merge by the table in section 2, feature by feature.
   The assistant's move onto AgentOp (D3) goes with FF5.
