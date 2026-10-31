@@ -127,19 +127,7 @@ from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from inbox.graph import inbox_import_flow
-from market.graph import (
-    market_backfill_flow,
-    market_crypto_flow,
-    market_equity_flow,
-    market_flows_flow,
-    market_fx_flow,
-    market_gold_flow,
-    market_load_ask_flow,
-    market_load_flow,
-    market_world_flow,
-    market_yields_flow,
-    model_estimate_flow,
-)
+from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
 from measure.graph import accuracy_flow
 from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
@@ -644,56 +632,64 @@ APP = Application(
         # the cadence from its rate limit and when its data changes; `operonx run market_<kind>` runs one now
         Job(
             "market_equity",
-            graph=market_equity_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_equity"},
             schedule=schedule(at="15:45", port=PORT),
             timeout=600,
             description="15:45 daily: VN-Index and the stocks' closes (VNDirect, then Vietcap).",
         ),
         Job(
             "market_flows",
-            graph=market_flows_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_flows"},
             schedule=schedule(at="16:00", port=PORT),
             timeout=600,
             description="16:00 daily: foreign net buying on HOSE (cafef).",
         ),
         Job(
             "market_yields",
-            graph=market_yields_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_yields"},
             schedule=schedule(at="17:30", port=PORT),
             timeout=600,
             description="17:30 daily: government bond yields (HNX curve, then worldgovernmentbonds).",
         ),
         Job(
             "market_fx",
-            graph=market_fx_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_fx"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: USD/VND (Vietcombank, then MSN).",
         ),
         Job(
             "market_world",
-            graph=market_world_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_world"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: gold, Brent, ACWI, S&P 500, US 10-year, the DXY's currencies (MSN).",
         ),
         Job(
             "market_crypto",
-            graph=market_crypto_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_crypto"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: Bitcoin and Ether (Binance).",
         ),
         Job(
             "market_gold",
-            graph=market_gold_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_gold"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: SJC gold bars (PNJ's history).",
         ),
         Job(
             "market_load",
-            graph=market_load_flow,
+            graph=market_flow,
+            inputs={"action": "load"},
             schedule=schedule(every="1m", port=PORT),
             timeout=7200,
             keep_runs=200,
@@ -774,7 +770,8 @@ APP = Application(
         # history on demand: `operonx run market_backfill [--set since=2020-01-01]`
         Job(
             "market_backfill",
-            graph=market_backfill_flow,
+            graph=market_flow,
+            inputs={"action": "backfill", "since": "2020-01-01"},
             timeout=7200,
             description="On demand: every series' history from 2020-01 (dated sources weekly).",
         ),
