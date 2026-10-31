@@ -1,6 +1,6 @@
 """cio_agent_flow: an event → four analyst groups at once (and any the prompts configuration adds) →
 debate → synthesis and format check → the view kept → the challenger (BRD FR-301…303, §8.1). decide_flow: one
-CIO action on a view. agent_eval_flow: the fixed eval set on prompt and model proposals (MEAS-07).
+CIO action on a view. (The fixed eval set on prompt and model proposals, MEAS-07, runs in measure/graph.py evaluation_flow.)
 
 Served as is: POST /api/events/run-agent and POST /api/views/decide (app/main.py)."""
 

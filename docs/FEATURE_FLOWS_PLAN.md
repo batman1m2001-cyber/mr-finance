@@ -1,21 +1,21 @@
 ---
 title: One flow per feature (93 → about 15)
-status: parked
+status: in_progress
 phases:
-  - {id: FF0, title: Pin every route's contract and the startup time, status: open}
+  - {id: FF0, title: Pin every route's contract and the startup time, status: done}
   - {id: FF1, title: "operonx: a route's body contract of its own (upstream)", status: open}
-  - {id: FF2, title: Jobs and thin handlers — market data, admin, housekeeping, evaluation, zone, status: open}
-  - {id: FF3, title: Domain features — allocation, evidence, policy, research + newsletter, status: open}
-  - {id: FF4, title: Events and client features — news + events + impact, agent review, client data in, goals + scenarios, status: open}
-  - {id: FF5, title: Pages and the assistant (AgentOp with memory), status: open}
-  - {id: FF6, title: Count, docs, full suite, status: open}
+  - {id: FF2, title: Jobs and thin handlers — market data, admin, housekeeping, evaluation, zone, status: done}
+  - {id: FF3, title: Domain features — allocation, evidence, policy, research + newsletter, status: skipped}
+  - {id: FF4, title: Events and client features — news + events + impact, agent review, client data in, goals + scenarios, status: skipped}
+  - {id: FF5, title: Pages and the assistant (AgentOp with memory), status: skipped}
+  - {id: FF6, title: Count, docs, full suite, status: done}
 rows: []
-updated: 2026-10-31
+updated: 2026-11-01
 ---
 
 # One flow per feature — plan
 
-**Status: parked 2026-10-31** at the owner's request ("save them in a plan to come back later"). Nothing is built yet.
+**Status: in progress 2026-11-01.** Resumed on branch `refactor/feature-flows`. See "What was built" at the end.
 
 Owner request (2026-10-31): "87 is still very high, see the other, they're big also but have only < 20 flow".
 This plan replaces the flow-merge milestone m33 (docs/FLOW_MERGE_PLAN.md on the scratch clone). That one merged only
@@ -119,3 +119,23 @@ arms read the same files at about the same pace. In 87 s the studio arm found D1
 feature, compiled once per build-time route"). One prompt difference to watch: the studio's system prompt says
 "plan doc first, stop at the end of a phase". On a request to work end to end, that can cost an owner reply per
 phase that plain Claude Code doesn't need.
+
+## 6. What was built (2026-11-01, branch `refactor/feature-flows`)
+
+- **FF0 done.** `tests/test_contract.py` + `tests/data/contract.json` (written by `scripts/pin_contract.py`) pin all 90
+  services (method, path, accepted and required fields, defaults), all 24 jobs (name, clock) and the reply keys of 13
+  read-only pages. Startup baseline: `import app.main` builds `APP` in about 2.6–3.1 s (unchanged after FF2).
+  Not pinned: the assistant's stream event sequence (`tests/test_assistant_stream.py` covers it).
+- **FF1 not started** (upstream, not this repo): `Service(body=)` is not in operonx 1.30.1.
+- **FF2 done for the jobs.** `market_flow(action, job, since, only, tick, at)` replaces 9 flows (7 sources, backfill, load);
+  `evaluation_flow` (`src/measure/graph.py`) replaces accuracy, trial daily, trial score and agent eval; `zone_flow`
+  replaces the zone's sync and agent tick. Each job keeps its name and clock and passes `action`/`job` through
+  `Job(inputs=...)`, which has no HTTP door, so no request contract changes. **93 → 81 flows.**
+  Left alone because an existing test imports the graph by name (D2: tests are not edited): `heartbeat_flow`,
+  `audit_check_flow`, `assistant_consolidate_flow`, `reference_flow`. Left because they join nothing:
+  `assistant_retention`, `agent_worker`, `inbox_import`.
+- **FF3–FF5 skipped (blocked by FF1).** Every remaining flow is behind an HTTP Service. Merging them makes the door
+  accept the union of all variants' fields and drops each route's required-field check, and `test_contract.py` fails
+  on exactly that. They wait for `Service(body=)`; then merge by the table in section 2, feature by feature.
+  The assistant's move onto AgentOp (D3) goes with FF5.
+- **Count:** the target of < 20 is not reached; it needs FF1.
