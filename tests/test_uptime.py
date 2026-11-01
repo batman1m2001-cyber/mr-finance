@@ -81,9 +81,9 @@ def test_below_the_target_admin_is_alerted_once_and_it_resolves_when_back_above(
 def test_the_heartbeat_job_records_the_minute_and_the_pages_show_the_measure():
     from starlette.testclient import TestClient
 
-    from control.graph import heartbeat_flow
+    from control.graph import admin_flow
 
-    out = asyncio.run(Operon(heartbeat_flow, params={"tick": None, "at": None}).run(inputs={}))
+    out = asyncio.run(Operon(admin_flow, params={"task": "heartbeat", "tick": None, "at": None}).run(inputs={}))
     assert out["beat"]["new"]
     with db.tx() as con:
         assert con.execute("select count(*) from heartbeats").fetchone()[0] == 1

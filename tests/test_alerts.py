@@ -62,9 +62,9 @@ def test_a_broken_audit_chain_alerts_the_cio_and_admin_and_resolves_when_whole()
 def _chain_check():
     from operonx import Operon
 
-    from control.graph import audit_check_flow
+    from control.graph import admin_flow
 
-    return asyncio.run(Operon(audit_check_flow, params={"tick": None, "at": None}).run(inputs={}))["chain"]
+    return asyncio.run(Operon(admin_flow, params={"task": "audit_check", "tick": None, "at": None}).run(inputs={}))["chain"]
 
 
 def test_acknowledging_is_for_the_roles_it_is_for_and_is_audited():

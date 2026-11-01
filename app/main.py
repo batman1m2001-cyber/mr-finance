@@ -85,7 +85,7 @@ from assistant.graph import assistant_flow, assistant_stream_flow
 from control import barrier
 from control import jobs as control_jobs
 from control import bodies as control_bodies
-from control.graph import admin_flow, audit_check_flow, heartbeat_flow
+from control.graph import admin_flow
 from declare.graph import declare_stream_flow
 from evidence import bodies as evidence_bodies
 from evidence.graph import evidence_flow
@@ -818,7 +818,8 @@ APP = Application(
         ),
         Job(
             "audit_check",
-            graph=audit_check_flow,
+            graph=admin_flow,
+            inputs={"task": "audit_check"},
             schedule=schedule(every="1h", port=PORT),
             timeout=600,
             description="Hourly: the audit chain walked and new rows copied to write-once segments; an alert for "
@@ -826,7 +827,8 @@ APP = Application(
         ),
         Job(
             "heartbeat",
-            graph=heartbeat_flow,
+            graph=admin_flow,
+            inputs={"task": "heartbeat"},
             schedule=schedule(every="20s", port=PORT),
             timeout=30,
             keep_runs=200,

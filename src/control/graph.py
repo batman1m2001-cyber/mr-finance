@@ -1,6 +1,5 @@
 """admin_flow: one flow for the Admin's and the CIO's small writes, a route picks its `task` (app/main.py binds it with
-`variants`, and `bodies.py` is each route's request contract). audit_check_flow (the hourly chain check) and
-heartbeat_flow (the 20-second heartbeat; NFR-03) stay apart: they are jobs and their tests run them by name.
+`variants`, and `bodies.py` is each route's request contract); the two jobs take theirs through `Job(inputs=...)`.
 
 config_propose   POST /api/config/propose         propose a new version of one kind of configuration (FR-701)
 config_decide    POST /api/config/decide          approve or reject a proposed version
@@ -9,7 +8,9 @@ job_run          POST /api/jobs/run               Admin runs a background job no
 account_request  POST /api/accounts/request       a request on a staff account, waiting for a second Admin (Q-25)
 account_decide   POST /api/accounts/decide        approve, reject or withdraw a request on a staff account
 model_estimate   POST /api/model/estimate         the estimated model proposed as the next factor_model version
-market_load      POST /api/market/load            an Admin queues a load of the market history (Hệ thống)"""
+market_load      POST /api/market/load            an Admin queues a load of the market history (Hệ thống)
+audit_check      the hourly job                   the audit chain walked; an alert when it is broken
+heartbeat        the 20-second job                this minute recorded as up; the month's availability checked (NFR-03)"""
 
 from operonx import END, START, graph
 from operonx.core.ops import if_
@@ -39,6 +40,8 @@ def admin_flow(
     title="",
     end=None,
     since="2020-01-01",
+    tick=None,
+    at=None,
 ):
     """One write per task, each the op its old flow ran: ``action`` is the request's own field (approve|reject...),
     ``task`` picks the route."""
@@ -53,13 +56,15 @@ def admin_flow(
     request_decided = decide_request(request_id=request_id, action=action, by=by, note=note)
     estimated = propose_estimate(by=by, end=end, note=note)
     asked = ask_load(by=by, since=since)
+    chain = check_chain(tick=tick, at=at)
+    beat = heartbeat(tick=tick, at=at)
 
     t = which["action"]
     START >> which >> if_(t == "config_decide", decided).if_(t == "alert_ack", acked).if_(t == "job_run", ran).if_(
         t == "account_request", filed
     ).if_(t == "account_decide", request_decided).if_(t == "model_estimate", estimated).if_(
         t == "market_load", asked
-    ).else_(proposed)
+    ).if_(t == "audit_check", chain).if_(t == "heartbeat", beat).else_(proposed)
     proposed >> END
     decided >> END
     acked >> END
@@ -68,17 +73,6 @@ def admin_flow(
     request_decided >> END
     estimated >> END
     asked >> END
+    chain >> END
+    beat >> END
 
-
-@graph
-def audit_check_flow(tick=None, at=None):
-    """The audit chain walked; an alert when it is broken."""
-    done = check_chain(tick=tick, at=at)
-    START >> done >> END
-
-
-@graph
-def heartbeat_flow(tick=None, at=None):
-    """This minute recorded as up; the month's availability checked."""
-    done = heartbeat(tick=tick, at=at)
-    START >> done >> END
