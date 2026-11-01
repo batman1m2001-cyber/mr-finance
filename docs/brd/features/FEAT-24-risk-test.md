@@ -8,7 +8,7 @@
 | Entry points | [SCR-CL-04](../ux/screens/client.md#scr-cl-04--khẩu-vị-rủi-ro-risk-test); `POST /api/risk {client_id, answers}` |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 
-## Behaviour (`risk_flow`)
+## Behaviour (`pages_flow (risk)`)
 Rules, not a model ([ADR-0015](../decisions/ADR-0015-decisions-of-the-first-build-plan.md) D3). 13 situational
 questions; 8–12 asked on any path; the drop question uses the client's own portfolio; a fearful answer leads to a
 smaller fall, a calm one to a crash; business and big-expense questions only for who has them. Tolerance from

@@ -85,5 +85,5 @@ file linked); its origin is the merge noted.
 |---|---|---|
 | Specialist team per client and an “Advisory performance” track record (recommendations, accuracy, missed news, AI pipeline scores), all from mock `data/advisory.json` | PR #13 “sync/onewealth” (2026-10-15) | [FEAT-28](../features/FEAT-28-advisory-team-and-track-record.md) |
 | House views (research houses' forecasts, mock `data/views.json`) matched to holdings | PR #13 | [FEAT-25](../features/FEAT-25-policy-cost-alerts-and-house-views.md) |
-| Goals planning (“Wealth Planning Advisor”: need, have, gap, status, ranked actions, month-by-month tracking) | PR #13 (`goals_flow`) | [FEAT-26](../features/FEAT-26-life-scenarios-stress-tests-and-goals.md) |
+| Goals planning (“Wealth Planning Advisor”: need, have, gap, status, ranked actions, month-by-month tracking) | PR #13 (`scenarios_flow (goals)`) | [FEAT-26](../features/FEAT-26-life-scenarios-stress-tests-and-goals.md) |
 | Three source groups on the overview (“Our Wealth at Techcombank”, “Custody around the world”, “Self-managed”) | PR #13 | [FEAT-21](../features/FEAT-21-dashboard.md) |

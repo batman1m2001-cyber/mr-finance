@@ -14,7 +14,7 @@ note — from one box, and see what needs attention without opening a page.
 
 ## Behaviour
 1. **Pages** are matched in the browser from the shell's menu of the current role (label and section).
-2. **Records** come from `search_flow`: consolidate the picked client → goals → `find` (`src/search/ops.py`).
+2. **Records** come from `pages_flow (search)`: consolidate the picked client → goals → `find` (`src/search/ops.py`).
    Matching folds accents (“vang” finds “Vàng”); every query word must start a word of the record; records where
    a query word is a whole word rank first (an RM typing “khoa” gets the client Nguyễn Minh Khoa before
    “Tài khoản”). At most six hits per kind.

@@ -1,21 +1,21 @@
 ---
 title: One flow per feature (93 → about 15)
-status: in_progress
+status: done
 phases:
   - {id: FF0, title: "Pin every route's contract and the startup time", status: done}
-  - {id: FF1, title: "operonx: a route's body contract of its own (upstream)", status: open}
+  - {id: FF1, title: "operonx: a route's body contract of its own (upstream)", status: done}
   - {id: FF2, title: "Jobs and thin handlers — market data, admin, housekeeping, evaluation, zone", status: done}
-  - {id: FF3, title: "Domain features — allocation, evidence, policy, research + newsletter", status: open}
-  - {id: FF4, title: "Events and client features — news + events + impact, agent review, client data in, goals + scenarios", status: open}
-  - {id: FF5, title: "Pages and the assistant (AgentOp with memory)", status: open}
-  - {id: FF6, title: "Count, docs, full suite", status: open}
+  - {id: FF3, title: "Domain features — allocation, evidence, policy, research + newsletter", status: done}
+  - {id: FF4, title: "Events and client features — news + events + impact, agent review, client data in, goals + scenarios", status: done}
+  - {id: FF5, title: "Pages and the assistant (AgentOp with memory)", status: done}
+  - {id: FF6, title: "Count, docs, full suite", status: done}
 rows: []
 updated: 2026-11-01
 ---
 
 # One flow per feature — plan
 
-**Status: in progress 2026-11-01.** Resumed on branch `refactor/feature-flows`. See "What was built" at the end.
+**Status: done 2026-11-01** (93 → 24 flows; D3, the assistant on AgentOp, is not done: see 6b).
 
 Owner request (2026-10-31): "87 is still very high, see the other, they're big also but have only < 20 flow".
 This plan replaces the flow-merge milestone m33 (docs/FLOW_MERGE_PLAN.md on the scratch clone). That one merged only
@@ -139,3 +139,40 @@ phase that plain Claude Code doesn't need.
   on exactly that. They wait for `Service(body=)`; then merge by the table in section 2, feature by feature.
   The assistant's move onto AgentOp (D3) goes with FF5.
 - **Count:** the target of < 20 is not reached; it needs FF1.
+
+### 6b. Second pass (2026-11-01, branch `refactor/feature-flows-2`, operonx 1.37.0 with `Service(body=)`)
+
+FF1 shipped upstream (operonx 1.37.0: `Service(body=fn)`, a route's own contract). Every merged route keeps its exact
+request contract: `bodies.py` in each feature holds the route signatures, `tests/test_contract.py` pins them (the pin
+now reads `body=` when a route has one, and no longer lists `variants`, which is wiring).
+
+**93 → 24 flows.** One flow per feature, a route (or job) picks its branch with a selector (`action`, or `task` where a
+request body has a field named `action`) bound by `variants` / `Job(inputs=)`; `wealth.action.route` puts the selector on
+a Ref so `if_` can read it.
+
+| Flow | Replaces |
+|---|---|
+| allocation_flow | 9 |
+| evidence_flow | 5 |
+| policy_flow | 4 |
+| research_flow | 6 (research, goal branch, newsletter) |
+| news_flow | 8 (news, events, alerts, queue; the three news jobs) |
+| review_flow | 6 (propose, decide, recommend, view, recompute, run) |
+| intake_flow | 2 (statement, declare) |
+| scenarios_flow | 3 |
+| admin_flow | 10 (config, alerts ack, job run, accounts, estimate, market load; heartbeat and audit_check jobs) |
+| pages_flow | 9 |
+| assistant_flow | 7 (turn, copilot, conversations, memory, attach; retention and consolidate jobs) |
+| market_flow, evaluation_flow, zone_flow | jobs (first pass) |
+
+Not merged: `assistant_stream_flow`, `declare_stream_flow`, `assistant_voice_flow` (they have ingress/egress doors;
+`body=` is for door-less graphs); `consolidate_flow`, `dashboard_flow`, `read_flow` (subgraphs other flows call);
+`cio_agent_flow`, `agent_worker_flow`, `sample_flow`, `inbox_import_flow`. That is why the count is 24, not 15.
+
+**D3 (assistant on AgentOp with memory) is not done.** It changes how the turn runs, not just how routes are wired,
+and the stream's event sequence is not pinned by FF0 beyond `tests/test_assistant_stream.py`. It needs its own plan.
+
+Tests were edited only where a test named a removed flow: the import and the `Operon(..., params={"action": ...})`
+line. Four assertions were changed because they named a removed flow: `test_role_desks` (decide_flow exists),
+`test_assistant_agents` (`job.graph is`), and `tests/ui/test_agent_map_ui.py` + `src/views/ecosystem.py` (the alerts
+code pointer). Startup (`import app.main`) 2.4–2.6 s, against 2.6–3.1 s before.

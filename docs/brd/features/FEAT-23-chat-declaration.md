@@ -8,7 +8,7 @@
 | Entry points | [SCR-CL-02](../ux/screens/client.md#scr-cl-02--tài-sản-holdings); `POST /api/declare {client_id, message, session_id}`; `POST /api/declare/stream` (the same turn as SSE, what the page uses) |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 
-## Behaviour (`declare_flow`, `declare_stream_flow`)
+## Behaviour (`intake_flow (declare)`, `declare_stream_flow`)
 One chat turn. With AI on, an operonx-agents `Agent` (`src/declare/agent.py`) writes to the client's profile with
 `declare_property`, `declare_gold`, `declare_holding`, `declare_loan`, `declare_dependent`, `declare_income`
 (a call identical to one already made in the same run is answered “already recorded”). Without AI, or when the

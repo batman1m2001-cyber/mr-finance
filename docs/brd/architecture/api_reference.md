@@ -15,38 +15,38 @@ matters), and the trace read is staff-only by the UI alone. This is the demo's r
 | Path | Service → graph | Body | Role checked | Feature |
 |---|---|---|---|---|
 | `/api/dashboard` | dashboard → `dashboard_flow` | `client_id, scope?, months?` | — | FEAT-21 |
-| `/api/flows` | flows → `flows_flow` | `client_id, scope?, month? (YYYY-MM)` | — | FEAT-29 |
-| `/api/timeline` | timeline → `timeline_flow` | `client_id, scope?, node (ME, CL:…, HD:…, LQ:reserve, FL:in\|out, FC:…), unit? (day\|month\|year)` | the family (people.auth) | FEAT-40 (simulated history, NODE_TIMELINE_PLAN) |
-| `/api/feed` | feed → `feed_flow` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 (each item has a stable `key`, FEAT-33) |
-| `/api/overview` | overview → `overview_flow` | `client_id, scope?, role? (client\|rm), goals? (ids followed)` | — (client: event types, classes for news) | FEAT-30 (R4) |
-| `/api/search` | search → `search_flow` | `q, role, client_id?, scope?` | role decides the kinds; the client sees type labels only | FEAT-34 |
+| `/api/flows` | flows → `pages_flow (flows)` | `client_id, scope?, month? (YYYY-MM)` | — | FEAT-29 |
+| `/api/timeline` | timeline → `pages_flow (timeline)` | `client_id, scope?, node (ME, CL:…, HD:…, LQ:reserve, FL:in\|out, FC:…), unit? (day\|month\|year)` | the family (people.auth) | FEAT-40 (simulated history, NODE_TIMELINE_PLAN) |
+| `/api/feed` | feed → `pages_flow (feed)` | `client_id, scope?, role? (client\|rm)` | — | FEAT-31 (each item has a stable `key`, FEAT-33) |
+| `/api/overview` | overview → `pages_flow (overview)` | `client_id, scope?, role? (client\|rm), goals? (ids followed)` | — (client: event types, classes for news) | FEAT-30 (R4) |
+| `/api/search` | search → `pages_flow (search)` | `q, role, client_id?, scope?` | role decides the kinds; the client sees type labels only | FEAT-34 |
 | `/api/copilot` | copilot → `assistant_flow (task copilot)` | `question, role, client_id?, scope?, route?, confirm?, goals?` | per tool (and the wrapped graph's own check) | FEAT-32; an ok answer has `focus` (FEAT-33), `as_of`, `answered_at`, `sources`, `card`; every call is an audit row (`audit_seq`) |
 | `/api/config/propose` | config_propose → `config_propose_flow` | `kind, data, by, note?` | the kind's owner role | FEAT-14 |
 | `/api/config/decide` | config_decide → `config_decide_flow` | `version_id, action (approve\|reject), by, note?` | owner role; ≠ proposer for two-person kinds | FEAT-14 |
-| `/api/statement` | statement → `statement_flow` | `client_id, filename, content` (base64) | — | FEAT-22 |
-| `/api/declare` | declare → `declare_flow` | `client_id, message, session_id` | — | FEAT-23 |
-| `/api/risk` | risk → `risk_flow` | `client_id, answers` | — | FEAT-24 |
-| `/api/alerts` | alerts → `alerts_flow` | `client_id, scope?` | — | FEAT-25 |
-| `/api/scenario` | scenario → `scenario_flow` | `client_id, scenario, params?, scope?` | — | FEAT-26 |
-| `/api/goals` | goals → `goals_flow` | `client_id, scope?` | — | FEAT-26 |
-| `/api/review/propose` | propose → `propose_flow` | `client_id, scenario, title, option` | — | FEAT-27 |
+| `/api/statement` | statement → `intake_flow (statement)` | `client_id, filename, content` (base64) | — | FEAT-22 |
+| `/api/declare` | declare → `intake_flow (declare)` | `client_id, message, session_id` | — | FEAT-23 |
+| `/api/risk` | risk → `pages_flow (risk)` | `client_id, answers` | — | FEAT-24 |
+| `/api/alerts` | alerts → `news_flow (alerts)` | `client_id, scope?` | — | FEAT-25 |
+| `/api/scenario` | scenario → `scenarios_flow (scenario)` | `client_id, scenario, params?, scope?` | — | FEAT-26 |
+| `/api/goals` | goals → `scenarios_flow (goals)` | `client_id, scope?` | — | FEAT-26 |
+| `/api/review/propose` | propose → `review_flow (propose)` | `client_id, scenario, title, option` | — | FEAT-27 |
 | `/api/review/decide` | decide → `review_flow` | `item_id, decision (approved\|rejected), note?, by` | RM | FEAT-27 |
-| `/api/news/ingest` | news_fetch → `ingest_flow` | `{}` | CIO (the person signed in) | FEAT-01 |
-| `/api/news/dismiss` | news_dismiss → `dismiss_flow` | `ids, by?, note?` | CIO | FEAT-02 |
-| `/api/news/release` | news_release → `release_flow` | `item_id, by, note` | Compliance | FEAT-02 |
-| `/api/events` | event → `event_flow` | `news_ids, title?, by` | CIO | FEAT-02 |
-| `/api/events/run-agent` | cio_agent → `agent_queue_flow` (a job; the `agent_worker` job runs `cio_agent_flow`) | `event_id, by, mode? (live\|mock)` → `{job}` | CIO; 409 in inbox mode or on a held event | FEAT-04, 05 |
+| `/api/news/ingest` | news_fetch → `news_flow (ingest)` | `{}` | CIO (the person signed in) | FEAT-01 |
+| `/api/news/dismiss` | news_dismiss → `news_flow (dismiss)` | `ids, by?, note?` | CIO | FEAT-02 |
+| `/api/news/release` | news_release → `news_flow (release)` | `item_id, by, note` | Compliance | FEAT-02 |
+| `/api/events` | event → `news_flow (event)` | `news_ids, title?, by` | CIO | FEAT-02 |
+| `/api/events/run-agent` | cio_agent → `news_flow (queue)` (a job; the `agent_worker` job runs `cio_agent_flow`) | `event_id, by, mode? (live\|mock)` → `{job}` | CIO; 409 in inbox mode or on a held event | FEAT-04, 05 |
 | `/api/views/decide` | view_decide → `decide_flow` | `view_id, action, by, reason, idem_key?, edits?, responses?` | CIO | FEAT-06 |
-| `/api/runs/recompute` | run_recompute → `recompute_flow` | `run, by, idem_key?` | CIO | FEAT-08 |
-| `/api/runs/decide` | run_decide → `run_decide_flow` | `run, action (make_effective\|withdraw), by, reason` | CIO | FEAT-08 |
+| `/api/runs/recompute` | run_recompute → `review_flow (recompute)` | `run, by, idem_key?` | CIO | FEAT-08 |
+| `/api/runs/decide` | run_decide → `review_flow (run)` | `run, action (make_effective\|withdraw), by, reason` | CIO | FEAT-08 |
 | `/api/research` | research_upload → `research_upload_flow` | `item {kind, report_no, title, summary, release_at, conflict? {related, parties, statement}, regulation?}, by` (naming a related party needs `conflict`) | CIO | FEAT-03 |
 | `/api/research/release` | research_release → `research_release_flow` | `item_id, decision (release\|reject), by, note` | Compliance, ≠ uploader | FEAT-03 |
-| `/api/newsletters` | newsletter_draft → `newsletter_draft_flow` | `view_ids (1–6 approved), by, title?, mode (template\|agent)?, distribution? {send_at, private_early_hours, early_reason}, conflict?` | CIO | FEAT-17 |
-| `/api/policy` | policy_add → `policy_add_flow` | `item {gazette_url} \| {source_url (official), title, number?, issuer?, issued?, text?, status, note?}, by` | Compliance | FEAT-16 |
-| `/api/policy/verify` | policy_verify → `policy_verify_flow` | `document_id, by, note (≥ 20)` | Compliance, ≠ the one who added it | FEAT-16 |
-| `/api/policy/status` | policy_status → `policy_status_flow` | `document_id, status (draft\|consultation\|issued\|effective\|dropped), by, note (≥ 10), date?` | Compliance | FEAT-16 |
-| `/api/policy/summarise` | policy_summarise → `policy_summarise_flow` | `document_id, by, mode?` (verified documents only; 409 with why otherwise) | Compliance | FEAT-16 |
-| `/api/newsletters/act` | newsletter_act → `newsletter_act_flow` | `newsletter_id, action (edit\|submit\|withdraw: CIO; approve\|return: Compliance, ≠ author), by, note?, changes? {title, intro, headings, distribution, conflict}` | CIO, Compliance | FEAT-17 |
+| `/api/newsletters` | newsletter_draft → `research_flow (newsletter draft)` | `view_ids (1–6 approved), by, title?, mode (template\|agent)?, distribution? {send_at, private_early_hours, early_reason}, conflict?` | CIO | FEAT-17 |
+| `/api/policy` | policy_add → `policy_flow (add)` | `item {gazette_url} \| {source_url (official), title, number?, issuer?, issued?, text?, status, note?}, by` | Compliance | FEAT-16 |
+| `/api/policy/verify` | policy_verify → `policy_flow (verify)` | `document_id, by, note (≥ 20)` | Compliance, ≠ the one who added it | FEAT-16 |
+| `/api/policy/status` | policy_status → `policy_flow (status)` | `document_id, status (draft\|consultation\|issued\|effective\|dropped), by, note (≥ 10), date?` | Compliance | FEAT-16 |
+| `/api/policy/summarise` | policy_summarise → `policy_flow (summarise)` | `document_id, by, mode?` (verified documents only; 409 with why otherwise) | Compliance | FEAT-16 |
+| `/api/newsletters/act` | newsletter_act → `research_flow (newsletter act)` | `newsletter_id, action (edit\|submit\|withdraw: CIO; approve\|return: Compliance, ≠ author), by, note?, changes? {title, intro, headings, distribution, conflict}` | CIO, Compliance | FEAT-17 |
 | `/api/goals/outflow` | goal_outflow → `goal_outflow_flow` | `family_id, goal_id, purpose, country?, by` | RM | FEAT-10 |
 | `/api/accounts/request` | account_request → `account_request_flow` | `kind` (add, role, disable, enable, reset), `by`, `person_id`, `full_name`, `email`, `role`, `title`, `note` | Admin; refused in words: one's own account, the last enabled Admin, an RM with families, a customer, a demo persona while the demo accounts are on, a login taken; 409 while a request on that account waits; audited | FEAT-41 (SCR-ADM-03) |
 | `/api/accounts/decide` | account_decide → `account_decide_flow` | `request_id`, `action` (approve, reject, withdraw), `by`, `note` | another Admin approves (not the proposer, not the subject) or rejects (a reason); the proposer withdraws; re-checked on approval; an approved add or reset answers `code` and `code_expires` once; audited | FEAT-41 (SCR-ADM-03) |

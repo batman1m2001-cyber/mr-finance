@@ -44,7 +44,7 @@ A page that is not a feed is a source error in the run record; it does not fail 
 with status `refused` and their reason (never shown in the inbox); skipped (too old) items are only counted.
 
 ## API and data
-- `POST /api/news/ingest {}` → the run's counts (service `news_fetch`, graph `ingest_flow`).
+- `POST /api/news/ingest {}` → the run's counts (service `news_fetch`, graph `news_flow (ingest)`).
 - `GET /api/news/inbox` → items and feed health (FEAT-02).
 - Tables: `news_items`, `news_runs` ([domain model](../architecture/domain_model.md)).
 

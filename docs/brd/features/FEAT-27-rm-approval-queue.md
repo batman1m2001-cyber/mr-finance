@@ -9,7 +9,7 @@
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 
 ## Behaviour
-`propose_flow` puts a scenario option in the queue (`pending`); `review_flow` records an RM's decision once (role `rm`, sent as `by`)
+`review_flow (propose)` puts a scenario option in the queue (`pending`); `review_flow` records an RM's decision once (role `rm`, sent as `by`)
 (`approved` / `rejected`, with a note); a second decision is refused. The client sees “chờ RM duyệt” until then.
 
 **The certified specialist (G8, BRD-RULE-ROLE-05, WF-08).** When the family has a specialist on its team holding a

@@ -23,7 +23,7 @@
   phones, where it is a stacked list).
 
 ### Overview graph (R4, R-D6)
-- `src/overview` (`overview_flow`, `POST /api/overview {client_id, scope, role, goals}`) joins what other pages
+- `src/overview` (`pages_flow (overview)`, `POST /api/overview {client_id, scope, role, goals}`) joins what other pages
   already show: the client in the centre; the asset classes held (value, count; liabilities point back to the
   client), each opening onto its holdings; the data sources; the goals the browser follows (`goals`, from Kế
   hoạch's kept list; none = the persona's defaults); the risks the dashboard flags (stress drawdown when not “ok”,

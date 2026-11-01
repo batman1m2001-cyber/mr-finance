@@ -10,7 +10,7 @@
 | Status | see [traceability](../requirements/requirements_traceability.md) §4 |
 
 ## Behaviour
-`feed_flow` (`src/feed/`) returns items, most important first; each has a type, a severity (Cần xem / Đáng chú ý /
+`pages_flow (feed)` (`src/feed/`) returns items, most important first; each has a type, a severity (Cần xem / Đáng chú ý /
 Thông tin), a title, **why** it is shown, its **evidence** (a stored record or a returned number) and the page
 that shows it:
 

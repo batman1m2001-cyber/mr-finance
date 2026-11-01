@@ -8,7 +8,7 @@
 | Entry points | [SCR-CL-02](../ux/screens/client.md#scr-cl-02--tài-sản-holdings); `POST /api/statement {client_id, filename, content(base64)}`; eval `uv run operonx run statement_reading` |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 
-## Behaviour (`statement_flow`)
+## Behaviour (`intake_flow (statement)`)
 `read_file` (PDF text, Excel/CSV rows) → AI on? (`MF_AI=on`, or `auto` with `LLM_API_KEY`) → `model_read` with
 `llm:assistant`, else `rule_read` (the known layouts: VPS, SSI, Vietcombank) → if the model fails or returns
 nothing usable, the rules step in → `pick_items` → `save_holdings` as `statement` holdings (reading the same

@@ -100,11 +100,11 @@ tools per role (`agent_tools(role)`, the person in `RunContext.deps`):
 
 Built in A1 (25 tools): the Copilot's 13 (`src/assistant/tools.py`: tong_quan, dong_tien, chu_y, muc_tieu,
 tac_dong, dieu_tra, kich_ban, hom_nay, hop_tin, tin_bi_giu, mo_trang; writes duyet_de_xuat, lay_tin) and the served
-graphs wrapped (`src/assistant/actions.py`) — reads `dong_luc` (alerts_flow: policies, macro, projects in VND),
-`tim_kiem` (search_flow), `de_xuat` (the review queue; the specialist's waiting items), `su_kien` (events),
-`canh_bao_he_thong` (the bell's alerts), `lien_he` (the RM's contacts); writes `gui_de_xuat` (propose_flow, client
-and RM), `ghi_lien_he` (contact_flow), `khuyen_nghi` (recommend_flow), `chuyen_gia_duyet` (specialist_flow),
-`danh_dau_khan` (event_urgent_flow), `da_xem_canh_bao` (alert_ack_flow). The dashboard, flows, feed, goals, impact,
+graphs wrapped (`src/assistant/actions.py`) — reads `dong_luc` (news_flow (alerts): policies, macro, projects in VND),
+`tim_kiem` (pages_flow (search)), `de_xuat` (the review queue; the specialist's waiting items), `su_kien` (events),
+`canh_bao_he_thong` (the bell's alerts), `lien_he` (the RM's contacts); writes `gui_de_xuat` (review_flow (propose), client
+and RM), `ghi_lien_he` (pages_flow (contact)), `khuyen_nghi` (review_flow (recommend)), `chuyen_gia_duyet` (specialist_flow),
+`danh_dau_khan` (news_flow (urgent)), `da_xem_canh_bao` (alert_ack_flow). The dashboard, flows, feed, goals, impact,
 investigate, scenario and RM-today reads are the Copilot's tools.
 
 Left to their pages, deliberately: the four-eyes governance decisions (configuration versions, CIO views and runs,
