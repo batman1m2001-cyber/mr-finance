@@ -79,17 +79,8 @@ from operonx.app.jobs import Job
 
 from app import web
 from app.http import SecurityHeaders
-from allocation.graph import (
-    allocation_example_flow,
-    allocation_flow,
-    allocation_method_flow,
-    allocation_override_flow,
-    allocation_queue_flow,
-    allocation_review_flow,
-    allocation_send_flow,
-    allocation_tilt_flow,
-    allocation_tilts_flow,
-)
+from allocation import bodies as allocation_bodies
+from allocation.graph import allocation_flow
 from apply.graph import recompute_flow, run_decide_flow
 from assistant.graph import (
     assistant_consolidate_flow,
@@ -318,54 +309,72 @@ APP = Application(
             "allocation",
             http("POST", "/api/allocation", port=PORT),
             graph=allocation_flow,
+            variants={"view": {"action": "view"}},
+            body=allocation_bodies.view,
             description="POST {client_id, scope?, method?, assumptions?, role?, whatif?}: three buckets, targets, actions; a what-if.",
         ),
         Service(
             "allocation_example",
             http("POST", "/api/allocation/example", port=PORT),
-            graph=allocation_example_flow,
+            graph=allocation_flow,
+            variants={"example": {"action": "example"}},
+            body=allocation_bodies.example,
             description="POST {method?, assumptions?, role?}: the BRD's worked example K-7F3A.",
         ),
         Service(
             "allocation_tilt",
             http("POST", "/api/allocation/tilt", port=PORT),
-            graph=allocation_tilt_flow,
+            graph=allocation_flow,
+            variants={"tilt": {"action": "tilt"}},
+            body=allocation_bodies.tilt,
             description="POST {asset_class, stance, view_id, by, reason?}: a CIO tilts the model portfolio.",
         ),
         Service(
             "allocation_tilts",
             http("POST", "/api/allocation/tilts", port=PORT),
-            graph=allocation_tilts_flow,
+            graph=allocation_flow,
+            variants={"tilts": {"action": "tilts"}},
+            body=allocation_bodies.tilts,
             description="POST {}: the CIO's tilts in force and the model each level gets.",
         ),
         Service(
             "allocation_send",
             http("POST", "/api/allocation/send", port=PORT),
-            graph=allocation_send_flow,
+            graph=allocation_flow,
+            variants={"send": {"action": "send"}},
+            body=allocation_bodies.send,
             description="POST {client_id, by, scope?, method?, assumptions?}: the actions to the review queue.",
         ),
         Service(
             "allocation_review",
             http("POST", "/api/allocation/review", port=PORT),
-            graph=allocation_review_flow,
+            graph=allocation_flow,
+            variants={"review": {"action": "review"}},
+            body=allocation_bodies.review,
             description="POST {item_id, decisions {n: approve|reject}, by, note?}: the CIO decides each action.",
         ),
         Service(
             "allocation_queue",
             http("POST", "/api/allocation/queue", port=PORT),
-            graph=allocation_queue_flow,
+            graph=allocation_flow,
+            variants={"queue": {"action": "queue"}},
+            body=allocation_bodies.queue,
             description="POST {}: the allocations waiting for the CIO and the last ones decided.",
         ),
         Service(
             "allocation_override",
             http("POST", "/api/allocation/override", port=PORT),
-            graph=allocation_override_flow,
+            graph=allocation_flow,
+            variants={"override": {"action": "override"}},
+            body=allocation_bodies.override,
             description="POST {client_id, key, bucket, reason, by, scope?}: an RM's bucket override, logged.",
         ),
         Service(
             "allocation_method",
             http("POST", "/api/allocation/method", port=PORT),
-            graph=allocation_method_flow,
+            graph=allocation_flow,
+            variants={"method": {"action": "method"}},
+            body=allocation_bodies.method,
             description="POST {method: tilt|bl, by}: how the CIO's tilts move every client's model.",
         ),
         Service(

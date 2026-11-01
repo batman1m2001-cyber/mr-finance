@@ -25,13 +25,14 @@ def contract():
         fields = None
         if callable(s.graph):
             fields = {}
-            for p in inspect.signature(s.graph).parameters.values():
+            body = (s.options or {}).get("body")
+            # Service(body=fn): fn's signature is the contract; otherwise the graph's parameters are
+            for p in inspect.signature(body if callable(body) else s.graph).parameters.values():
                 fields[p.name] = "<required>" if p.default is p.empty else repr(p.default)
         services[s.name] = {
             "kind": s.kind,
             "method": s.method,
             "path": s.path,
-            "variants": sorted(s.variants or {}),
             "fields": fields,
         }
     jobs = {}
@@ -61,7 +62,9 @@ def responses(app):
             continue
         params = inspect.signature(s.graph).parameters
         engine = Operon(s.graph, params={n: None for n in params})
-        got = asyncio.run(engine.run(inputs={"client_id": "C01"} if "client_id" in params else {}))
+        bound = next(iter((s.variants or {}).values()), {})  # a merged feature flow: the route's action
+        inputs = {**bound, **({"client_id": "C01"} if "client_id" in params else {})}
+        got = asyncio.run(engine.run(inputs=inputs))
         out[s.name] = sorted(k for k in got if k != "$state")
     return out
 

@@ -23,8 +23,21 @@ scorer/
 │       └── _text.py      # private helpers (leading underscore)
 ├── tests/
 │   └── test_scoring.py
-└── datasets/             # eval cases, one .jsonl per dataset
+├── datasets/             # eval cases, one .jsonl per dataset
+└── docs/brd/             # the requirements and their checklist (`--no-brd` skips it)
 ```
+
+`docs/brd/requirements/requirements_traceability.md` is the checklist: one
+row per requirement, with its status, the code that meets it and the test
+that shows it. Update a row when a change meets or alters its requirement.
+`operonx-project` builds the open rows as milestones. Each milestone's
+cards and their status are written to `docs/brd/board/`, in git, by the
+engine only; never edit it. The engine's runtime state is
+`.operonx/project/`, outside git, and is rebuilt from the board on a fresh
+clone. The studio's Board tab shows the checklist, before the first
+milestone too. How to build with it, and how to work a card yourself
+(`take`/`submit`), is operonx-project's guide: `project/01-project.md` in
+`.operonx/guide/` when it is installed.
 
 ## The rules
 
@@ -201,9 +214,16 @@ def test_the_flow_scores_every_call():
 
 ```bash run
 python -m pytest tests -q
+operonx lint
 operonx serve --list
 operonx run score_calls
 ```
+
+`operonx lint` checks the conventions of this page and of the project's
+`AGENTS.md` (no `print()`, no graph inside a function, no logic in a
+graph's body, the edges written out, every secret in `.env.example`, ...);
+`operonx lint --rules` lists them, and `operonx lint --build` also loads the
+application and builds every graph with the network blocked.
 
 ## Growing it
 

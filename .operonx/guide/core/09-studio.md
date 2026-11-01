@@ -14,8 +14,7 @@ git clone https://github.com/batman1m2001-cyber/operonx-studio
 operonx-studio/install.sh             # again after a `git pull` to upgrade
 ```
 
-It installs `operonx-studio` (and `operonx-lint`, `operonx-extract`,
-`operonx-new`) as a uv tool, in an environment of its own, or with plain
+It installs `operonx-studio` (and `operonx-extract`) as a uv tool, in an environment of its own, or with plain
 pip when uv is missing. Without bash (Windows): `pip install ./operonx-studio`.
 
 ## Open a project
@@ -79,11 +78,17 @@ The **?** button on the canvas explains every mark; `/` finds an op.
 | **Monitor**, **Alerts** | latency and errors over time, and the rules that warn on them |
 | **Review**, **Evals** | label outputs; read each eval run case by case (run evals with `operonx eval`, see [Evals](07-evals.md)) |
 | **Services**, **Jobs** | start and stop the project's services, run its jobs |
+| **Board** | a project with `docs/brd/`: its checklist (tick rows, then Build), Run/Stop for operonx-project's daemon, each milestone's cards with a live line, and the questions waiting on you |
+
+The assistant can do what the Board does, from its chat. Its board tools are
+`board_status`, `board_card`, `board_start`, `board_act`, `board_daemon`,
+`board_take` and `board_submit`. With `board_take` and `board_submit` it
+works a card itself, through the engine's own checks.
 
 ## The project commands it brings
 
 ```bash
-operonx-lint              # lint operonx.toml and the graphs
-operonx-lint --build .    # … and build every graph offline
+operonx lint              # core's: the conventions (operonx-lint is its old name)
+operonx lint --build .    # … and build every graph offline
 operonx-extract           # the project's graphs as JSON (what the canvas draws)
 ```

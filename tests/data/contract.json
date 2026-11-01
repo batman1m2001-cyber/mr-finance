@@ -178,8 +178,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/accounts/decide",
-   "variants": []
+   "path": "/api/accounts/decide"
   },
   "account_request": {
    "fields": {
@@ -194,29 +193,25 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/accounts/request",
-   "variants": []
+   "path": "/api/accounts/request"
   },
   "accuracy_score": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/accuracy_score",
-   "variants": []
+   "path": "/__schedule__/job/accuracy_score"
   },
   "agent_eval": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/agent_eval",
-   "variants": []
+   "path": "/__schedule__/job/agent_eval"
   },
   "agent_worker": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/agent_worker",
-   "variants": []
+   "path": "/__schedule__/job/agent_worker"
   },
   "alert_ack": {
    "fields": {
@@ -226,8 +221,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/system/alerts/ack",
-   "variants": []
+   "path": "/api/system/alerts/ack"
   },
   "alerts": {
    "fields": {
@@ -236,8 +230,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/alerts",
-   "variants": []
+   "path": "/api/alerts"
   },
   "allocation": {
    "fields": {
@@ -250,8 +243,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation",
-   "variants": []
+   "path": "/api/allocation"
   },
   "allocation_example": {
    "fields": {
@@ -261,8 +253,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/example",
-   "variants": []
+   "path": "/api/allocation/example"
   },
   "allocation_method": {
    "fields": {
@@ -271,8 +262,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/method",
-   "variants": []
+   "path": "/api/allocation/method"
   },
   "allocation_override": {
    "fields": {
@@ -285,15 +275,13 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/override",
-   "variants": []
+   "path": "/api/allocation/override"
   },
   "allocation_queue": {
    "fields": {},
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/queue",
-   "variants": []
+   "path": "/api/allocation/queue"
   },
   "allocation_review": {
    "fields": {
@@ -304,8 +292,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/review",
-   "variants": []
+   "path": "/api/allocation/review"
   },
   "allocation_send": {
    "fields": {
@@ -317,8 +304,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/send",
-   "variants": []
+   "path": "/api/allocation/send"
   },
   "allocation_tilt": {
    "fields": {
@@ -330,15 +316,13 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/tilt",
-   "variants": []
+   "path": "/api/allocation/tilt"
   },
   "allocation_tilts": {
    "fields": {},
    "kind": "http",
    "method": "POST",
-   "path": "/api/allocation/tilts",
-   "variants": []
+   "path": "/api/allocation/tilts"
   },
   "assistant": {
    "fields": {
@@ -356,8 +340,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/assistant",
-   "variants": []
+   "path": "/api/assistant"
   },
   "assistant_attach": {
    "fields": {
@@ -368,15 +351,13 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/assistant/attach",
-   "variants": []
+   "path": "/api/assistant/attach"
   },
   "assistant_consolidate": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/assistant_consolidate",
-   "variants": []
+   "path": "/__schedule__/job/assistant_consolidate"
   },
   "assistant_conversations": {
    "fields": {
@@ -388,8 +369,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/assistant/conversations",
-   "variants": []
+   "path": "/api/assistant/conversations"
   },
   "assistant_memory": {
    "fields": {
@@ -406,22 +386,19 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/assistant/memory",
-   "variants": []
+   "path": "/api/assistant/memory"
   },
   "assistant_retention": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/assistant_retention",
-   "variants": []
+   "path": "/__schedule__/job/assistant_retention"
   },
   "assistant_stream": {
    "fields": {},
    "kind": "http",
    "method": "POST",
-   "path": "/api/assistant/stream",
-   "variants": []
+   "path": "/api/assistant/stream"
   },
   "assistant_voice": {
    "fields": {
@@ -430,15 +407,13 @@
    },
    "kind": "websocket",
    "method": "POST",
-   "path": "/api/assistant/voice",
-   "variants": []
+   "path": "/api/assistant/voice"
   },
   "audit_check": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/audit_check",
-   "variants": []
+   "path": "/__schedule__/job/audit_check"
   },
   "cio_agent": {
    "fields": {
@@ -448,8 +423,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/events/run-agent",
-   "variants": []
+   "path": "/api/events/run-agent"
   },
   "config_decide": {
    "fields": {
@@ -460,8 +434,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/config/decide",
-   "variants": []
+   "path": "/api/config/decide"
   },
   "config_propose": {
    "fields": {
@@ -472,8 +445,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/config/propose",
-   "variants": []
+   "path": "/api/config/propose"
   },
   "copilot": {
    "fields": {
@@ -487,8 +459,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/copilot",
-   "variants": []
+   "path": "/api/copilot"
   },
   "dashboard": {
    "fields": {
@@ -498,8 +469,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/dashboard",
-   "variants": []
+   "path": "/api/dashboard"
   },
   "decide": {
    "fields": {
@@ -510,8 +480,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/review/decide",
-   "variants": []
+   "path": "/api/review/decide"
   },
   "declare": {
    "fields": {
@@ -521,15 +490,13 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/declare",
-   "variants": []
+   "path": "/api/declare"
   },
   "declare_stream": {
    "fields": {},
    "kind": "http",
    "method": "POST",
-   "path": "/api/declare/stream",
-   "variants": []
+   "path": "/api/declare/stream"
   },
   "event": {
    "fields": {
@@ -539,8 +506,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/events",
-   "variants": []
+   "path": "/api/events"
   },
   "event_urgent": {
    "fields": {
@@ -551,8 +517,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/events/urgent",
-   "variants": []
+   "path": "/api/events/urgent"
   },
   "evidence": {
    "fields": {
@@ -561,8 +526,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/evidence",
-   "variants": []
+   "path": "/api/evidence"
   },
   "evidence_decide": {
    "fields": {
@@ -573,8 +537,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/evidence/decide",
-   "variants": []
+   "path": "/api/evidence/decide"
   },
   "evidence_draft": {
    "fields": {
@@ -584,8 +547,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/evidence/draft",
-   "variants": []
+   "path": "/api/evidence/draft"
   },
   "evidence_draft_decide": {
    "fields": {
@@ -596,8 +558,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/evidence/draft/decide",
-   "variants": []
+   "path": "/api/evidence/draft/decide"
   },
   "evidence_type": {
    "fields": {
@@ -609,8 +570,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/evidence/type",
-   "variants": []
+   "path": "/api/evidence/type"
   },
   "feed": {
    "fields": {
@@ -620,8 +580,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/feed",
-   "variants": []
+   "path": "/api/feed"
   },
   "feed_open": {
    "fields": {
@@ -630,8 +589,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/feed/open",
-   "variants": []
+   "path": "/api/feed/open"
   },
   "flows": {
    "fields": {
@@ -641,8 +599,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/flows",
-   "variants": []
+   "path": "/api/flows"
   },
   "goal_outflow": {
    "fields": {
@@ -654,8 +611,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/goals/outflow",
-   "variants": []
+   "path": "/api/goals/outflow"
   },
   "goal_suggest": {
    "fields": {
@@ -665,8 +621,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/goals/suggest",
-   "variants": []
+   "path": "/api/goals/suggest"
   },
   "goals": {
    "fields": {
@@ -675,22 +630,19 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/goals",
-   "variants": []
+   "path": "/api/goals"
   },
   "heartbeat": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/heartbeat",
-   "variants": []
+   "path": "/__schedule__/job/heartbeat"
   },
   "inbox_import": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/inbox_import",
-   "variants": []
+   "path": "/__schedule__/job/inbox_import"
   },
   "job_run": {
    "fields": {
@@ -699,50 +651,43 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/jobs/run",
-   "variants": []
+   "path": "/api/jobs/run"
   },
   "market_crypto": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_crypto",
-   "variants": []
+   "path": "/__schedule__/job/market_crypto"
   },
   "market_equity": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_equity",
-   "variants": []
+   "path": "/__schedule__/job/market_equity"
   },
   "market_flows": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_flows",
-   "variants": []
+   "path": "/__schedule__/job/market_flows"
   },
   "market_fx": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_fx",
-   "variants": []
+   "path": "/__schedule__/job/market_fx"
   },
   "market_gold": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_gold",
-   "variants": []
+   "path": "/__schedule__/job/market_gold"
   },
   "market_load": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_load",
-   "variants": []
+   "path": "/__schedule__/job/market_load"
   },
   "market_load_ask": {
    "fields": {
@@ -751,22 +696,19 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/market/load",
-   "variants": []
+   "path": "/api/market/load"
   },
   "market_world": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_world",
-   "variants": []
+   "path": "/__schedule__/job/market_world"
   },
   "market_yields": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/market_yields",
-   "variants": []
+   "path": "/__schedule__/job/market_yields"
   },
   "model_estimate": {
    "fields": {
@@ -776,8 +718,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/model/estimate",
-   "variants": []
+   "path": "/api/model/estimate"
   },
   "news_dismiss": {
    "fields": {
@@ -787,8 +728,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/news/dismiss",
-   "variants": []
+   "path": "/api/news/dismiss"
   },
   "news_fetch": {
    "fields": {
@@ -799,22 +739,19 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/news/ingest",
-   "variants": []
+   "path": "/api/news/ingest"
   },
   "news_ingest": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/news_ingest",
-   "variants": []
+   "path": "/__schedule__/job/news_ingest"
   },
   "news_reference": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/news_reference",
-   "variants": []
+   "path": "/__schedule__/job/news_reference"
   },
   "news_release": {
    "fields": {
@@ -824,8 +761,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/news/release",
-   "variants": []
+   "path": "/api/news/release"
   },
   "newsletter_act": {
    "fields": {
@@ -837,8 +773,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/newsletters/act",
-   "variants": []
+   "path": "/api/newsletters/act"
   },
   "newsletter_draft": {
    "fields": {
@@ -852,8 +787,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/newsletters",
-   "variants": []
+   "path": "/api/newsletters"
   },
   "overview": {
    "fields": {
@@ -864,8 +798,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/overview",
-   "variants": []
+   "path": "/api/overview"
   },
   "policy_add": {
    "fields": {
@@ -874,8 +807,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/policy",
-   "variants": []
+   "path": "/api/policy"
   },
   "policy_status": {
    "fields": {
@@ -887,8 +819,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/policy/status",
-   "variants": []
+   "path": "/api/policy/status"
   },
   "policy_summarise": {
    "fields": {
@@ -898,15 +829,13 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/policy/summarise",
-   "variants": []
+   "path": "/api/policy/summarise"
   },
   "policy_sweep": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/policy_sweep",
-   "variants": []
+   "path": "/__schedule__/job/policy_sweep"
   },
   "policy_verify": {
    "fields": {
@@ -916,8 +845,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/policy/verify",
-   "variants": []
+   "path": "/api/policy/verify"
   },
   "propose": {
    "fields": {
@@ -929,8 +857,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/review/propose",
-   "variants": []
+   "path": "/api/review/propose"
   },
   "recommend": {
    "fields": {
@@ -942,8 +869,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/review/recommend",
-   "variants": []
+   "path": "/api/review/recommend"
   },
   "research_release": {
    "fields": {
@@ -954,8 +880,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/research/release",
-   "variants": []
+   "path": "/api/research/release"
   },
   "research_upload": {
    "fields": {
@@ -964,8 +889,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/research",
-   "variants": []
+   "path": "/api/research"
   },
   "risk": {
    "fields": {
@@ -974,8 +898,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/risk",
-   "variants": []
+   "path": "/api/risk"
   },
   "rm_contact": {
    "fields": {
@@ -987,8 +910,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/rm/contacts",
-   "variants": []
+   "path": "/api/rm/contacts"
   },
   "run_decide": {
    "fields": {
@@ -999,8 +921,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/runs/decide",
-   "variants": []
+   "path": "/api/runs/decide"
   },
   "run_recompute": {
    "fields": {
@@ -1010,8 +931,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/runs/recompute",
-   "variants": []
+   "path": "/api/runs/recompute"
   },
   "scenario": {
    "fields": {
@@ -1022,8 +942,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/scenario",
-   "variants": []
+   "path": "/api/scenario"
   },
   "scenario_combine": {
    "fields": {
@@ -1035,8 +954,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/scenario/combine",
-   "variants": []
+   "path": "/api/scenario/combine"
   },
   "search": {
    "fields": {
@@ -1047,8 +965,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/search",
-   "variants": []
+   "path": "/api/search"
   },
   "statement": {
    "fields": {
@@ -1058,8 +975,7 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/statement",
-   "variants": []
+   "path": "/api/statement"
   },
   "timeline": {
    "fields": {
@@ -1070,22 +986,19 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/timeline",
-   "variants": []
+   "path": "/api/timeline"
   },
   "trial_daily": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/trial_daily",
-   "variants": []
+   "path": "/__schedule__/job/trial_daily"
   },
   "trial_score": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/trial_score",
-   "variants": []
+   "path": "/__schedule__/job/trial_score"
   },
   "view_decide": {
    "fields": {
@@ -1099,22 +1012,19 @@
    },
    "kind": "http",
    "method": "POST",
-   "path": "/api/views/decide",
-   "variants": []
+   "path": "/api/views/decide"
   },
   "web": {
    "fields": null,
    "kind": "asgi",
    "method": "POST",
-   "path": "/",
-   "variants": []
+   "path": "/"
   },
   "zone_sync": {
    "fields": null,
    "kind": "schedule",
    "method": "*",
-   "path": "/__schedule__/job/zone_sync",
-   "variants": []
+   "path": "/__schedule__/job/zone_sync"
   }
  }
 }

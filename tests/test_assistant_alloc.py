@@ -5,12 +5,12 @@ import asyncio
 
 from operonx import Operon
 
-from allocation.graph import allocation_send_flow
+from allocation.graph import allocation_flow
 from assistant import registry
 from assistant.base import Ctx, execute
 from research import store as research_store
 
-SEND = Operon(allocation_send_flow, params={"client_id": None, "by": None, "scope": None, "method": None, "assumptions": None})
+SEND = Operon(allocation_flow, params={"action": "send", "client_id": None, "by": None, "scope": None, "method": None, "assumptions": None})
 
 
 def ask(name, role, client=None):

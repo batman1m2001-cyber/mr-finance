@@ -8,31 +8,20 @@ import pytest
 from operonx import Operon
 
 from allocation import _engine, _model, ops
-from allocation.graph import (
-    allocation_example_flow,
-    allocation_flow,
-    allocation_method_flow,
-    allocation_override_flow,
-    allocation_queue_flow,
-    allocation_review_flow,
-    allocation_send_flow,
-    allocation_tilt_flow,
-    allocation_tilts_flow,
-)
+from allocation.graph import allocation_flow
 from views.schema import forbidden_words
 from wealth import fixtures, store
 from wealth.money import TY, TR
 
 FLOW = Operon(allocation_flow, params={"client_id": None, "scope": None, "method": None, "assumptions": None, "role": None, "whatif": None})
-EXAMPLE = Operon(allocation_example_flow, params={"method": None, "assumptions": None, "role": None})
-TILT = Operon(allocation_tilt_flow, params={"asset_class": None, "stance": None, "view_id": None, "by": None, "reason": None})
-TILTS = Operon(allocation_tilts_flow, params={})
-SEND = Operon(allocation_send_flow, params={"client_id": None, "by": None, "scope": None, "method": None, "assumptions": None})
-REVIEW = Operon(allocation_review_flow, params={"item_id": None, "by": None, "decisions": None, "note": None})
-QUEUE = Operon(allocation_queue_flow, params={})
-METHOD = Operon(allocation_method_flow, params={"method": None, "by": None})
-OVERRIDE = Operon(
-    allocation_override_flow, params={"client_id": None, "key": None, "by": None, "bucket": None, "reason": None, "scope": None}
+EXAMPLE = Operon(allocation_flow, params={"action": "example", "method": None, "assumptions": None, "role": None})
+TILT = Operon(allocation_flow, params={"action": "tilt", "asset_class": None, "stance": None, "view_id": None, "by": None, "reason": None})
+TILTS = Operon(allocation_flow, params={"action": "tilts"})
+SEND = Operon(allocation_flow, params={"action": "send", "client_id": None, "by": None, "scope": None, "method": None, "assumptions": None})
+REVIEW = Operon(allocation_flow, params={"action": "review", "item_id": None, "by": None, "decisions": None, "note": None})
+QUEUE = Operon(allocation_flow, params={"action": "queue"})
+METHOD = Operon(allocation_flow, params={"action": "method", "method": None, "by": None})
+OVERRIDE = Operon(allocation_flow, params={"action": "override", "client_id": None, "key": None, "by": None, "bucket": None, "reason": None, "scope": None}
 )
 
 
