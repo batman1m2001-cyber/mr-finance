@@ -10,6 +10,8 @@ release    POST /api/news/release: the CIO lets an item that names someone on th
 event      POST /api/events: news items the CIO picked → one event, held while any item waits for the CIO (FR-105)
 urgent     POST /api/events/urgent: the CIO's urgent flag on an event (BRD-KPI-01)
 queue      POST /api/events/run-agent: the CIO's agent run, queued for the ``agent_worker`` job (AI-13)
+worker     the agent_worker job (every 5 s): the oldest queued CIO agent run, one at a time (AI-13)
+inbox      the inbox_import job (every 10 min): the AI zone's packages through the same checks, imported or rejected
 alerts     POST /api/alerts and the policy_sweep job (every client, 07:00): the client's holdings and profile → every
            factor scored → the alerts, kept"""
 
@@ -19,11 +21,12 @@ from operonx.core.ops import if_
 from assistant.ops import follow_ups_topics
 from consolidate.graph import consolidate_flow
 from events.ops import flag_urgent, group
+from inbox.ops import import_inbox
 from impact.ops import check_request as check_alerts
 from impact.ops import keep as keep_alerts
 from impact.ops import profile_of, score
 from news.ops import dismiss, fetch, keep, reference_check, release, screen
-from views.worker import queue_agent
+from views.worker import queue_agent, work_queue
 
 
 @graph
@@ -58,6 +61,8 @@ def news_flow(
     grouped = group(news_ids=news_ids, title=title, by=by)
     flagged = flag_urgent(event_id=event_id, urgent=urgent, reason=reason, by=by)
     queued = queue_agent(event_id=event_id, by=by, mode=mode)
+    worked = work_queue(tick=tick, at=at)
+    imported = import_inbox(tick=tick, at=at)
     ask = check_alerts(client_id=client_id, scope=scope)
     held = consolidate_flow(client_id=ask["client_id"], scope=ask["scope"])
     who = profile_of(client_id=ask["client_id"], members=held["members"])
@@ -67,7 +72,9 @@ def news_flow(
     a = action
     START >> if_(a == "ingest", got).if_(a == "reference", referenced).if_(a == "dismiss", dismissed).if_(
         a == "release", released
-    ).if_(a == "event", grouped).if_(a == "urgent", flagged).if_(a == "queue", queued).if_(a == "alerts", ask).build()
+    ).if_(a == "event", grouped).if_(a == "urgent", flagged).if_(a == "queue", queued).if_(
+        a == "worker", worked
+    ).if_(a == "inbox", imported).if_(a == "alerts", ask).build()
     got >> seen >> kept >> topics >> END
     kept >> END  # the ingest stays the answer of POST /api/news/ingest
     ask >> held >> who >> found >> alerts >> END
@@ -77,3 +84,5 @@ def news_flow(
     grouped >> END
     flagged >> END
     queued >> END
+    worked >> END
+    imported >> END

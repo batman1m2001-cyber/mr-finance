@@ -6,7 +6,6 @@ Served as is: POST /api/events/run-agent queues a run in news/graph.py news_flow
 from operonx import END, START, graph
 
 from views.ops import analyse, analyse_more, compose, discuss, gather, review, save_view
-from views.worker import work_queue
 
 
 @graph
@@ -56,9 +55,3 @@ def cio_agent_flow(event_id, by="cio", mode=None):
     other >> talk
     talk >> made >> kept >> checked >> END
 
-
-@graph
-def agent_worker_flow(tick=None, at=None):
-    """The ``agent_worker`` job (every 5 seconds): the oldest queued run."""
-    done = work_queue(tick=tick, at=at)
-    START >> done >> END

@@ -90,7 +90,6 @@ from declare.graph import declare_stream_flow
 from evidence import bodies as evidence_bodies
 from evidence.graph import evidence_flow
 from impact.ops import every_client
-from inbox.graph import inbox_import_flow
 from market.graph import market_flow
 from measure.graph import evaluation_flow
 from news import bodies as news_bodies
@@ -108,7 +107,6 @@ from scenarios.graph import scenarios_flow
 from statements import bodies as statements_bodies
 from statements.checks import items_match
 from statements.graph import intake_flow, sample_flow
-from views.graph import agent_worker_flow
 from voice.graph import assistant_voice_flow
 from zone.graph import zone_flow
 
@@ -795,7 +793,8 @@ APP = Application(
         ),
         Job(
             "agent_worker",
-            graph=agent_worker_flow,
+            graph=news_flow,
+            inputs={"action": "worker"},
             schedule=schedule(every="5s", port=PORT),
             timeout=1800,
             keep_runs=500,
@@ -803,7 +802,8 @@ APP = Application(
         ),
         Job(
             "inbox_import",
-            graph=inbox_import_flow,
+            graph=news_flow,
+            inputs={"action": "inbox"},
             schedule=schedule(every="10m", port=PORT),
             timeout=1800,
             description="Every 10 minutes: the AI zone's packages through the same checks, imported or rejected.",
