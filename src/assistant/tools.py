@@ -291,9 +291,9 @@ async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def goals(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from scenarios.graph import goals_flow
+    from scenarios.graph import scenarios_flow
 
-    out = (await _graph(goals_flow, client_id=_need_client(ctx), scope=ctx.scope))["goals"]
+    out = (await _graph(scenarios_flow, action="goals", client_id=_need_client(ctx), scope=ctx.scope))["goals"]
     followed = [g for g in out if (g["id"] in ctx.followed if ctx.followed is not None else g["followed"])]
     label = {"on_track": "đúng tiến độ", "at_risk": "cần chú ý", "off_track": "chậm tiến độ"}
 
@@ -458,11 +458,11 @@ async def investigate(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def stress(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """One stress test on the client's own holdings, through the planning page's scenario_flow."""
-    from scenarios.graph import scenario_flow
+    """One stress test on the client's own holdings, through the planning page's scenarios_flow."""
+    from scenarios.graph import scenarios_flow
 
     sid = STRESS.get(args.get("scenario"), "vni_30")
-    r = (await _graph(scenario_flow, client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
+    r = (await _graph(scenarios_flow, action="scenario", client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
     b, a = r["before"], r["after"]
     d = a["net_worth"] - b["net_worth"]
     pct = d / b["net_worth"] if b["net_worth"] else 0.0

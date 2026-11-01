@@ -17,7 +17,7 @@ from assistant.base import Ctx, ToolFailed
 from assistant.ops import graph_of, request_of
 from assistant.turn import graph_line
 from overview.graph import overview_flow
-from scenarios.graph import combine_flow
+from scenarios.graph import scenarios_flow
 
 PICK = {"id": "GL:tuition", "kind": "goal", "label": "Học phí cho con"}
 
@@ -31,7 +31,7 @@ def run(coro):
 
 
 def combined(ids, params=None):
-    eng = Operon(combine_flow, params={"client_id": None, "scenarios": None, "params": None, "scope": None,
+    eng = Operon(scenarios_flow, params={"action": "combine", "client_id": None, "scenarios": None, "params": None, "scope": None,
                                        "goals": None})  # fmt: skip
     out = run(eng.run(inputs={"client_id": "C01", "scenarios": ids, "params": params or {}, "scope": "personal",
                               "goals": None}))  # fmt: skip

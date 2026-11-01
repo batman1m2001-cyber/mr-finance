@@ -170,12 +170,13 @@ async def assume(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def _compare(ctx: Ctx, ids: List[str], params: Dict[str, Any]) -> Dict[str, Any]:
-    from scenarios.graph import combine_flow
+    from scenarios.graph import scenarios_flow
 
     async def run(which: List[str]) -> Dict[str, Any]:
         return (
             await run_graph(
-                combine_flow,
+                scenarios_flow,
+                action="combine",
                 client_id=_need_client(ctx),
                 scenarios=which,
                 params=params,

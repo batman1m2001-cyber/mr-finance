@@ -21,8 +21,8 @@ POST /api/declare   {client_id, message, session_id} ──► declare_flow ─�
 POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
-POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
-POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
+POST /api/scenario  {client_id, scenario, params?} ──► scenarios_flow (action scenario) ──► numbers, a light and a heavy option
+POST /api/goals     {client_id, scope?} ──► scenarios_flow (action goals) ──► every life goal: need, have, gap, status, actions
 POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} ──► allocation_flow ──► Liquidity, Legacy,
                     Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
                     the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
@@ -34,7 +34,7 @@ POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item'
                     (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
                     · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
-POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
+POST /api/scenario/combine {client_id, scenarios, params?} ──► scenarios_flow (action combine) ──► stress tests together
 POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
 POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
@@ -128,7 +128,8 @@ from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_f
 from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, recommend_flow, review_flow
 from risk.graph import risk_flow
-from scenarios.graph import combine_flow, goals_flow, scenario_flow
+from scenarios import bodies as scenarios_bodies
+from scenarios.graph import scenarios_flow
 from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
@@ -290,19 +291,25 @@ APP = Application(
         Service(
             "scenario",
             http("POST", "/api/scenario", port=PORT),
-            graph=scenario_flow,
+            graph=scenarios_flow,
+            variants={"scenario": {"action": "scenario"}},
+            body=scenarios_bodies.scenario,
             description="POST {client_id, scenario, params?, scope?}: a life event or a stress test, with two options.",
         ),
         Service(
             "scenario_combine",
             http("POST", "/api/scenario/combine", port=PORT),
-            graph=combine_flow,
+            graph=scenarios_flow,
+            variants={"combine": {"action": "combine"}},
+            body=scenarios_bodies.combine,
             description="POST {client_id, scenarios, params?, scope?, goals?}: stress tests together, no double count.",
         ),
         Service(
             "goals",
             http("POST", "/api/goals", port=PORT),
-            graph=goals_flow,
+            graph=scenarios_flow,
+            variants={"goals": {"action": "goals"}},
+            body=scenarios_bodies.goals,
             description="POST {client_id, scope?}: every life goal, with its gap, status and actions.",
         ),
         Service(

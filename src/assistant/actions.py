@@ -250,11 +250,11 @@ OPTIONS = {"light": "phương án nhẹ", "heavy": "phương án mạnh"}
 
 
 async def plan_propose(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from scenarios.graph import scenario_flow
+    from scenarios.graph import scenarios_flow
 
     sid = STRESS.get(args.get("scenario"), "vni_30")
     want = args.get("option") if args.get("option") in OPTIONS else "light"
-    r = (await _graph(scenario_flow, client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
+    r = (await _graph(scenarios_flow, action="scenario", client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
     option = next((o for o in r["options"] if o["id"] == want), None)
     if option is None:
         raise ToolFailed(f"Kịch bản {r['title']} không có {OPTIONS[want]}")
