@@ -1,3 +1,15 @@
+---
+title: "OneWealth — English and Vietnamese: plan"
+status: done
+phases:
+  - {id: P1, title: "Switch, i18n.js, the shell", status: done}
+  - {id: P2, title: "The book for every page", status: done}
+  - {id: P3, title: "Crawl of every role x page", status: done}
+  - {id: P4, title: "Assistant in English", status: done}
+  - {id: P5, title: "Merge to main", status: done}
+rows: []
+updated: 2026-10-27
+---
 # OneWealth — English and Vietnamese: plan
 
 **Status: done 2026-10-27** (owner's request that day: "the language switch button EN/VI, with English is the default";

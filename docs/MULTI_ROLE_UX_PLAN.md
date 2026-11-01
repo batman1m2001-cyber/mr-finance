@@ -1,3 +1,17 @@
+---
+title: "Multi-role UX plan — a desk for every staff role"
+status: done
+phases:
+  - {id: M0, title: "Foundation", status: done}
+  - {id: M1, title: "CIO desk", status: done}
+  - {id: M2, title: "RM desk", status: done}
+  - {id: M3, title: "Admin desk", status: done}
+  - {id: M4, title: "Expert desk", status: done}
+  - {id: M5, title: "Compliance desk", status: done}
+  - {id: M6, title: "BRD close-out", status: done}
+rows: []
+updated: 2026-10-18
+---
 # Multi-role UX plan — a desk for every staff role
 
 Owner request, 2026-10-18 (verbatim in [docs/brd/sources/owner_requests/2026-10-18_multi_role_ux.md](brd/sources/owner_requests/2026-10-18_multi_role_ux.md)):

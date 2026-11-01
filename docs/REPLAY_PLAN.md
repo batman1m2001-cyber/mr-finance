@@ -1,3 +1,14 @@
+---
+title: "Replay plan: View B on past news (2026-10-25)"
+status: in_progress
+phases:
+  - {id: S1, title: "scripts/replay.py: its own state, live window rule, scoring, report", status: done}
+  - {id: S2, title: /api/trial lists replays; replay and move endpoints, status: done}
+  - {id: S3, title: "Trial page: source toggle Trực tiếp · Chạy lại", status: done}
+  - {id: S4, title: Run 2026-09 through the bridge and score again after 28/10, status: in_progress}
+rows: []
+updated: 2026-10-25
+---
 # Replay plan — View B on past news (2026-10-25)
 
 **Why.** The business presents the agents' metrics on 30/10. The live trial began on 22/10: its 1-week moves are

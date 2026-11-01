@@ -1,3 +1,18 @@
+---
+title: "The unified graph and its money flows — plan"
+status: done
+phases:
+  - {id: U0, title: "BRD: source, requirements, plan", status: done}
+  - {id: U1, title: "Data: flow fields, combine, what-if", status: done}
+  - {id: U2, title: "Animation by data", status: done}
+  - {id: U3, title: "Scenarios on the graph", status: done}
+  - {id: U4, title: "Edge selection and categories", status: done}
+  - {id: U5, title: "The assistant sees the graph", status: done}
+  - {id: V, title: "Layout audit, suites, report", status: done}
+rows: [OWN-GW-33, OWN-GW-34, OWN-GW-35, OWN-GW-36, OWN-GW-37, OWN-GW-38, OWN-GW-39, OWN-GW-40, OWN-GW-41, OWN-GW-42, OWN-GW-43, OWN-GW-44, OWN-GW-45, OWN-GW-46, OWN-GW-47, OWN-GW-48, OWN-GW-49, OWN-GW-50]
+updated: 2026-10-17
+---
+
 # The unified graph and its money flows — plan
 
 Owner request (2026-10-17):

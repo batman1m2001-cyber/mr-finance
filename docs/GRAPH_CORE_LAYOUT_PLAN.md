@@ -1,3 +1,19 @@
+---
+title: "The central wealth core and the graph's layout and routing — plan"
+status: done
+phases:
+  - {id: C0, title: "BRD", status: done}
+  - {id: L0, title: "Layout audit as a test", status: done}
+  - {id: L1, title: "Ring", status: done}
+  - {id: L2, title: "Folding and branches", status: done}
+  - {id: L3, title: "Router", status: done}
+  - {id: L4, title: "Exploration", status: done}
+  - {id: C1, title: "Core layers and theme tokens", status: done}
+  - {id: C2, title: "Core motion", status: done}
+  - {id: V, title: "Verification", status: done}
+rows: [OWN-GW-20, OWN-GW-21, OWN-GW-22, OWN-GW-23, OWN-GW-24, OWN-GW-25, OWN-GW-26, OWN-GW-27, OWN-GW-28, OWN-GW-29, OWN-GW-30, OWN-GW-31, OWN-GW-32]
+updated: 2026-10-17
+---
 # The central wealth core and the graph's layout and routing — plan
 
 **Status (2026-10-17): DONE.** C0, L0–L4, C1–C2 and V are built and their gates pass. The audit is at 0 on

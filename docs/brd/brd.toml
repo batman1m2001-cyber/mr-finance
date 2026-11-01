@@ -1,0 +1,24 @@
+# The checklist's summary table counts rows by set; each set's name is its first cell, the pattern matches its row ids.
+[[groups]]
+name = "BRD numbered (BR, FR, NFR)"
+pattern = "BRD-(BR|FR|NFR)-"
+
+[[groups]]
+name = "BRD success metrics (KPI)"
+pattern = "BRD-KPI-"
+
+[[groups]]
+name = "BRD rules (RULE)"
+pattern = "BRD-RULE-"
+
+[[groups]]
+name = "Original brief (BRIEF)"
+pattern = "BRIEF-"
+
+[[groups]]
+name = "Redesign kit (KIT)"
+pattern = "KIT-"
+
+[[groups]]
+name = "Owner requests (OWN)"
+pattern = "OWN-"

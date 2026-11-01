@@ -1,3 +1,15 @@
+---
+title: Money on the edges and a node's timeline
+status: done
+phases:
+  - {id: T1, title: The history (data), status: done}
+  - {id: T2, title: The reads, status: done}
+  - {id: T3, title: The edges, status: done}
+  - {id: T4, title: The timeline in Thông tin, status: done}
+  - {id: T5, title: Checks and docs, status: done}
+rows: []
+updated: 2026-10-20
+---
 # Money on the edges and a node's timeline — plan
 
 The owner's idea (2026-10-20): show the money on the edges between “Bạn” and the other nodes, signed (+ / −), and when

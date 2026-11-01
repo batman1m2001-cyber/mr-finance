@@ -1,3 +1,19 @@
+---
+title: "A test book of Private clients from a real bank's data, converted to Vietnam (option 2)"
+status: in_progress
+phases:
+  - {id: D0, title: "Licence", status: open}
+  - {id: D1, title: "Sample", status: done}
+  - {id: D2, title: "Calibration", status: done}
+  - {id: D3, title: "Match and convert", status: done}
+  - {id: D4, title: "History and RMs", status: open}
+  - {id: D5, title: "Switch", status: open}
+  - {id: D6, title: "Tests", status: open}
+  - {id: D7, title: "KPIs", status: open}
+  - {id: D8, title: "Documents", status: open}
+rows: []
+updated: 2026-10-24
+---
 # A test book of Private clients from a real bank's data, converted to Vietnam (option 2)
 
 **Asked.** Test data with more clients than the five hand-made families (ADR-0005), without drawing every number at

@@ -1,3 +1,16 @@
+---
+title: "Each staff role's assistant, tested as its users use it — plan"
+status: done
+phases:
+  - {id: U0, title: "Plan, seed script, harness, catalogue", status: done}
+  - {id: U1, title: "Full catalogue on the real model", status: done}
+  - {id: U2, title: "Fix confirmed defects", status: done}
+  - {id: U3, title: "Browser pass and failure modes", status: done}
+  - {id: U4, title: "Final run, coverage, readiness", status: done}
+rows: []
+updated: 2026-10-18
+---
+
 # Each staff role's assistant, tested as its users use it — plan
 
 Owner request, 2026-10-18: “stress test as a user to test the assistant for each role like we did for customer role”

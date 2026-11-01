@@ -1,3 +1,13 @@
+---
+title: Owner backlog of 2026-10-18
+status: done
+phases:
+  - {id: F, title: "The fold is a rule, not a fit", status: done}
+  - {id: A, title: "The CIO's agents and the jobs, run from the assistant and from one page", status: done}
+  - {id: U, title: Admin's users and roles (Q-25), status: done}
+rows: [OWN-MR-04, OWN-GW-27]
+updated: 2026-10-18
+---
 # Owner backlog of 2026-10-18 — plan
 
 The owner's go (2026-10-18): "just go, don't let anything remain". Three items were held for the owner after the

@@ -1,3 +1,13 @@
+---
+title: News sources and collection figures (2026-10-25)
+status: done
+phases:
+  - {id: N1, title: "Nguồn tin: a page to manage the sources", status: done}
+  - {id: N2, title: The day's collection time, status: done}
+  - {id: N3, title: News that reached a portfolio, status: done}
+rows: [OWN-NO-01, OWN-NO-02, OWN-NO-03]
+updated: 2026-10-25
+---
 # News sources and collection figures (2026-10-25) — plan
 
 **Status: done (N1–N3), 2026-10-25.** OWN-NO-01…03 implemented_verified (tests/ui/test_sources_ui.py,

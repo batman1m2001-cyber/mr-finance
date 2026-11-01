@@ -1,3 +1,15 @@
+---
+title: "OneWealth — Talking to the assistant: plan"
+status: done
+phases:
+  - {id: P1, title: "src/voice: VAD, STT, TTS, cutter", status: done}
+  - {id: P2, title: "Voice flow and websocket service", status: done}
+  - {id: P3, title: "Panel: mic, capture, playback", status: done}
+  - {id: P4, title: "Measure", status: done}
+rows: []
+updated: 2026-10-27
+---
+
 # OneWealth — Talking to the assistant: plan
 
 **Status: done** (owner's go, 2026-10-26; P1–P4 built and measured 2026-10-27, on :8030 with the iPhone app 1.2.0 —

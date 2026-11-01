@@ -1,3 +1,19 @@
+---
+title: "OneWealth: assistant, memory and agent ecosystem"
+status: done
+phases:
+  - {id: A0, title: "Audit, architecture and ADRs", status: done}
+  - {id: A1, title: "The tool registry", status: done}
+  - {id: A2, title: "The assistant orchestration", status: done}
+  - {id: A3, title: "Conversations on the server", status: done}
+  - {id: A4, title: "Long-term and archive memory", status: done}
+  - {id: A5, title: "Knowledge base and web search", status: done}
+  - {id: A6, title: "Background agents", status: done}
+  - {id: A7, title: "Agent Ecosystem Map", status: done}
+  - {id: A8, title: "Full eval and readiness report", status: done}
+rows: [OWN-AS-01, OWN-AS-25]
+updated: 2026-10-17
+---
 # OneWealth — Assistant, memory and agent ecosystem: backlog plan
 
 **Status: in progress** (owner's go, 2026-10-16: “go, don't stop until you finished the assistant plan”). The brief

@@ -1,3 +1,14 @@
+---
+title: "Business feedback, 2026-10-21 — plan"
+status: in_progress
+phases:
+  - {id: B1, title: "The daily news-agent trial", status: done}
+  - {id: B2, title: "A phone app (PWA)", status: in_progress}
+  - {id: B3, title: "The interface: the old look, the new bar", status: done}
+  - {id: B4, title: "The technical document (owner backlog)", status: open}
+rows: []
+updated: 2026-10-25
+---
 # Business feedback, 2026-10-21 — plan
 
 The meeting's four notes, what the product already has for each (read from the code and the live data on 2026-10-21),

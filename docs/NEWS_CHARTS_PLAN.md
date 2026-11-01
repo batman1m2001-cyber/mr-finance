@@ -1,3 +1,13 @@
+---
+title: Charts on Thử nghiệm hằng ngày (2026-10-25)
+status: done
+phases:
+  - {id: C1, title: "View A: news kept per day, by group", status: done}
+  - {id: C2, title: "View B: precision and recall by scoring day", status: done}
+  - {id: C3, title: "View B: the simulated net VND by group", status: done}
+rows: [OWN-NO-04, OWN-NO-05, OWN-NO-06]
+updated: 2026-10-25
+---
 # Charts on Thử nghiệm hằng ngày (2026-10-25) — plan
 
 **Status: done (C1–C3), 2026-10-25.** OWN-NO-04…06 implemented_verified (tests/test_agent_eval.py,

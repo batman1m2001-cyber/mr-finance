@@ -1,3 +1,20 @@
+---
+title: "OneWealth: finishing the BRD's original features"
+status: done
+phases:
+  - {id: F1, title: "The data layer", status: done}
+  - {id: F2, title: "Estimate the model and validate it", status: done}
+  - {id: F3, title: "Accuracy over time and measurement reports", status: done}
+  - {id: F4, title: "Configuration completes", status: done}
+  - {id: F5, title: "Identity and access", status: done}
+  - {id: F6, title: "Background runs, AI zone, inbox mode", status: done}
+  - {id: F7, title: "Observability and alerts", status: done}
+  - {id: F8, title: "Newsletter and content rules", status: done}
+  - {id: F9, title: "The policy agent", status: done}
+  - {id: F10, title: "Remaining rules and verification", status: done}
+rows: [BRD-NFR-01, BRD-NFR-03, BRD-NFR-07, BRD-NFR-08, BRD-NFR-11, BRD-BR-08, BRD-KPI-01, BRD-KPI-02]
+updated: 2026-10-16
+---
 # OneWealth — Finishing the BRD's original features: audit and plan
 
 The owner asked (2026-10-16) to finish the original features of the BRD “at all cost”. The BRD has two parts:

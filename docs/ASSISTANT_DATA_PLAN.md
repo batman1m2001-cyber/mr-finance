@@ -1,3 +1,16 @@
+---
+title: "OneWealth: the assistant reads the data itself"
+status: done
+phases:
+  - {id: D0, title: "ADR and requirements", status: done}
+  - {id: D1, title: "Shared counts", status: done}
+  - {id: D2, title: "The data room", status: done}
+  - {id: D3, title: "The catalog", status: done}
+  - {id: D4, title: "Wire-up", status: done}
+  - {id: D5, title: "Eval on real models", status: done}
+rows: [OWN-DA-01, OWN-DA-02, OWN-DA-03, OWN-DA-04, OWN-DA-05, OWN-DA-06, OWN-DA-07, OWN-DA-08]
+updated: 2026-10-24
+---
 # OneWealth — The assistant reads the data itself: plan
 
 **Status: done** (D0–D5, 2026-10-24; owner, 2026-10-24: “can you think a way to give assistant access to our db, and knowledge to

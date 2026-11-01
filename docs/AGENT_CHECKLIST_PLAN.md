@@ -1,3 +1,15 @@
+---
+title: "One checklist of the agents, one name each"
+status: done
+phases:
+  - {id: C1, title: "The checklist (8 entries, 3 evaluations)", status: done}
+  - {id: C2, title: "The guard test", status: done}
+  - {id: C3, title: "The Agent page", status: done}
+  - {id: C4, title: "One name everywhere", status: done}
+  - {id: C5, title: "The one-pager", status: done}
+rows: []
+updated: 2026-10-22
+---
 # One checklist of the agents, one name each (owner, 2026-10-22)
 
 **Asked.** "There are so many agents that they confuse me: give each a name, and a checklist of all of them and what

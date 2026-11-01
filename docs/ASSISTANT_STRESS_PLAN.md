@@ -1,3 +1,15 @@
+---
+title: "The assistant, tested as its customers use it"
+status: done
+phases:
+  - {id: T0, title: "Plan, harness, catalogue", status: done}
+  - {id: T1, title: "Full catalogue run", status: done}
+  - {id: T2, title: "Fix defects", status: done}
+  - {id: T3, title: "Browser pass and failure modes", status: done}
+  - {id: T4, title: "Final run and readiness report", status: done}
+rows: []
+updated: 2026-10-18
+---
 # The assistant, tested as its customers use it — plan
 
 Owner request, 2026-10-17: “OneWealth — Real-World AI Assistant Stress Test”. The verbatim copy is in

@@ -1,3 +1,16 @@
+---
+title: "OneWealth: measuring the news agents"
+status: done
+phases:
+  - {id: E0, title: "Bridge fix, cost and cached tokens", status: done}
+  - {id: E1, title: "Collection funnel and monitor", status: done}
+  - {id: E2, title: "Accuracy scoring", status: done}
+  - {id: E3, title: "Financial value in VND", status: done}
+  - {id: E4, title: "Cost per agent", status: done}
+  - {id: E5, title: "Dashboard in two views", status: done}
+rows: [OWN-EV-01, OWN-EV-02, OWN-EV-03, OWN-EV-04, OWN-EV-05, OWN-EV-06, OWN-EV-07, OWN-EV-08]
+updated: 2026-10-24
+---
 # OneWealth: measuring the news agents (plan)
 
 **Status: done (E0–E5), 2026-10-24.**

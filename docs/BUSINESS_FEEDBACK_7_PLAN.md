@@ -1,3 +1,14 @@
+---
+title: "Business feedback 7 — the RM's screens (2026-10-25) — plan"
+status: done
+phases:
+  - {id: G1, title: "The desk is Tổng quan", status: done}
+  - {id: G2, title: "No Hôm nay", status: done}
+  - {id: G3, title: "The client picker in the sheet", status: done}
+  - {id: G4, title: "No Nội bộ line on the RM sheets", status: done}
+rows: [OWN-FB-19, OWN-FB-20, OWN-FB-21, OWN-FB-22, OWN-FB-23, OWN-FB-24, OWN-FB-25]
+updated: 2026-10-25
+---
 # Business feedback 7 — the RM's screens (2026-10-25) — plan
 
 **Status: done 2026-10-25** — G1–G4 merged into `main`, live on :8030; gate `tests/ui/test_feedback7_ui.py` (4) and the related desk, assistant and BRD-page files pass.

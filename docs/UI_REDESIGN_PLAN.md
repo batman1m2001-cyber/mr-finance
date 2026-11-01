@@ -1,3 +1,19 @@
+---
+title: "OneWealth — UI redesign to the kit: audit and plan"
+status: done
+phases:
+  - {id: R0, title: "Browser test harness", status: done}
+  - {id: R1, title: "Design system 2.0", status: done}
+  - {id: R2, title: "Toàn cảnh to the board", status: done}
+  - {id: R3, title: "Old pages rebuilt", status: done}
+  - {id: R4, title: "Graph and timeline", status: done}
+  - {id: R5, title: "Copilot 2.0", status: done}
+  - {id: R6, title: "Live demo", status: done}
+  - {id: R7, title: "Regression and report", status: done}
+rows: []
+updated: 2026-10-15
+---
+
 # OneWealth — UI redesign to the kit: audit and plan
 
 The owner asked (2026-10-16) why the interface was never redesigned to the kit, and to recheck everything that was

@@ -1,3 +1,16 @@
+---
+title: "OneWealth redesign kit: findings and plan"
+status: done
+phases:
+  - {id: K1, title: Matrix, status: done}
+  - {id: K2, title: "Pulse, Wealth Map, Money Flow", status: done}
+  - {id: K3, title: Graph, status: done}
+  - {id: K4, title: Intelligence Feed, status: done}
+  - {id: K5, title: Copilot, status: done}
+  - {id: K6, title: Regression and report, status: done}
+rows: [BRD-BR-11, BRD-BR-15, BRD-FR-306, BRD-FR-703, BRD-FR-801]
+updated: 2026-10-15
+---
 # OneWealth — redesign kit: findings and plan
 
 Source: `OneWealth_Redesign_Kit.zip` (kept out of git, like the BRD): `PROMPT_MASTER.md`, `CHANGE_PROPOSAL.md`,

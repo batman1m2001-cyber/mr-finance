@@ -1,3 +1,18 @@
+---
+title: "OneWealth news-impact system and redesign: analysis and plan"
+status: in_progress
+phases:
+  - {id: N0, title: Engine, status: done}
+  - {id: N1, title: News, status: done}
+  - {id: N2, title: Views and agents, status: done}
+  - {id: N3, title: "Apply, control", status: done}
+  - {id: U1, title: Design system and shell, status: done}
+  - {id: U2, title: Redesigned screens, status: done}
+  - {id: N4, title: Research and goal branch, status: done}
+  - {id: N5, title: "Optional: stress tests, agent catalogue, CIO newsletter, accuracy tracking, HMAC inbox", status: open}
+rows: [BRD-FR-404, BRD-FR-305, BRD-FR-307, BRD-NFR-05]
+updated: 2026-10-15
+---
 # OneWealth — news-impact system and redesign: analysis and plan
 
 Status: **plan**, 2026-10-15. Branch `redesign/news-impact` (worktree `../mr-finance-redesign`).

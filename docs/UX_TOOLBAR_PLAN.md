@@ -1,3 +1,16 @@
+---
+title: "The client's side toolbar: findings and plan (2026-10-21)"
+status: done
+phases:
+  - {id: T1, title: "Quick fixes", status: done}
+  - {id: T2, title: "Toolbar with names", status: done}
+  - {id: T3+T4, title: "One dashboard, Bảng số liệu", status: done}
+  - {id: T5, title: "One name per thing", status: done}
+  - {id: T6, title: "Groups on the graph", status: done}
+rows: []
+updated: 2026-10-21
+---
+
 # The client's side toolbar: findings and plan (2026-10-21)
 
 Owner request: look at each item of the client's side toolbar and make the interface more efficient — redesign the

@@ -1,3 +1,16 @@
+---
+title: "The assistant takes a file"
+status: parked
+phases:
+  - {id: T1, title: "The file store and attach flow", status: skipped}
+  - {id: T2, title: "The tools", status: skipped}
+  - {id: T3, title: "Without a model", status: skipped}
+  - {id: T4, title: "The panel", status: skipped}
+  - {id: T5, title: "The BRD", status: skipped}
+  - {id: T6, title: "Tests and the gate", status: skipped}
+rows: []
+updated: 2026-10-26
+---
 # The assistant takes a file: "dùng file này add vào tài sản cho tôi" (2026-10-22)
 
 > Superseded by [OCR_PLAN.md](OCR_PLAN.md) (2026-10-26), which also takes images and scans.

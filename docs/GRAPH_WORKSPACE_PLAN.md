@@ -1,3 +1,21 @@
+---
+title: "Graph workspace plan — the Customer's persistent financial graph (experiment)"
+status: done
+phases:
+  - {id: G0, title: "Branch, worktree, BRD", status: done}
+  - {id: G1, title: "Workspace shell", status: done}
+  - {id: G2, title: "Bottom strip", status: done}
+  - {id: G3, title: "Data and graph", status: done}
+  - {id: G4, title: "Stream door", status: done}
+  - {id: G5, title: "Graph follows the stream", status: done}
+  - {id: G6, title: "Phone, keyboard, motion", status: done}
+  - {id: G7, title: "Verification and report", status: done}
+  - {id: G8, title: "Hierarchy", status: done}
+  - {id: G9, title: "Dataflow", status: done}
+  - {id: G10, title: "Performance and report", status: done}
+rows: [OWN-GW-01, OWN-GW-02, OWN-GW-03, OWN-GW-04, OWN-GW-05, OWN-GW-06, OWN-GW-07, OWN-GW-08, OWN-GW-09, OWN-GW-10, OWN-GW-11, OWN-GW-12, OWN-GW-13, OWN-GW-14, OWN-GW-15, OWN-GW-16, OWN-GW-17, OWN-GW-18, OWN-GW-19]
+updated: 2026-10-17
+---
 # Graph workspace plan — the Customer's persistent financial graph (experiment)
 
 Owner request 2026-10-17: [`docs/brd/sources/owner_requests/2026-10-17_persistent_financial_graph.md`](brd/sources/owner_requests/2026-10-17_persistent_financial_graph.md).

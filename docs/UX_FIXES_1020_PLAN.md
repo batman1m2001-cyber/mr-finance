@@ -1,3 +1,16 @@
+---
+title: "UI/UX fixes of 2026-10-20 — plan and result"
+status: done
+phases:
+  - {id: H, title: "A sheet's header keeps one line", status: done}
+  - {id: P, title: "A phone's header is one row", status: done}
+  - {id: T, title: "Text is not cut off", status: done}
+  - {id: S, title: "Small things", status: done}
+  - {id: N, title: "English names", status: done}
+rows: []
+updated: 2026-10-20
+---
+
 # UI/UX fixes of 2026-10-20 — plan and result
 
 The owner asked for UI/UX fixes on the live demo (:8030) after a review of every screen. The review signed in as each

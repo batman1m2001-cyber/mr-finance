@@ -1,3 +1,19 @@
+---
+title: "OneWealth: the BRD's last 15 rows"
+status: done
+phases:
+  - {id: G1, title: "Cách tính everywhere", status: done}
+  - {id: G2, title: "The client-data barrier", status: done}
+  - {id: G3, title: "Encryption and secrets", status: done}
+  - {id: G4, title: "Moving to the bank", status: done}
+  - {id: G5, title: "Availability", status: done}
+  - {id: G6, title: "Urgent and important news", status: done}
+  - {id: G7, title: "Control and behaviour measures", status: done}
+  - {id: G8, title: "The certified specialist", status: done}
+  - {id: G9, title: "The control group", status: done}
+rows: [BRD-NFR-11, BRD-NFR-08, BRD-NFR-07, BRD-NFR-03, BRD-KPI-01, BRD-KPI-02, BRD-KPI-05, BRD-KPI-06, BRD-KPI-07, BRD-RULE-DATA-10, BRD-RULE-ROLE-05, BRD-RULE-WF-08, BRD-RULE-MEAS-06]
+updated: 2026-10-16
+---
 # OneWealth — The BRD's last 15 rows: audit and plan
 
 After [BRD_COMPLETION_PLAN.md](BRD_COMPLETION_PLAN.md) (F1–F10), 150 of the BRD's 165 rows are verified

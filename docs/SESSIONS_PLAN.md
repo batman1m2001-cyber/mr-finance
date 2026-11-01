@@ -1,3 +1,17 @@
+---
+title: "Assistant sessions, history and compaction — plan"
+status: done
+phases:
+  - {id: S0, title: "BRD: source, requirements, plan", status: done}
+  - {id: S1, title: "Store: rename, archive, restore, turns kept", status: done}
+  - {id: S2, title: "Titles and goals", status: done}
+  - {id: S3, title: "Structured compaction", status: done}
+  - {id: S4, title: "The panel: session bar and history", status: done}
+  - {id: S5, title: "Verification", status: done}
+rows: [OWN-SS-01, OWN-SS-02, OWN-SS-03, OWN-SS-04, OWN-SS-05, OWN-SS-06, OWN-SS-07, OWN-SS-08]
+updated: 2026-10-17
+---
+
 # Assistant sessions, history and compaction — plan
 
 Owner request: [`2026-10-17_assistant_sessions.md`](brd/sources/owner_requests/2026-10-17_assistant_sessions.md)

@@ -1,3 +1,17 @@
+---
+title: "Business feedback 6 — the staff desks (2026-10-24) — plan"
+status: done
+phases:
+  - {id: F1, title: "Sheets: nested tabs", status: done}
+  - {id: F2, title: "RM", status: done}
+  - {id: F3, title: "CIO Decision board", status: done}
+  - {id: F4, title: "CIO Tác động, Nội dung, Hiệu quả; Admin", status: done}
+  - {id: F5, title: "Customer Headline News", status: done}
+  - {id: F6, title: "Accounts", status: done}
+  - {id: F7, title: "Gate", status: done}
+rows: [OWN-FB-01, OWN-FB-02, OWN-FB-03, OWN-FB-04, OWN-FB-05, OWN-FB-06, OWN-FB-07, OWN-FB-08, OWN-FB-09, OWN-FB-10, OWN-FB-11, OWN-FB-12, OWN-FB-13, OWN-FB-14, OWN-FB-15, OWN-FB-16, OWN-FB-17, OWN-FB-18]
+updated: 2026-10-25
+---
 # Business feedback 6 — the staff desks (2026-10-24) — plan
 
 **Status: done (F1–F7), 2026-10-24.** OWN-FB-01…18 implemented_verified (tests/ui/test_feedback6_ui.py,

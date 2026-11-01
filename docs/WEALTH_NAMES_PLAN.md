@@ -1,3 +1,16 @@
+---
+title: "The client's four sections, by the bank's names (business feedback 2, 2026-10-22)"
+status: done
+phases:
+  - {id: W1, title: "The menu", status: done}
+  - {id: W2, title: "The pages", status: done}
+  - {id: W3, title: "The assistant and the guide", status: done}
+  - {id: W4, title: "The BRD", status: done}
+  - {id: W5, title: "Tests and the gate", status: done}
+rows: []
+updated: 2026-10-22
+---
+
 # The client's four sections, by the bank's names (business feedback 2, 2026-10-22)
 
 **Asked.** The business's second feedback file ("Các lỗi -2.docx", nine items, screenshots of the new app next to the

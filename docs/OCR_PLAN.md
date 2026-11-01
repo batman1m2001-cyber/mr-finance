@@ -1,3 +1,17 @@
+---
+title: "Any document to the assistant: attach, paste, photograph (2026-10-26)"
+status: done
+phases:
+  - {id: O1, title: The file, status: done}
+  - {id: O2, title: The reader, status: done}
+  - {id: O3, title: The turn, status: done}
+  - {id: O4, title: The writes, status: done}
+  - {id: O5, title: The panel, status: done}
+  - {id: O6, title: The BRD, status: done}
+  - {id: O7, title: Tests and the gate, status: done}
+rows: [OWN-DOC-01, OWN-DOC-02, OWN-DOC-03, OWN-DOC-04, OWN-DOC-05, OWN-DOC-06, OWN-DOC-07]
+updated: 2026-10-26
+---
 # Any document to the assistant: attach, paste, photograph (2026-10-26)
 
 **Status: done** (O1–O7, 2026-10-26). Gate: 5/5 documents read as written with the right kind (5 requests,
