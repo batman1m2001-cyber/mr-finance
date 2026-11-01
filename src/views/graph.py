@@ -1,5 +1,5 @@
 """cio_agent_flow: an event → four analyst groups at once (and any the prompts configuration adds) →
-debate → synthesis and format check → the view kept → the challenger (BRD FR-301…303, §8.1). The CIO's action on a view is review_flow (review/graph.py). (The fixed eval set on prompt and model proposals, MEAS-07, runs in measure/graph.py evaluation_flow.)
+debate → synthesis and format check → the view kept → the challenger (BRD FR-301…303, §8.1). The CIO's action on a view is review_flow (review/graph.py). (The fixed eval set on prompt and model proposals, MEAS-07, runs in market/graph.py market_flow.)
 
 Served as is: POST /api/events/run-agent queues a run in news/graph.py news_flow."""
 

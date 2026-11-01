@@ -91,7 +91,6 @@ from evidence import bodies as evidence_bodies
 from evidence.graph import evidence_flow
 from impact.ops import every_client
 from market.graph import market_flow
-from measure.graph import evaluation_flow
 from news import bodies as news_bodies
 from news.graph import news_flow
 from pages import bodies as pages_bodies
@@ -836,7 +835,7 @@ APP = Application(
         ),
         Job(
             "agent_eval",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "agent_eval"},
             schedule=schedule(every="1m", port=PORT),
             timeout=3600,
@@ -845,7 +844,7 @@ APP = Application(
         ),
         Job(
             "accuracy_score",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "accuracy"},
             schedule=schedule(at="18:30", port=PORT),
             timeout=600,
@@ -855,7 +854,7 @@ APP = Application(
         # nothing approved; their drafts' shadow forecasts kept and scored, the report in out/trial/<day>.json
         Job(
             "trial_daily",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "trial_daily"},
             schedule=schedule(at="08:30", port=PORT),
             timeout=3600,
@@ -864,7 +863,7 @@ APP = Application(
         ),
         Job(
             "trial_score",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "trial_score"},
             schedule=schedule(every="15m", port=PORT),
             timeout=600,
