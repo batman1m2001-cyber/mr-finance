@@ -24,7 +24,6 @@ from impact.ops import keep as keep_alerts
 from impact.ops import profile_of, score
 from news.ops import dismiss, fetch, keep, reference_check, release, screen
 from views.worker import queue_agent
-from wealth.action import route
 
 
 @graph
@@ -49,7 +48,6 @@ def news_flow(
     scope="personal",
 ):
     """Fetch, gate, sort and keep the news; group it into events; what is moving a client's wealth."""
-    which = route(action=action)
     got = fetch(feeds=feeds, now=now)
     seen = screen(fetched=got["fetched"], at=got["at"])
     kept = keep(rows=seen["rows"], counts=seen["counts"], at=got["at"], started=got["started"])
@@ -66,8 +64,8 @@ def news_flow(
     found = score(holdings=held["holdings"], profile=who["profile"])
     alerts = keep_alerts(client_id=ask["client_id"], scope=ask["scope"], alerts=found["alerts"], net_worth=found["net_worth"])
 
-    a = which["action"]
-    START >> which >> if_(a == "ingest", got).if_(a == "reference", referenced).if_(a == "dismiss", dismissed).if_(
+    a = action
+    START >> if_(a == "ingest", got).if_(a == "reference", referenced).if_(a == "dismiss", dismissed).if_(
         a == "release", released
     ).if_(a == "event", grouped).if_(a == "urgent", flagged).if_(a == "queue", queued).if_(a == "alerts", ask).build()
     got >> seen >> kept >> topics >> END

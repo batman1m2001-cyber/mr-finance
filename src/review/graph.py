@@ -15,7 +15,6 @@ from operonx.core.ops import if_
 from apply.ops import decide_run, recompute
 from review.ops import check_pending, decide, propose, read_decision, read_proposal, recommend
 from views.ops import decide_view
-from wealth.action import route
 
 
 @graph
@@ -41,7 +40,6 @@ def review_flow(
 ):
     """A simulation's option for the RM, the RM's decision on it, the RM's own recommendation, or the CIO's decision on
     a view or a run."""
-    which = route(action=task)
     proposal = read_proposal(client_id=client_id, scenario=scenario, title=title, option=option, summary=summary)
     queued = propose(client_id=proposal["client_id"], kind=proposal["kind"], title=proposal["title"], data=proposal["data"])
     ask = read_decision(item_id=item_id, decision=decision, note=note, by=by)
@@ -54,8 +52,8 @@ def review_flow(
     recomputed = recompute(run_id=run, by=by, idem_key=idem_key)
     run_decided = decide_run(run_id=run, action=action, by=by, reason=reason)
 
-    a = which["action"]
-    START >> which >> if_(a == "propose", proposal).if_(a == "decide", ask).if_(a == "recommend", recommended).if_(
+    a = task
+    START >> if_(a == "propose", proposal).if_(a == "decide", ask).if_(a == "recommend", recommended).if_(
         a == "view", viewed
     ).if_(a == "recompute", recomputed).if_(a == "run", run_decided).build()
     proposal >> queued >> END

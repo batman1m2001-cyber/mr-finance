@@ -11,7 +11,6 @@ from operonx import END, START, graph
 from operonx.core.ops import if_
 
 from evidence.ops import decide, decide_draft, draft, read, save_type
-from wealth.action import route
 
 
 @graph
@@ -31,14 +30,13 @@ def evidence_flow(
 ):
     """Each news item's evidence: the statistics or the qualitative frame, as the caller's role may read it; or the
     CIO's and the agent's writes on it."""
-    which = route(action=action)
     decided = decide(factor=factor, decision=decision, by=by, note=note)
     drafted = draft(news_id=news_id, by=by, mode=mode)
     draft_decided = decide_draft(news_id=news_id, decision=decision, by=by, note=note)
     typed = save_type(event_type=event_type, label=label, dates=dates, series=series, by=by)
     shown = read(factor=factor, role=role)
-    a = which["action"]
-    START >> which >> if_(a == "decide", decided).if_(a == "draft", drafted).if_(a == "draft_decide", draft_decided).if_(
+    a = action
+    START >> if_(a == "decide", decided).if_(a == "draft", drafted).if_(a == "draft_decide", draft_decided).if_(
         a == "type", typed
     ).else_(shown)
     decided >> END

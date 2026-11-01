@@ -16,7 +16,6 @@ from operonx.core.ops import if_
 
 from allocation.ops import allocate, case_of, check_request, example, override, queue, review, send, set_method, tilt, tilt_list
 from consolidate.graph import consolidate_flow
-from wealth.action import route
 
 
 @graph
@@ -41,7 +40,6 @@ def allocation_flow(
 ):
     """Liquidity, Legacy and Growth for a client: each target, the gap, the fill and the rebalance, checked; with
     ``whatif``, the same for a scenario. The other actions are the CIO's and the RM's writes and reads."""
-    which = route(action=action)
     ask = check_request(client_id=client_id, scope=scope, method=method, assumptions=assumptions, whatif=whatif)
     held = consolidate_flow(client_id=ask["client_id"], scope=ask["scope"])
     made = case_of(
@@ -58,8 +56,8 @@ def allocation_flow(
     waiting = queue()
     picked = set_method(method=method, by=by)
 
-    a = which["action"]
-    START >> which >> if_(a == "example", worked).if_(a == "tilt", tilted).if_(a == "tilts", tilts_in_force).if_(
+    a = action
+    START >> if_(a == "example", worked).if_(a == "tilt", tilted).if_(a == "tilts", tilts_in_force).if_(
         a == "review", decided
     ).if_(a == "queue", waiting).if_(a == "method", picked).else_(ask)
     ask >> held >> if_(a == "override", moved).else_(made)

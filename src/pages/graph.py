@@ -37,7 +37,6 @@ from search.ops import search
 from timeline.ops import changes
 from timeline.ops import check_request as check_timeline
 from timeline.ops import series
-from wealth.action import route
 
 
 @graph
@@ -62,7 +61,6 @@ def pages_flow(
 ):
     """A client's pages. ``scope``: personal or family; ``role``: client or rm; ``month``: YYYY-MM (none = the latest
     month with rows); ``goals``: the ids the client follows, as kept in the browser."""
-    which = route(action=action)
 
     # dashboard
     dashboard = dashboard_flow(client_id=client_id, scope=scope, months=months)
@@ -163,8 +161,8 @@ def pages_flow(
     # contact
     contact = log_contact(family_id=family_id, channel=channel, signal=signal, note=note, by=by)
 
-    a = which["action"]
-    START >> which >> if_(a == "dashboard", dashboard).if_(a == "overview", ask_overview).if_(
+    a = action
+    START >> if_(a == "dashboard", dashboard).if_(a == "overview", ask_overview).if_(
         a == "timeline", ask_timeline
     ).if_(a == "flows", ask_flows).if_(a == "feed", ask_feed).if_(a == "feed_open", opened).if_(
         a == "search", ask_search

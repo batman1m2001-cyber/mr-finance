@@ -21,7 +21,6 @@ from scenarios.ops import (
     profile_of,
     stress,
 )
-from wealth.action import route
 
 
 @graph
@@ -31,7 +30,6 @@ def scenarios_flow(
     """``scenario``: one simulation, on this client's own holdings. ``combine``: several stress tests at once: per
     class and per scenario, net worth, liquidity, income, expenses and goals before and after — a what-if, never net
     worth. ``goals``: every life goal with its gap and status."""
-    which = route(action=action)
 
     ask_one = check_request(client_id=client_id, scenario=scenario, params=params, scope=scope)
     held_one = consolidate_flow(client_id=ask_one["client_id"], scope=ask_one["scope"])
@@ -72,8 +70,8 @@ def scenarios_flow(
         followed=ask_many["followed"],
     )
 
-    a = which["action"]
-    START >> which >> if_(a == "goals", ask_goals).if_(a == "combine", ask_many).else_(ask_one)
+    a = action
+    START >> if_(a == "goals", ask_goals).if_(a == "combine", ask_many).else_(ask_one)
     ask_one >> held_one >> who_one >> kind >> if_(kind["stress"] == True, shocked).else_(tried)  # noqa: E712
     tried >> one
     shocked >> one

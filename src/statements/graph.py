@@ -21,7 +21,6 @@ from statements.ops import (
     rule_read,
     save_holdings,
 )
-from wealth.action import route
 
 READ_PROMPT = {
     "system": (
@@ -85,7 +84,6 @@ def intake_flow(action="statement", client_id=None, filename=None, content=None,
     their tier-2 holdings. ``declare`` (POST /api/declare): one chat turn, the agent records what the client says
     (when AI is on), or the rules do, as their tier-3 declarations. The turn said as it happens
     (POST /api/declare/stream) has doors and stays declare/graph.py declare_stream_flow."""
-    which = route(action=action)
 
     ask = check_request(client_id=client_id, filename=filename, content=content)
     got = read_flow(filename=ask["filename"], content=ask["content"])
@@ -129,7 +127,7 @@ def intake_flow(action="statement", client_id=None, filename=None, content=None,
         rule_method=rules["method"],
     )
 
-    START >> which >> if_(which["action"] == "declare", asked).else_(ask)
+    START >> if_(action == "declare", asked).else_(ask)
     ask >> got >> saved >> END
     asked >> mode >> if_(mode["assistant"] == True, agent).if_(mode["onprem"] == True, onprem).else_(rules)  # noqa: E712
     agent >> said

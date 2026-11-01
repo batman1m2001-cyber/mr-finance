@@ -15,7 +15,6 @@ from operonx.core.ops import if_
 from newsletter.ops import act as newsletter_step
 from newsletter.ops import draft as newsletter_draft
 from research.ops import declare_outflow, release, suggest_goals, upload
-from wealth.action import route
 
 
 @graph
@@ -41,7 +40,6 @@ def research_flow(
     changes=None,
 ):
     """The research desk, the goals' outflow labels and the newsletter: one step each, as the route says."""
-    which = route(action=task)
     uploaded = upload(item=item, by=by)
     released = release(item_id=item_id, decision=decision, by=by, note=note)
     outflow = declare_outflow(family_id=family_id, goal_id=goal_id, purpose=purpose, by=by, country=country)
@@ -50,8 +48,8 @@ def research_flow(
         view_ids=view_ids, by=by, title=title, mode=mode, distribution=distribution, conflict=conflict, body=body
     )
     stepped = newsletter_step(newsletter_id=newsletter_id, action=action, by=by, note=note, changes=changes)
-    t = which["action"]
-    START >> which >> if_(t == "release", released).if_(t == "outflow", outflow).if_(t == "suggest", suggested).if_(
+    t = task
+    START >> if_(t == "release", released).if_(t == "outflow", outflow).if_(t == "suggest", suggested).if_(
         t == "draft", drafted
     ).if_(t == "act", stepped).else_(uploaded)
     uploaded >> END

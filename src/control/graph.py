@@ -18,7 +18,6 @@ from operonx.core.ops import if_
 from control.ops import ack_alert, check_chain, decide, heartbeat, propose, run_job
 from market.ops import ask_load, propose_estimate
 from people.ops import decide_request, file_request
-from wealth.action import route
 
 
 @graph
@@ -45,7 +44,6 @@ def admin_flow(
 ):
     """One write per task, each the op its old flow ran: ``action`` is the request's own field (approve|reject...),
     ``task`` picks the route."""
-    which = route(action=task)
     proposed = propose(kind=kind, data=data, by=by, note=note)
     decided = decide(version_id=version_id, action=action, by=by, note=note)
     acked = ack_alert(alert_id=alert_id, by=by, note=note)
@@ -59,8 +57,8 @@ def admin_flow(
     chain = check_chain(tick=tick, at=at)
     beat = heartbeat(tick=tick, at=at)
 
-    t = which["action"]
-    START >> which >> if_(t == "config_decide", decided).if_(t == "alert_ack", acked).if_(t == "job_run", ran).if_(
+    t = task
+    START >> if_(t == "config_decide", decided).if_(t == "alert_ack", acked).if_(t == "job_run", ran).if_(
         t == "account_request", filed
     ).if_(t == "account_decide", request_decided).if_(t == "model_estimate", estimated).if_(
         t == "market_load", asked

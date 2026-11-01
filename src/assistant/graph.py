@@ -35,7 +35,6 @@ from copilot.ops import act as copilot_act
 from copilot.ops import answer as copilot_answer
 from copilot.ops import check_request as copilot_check
 from copilot.ops import decide as copilot_decide
-from wealth.action import route as pick_task
 
 
 @graph
@@ -68,7 +67,6 @@ def assistant_flow(
 ):
     """Ask OneWealth: the role's tools in as many steps as the question needs; writes wait for the person. The other
     tasks are the Copilot, the person's conversations and memory, an attachment, and the two daily jobs."""
-    which = pick_task(action=task)
     ask = check_request(
         message=message,
         role=role,
@@ -114,8 +112,8 @@ def assistant_flow(
     swept = retention_sweep()
     distilled = consolidate_due(tick=tick, at=at)
 
-    t = which["action"]
-    START >> which >> if_(t == "copilot", copilot_ask).if_(t == "conversations", sessions).if_(t == "memory", remembered).if_(
+    t = task
+    START >> if_(t == "copilot", copilot_ask).if_(t == "conversations", sessions).if_(t == "memory", remembered).if_(
         t == "attach", attached
     ).if_(t == "retention", swept).if_(t == "consolidate", distilled).else_(ask)
     ask >> done >> out >> END

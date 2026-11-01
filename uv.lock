@@ -1184,7 +1184,7 @@ requires-dist = [
     { name = "httpx", marker = "extra == 'test'", specifier = ">=0.24" },
     { name = "onnxruntime", specifier = ">=1.17" },
     { name = "openpyxl", specifier = ">=3.1.5" },
-    { name = "operonx", extras = ["openai", "serve"], specifier = ">=1.30.1" },
+    { name = "operonx", extras = ["openai", "serve"], specifier = ">=1.38.0" },
     { name = "operonx-agents", specifier = ">=0.3.1" },
     { name = "operonx-kb", extras = ["pdf"], specifier = ">=0.2.6" },
     { name = "pillow", specifier = ">=10" },
@@ -1559,7 +1559,7 @@ wheels = [
 
 [[package]]
 name = "operonx"
-version = "1.37.0"
+version = "1.38.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "orjson" },
@@ -1568,9 +1568,9 @@ dependencies = [
     { name = "rich" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/73/31/4aa2b16e64825b3c7b0a46289e33712d873ba701997ed78e3bab6cd72900/operonx-1.37.0.tar.gz", hash = "sha256:d703419c9d69a0b9de010e9844d9fb15a5944427fbbc25bbcb14a04a915b3038", size = 818982, upload-time = "2026-11-01T06:32:35.445Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ab/2a/02096ac7b17a7924e3b53cb44daa5e31e7660c413f1f9f6b25f558936eb8/operonx-1.38.0.tar.gz", hash = "sha256:03512347dc64cc1c6775922345ca01ada1c12b48ed324e4eafb24f807489ae4c", size = 819558, upload-time = "2026-11-01T09:16:28.124Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/42/2f/6134302df67b34d5ed59a85a628438eb4a75f20f3fce8a3240a690af6b97/operonx-1.37.0-py3-none-any.whl", hash = "sha256:f335a8221b27a2ae9b67670008f0a2dbe776177e48213a2ad0da6516b0669a9c", size = 1002910, upload-time = "2026-11-01T06:32:33.765Z" },
+    { url = "https://files.pythonhosted.org/packages/8e/b6/8ed9f0b59be6ac66ece3f84cc373fddc7921ac847dc17a99e87441f7a56b/operonx-1.38.0-py3-none-any.whl", hash = "sha256:9c761b7b4a6463f916e33fabc2d496b44b679a828f3989761b3bcb1b4a5141d6", size = 1003572, upload-time = "2026-11-01T09:16:26.026Z" },
 ]
 
 [package.optional-dependencies]

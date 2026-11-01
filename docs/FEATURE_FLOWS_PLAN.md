@@ -148,8 +148,8 @@ request contract: `bodies.py` in each feature holds the route signatures, `tests
 now reads `body=` when a route has one, and no longer lists `variants`, which is wiring).
 
 **93 → 24 flows.** One flow per feature, a route (or job) picks its branch with a selector (`action`, or `task` where a
-request body has a field named `action`) bound by `variants` / `Job(inputs=)`; `wealth.action.route` puts the selector on
-a Ref so `if_` can read it.
+request body has a field named `action`) bound by `variants` / `Job(inputs=)`. A bound selector is a plain value, and `if_` takes the
+`bool` (operonx 1.38.0): `START >> if_(action == "tilt", tilted)…`; a job's runtime selector is a Ref and routes at run time.
 
 | Flow | Replaces |
 |---|---|

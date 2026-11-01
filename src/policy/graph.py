@@ -10,19 +10,17 @@ from operonx import END, START, graph
 from operonx.core.ops import if_
 
 from policy.ops import add, set_status, summarise, verify
-from wealth.action import route
 
 
 @graph
 def policy_flow(action="add", item=None, by=None, document_id=None, note="", status=None, date=None, mode=""):
     """The CIO's and the policy agent's writes on the radar."""
-    which = route(action=action)
     added = add(item=item, by=by)
     verified = verify(document_id=document_id, by=by, note=note)
     set_ = set_status(document_id=document_id, status=status, by=by, note=note, date=date)
     summarised = summarise(document_id=document_id, by=by, mode=mode)
-    a = which["action"]
-    START >> which >> if_(a == "verify", verified).if_(a == "status", set_).if_(a == "summarise", summarised).else_(added)
+    a = action
+    START >> if_(a == "verify", verified).if_(a == "status", set_).if_(a == "summarise", summarised).else_(added)
     added >> END
     verified >> END
     set_ >> END
