@@ -7,6 +7,7 @@ import asyncio
 import hashlib
 import inspect
 import sqlite3
+from news.graph import news_flow
 from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
 from urllib.parse import urlparse
@@ -66,12 +67,11 @@ def _feeds(mp):
 
 
 def _an_event(mp):
-    from events.graph import event_flow
-    from news.graph import ingest_flow
+    from news.graph import news_flow
 
     _feeds(mp)
-    ids = run(base.run_graph(ingest_flow, feeds=None, now=None, tick=None, at=None))["ingest"]["ids"]
-    ev = run(base.run_graph(event_flow, news_ids=ids, title=None, by="cio"))["event"]
+    ids = run(base.run_graph(news_flow, action="ingest", feeds=None, now=None, tick=None, at=None))["ingest"]["ids"]
+    ev = run(base.run_graph(news_flow, action="event", news_ids=ids, title=None, by="cio"))["event"]
     return {"event_id": ev["id"], "urgent": True, "reason": "Tác động lớn tới danh mục trái phiếu"}
 
 

@@ -20,7 +20,7 @@ POST /api/statement {client_id, filename, content} ──► statement_flow ─�
 POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
 POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
-POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
+POST /api/alerts    {client_id, scope?} ──► news_flow (alerts) ──► policies, macro, infrastructure, in VND
 POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
 POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
 POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} ──► allocation_flow ──► Liquidity, Legacy,
@@ -35,17 +35,16 @@ POST /api/evidence {factor?, role?} ──► evidence_flow (one flow, an action
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
                     · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
 POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
-POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
-POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
-07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
-every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
+POST /api/review/propose (the RM queue), /decide, /recommend (the RM's own recommendation) ──► review_flow
+07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: news_flow (alerts) for every client
+every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► news_flow (ingest): the feeds into the inbox
 every 2 h ──► news_reference: the independent reference's stories, judged collected a day later (KPI-02)
 15:45/16:00/17:30 daily and hourly, `operonx run market_<kind>` ──► the market jobs: public sources into SQLite
      (market_backfill on demand) · GET /api/market[/series] ──► app/web.py (the source registry, the series)
-POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (a CIO)
+POST /api/news/dismiss, /api/news/release ──► news_flow (a CIO)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
-POST /api/events ──► event_flow · POST /api/events/urgent ──► event_urgent_flow (KPI-01) · POST /api/events/run-agent
-     ──► agent_queue_flow, then the agent_worker job ──► cio_agent_flow (agent + challenger)
+POST /api/events, /api/events/urgent ──► news_flow (KPI-01) · POST /api/events/run-agent
+     ──► news_flow (queue), then the agent_worker job ──► cio_agent_flow (agent + challenger)
 POST /api/newsletters, /api/newsletters/act ──► research_flow, a task each (FR-801: the CIO drafts from
      approved views, another CIO approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
 POST /api/policy[/verify|/status|/summarise] ──► policy_flow, an action each (FR-306: a CIO adds a document from the Official
@@ -103,15 +102,14 @@ from control.graph import (
 )
 from copilot.graph import copilot_flow
 from declare.graph import declare_flow, declare_stream_flow
-from events.graph import event_flow, event_urgent_flow
 from evidence import bodies as evidence_bodies
 from evidence.graph import evidence_flow
-from impact.graph import alerts_flow
 from impact.ops import every_client
 from inbox.graph import inbox_import_flow
 from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
 from measure.graph import evaluation_flow
-from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
+from news import bodies as news_bodies
+from news.graph import news_flow
 from pages import bodies as pages_bodies
 from pages.graph import pages_flow
 from people.graph import account_decide_flow, account_request_flow
@@ -119,11 +117,12 @@ from policy import bodies as policy_bodies
 from policy.graph import policy_flow
 from research import bodies as research_bodies
 from research.graph import research_flow
-from review.graph import propose_flow, recommend_flow, review_flow
+from review import bodies as review_bodies
+from review.graph import review_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
-from views.graph import agent_queue_flow, agent_worker_flow, decide_flow
+from views.graph import agent_worker_flow, decide_flow
 from voice.graph import assistant_voice_flow
 from zone.graph import zone_flow
 
@@ -292,7 +291,9 @@ APP = Application(
         Service(
             "alerts",
             http("POST", "/api/alerts", port=PORT),
-            graph=alerts_flow,
+            graph=news_flow,
+            variants={"alerts": {"action": "alerts"}},
+            body=news_bodies.alerts,
             description="POST {client_id, scope?}: what is moving the client's wealth, in VND, with sources.",
         ),
         Service(
@@ -428,57 +429,75 @@ APP = Application(
         Service(
             "propose",
             http("POST", "/api/review/propose", port=PORT),
-            graph=propose_flow,
+            graph=review_flow,
+            variants={"propose": {"action": "propose"}},
+            body=review_bodies.propose,
             description="POST {client_id, scenario, title, option}: an option sent to the RM queue.",
         ),
         Service(
             "decide",
             http("POST", "/api/review/decide", port=PORT),
             graph=review_flow,
+            variants={"decide": {"action": "decide"}},
+            body=review_bodies.decide,
             description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
         Service(
             "recommend",
             http("POST", "/api/review/recommend", port=PORT),
-            graph=recommend_flow,
+            graph=review_flow,
+            variants={"recommend": {"action": "recommend"}},
+            body=review_bodies.recommend,
             description="POST {client_id, title, actions, note?, by}: the RM writes an action recommendation for a "
             "family; it reaches the client at once (the RM's alone, OWN-FB-18).",
         ),
         Service(
             "news_fetch",
             http("POST", "/api/news/ingest", port=PORT),
-            graph=ingest_flow,
+            graph=news_flow,
+            variants={"ingest": {"action": "ingest"}},
+            body=news_bodies.ingest,
             description="POST {}: fetch every white-listed feed now, through the gates, into the inbox.",
         ),
         Service(
             "news_dismiss",
             http("POST", "/api/news/dismiss", port=PORT),
-            graph=dismiss_flow,
+            graph=news_flow,
+            variants={"dismiss": {"action": "dismiss"}},
+            body=news_bodies.dismiss,
             description="POST {ids, by?, note?}: the CIO drops items from the inbox.",
         ),
         Service(
             "news_release",
             http("POST", "/api/news/release", port=PORT),
-            graph=release_flow,
+            graph=news_flow,
+            variants={"release": {"action": "release"}},
+            body=news_bodies.release,
             description="POST {item_id, by, note}: a CIO releases an item held by the restricted list.",
         ),
         Service(
             "event",
             http("POST", "/api/events", port=PORT),
-            graph=event_flow,
+            graph=news_flow,
+            variants={"event": {"action": "event"}},
+            body=news_bodies.event,
             description="POST {news_ids, title?, by}: the CIO groups news into an event.",
         ),
         Service(
             "event_urgent",
             http("POST", "/api/events/urgent", port=PORT),
-            graph=event_urgent_flow,
+            graph=news_flow,
+            variants={"urgent": {"action": "urgent"}},
+            body=news_bodies.urgent,
             description="POST {event_id, urgent, reason, by}: the CIO flags an event urgent, or takes the flag off "
             "(KPI-01).",
         ),
         Service(
             "cio_agent",
             http("POST", "/api/events/run-agent", port=PORT),
-            graph=agent_queue_flow,
+            graph=news_flow,
+            variants={"queue": {"action": "queue"}},
+            body=news_bodies.queue,
             description="POST {event_id, by, mode?: live|mock}: the CIO agent queued; the agent_worker job runs it.",
         ),
         Service(
@@ -636,7 +655,8 @@ APP = Application(
         # and on demand with `operonx run policy_sweep`
         Job(
             "policy_sweep",
-            graph=alerts_flow,
+            graph=news_flow,
+            inputs={"action": "alerts"},
             items=every_client,
             key="client_id",
             schedule=schedule(at="07:00", port=PORT),
@@ -661,14 +681,16 @@ APP = Application(
         # (inside `operonx serve`), and on demand with `operonx run news_ingest`; then the topic follow-ups (A6)
         Job(
             "news_ingest",
-            graph=ingest_flow,
+            graph=news_flow,
+            inputs={"action": "ingest"},
             schedule=schedule(every="10m", port=PORT),
             description="Every 10 minutes: the white-listed RSS feeds into the inbox (FR-101).",
         ),
         # important news collected (KPI-02, news/reference.py): the independent reference every 2 hours
         Job(
             "news_reference",
-            graph=reference_flow,
+            graph=news_flow,
+            inputs={"action": "reference"},
             schedule=schedule(every="2h", port=PORT),
             timeout=120,
             description="Every 2 hours: Google News' business stories kept; a day later, each important one judged "

@@ -4,6 +4,7 @@ every family, reproducible to the dong, post-checked, ranked, traceable, withdra
 import asyncio
 import json
 import sqlite3
+from news.graph import news_flow
 from datetime import datetime, timezone
 from email.utils import format_datetime
 
@@ -16,15 +17,13 @@ from apply import reads, trace
 from apply import run as runs
 from apply.graph import recompute_flow, run_decide_flow
 from control import audit, crypto, db
-from events.graph import event_flow
-from news.graph import ingest_flow
 from views.graph import cio_agent_flow, decide_flow
 from wealth import fixtures
 
 NOW = 1_792_000_000.0
 LINKS = iter(range(10**6))
-INGEST = Operon(ingest_flow, params={"feeds": None, "now": None, "tick": None, "at": None})
-EVENT = Operon(event_flow, params={"news_ids": None, "title": None, "by": None})
+INGEST = Operon(news_flow, params={"action": "ingest", "feeds": None, "now": None, "tick": None, "at": None})
+EVENT = Operon(news_flow, params={"action": "event", "news_ids": None, "title": None, "by": None})
 AGENT = Operon(cio_agent_flow, params={"event_id": None, "by": None, "mode": None})
 DECIDE = Operon(
     decide_flow,

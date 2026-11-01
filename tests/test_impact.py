@@ -1,15 +1,15 @@
 import asyncio
 
+from news.graph import news_flow
 from operonx import Operon
 from operonx.app.jobs import Job
 
 from impact import _rules
-from impact.graph import alerts_flow
 from impact.ops import every_client
 from wealth import fixtures, store
 from wealth.money import TY
 
-ENGINE = Operon(alerts_flow, params={"client_id": None, "scope": None})
+ENGINE = Operon(news_flow, params={"action": "alerts", "client_id": None, "scope": None})
 
 
 def h(cls, value, kind="asset", cost=None, **detail):
@@ -116,7 +116,7 @@ def test_the_family_view_finds_the_second_property():
 
 def test_the_sweep_job_runs_every_client(tmp_path):
     run = asyncio.run(
-        Job("sweep", graph=alerts_flow, items=every_client, key="client_id", record_dir=str(tmp_path / "jobs")).run()
+        Job("sweep", graph=news_flow, inputs={"action": "alerts"}, items=every_client, key="client_id", record_dir=str(tmp_path / "jobs")).run()
     )
     assert run.status == "ok" and sorted(run.results) == fixtures.client_ids()
 

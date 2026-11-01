@@ -3,6 +3,7 @@
 import asyncio
 import copy
 import json
+from news.graph import news_flow
 from datetime import datetime, timezone
 from email.utils import format_datetime
 from types import SimpleNamespace
@@ -11,16 +12,14 @@ import pytest
 from operonx import Operon
 from starlette.testclient import TestClient
 
-from events.graph import event_flow
-from news.graph import ingest_flow, release_flow
 from views import agents, mock, schema
 from views import store as vstore
 from views.graph import cio_agent_flow, decide_flow
 from wealth import fixtures
 
 NOW = 1_792_000_000.0
-INGEST = Operon(ingest_flow, params={"feeds": None, "now": None, "tick": None, "at": None})
-EVENT = Operon(event_flow, params={"news_ids": None, "title": None, "by": None})
+INGEST = Operon(news_flow, params={"action": "ingest", "feeds": None, "now": None, "tick": None, "at": None})
+EVENT = Operon(news_flow, params={"action": "event", "news_ids": None, "title": None, "by": None})
 AGENT = Operon(cio_agent_flow, params={"event_id": None, "by": None, "mode": None})
 DECIDE = Operon(
     decide_flow,
@@ -88,7 +87,7 @@ def test_an_event_groups_news_and_a_restricted_mention_holds_it():
     out = run(AGENT, event_id=held["id"], by="cio")
     assert "đang bị giữ" in str(out["$errors"])
     ok(
-        Operon(release_flow, params={"item_id": None, "by": None, "note": None}),
+        Operon(news_flow, params={"action": "release", "item_id": None, "by": None, "note": None}),
         item_id=held["held"][0],
         by="cio",
         note="Tin công khai, không liên quan giao dịch",

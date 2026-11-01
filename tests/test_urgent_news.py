@@ -4,6 +4,7 @@ collected."""
 
 import asyncio
 import time
+from news.graph import news_flow
 from datetime import date, timedelta
 
 import pytest
@@ -88,13 +89,13 @@ def _news(title, published=None, source="vneconomy_ck", n=[0]):
 
 
 def test_the_cio_flags_an_event_urgent_with_a_reason_audited_and_can_take_it_off():
-    from events.graph import event_urgent_flow
+    from news.graph import news_flow
 
     ev = _event("NHNN điều chỉnh lãi suất điều hành")
     assert [p["id"] for p in ev["urgent_proposed"]] == ["sbv_rate"] and ev["urgent"] is None
     with pytest.raises(events.EventError, match="lý do"):
         events.set_urgent(ev["id"], True, " ", "cio")
-    eng = Operon(event_urgent_flow, params={"event_id": None, "urgent": None, "reason": None, "by": None})
+    eng = Operon(news_flow, params={"action": "urgent", "event_id": None, "urgent": None, "reason": None, "by": None})
     refused = asyncio.run(eng.run(inputs={"event_id": ev["id"], "urgent": True, "reason": "x", "by": "rm"}))
     assert refused.get("$errors")  # only the CIO
     got = asyncio.run(eng.run(inputs={"event_id": ev["id"], "urgent": True, "reason": "Quyết định NHNN", "by": "cio"}))
@@ -181,9 +182,9 @@ def test_a_story_seen_again_grows_its_outlets_until_it_is_judged():
 
 
 def test_the_reference_job_reads_keeps_and_alerts_when_the_reference_cannot_be_read():
-    from news.graph import reference_flow
+    from news.graph import news_flow
 
-    eng = Operon(reference_flow, params={"feed": None, "now": None, "tick": None, "at": None})
+    eng = Operon(news_flow, params={"action": "reference", "feed": None, "now": None, "tick": None, "at": None})
     got = asyncio.run(eng.run(inputs={"feed": feed(_story("f", "VN-Index giảm", [("VN-Index giảm", "CafeF")], 0))}))
     assert got["error"] is None and got["added"] == 1
     bad = asyncio.run(eng.run(inputs={"feed": "<html>not a feed"}))

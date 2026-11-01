@@ -6,11 +6,12 @@ member's holdings are marked. Nothing is invented: each figure is checked agains
 
 import asyncio
 
+from news.graph import news_flow
 from operonx import Operon
 from test_apply import MARKET, approved
 
 from apply import reads
-from impact.graph import alerts_flow
+from news.graph import news_flow
 from pages.graph import pages_flow
 from scenarios.graph import goals_flow
 
@@ -106,7 +107,7 @@ def _policy_edges(o):
 
 
 def test_a_policy_item_has_an_amount_only_where_one_class_takes_it(monkeypatch):
-    rep = asyncio.run(Operon(alerts_flow, params={"client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
+    rep = asyncio.run(Operon(news_flow, params={"action": "alerts", "client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
     impact = {a["id"]: a["impact"] for a in rep["report"]["alerts"]}
     for ref, level in _policy_edges(overview()).items():  # every item of the demo data touches one class
         assert len({e["from"] for e in level}) == 1

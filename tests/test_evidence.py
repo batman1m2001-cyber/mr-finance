@@ -4,6 +4,7 @@ the labels match the same way every time (§7), the CIO's review and the unsourc
 
 import asyncio
 import re
+from news.graph import news_flow
 from datetime import date, timedelta
 
 import pytest
@@ -12,7 +13,7 @@ from operonx import Operon
 from evidence import _check, _stats, agent, frames, labels
 from evidence import catalogue as cat
 from evidence.graph import evidence_flow
-from impact.graph import alerts_flow
+from news.graph import news_flow
 from market import store as market
 from procedural import goals
 from research import ops as research_ops
@@ -21,7 +22,7 @@ from wealth import fixtures
 
 READ = Operon(evidence_flow, params={"action": "read", "factor": None, "role": None})
 DECIDE = Operon(evidence_flow, params={"action": "decide", "factor": None, "decision": None, "by": None, "note": None})
-ALERTS = Operon(alerts_flow, params={"client_id": None, "scope": None})
+ALERTS = Operon(news_flow, params={"action": "alerts", "client_id": None, "scope": None})
 DECLARE = Operon(research_flow, params={"task": "outflow", "family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
 )
 TODAY = date(2026, 10, 15)
