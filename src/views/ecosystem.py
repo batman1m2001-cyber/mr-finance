@@ -151,7 +151,7 @@ EDGES: List[Dict[str, str]] = [
      "code": "src/news/graph.py::follow_ups_topics"},
     {"from": "follow_checks", "to": "person", "label": "báo một lần ở chuông", "code": "web/header.js::follow_up_seen"},
     {"from": "policy_sweep", "to": "state", "label": "nhận định đã duyệt và danh mục → cảnh báo khách",
-     "code": "src/impact/graph.py::alerts_flow"},
+     "code": "src/news/graph.py::news_flow"},
     {"from": "person", "to": "queue", "label": "CIO: “Chạy Agent CIO” cho một sự kiện",
      "code": "src/news/graph.py::news_flow"},
     {"from": "queue", "to": "cio", "label": "chạy việc cũ nhất", "code": "src/views/worker.py::run_next"},

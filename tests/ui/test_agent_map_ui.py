@@ -45,7 +45,7 @@ def test_on_a_phone_the_map_is_a_list_per_group(open_page):
     assert p.page.locator(".eco-wire").count() == 0 and p.page.locator(".eco-list .mgroup").count() == 6
     p.page.click("[data-node='policy_sweep']")
     p.page.wait_for_selector(".drawer .eco-links")
-    assert "src/impact/graph.py::alerts_flow" in p.page.inner_text(".drawer")
+    assert "src/news/graph.py::news_flow" in p.page.inner_text(".drawer")
     assert not p.problems()
 
 
