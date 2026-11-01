@@ -661,9 +661,9 @@ def plan_fetch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def fetch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from news.graph import ingest_flow
+    from news.graph import news_flow
 
-    s = (await _graph(ingest_flow, feeds=None, now=None, tick=None, at=None))["ingest"]
+    s = (await _graph(news_flow, action="ingest", feeds=None, now=None, tick=None, at=None))["ingest"]
     return {
         "text": f"Đã lấy tin: thêm {s['added']}, bỏ {s['refused']}, trùng {s['duplicates']}, giữ {s['held']}.",
         "data": s,

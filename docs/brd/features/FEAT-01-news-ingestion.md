@@ -50,7 +50,7 @@ with status `refused` and their reason (never shown in the inbox); skipped (too 
 
 ## Implementation
 `src/news/rss.py` (RSS 2.0/Atom → plain items), `src/news/rules.py`, `src/news/ops.py` (`fetch`, `screen`,
-`keep`), `src/news/graph.py` (`ingest_flow`), `src/news/store.py`; job and service in `app/main.py`.
+`keep`), `src/news/graph.py` (`news_flow`, action `ingest`), `src/news/store.py`; job and service in `app/main.py`.
 
 ## Dependencies
 Outbound HTTPS to the feeds ([integrations](../architecture/integrations.md)). FEAT-11 (audit).

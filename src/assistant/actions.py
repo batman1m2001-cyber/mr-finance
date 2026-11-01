@@ -49,9 +49,9 @@ KIND = {"policy": "chính sách", "macro": "vĩ mô", "infrastructure": "dự á
 
 async def drivers(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """What is moving the client's wealth: each policy, macro move and project, in VND (the policy-cost page)."""
-    from impact.graph import alerts_flow
+    from news.graph import news_flow
 
-    r = (await _graph(alerts_flow, client_id=_need_client(ctx), scope=ctx.scope))["report"]
+    r = (await _graph(news_flow, action="alerts", client_id=_need_client(ctx), scope=ctx.scope))["report"]
     found = sorted(r["alerts"], key=lambda a: -abs(a["impact"]))
     if not found:
         return {"text": "Chưa thấy chính sách, biến động vĩ mô hay dự án nào tác động tới tài sản.", "data": {"n": 0}}
@@ -381,11 +381,12 @@ def plan_urgent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def urgent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from events.graph import event_urgent_flow
+    from news.graph import news_flow
 
     ev = (
         await _graph(
-            event_urgent_flow,
+            news_flow,
+            action="urgent",
             event_id=args.get("event_id"),
             urgent=args.get("urgent"),
             reason=args.get("reason"),
@@ -472,9 +473,9 @@ def plan_agent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def agent_run(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from views.graph import agent_queue_flow
+    from news.graph import news_flow
 
-    job = (await _graph(agent_queue_flow, event_id=args.get("event_id"), by=ctx.user, mode=args.get("mode")))["job"]
+    job = (await _graph(news_flow, action="queue", event_id=args.get("event_id"), by=ctx.user, mode=args.get("mode")))["job"]
     return {
         "text": f"Đã xếp Agent CIO chạy cho sự kiện {job['event_id']} (lần {job['id']}, chế độ {MODES[job['mode']]}). "
         "Nhận định ra là bản nháp: qua Agent Phản biện, rồi bạn duyệt ở trang Sự kiện & nhận định; tiến độ ở trang "

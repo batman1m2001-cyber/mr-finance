@@ -3,7 +3,7 @@ own SQLite file (``MF_STATE``, e.g. data/zone.db) and its own data folder holdin
 (``MF_DATA``, made by scripts/make_zone_data.py). It reads no customer and no member of staff (``MF_ZONE=on`` makes
 any such read raise).
 
-every 10 min ──► zone_news: ingest_flow, the white-listed feeds into the zone's own news (TCB's sources, synced)
+every 10 min ──► zone_news: news_flow (ingest), the white-listed feeds into the zone's own news (TCB's sources, synced)
 every 15 min ──► zone_agent: deliveries not yet taken, again; then one event under the day's cap
      (``MF_ZONE_DAILY``), cio_agent_flow on it, the package signed (``MF_INBOX_KEY``) to TCB's POST /api/inbox
      (``MF_TCB_INBOX``), reading back only an id
@@ -18,7 +18,7 @@ from operonx.app.jobs import Job
 
 os.environ["MF_ZONE"] = "on"  # before any read: this process is the zone
 
-from news.graph import ingest_flow  # noqa: E402
+from news.graph import news_flow  # noqa: E402
 from zone import web  # noqa: E402
 from zone.graph import zone_flow  # noqa: E402
 
@@ -31,7 +31,8 @@ APP = Application(
     jobs=[
         Job(
             "zone_news",
-            graph=ingest_flow,
+            graph=news_flow,
+            inputs={"action": "ingest"},
             schedule=schedule(every="10m", port=PORT),
             description="Every 10 minutes: the white-listed feeds into the zone's own news.",
         ),
