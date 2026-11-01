@@ -21,45 +21,10 @@ async def _run(job: str, since: Optional[str], only: Optional[list]) -> dict:
 
 
 @op
-async def equity_bars(since: str = None, only: list = None) -> dict:
-    """VN-Index and the demo's stocks: daily closes (VNDirect, then Vietcap)."""
-    return {"run": await _run("market_equity", since, only)}
-
-
-@op
-async def foreign_flow(since: str = None, only: list = None) -> dict:
-    """Foreign investors' net buying on HOSE (cafef)."""
-    return {"run": await _run("market_flows", since, only)}
-
-
-@op
-async def gov_yields(since: str = None, only: list = None) -> dict:
-    """Vietnam government bond yields by tenor (HNX curve, then worldgovernmentbonds for 10 years)."""
-    return {"run": await _run("market_yields", since, only)}
-
-
-@op
-async def fx_rates(since: str = None, only: list = None) -> dict:
-    """USD/VND (Vietcombank, then MSN)."""
-    return {"run": await _run("market_fx", since, only)}
-
-
-@op
-async def world_series(since: str = None, only: list = None) -> dict:
-    """Gold, Brent, world equities, the S&P 500, the US 10-year and the DXY's six currencies (MSN, one request)."""
-    return {"run": await _run("market_world", since, only)}
-
-
-@op
-async def crypto_bars(since: str = None, only: list = None) -> dict:
-    """Bitcoin and Ether in USD (Binance)."""
-    return {"run": await _run("market_crypto", since, only)}
-
-
-@op
-async def sjc_gold(since: str = None, only: list = None) -> dict:
-    """SJC gold bars' selling price in Ho Chi Minh City (PNJ's history)."""
-    return {"run": await _run("market_gold", since, only)}
+async def pull(job: str, since: str = None, only: list = None) -> dict:
+    """One source's series (``job``: market_equity, market_flows, market_yields, market_fx, market_world,
+    market_crypto, market_gold — see data/market_sources.json): daily closes, flows, yields, rates."""
+    return {"run": await _run(job, since, only)}
 
 
 @op
