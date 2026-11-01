@@ -106,7 +106,7 @@ from scenarios import bodies as scenarios_bodies
 from scenarios.graph import scenarios_flow
 from statements import bodies as statements_bodies
 from statements.checks import items_match
-from statements.graph import intake_flow, sample_flow
+from statements.graph import intake_flow
 from voice.graph import assistant_voice_flow
 from zone.graph import zone_flow
 
@@ -884,7 +884,8 @@ APP = Application(
         # The three demo samples must pass; the free-text note needs a model (MF_AI=on).
         Eval(
             "statement_reading",
-            graph=sample_flow,
+            graph=intake_flow,
+            inputs={"action": "sample"},
             input="filename",
             dataset="dataset:statements",
             evaluators=[items_match],

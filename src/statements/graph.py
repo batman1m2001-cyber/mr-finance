@@ -79,13 +79,15 @@ def read_flow(filename, content):
 
 @graph
 def intake_flow(action="statement", client_id=None, filename=None, content=None, message=None, session_id=None):
-    """What a client brings in, one flow, the route picks its ``action`` (app/main.py `variants`; bodies.py has each
+    """What a client brings in, one flow, the route picks its ``action`` (``sample``: the eval's, a sample statement from data/samples, read and nothing kept) (app/main.py `variants`; bodies.py has each
     route's request contract). ``statement`` (POST /api/statement): a statement the client uploaded, read and kept as
     their tier-2 holdings. ``declare`` (POST /api/declare): one chat turn, the agent records what the client says
     (when AI is on), or the rules do, as their tier-3 declarations. The turn said as it happens
     (POST /api/declare/stream) has doors and stays declare/graph.py declare_stream_flow."""
 
     ask = check_request(client_id=client_id, filename=filename, content=content)
+    sample = load_sample(filename=filename)
+    sampled = read_flow(filename=filename, content=sample["content"])
     got = read_flow(filename=ask["filename"], content=ask["content"])
     saved = save_holdings(
         client_id=ask["client_id"],
@@ -127,7 +129,8 @@ def intake_flow(action="statement", client_id=None, filename=None, content=None,
         rule_method=rules["method"],
     )
 
-    START >> if_(action == "declare", asked).else_(ask)
+    START >> if_(action == "declare", asked).if_(action == "sample", sample).else_(ask)
+    sample >> sampled >> END
     ask >> got >> saved >> END
     asked >> mode >> if_(mode["assistant"] == True, agent).if_(mode["onprem"] == True, onprem).else_(rules)  # noqa: E712
     agent >> said
@@ -136,10 +139,3 @@ def intake_flow(action="statement", client_id=None, filename=None, content=None,
     rules >> turn
     turn >> END
 
-
-@graph
-def sample_flow(filename):
-    """The eval's graph: a sample statement from data/samples, read (nothing is kept)."""
-    sample = load_sample(filename=filename)
-    got = read_flow(filename=filename, content=sample["content"])
-    START >> sample >> got >> END
