@@ -11,10 +11,10 @@ from test_apply import MARKET, approved
 
 from apply import reads
 from impact.graph import alerts_flow
-from overview.graph import overview_flow
+from pages.graph import pages_flow
 from scenarios.graph import goals_flow
 
-OV = Operon(overview_flow, params={"client_id": None, "scope": None, "role": None, "goals": None})
+OV = Operon(pages_flow, params={"action": "overview", "client_id": None, "scope": None, "role": None, "goals": None})
 
 
 def overview(**inputs):

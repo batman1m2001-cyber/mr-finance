@@ -1,6 +1,6 @@
 """Mr. Finance: the whole picture of a client's wealth, and what is moving it.
 
-POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──► the dashboard
+POST /api/dashboard {client_id, scope?, months?} ──► pages_flow ──► the dashboard
 POST /api/flows     {client_id, scope?, month?} ──► flows_flow ──► a month's money in → out, with the rows
 POST /api/timeline  {client_id, scope?, node, unit?} ──► timeline_flow ──► a graph node's money by day, month, year
 POST /api/feed      {client_id, scope?, role?} ──► feed_flow ──► what matters now, why, and its evidence
@@ -91,7 +91,6 @@ from assistant.graph import (
     assistant_retention_flow,
     assistant_stream_flow,
 )
-from contacts.graph import contact_flow
 from control import barrier
 from control import jobs as control_jobs
 from control.graph import (
@@ -103,7 +102,6 @@ from control.graph import (
     job_run_flow,
 )
 from copilot.graph import copilot_flow
-from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow, declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
 from evidence.graph import (
@@ -113,8 +111,6 @@ from evidence.graph import (
     evidence_flow,
     evidence_type_flow,
 )
-from feed.graph import feed_flow, feed_open_flow
-from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from inbox.graph import inbox_import_flow
@@ -122,17 +118,15 @@ from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
 from measure.graph import evaluation_flow
 from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
-from overview.graph import overview_flow
+from pages import bodies as pages_bodies
+from pages.graph import pages_flow
 from people.graph import account_decide_flow, account_request_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
 from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, recommend_flow, review_flow
-from risk.graph import risk_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
-from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
-from timeline.graph import timeline_flow
 from views.graph import agent_queue_flow, agent_worker_flow, decide_flow
 from voice.graph import assistant_voice_flow
 from zone.graph import zone_flow
@@ -156,43 +150,57 @@ APP = Application(
         Service(
             "dashboard",
             http("POST", "/api/dashboard", port=PORT),
-            graph=dashboard_flow,
+            graph=pages_flow,
+            variants={"dashboard": {"action": "dashboard"}},
+            body=pages_bodies.dashboard,
             description="POST {client_id, scope: personal|family, months}: the dashboard.",
         ),
         Service(
             "overview",
             http("POST", "/api/overview", port=PORT),
-            graph=overview_flow,
+            graph=pages_flow,
+            variants={"overview": {"action": "overview"}},
+            body=pages_bodies.overview,
             description="POST {client_id, scope, role: client|rm, goals}: the overview graph around one client.",
         ),
         Service(
             "timeline",
             http("POST", "/api/timeline", port=PORT),
-            graph=timeline_flow,
+            graph=pages_flow,
+            variants={"timeline": {"action": "timeline"}},
+            body=pages_bodies.timeline,
             description="POST {client_id, scope, node, unit: day|month|year}: a node's money over time (simulated).",
         ),
         Service(
             "flows",
             http("POST", "/api/flows", port=PORT),
-            graph=flows_flow,
+            graph=pages_flow,
+            variants={"flows": {"action": "flows"}},
+            body=pages_bodies.flows,
             description="POST {client_id, scope: personal|family, month: YYYY-MM}: Money Flow from the transactions.",
         ),
         Service(
             "feed",
             http("POST", "/api/feed", port=PORT),
-            graph=feed_flow,
+            graph=pages_flow,
+            variants={"feed": {"action": "feed"}},
+            body=pages_bodies.feed,
             description="POST {client_id, scope, role: client|rm}: the Intelligence Feed, with why and evidence.",
         ),
         Service(
             "feed_open",
             http("POST", "/api/feed/open", port=PORT),
-            graph=feed_open_flow,
+            graph=pages_flow,
+            variants={"feed_open": {"action": "feed_open"}},
+            body=pages_bodies.feed_open,
             description="POST {client_id, key}: the client opened a high-level item (KPI-07).",
         ),
         Service(
             "rm_contact",
             http("POST", "/api/rm/contacts", port=PORT),
-            graph=contact_flow,
+            graph=pages_flow,
+            variants={"contact": {"action": "contact"}},
+            body=pages_bodies.contact,
             description="POST {family_id, channel, signal?, note?, by}: an RM records a contact, from a Hôm nay "
             "signal or not (KPI-06).",
         ),
@@ -211,7 +219,9 @@ APP = Application(
         Service(
             "search",
             http("POST", "/api/search", port=PORT),
-            graph=search_flow,
+            graph=pages_flow,
+            variants={"search": {"action": "search"}},
+            body=pages_bodies.search,
             description="POST {q, role, client_id?, scope?}: the header search over what the role may open.",
         ),
         Service(
@@ -278,7 +288,9 @@ APP = Application(
         Service(
             "risk",
             http("POST", "/api/risk", port=PORT),
-            graph=risk_flow,
+            graph=pages_flow,
+            variants={"risk": {"action": "risk"}},
+            body=pages_bodies.risk,
             description="POST {client_id, answers}: the next question of the risk test, or its result.",
         ),
         Service(

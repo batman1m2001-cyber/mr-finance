@@ -6,10 +6,10 @@ from operonx import Operon
 from operonx.app import Application
 from starlette.testclient import TestClient
 
-from flows.graph import flows_flow
+from pages.graph import pages_flow
 from wealth import fixtures
 
-FLOWS = Operon(flows_flow, params={"client_id": None, "scope": None, "month": None})
+FLOWS = Operon(pages_flow, params={"action": "flows", "client_id": None, "scope": None, "month": None})
 
 
 def run(**inputs):
