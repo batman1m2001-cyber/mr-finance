@@ -421,9 +421,9 @@ def plan_ack(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def ack(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from control.graph import alert_ack_flow
+    from control.graph import admin_flow
 
-    a = (await _graph(alert_ack_flow, alert_id=args.get("alert_id"), by=ctx.user, note=args.get("note")))["alert"]
+    a = (await _graph(admin_flow, task="alert_ack", alert_id=args.get("alert_id"), by=ctx.user, note=args.get("note")))["alert"]
     return {"text": f"Đã đánh dấu đã xem cảnh báo {a['id']}.", "data": {"id": a["id"]}}
 
 
@@ -552,9 +552,9 @@ def plan_job(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def job_run(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from control.graph import job_run_flow
+    from control.graph import admin_flow
 
-    r = (await _graph(job_run_flow, job=args.get("job"), by=ctx.user))["run"]
+    r = (await _graph(admin_flow, task="job_run", job=args.get("job"), by=ctx.user))["run"]
     return {
         "text": f"Đã bắt đầu “{r['label']}” (lần {r['id']}). Việc chạy nền; kết quả ở trang Việc nền.",
         "data": {"id": r["id"], "job": r["job"]},
@@ -668,11 +668,11 @@ def plan_account(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def account_request(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from people.graph import account_request_flow
+    from control.graph import admin_flow
 
     keys = ("kind", "person_id", "email", "role", "title", "note")
     body = {k: args.get(k) or "" for k in keys}
-    r = (await _graph(account_request_flow, by=ctx.user, full_name=args.get("name") or "", **body))["request"]
+    r = (await _graph(admin_flow, task="account_request", by=ctx.user, full_name=args.get("name") or "", **body))["request"]
     return {
         "text": f"Đã gửi yêu cầu {r['id']} ({r['label']}): chờ một Quản trị khác duyệt ở trang Tài khoản và vai trò."
         + (

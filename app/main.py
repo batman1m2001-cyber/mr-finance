@@ -52,7 +52,7 @@ POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: a 
      Gazette, a second CIO verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
 Every 20 s ──► heartbeat: the minute recorded, availability in business hours (NFR-03)
 Hourly ──► audit_check: the audit chain walked, new rows to write-once segments · POST /api/system/alerts/ack ──►
-     alert_ack_flow; GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
+     admin_flow (task alert_ack); GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
      inbox, availability (NFR-12)
 POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
      the zone_sync job sends the zone the approved catalogues and released research (inbox mode, F-D7)
@@ -94,14 +94,8 @@ from assistant.graph import (
 from contacts.graph import contact_flow
 from control import barrier
 from control import jobs as control_jobs
-from control.graph import (
-    alert_ack_flow,
-    audit_check_flow,
-    config_decide_flow,
-    config_propose_flow,
-    heartbeat_flow,
-    job_run_flow,
-)
+from control import bodies as control_bodies
+from control.graph import admin_flow, audit_check_flow, heartbeat_flow
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow, declare_stream_flow
@@ -118,12 +112,11 @@ from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from inbox.graph import inbox_import_flow
-from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
+from market.graph import market_flow
 from measure.graph import evaluation_flow
 from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
-from people.graph import account_decide_flow, account_request_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
 from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, recommend_flow, review_flow
@@ -200,13 +193,17 @@ APP = Application(
         Service(
             "config_propose",
             http("POST", "/api/config/propose", port=PORT),
-            graph=config_propose_flow,
+            graph=admin_flow,
+            variants={"config_propose": {"task": "config_propose"}},
+            body=control_bodies.config_propose,
             description="POST {kind, data, by, note}: propose a configuration version (FR-701).",
         ),
         Service(
             "config_decide",
             http("POST", "/api/config/decide", port=PORT),
-            graph=config_decide_flow,
+            graph=admin_flow,
+            variants={"config_decide": {"task": "config_decide"}},
+            body=control_bodies.config_decide,
             description="POST {version_id, action: approve|reject, by, note}: decide a proposed version.",
         ),
         Service(
@@ -518,14 +515,18 @@ APP = Application(
         Service(
             "model_estimate",
             http("POST", "/api/model/estimate", port=PORT),
-            graph=model_estimate_flow,
+            graph=admin_flow,
+            variants={"model_estimate": {"task": "model_estimate"}},
+            body=control_bodies.model_estimate,
             description="POST {by, end?, note?}: a CIO proposes the model estimated from market history (F2).",
         ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service(
             "market_load_ask",
             http("POST", "/api/market/load", port=PORT),
-            graph=market_load_ask_flow,
+            graph=admin_flow,
+            variants={"market_load": {"task": "market_load"}},
+            body=control_bodies.market_load,
             description="POST {by, since}: an Admin queues a load of the market history (the market_load job runs it).",
         ),
         Service(
@@ -567,27 +568,35 @@ APP = Application(
         Service(
             "alert_ack",
             http("POST", "/api/system/alerts/ack", port=PORT),
-            graph=alert_ack_flow,
+            graph=admin_flow,
+            variants={"alert_ack": {"task": "alert_ack"}},
+            body=control_bodies.alert_ack,
             description="POST {alert_id, by, note?}: “Đã xem” on an alert, by a role it is for (NFR-12).",
         ),
         Service(
             "account_request",
             http("POST", "/api/accounts/request", port=PORT),
-            graph=account_request_flow,
+            graph=admin_flow,
+            variants={"account_request": {"task": "account_request"}},
+            body=control_bodies.account_request,
             description="POST {kind: add|role|disable|enable|reset, by, person_id?, full_name?, email?, role?, title?, "
             "note?}: one Admin asks for a change to a staff account (Q-25); another Admin decides.",
         ),
         Service(
             "account_decide",
             http("POST", "/api/accounts/decide", port=PORT),
-            graph=account_decide_flow,
+            graph=admin_flow,
+            variants={"account_decide": {"task": "account_decide"}},
+            body=control_bodies.account_decide,
             description="POST {request_id, action: approve|reject|withdraw, by, note?}: a second Admin approves or "
             "rejects (a reason), the proposer withdraws; an approved add or reset answers a one-time code once.",
         ),
         Service(
             "job_run",
             http("POST", "/api/jobs/run", port=PORT),
-            graph=job_run_flow,
+            graph=admin_flow,
+            variants={"job_run": {"task": "job_run"}},
+            body=control_bodies.job_run,
             description="POST {job, by}: Admin runs a background job now (control/jobs.py RUNNABLE); one at a time.",
         ),
         Service(
