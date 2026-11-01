@@ -30,7 +30,7 @@ POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} 
                     /api/allocation/review ──► the CIO decides each action (Q-29), /api/allocation/queue lists them ·
                     /api/allocation/override ──► an RM moves an asset to another bucket, with a reason ·
                     /api/allocation/method ──► the CIO picks ±2-point tilts or Black–Litterman
-POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item's evidence: statistics or the qualitative frame
+POST /api/evidence {factor?, role?} ──► evidence_flow (one flow, an action per route) ──► each item's evidence: statistics or the qualitative frame
                     (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
                     · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
@@ -106,13 +106,8 @@ from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
 from declare.graph import declare_flow, declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
-from evidence.graph import (
-    evidence_decide_flow,
-    evidence_draft_decide_flow,
-    evidence_draft_flow,
-    evidence_flow,
-    evidence_type_flow,
-)
+from evidence import bodies as evidence_bodies
+from evidence.graph import evidence_flow
 from feed.graph import feed_flow, feed_open_flow
 from flows.graph import flows_flow
 from impact.graph import alerts_flow
@@ -381,30 +376,40 @@ APP = Application(
             "evidence",
             http("POST", "/api/evidence", port=PORT),
             graph=evidence_flow,
+            variants={"read": {"action": "read"}},
+            body=evidence_bodies.read,
             description="POST {factor?, role?}: each news item's evidence (statistics or qualitative frame).",
         ),
         Service(
             "evidence_decide",
             http("POST", "/api/evidence/decide", port=PORT),
-            graph=evidence_decide_flow,
+            graph=evidence_flow,
+            variants={"decide": {"action": "decide"}},
+            body=evidence_bodies.decide,
             description="POST {factor, decision, by, note?}: the CIO approves, returns or rejects a frame.",
         ),
         Service(
             "evidence_draft",
             http("POST", "/api/evidence/draft", port=PORT),
-            graph=evidence_draft_flow,
+            graph=evidence_flow,
+            variants={"draft": {"action": "draft"}},
+            body=evidence_bodies.draft,
             description="POST {news_id, by, mode?}: the evidence agent drafts one news item's frame for the CIO.",
         ),
         Service(
             "evidence_draft_decide",
             http("POST", "/api/evidence/draft/decide", port=PORT),
-            graph=evidence_draft_decide_flow,
+            graph=evidence_flow,
+            variants={"draft_decide": {"action": "draft_decide"}},
+            body=evidence_bodies.draft_decide,
             description="POST {news_id, decision, by, note?}: the CIO approves, returns or rejects the agent's draft.",
         ),
         Service(
             "evidence_type",
             http("POST", "/api/evidence/type", port=PORT),
-            graph=evidence_type_flow,
+            graph=evidence_flow,
+            variants={"type": {"action": "type"}},
+            body=evidence_bodies.type,
             description="POST {event_type? | label?, dates, series?, by}: the CIO adds an event type or its precedent dates.",
         ),
         Service(
