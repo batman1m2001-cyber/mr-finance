@@ -15,13 +15,13 @@ from operonx_agents.testing import ScriptedLLM, asks, says, scripted
 from assistant import attachments as att
 from assistant import ops, registry
 from assistant.base import Ctx
-from assistant.graph import assistant_attach_flow, assistant_flow
+from assistant.graph import assistant_flow
 from wealth import store
 
 INPUTS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id",
           "attachments")  # fmt: skip
 ASK = Operon(assistant_flow, params={k: None for k in INPUTS})
-ATTACH = Operon(assistant_attach_flow, params={k: None for k in ("role", "client_id", "file_name", "data")})
+ATTACH = Operon(assistant_flow, params={"task": "attach", **{k: None for k in ("role", "client_id", "file_name", "data")}})
 
 RECEIPT = {  # what the fake model reads from a savings receipt photo
     "kind": "bien_lai", "title": "Biên lai gửi tiết kiệm", "institution": "Vietcombank",

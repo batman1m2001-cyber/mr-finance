@@ -13,15 +13,13 @@ from operonx import Operon
 
 from assistant import knowledge, registry, web
 from assistant.base import ToolFailed
-from assistant.graph import assistant_memory_flow
+from assistant.graph import assistant_flow
 from control import db
 
 ROOT = Path(__file__).resolve().parents[1]
-MEM = Operon(
-    assistant_memory_flow,
-    params={
+MEM = Operon(assistant_flow, params={"task": "memory", **{
         k: None for k in ("action", "item_id", "text", "kind", "query", "role", "client_id", "file_name", "data", "key")
-    },
+    }},
 )
 
 

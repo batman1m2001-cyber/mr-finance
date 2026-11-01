@@ -16,14 +16,12 @@ from operonx_agents.testing import ScriptedLLM, asks, says, scripted
 
 from assistant import conversations as conv
 from assistant import memory
-from assistant.graph import assistant_conversations_flow, assistant_flow, assistant_memory_flow
+from assistant.graph import assistant_flow
 from control import audit, config, db
 
 INPUTS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id")
 ASK = Operon(assistant_flow, params={k: None for k in INPUTS})
-MEM = Operon(
-    assistant_memory_flow,
-    params={k: None for k in ("action", "item_id", "text", "kind", "query", "role", "client_id")},
+MEM = Operon(assistant_flow, params={"task": "memory", **{k: None for k in ("action", "item_id", "text", "kind", "query", "role", "client_id")}},
 )
 
 
@@ -159,8 +157,7 @@ def test_forgetting_leaves_nothing_readable_on_disk():
     with scripted(copilot=ScriptedLLM(says("Ổn."))):
         cid = ask("Câu hỏi về nhạc trịnh buổi tối")["conversation_id"]
     mem("clear")
-    flow = Operon(
-        assistant_conversations_flow, params={k: None for k in ("action", "conversation_id", "role", "client_id")}
+    flow = Operon(assistant_flow, params={"task": "conversations", **{k: None for k in ("action", "conversation_id", "role", "client_id")}}
     )
     out = asyncio.run(
         flow.run(inputs={"action": "delete", "conversation_id": cid, "role": "client", "client_id": "C01"})

@@ -51,7 +51,7 @@ before anything is written.
 
 ## Implementation
 `src/assistant/consolidate.py`, `src/assistant/followups.py`, `src/assistant/ops.py` (`consolidate_due`,
-`follow_ups_market`, `follow_ups_topics`, `memory_page`), `src/assistant/graph.py::assistant_consolidate_flow`,
+`follow_ups_market`, `follow_ups_topics`, `memory_page`), `src/assistant/graph.py::assistant_flow (task consolidate)`,
 `src/market/graph.py`, `src/news/graph.py`, `app/main.py` (the job), `web/header.js` (the bell),
 `web/pages/memory.js`.
 

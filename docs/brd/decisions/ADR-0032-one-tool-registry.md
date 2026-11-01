@@ -17,7 +17,7 @@ confirmed first. The assistant needs many more, chosen by a model.
   graph or read), for writes a confirmation summary and a verifier, a timeout and a cost class.
 - A turn gets only its role's tools. Writes have `approval="always"`: the run parks; the person confirms in the panel;
   the run resumes. After the write, the verifier reads the state back; a failed check is reported.
-- The Copilot's tools move in unchanged; `copilot_flow` reads them from the registry.
+- The Copilot's tools move in unchanged; `assistant_flow (task copilot)` reads them from the registry.
 
 ## Consequences
 
