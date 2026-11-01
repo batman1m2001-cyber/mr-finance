@@ -46,7 +46,7 @@ POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──�
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
 POST /api/events ──► event_flow · POST /api/events/urgent ──► event_urgent_flow (KPI-01) · POST /api/events/run-agent
      ──► agent_queue_flow, then the agent_worker job ──► cio_agent_flow (agent + challenger)
-POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, newsletter_act_flow (FR-801: the CIO drafts from
+POST /api/newsletters, /api/newsletters/act ──► research_flow, a task each (FR-801: the CIO drafts from
      approved views, another CIO approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
 POST /api/policy[/verify|/status|/summarise] ──► policy_flow, an action each (FR-306: a CIO adds a document from the Official
      Gazette, a second CIO verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
@@ -60,7 +60,7 @@ POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/vie
 approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
      run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
      /api/rm/today, /api/audit[/verify] ──► app/web.py
-POST /api/research, /api/research/release, /api/goals/outflow, /api/goals/suggest ──► the research and goal-branch flows ·
+POST /api/research, /api/research/release, /api/goals/outflow, /api/goals/suggest ──► research_flow, a task each ·
      GET /api/research, /api/goals/regulation ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
      clients, the RM team, the advisory track record, the house views, the UI)
@@ -116,12 +116,12 @@ from inbox.graph import inbox_import_flow
 from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
 from measure.graph import evaluation_flow
 from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
-from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
 from people.graph import account_decide_flow, account_request_flow
 from policy import bodies as policy_bodies
 from policy.graph import policy_flow
-from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
+from research import bodies as research_bodies
+from research.graph import research_flow
 from review.graph import propose_flow, recommend_flow, review_flow
 from risk.graph import risk_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
@@ -490,13 +490,17 @@ APP = Application(
         Service(
             "research_upload",
             http("POST", "/api/research", port=PORT),
-            graph=research_upload_flow,
+            graph=research_flow,
+            variants={"upload": {"task": "upload"}},
+            body=research_bodies.upload,
             description="POST {item: {kind, report_no, title, summary, release_at, conflicts?, regulation?}, by}.",
         ),
         Service(
             "research_release",
             http("POST", "/api/research/release", port=PORT),
-            graph=research_release_flow,
+            graph=research_flow,
+            variants={"release": {"task": "release"}},
+            body=research_bodies.release,
             description=(
                 "POST {item_id, decision: release|reject, by, note}: a CIO other than the one who filed it, after the "
                 "release time."
@@ -505,13 +509,17 @@ APP = Application(
         Service(
             "goal_outflow",
             http("POST", "/api/goals/outflow", port=PORT),
-            graph=goal_outflow_flow,
+            graph=research_flow,
+            variants={"outflow": {"task": "outflow"}},
+            body=research_bodies.outflow,
             description="POST {family_id, goal_id, purpose, country?, by}: the RM declares a goal's outflow.",
         ),
         Service(
             "goal_suggest",
             http("POST", "/api/goals/suggest", port=PORT),
-            graph=goal_suggest_flow,
+            graph=research_flow,
+            variants={"suggest": {"task": "suggest"}},
+            body=research_bodies.suggest,
             description="POST {family_id, by, mode?}: AI suggests a purpose and country for the undeclared goals (P2).",
         ),
         Service(
@@ -530,13 +538,17 @@ APP = Application(
         Service(
             "newsletter_draft",
             http("POST", "/api/newsletters", port=PORT),
-            graph=newsletter_draft_flow,
+            graph=research_flow,
+            variants={"draft": {"task": "draft"}},
+            body=research_bodies.draft,
             description="POST {view_ids, by, title?, mode?: template|agent, distribution?, conflict?}: a CIO drafts.",
         ),
         Service(
             "newsletter_act",
             http("POST", "/api/newsletters/act", port=PORT),
-            graph=newsletter_act_flow,
+            graph=research_flow,
+            variants={"act": {"task": "act"}},
+            body=research_bodies.act,
             description="POST {newsletter_id, action: edit|submit|approve|return|withdraw, by, note?, changes?}.",
         ),
         Service(

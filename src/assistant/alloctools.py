@@ -88,10 +88,10 @@ async def event_types(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 async def labels(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """The AI's purpose and country for the family's goals the RM has not declared; nothing is kept."""
-    from research.graph import goal_suggest_flow
+    from research.graph import research_flow
 
     family = _family(ctx)
-    got = await run_graph(goal_suggest_flow, family_id=family, by=ctx.user or USER["rm"])
+    got = await run_graph(research_flow, task="suggest", family_id=family, by=ctx.user or USER["rm"])
     s = got["suggestions"]
     if got["mode"] == "none":
         return {"text": "Mọi mục tiêu của gia đình đã có nhãn (RM khai hoặc đọc được từ tên).", "data": {}}

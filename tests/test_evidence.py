@@ -16,14 +16,13 @@ from impact.graph import alerts_flow
 from market import store as market
 from procedural import goals
 from research import ops as research_ops
-from research.graph import goal_outflow_flow
+from research.graph import research_flow
 from wealth import fixtures
 
 READ = Operon(evidence_flow, params={"action": "read", "factor": None, "role": None})
 DECIDE = Operon(evidence_flow, params={"action": "decide", "factor": None, "decision": None, "by": None, "note": None})
 ALERTS = Operon(alerts_flow, params={"client_id": None, "scope": None})
-DECLARE = Operon(
-    goal_outflow_flow, params={"family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
+DECLARE = Operon(research_flow, params={"task": "outflow", "family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
 )
 TODAY = date(2026, 10, 15)
 
