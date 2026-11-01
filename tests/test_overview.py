@@ -8,9 +8,9 @@ from operonx import Operon
 from test_apply import MARKET, approved
 
 from apply import reads
-from overview.graph import overview_flow
+from pages.graph import pages_flow
 
-OV = Operon(overview_flow, params={"client_id": None, "scope": None, "role": None, "goals": None})
+OV = Operon(pages_flow, params={"action": "overview", "client_id": None, "scope": None, "role": None, "goals": None})
 
 
 def overview(**inputs):
@@ -109,12 +109,11 @@ def test_the_goals_are_the_ones_the_browser_follows():
 
 def test_the_workspace_kinds_money_reserve_and_scenarios():
     # FEAT-40 (OWN-GW-11/12): the month's flows as on Toàn cảnh, the reserve always, the stress scenarios hypothetical
-    from flows.graph import flows_flow
 
     o = overview()
     by = {n["id"]: n for n in o["nodes"]}
     f = asyncio.run(
-        Operon(flows_flow, params={"client_id": None, "scope": None, "month": None}).run(inputs={"client_id": "C01"})
+        Operon(pages_flow, params={"action": "flows", "client_id": None, "scope": None, "month": None}).run(inputs={"client_id": "C01"})
     )
     f = f["flows"]
     assert by["FL:in"]["value"] == f["total_in"] and by["FL:out"]["value"] == f["total_out"]

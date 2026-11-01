@@ -196,7 +196,7 @@ FUTURE = re.compile(r"^\s*(?:năm|sang năm)\s*(?:sau|tới)|^\s*tới", re.I)
 
 
 async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from flows.graph import flows_flow
+    from pages.graph import pages_flow
 
     month, mm, yy = None, None, None
     if "month" in args:  # a model chose the month it means (or none: the latest), not a month merely mentioned
@@ -211,7 +211,7 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         m = MONTH.search(ctx.question or "")
         if m and not FUTURE.search(ctx.question[m.end() : m.end() + 12]):  # “tháng 3 năm sau” is not past (D14)
             mm, yy = int(m.group(1)), m.group(2)
-    first = (await _graph(flows_flow, client_id=_need_client(ctx), scope=ctx.scope, month=None))["flows"]
+    first = (await _graph(pages_flow, action="flows", client_id=_need_client(ctx), scope=ctx.scope, month=None))["flows"]
     if mm:
         cands = [x for x in first["months"] if int(x[5:]) == mm and (not yy or x[:4].endswith(yy[-2:]))]
         month = cands[-1] if cands else None
@@ -220,7 +220,7 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     f = (
         first
         if not month or month == first["month"]
-        else (await _graph(flows_flow, client_id=ctx.client_id, scope=ctx.scope, month=month))["flows"]
+        else (await _graph(pages_flow, action="flows", client_id=ctx.client_id, scope=ctx.scope, month=month))["flows"]
     )
     top = f["outflow"][0] if f["outflow"] else None
     left = "còn lại" if f["left"] >= 0 else "thiếu hụt"
@@ -260,10 +260,10 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from feed.graph import feed_flow
+    from pages.graph import pages_flow
 
     role = "rm" if ctx.role == "rm" else "client"
-    items = (await _graph(feed_flow, client_id=_need_client(ctx), scope=ctx.scope, role=role))["feed"]["items"]
+    items = (await _graph(pages_flow, action="feed", client_id=_need_client(ctx), scope=ctx.scope, role=role))["feed"]["items"]
     if not items:
         return {"text": "Không có điều gì cần chú ý lúc này.", "data": {"items": 0}}
     lines = [f"{k + 1}) {i['title']} — {i['why']}." for k, i in enumerate(items[:3])]

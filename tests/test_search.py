@@ -9,9 +9,9 @@ from starlette.testclient import TestClient
 from test_apply import MARKET, approved
 
 from events import store as events
-from search.graph import search_flow
+from pages.graph import pages_flow
 
-SEARCH = Operon(search_flow, params={"q": None, "role": None, "client_id": None, "scope": None})
+SEARCH = Operon(pages_flow, params={"action": "search", "q": None, "role": None, "client_id": None, "scope": None})
 
 
 def hits(q, role, client_id="C01"):

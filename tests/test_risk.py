@@ -5,10 +5,10 @@ from operonx import Operon
 
 from dashboard.graph import dashboard_flow
 from risk import _bank
-from risk.graph import risk_flow
+from pages.graph import pages_flow
 from wealth import fixtures, store
 
-ENGINE = Operon(risk_flow, params={"client_id": None, "answers": None})
+ENGINE = Operon(pages_flow, params={"action": "risk", "client_id": None, "answers": None})
 
 
 def step(client_id, answers):

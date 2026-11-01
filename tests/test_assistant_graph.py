@@ -16,7 +16,7 @@ from assistant import stream as st
 from assistant.base import Ctx, ToolFailed
 from assistant.ops import graph_of, request_of
 from assistant.turn import graph_line
-from overview.graph import overview_flow
+from pages.graph import pages_flow
 from scenarios.graph import combine_flow
 
 PICK = {"id": "GL:tuition", "kind": "goal", "label": "Học phí cho con"}
@@ -63,7 +63,7 @@ def test_the_instructions_say_it_and_the_name_only_in_model_mode():
 
 
 def test_links_are_the_overviews_own():
-    o = run(Operon(overview_flow, params={"client_id": None, "scope": None, "role": None, "goals": None}).run(
+    o = run(Operon(pages_flow, params={"action": "overview", "client_id": None, "scope": None, "role": None, "goals": None}).run(
         inputs={"client_id": "C01", "role": "client"}))["overview"]  # fmt: skip
     mine = [e for e in o["edges"] if "GL:tuition" in (e["from"], e["to"])]
     got = run(graphtools.links(ctx({"selected": PICK}), {}))

@@ -90,12 +90,12 @@ async def drivers(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 async def search(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """The header's search: what the role may open, each hit with its page."""
-    from search.graph import search_flow
+    from pages.graph import pages_flow
 
     q = str(args.get("q") or "").strip()[:100]
     if not q:
         raise ToolFailed("Cần từ khóa để tìm")
-    found = (await _graph(search_flow, q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]
+    found = (await _graph(pages_flow, action="search", q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]
     hits = found["hits"]
     if not hits:
         return {"text": f"Không tìm thấy gì cho “{q}” trong những gì bạn được xem.", "data": {"hits": 0, "total": 0}}
@@ -299,11 +299,12 @@ def plan_contact(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def contact(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from contacts.graph import contact_flow
+    from pages.graph import pages_flow
 
     c = (
         await _graph(
-            contact_flow,
+            pages_flow,
+            action="contact",
             family_id=args.get("family_id"),
             channel=args.get("channel"),
             signal=None,
