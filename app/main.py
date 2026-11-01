@@ -108,7 +108,6 @@ from statements import bodies as statements_bodies
 from statements.checks import items_match
 from statements.graph import intake_flow
 from voice.graph import assistant_voice_flow
-from zone.graph import zone_flow
 
 barrier.install()  # every llm: call of this process passes the client-data barrier (BRD-NFR-08)
 
@@ -810,7 +809,7 @@ APP = Application(
         ),
         Job(
             "zone_sync",
-            graph=zone_flow,
+            graph=news_flow,
             inputs={"action": "sync"},
             schedule=schedule(every="10m", port=PORT),
             timeout=300,

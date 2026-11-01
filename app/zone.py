@@ -20,7 +20,6 @@ os.environ["MF_ZONE"] = "on"  # before any read: this process is the zone
 
 from news.graph import news_flow  # noqa: E402
 from zone import web  # noqa: E402
-from zone.graph import zone_flow  # noqa: E402
 
 PORT = env("ZONE_PORT", 8040)
 
@@ -38,7 +37,7 @@ APP = Application(
         ),
         Job(
             "zone_agent",
-            graph=zone_flow,
+            graph=news_flow,
             inputs={"action": "agent"},
             schedule=schedule(every="15m", port=PORT),
             timeout=1800,
