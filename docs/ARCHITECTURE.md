@@ -182,7 +182,7 @@ flowchart LR
   q["Câu hỏi + trang đang xem"] --> scrub["copilot/scrub.py<br/>bỏ tên, số"] --> mode{"client_ai + mô hình?"}
   mode -->|"model"| agent["operonx-agents<br/>công cụ của vai trò"]
   mode -->|"template"| tpl["Mô hình chỉ thấy câu hỏi đã làm sạch;<br/>câu trả lời là văn bản mẫu của công cụ"]
-  mode -->|"fallback"| kw["Router từ khóa (copilot_flow)"]
+  mode -->|"fallback"| kw["Router từ khóa (assistant_flow (task copilot))"]
   agent -->|"thao tác ghi"| wait["Dừng chờ người dùng xác nhận"]
 ```
 

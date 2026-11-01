@@ -62,16 +62,16 @@ A4). See
 
 ## Implementation
 A3 (2026-10-17): `src/assistant/conversations.py` (the store, sealed), `src/assistant/turn.py` (`ContextPolicy`, a
-session per mode), `assistant_conversations_flow` (`POST /api/assistant/conversations`: list, open, delete), the
+session per mode), `assistant_flow (task conversations)` (`POST /api/assistant/conversations`: list, open, delete), the
 panel's history (`web/copilot.js`). operonx-agents 0.2.4 (one SQLite connection per file) and 0.2.5 (compaction
 across runs). A4 (2026-10-17): `src/assistant/memory.py` (the rules, the tools, the archive search),
-`src/assistant/retention.py` (the daily sweep), `assistant_memory_flow` (`POST /api/assistant/memory`), the Bộ nhớ
+`src/assistant/retention.py` (the daily sweep), `assistant_flow (task memory)` (`POST /api/assistant/memory`), the Bộ nhớ
 page (`web/pages/memory.js`); the generic store and tools are operonx-agents 0.3.0 `memory` (Operonx #189).
 
 Sessions (2026-10-17): `src/assistant/conversations.py` (columns `title_auto`, `archived`, `goal`, `summary`,
 `summary_at`, `described`; `turns.status`; `begin` / `progress` / `interrupt` / `record`; `rename`, `set_archived`,
 `describe`), `src/assistant/sessions.py` (titles and goals), `src/assistant/turn.py` (`Summarizer`, the summary kept),
-`src/assistant/memory.py` (`doc_lai_phien`), `assistant_conversations_flow` (actions `list_archived`, `rename`,
+`src/assistant/memory.py` (`doc_lai_phien`), `assistant_flow (task conversations)` (actions `list_archived`, `rename`,
 `archive`, `restore`, `describe`), the panel's session bar and history (`web/copilot.js`), Bộ nhớ lists archived
 sessions too.
 

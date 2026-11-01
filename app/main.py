@@ -6,7 +6,7 @@ POST /api/timeline  {client_id, scope?, node, unit?} ──► timeline_flow ─
 POST /api/feed      {client_id, scope?, role?} ──► feed_flow ──► what matters now, why, and its evidence
 POST /api/feed/open {client_id, key} ──► feed_open_flow ──► the client opened a high-level item (KPI-07)
 POST /api/rm/contacts {family_id, channel, signal?, note?, by} ──► contact_flow ──► an RM's contact (KPI-06)
-POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ──► copilot_flow ──► a templated answer
+POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ──► assistant_flow (copilot) ──► a templated answer
 POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, route?, conversation_id?} ──►
                     assistant_flow ──► an answer from the role's tools in several steps; writes wait for the person
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
@@ -80,20 +80,12 @@ from app import web
 from app.http import SecurityHeaders
 from allocation import bodies as allocation_bodies
 from allocation.graph import allocation_flow
-from assistant.graph import (
-    assistant_consolidate_flow,
-    assistant_conversations_flow,
-    assistant_flow,
-    assistant_attach_flow,
-    assistant_memory_flow,
-    assistant_retention_flow,
-    assistant_stream_flow,
-)
+from assistant import bodies as assistant_bodies
+from assistant.graph import assistant_flow, assistant_stream_flow
 from control import barrier
 from control import jobs as control_jobs
 from control import bodies as control_bodies
 from control.graph import admin_flow, audit_check_flow, heartbeat_flow
-from copilot.graph import copilot_flow
 from declare.graph import declare_stream_flow
 from evidence import bodies as evidence_bodies
 from evidence.graph import evidence_flow
@@ -220,13 +212,17 @@ APP = Application(
         Service(
             "copilot",
             http("POST", "/api/copilot", port=PORT),
-            graph=copilot_flow,
+            graph=assistant_flow,
+            variants={"copilot": {"task": "copilot"}},
+            body=assistant_bodies.copilot,
             description="POST {question, role, client_id, scope, route, confirm}: the Copilot (routes, never reads).",
         ),
         Service(
             "assistant",
             http("POST", "/api/assistant", port=PORT),
             graph=assistant_flow,
+            variants={"turn": {"task": "turn"}},
+            body=assistant_bodies.turn,
             description="POST {message | turn_id + approvals, role, client_id, scope, route, goals, conversation_id}: "
             "the assistant (A2) — the role's tools in several steps, writes confirmed and verified, kept in a "
             "conversation (A3); the Copilot's path when no model answers.",
@@ -241,21 +237,27 @@ APP = Application(
         Service(
             "assistant_conversations",
             http("POST", "/api/assistant/conversations", port=PORT),
-            graph=assistant_conversations_flow,
+            graph=assistant_flow,
+            variants={"conversations": {"task": "conversations"}},
+            body=assistant_bodies.conversations,
             description="POST {action: list | open | delete, conversation_id, role, client_id}: the person's "
             "conversations with the assistant (A3).",
         ),
         Service(
             "assistant_memory",
             http("POST", "/api/assistant/memory", port=PORT),
-            graph=assistant_memory_flow,
+            graph=assistant_flow,
+            variants={"memory": {"task": "memory"}},
+            body=assistant_bodies.memory,
             description="POST {action: list | search | update | delete | clear, item_id, text, kind, query, role, "
             "client_id}: the Bộ nhớ page (A4).",
         ),
         Service(
             "assistant_attach",
             http("POST", "/api/assistant/attach", port=PORT),
-            graph=assistant_attach_flow,
+            graph=assistant_flow,
+            variants={"attach": {"task": "attach"}},
+            body=assistant_bodies.attach,
             description="POST {file_name, data: base64, role, client_id}: a file or image for the assistant, read "
             "once and kept 24 hours (docs/OCR_PLAN.md).",
         ),
@@ -691,14 +693,16 @@ APP = Application(
         # the assistant's retention (A4): conversations past the CIO's assistant_retention, expired memory items
         Job(
             "assistant_retention",
-            graph=assistant_retention_flow,
+            graph=assistant_flow,
+            inputs={"task": "retention"},
             schedule=schedule(at="02:30", port=PORT),
             description="02:30 daily: the assistant's conversations past retention and expired memory items deleted.",
         ),
         # the memory consolidator (A6, ADR-0031): idle conversations into long-term items, ≤ 8,000 tokens each
         Job(
             "assistant_consolidate",
-            graph=assistant_consolidate_flow,
+            graph=assistant_flow,
+            inputs={"task": "consolidate"},
             schedule=schedule(every="5m", port=PORT),
             timeout=600,
             description="Every 5 minutes: conversations idle 15 minutes distilled into the person's memory (A6).",

@@ -10,7 +10,7 @@
 | Status | see [traceability](../requirements/requirements_traceability.md) §4 |
 
 ## Behaviour
-`copilot_flow`: check → **scrub** → **route** → **act** → **answer**.
+`assistant_flow (task copilot)`: check → **scrub** → **route** → **act** → **answer**.
 - **Scrub** (`src/copilot/scrub.py`): digit runs, upper-case codes, every fixture person's full name and its last
   two words (accent-insensitive) become `<số>`, `<mã>`, `<người>`. Example: “Dòng tiền tháng 8 của Nguyễn Minh
   Khoa?” → “Dòng tiền tháng <số> của <người>?”.

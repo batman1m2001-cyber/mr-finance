@@ -13,14 +13,13 @@ from operonx import Operon
 from operonx_agents.testing import ScriptedLLM, asks, says, scripted
 
 from assistant import conversations as conv
-from assistant.graph import assistant_conversations_flow, assistant_flow
+from assistant.graph import assistant_flow
 from control import audit, config, db
 from wealth import fixtures
 
 INPUTS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id")
 ASK = Operon(assistant_flow, params={k: None for k in INPUTS})
-CONVS = Operon(
-    assistant_conversations_flow, params={k: None for k in ("action", "conversation_id", "role", "client_id")}
+CONVS = Operon(assistant_flow, params={"task": "conversations", **{k: None for k in ("action", "conversation_id", "role", "client_id")}}
 )
 
 

@@ -10,12 +10,12 @@ from operonx.app import Application
 from starlette.testclient import TestClient
 
 from copilot import router
-from copilot.graph import copilot_flow
+from assistant.graph import assistant_flow
 from copilot.scrub import fold, names, scrub
 from wealth import fixtures
 from wealth import store as wealth_store
 
-ASK = Operon(copilot_flow, params={k: None for k in ("question", "role", "client_id", "scope", "route", "confirm")})
+ASK = Operon(assistant_flow, params={"task": "copilot", **{k: None for k in ("question", "role", "client_id", "scope", "route", "confirm")}})
 CODES = set(json.load(open("data/market.json"))["stocks"]) | {"TCBF", "TCEF", "TCB12401", "SMR12501"}
 
 
@@ -204,9 +204,7 @@ def test_every_call_is_in_the_audit_chain_with_the_question_as_the_router_saw_it
 
 def test_goals_are_the_ones_the_browser_follows():
     out = asyncio.run(
-        Operon(
-            copilot_flow,
-            params={k: None for k in ("question", "role", "client_id", "scope", "route", "confirm", "goals")},
+        Operon(assistant_flow, params={"task": "copilot", **{k: None for k in ("question", "role", "client_id", "scope", "route", "confirm", "goals")}},
         ).run(
             inputs={"question": "Mục tiêu của tôi thế nào?", "role": "client", "client_id": "C01", "goals": ["medical"]}
         )
