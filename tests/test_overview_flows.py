@@ -6,12 +6,10 @@ member's holdings are marked. Nothing is invented: each figure is checked agains
 
 import asyncio
 
-from news.graph import news_flow
 from operonx import Operon
 from test_apply import MARKET, approved
 
 from apply import reads
-from news.graph import news_flow
 from pages.graph import pages_flow
 from scenarios.graph import goals_flow
 
