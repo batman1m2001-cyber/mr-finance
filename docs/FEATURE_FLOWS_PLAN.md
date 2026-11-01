@@ -1,21 +1,22 @@
 ---
 title: One flow per feature (93 → about 15)
-status: done
+status: in_progress
 phases:
   - {id: FF0, title: "Pin every route's contract and the startup time", status: done}
   - {id: FF1, title: "operonx: a route's body contract of its own (upstream)", status: done}
   - {id: FF2, title: "Jobs and thin handlers — market data, admin, housekeeping, evaluation, zone", status: done}
   - {id: FF3, title: "Domain features — allocation, evidence, policy, research + newsletter", status: done}
   - {id: FF4, title: "Events and client features — news + events + impact, agent review, client data in, goals + scenarios", status: done}
-  - {id: FF5, title: "Pages and the assistant (AgentOp with memory)", status: done}
-  - {id: FF6, title: "Count, docs, full suite", status: done}
+  - {id: FF5, title: "Pages and the assistant (AgentOp with memory)", status: in_progress}
+  - {id: FF6, title: "Count, docs, full suite", status: in_progress}
 rows: []
 updated: 2026-11-01
 ---
 
 # One flow per feature — plan
 
-**Status: done 2026-11-01** (93 → 24 flows; D3, the assistant on AgentOp, is not done: see 6b).
+**Status: in progress 2026-11-01.** 93 → 24 flows against the target of < 20 (FF6 not met). FF5's pages are merged;
+D3, the assistant on AgentOp, is open (see 6b). Whether 24 is accepted, or D3 is deferred, is the owner's call.
 
 Owner request (2026-10-31): "87 is still very high, see the other, they're big also but have only < 20 flow".
 This plan replaces the flow-merge milestone m33 (docs/FLOW_MERGE_PLAN.md on the scratch clone). That one merged only
@@ -176,3 +177,8 @@ Tests were edited only where a test named a removed flow: the import and the `Op
 line. Four assertions were changed because they named a removed flow: `test_role_desks` (decide_flow exists),
 `test_assistant_agents` (`job.graph is`), and `tests/ui/test_agent_map_ui.py` + `src/views/ecosystem.py` (the alerts
 code pointer). Startup (`import app.main`) 2.4–2.6 s, against 2.6–3.1 s before.
+
+Full suite (36 min): the two failures fail on main too (87ed546, same assertions): `tests/ui` `#book tbody tr`
+`25 > 25` and `#impact .nrow` `6 == 9`. Not caused by this branch; not fixed here.
+
+**Open:** FF5's D3; FF6's count (24, target < 20). The owner decides whether 24 stands or more flows merge.
