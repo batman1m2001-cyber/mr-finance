@@ -265,11 +265,12 @@ async def plan_propose(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def propose(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from review.graph import propose_flow
+    from review.graph import review_flow
 
     it = (
         await _graph(
-            propose_flow,
+            review_flow,
+            action="propose",
             client_id=_need_client(ctx),
             option=args.get("option"),
             scenario=args.get("scenario"),
@@ -337,11 +338,12 @@ def plan_recommend(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def recommend(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from review.graph import recommend_flow
+    from review.graph import review_flow
 
     it = (
         await _graph(
-            recommend_flow,
+            review_flow,
+            action="recommend",
             client_id=_need_client(ctx),
             title=args.get("title"),
             actions=args.get("actions"),

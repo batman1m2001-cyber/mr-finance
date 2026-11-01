@@ -35,8 +35,7 @@ POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item'
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
                     · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
 POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
-POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
-POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
+POST /api/review/propose (the RM queue), /decide, /recommend (the RM's own recommendation) ──► review_flow
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: news_flow (alerts) for every client
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► news_flow (ingest): the feeds into the inbox
 every 2 h ──► news_reference: the independent reference's stories, judged collected a day later (KPI-02)
@@ -125,7 +124,8 @@ from overview.graph import overview_flow
 from people.graph import account_decide_flow, account_request_flow
 from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
 from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
-from review.graph import propose_flow, recommend_flow, review_flow
+from review import bodies as review_bodies
+from review.graph import review_flow
 from risk.graph import risk_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
 from search.graph import search_flow
@@ -411,19 +411,25 @@ APP = Application(
         Service(
             "propose",
             http("POST", "/api/review/propose", port=PORT),
-            graph=propose_flow,
+            graph=review_flow,
+            variants={"propose": {"action": "propose"}},
+            body=review_bodies.propose,
             description="POST {client_id, scenario, title, option}: an option sent to the RM queue.",
         ),
         Service(
             "decide",
             http("POST", "/api/review/decide", port=PORT),
             graph=review_flow,
+            variants={"decide": {"action": "decide"}},
+            body=review_bodies.decide,
             description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
         Service(
             "recommend",
             http("POST", "/api/review/recommend", port=PORT),
-            graph=recommend_flow,
+            graph=review_flow,
+            variants={"recommend": {"action": "recommend"}},
+            body=review_bodies.recommend,
             description="POST {client_id, title, actions, note?, by}: the RM writes an action recommendation for a "
             "family; it reaches the client at once (the RM's alone, OWN-FB-18).",
         ),
