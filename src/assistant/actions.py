@@ -270,7 +270,7 @@ async def propose(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     it = (
         await _graph(
             review_flow,
-            action="propose",
+            task="propose",
             client_id=_need_client(ctx),
             option=args.get("option"),
             scenario=args.get("scenario"),
@@ -344,7 +344,7 @@ async def recommend(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     it = (
         await _graph(
             review_flow,
-            action="recommend",
+            task="recommend",
             client_id=_need_client(ctx),
             title=args.get("title"),
             actions=args.get("actions"),
@@ -518,9 +518,9 @@ def plan_challenge(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 async def challenge(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     from views import store as views_store
-    from views.graph import decide_flow
+    from review.graph import review_flow
 
-    await _graph(decide_flow, view_id=args.get("view_id"), action="challenge", by=ctx.user)
+    await _graph(review_flow, task="view", view_id=args.get("view_id"), action="challenge", by=ctx.user)
     v = views_store.get(str(args.get("view_id")))
     found = views_store.latest_challenge(v["id"])
     ran = len(views_store.challenges(v["id"])) > int(args.get("before") or 0)

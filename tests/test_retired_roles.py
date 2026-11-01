@@ -13,7 +13,7 @@ from review.graph import review_flow
 from wealth import store
 
 REVIEW = Operon(review_flow, params={"item_id": None, "decision": None, "note": None, "by": None})
-RECOMMEND = Operon(review_flow, params={"action": "recommend", "client_id": None, "title": None, "actions": None, "note": None, "by": None})
+RECOMMEND = Operon(review_flow, params={"task": "recommend", "client_id": None, "title": None, "actions": None, "note": None, "by": None})
 
 
 def run(eng, **inputs):

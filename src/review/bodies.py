@@ -14,3 +14,15 @@ def decide(item_id: str, decision: str, note: Optional[str] = None, by: Optional
 
 def recommend(client_id: str, title: str, actions: Any, note: Optional[str] = None, by: Optional[str] = None):
     ...
+
+
+def view(view_id: str, action: str, by: str, reason: str = "", idem_key: Optional[str] = None, edits: Any = None, responses: Any = None):
+    ...
+
+
+def recompute(run: str, by: str = "cio", idem_key: Optional[str] = None):
+    ...
+
+
+def run(run: str, action: str, by: str, reason: str = ""):
+    ...

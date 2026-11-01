@@ -55,9 +55,9 @@ Hourly ──► audit_check: the audit chain walked, new rows to write-once seg
      inbox, availability (NFR-12)
 POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
      the zone_sync job sends the zone the approved catalogues and released research (inbox mode, F-D7)
-POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
-approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
-     run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
+POST /api/views/decide ──► review_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
+approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► review_flow ·
+     GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
      /api/rm/today, /api/audit[/verify] ──► app/web.py
 POST /api/research, /api/research/release, /api/goals/outflow, /api/goals/suggest ──► research_flow, a task each ·
      GET /api/research, /api/goals/regulation ──► app/web.py
@@ -80,7 +80,6 @@ from app import web
 from app.http import SecurityHeaders
 from allocation import bodies as allocation_bodies
 from allocation.graph import allocation_flow
-from apply.graph import recompute_flow, run_decide_flow
 from assistant.graph import (
     assistant_consolidate_flow,
     assistant_conversations_flow,
@@ -122,7 +121,7 @@ from review.graph import review_flow
 from scenarios.graph import combine_flow, goals_flow, scenario_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
-from views.graph import agent_worker_flow, decide_flow
+from views.graph import agent_worker_flow
 from voice.graph import assistant_voice_flow
 from zone.graph import zone_flow
 
@@ -430,7 +429,7 @@ APP = Application(
             "propose",
             http("POST", "/api/review/propose", port=PORT),
             graph=review_flow,
-            variants={"propose": {"action": "propose"}},
+            variants={"propose": {"task": "propose"}},
             body=review_bodies.propose,
             description="POST {client_id, scenario, title, option}: an option sent to the RM queue.",
         ),
@@ -438,7 +437,7 @@ APP = Application(
             "decide",
             http("POST", "/api/review/decide", port=PORT),
             graph=review_flow,
-            variants={"decide": {"action": "decide"}},
+            variants={"decide": {"task": "decide"}},
             body=review_bodies.decide,
             description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
@@ -446,7 +445,7 @@ APP = Application(
             "recommend",
             http("POST", "/api/review/recommend", port=PORT),
             graph=review_flow,
-            variants={"recommend": {"action": "recommend"}},
+            variants={"recommend": {"task": "recommend"}},
             body=review_bodies.recommend,
             description="POST {client_id, title, actions, note?, by}: the RM writes an action recommendation for a "
             "family; it reaches the client at once (the RM's alone, OWN-FB-18).",
@@ -503,19 +502,25 @@ APP = Application(
         Service(
             "view_decide",
             http("POST", "/api/views/decide", port=PORT),
-            graph=decide_flow,
+            graph=review_flow,
+            variants={"view": {"task": "view"}},
+            body=review_bodies.view,
             description="POST {view_id, action, by, reason, idem_key?, edits?, responses?}: one CIO action.",
         ),
         Service(
             "run_recompute",
             http("POST", "/api/runs/recompute", port=PORT),
-            graph=recompute_flow,
+            graph=review_flow,
+            variants={"recompute": {"task": "recompute"}},
+            body=review_bodies.recompute,
             description="POST {run_id, by, idem_key?}: re-apply the run's view on today's data and compare.",
         ),
         Service(
             "run_decide",
             http("POST", "/api/runs/decide", port=PORT),
-            graph=run_decide_flow,
+            graph=review_flow,
+            variants={"run": {"task": "run"}},
+            body=review_bodies.run,
             description="POST {run_id, action: make_effective|withdraw, by, reason}: the CIO on a run.",
         ),
         Service(

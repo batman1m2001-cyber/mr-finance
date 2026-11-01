@@ -15,9 +15,9 @@ from starlette.testclient import TestClient
 
 from apply import reads, trace
 from apply import run as runs
-from apply.graph import recompute_flow, run_decide_flow
 from control import audit, crypto, db
-from views.graph import cio_agent_flow, decide_flow
+from review.graph import review_flow
+from views.graph import cio_agent_flow
 from wealth import fixtures
 
 NOW = 1_792_000_000.0
@@ -26,8 +26,9 @@ INGEST = Operon(news_flow, params={"action": "ingest", "feeds": None, "now": Non
 EVENT = Operon(news_flow, params={"action": "event", "news_ids": None, "title": None, "by": None})
 AGENT = Operon(cio_agent_flow, params={"event_id": None, "by": None, "mode": None})
 DECIDE = Operon(
-    decide_flow,
+    review_flow,
     params={
+        "task": "view",
         "view_id": None,
         "action": None,
         "by": None,
@@ -37,8 +38,8 @@ DECIDE = Operon(
         "responses": None,
     },
 )
-RECOMPUTE = Operon(recompute_flow, params={"run": None, "by": None, "idem_key": None})
-RUN_DECIDE = Operon(run_decide_flow, params={"run": None, "action": None, "by": None, "reason": None})
+RECOMPUTE = Operon(review_flow, params={"task": "recompute", "run": None, "by": None, "idem_key": None})
+RUN_DECIDE = Operon(review_flow, params={"task": "run", "run": None, "action": None, "by": None, "reason": None})
 
 
 def ok(engine, **inputs):

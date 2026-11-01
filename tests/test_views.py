@@ -14,7 +14,8 @@ from starlette.testclient import TestClient
 
 from views import agents, mock, schema
 from views import store as vstore
-from views.graph import cio_agent_flow, decide_flow
+from review.graph import review_flow
+from views.graph import cio_agent_flow
 from wealth import fixtures
 
 NOW = 1_792_000_000.0
@@ -22,8 +23,9 @@ INGEST = Operon(news_flow, params={"action": "ingest", "feeds": None, "now": Non
 EVENT = Operon(news_flow, params={"action": "event", "news_ids": None, "title": None, "by": None})
 AGENT = Operon(cio_agent_flow, params={"event_id": None, "by": None, "mode": None})
 DECIDE = Operon(
-    decide_flow,
+    review_flow,
     params={
+        "task": "view",
         "view_id": None,
         "action": None,
         "by": None,
