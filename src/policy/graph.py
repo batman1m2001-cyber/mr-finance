@@ -1,33 +1,29 @@
-"""The policy radar's flows (POST /api/policy, /verify, /status, /summarise; FR-306)."""
+"""policy_flow: one flow for the policy radar (FR-306), a route picks its `action` (app/main.py binds it with `variants`,
+and `bodies.py` is each route's request contract).
+
+add        POST /api/policy            a CIO adds a policy document
+verify     POST /api/policy/verify     a second CIO confirms the document's source
+status     POST /api/policy/status     a new status on the radar
+summarise  POST /api/policy/summarise  the policy agent summarises a verified document"""
 
 from operonx import END, START, graph
+from operonx.core.ops import if_
 
 from policy.ops import add, set_status, summarise, verify
+from wealth.action import route
 
 
 @graph
-def policy_add_flow(item, by):
-    """A CIO adds a policy document."""
-    done = add(item=item, by=by)
-    START >> done >> END
-
-
-@graph
-def policy_verify_flow(document_id, by, note=""):
-    """A second CIO confirms the document's source."""
-    done = verify(document_id=document_id, by=by, note=note)
-    START >> done >> END
-
-
-@graph
-def policy_status_flow(document_id, status, by, note="", date=None):
-    """A new status on the radar."""
-    done = set_status(document_id=document_id, status=status, by=by, note=note, date=date)
-    START >> done >> END
-
-
-@graph
-def policy_summarise_flow(document_id, by, mode=""):
-    """The policy agent summarises a verified document."""
-    done = summarise(document_id=document_id, by=by, mode=mode)
-    START >> done >> END
+def policy_flow(action="add", item=None, by=None, document_id=None, note="", status=None, date=None, mode=""):
+    """The CIO's and the policy agent's writes on the radar."""
+    which = route(action=action)
+    added = add(item=item, by=by)
+    verified = verify(document_id=document_id, by=by, note=note)
+    set_ = set_status(document_id=document_id, status=status, by=by, note=note, date=date)
+    summarised = summarise(document_id=document_id, by=by, mode=mode)
+    a = which["action"]
+    START >> which >> if_(a == "verify", verified).if_(a == "status", set_).if_(a == "summarise", summarised).else_(added)
+    added >> END
+    verified >> END
+    set_ >> END
+    summarised >> END

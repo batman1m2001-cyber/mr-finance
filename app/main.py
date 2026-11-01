@@ -48,7 +48,7 @@ POST /api/events ──► event_flow · POST /api/events/urgent ──► event
      ──► agent_queue_flow, then the agent_worker job ──► cio_agent_flow (agent + challenger)
 POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, newsletter_act_flow (FR-801: the CIO drafts from
      approved views, another CIO approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
-POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: a CIO adds a document from the Official
+POST /api/policy[/verify|/status|/summarise] ──► policy_flow, an action each (FR-306: a CIO adds a document from the Official
      Gazette, a second CIO verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
 Every 20 s ──► heartbeat: the minute recorded, availability in business hours (NFR-03)
 Hourly ──► audit_check: the audit chain walked, new rows to write-once segments · POST /api/system/alerts/ack ──►
@@ -119,7 +119,8 @@ from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
 from people.graph import account_decide_flow, account_request_flow
-from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
+from policy import bodies as policy_bodies
+from policy.graph import policy_flow
 from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
 from review.graph import propose_flow, recommend_flow, review_flow
 from risk.graph import risk_flow
@@ -541,25 +542,33 @@ APP = Application(
         Service(
             "policy_add",
             http("POST", "/api/policy", port=PORT),
-            graph=policy_add_flow,
+            graph=policy_flow,
+            variants={"add": {"action": "add"}},
+            body=policy_bodies.add,
             description="POST {item: {gazette_url} | {source_url, title, number?, issued?, text?, status}, by}.",
         ),
         Service(
             "policy_verify",
             http("POST", "/api/policy/verify", port=PORT),
-            graph=policy_verify_flow,
+            graph=policy_flow,
+            variants={"verify": {"action": "verify"}},
+            body=policy_bodies.verify,
             description="POST {document_id, by, note}: a second CIO confirms the source (FR-306).",
         ),
         Service(
             "policy_status",
             http("POST", "/api/policy/status", port=PORT),
-            graph=policy_status_flow,
+            graph=policy_flow,
+            variants={"status": {"action": "status"}},
+            body=policy_bodies.status,
             description="POST {document_id, status, by, note, date?}: where the document stands (the radar).",
         ),
         Service(
             "policy_summarise",
             http("POST", "/api/policy/summarise", port=PORT),
-            graph=policy_summarise_flow,
+            graph=policy_flow,
+            variants={"summarise": {"action": "summarise"}},
+            body=policy_bodies.summarise,
             description="POST {document_id, by, mode?}: the policy agent on a verified document (FR-306).",
         ),
         Service(

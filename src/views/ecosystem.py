@@ -159,7 +159,7 @@ EDGES: List[Dict[str, str]] = [
     {"from": "cio", "to": "challenger", "label": "phản biện trước khi duyệt", "code": "src/views/ops.py::review"},
     {"from": "cio", "to": "state", "label": "nhận định chờ CIO duyệt", "code": "src/views/ops.py::save_view"},
     {"from": "person", "to": "policy", "label": "CIO: tóm tắt một văn bản",
-     "code": "app/main.py::policy_summarise_flow"},
+     "code": "src/policy/graph.py::policy_flow"},
     {"from": "policy", "to": "state", "label": "tóm tắt, trích điều khoản", "code": "src/policy/agent.py::summarise"},
 ]  # fmt: skip
 
