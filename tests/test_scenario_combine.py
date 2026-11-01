@@ -10,14 +10,14 @@ from operonx import Operon
 
 from scenarios import _sim
 from scenarios.combine import combine
-from scenarios.graph import combine_flow, scenario_flow
+from scenarios.graph import scenarios_flow
 from wealth import fixtures
 from wealth.money import TR, TY
 
 COMBINE = Operon(
-    combine_flow, params={"client_id": None, "scenarios": None, "params": None, "scope": None, "goals": None}
+    scenarios_flow, params={"action": "combine", "client_id": None, "scenarios": None, "params": None, "scope": None, "goals": None}
 )
-SINGLE = Operon(scenario_flow, params={"client_id": None, "scenario": None, "params": None, "scope": None})
+SINGLE = Operon(scenarios_flow, params={"action": "scenario", "client_id": None, "scenario": None, "params": None, "scope": None})
 STRESS = [sid for sid, m in _sim.SCENARIOS.items() if m["kind"] == "stress" and sid != "custom"]
 
 

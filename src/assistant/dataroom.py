@@ -183,9 +183,9 @@ async def _transactions(who: Who) -> List[Sequence[Any]]:
 
 async def _goals(who: Who) -> List[Sequence[Any]]:
     from assistant.base import run_graph
-    from scenarios.graph import goals_flow
+    from scenarios.graph import scenarios_flow
 
-    out = (await run_graph(goals_flow, client_id=who.client_id, scope=who.ctx.scope))["goals"]
+    out = (await run_graph(scenarios_flow, action="goals", client_id=who.client_id, scope=who.ctx.scope))["goals"]
     followed = who.ctx.followed
     rows = []
     for g in out:

@@ -12,7 +12,7 @@ from test_apply import MARKET, approved
 from apply import reads
 from news.graph import news_flow
 from pages.graph import pages_flow
-from scenarios.graph import goals_flow
+from scenarios.graph import scenarios_flow
 
 OV = Operon(pages_flow, params={"action": "overview", "client_id": None, "scope": None, "role": None, "goals": None})
 
@@ -56,7 +56,7 @@ def test_the_months_categories_add_up_and_open_from_their_side():
 def test_a_goal_edge_is_the_monthly_saving_it_needs_and_shared_pools_are_said_once():
     o = overview()
     nodes, edges = by_id(o)
-    out = asyncio.run(Operon(goals_flow, params={"client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
+    out = asyncio.run(Operon(scenarios_flow, params={"action": "goals", "client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
     goals = {g["id"]: g["goal"] for g in out["goals"]}
     shown = [n for n in o["nodes"] if n["kind"] == "goal"]
     for n in shown:

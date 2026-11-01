@@ -16,13 +16,13 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
 WS   /api/assistant/voice?rate= ──► assistant_voice_flow ──► the assistant by voice: microphone PCM in, captions,
                     the question and the answer read sentence by sentence out (docs/VOICE_PLAN.md)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
-POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
-POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
+POST /api/statement {client_id, filename, content} ──► intake_flow (action statement) ──► holdings read (AI or rules)
+POST /api/declare   {client_id, message, session_id} ──► intake_flow (action declare) ──► the chat's reply, what it recorded
 POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
 POST /api/alerts    {client_id, scope?} ──► news_flow (alerts) ──► policies, macro, infrastructure, in VND
-POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
-POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
+POST /api/scenario  {client_id, scenario, params?} ──► scenarios_flow (action scenario) ──► numbers, a light and a heavy option
+POST /api/goals     {client_id, scope?} ──► scenarios_flow (action goals) ──► every life goal: need, have, gap, status, actions
 POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} ──► allocation_flow ──► Liquidity, Legacy,
                     Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
                     the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
@@ -34,7 +34,7 @@ POST /api/evidence {factor?, role?} ──► evidence_flow (one flow, an action
                     (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
                     · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
-POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
+POST /api/scenario/combine {client_id, scenarios, params?} ──► scenarios_flow (action combine) ──► stress tests together
 POST /api/review/propose (the RM queue), /decide, /recommend (the RM's own recommendation) ──► review_flow
 07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: news_flow (alerts) for every client
 every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► news_flow (ingest): the feeds into the inbox
@@ -51,7 +51,7 @@ POST /api/policy[/verify|/status|/summarise] ──► policy_flow, an action ea
      Gazette, a second CIO verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
 Every 20 s ──► heartbeat: the minute recorded, availability in business hours (NFR-03)
 Hourly ──► audit_check: the audit chain walked, new rows to write-once segments · POST /api/system/alerts/ack ──►
-     alert_ack_flow; GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
+     admin_flow (task alert_ack); GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
      inbox, availability (NFR-12)
 POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
      the zone_sync job sends the zone the approved catalogues and released research (inbox mode, F-D7)
@@ -92,36 +92,31 @@ from assistant.graph import (
 )
 from control import barrier
 from control import jobs as control_jobs
-from control.graph import (
-    alert_ack_flow,
-    audit_check_flow,
-    config_decide_flow,
-    config_propose_flow,
-    heartbeat_flow,
-    job_run_flow,
-)
+from control import bodies as control_bodies
+from control.graph import admin_flow, audit_check_flow, heartbeat_flow
 from copilot.graph import copilot_flow
-from declare.graph import declare_flow, declare_stream_flow
+from declare.graph import declare_stream_flow
 from evidence import bodies as evidence_bodies
 from evidence.graph import evidence_flow
 from impact.ops import every_client
 from inbox.graph import inbox_import_flow
-from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
+from market.graph import market_flow
 from measure.graph import evaluation_flow
 from news import bodies as news_bodies
 from news.graph import news_flow
 from pages import bodies as pages_bodies
 from pages.graph import pages_flow
-from people.graph import account_decide_flow, account_request_flow
 from policy import bodies as policy_bodies
 from policy.graph import policy_flow
 from research import bodies as research_bodies
 from research.graph import research_flow
 from review import bodies as review_bodies
 from review.graph import review_flow
-from scenarios.graph import combine_flow, goals_flow, scenario_flow
+from scenarios import bodies as scenarios_bodies
+from scenarios.graph import scenarios_flow
+from statements import bodies as statements_bodies
 from statements.checks import items_match
-from statements.graph import sample_flow, statement_flow
+from statements.graph import intake_flow, sample_flow
 from views.graph import agent_worker_flow, decide_flow
 from voice.graph import assistant_voice_flow
 from zone.graph import zone_flow
@@ -202,13 +197,17 @@ APP = Application(
         Service(
             "config_propose",
             http("POST", "/api/config/propose", port=PORT),
-            graph=config_propose_flow,
+            graph=admin_flow,
+            variants={"config_propose": {"task": "config_propose"}},
+            body=control_bodies.config_propose,
             description="POST {kind, data, by, note}: propose a configuration version (FR-701).",
         ),
         Service(
             "config_decide",
             http("POST", "/api/config/decide", port=PORT),
-            graph=config_decide_flow,
+            graph=admin_flow,
+            variants={"config_decide": {"task": "config_decide"}},
+            body=control_bodies.config_decide,
             description="POST {version_id, action: approve|reject, by, note}: decide a proposed version.",
         ),
         Service(
@@ -264,13 +263,17 @@ APP = Application(
         Service(
             "statement",
             http("POST", "/api/statement", port=PORT),
-            graph=statement_flow,
+            graph=intake_flow,
+            variants={"statement": {"action": "statement"}},
+            body=statements_bodies.statement,
             description="POST {client_id, filename, content: base64}: a statement, read and kept.",
         ),
         Service(
             "declare",
             http("POST", "/api/declare", port=PORT),
-            graph=declare_flow,
+            graph=intake_flow,
+            variants={"declare": {"action": "declare"}},
+            body=statements_bodies.declare,
             description="POST {client_id, message, session_id}: one chat turn of declarations.",
         ),
         Service(
@@ -299,19 +302,25 @@ APP = Application(
         Service(
             "scenario",
             http("POST", "/api/scenario", port=PORT),
-            graph=scenario_flow,
+            graph=scenarios_flow,
+            variants={"scenario": {"action": "scenario"}},
+            body=scenarios_bodies.scenario,
             description="POST {client_id, scenario, params?, scope?}: a life event or a stress test, with two options.",
         ),
         Service(
             "scenario_combine",
             http("POST", "/api/scenario/combine", port=PORT),
-            graph=combine_flow,
+            graph=scenarios_flow,
+            variants={"combine": {"action": "combine"}},
+            body=scenarios_bodies.combine,
             description="POST {client_id, scenarios, params?, scope?, goals?}: stress tests together, no double count.",
         ),
         Service(
             "goals",
             http("POST", "/api/goals", port=PORT),
-            graph=goals_flow,
+            graph=scenarios_flow,
+            variants={"goals": {"action": "goals"}},
+            body=scenarios_bodies.goals,
             description="POST {client_id, scope?}: every life goal, with its gap, status and actions.",
         ),
         Service(
@@ -556,14 +565,18 @@ APP = Application(
         Service(
             "model_estimate",
             http("POST", "/api/model/estimate", port=PORT),
-            graph=model_estimate_flow,
+            graph=admin_flow,
+            variants={"model_estimate": {"task": "model_estimate"}},
+            body=control_bodies.model_estimate,
             description="POST {by, end?, note?}: a CIO proposes the model estimated from market history (F2).",
         ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service(
             "market_load_ask",
             http("POST", "/api/market/load", port=PORT),
-            graph=market_load_ask_flow,
+            graph=admin_flow,
+            variants={"market_load": {"task": "market_load"}},
+            body=control_bodies.market_load,
             description="POST {by, since}: an Admin queues a load of the market history (the market_load job runs it).",
         ),
         Service(
@@ -617,27 +630,35 @@ APP = Application(
         Service(
             "alert_ack",
             http("POST", "/api/system/alerts/ack", port=PORT),
-            graph=alert_ack_flow,
+            graph=admin_flow,
+            variants={"alert_ack": {"task": "alert_ack"}},
+            body=control_bodies.alert_ack,
             description="POST {alert_id, by, note?}: “Đã xem” on an alert, by a role it is for (NFR-12).",
         ),
         Service(
             "account_request",
             http("POST", "/api/accounts/request", port=PORT),
-            graph=account_request_flow,
+            graph=admin_flow,
+            variants={"account_request": {"task": "account_request"}},
+            body=control_bodies.account_request,
             description="POST {kind: add|role|disable|enable|reset, by, person_id?, full_name?, email?, role?, title?, "
             "note?}: one Admin asks for a change to a staff account (Q-25); another Admin decides.",
         ),
         Service(
             "account_decide",
             http("POST", "/api/accounts/decide", port=PORT),
-            graph=account_decide_flow,
+            graph=admin_flow,
+            variants={"account_decide": {"task": "account_decide"}},
+            body=control_bodies.account_decide,
             description="POST {request_id, action: approve|reject|withdraw, by, note?}: a second Admin approves or "
             "rejects (a reason), the proposer withdraws; an approved add or reset answers a one-time code once.",
         ),
         Service(
             "job_run",
             http("POST", "/api/jobs/run", port=PORT),
-            graph=job_run_flow,
+            graph=admin_flow,
+            variants={"job_run": {"task": "job_run"}},
+            body=control_bodies.job_run,
             description="POST {job, by}: Admin runs a background job now (control/jobs.py RUNNABLE); one at a time.",
         ),
         Service(

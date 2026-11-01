@@ -166,12 +166,12 @@ def test_investigate_reads_the_events_path_from_the_impact_graph():
 
 
 def test_a_stress_scenario_is_the_planning_pages_and_picked_by_words():
-    from scenarios.graph import scenario_flow
+    from scenarios.graph import scenarios_flow
 
     a = ask("Nếu lãi suất tăng mạnh thì sao?")
     assert a["tool"] == "kich_ban" and a["status"] == "ok"
     r = asyncio.run(
-        Operon(scenario_flow, params={"client_id": None, "scenario": None, "params": None, "scope": None}).run(
+        Operon(scenarios_flow, params={"action": "scenario", "client_id": None, "scenario": None, "params": None, "scope": None}).run(
             inputs={"client_id": "C01", "scenario": "rates_up"}
         )
     )["result"]
