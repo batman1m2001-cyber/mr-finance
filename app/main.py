@@ -16,8 +16,8 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
 WS   /api/assistant/voice?rate= ──► assistant_voice_flow ──► the assistant by voice: microphone PCM in, captions,
                     the question and the answer read sentence by sentence out (docs/VOICE_PLAN.md)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
-POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
-POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
+POST /api/statement {client_id, filename, content} ──► intake_flow (action statement) ──► holdings read (AI or rules)
+POST /api/declare   {client_id, message, session_id} ──► intake_flow (action declare) ──► the chat's reply, what it recorded
 POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
 POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
@@ -98,7 +98,7 @@ from control import bodies as control_bodies
 from control.graph import admin_flow, audit_check_flow, heartbeat_flow
 from copilot.graph import copilot_flow
 from dashboard.graph import dashboard_flow
-from declare.graph import declare_flow, declare_stream_flow
+from declare.graph import declare_stream_flow
 from events.graph import event_flow, event_urgent_flow
 from evidence.graph import (
     evidence_decide_flow,
@@ -125,7 +125,8 @@ from scenarios import bodies as scenarios_bodies
 from scenarios.graph import scenarios_flow
 from search.graph import search_flow
 from statements.checks import items_match
-from statements.graph import sample_flow, statement_flow
+from statements import bodies as statements_bodies
+from statements.graph import intake_flow, sample_flow
 from timeline.graph import timeline_flow
 from views.graph import agent_queue_flow, agent_worker_flow, decide_flow
 from voice.graph import assistant_voice_flow
@@ -257,13 +258,17 @@ APP = Application(
         Service(
             "statement",
             http("POST", "/api/statement", port=PORT),
-            graph=statement_flow,
+            graph=intake_flow,
+            variants={"statement": {"action": "statement"}},
+            body=statements_bodies.statement,
             description="POST {client_id, filename, content: base64}: a statement, read and kept.",
         ),
         Service(
             "declare",
             http("POST", "/api/declare", port=PORT),
-            graph=declare_flow,
+            graph=intake_flow,
+            variants={"declare": {"action": "declare"}},
+            body=statements_bodies.declare,
             description="POST {client_id, message, session_id}: one chat turn of declarations.",
         ),
         Service(

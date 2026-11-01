@@ -1,9 +1,15 @@
-"""statement_flow: the file → the model's reading (when AI is on) or the rules' → holdings."""
+"""intake_flow: what a client brings in. A statement: the file → the model's reading (when AI is on) or the rules' →
+holdings. A declaration: one chat turn → the agent (or the rules) records it. read_flow is the statement's reading."""
 
 from operonx import END, START, graph
+from operonx.agents import AgentOp
 from operonx.core.ops import if_
 from operonx.providers.ops import LLMOp
 
+from declare.agent import DECLARER, DECLARER_ONPREM
+from declare.ops import agent_answer, chat_session, recorded, rule_declare
+from declare.ops import ai_mode as declare_mode
+from declare.ops import check_request as check_declare
 from statements.ops import (
     ai_mode,
     check_request,
@@ -15,6 +21,7 @@ from statements.ops import (
     rule_read,
     save_holdings,
 )
+from wealth.action import route
 
 READ_PROMPT = {
     "system": (
@@ -72,9 +79,14 @@ def read_flow(filename, content):
 
 
 @graph
-def statement_flow(client_id, filename, content):
-    """A statement the client uploaded (POST /api/statement), read and kept as their tier-2
-    holdings."""
+def intake_flow(action="statement", client_id=None, filename=None, content=None, message=None, session_id=None):
+    """What a client brings in, one flow, the route picks its ``action`` (app/main.py `variants`; bodies.py has each
+    route's request contract). ``statement`` (POST /api/statement): a statement the client uploaded, read and kept as
+    their tier-2 holdings. ``declare`` (POST /api/declare): one chat turn, the agent records what the client says
+    (when AI is on), or the rules do, as their tier-3 declarations. The turn said as it happens
+    (POST /api/declare/stream) has doors and stays declare/graph.py declare_stream_flow."""
+    which = route(action=action)
+
     ask = check_request(client_id=client_id, filename=filename, content=content)
     got = read_flow(filename=ask["filename"], content=ask["content"])
     saved = save_holdings(
@@ -84,7 +96,47 @@ def statement_flow(client_id, filename, content):
         items=got["items"],
         method=got["method"],
     )
-    START >> ask >> got >> saved >> END
+
+    asked = check_declare(client_id=client_id, message=message, session_id=session_id)
+    mode = declare_mode()
+    agent = AgentOp.of(
+        agent=DECLARER, input=asked["message"], session_id=asked["session_id"], deps=asked["client_id"], sessions=chat_session
+    )
+    onprem = AgentOp.of(
+        agent=DECLARER_ONPREM,
+        input=asked["message"],
+        session_id=asked["session_id"],
+        deps=asked["client_id"],
+        sessions=chat_session,
+    )
+    said = agent_answer(
+        client_id=asked["client_id"],
+        message=asked["message"],
+        output=agent["output"],
+        status=agent["status"],
+        error=agent["error"],
+        onprem_output=onprem["output"],
+        onprem_status=onprem["status"],
+        onprem_error=onprem["error"],
+    )
+    rules = rule_declare(client_id=asked["client_id"], message=asked["message"])
+    turn = recorded(
+        client_id=asked["client_id"],
+        since=mode["since"],
+        ai_reply=said["reply"],
+        rule_reply=rules["reply"],
+        ai_method=said["method"],
+        rule_method=rules["method"],
+    )
+
+    START >> which >> if_(which["action"] == "declare", asked).else_(ask)
+    ask >> got >> saved >> END
+    asked >> mode >> if_(mode["assistant"] == True, agent).if_(mode["onprem"] == True, onprem).else_(rules)  # noqa: E712
+    agent >> said
+    onprem >> said
+    said >> turn
+    rules >> turn
+    turn >> END
 
 
 @graph
