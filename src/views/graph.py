@@ -1,12 +1,11 @@
 """cio_agent_flow: an event → four analyst groups at once (and any the prompts configuration adds) →
-debate → synthesis and format check → the view kept → the challenger (BRD FR-301…303, §8.1). decide_flow: one
-CIO action on a view. (The fixed eval set on prompt and model proposals, MEAS-07, runs in measure/graph.py evaluation_flow.)
+debate → synthesis and format check → the view kept → the challenger (BRD FR-301…303, §8.1). The CIO's action on a view is review_flow (review/graph.py). (The fixed eval set on prompt and model proposals, MEAS-07, runs in measure/graph.py evaluation_flow.)
 
-Served as is: POST /api/views/decide (app/main.py); POST /api/events/run-agent queues a run in news/graph.py news_flow."""
+Served as is: POST /api/events/run-agent queues a run in news/graph.py news_flow."""
 
 from operonx import END, START, graph
 
-from views.ops import analyse, analyse_more, compose, decide_view, discuss, gather, review, save_view
+from views.ops import analyse, analyse_more, compose, discuss, gather, review, save_view
 from views.worker import work_queue
 
 
@@ -56,15 +55,6 @@ def cio_agent_flow(event_id, by="cio", mode=None):
     credit >> talk
     other >> talk
     talk >> made >> kept >> checked >> END
-
-
-@graph
-def decide_flow(view_id, action, by, reason="", idem_key=None, edits=None, responses=None):
-    """Edit, answer findings, approve, return, reject or withdraw (FR-304)."""
-    done = decide_view(
-        view_id=view_id, action=action, by=by, reason=reason, idem_key=idem_key, edits=edits, responses=responses
-    )
-    START >> done >> END
 
 
 @graph

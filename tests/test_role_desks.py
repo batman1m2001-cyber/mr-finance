@@ -274,9 +274,10 @@ def test_the_rm_assistant_says_the_books_numbers():
 
 def test_the_agents_beneath_the_desk_are_untouched():
     # the CIO's own agent and its challenger (FEAT-04, 05) are still the flows they were; the desk only reads them
+    from review import graph as review_graph
     from views import graph
 
-    assert graph.cio_agent_flow and graph.decide_flow
+    assert graph.cio_agent_flow and review_graph.review_flow  # decide_flow is review_flow's `view` task now
     assert {"agent_nen"} <= set(registry.REGISTRY) and registry.REGISTRY["agent_nen"].roles == ("cio", "admin")
 
 

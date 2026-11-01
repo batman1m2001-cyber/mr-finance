@@ -40,7 +40,7 @@ Every status change is an audit row in the same transaction as the change.
 ## Implementation
 `src/apply/run.py` (`family_holdings`, `make_snapshot`, `compute`, `postcheck`, `ranking`, `exposure`,
 `apply_view`, `_insert_run`/`_compute_run`, `decide_run`, `withdraw_view`, `verify`), `src/apply/ops.py`,
-`src/apply/graph.py` (`recompute_flow`, `run_decide_flow`); tables `application_runs`, `run_snapshots`,
+`src/review/graph.py` (`review_flow`: tasks `recompute`, `run`); tables `application_runs`, `run_snapshots`,
 `family_impacts`.
 
 ## Acceptance and tests
