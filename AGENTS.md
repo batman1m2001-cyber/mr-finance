@@ -179,7 +179,7 @@ uv run operonx run NAME       # run one job
 ## operonx guides
 
 <!-- operonx:guide -->
-Installed: operonx 1.37.0, operonx-agents 0.3.1, operonx-kb 0.2.6. Read `.operonx/guide/README.md` first: it lists every
+Installed: operonx 1.38.0, operonx-agents 0.3.1, operonx-kb 0.2.6. Read `.operonx/guide/README.md` first: it lists every
 page of every installed operonx package, each tested against that version.
 Upgrade: `uv lock --upgrade-package operonx && uv sync`, then `uv run operonx guide`
 (after `uv add operonx-agents` or `operonx-kb`, just `uv run operonx guide`).
