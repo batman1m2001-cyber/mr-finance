@@ -31,9 +31,9 @@ export const DESKS = {
   rm: {
     title: "Tổng quan", view: "rm",
     groups: [
+      {id: "hieu-qua", label: "Advisory performance", short: "Hiệu quả", icon: "activity", tip: "Advisory performance: khách hàng này và tất cả khách hàng của bạn", nav: ["hieu-qua"]},  // first on the rail (business feedback 2026-11-02)
       {id: "ban", label: "Tổng quan", icon: "users", tip: "Tổng quan: khách hàng đang quản lý, ai cần bạn trước, ghi liên hệ", desk: true, nav: ["ban"]},  // OWN-FB-25, -21
       {id: "khach-hang", label: "Khách hàng", icon: "user", tip: "Khách hàng đang chọn: Wealth view, Wealth planning, Wealth advisor, Advisory performance", nav: ["khach-hang"]},
-      {id: "hieu-qua", label: "Advisory performance", short: "Hiệu quả", icon: "activity", tip: "Advisory performance: khách hàng này và tất cả khách hàng của bạn", nav: ["hieu-qua"]},
       {id: "bo-nho", label: "Bộ nhớ", icon: "archive", tip: "Bộ nhớ: điều trợ lý ghi nhớ về bạn", nav: ["bo-nho"], foot: true},
     ],
   },

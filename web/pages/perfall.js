@@ -3,7 +3,7 @@
    per client, one row per client (a row opens that client's performance), the latest advice, the news missed
    grouped by item with the clients it touched, and the average reading. Data: GET /api/advisory/all. */
 import {esc, get, n as how, pct, vnd} from "../core/core.js";
-import {adviceTable, drawEngagement, drawSparks, engSeg, missedList, pipeline, tiles} from "./performance.js?v=20261025t3";
+import {adviceTable, drawEngagement, drawSparks, engSeg, missedList, pipeline} from "./performance.js?v=20261102a1";
 
 export async function render(box, ctx) {
   const a = await get("/api/advisory/all");
@@ -13,7 +13,6 @@ export async function render(box, ctx) {
   box.innerHTML = `
     <div class="pagehead"><div><h1 class="h1" lang="en">Advisory performance</h1>
       <p class="lede">Hiệu quả tư vấn và AI trên tất cả khách hàng · ${a.clients.length} khách hàng · 12 tháng</p></div></div>
-    ${tiles(sm, `lượt khách hàng · tác động ${how(vnd(sm.missed_news_value, true), "advisory.missed_news")}`)}
     ${pipeline(a.agents, "điểm trung bình trên mọi khách hàng · xu hướng độ chính xác 12 tháng",
       g => g.by_client.map(c => `<div class="kv"><span>${esc(c.client)}</span><b>${how(String(c.score), "advisory.agent_metric")}</b></div>`).join(""))}
     <div class="panel mt"><h3>Theo từng khách hàng <span class="hint">bấm một dòng để mở chi tiết khách hàng đó</span></h3>

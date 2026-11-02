@@ -16,7 +16,8 @@ def test_sign_in_with_the_form_and_with_a_demo_account_then_sign_out(browser, ba
         page.wait_for_selector("#signin-form")
         assert page.is_hidden("#nav a") and page.is_hidden(".cp-panel")  # nothing of the app before sign-in
         assert page.locator(".demo-acc").count() >= 5
-        assert page.locator(".demo-acc[data-acc=rm01], .demo-acc[data-acc=cio], .demo-acc[data-acc=admin]").count() == 0  # staff: the form only
+        assert page.locator(".demo-acc[data-acc=rm01]").count() == 1  # one RM listed (business feedback 2026-11-02)
+        assert page.locator(".demo-acc[data-acc=rm02], .demo-acc[data-acc=cio], .demo-acc[data-acc=admin]").count() == 0  # other staff: the form only
         page.fill("[name=login]", "huy.tran@tcbwealth.example")
         page.fill("[name=password]", "sai-mat-khau")
         page.click("#signin-form [type=submit]")

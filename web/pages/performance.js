@@ -1,9 +1,8 @@
 /* Advisory performance for one client (SCR-RM-04; laid out as the owner's mock, OWN-FB-06; UI redesign R3, was the pre-redesign “performance” tab; FEAT-28).
-   Staff only. What the AI advised and what came of it over twelve months: the counts and money (right, wrong,
-   missed, news missed), each AI in the pipeline with its score, metrics and a twelve-month accuracy line, the
+   Staff only. What the AI advised and what came of it over twelve months: each AI in the pipeline with its score, metrics and a twelve-month accuracy line, the
    advice log, the important news it missed, how much the client reads, and the risk tests over time (tolerance
    against capacity). Data: GET /api/advisory?client_id=. perfall.js shows the same over every client. */
-import {esc, get, n as how, pct, vnd} from "../core/core.js";
+import {esc, get, n as how, vnd} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
 import {columns, lines, sparkline} from "../charts/money.js?v=20261016r4";
 
@@ -11,21 +10,6 @@ export const OUTCOME = {right: ["good", "Đúng"], wrong: ["bad", "Sai"], missed
 const AGENT_NAME = {news: "AI News Reader", impact: "AI Impact Assessor", planner: "AI Planning Advisor", chat: "AI Client Chat"};  // the owner's mock (OWN-FB-06)
 export const ENG = [["minutes", "Phút đọc / tuần", "phút / tuần"], ["days", "Ngày đọc / tháng", "ngày / tháng"]];
 export const eng = {view: "minutes"};  // shared by both pages for this page's life
-
-const kpi = (ic, tone, label, value, sub, cls = "") => `<div class="kpi pcard">
-  <div class="k">${label}</div><div class="v ${cls}">${value}</div><div class="s muted">${sub}</div></div>`;
-
-export function tiles(sm, newsSub) {
-  const decided = sm.right + sm.wrong;
-  return `<div class="kpis six">
-    ${kpi("list", "var(--accent)", "Khuyến nghị", sm.advice, `${sm.right} đúng · ${sm.wrong} sai · ${sm.open} đang theo dõi`)}
-    ${kpi("target", "var(--accent)", "Tỷ lệ đúng", decided ? how(pct(sm.right / decided, false, 0), "advisory.hit_rate", {right: String(sm.right), wrong: String(sm.wrong)}) : "—", "trên các khuyến nghị đã thực hiện")}
-    ${kpi("stock", "var(--good)", "Tiền mang lại", how(vnd(sm.gained, true), "advisory.value", {count: String(sm.right)}), "từ các khuyến nghị đúng", "up")}
-    ${kpi("down", "var(--critical)", "Sai, thiệt hại", how(vnd(sm.lost, true), "advisory.value", {count: String(sm.wrong)}), `${sm.wrong} khuyến nghị sai`, "down")}
-    ${kpi("clock", "var(--warning)", "Hành động bỏ lỡ", sm.missed, `khách hàng không thực hiện · đã có thể thêm ${how(vnd(sm.missed_value), "advisory.value", {count: String(sm.missed)})}`)}
-    ${kpi("news", "var(--warning)", "Tin quan trọng bị bỏ sót", sm.missed_news, newsSub)}
-  </div>`;
-}
 
 // the AI pipeline: one card per AI, in order; sub(g) is what goes under its line
 // the AI pipeline (the owner's mock, OWN-FB-06): four numbered cards in order, an arrow from each to the next
@@ -84,7 +68,6 @@ export async function render(box, ctx) {
   box.innerHTML = `
     <div class="pagehead"><div><h1 class="h1" lang="en">Advisory performance</h1>
       <p class="lede">Hiệu quả tư vấn và AI cho khách hàng ${esc(me.name || client)} · 12 tháng</p></div></div>
-    ${tiles(t.summary, `đã có tín hiệu sớm · tác động ${how(vnd(t.summary.missed_news_value, true), "advisory.missed_news")}`)}
     ${pipeline(t.agents, "hiệu quả từng AI · điểm 0–100 · xu hướng độ chính xác 12 tháng",
       g => g.metrics.map(m => `<div class="kv"><span>${esc(m.label)}</span><b class="${m.tone === "bad" ? "down" : ""}">${how(esc(m.value), "advisory.agent_metric")}</b></div>`).join(""))}
     <div class="cols mt">
