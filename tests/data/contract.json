@@ -1,0 +1,1120 @@
+{
+ "jobs": {
+  "accuracy_score": {
+   "schedule": {
+    "at": "18:30"
+   }
+  },
+  "agent_eval": {
+   "schedule": {
+    "every": "1m"
+   }
+  },
+  "agent_worker": {
+   "schedule": {
+    "every": "5s"
+   }
+  },
+  "assistant_consolidate": {
+   "schedule": {
+    "every": "5m"
+   }
+  },
+  "assistant_retention": {
+   "schedule": {
+    "at": "02:30"
+   }
+  },
+  "audit_check": {
+   "schedule": {
+    "every": "1h"
+   }
+  },
+  "heartbeat": {
+   "schedule": {
+    "every": "20s"
+   }
+  },
+  "inbox_import": {
+   "schedule": {
+    "every": "10m"
+   }
+  },
+  "market_backfill": {
+   "schedule": null
+  },
+  "market_crypto": {
+   "schedule": {
+    "every": "1h"
+   }
+  },
+  "market_equity": {
+   "schedule": {
+    "at": "15:45"
+   }
+  },
+  "market_flows": {
+   "schedule": {
+    "at": "16:00"
+   }
+  },
+  "market_fx": {
+   "schedule": {
+    "every": "1h"
+   }
+  },
+  "market_gold": {
+   "schedule": {
+    "every": "1h"
+   }
+  },
+  "market_load": {
+   "schedule": {
+    "every": "1m"
+   }
+  },
+  "market_world": {
+   "schedule": {
+    "every": "1h"
+   }
+  },
+  "market_yields": {
+   "schedule": {
+    "at": "17:30"
+   }
+  },
+  "news_ingest": {
+   "schedule": {
+    "every": "10m"
+   }
+  },
+  "news_reference": {
+   "schedule": {
+    "every": "2h"
+   }
+  },
+  "policy_sweep": {
+   "schedule": {
+    "at": "07:00"
+   }
+  },
+  "statement_reading": {
+   "schedule": null
+  },
+  "trial_daily": {
+   "schedule": {
+    "at": "08:30"
+   }
+  },
+  "trial_score": {
+   "schedule": {
+    "every": "15m"
+   }
+  },
+  "zone_sync": {
+   "schedule": {
+    "every": "10m"
+   }
+  }
+ },
+ "responses": {
+  "alerts": [
+   "report"
+  ],
+  "allocation": [
+   "allocation"
+  ],
+  "allocation_example": [
+   "allocation"
+  ],
+  "allocation_queue": [
+   "decided",
+   "overrides",
+   "waiting"
+  ],
+  "allocation_tilts": [
+   "classes",
+   "method",
+   "methods",
+   "model",
+   "model_bl",
+   "stances",
+   "tilts"
+  ],
+  "dashboard": [
+   "dashboard"
+  ],
+  "evidence": [
+   "evidence"
+  ],
+  "feed": [
+   "feed"
+  ],
+  "flows": [
+   "flows"
+  ],
+  "goals": [
+   "as_of",
+   "goals",
+   "stages"
+  ],
+  "overview": [
+   "overview"
+  ],
+  "risk": [
+   "reply"
+  ],
+  "timeline": [
+   "timeline"
+  ]
+ },
+ "services": {
+  "account_decide": {
+   "fields": {
+    "action": "<required>",
+    "by": "<required>",
+    "note": "''",
+    "request_id": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/accounts/decide",
+   "variants": []
+  },
+  "account_request": {
+   "fields": {
+    "by": "<required>",
+    "email": "''",
+    "full_name": "''",
+    "kind": "<required>",
+    "note": "''",
+    "person_id": "''",
+    "role": "''",
+    "title": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/accounts/request",
+   "variants": []
+  },
+  "accuracy_score": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/accuracy_score",
+   "variants": []
+  },
+  "agent_eval": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/agent_eval",
+   "variants": []
+  },
+  "agent_worker": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/agent_worker",
+   "variants": []
+  },
+  "alert_ack": {
+   "fields": {
+    "alert_id": "<required>",
+    "by": "<required>",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/system/alerts/ack",
+   "variants": []
+  },
+  "alerts": {
+   "fields": {
+    "client_id": "<required>",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/alerts",
+   "variants": []
+  },
+  "allocation": {
+   "fields": {
+    "assumptions": "None",
+    "client_id": "<required>",
+    "method": "'A'",
+    "role": "None",
+    "scope": "'family'",
+    "whatif": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation",
+   "variants": []
+  },
+  "allocation_example": {
+   "fields": {
+    "assumptions": "None",
+    "method": "'A'",
+    "role": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/example",
+   "variants": []
+  },
+  "allocation_method": {
+   "fields": {
+    "by": "<required>",
+    "method": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/method",
+   "variants": []
+  },
+  "allocation_override": {
+   "fields": {
+    "bucket": "''",
+    "by": "<required>",
+    "client_id": "<required>",
+    "key": "<required>",
+    "reason": "''",
+    "scope": "'family'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/override",
+   "variants": []
+  },
+  "allocation_queue": {
+   "fields": {},
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/queue",
+   "variants": []
+  },
+  "allocation_review": {
+   "fields": {
+    "by": "<required>",
+    "decisions": "None",
+    "item_id": "<required>",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/review",
+   "variants": []
+  },
+  "allocation_send": {
+   "fields": {
+    "assumptions": "None",
+    "by": "<required>",
+    "client_id": "<required>",
+    "method": "'A'",
+    "scope": "'family'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/send",
+   "variants": []
+  },
+  "allocation_tilt": {
+   "fields": {
+    "asset_class": "<required>",
+    "by": "<required>",
+    "reason": "''",
+    "stance": "<required>",
+    "view_id": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/tilt",
+   "variants": []
+  },
+  "allocation_tilts": {
+   "fields": {},
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/allocation/tilts",
+   "variants": []
+  },
+  "assistant": {
+   "fields": {
+    "approvals": "None",
+    "attachments": "None",
+    "client_id": "None",
+    "conversation_id": "None",
+    "goals": "None",
+    "graph": "None",
+    "message": "None",
+    "role": "'client'",
+    "route": "None",
+    "scope": "'personal'",
+    "turn_id": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/assistant",
+   "variants": []
+  },
+  "assistant_attach": {
+   "fields": {
+    "client_id": "None",
+    "data": "None",
+    "file_name": "None",
+    "role": "'client'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/assistant/attach",
+   "variants": []
+  },
+  "assistant_consolidate": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/assistant_consolidate",
+   "variants": []
+  },
+  "assistant_conversations": {
+   "fields": {
+    "action": "'list'",
+    "client_id": "None",
+    "conversation_id": "None",
+    "role": "'client'",
+    "title": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/assistant/conversations",
+   "variants": []
+  },
+  "assistant_memory": {
+   "fields": {
+    "action": "'list'",
+    "client_id": "None",
+    "data": "None",
+    "file_name": "None",
+    "item_id": "None",
+    "key": "None",
+    "kind": "None",
+    "query": "None",
+    "role": "'client'",
+    "text": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/assistant/memory",
+   "variants": []
+  },
+  "assistant_retention": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/assistant_retention",
+   "variants": []
+  },
+  "assistant_stream": {
+   "fields": {},
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/assistant/stream",
+   "variants": []
+  },
+  "assistant_voice": {
+   "fields": {
+    "rate": "48000",
+    "silence_ms": "1200"
+   },
+   "kind": "websocket",
+   "method": "POST",
+   "path": "/api/assistant/voice",
+   "variants": []
+  },
+  "audit_check": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/audit_check",
+   "variants": []
+  },
+  "cio_agent": {
+   "fields": {
+    "by": "'cio'",
+    "event_id": "<required>",
+    "mode": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/events/run-agent",
+   "variants": []
+  },
+  "config_decide": {
+   "fields": {
+    "action": "<required>",
+    "by": "<required>",
+    "note": "''",
+    "version_id": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/config/decide",
+   "variants": []
+  },
+  "config_propose": {
+   "fields": {
+    "by": "<required>",
+    "data": "<required>",
+    "kind": "<required>",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/config/propose",
+   "variants": []
+  },
+  "copilot": {
+   "fields": {
+    "client_id": "None",
+    "confirm": "None",
+    "goals": "None",
+    "question": "None",
+    "role": "'client'",
+    "route": "None",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/copilot",
+   "variants": []
+  },
+  "dashboard": {
+   "fields": {
+    "client_id": "<required>",
+    "months": "12",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/dashboard",
+   "variants": []
+  },
+  "decide": {
+   "fields": {
+    "by": "None",
+    "decision": "<required>",
+    "item_id": "<required>",
+    "note": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/review/decide",
+   "variants": []
+  },
+  "declare": {
+   "fields": {
+    "client_id": "<required>",
+    "message": "<required>",
+    "session_id": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/declare",
+   "variants": []
+  },
+  "declare_stream": {
+   "fields": {},
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/declare/stream",
+   "variants": []
+  },
+  "event": {
+   "fields": {
+    "by": "'cio'",
+    "news_ids": "<required>",
+    "title": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/events",
+   "variants": []
+  },
+  "event_urgent": {
+   "fields": {
+    "by": "'cio'",
+    "event_id": "<required>",
+    "reason": "''",
+    "urgent": "True"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/events/urgent",
+   "variants": []
+  },
+  "evidence": {
+   "fields": {
+    "factor": "None",
+    "role": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/evidence",
+   "variants": []
+  },
+  "evidence_decide": {
+   "fields": {
+    "by": "None",
+    "decision": "None",
+    "factor": "None",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/evidence/decide",
+   "variants": []
+  },
+  "evidence_draft": {
+   "fields": {
+    "by": "None",
+    "mode": "''",
+    "news_id": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/evidence/draft",
+   "variants": []
+  },
+  "evidence_draft_decide": {
+   "fields": {
+    "by": "None",
+    "decision": "None",
+    "news_id": "None",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/evidence/draft/decide",
+   "variants": []
+  },
+  "evidence_type": {
+   "fields": {
+    "by": "None",
+    "dates": "None",
+    "event_type": "None",
+    "label": "None",
+    "series": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/evidence/type",
+   "variants": []
+  },
+  "feed": {
+   "fields": {
+    "client_id": "<required>",
+    "role": "'client'",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/feed",
+   "variants": []
+  },
+  "feed_open": {
+   "fields": {
+    "client_id": "<required>",
+    "key": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/feed/open",
+   "variants": []
+  },
+  "flows": {
+   "fields": {
+    "client_id": "<required>",
+    "month": "None",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/flows",
+   "variants": []
+  },
+  "goal_outflow": {
+   "fields": {
+    "by": "<required>",
+    "country": "''",
+    "family_id": "<required>",
+    "goal_id": "<required>",
+    "purpose": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/goals/outflow",
+   "variants": []
+  },
+  "goal_suggest": {
+   "fields": {
+    "by": "<required>",
+    "family_id": "<required>",
+    "mode": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/goals/suggest",
+   "variants": []
+  },
+  "goals": {
+   "fields": {
+    "client_id": "<required>",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/goals",
+   "variants": []
+  },
+  "heartbeat": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/heartbeat",
+   "variants": []
+  },
+  "inbox_import": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/inbox_import",
+   "variants": []
+  },
+  "job_run": {
+   "fields": {
+    "by": "<required>",
+    "job": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/jobs/run",
+   "variants": []
+  },
+  "market_crypto": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_crypto",
+   "variants": []
+  },
+  "market_equity": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_equity",
+   "variants": []
+  },
+  "market_flows": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_flows",
+   "variants": []
+  },
+  "market_fx": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_fx",
+   "variants": []
+  },
+  "market_gold": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_gold",
+   "variants": []
+  },
+  "market_load": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_load",
+   "variants": []
+  },
+  "market_load_ask": {
+   "fields": {
+    "by": "<required>",
+    "since": "'2020-01-01'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/market/load",
+   "variants": []
+  },
+  "market_world": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_world",
+   "variants": []
+  },
+  "market_yields": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/market_yields",
+   "variants": []
+  },
+  "model_estimate": {
+   "fields": {
+    "by": "<required>",
+    "end": "None",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/model/estimate",
+   "variants": []
+  },
+  "news_dismiss": {
+   "fields": {
+    "by": "'cio'",
+    "ids": "<required>",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/news/dismiss",
+   "variants": []
+  },
+  "news_fetch": {
+   "fields": {
+    "at": "None",
+    "feeds": "None",
+    "now": "None",
+    "tick": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/news/ingest",
+   "variants": []
+  },
+  "news_ingest": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/news_ingest",
+   "variants": []
+  },
+  "news_reference": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/news_reference",
+   "variants": []
+  },
+  "news_release": {
+   "fields": {
+    "by": "<required>",
+    "item_id": "<required>",
+    "note": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/news/release",
+   "variants": []
+  },
+  "newsletter_act": {
+   "fields": {
+    "action": "<required>",
+    "by": "<required>",
+    "changes": "None",
+    "newsletter_id": "<required>",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/newsletters/act",
+   "variants": []
+  },
+  "newsletter_draft": {
+   "fields": {
+    "body": "''",
+    "by": "<required>",
+    "conflict": "None",
+    "distribution": "None",
+    "mode": "'template'",
+    "title": "''",
+    "view_ids": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/newsletters",
+   "variants": []
+  },
+  "overview": {
+   "fields": {
+    "client_id": "<required>",
+    "goals": "None",
+    "role": "'client'",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/overview",
+   "variants": []
+  },
+  "policy_add": {
+   "fields": {
+    "by": "<required>",
+    "item": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/policy",
+   "variants": []
+  },
+  "policy_status": {
+   "fields": {
+    "by": "<required>",
+    "date": "None",
+    "document_id": "<required>",
+    "note": "''",
+    "status": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/policy/status",
+   "variants": []
+  },
+  "policy_summarise": {
+   "fields": {
+    "by": "<required>",
+    "document_id": "<required>",
+    "mode": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/policy/summarise",
+   "variants": []
+  },
+  "policy_sweep": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/policy_sweep",
+   "variants": []
+  },
+  "policy_verify": {
+   "fields": {
+    "by": "<required>",
+    "document_id": "<required>",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/policy/verify",
+   "variants": []
+  },
+  "propose": {
+   "fields": {
+    "client_id": "<required>",
+    "option": "<required>",
+    "scenario": "None",
+    "summary": "None",
+    "title": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/review/propose",
+   "variants": []
+  },
+  "recommend": {
+   "fields": {
+    "actions": "<required>",
+    "by": "None",
+    "client_id": "<required>",
+    "note": "None",
+    "title": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/review/recommend",
+   "variants": []
+  },
+  "research_release": {
+   "fields": {
+    "by": "<required>",
+    "decision": "<required>",
+    "item_id": "<required>",
+    "note": "''"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/research/release",
+   "variants": []
+  },
+  "research_upload": {
+   "fields": {
+    "by": "<required>",
+    "item": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/research",
+   "variants": []
+  },
+  "risk": {
+   "fields": {
+    "answers": "None",
+    "client_id": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/risk",
+   "variants": []
+  },
+  "rm_contact": {
+   "fields": {
+    "by": "None",
+    "channel": "'call'",
+    "family_id": "<required>",
+    "note": "None",
+    "signal": "None"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/rm/contacts",
+   "variants": []
+  },
+  "run_decide": {
+   "fields": {
+    "action": "<required>",
+    "by": "<required>",
+    "reason": "''",
+    "run": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/runs/decide",
+   "variants": []
+  },
+  "run_recompute": {
+   "fields": {
+    "by": "'cio'",
+    "idem_key": "None",
+    "run": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/runs/recompute",
+   "variants": []
+  },
+  "scenario": {
+   "fields": {
+    "client_id": "<required>",
+    "params": "None",
+    "scenario": "<required>",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/scenario",
+   "variants": []
+  },
+  "scenario_combine": {
+   "fields": {
+    "client_id": "<required>",
+    "goals": "None",
+    "params": "None",
+    "scenarios": "<required>",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/scenario/combine",
+   "variants": []
+  },
+  "search": {
+   "fields": {
+    "client_id": "None",
+    "q": "<required>",
+    "role": "<required>",
+    "scope": "'personal'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/search",
+   "variants": []
+  },
+  "statement": {
+   "fields": {
+    "client_id": "<required>",
+    "content": "<required>",
+    "filename": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/statement",
+   "variants": []
+  },
+  "timeline": {
+   "fields": {
+    "client_id": "<required>",
+    "node": "'ME'",
+    "scope": "'personal'",
+    "unit": "'month'"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/timeline",
+   "variants": []
+  },
+  "trial_daily": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/trial_daily",
+   "variants": []
+  },
+  "trial_score": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/trial_score",
+   "variants": []
+  },
+  "view_decide": {
+   "fields": {
+    "action": "<required>",
+    "by": "<required>",
+    "edits": "None",
+    "idem_key": "None",
+    "reason": "''",
+    "responses": "None",
+    "view_id": "<required>"
+   },
+   "kind": "http",
+   "method": "POST",
+   "path": "/api/views/decide",
+   "variants": []
+  },
+  "web": {
+   "fields": null,
+   "kind": "asgi",
+   "method": "POST",
+   "path": "/",
+   "variants": []
+  },
+  "zone_sync": {
+   "fields": null,
+   "kind": "schedule",
+   "method": "*",
+   "path": "/__schedule__/job/zone_sync",
+   "variants": []
+  }
+ }
+}

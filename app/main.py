@@ -127,20 +127,8 @@ from flows.graph import flows_flow
 from impact.graph import alerts_flow
 from impact.ops import every_client
 from inbox.graph import inbox_import_flow
-from market.graph import (
-    market_backfill_flow,
-    market_crypto_flow,
-    market_equity_flow,
-    market_flows_flow,
-    market_fx_flow,
-    market_gold_flow,
-    market_load_ask_flow,
-    market_load_flow,
-    market_world_flow,
-    market_yields_flow,
-    model_estimate_flow,
-)
-from measure.graph import accuracy_flow
+from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
+from measure.graph import evaluation_flow
 from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
 from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
 from overview.graph import overview_flow
@@ -154,10 +142,9 @@ from search.graph import search_flow
 from statements.checks import items_match
 from statements.graph import sample_flow, statement_flow
 from timeline.graph import timeline_flow
-from trial.graph import trial_daily_flow, trial_score_flow
-from views.graph import agent_eval_flow, agent_queue_flow, agent_worker_flow, decide_flow
+from views.graph import agent_queue_flow, agent_worker_flow, decide_flow
 from voice.graph import assistant_voice_flow
-from zone.graph import zone_sync_flow
+from zone.graph import zone_flow
 
 barrier.install()  # every llm: call of this process passes the client-data barrier (BRD-NFR-08)
 
@@ -644,56 +631,64 @@ APP = Application(
         # the cadence from its rate limit and when its data changes; `operonx run market_<kind>` runs one now
         Job(
             "market_equity",
-            graph=market_equity_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_equity"},
             schedule=schedule(at="15:45", port=PORT),
             timeout=600,
             description="15:45 daily: VN-Index and the stocks' closes (VNDirect, then Vietcap).",
         ),
         Job(
             "market_flows",
-            graph=market_flows_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_flows"},
             schedule=schedule(at="16:00", port=PORT),
             timeout=600,
             description="16:00 daily: foreign net buying on HOSE (cafef).",
         ),
         Job(
             "market_yields",
-            graph=market_yields_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_yields"},
             schedule=schedule(at="17:30", port=PORT),
             timeout=600,
             description="17:30 daily: government bond yields (HNX curve, then worldgovernmentbonds).",
         ),
         Job(
             "market_fx",
-            graph=market_fx_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_fx"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: USD/VND (Vietcombank, then MSN).",
         ),
         Job(
             "market_world",
-            graph=market_world_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_world"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: gold, Brent, ACWI, S&P 500, US 10-year, the DXY's currencies (MSN).",
         ),
         Job(
             "market_crypto",
-            graph=market_crypto_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_crypto"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: Bitcoin and Ether (Binance).",
         ),
         Job(
             "market_gold",
-            graph=market_gold_flow,
+            graph=market_flow,
+            inputs={"action": "pull", "job": "market_gold"},
             schedule=schedule(every="1h", port=PORT),
             timeout=300,
             description="Hourly: SJC gold bars (PNJ's history).",
         ),
         Job(
             "market_load",
-            graph=market_load_flow,
+            graph=market_flow,
+            inputs={"action": "load"},
             schedule=schedule(every="1m", port=PORT),
             timeout=7200,
             keep_runs=200,
@@ -716,7 +711,8 @@ APP = Application(
         ),
         Job(
             "zone_sync",
-            graph=zone_sync_flow,
+            graph=zone_flow,
+            inputs={"action": "sync"},
             schedule=schedule(every="10m", port=PORT),
             timeout=300,
             description="Every 10 minutes in inbox mode: the approved catalogues and released research to the AI zone.",
@@ -740,7 +736,8 @@ APP = Application(
         ),
         Job(
             "agent_eval",
-            graph=agent_eval_flow,
+            graph=evaluation_flow,
+            inputs={"action": "agent_eval"},
             schedule=schedule(every="1m", port=PORT),
             timeout=3600,
             keep_runs=200,
@@ -748,7 +745,8 @@ APP = Application(
         ),
         Job(
             "accuracy_score",
-            graph=accuracy_flow,
+            graph=evaluation_flow,
+            inputs={"action": "accuracy"},
             schedule=schedule(at="18:30", port=PORT),
             timeout=600,
             description="18:30 daily, after the market jobs: approved views' forecasts kept and scored (FEAT-18).",
@@ -757,7 +755,8 @@ APP = Application(
         # nothing approved; their drafts' shadow forecasts kept and scored, the report in out/trial/<day>.json
         Job(
             "trial_daily",
-            graph=trial_daily_flow,
+            graph=evaluation_flow,
+            inputs={"action": "trial_daily"},
             schedule=schedule(at="08:30", port=PORT),
             timeout=3600,
             description="08:30 daily until MF_TRIAL_UNTIL: the news since the last run grouped into events by the CIO "
@@ -765,7 +764,8 @@ APP = Application(
         ),
         Job(
             "trial_score",
-            graph=trial_score_flow,
+            graph=evaluation_flow,
+            inputs={"action": "trial_score"},
             schedule=schedule(every="15m", port=PORT),
             timeout=600,
             description="Every 15 minutes: the trial's drafts' shadow forecasts kept, the due ones scored, the report "
@@ -774,7 +774,8 @@ APP = Application(
         # history on demand: `operonx run market_backfill [--set since=2020-01-01]`
         Job(
             "market_backfill",
-            graph=market_backfill_flow,
+            graph=market_flow,
+            inputs={"action": "backfill", "since": "2020-01-01"},
             timeout=7200,
             description="On demand: every series' history from 2020-01 (dated sources weekly).",
         ),
