@@ -5,9 +5,10 @@
 import {esc, get, post} from "../core/core.js";
 import {icon} from "../core/icons.js";
 
-// only the clients' accounts are listed (business feedback 2026-10-29); RM, CIO and Admin sign in with the form
+// the clients' accounts and one RM's are listed (business feedback 2026-10-29, 2026-11-02); the other staff sign in with the form
 const GROUPS = [
   ["client", "Khách hàng", "user"],
+  ["rm", "Chuyên viên quan hệ khách hàng (RM)", "users", ["rm01"]],
 ];
 
 export async function render(box, ctx) {
@@ -35,8 +36,8 @@ export async function render(box, ctx) {
       <section class="card signin-demo" aria-labelledby="demo-h">
         <div class="row one"><span class="ic-chip">${icon("lock")}</span><div><div class="h3" id="demo-h">Tài khoản demo</div>
           <div class="small muted">Bấm để vào bằng tài khoản đó. Chỉ bật trên bản demo công khai; người và số liệu khách hàng đều là giả lập.</div></div></div>
-        ${GROUPS.map(([role, label, ic]) => {
-          const rows = accounts.filter(a => a.role === role);
+        ${GROUPS.map(([role, label, ic, only]) => {
+          const rows = accounts.filter(a => a.role === role && (!only || only.includes(a.id)));
           if (!rows.length) return "";
           return `<div class="demo-group"><div class="eyebrow">${icon(ic)} ${esc(label)}</div>
             <div class="demo-list">${rows.map(a => `
