@@ -26,9 +26,9 @@ def entries(n, start=0):
 
 
 def check():
-    from control.graph import audit_check_flow
+    from control.graph import admin_flow
 
-    return asyncio.run(Operon(audit_check_flow, params={"tick": None, "at": None}).run(inputs={}))
+    return asyncio.run(Operon(admin_flow, params={"task": "audit_check", "tick": None, "at": None}).run(inputs={}))
 
 
 def con():

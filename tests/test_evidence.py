@@ -4,6 +4,7 @@ the labels match the same way every time (§7), the CIO's review and the unsourc
 
 import asyncio
 import re
+from news.graph import news_flow
 from datetime import date, timedelta
 
 import pytest
@@ -11,25 +12,18 @@ from operonx import Operon
 
 from evidence import _check, _stats, agent, frames, labels
 from evidence import catalogue as cat
-from evidence.graph import (
-    evidence_decide_flow,
-    evidence_draft_decide_flow,
-    evidence_draft_flow,
-    evidence_flow,
-    evidence_type_flow,
-)
-from impact.graph import alerts_flow
+from evidence.graph import evidence_flow
+from news.graph import news_flow
 from market import store as market
 from procedural import goals
 from research import ops as research_ops
-from research.graph import goal_outflow_flow
+from research.graph import research_flow
 from wealth import fixtures
 
-READ = Operon(evidence_flow, params={"factor": None, "role": None})
-DECIDE = Operon(evidence_decide_flow, params={"factor": None, "decision": None, "by": None, "note": None})
-ALERTS = Operon(alerts_flow, params={"client_id": None, "scope": None})
-DECLARE = Operon(
-    goal_outflow_flow, params={"family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
+READ = Operon(evidence_flow, params={"action": "read", "factor": None, "role": None})
+DECIDE = Operon(evidence_flow, params={"action": "decide", "factor": None, "decision": None, "by": None, "note": None})
+ALERTS = Operon(news_flow, params={"action": "alerts", "client_id": None, "scope": None})
+DECLARE = Operon(research_flow, params={"task": "outflow", "family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
 )
 TODAY = date(2026, 10, 15)
 
@@ -181,8 +175,8 @@ def test_reading_an_unknown_frame_is_refused():
 
 
 # --- the evidence agent (§4, P1): mock mode here; the live loop with a fake model ---------------------------------
-DRAFT = Operon(evidence_draft_flow, params={"news_id": None, "by": None, "mode": None})
-DRAFT_DECIDE = Operon(evidence_draft_decide_flow, params={"news_id": None, "decision": None, "by": None, "note": None})
+DRAFT = Operon(evidence_flow, params={"action": "draft", "news_id": None, "by": None, "mode": None})
+DRAFT_DECIDE = Operon(evidence_flow, params={"action": "draft_decide", "news_id": None, "decision": None, "by": None, "note": None})
 
 
 def news_item(title, kind="monetary", summary=""):
@@ -259,7 +253,7 @@ def test_the_live_agent_is_sent_back_with_the_reasons(monkeypatch):
 
 
 # --- the full catalogue (P2): the CIO adds a type or precedent dates; enough dates give the statistics branch -------
-TYPE = Operon(evidence_type_flow, params={"event_type": None, "label": None, "dates": None, "series": None, "by": None})
+TYPE = Operon(evidence_flow, params={"action": "type", "event_type": None, "label": None, "dates": None, "series": None, "by": None})
 ELECTIONS = ["2008-11-04", "2010-11-02", "2012-11-06", "2014-11-04", "2016-11-08", "2018-11-06", "2020-11-03", "2022-11-08"]
 
 

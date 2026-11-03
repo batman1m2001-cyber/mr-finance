@@ -5,7 +5,7 @@ from operonx.agents.testing import ScriptedLLM, asks, says, scripted
 
 from consolidate.graph import consolidate_flow
 from declare import _rules
-from declare.graph import declare_flow
+from statements.graph import intake_flow
 from wealth import store
 from wealth.money import TR, TY
 
@@ -14,7 +14,7 @@ PARAMS = {"client_id": None, "message": None, "session_id": None}
 
 def say(message, client_id="C05"):
     out = asyncio.run(
-        Operon(declare_flow, params=PARAMS).run(
+        Operon(intake_flow, params={"action": "declare", **PARAMS}).run(
             inputs={"client_id": client_id, "message": message, "session_id": f"{client_id}-t"}
         )
     )

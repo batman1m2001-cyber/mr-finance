@@ -44,13 +44,13 @@ A page that is not a feed is a source error in the run record; it does not fail 
 with status `refused` and their reason (never shown in the inbox); skipped (too old) items are only counted.
 
 ## API and data
-- `POST /api/news/ingest {}` → the run's counts (service `news_fetch`, graph `ingest_flow`).
+- `POST /api/news/ingest {}` → the run's counts (service `news_fetch`, graph `news_flow (ingest)`).
 - `GET /api/news/inbox` → items and feed health (FEAT-02).
 - Tables: `news_items`, `news_runs` ([domain model](../architecture/domain_model.md)).
 
 ## Implementation
 `src/news/rss.py` (RSS 2.0/Atom → plain items), `src/news/rules.py`, `src/news/ops.py` (`fetch`, `screen`,
-`keep`), `src/news/graph.py` (`ingest_flow`), `src/news/store.py`; job and service in `app/main.py`.
+`keep`), `src/news/graph.py` (`news_flow`, action `ingest`), `src/news/store.py`; job and service in `app/main.py`.
 
 ## Dependencies
 Outbound HTTPS to the feeds ([integrations](../architecture/integrations.md)). FEAT-11 (audit).

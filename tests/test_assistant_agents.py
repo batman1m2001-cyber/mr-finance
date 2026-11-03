@@ -14,12 +14,10 @@ from operonx import Operon
 from assistant import consolidate, followups, memory, registry
 from assistant import conversations as conv
 from assistant.base import ToolFailed
-from assistant.graph import assistant_memory_flow
+from assistant.graph import assistant_flow
 
-MEM = Operon(
-    assistant_memory_flow,
-    params={k: None for k in ("action", "item_id", "text", "kind", "query", "role", "client_id", "file_name", "data",
-                              "key")},
+MEM = Operon(assistant_flow, params={"task": "memory", **{k: None for k in ("action", "item_id", "text", "kind", "query", "role", "client_id", "file_name", "data",
+                              "key")}},
 )  # fmt: skip
 
 
@@ -199,10 +197,10 @@ def test_the_cost_per_day_adds_up(model):
 
 def test_the_job_is_scheduled_every_five_minutes():
     from app.main import APP
-    from assistant.graph import assistant_consolidate_flow
+    from assistant.graph import assistant_flow
 
     job = next(j for j in APP.jobs if j.name == "assistant_consolidate")
-    assert job.graph is assistant_consolidate_flow
+    assert job.graph is assistant_flow
 
 
 # -- follow-ups ---------------------------------------------------------------------------------------------------

@@ -11,15 +11,14 @@ from pathlib import Path
 import pytest
 from operonx import Operon
 
-from overview.graph import overview_flow
-from timeline.graph import timeline_flow
+from pages.graph import pages_flow
 from timeline.history import grid, month_back
 from wealth.paths import DATA
 
 ROOT = Path(__file__).resolve().parents[1]
 PEOPLE = sorted(p.stem for p in (DATA / "clients").glob("*.json"))
-TL = Operon(timeline_flow, params={"client_id": None, "scope": None, "node": None, "unit": None})
-OV = Operon(overview_flow, params={"client_id": None, "scope": None, "role": None, "goals": None})
+TL = Operon(pages_flow, params={"action": "timeline", "client_id": None, "scope": None, "node": None, "unit": None})
+OV = Operon(pages_flow, params={"action": "overview", "client_id": None, "scope": None, "role": None, "goals": None})
 
 
 def timeline(**inputs):

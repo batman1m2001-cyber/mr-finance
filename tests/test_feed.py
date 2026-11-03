@@ -10,9 +10,9 @@ from test_apply import MARKET, approved
 from apply import run as runs
 from events import store as events
 from feed import ops
-from feed.graph import feed_flow
+from pages.graph import pages_flow
 
-FEED = Operon(feed_flow, params={"client_id": None, "scope": None, "role": None})
+FEED = Operon(pages_flow, params={"action": "feed", "client_id": None, "scope": None, "role": None})
 
 
 def items(client_id="C01", role="rm"):

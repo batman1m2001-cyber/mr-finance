@@ -17,7 +17,7 @@ results come in only as signed packages, checked like a live run's before the CI
 | | The bank (`app/main.py`, `MF_STATE` = state.db) | The AI zone (`app/zone.py`, its own `MF_STATE` and `MF_DATA`, `MF_ZONE=on`) |
 |---|---|---|
 | Holds | everything | its own fetched news, the released research and the approved catalogues — the data folder has only `market.json`, `factors.json`, `factor_model.json`, `news_config.json` (`scripts/make_zone_data.py`) |
-| Jobs | `zone_sync` (10 min, inbox mode): catalogues and research out, signed `MF_ZONE_KEY`, when changed · `inbox_import` (10 min) | `zone_news` (10 min): `ingest_flow` on the bank's approved feeds · `zone_agent` (15 min): one event under the day's cap |
+| Jobs | `zone_sync` (10 min, inbox mode): catalogues and research out, signed `MF_ZONE_KEY`, when changed · `inbox_import` (10 min) | `zone_news` (10 min): `news_flow (ingest)` on the bank's approved feeds · `zone_agent` (15 min): one event under the day's cap |
 | Doors | `POST /api/inbox` → `202 {"id"}` | `POST /api/zone/sync` (the bank's push) · `GET /api/zone/status` |
 
 ## The zone's agent (`src/zone/agent.py`)

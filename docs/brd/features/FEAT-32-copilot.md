@@ -10,7 +10,7 @@
 | Status | see [traceability](../requirements/requirements_traceability.md) §4 |
 
 ## Behaviour
-`copilot_flow`: check → **scrub** → **route** → **act** → **answer**.
+`assistant_flow (task copilot)`: check → **scrub** → **route** → **act** → **answer**.
 - **Scrub** (`src/copilot/scrub.py`): digit runs, upper-case codes, every fixture person's full name and its last
   two words (accent-insensitive) become `<số>`, `<mã>`, `<người>`. Example: “Dòng tiền tháng 8 của Nguyễn Minh
   Khoa?” → “Dòng tiền tháng <số> của <người>?”.
@@ -22,7 +22,7 @@
 - **Act** (`tools.py`): 13 tools. Read — tong_quan (dashboard), dong_tien (flows), chu_y (feed), muc_tieu (goals,
   the ones followed in the browser when `goals` is sent), tac_dong (role-filtered impact), **dieu_tra** (an approved
   event's path from the impact graph: news, scenarios, factors, assets with this event's share, goals), **kich_ban**
-  (a stress test through the planning page's `scenario_flow`: stock market, corporate bonds, property freeze, rates,
+  (a stress test through the planning page's `scenarios_flow (scenario)`: stock market, corporate bonds, property freeze, rates,
   USD — the router chooses among plain words, never an id with digits), hom_nay (RM), hop_tin (CIO), tin_bi_giu
   (Compliance), mo_trang (navigate).
   Write — duyet_de_xuat (RM; review_flow with the RM's id), lay_tin (CIO; ingest). A tool outside the role is
@@ -78,7 +78,7 @@ the fixtures (control: the unscrubbed prompt does); the live router (fake model)
 an off-catalogue reply falls back, labelled; a client cannot run a CIO tool, even by sending a confirm; no write
 before confirm, the confirmed write changes the record, a repeated decision is reported as failed; a failing
 tool and an unknown question; the endpoint. R5: an answer's as-of, sources and card; dieu_tra equals the impact
-graph (event type for the client, headline for staff); kich_ban equals scenario_flow and picks the scenario by
+graph (event type for the client, headline for staff); kich_ban equals scenarios_flow (scenario) and picks the scenario by
 words; every call is in the audit chain, which verifies, with the scrubbed question; the followed goals.
 `tests/ui/test_copilot_ui.py::test_answers_show_their_card_their_time_and_sources_and_offer_next_steps`.
 A2: `tests/test_assistant.py` (scripted model): two tools in one turn and their citations; the turn audited

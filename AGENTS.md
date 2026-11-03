@@ -117,15 +117,49 @@ def answer_flow(question, k):  # a setting is a graph input
 - Tests go in `tests/`. Call an op directly (`my_op(x=1)()`), run a graph
   with `Operon` or a `Job`, and never call a real model: use a fake one.
 
+<!-- operonx:builder -->
+## Building it: docs/brd and the board
+
+- `docs/brd/` is the living BRD: what the product must do, and how far it
+  is. `docs/brd/requirements/requirements_traceability.md` is the
+  checklist, the only place a requirement's status is stated (its code, the
+  test that shows it, by name, and the evidence). Questions are `Q-nn` in
+  `docs/brd/requirements/open_questions.md`, never deleted.
+- `docs/brd/board/` is how it is built: one file per milestone, every card
+  with its plan (what it does, its rows, criteria, dependencies, files) and
+  its status. The engine (`operonx-project`) writes it. Never edit it by
+  hand: `operonx-project replan` changes a plan.
+- When a change meets or alters a requirement, update its row (status,
+  code, test) and add one line to `docs/brd/CHANGELOG.md`. The rules are in
+  `docs/brd/README.md`. The checklist's summary table is counted from
+  the rows by the engine: leave it.
+- Work with more than one step gets a plan doc under `docs/` that starts
+  with a status block: `title`, `status` (plan, in_progress, done or
+  parked), `phases` (each `{id, title, status}`: open, in_progress, done or
+  skipped) and the `rows` it serves. Change a phase's status in the commit
+  that finishes it. `operonx-project plans` lists them; the studio's
+  Project mode shows them.
+- To work a card yourself: `operonx-project take <milestone> <card>` prints
+  its worktree, criteria and rows; make the criteria pass there, then
+  `operonx-project submit <milestone> <card>`. The review and the held-out
+  tests decide, as for the engine's own cards.
+- New work: rows in the checklist, then `operonx-project start --title ...
+  --rows <ID> ...` (or the studio's Board) and `operonx-project daemon`.
+  `.operonx/project/`, outside git, is only the running engine's state.
+<!-- /operonx:builder -->
+
 ## Commands
 
+<!-- operonx:commands -->
 ```bash
 uv run pytest                 # the tests: keep them green
+uv run operonx lint           # the rules below, checked (operonx lint --rules)
 uv run operonx serve --list   # every service, and where it listens
 uv run operonx run --list     # every job
 uv run operonx serve          # serve every service (and run scheduled jobs on their clocks)
 uv run operonx run NAME       # run one job
 ```
+<!-- /operonx:commands -->
 
 ## Rules
 
@@ -145,7 +179,7 @@ uv run operonx run NAME       # run one job
 ## operonx guides
 
 <!-- operonx:guide -->
-Installed: operonx 1.30.1, operonx-agents 0.3.1, operonx-kb 0.2.6. Read `.operonx/guide/README.md` first: it lists every
+Installed: operonx 1.38.0, operonx-agents 0.3.1, operonx-kb 0.2.6. Read `.operonx/guide/README.md` first: it lists every
 page of every installed operonx package, each tested against that version.
 Upgrade: `uv lock --upgrade-package operonx && uv sync`, then `uv run operonx guide`
 (after `uv add operonx-agents` or `operonx-kb`, just `uv run operonx guide`).

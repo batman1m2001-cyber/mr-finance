@@ -6,11 +6,11 @@ from starlette.testclient import TestClient
 
 from review.graph import review_flow
 from scenarios import _sim
-from scenarios.graph import scenario_flow
+from scenarios.graph import scenarios_flow
 from wealth import fixtures, store
 from wealth.money import TR, TY
 
-ENGINE = Operon(scenario_flow, params={"client_id": None, "scenario": None, "params": None, "scope": None})
+ENGINE = Operon(scenarios_flow, params={"action": "scenario", "client_id": None, "scenario": None, "params": None, "scope": None})
 
 
 def sim(client_id, scenario, params=None, scope="personal"):
@@ -101,9 +101,9 @@ def test_review_flow_refuses_an_unknown_item():
 
 
 def test_every_client_has_goals_with_a_gap_a_status_and_ranked_actions():
-    from scenarios.graph import goals_flow
+    from scenarios.graph import scenarios_flow
 
-    engine = Operon(goals_flow, params={"client_id": None, "scope": None})
+    engine = Operon(scenarios_flow, params={"action": "goals", "client_id": None, "scope": None})
     for cid in fixtures.client_ids():
         out = asyncio.run(engine.run(inputs={"client_id": cid, "scope": "family"}))
         assert "$errors" not in out, out.get("$errors")

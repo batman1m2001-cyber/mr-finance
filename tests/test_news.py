@@ -3,6 +3,7 @@ here are written for the tests (no network, no copied articles)."""
 
 import asyncio
 import time
+from news.graph import news_flow
 from datetime import datetime, timezone
 from email.utils import format_datetime
 
@@ -11,11 +12,10 @@ from operonx import Operon
 from starlette.testclient import TestClient
 
 from news import rss, rules, store
-from news.graph import dismiss_flow, ingest_flow, release_flow
 from news.ops import config
 
 NOW = 1_792_000_000.0  # 2026-10-14
-INGEST = Operon(ingest_flow, params={"feeds": None, "now": None, "tick": None, "at": None})
+INGEST = Operon(news_flow, params={"action": "ingest", "feeds": None, "now": None, "tick": None, "at": None})
 
 
 def rfc(ts):
@@ -144,7 +144,7 @@ def test_an_item_naming_the_restricted_list_is_held_until_the_cio_releases_it():
     assert out["held"] == 1
     [it] = store.inbox()
     assert it["held"] and it["restricted"] == ["Sao Mai Land (mock)"]
-    engine = Operon(release_flow, params={"item_id": None, "by": None, "note": None})
+    engine = Operon(news_flow, params={"action": "release", "item_id": None, "by": None, "note": None})
     for who in ("admin", "rm01", "nobody"):  # only the CIO may release (BR-04, OWN-FB-18)
         denied = asyncio.run(engine.run(inputs={"item_id": it["id"], "by": who, "note": "Cho qua"}))
         assert "$errors" in denied and store.inbox()[0]["held"]
@@ -199,7 +199,7 @@ def test_the_inbox_filters_and_dismiss():
     assert [i["source"] for i in store.inbox(query="vn-index")] == ["vnexpress_kd"]
     fed_id = store.inbox(source="fed")[0]["id"]
     out = asyncio.run(
-        Operon(dismiss_flow, params={"ids": None, "by": None, "note": None}).run(inputs={"ids": [fed_id]})
+        Operon(news_flow, params={"action": "dismiss", "ids": None, "by": None, "note": None}).run(inputs={"ids": [fed_id]})
     )
     assert out["changed"] == 1
     assert [i["source"] for i in store.inbox()] == ["vnexpress_kd"]
@@ -207,7 +207,7 @@ def test_the_inbox_filters_and_dismiss():
     vne_id = store.inbox(source="vnexpress_kd")[0]["id"]
     for who in ("admin", "rm01"):  # only the CIO drops items (FR-103)
         denied = asyncio.run(
-            Operon(dismiss_flow, params={"ids": None, "by": None, "note": None}).run(
+            Operon(news_flow, params={"action": "dismiss", "ids": None, "by": None, "note": None}).run(
                 inputs={"ids": [vne_id], "by": who}
             )
         )

@@ -8,18 +8,17 @@ from operonx import Operon
 from test_apply import MARKET, approved
 
 from contacts import store as contacts
-from contacts.graph import contact_flow
+from pages.graph import pages_flow
 from control import db
 from control.errors import BadRequest
 from feed import opens
-from feed.graph import feed_flow, feed_open_flow
 from measure import reviewed
 from review.graph import review_flow
 from wealth import store as wealth
 
-FEED = Operon(feed_flow, params={"client_id": None, "scope": None, "role": None})
-OPEN = Operon(feed_open_flow, params={"client_id": None, "key": None})
-CONTACT = Operon(contact_flow, params={"family_id": None, "channel": None, "signal": None, "note": None, "by": None})
+FEED = Operon(pages_flow, params={"action": "feed", "client_id": None, "scope": None, "role": None})
+OPEN = Operon(pages_flow, params={"action": "feed_open", "client_id": None, "key": None})
+CONTACT = Operon(pages_flow, params={"action": "contact", "family_id": None, "channel": None, "signal": None, "note": None, "by": None})
 REVIEW = Operon(review_flow, params={"item_id": None, "decision": None, "note": None, "by": None})
 
 

@@ -8,6 +8,7 @@ import time
 import pytest
 from starlette.testclient import TestClient
 
+from news.graph import news_flow
 from assistant import desktools
 from assistant.base import Ctx
 from control import alerts, audit, db, jobs, roles
@@ -119,12 +120,11 @@ def test_what_the_cio_may_start_and_agent_nen_says_it(state, monkeypatch):
     from test_assistant_tools import rss
 
     from assistant import base
-    from events.graph import event_flow
-    from news.graph import ingest_flow
+    from news.graph import news_flow
 
     monkeypatch.setattr("news.ops._get", lambda url, timeout: rss(url, "Giá vàng SJC giảm mạnh"))
-    ids = asyncio.run(base.run_graph(ingest_flow, feeds=None, now=None, tick=None, at=None))["ingest"]["ids"]
-    ev = asyncio.run(base.run_graph(event_flow, news_ids=ids, title=None, by="cio"))["event"]
+    ids = asyncio.run(base.run_graph(news_flow, action="ingest", feeds=None, now=None, tick=None, at=None))["ingest"]["ids"]
+    ev = asyncio.run(base.run_graph(news_flow, action="event", news_ids=ids, title=None, by="cio"))["event"]
     from app.web import agents_read
 
     assert [e["id"] for e in agents_read()["can_run"]] == [ev["id"]]

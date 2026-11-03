@@ -10,7 +10,7 @@
 | Status | see [traceability](../requirements/requirements_traceability.md) §4 |
 
 ## Behaviour
-- **Money Flow:** `flows_flow` (`POST /api/flows {client_id, scope, month?}`) sums one month's **transaction rows
+- **Money Flow:** `pages_flow (flows)` (`POST /api/flows {client_id, scope, month?}`) sums one month's **transaction rows
   only**: inflow categories → the month → outflow categories + “Còn lại” (or a “Thiếu hụt” band in when out > in).
   No inferred flow, no investment band (the fixtures hold no purchases). Each band returns its rows. Default month:
   the latest with rows. Example (C01, personal, 09/2026): Lương 120 tr → Trả nợ vay 38, Thanh toán thẻ 34,8, Chi

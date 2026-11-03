@@ -10,11 +10,11 @@ from operonx import Operon
 from test_apply import MARKET, approved
 
 from apply import reads
-from impact.graph import alerts_flow
-from overview.graph import overview_flow
-from scenarios.graph import goals_flow
+from news.graph import news_flow
+from pages.graph import pages_flow
+from scenarios.graph import scenarios_flow
 
-OV = Operon(overview_flow, params={"client_id": None, "scope": None, "role": None, "goals": None})
+OV = Operon(pages_flow, params={"action": "overview", "client_id": None, "scope": None, "role": None, "goals": None})
 
 
 def overview(**inputs):
@@ -56,7 +56,7 @@ def test_the_months_categories_add_up_and_open_from_their_side():
 def test_a_goal_edge_is_the_monthly_saving_it_needs_and_shared_pools_are_said_once():
     o = overview()
     nodes, edges = by_id(o)
-    out = asyncio.run(Operon(goals_flow, params={"client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
+    out = asyncio.run(Operon(scenarios_flow, params={"action": "goals", "client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
     goals = {g["id"]: g["goal"] for g in out["goals"]}
     shown = [n for n in o["nodes"] if n["kind"] == "goal"]
     for n in shown:
@@ -106,7 +106,7 @@ def _policy_edges(o):
 
 
 def test_a_policy_item_has_an_amount_only_where_one_class_takes_it(monkeypatch):
-    rep = asyncio.run(Operon(alerts_flow, params={"client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
+    rep = asyncio.run(Operon(news_flow, params={"action": "alerts", "client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
     impact = {a["id"]: a["impact"] for a in rep["report"]["alerts"]}
     for ref, level in _policy_edges(overview()).items():  # every item of the demo data touches one class
         assert len({e["from"] for e in level}) == 1

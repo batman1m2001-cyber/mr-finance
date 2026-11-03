@@ -33,8 +33,8 @@ News item status: `new` → `grouped` | `dismissed` (`refused` items never enter
 Compliance's release. Event: `status` and `held[]`.
 
 ## Implementation
-`src/news/ops.py` (`dismiss`, `release`), `src/news/graph.py` (`dismiss_flow`, `release_flow`),
-`src/events/{ops,graph,store}.py` (`event_flow`), reads in `app/web.py` (`news_inbox`, `events_list`, `event_one`).
+`src/news/ops.py` (`dismiss`, `release`), `src/news/graph.py` (`news_flow`, actions `dismiss`, `release`),
+`src/events/{ops,graph,store}.py` (`news_flow (event)`), reads in `app/web.py` (`news_inbox`, `events_list`, `event_one`).
 
 ## Acceptance and tests
 `tests/test_news.py::test_the_inbox_filters_and_dismiss`, `::test_the_inbox_endpoint_returns_items_and_feed_health`,

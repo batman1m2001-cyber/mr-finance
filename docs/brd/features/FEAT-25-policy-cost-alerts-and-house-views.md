@@ -8,7 +8,7 @@
 | Entry points | [SCR-CL-06 Chi phí chính sách](../ux/screens/client.md#scr-cl-06--chi-phí-chính-sách-policy-costs), the overview's “Headline News”; `POST /api/alerts {client_id, scope?}`; job `policy_sweep` 07:00; `GET /api/views` (house views) |
 | Status | see [traceability](../requirements/requirements_traceability.md) §3 |
 
-## Behaviour (`alerts_flow`)
+## Behaviour (`news_flow (alerts)`)
 19 dated factors in `data/factors.json` (the brief's 14 policies, two macro moves, three infrastructure
 projects), each with a legal status (→ probability: draft low, consultation medium, passed high), a source line
 and a rule (`src/impact/_rules.py`, 16 rule types: which holdings it touches, the sensitivity). Impact = exposure

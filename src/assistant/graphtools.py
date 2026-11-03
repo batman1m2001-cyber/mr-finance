@@ -52,14 +52,15 @@ def _amount(e: Dict[str, Any]) -> str:
 
 async def links(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """The links of the node (or edge ``A>B``) named, else of what is picked on the graph."""
-    from overview.graph import overview_flow
+    from pages.graph import pages_flow
 
     target = str(args.get("node") or (ctx.graph.get("selected") or {}).get("id") or "").strip()
     if not target:
         raise ToolFailed("Chưa chọn mục nào: bấm một nút hoặc một liên kết trên đồ thị rồi hỏi lại")
     o = (
         await run_graph(
-            overview_flow,
+            pages_flow,
+            action="overview",
             client_id=_need_client(ctx),
             scope=ctx.scope,
             role="client" if ctx.role == "client" else "rm",
@@ -170,12 +171,13 @@ async def assume(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def _compare(ctx: Ctx, ids: List[str], params: Dict[str, Any]) -> Dict[str, Any]:
-    from scenarios.graph import combine_flow
+    from scenarios.graph import scenarios_flow
 
     async def run(which: List[str]) -> Dict[str, Any]:
         return (
             await run_graph(
-                combine_flow,
+                scenarios_flow,
+                action="combine",
                 client_id=_need_client(ctx),
                 scenarios=which,
                 params=params,

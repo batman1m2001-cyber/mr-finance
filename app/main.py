@@ -1,12 +1,12 @@
 """Mr. Finance: the whole picture of a client's wealth, and what is moving it.
 
-POST /api/dashboard {client_id, scope?, months?} ──► dashboard_flow ──► the dashboard
+POST /api/dashboard {client_id, scope?, months?} ──► pages_flow ──► the dashboard
 POST /api/flows     {client_id, scope?, month?} ──► flows_flow ──► a month's money in → out, with the rows
 POST /api/timeline  {client_id, scope?, node, unit?} ──► timeline_flow ──► a graph node's money by day, month, year
 POST /api/feed      {client_id, scope?, role?} ──► feed_flow ──► what matters now, why, and its evidence
 POST /api/feed/open {client_id, key} ──► feed_open_flow ──► the client opened a high-level item (KPI-07)
 POST /api/rm/contacts {family_id, channel, signal?, note?, by} ──► contact_flow ──► an RM's contact (KPI-06)
-POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ──► copilot_flow ──► a templated answer
+POST /api/copilot   {question, role, client_id?, scope?, route?, confirm?} ──► assistant_flow (copilot) ──► a templated answer
 POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, route?, conversation_id?} ──►
                     assistant_flow ──► an answer from the role's tools in several steps; writes wait for the person
                     (A2); kept in its conversation (A3) · POST /api/assistant/conversations ──► list, open, delete
@@ -16,13 +16,13 @@ POST /api/assistant {message | turn_id + approvals, role, client_id?, scope?, ro
 WS   /api/assistant/voice?rate= ──► assistant_voice_flow ──► the assistant by voice: microphone PCM in, captions,
                     the question and the answer read sentence by sentence out (docs/VOICE_PLAN.md)
 POST /api/config/propose, /api/config/decide ──► versioned configuration, propose then approve (FR-701)
-POST /api/statement {client_id, filename, content} ──► statement_flow ──► holdings read (AI or rules)
-POST /api/declare   {client_id, message, session_id} ──► declare_flow ──► the chat's reply, what it recorded
+POST /api/statement {client_id, filename, content} ──► intake_flow (action statement) ──► holdings read (AI or rules)
+POST /api/declare   {client_id, message, session_id} ──► intake_flow (action declare) ──► the chat's reply, what it recorded
 POST /api/declare/stream (same body, text/event-stream) ──► declare_stream_flow ──► the same turn as it happens
 POST /api/risk      {client_id, answers} ──► risk_flow ──► the next question, or the profile
-POST /api/alerts    {client_id, scope?} ──► alerts_flow ──► policies, macro, infrastructure, in VND
-POST /api/scenario  {client_id, scenario, params?} ──► scenario_flow ──► numbers, a light and a heavy option
-POST /api/goals     {client_id, scope?} ──► goals_flow ──► every life goal: need, have, gap, status, actions
+POST /api/alerts    {client_id, scope?} ──► news_flow (alerts) ──► policies, macro, infrastructure, in VND
+POST /api/scenario  {client_id, scenario, params?} ──► scenarios_flow (action scenario) ──► numbers, a light and a heavy option
+POST /api/goals     {client_id, scope?} ──► scenarios_flow (action goals) ──► every life goal: need, have, gap, status, actions
 POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} ──► allocation_flow ──► Liquidity, Legacy,
                     Growth: targets, gaps, the actions, checked (ASSET_ALLOCATION_BRD) · /api/allocation/example ──►
                     the worked example K-7F3A · /api/allocation/tilt ──► a CIO tilts the model from an approved view ·
@@ -30,37 +30,36 @@ POST /api/allocation {client_id, scope?, method?, assumptions?, role?, whatif?} 
                     /api/allocation/review ──► the CIO decides each action (Q-29), /api/allocation/queue lists them ·
                     /api/allocation/override ──► an RM moves an asset to another bucket, with a reason ·
                     /api/allocation/method ──► the CIO picks ±2-point tilts or Black–Litterman
-POST /api/evidence {factor?, role?} ──► evidence_flow ──► each item's evidence: statistics or the qualitative frame
+POST /api/evidence {factor?, role?} ──► evidence_flow (one flow, an action per route) ──► each item's evidence: statistics or the qualitative frame
                     (NEWS_EVIDENCE_BRD) · /api/evidence/decide ──► the CIO approves, returns or rejects a frame
                     · /api/evidence/draft ──► the agent drafts a news item's frame · /draft/decide ──► the CIO reviews it
                     · /api/evidence/type ──► the CIO adds an event type or precedent dates (P2)
-POST /api/scenario/combine {client_id, scenarios, params?} ──► combine_flow ──► stress tests together
-POST /api/review/propose ──► propose_flow (the RM queue) · POST /api/review/decide ──► review_flow
-POST /api/review/recommend ──► recommend_flow (the RM's own recommendation)
-07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: alerts_flow for every client
-every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► ingest_flow: the feeds into the inbox
+POST /api/scenario/combine {client_id, scenarios, params?} ──► scenarios_flow (action combine) ──► stress tests together
+POST /api/review/propose (the RM queue), /decide, /recommend (the RM's own recommendation) ──► review_flow
+07:00 daily, and `operonx run policy_sweep` ──► the policy_sweep job: news_flow (alerts) for every client
+every 10 min, POST /api/news/ingest, `operonx run news_ingest` ──► news_flow (ingest): the feeds into the inbox
 every 2 h ──► news_reference: the independent reference's stories, judged collected a day later (KPI-02)
 15:45/16:00/17:30 daily and hourly, `operonx run market_<kind>` ──► the market jobs: public sources into SQLite
      (market_backfill on demand) · GET /api/market[/series] ──► app/web.py (the source registry, the series)
-POST /api/news/dismiss ──► dismiss_flow · POST /api/news/release ──► release_flow (a CIO)
+POST /api/news/dismiss, /api/news/release ──► news_flow (a CIO)
 GET  /api/news/inbox ──► app/web.py (the inbox and the feed-health strip)
-POST /api/events ──► event_flow · POST /api/events/urgent ──► event_urgent_flow (KPI-01) · POST /api/events/run-agent
-     ──► agent_queue_flow, then the agent_worker job ──► cio_agent_flow (agent + challenger)
-POST /api/newsletters, /api/newsletters/act ──► newsletter_draft_flow, newsletter_act_flow (FR-801: the CIO drafts from
+POST /api/events, /api/events/urgent ──► news_flow (KPI-01) · POST /api/events/run-agent
+     ──► news_flow (queue), then the agent_worker job ──► cio_agent_flow (agent + challenger)
+POST /api/newsletters, /api/newsletters/act ──► research_flow, a task each (FR-801: the CIO drafts from
      approved views, another CIO approves, a preview, never sent) · GET /api/newsletters[/{id}] ──► app/web.py
-POST /api/policy[/verify|/status|/summarise] ──► policy_*_flow (FR-306: a CIO adds a document from the Official
+POST /api/policy[/verify|/status|/summarise] ──► policy_flow, an action each (FR-306: a CIO adds a document from the Official
      Gazette, a second CIO verifies it, the policy agent quotes it) · GET /api/policy[/{id}] (radar) ──► app/web.py
 Every 20 s ──► heartbeat: the minute recorded, availability in business hours (NFR-03)
 Hourly ──► audit_check: the audit chain walked, new rows to write-once segments · POST /api/system/alerts/ack ──►
-     alert_ack_flow; GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
+     admin_flow (task alert_ack); GET /api/system/alerts (the bell) — alerts on failing feeds, series, agents, the chain, the
      inbox, availability (NFR-12)
 POST /api/inbox ◄── the AI zone (app/zone.py, its own process and database) ──► the inbox_import job every 10 min;
      the zone_sync job sends the zone the approved catalogues and released research (inbox mode, F-D7)
-POST /api/views/decide ──► decide_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
-approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► recompute_flow,
-     run_decide_flow · GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
+POST /api/views/decide ──► review_flow · GET /api/events[/{id}], /api/views/{id}, /api/agents ──► app/web.py
+approve ──► an application run for every family · POST /api/runs/recompute, /api/runs/decide ──► review_flow ·
+     GET /api/runs[/{id}[/verify]], /api/families/{id}/impact?role=, /api/trace/{run}/{family},
      /api/rm/today, /api/audit[/verify] ──► app/web.py
-POST /api/research, /api/research/release, /api/goals/outflow, /api/goals/suggest ──► the research and goal-branch flows ·
+POST /api/research, /api/research/release, /api/goals/outflow, /api/goals/suggest ──► research_flow, a task each ·
      GET /api/research, /api/goals/regulation ──► app/web.py
 GET  /api/clients, /api/advisory[/all], /api/views, POST /api/reset, GET / ──► app/web.py (the sample
      clients, the RM team, the advisory track record, the house views, the UI)
@@ -79,72 +78,35 @@ from operonx.app.jobs import Job
 
 from app import web
 from app.http import SecurityHeaders
-from allocation.graph import (
-    allocation_example_flow,
-    allocation_flow,
-    allocation_method_flow,
-    allocation_override_flow,
-    allocation_queue_flow,
-    allocation_review_flow,
-    allocation_send_flow,
-    allocation_tilt_flow,
-    allocation_tilts_flow,
-)
-from apply.graph import recompute_flow, run_decide_flow
-from assistant.graph import (
-    assistant_consolidate_flow,
-    assistant_conversations_flow,
-    assistant_flow,
-    assistant_attach_flow,
-    assistant_memory_flow,
-    assistant_retention_flow,
-    assistant_stream_flow,
-)
-from contacts.graph import contact_flow
+from allocation import bodies as allocation_bodies
+from allocation.graph import allocation_flow
+from assistant import bodies as assistant_bodies
+from assistant.graph import assistant_flow, assistant_stream_flow
 from control import barrier
 from control import jobs as control_jobs
-from control.graph import (
-    alert_ack_flow,
-    audit_check_flow,
-    config_decide_flow,
-    config_propose_flow,
-    heartbeat_flow,
-    job_run_flow,
-)
-from copilot.graph import copilot_flow
-from dashboard.graph import dashboard_flow
-from declare.graph import declare_flow, declare_stream_flow
-from events.graph import event_flow, event_urgent_flow
-from evidence.graph import (
-    evidence_decide_flow,
-    evidence_draft_decide_flow,
-    evidence_draft_flow,
-    evidence_flow,
-    evidence_type_flow,
-)
-from feed.graph import feed_flow, feed_open_flow
-from flows.graph import flows_flow
-from impact.graph import alerts_flow
+from control import bodies as control_bodies
+from control.graph import admin_flow
+from declare.graph import declare_stream_flow
+from evidence import bodies as evidence_bodies
+from evidence.graph import evidence_flow
 from impact.ops import every_client
-from inbox.graph import inbox_import_flow
-from market.graph import market_flow, market_load_ask_flow, model_estimate_flow
-from measure.graph import evaluation_flow
-from news.graph import dismiss_flow, ingest_flow, reference_flow, release_flow
-from newsletter.graph import newsletter_act_flow, newsletter_draft_flow
-from overview.graph import overview_flow
-from people.graph import account_decide_flow, account_request_flow
-from policy.graph import policy_add_flow, policy_status_flow, policy_summarise_flow, policy_verify_flow
-from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
-from review.graph import propose_flow, recommend_flow, review_flow
-from risk.graph import risk_flow
-from scenarios.graph import combine_flow, goals_flow, scenario_flow
-from search.graph import search_flow
+from market.graph import market_flow
+from news import bodies as news_bodies
+from news.graph import news_flow
+from pages import bodies as pages_bodies
+from pages.graph import pages_flow
+from policy import bodies as policy_bodies
+from policy.graph import policy_flow
+from research import bodies as research_bodies
+from research.graph import research_flow
+from review import bodies as review_bodies
+from review.graph import review_flow
+from scenarios import bodies as scenarios_bodies
+from scenarios.graph import scenarios_flow
+from statements import bodies as statements_bodies
 from statements.checks import items_match
-from statements.graph import sample_flow, statement_flow
-from timeline.graph import timeline_flow
-from views.graph import agent_queue_flow, agent_worker_flow, decide_flow
+from statements.graph import intake_flow
 from voice.graph import assistant_voice_flow
-from zone.graph import zone_flow
 
 barrier.install()  # every llm: call of this process passes the client-data barrier (BRD-NFR-08)
 
@@ -165,74 +127,98 @@ APP = Application(
         Service(
             "dashboard",
             http("POST", "/api/dashboard", port=PORT),
-            graph=dashboard_flow,
+            graph=pages_flow,
+            variants={"dashboard": {"action": "dashboard"}},
+            body=pages_bodies.dashboard,
             description="POST {client_id, scope: personal|family, months}: the dashboard.",
         ),
         Service(
             "overview",
             http("POST", "/api/overview", port=PORT),
-            graph=overview_flow,
+            graph=pages_flow,
+            variants={"overview": {"action": "overview"}},
+            body=pages_bodies.overview,
             description="POST {client_id, scope, role: client|rm, goals}: the overview graph around one client.",
         ),
         Service(
             "timeline",
             http("POST", "/api/timeline", port=PORT),
-            graph=timeline_flow,
+            graph=pages_flow,
+            variants={"timeline": {"action": "timeline"}},
+            body=pages_bodies.timeline,
             description="POST {client_id, scope, node, unit: day|month|year}: a node's money over time (simulated).",
         ),
         Service(
             "flows",
             http("POST", "/api/flows", port=PORT),
-            graph=flows_flow,
+            graph=pages_flow,
+            variants={"flows": {"action": "flows"}},
+            body=pages_bodies.flows,
             description="POST {client_id, scope: personal|family, month: YYYY-MM}: Money Flow from the transactions.",
         ),
         Service(
             "feed",
             http("POST", "/api/feed", port=PORT),
-            graph=feed_flow,
+            graph=pages_flow,
+            variants={"feed": {"action": "feed"}},
+            body=pages_bodies.feed,
             description="POST {client_id, scope, role: client|rm}: the Intelligence Feed, with why and evidence.",
         ),
         Service(
             "feed_open",
             http("POST", "/api/feed/open", port=PORT),
-            graph=feed_open_flow,
+            graph=pages_flow,
+            variants={"feed_open": {"action": "feed_open"}},
+            body=pages_bodies.feed_open,
             description="POST {client_id, key}: the client opened a high-level item (KPI-07).",
         ),
         Service(
             "rm_contact",
             http("POST", "/api/rm/contacts", port=PORT),
-            graph=contact_flow,
+            graph=pages_flow,
+            variants={"contact": {"action": "contact"}},
+            body=pages_bodies.contact,
             description="POST {family_id, channel, signal?, note?, by}: an RM records a contact, from a Hôm nay "
             "signal or not (KPI-06).",
         ),
         Service(
             "config_propose",
             http("POST", "/api/config/propose", port=PORT),
-            graph=config_propose_flow,
+            graph=admin_flow,
+            variants={"config_propose": {"task": "config_propose"}},
+            body=control_bodies.config_propose,
             description="POST {kind, data, by, note}: propose a configuration version (FR-701).",
         ),
         Service(
             "config_decide",
             http("POST", "/api/config/decide", port=PORT),
-            graph=config_decide_flow,
+            graph=admin_flow,
+            variants={"config_decide": {"task": "config_decide"}},
+            body=control_bodies.config_decide,
             description="POST {version_id, action: approve|reject, by, note}: decide a proposed version.",
         ),
         Service(
             "search",
             http("POST", "/api/search", port=PORT),
-            graph=search_flow,
+            graph=pages_flow,
+            variants={"search": {"action": "search"}},
+            body=pages_bodies.search,
             description="POST {q, role, client_id?, scope?}: the header search over what the role may open.",
         ),
         Service(
             "copilot",
             http("POST", "/api/copilot", port=PORT),
-            graph=copilot_flow,
+            graph=assistant_flow,
+            variants={"copilot": {"task": "copilot"}},
+            body=assistant_bodies.copilot,
             description="POST {question, role, client_id, scope, route, confirm}: the Copilot (routes, never reads).",
         ),
         Service(
             "assistant",
             http("POST", "/api/assistant", port=PORT),
             graph=assistant_flow,
+            variants={"turn": {"task": "turn"}},
+            body=assistant_bodies.turn,
             description="POST {message | turn_id + approvals, role, client_id, scope, route, goals, conversation_id}: "
             "the assistant (A2) — the role's tools in several steps, writes confirmed and verified, kept in a "
             "conversation (A3); the Copilot's path when no model answers.",
@@ -247,34 +233,44 @@ APP = Application(
         Service(
             "assistant_conversations",
             http("POST", "/api/assistant/conversations", port=PORT),
-            graph=assistant_conversations_flow,
+            graph=assistant_flow,
+            variants={"conversations": {"task": "conversations"}},
+            body=assistant_bodies.conversations,
             description="POST {action: list | open | delete, conversation_id, role, client_id}: the person's "
             "conversations with the assistant (A3).",
         ),
         Service(
             "assistant_memory",
             http("POST", "/api/assistant/memory", port=PORT),
-            graph=assistant_memory_flow,
+            graph=assistant_flow,
+            variants={"memory": {"task": "memory"}},
+            body=assistant_bodies.memory,
             description="POST {action: list | search | update | delete | clear, item_id, text, kind, query, role, "
             "client_id}: the Bộ nhớ page (A4).",
         ),
         Service(
             "assistant_attach",
             http("POST", "/api/assistant/attach", port=PORT),
-            graph=assistant_attach_flow,
+            graph=assistant_flow,
+            variants={"attach": {"task": "attach"}},
+            body=assistant_bodies.attach,
             description="POST {file_name, data: base64, role, client_id}: a file or image for the assistant, read "
             "once and kept 24 hours (docs/OCR_PLAN.md).",
         ),
         Service(
             "statement",
             http("POST", "/api/statement", port=PORT),
-            graph=statement_flow,
+            graph=intake_flow,
+            variants={"statement": {"action": "statement"}},
+            body=statements_bodies.statement,
             description="POST {client_id, filename, content: base64}: a statement, read and kept.",
         ),
         Service(
             "declare",
             http("POST", "/api/declare", port=PORT),
-            graph=declare_flow,
+            graph=intake_flow,
+            variants={"declare": {"action": "declare"}},
+            body=statements_bodies.declare,
             description="POST {client_id, message, session_id}: one chat turn of declarations.",
         ),
         Service(
@@ -287,201 +283,267 @@ APP = Application(
         Service(
             "risk",
             http("POST", "/api/risk", port=PORT),
-            graph=risk_flow,
+            graph=pages_flow,
+            variants={"risk": {"action": "risk"}},
+            body=pages_bodies.risk,
             description="POST {client_id, answers}: the next question of the risk test, or its result.",
         ),
         Service(
             "alerts",
             http("POST", "/api/alerts", port=PORT),
-            graph=alerts_flow,
+            graph=news_flow,
+            variants={"alerts": {"action": "alerts"}},
+            body=news_bodies.alerts,
             description="POST {client_id, scope?}: what is moving the client's wealth, in VND, with sources.",
         ),
         Service(
             "scenario",
             http("POST", "/api/scenario", port=PORT),
-            graph=scenario_flow,
+            graph=scenarios_flow,
+            variants={"scenario": {"action": "scenario"}},
+            body=scenarios_bodies.scenario,
             description="POST {client_id, scenario, params?, scope?}: a life event or a stress test, with two options.",
         ),
         Service(
             "scenario_combine",
             http("POST", "/api/scenario/combine", port=PORT),
-            graph=combine_flow,
+            graph=scenarios_flow,
+            variants={"combine": {"action": "combine"}},
+            body=scenarios_bodies.combine,
             description="POST {client_id, scenarios, params?, scope?, goals?}: stress tests together, no double count.",
         ),
         Service(
             "goals",
             http("POST", "/api/goals", port=PORT),
-            graph=goals_flow,
+            graph=scenarios_flow,
+            variants={"goals": {"action": "goals"}},
+            body=scenarios_bodies.goals,
             description="POST {client_id, scope?}: every life goal, with its gap, status and actions.",
         ),
         Service(
             "allocation",
             http("POST", "/api/allocation", port=PORT),
             graph=allocation_flow,
+            variants={"view": {"action": "view"}},
+            body=allocation_bodies.view,
             description="POST {client_id, scope?, method?, assumptions?, role?, whatif?}: three buckets, targets, actions; a what-if.",
         ),
         Service(
             "allocation_example",
             http("POST", "/api/allocation/example", port=PORT),
-            graph=allocation_example_flow,
+            graph=allocation_flow,
+            variants={"example": {"action": "example"}},
+            body=allocation_bodies.example,
             description="POST {method?, assumptions?, role?}: the BRD's worked example K-7F3A.",
         ),
         Service(
             "allocation_tilt",
             http("POST", "/api/allocation/tilt", port=PORT),
-            graph=allocation_tilt_flow,
+            graph=allocation_flow,
+            variants={"tilt": {"action": "tilt"}},
+            body=allocation_bodies.tilt,
             description="POST {asset_class, stance, view_id, by, reason?}: a CIO tilts the model portfolio.",
         ),
         Service(
             "allocation_tilts",
             http("POST", "/api/allocation/tilts", port=PORT),
-            graph=allocation_tilts_flow,
+            graph=allocation_flow,
+            variants={"tilts": {"action": "tilts"}},
+            body=allocation_bodies.tilts,
             description="POST {}: the CIO's tilts in force and the model each level gets.",
         ),
         Service(
             "allocation_send",
             http("POST", "/api/allocation/send", port=PORT),
-            graph=allocation_send_flow,
+            graph=allocation_flow,
+            variants={"send": {"action": "send"}},
+            body=allocation_bodies.send,
             description="POST {client_id, by, scope?, method?, assumptions?}: the actions to the review queue.",
         ),
         Service(
             "allocation_review",
             http("POST", "/api/allocation/review", port=PORT),
-            graph=allocation_review_flow,
+            graph=allocation_flow,
+            variants={"review": {"action": "review"}},
+            body=allocation_bodies.review,
             description="POST {item_id, decisions {n: approve|reject}, by, note?}: the CIO decides each action.",
         ),
         Service(
             "allocation_queue",
             http("POST", "/api/allocation/queue", port=PORT),
-            graph=allocation_queue_flow,
+            graph=allocation_flow,
+            variants={"queue": {"action": "queue"}},
+            body=allocation_bodies.queue,
             description="POST {}: the allocations waiting for the CIO and the last ones decided.",
         ),
         Service(
             "allocation_override",
             http("POST", "/api/allocation/override", port=PORT),
-            graph=allocation_override_flow,
+            graph=allocation_flow,
+            variants={"override": {"action": "override"}},
+            body=allocation_bodies.override,
             description="POST {client_id, key, bucket, reason, by, scope?}: an RM's bucket override, logged.",
         ),
         Service(
             "allocation_method",
             http("POST", "/api/allocation/method", port=PORT),
-            graph=allocation_method_flow,
+            graph=allocation_flow,
+            variants={"method": {"action": "method"}},
+            body=allocation_bodies.method,
             description="POST {method: tilt|bl, by}: how the CIO's tilts move every client's model.",
         ),
         Service(
             "evidence",
             http("POST", "/api/evidence", port=PORT),
             graph=evidence_flow,
+            variants={"read": {"action": "read"}},
+            body=evidence_bodies.read,
             description="POST {factor?, role?}: each news item's evidence (statistics or qualitative frame).",
         ),
         Service(
             "evidence_decide",
             http("POST", "/api/evidence/decide", port=PORT),
-            graph=evidence_decide_flow,
+            graph=evidence_flow,
+            variants={"decide": {"action": "decide"}},
+            body=evidence_bodies.decide,
             description="POST {factor, decision, by, note?}: the CIO approves, returns or rejects a frame.",
         ),
         Service(
             "evidence_draft",
             http("POST", "/api/evidence/draft", port=PORT),
-            graph=evidence_draft_flow,
+            graph=evidence_flow,
+            variants={"draft": {"action": "draft"}},
+            body=evidence_bodies.draft,
             description="POST {news_id, by, mode?}: the evidence agent drafts one news item's frame for the CIO.",
         ),
         Service(
             "evidence_draft_decide",
             http("POST", "/api/evidence/draft/decide", port=PORT),
-            graph=evidence_draft_decide_flow,
+            graph=evidence_flow,
+            variants={"draft_decide": {"action": "draft_decide"}},
+            body=evidence_bodies.draft_decide,
             description="POST {news_id, decision, by, note?}: the CIO approves, returns or rejects the agent's draft.",
         ),
         Service(
             "evidence_type",
             http("POST", "/api/evidence/type", port=PORT),
-            graph=evidence_type_flow,
+            graph=evidence_flow,
+            variants={"type": {"action": "type"}},
+            body=evidence_bodies.type,
             description="POST {event_type? | label?, dates, series?, by}: the CIO adds an event type or its precedent dates.",
         ),
         Service(
             "propose",
             http("POST", "/api/review/propose", port=PORT),
-            graph=propose_flow,
+            graph=review_flow,
+            variants={"propose": {"task": "propose"}},
+            body=review_bodies.propose,
             description="POST {client_id, scenario, title, option}: an option sent to the RM queue.",
         ),
         Service(
             "decide",
             http("POST", "/api/review/decide", port=PORT),
             graph=review_flow,
+            variants={"decide": {"task": "decide"}},
+            body=review_bodies.decide,
             description="POST {item_id, decision: approved|rejected, note?}: the RM's decision.",
         ),
         Service(
             "recommend",
             http("POST", "/api/review/recommend", port=PORT),
-            graph=recommend_flow,
+            graph=review_flow,
+            variants={"recommend": {"task": "recommend"}},
+            body=review_bodies.recommend,
             description="POST {client_id, title, actions, note?, by}: the RM writes an action recommendation for a "
             "family; it reaches the client at once (the RM's alone, OWN-FB-18).",
         ),
         Service(
             "news_fetch",
             http("POST", "/api/news/ingest", port=PORT),
-            graph=ingest_flow,
+            graph=news_flow,
+            variants={"ingest": {"action": "ingest"}},
+            body=news_bodies.ingest,
             description="POST {}: fetch every white-listed feed now, through the gates, into the inbox.",
         ),
         Service(
             "news_dismiss",
             http("POST", "/api/news/dismiss", port=PORT),
-            graph=dismiss_flow,
+            graph=news_flow,
+            variants={"dismiss": {"action": "dismiss"}},
+            body=news_bodies.dismiss,
             description="POST {ids, by?, note?}: the CIO drops items from the inbox.",
         ),
         Service(
             "news_release",
             http("POST", "/api/news/release", port=PORT),
-            graph=release_flow,
+            graph=news_flow,
+            variants={"release": {"action": "release"}},
+            body=news_bodies.release,
             description="POST {item_id, by, note}: a CIO releases an item held by the restricted list.",
         ),
         Service(
             "event",
             http("POST", "/api/events", port=PORT),
-            graph=event_flow,
+            graph=news_flow,
+            variants={"event": {"action": "event"}},
+            body=news_bodies.event,
             description="POST {news_ids, title?, by}: the CIO groups news into an event.",
         ),
         Service(
             "event_urgent",
             http("POST", "/api/events/urgent", port=PORT),
-            graph=event_urgent_flow,
+            graph=news_flow,
+            variants={"urgent": {"action": "urgent"}},
+            body=news_bodies.urgent,
             description="POST {event_id, urgent, reason, by}: the CIO flags an event urgent, or takes the flag off "
             "(KPI-01).",
         ),
         Service(
             "cio_agent",
             http("POST", "/api/events/run-agent", port=PORT),
-            graph=agent_queue_flow,
+            graph=news_flow,
+            variants={"queue": {"action": "queue"}},
+            body=news_bodies.queue,
             description="POST {event_id, by, mode?: live|mock}: the CIO agent queued; the agent_worker job runs it.",
         ),
         Service(
             "view_decide",
             http("POST", "/api/views/decide", port=PORT),
-            graph=decide_flow,
+            graph=review_flow,
+            variants={"view": {"task": "view"}},
+            body=review_bodies.view,
             description="POST {view_id, action, by, reason, idem_key?, edits?, responses?}: one CIO action.",
         ),
         Service(
             "run_recompute",
             http("POST", "/api/runs/recompute", port=PORT),
-            graph=recompute_flow,
+            graph=review_flow,
+            variants={"recompute": {"task": "recompute"}},
+            body=review_bodies.recompute,
             description="POST {run_id, by, idem_key?}: re-apply the run's view on today's data and compare.",
         ),
         Service(
             "run_decide",
             http("POST", "/api/runs/decide", port=PORT),
-            graph=run_decide_flow,
+            graph=review_flow,
+            variants={"run": {"task": "run"}},
+            body=review_bodies.run,
             description="POST {run_id, action: make_effective|withdraw, by, reason}: the CIO on a run.",
         ),
         Service(
             "research_upload",
             http("POST", "/api/research", port=PORT),
-            graph=research_upload_flow,
+            graph=research_flow,
+            variants={"upload": {"task": "upload"}},
+            body=research_bodies.upload,
             description="POST {item: {kind, report_no, title, summary, release_at, conflicts?, regulation?}, by}.",
         ),
         Service(
             "research_release",
             http("POST", "/api/research/release", port=PORT),
-            graph=research_release_flow,
+            graph=research_flow,
+            variants={"release": {"task": "release"}},
+            body=research_bodies.release,
             description=(
                 "POST {item_id, decision: release|reject, by, note}: a CIO other than the one who filed it, after the "
                 "release time."
@@ -490,88 +552,116 @@ APP = Application(
         Service(
             "goal_outflow",
             http("POST", "/api/goals/outflow", port=PORT),
-            graph=goal_outflow_flow,
+            graph=research_flow,
+            variants={"outflow": {"task": "outflow"}},
+            body=research_bodies.outflow,
             description="POST {family_id, goal_id, purpose, country?, by}: the RM declares a goal's outflow.",
         ),
         Service(
             "goal_suggest",
             http("POST", "/api/goals/suggest", port=PORT),
-            graph=goal_suggest_flow,
+            graph=research_flow,
+            variants={"suggest": {"task": "suggest"}},
+            body=research_bodies.suggest,
             description="POST {family_id, by, mode?}: AI suggests a purpose and country for the undeclared goals (P2).",
         ),
         Service(
             "model_estimate",
             http("POST", "/api/model/estimate", port=PORT),
-            graph=model_estimate_flow,
+            graph=admin_flow,
+            variants={"model_estimate": {"task": "model_estimate"}},
+            body=control_bodies.model_estimate,
             description="POST {by, end?, note?}: a CIO proposes the model estimated from market history (F2).",
         ),
         # last: it is mounted at "/", and would answer every path the services above own
         Service(
             "market_load_ask",
             http("POST", "/api/market/load", port=PORT),
-            graph=market_load_ask_flow,
+            graph=admin_flow,
+            variants={"market_load": {"task": "market_load"}},
+            body=control_bodies.market_load,
             description="POST {by, since}: an Admin queues a load of the market history (the market_load job runs it).",
         ),
         Service(
             "newsletter_draft",
             http("POST", "/api/newsletters", port=PORT),
-            graph=newsletter_draft_flow,
+            graph=research_flow,
+            variants={"draft": {"task": "draft"}},
+            body=research_bodies.draft,
             description="POST {view_ids, by, title?, mode?: template|agent, distribution?, conflict?}: a CIO drafts.",
         ),
         Service(
             "newsletter_act",
             http("POST", "/api/newsletters/act", port=PORT),
-            graph=newsletter_act_flow,
+            graph=research_flow,
+            variants={"act": {"task": "act"}},
+            body=research_bodies.act,
             description="POST {newsletter_id, action: edit|submit|approve|return|withdraw, by, note?, changes?}.",
         ),
         Service(
             "policy_add",
             http("POST", "/api/policy", port=PORT),
-            graph=policy_add_flow,
+            graph=policy_flow,
+            variants={"add": {"action": "add"}},
+            body=policy_bodies.add,
             description="POST {item: {gazette_url} | {source_url, title, number?, issued?, text?, status}, by}.",
         ),
         Service(
             "policy_verify",
             http("POST", "/api/policy/verify", port=PORT),
-            graph=policy_verify_flow,
+            graph=policy_flow,
+            variants={"verify": {"action": "verify"}},
+            body=policy_bodies.verify,
             description="POST {document_id, by, note}: a second CIO confirms the source (FR-306).",
         ),
         Service(
             "policy_status",
             http("POST", "/api/policy/status", port=PORT),
-            graph=policy_status_flow,
+            graph=policy_flow,
+            variants={"status": {"action": "status"}},
+            body=policy_bodies.status,
             description="POST {document_id, status, by, note, date?}: where the document stands (the radar).",
         ),
         Service(
             "policy_summarise",
             http("POST", "/api/policy/summarise", port=PORT),
-            graph=policy_summarise_flow,
+            graph=policy_flow,
+            variants={"summarise": {"action": "summarise"}},
+            body=policy_bodies.summarise,
             description="POST {document_id, by, mode?}: the policy agent on a verified document (FR-306).",
         ),
         Service(
             "alert_ack",
             http("POST", "/api/system/alerts/ack", port=PORT),
-            graph=alert_ack_flow,
+            graph=admin_flow,
+            variants={"alert_ack": {"task": "alert_ack"}},
+            body=control_bodies.alert_ack,
             description="POST {alert_id, by, note?}: “Đã xem” on an alert, by a role it is for (NFR-12).",
         ),
         Service(
             "account_request",
             http("POST", "/api/accounts/request", port=PORT),
-            graph=account_request_flow,
+            graph=admin_flow,
+            variants={"account_request": {"task": "account_request"}},
+            body=control_bodies.account_request,
             description="POST {kind: add|role|disable|enable|reset, by, person_id?, full_name?, email?, role?, title?, "
             "note?}: one Admin asks for a change to a staff account (Q-25); another Admin decides.",
         ),
         Service(
             "account_decide",
             http("POST", "/api/accounts/decide", port=PORT),
-            graph=account_decide_flow,
+            graph=admin_flow,
+            variants={"account_decide": {"task": "account_decide"}},
+            body=control_bodies.account_decide,
             description="POST {request_id, action: approve|reject|withdraw, by, note?}: a second Admin approves or "
             "rejects (a reason), the proposer withdraws; an approved add or reset answers a one-time code once.",
         ),
         Service(
             "job_run",
             http("POST", "/api/jobs/run", port=PORT),
-            graph=job_run_flow,
+            graph=admin_flow,
+            variants={"job_run": {"task": "job_run"}},
+            body=control_bodies.job_run,
             description="POST {job, by}: Admin runs a background job now (control/jobs.py RUNNABLE); one at a time.",
         ),
         Service(
@@ -589,7 +679,8 @@ APP = Application(
         # and on demand with `operonx run policy_sweep`
         Job(
             "policy_sweep",
-            graph=alerts_flow,
+            graph=news_flow,
+            inputs={"action": "alerts"},
             items=every_client,
             key="client_id",
             schedule=schedule(at="07:00", port=PORT),
@@ -598,14 +689,16 @@ APP = Application(
         # the assistant's retention (A4): conversations past the CIO's assistant_retention, expired memory items
         Job(
             "assistant_retention",
-            graph=assistant_retention_flow,
+            graph=assistant_flow,
+            inputs={"task": "retention"},
             schedule=schedule(at="02:30", port=PORT),
             description="02:30 daily: the assistant's conversations past retention and expired memory items deleted.",
         ),
         # the memory consolidator (A6, ADR-0031): idle conversations into long-term items, ≤ 8,000 tokens each
         Job(
             "assistant_consolidate",
-            graph=assistant_consolidate_flow,
+            graph=assistant_flow,
+            inputs={"task": "consolidate"},
             schedule=schedule(every="5m", port=PORT),
             timeout=600,
             description="Every 5 minutes: conversations idle 15 minutes distilled into the person's memory (A6).",
@@ -614,14 +707,16 @@ APP = Application(
         # (inside `operonx serve`), and on demand with `operonx run news_ingest`; then the topic follow-ups (A6)
         Job(
             "news_ingest",
-            graph=ingest_flow,
+            graph=news_flow,
+            inputs={"action": "ingest"},
             schedule=schedule(every="10m", port=PORT),
             description="Every 10 minutes: the white-listed RSS feeds into the inbox (FR-101).",
         ),
         # important news collected (KPI-02, news/reference.py): the independent reference every 2 hours
         Job(
             "news_reference",
-            graph=reference_flow,
+            graph=news_flow,
+            inputs={"action": "reference"},
             schedule=schedule(every="2h", port=PORT),
             timeout=120,
             description="Every 2 hours: Google News' business stories kept; a day later, each important one judged "
@@ -696,7 +791,8 @@ APP = Application(
         ),
         Job(
             "agent_worker",
-            graph=agent_worker_flow,
+            graph=news_flow,
+            inputs={"action": "worker"},
             schedule=schedule(every="5s", port=PORT),
             timeout=1800,
             keep_runs=500,
@@ -704,14 +800,15 @@ APP = Application(
         ),
         Job(
             "inbox_import",
-            graph=inbox_import_flow,
+            graph=news_flow,
+            inputs={"action": "inbox"},
             schedule=schedule(every="10m", port=PORT),
             timeout=1800,
             description="Every 10 minutes: the AI zone's packages through the same checks, imported or rejected.",
         ),
         Job(
             "zone_sync",
-            graph=zone_flow,
+            graph=news_flow,
             inputs={"action": "sync"},
             schedule=schedule(every="10m", port=PORT),
             timeout=300,
@@ -719,7 +816,8 @@ APP = Application(
         ),
         Job(
             "audit_check",
-            graph=audit_check_flow,
+            graph=admin_flow,
+            inputs={"task": "audit_check"},
             schedule=schedule(every="1h", port=PORT),
             timeout=600,
             description="Hourly: the audit chain walked and new rows copied to write-once segments; an alert for "
@@ -727,7 +825,8 @@ APP = Application(
         ),
         Job(
             "heartbeat",
-            graph=heartbeat_flow,
+            graph=admin_flow,
+            inputs={"task": "heartbeat"},
             schedule=schedule(every="20s", port=PORT),
             timeout=30,
             keep_runs=200,
@@ -736,7 +835,7 @@ APP = Application(
         ),
         Job(
             "agent_eval",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "agent_eval"},
             schedule=schedule(every="1m", port=PORT),
             timeout=3600,
@@ -745,7 +844,7 @@ APP = Application(
         ),
         Job(
             "accuracy_score",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "accuracy"},
             schedule=schedule(at="18:30", port=PORT),
             timeout=600,
@@ -755,7 +854,7 @@ APP = Application(
         # nothing approved; their drafts' shadow forecasts kept and scored, the report in out/trial/<day>.json
         Job(
             "trial_daily",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "trial_daily"},
             schedule=schedule(at="08:30", port=PORT),
             timeout=3600,
@@ -764,7 +863,7 @@ APP = Application(
         ),
         Job(
             "trial_score",
-            graph=evaluation_flow,
+            graph=market_flow,
             inputs={"action": "trial_score"},
             schedule=schedule(every="15m", port=PORT),
             timeout=600,
@@ -783,7 +882,8 @@ APP = Application(
         # The three demo samples must pass; the free-text note needs a model (MF_AI=on).
         Eval(
             "statement_reading",
-            graph=sample_flow,
+            graph=intake_flow,
+            inputs={"action": "sample"},
             input="filename",
             dataset="dataset:statements",
             evaluators=[items_match],

@@ -11,10 +11,10 @@ from apply import reads
 from contacts import store as contacts
 from control import config
 from control.errors import BadRequest
-from feed.graph import feed_flow
+from pages.graph import pages_flow
 from measure import control
 
-FEED = Operon(feed_flow, params={"client_id": None, "scope": None, "role": None})
+FEED = Operon(pages_flow, params={"action": "feed", "client_id": None, "scope": None, "role": None})
 CFG = {"share": 0.5, "seed": "MEAS-06-2026", "strata": ["segment", "rm"]}
 
 

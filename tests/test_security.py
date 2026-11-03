@@ -56,19 +56,17 @@ def found_in_files(needles):
 def fill_every_table():
     """One of every write that holds client data."""
     from test_apply import MARKET, approved
-
-    from declare.graph import declare_flow
-    from statements.graph import statement_flow
+    from statements.graph import intake_flow
 
     store.client("C01")  # seeds
     raw = (DATA / "samples" / "vps_C01.csv").read_bytes()
     asyncio.run(
-        Operon(statement_flow, params={"client_id": None, "filename": None, "content": None}).run(
+        Operon(intake_flow, params={"action": "statement", "client_id": None, "filename": None, "content": None}).run(
             inputs={"client_id": "C01", "filename": "vps_C01.csv", "content": base64.b64encode(raw).decode()}
         )
     )
     asyncio.run(
-        Operon(declare_flow, params={"client_id": None, "message": None, "session_id": None}).run(
+        Operon(intake_flow, params={"action": "declare", "client_id": None, "message": None, "session_id": None}).run(
             inputs={"client_id": "C01", "message": "Tôi có 10 lượng vàng", "session_id": "C01-s"}
         )
     )

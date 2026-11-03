@@ -7,7 +7,7 @@ import pytest
 from operonx import Operon
 from operonx.agents.testing import ScriptedLLM, says, scripted
 
-from statements.graph import statement_flow
+from statements.graph import intake_flow
 from wealth import store
 from wealth.text import ascii_lower, number
 
@@ -18,7 +18,7 @@ PARAMS = {"client_id": None, "filename": None, "content": None}
 def read(client_id, name, raw=None):
     raw = raw if raw is not None else (SAMPLES / name).read_bytes()
     out = asyncio.run(
-        Operon(statement_flow, params=PARAMS).run(
+        Operon(intake_flow, params={"action": "statement", **PARAMS}).run(
             inputs={
                 "client_id": client_id,
                 "filename": name,

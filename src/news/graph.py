@@ -1,43 +1,97 @@
-"""ingest_flow: every white-listed feed → the gates → sorted → kept (BRD FR-101…105).
+"""news_flow: the news, its events and the alerts they cause, one flow; a route or a job picks its `action`
+(app/main.py binds it with `variants` or `Job(inputs=...)`, and `bodies.py` is each route's request contract).
 
-Runs every 10 minutes inside `operonx serve` (the news_ingest job, app/main.py), on demand with
-`operonx run news_ingest`, and on POST /api/news/ingest (the inbox's "Lấy tin ngay"). ``feeds``
-replaces the network with given XML ({source id: text}); ``tick`` and ``at`` are what the schedule
-sends and are not used."""
+ingest     the news_ingest and zone_news jobs, POST /api/news/ingest: every white-listed feed → the gates → sorted →
+           kept (BRD FR-101…105), then the follow-ups on approved events (A6). ``feeds`` replaces the network with
+           given XML ({source id: text}); ``tick`` and ``at`` are what the schedule sends and are not used.
+reference  the news_reference job: the independent reference read, its stories kept and judged (KPI-02)
+dismiss    POST /api/news/dismiss: the CIO drops items from the inbox (FR-103)
+release    POST /api/news/release: the CIO lets an item that names someone on the restricted list through (BR-04)
+event      POST /api/events: news items the CIO picked → one event, held while any item waits for the CIO (FR-105)
+urgent     POST /api/events/urgent: the CIO's urgent flag on an event (BRD-KPI-01)
+queue      POST /api/events/run-agent: the CIO's agent run, queued for the ``agent_worker`` job (AI-13)
+worker     the agent_worker job (every 5 s): the oldest queued CIO agent run, one at a time (AI-13)
+inbox      the inbox_import job (every 10 min): the AI zone's packages through the same checks, imported or rejected
+sync       the zone_sync job (every 10 min, inbox mode): TCB → the AI zone, the approved catalogues and released research (F-D7)
+agent      the zone_agent job (every 15 min, the zone's own process): the AI zone → TCB's inbox, one event's view, signed (F-D7)
+alerts     POST /api/alerts and the policy_sweep job (every client, 07:00): the client's holdings and profile → every
+           factor scored → the alerts, kept"""
 
 from operonx import END, START, graph
+from operonx.core.ops import if_
 
 from assistant.ops import follow_ups_topics
+from consolidate.graph import consolidate_flow
+from events.ops import flag_urgent, group
+from inbox.ops import import_inbox
+from impact.ops import check_request as check_alerts
+from impact.ops import keep as keep_alerts
+from impact.ops import profile_of, score
 from news.ops import dismiss, fetch, keep, reference_check, release, screen
+from views.worker import queue_agent, work_queue
+from zone.ops import push_sync, zone_tick
 
 
 @graph
-def ingest_flow(feeds=None, now=None, tick=None, at=None):
-    """Fetch, gate, sort and keep the news."""
+def news_flow(
+    action="ingest",
+    feeds=None,
+    now=None,
+    tick=None,
+    at=None,
+    feed=None,
+    ids=None,
+    by="cio",
+    note="",
+    item_id=None,
+    news_ids=None,
+    title=None,
+    event_id=None,
+    urgent=True,
+    reason="",
+    mode=None,
+    client_id=None,
+    scope="personal",
+):
+    """Fetch, gate, sort and keep the news; group it into events; what is moving a client's wealth."""
     got = fetch(feeds=feeds, now=now)
     seen = screen(fetched=got["fetched"], at=got["at"])
     kept = keep(rows=seen["rows"], counts=seen["counts"], at=got["at"], started=got["started"])
     topics = follow_ups_topics(after=kept["ingest"])  # the follow-ups on approved events (A6)
-    START >> got >> seen >> kept >> topics >> END
-    kept >> END  # the ingest stays the graph's answer (POST /api/news/ingest)
+    referenced = reference_check(feed=feed, now=now)
+    dismissed = dismiss(ids=ids, by=by, note=note)
+    released = release(item_id=item_id, by=by, note=note)
+    grouped = group(news_ids=news_ids, title=title, by=by)
+    flagged = flag_urgent(event_id=event_id, urgent=urgent, reason=reason, by=by)
+    queued = queue_agent(event_id=event_id, by=by, mode=mode)
+    worked = work_queue(tick=tick, at=at)
+    imported = import_inbox(tick=tick, at=at)
+    synced = push_sync(tick=tick, at=at)
+    zoned = zone_tick(tick=tick, at=at)
+    ask = check_alerts(client_id=client_id, scope=scope)
+    held = consolidate_flow(client_id=ask["client_id"], scope=ask["scope"])
+    who = profile_of(client_id=ask["client_id"], members=held["members"])
+    found = score(holdings=held["holdings"], profile=who["profile"])
+    alerts = keep_alerts(client_id=ask["client_id"], scope=ask["scope"], alerts=found["alerts"], net_worth=found["net_worth"])
 
-
-@graph
-def dismiss_flow(ids, by="cio", note=""):
-    """The CIO drops items from the inbox (FR-103)."""
-    done = dismiss(ids=ids, by=by, note=note)
-    START >> done >> END
-
-
-@graph
-def release_flow(item_id, by, note):
-    """The CIO lets an item that names someone on the restricted list through (BR-04)."""
-    done = release(item_id=item_id, by=by, note=note)
-    START >> done >> END
-
-
-@graph
-def reference_flow(feed=None, now=None, tick=None, at=None):
-    """The independent reference read, its stories kept and judged (KPI-02)."""
-    done = reference_check(feed=feed, now=now)
-    START >> done >> END
+    a = action
+    START >> if_(a == "ingest", got).if_(a == "reference", referenced).if_(a == "dismiss", dismissed).if_(
+        a == "release", released
+    ).if_(a == "event", grouped).if_(a == "urgent", flagged).if_(a == "queue", queued).if_(
+        a == "worker", worked
+    ).if_(a == "inbox", imported).if_(
+        a == "sync", synced
+    ).if_(a == "agent", zoned).if_(a == "alerts", ask).build()
+    got >> seen >> kept >> topics >> END
+    kept >> END  # the ingest stays the answer of POST /api/news/ingest
+    ask >> held >> who >> found >> alerts >> END
+    referenced >> END
+    dismissed >> END
+    released >> END
+    grouped >> END
+    flagged >> END
+    queued >> END
+    worked >> END
+    imported >> END
+    synced >> END
+    zoned >> END

@@ -21,8 +21,7 @@ from operonx import Operon
 from operonx.core.registry import ResourceHub
 
 from control import barrier, config
-from declare.graph import declare_flow
-from statements.graph import statement_flow
+from statements.graph import intake_flow
 from views import agents
 from wealth.paths import DATA
 
@@ -113,7 +112,7 @@ def client_ai(mode, hosts=("127.0.0.1",)):
 def statement():
     raw = (DATA / "samples" / "vps_C01.csv").read_bytes()
     out = asyncio.run(
-        Operon(statement_flow, params={"client_id": None, "filename": None, "content": None}).run(
+        Operon(intake_flow, params={"action": "statement", "client_id": None, "filename": None, "content": None}).run(
             inputs={"client_id": "C01", "filename": "vps_C01.csv", "content": base64.b64encode(raw).decode()}
         )
     )
@@ -122,7 +121,7 @@ def statement():
 
 def chat(message, session="t"):
     out = asyncio.run(
-        Operon(declare_flow, params={"client_id": None, "message": None, "session_id": None}).run(
+        Operon(intake_flow, params={"action": "declare", "client_id": None, "message": None, "session_id": None}).run(
             inputs={"client_id": "C01", "message": message, "session_id": f"C01-{session}"}
         )
     )

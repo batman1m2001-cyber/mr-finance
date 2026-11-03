@@ -196,7 +196,7 @@ FUTURE = re.compile(r"^\s*(?:năm|sang năm)\s*(?:sau|tới)|^\s*tới", re.I)
 
 
 async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from flows.graph import flows_flow
+    from pages.graph import pages_flow
 
     month, mm, yy = None, None, None
     if "month" in args:  # a model chose the month it means (or none: the latest), not a month merely mentioned
@@ -211,7 +211,7 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
         m = MONTH.search(ctx.question or "")
         if m and not FUTURE.search(ctx.question[m.end() : m.end() + 12]):  # “tháng 3 năm sau” is not past (D14)
             mm, yy = int(m.group(1)), m.group(2)
-    first = (await _graph(flows_flow, client_id=_need_client(ctx), scope=ctx.scope, month=None))["flows"]
+    first = (await _graph(pages_flow, action="flows", client_id=_need_client(ctx), scope=ctx.scope, month=None))["flows"]
     if mm:
         cands = [x for x in first["months"] if int(x[5:]) == mm and (not yy or x[:4].endswith(yy[-2:]))]
         month = cands[-1] if cands else None
@@ -220,7 +220,7 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     f = (
         first
         if not month or month == first["month"]
-        else (await _graph(flows_flow, client_id=ctx.client_id, scope=ctx.scope, month=month))["flows"]
+        else (await _graph(pages_flow, action="flows", client_id=ctx.client_id, scope=ctx.scope, month=month))["flows"]
     )
     top = f["outflow"][0] if f["outflow"] else None
     left = "còn lại" if f["left"] >= 0 else "thiếu hụt"
@@ -260,10 +260,10 @@ async def money_flow(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from feed.graph import feed_flow
+    from pages.graph import pages_flow
 
     role = "rm" if ctx.role == "rm" else "client"
-    items = (await _graph(feed_flow, client_id=_need_client(ctx), scope=ctx.scope, role=role))["feed"]["items"]
+    items = (await _graph(pages_flow, action="feed", client_id=_need_client(ctx), scope=ctx.scope, role=role))["feed"]["items"]
     if not items:
         return {"text": "Không có điều gì cần chú ý lúc này.", "data": {"items": 0}}
     lines = [f"{k + 1}) {i['title']} — {i['why']}." for k, i in enumerate(items[:3])]
@@ -291,9 +291,9 @@ async def watch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def goals(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from scenarios.graph import goals_flow
+    from scenarios.graph import scenarios_flow
 
-    out = (await _graph(goals_flow, client_id=_need_client(ctx), scope=ctx.scope))["goals"]
+    out = (await _graph(scenarios_flow, action="goals", client_id=_need_client(ctx), scope=ctx.scope))["goals"]
     followed = [g for g in out if (g["id"] in ctx.followed if ctx.followed is not None else g["followed"])]
     label = {"on_track": "đúng tiến độ", "at_risk": "cần chú ý", "off_track": "chậm tiến độ"}
 
@@ -458,11 +458,11 @@ async def investigate(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def stress(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    """One stress test on the client's own holdings, through the planning page's scenario_flow."""
-    from scenarios.graph import scenario_flow
+    """One stress test on the client's own holdings, through the planning page's scenarios_flow."""
+    from scenarios.graph import scenarios_flow
 
     sid = STRESS.get(args.get("scenario"), "vni_30")
-    r = (await _graph(scenario_flow, client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
+    r = (await _graph(scenarios_flow, action="scenario", client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
     b, a = r["before"], r["after"]
     d = a["net_worth"] - b["net_worth"]
     pct = d / b["net_worth"] if b["net_worth"] else 0.0
@@ -661,9 +661,9 @@ def plan_fetch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def fetch(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from news.graph import ingest_flow
+    from news.graph import news_flow
 
-    s = (await _graph(ingest_flow, feeds=None, now=None, tick=None, at=None))["ingest"]
+    s = (await _graph(news_flow, action="ingest", feeds=None, now=None, tick=None, at=None))["ingest"]
     return {
         "text": f"Đã lấy tin: thêm {s['added']}, bỏ {s['refused']}, trùng {s['duplicates']}, giữ {s['held']}.",
         "data": s,

@@ -10,7 +10,7 @@ the rest is what exists.
 
 | Area | Today | Kept / changed |
 |---|---|---|
-| Copilot (FEAT-32, `src/copilot/`) | `POST /api/copilot` → `copilot_flow`: check → scrub (`scrub.py`, names/numbers/codes out) → route (keyword rules, or `llm:copilot` seeing only the scrubbed question, the page path and the catalogue, ADR-0012) → **one** tool → answer from a fixed template; writes return `pending` + `confirm` and run on the second call; every call audited (`copilot.ask`); cards, `as_of`, sources, `focus` marks (FEAT-33) | Kept as the template path and the fallback; its 13 tools move into the registry (A1); the panel (`web/copilot.js`) becomes the assistant's front end (A2) |
+| Copilot (FEAT-32, `src/copilot/`) | `POST /api/copilot` → `assistant_flow (task copilot)`: check → scrub (`scrub.py`, names/numbers/codes out) → route (keyword rules, or `llm:copilot` seeing only the scrubbed question, the page path and the catalogue, ADR-0012) → **one** tool → answer from a fixed template; writes return `pending` + `confirm` and run on the second call; every call audited (`copilot.ask`); cards, `as_of`, sources, `focus` marks (FEAT-33) | Kept as the template path and the fallback; its 13 tools move into the registry (A1); the panel (`web/copilot.js`) becomes the assistant's front end (A2) |
 | Conversation | `sessionStorage` per role and tab, in the browser | Moves to the server (A3) |
 | Client-data barrier | `control/barrier.py` guards every `llm:` call (G2); `client_ai` = `demo` / `onprem` / `off` (live: `demo`, ADR-0018/0023) | The assistant goes through it unchanged (ADR-0026) |
 | Agents | CIO agent + challenger (FEAT-04/05; queued `agent_jobs`, `agent_runs`, the AI zone ADR-0022), policy agent (FEAT-16), newsletter intro (FEAT-17), market and news jobs, alert jobs (FEAT-36, no LLM). Catalogue page (FEAT-15) with each agent's runs and trace drawers | All kept; two agents added (ADR-0031); the catalogue becomes the ecosystem map (ADR-0033) |
@@ -100,11 +100,11 @@ tools per role (`agent_tools(role)`, the person in `RunContext.deps`):
 
 Built in A1 (25 tools): the Copilot's 13 (`src/assistant/tools.py`: tong_quan, dong_tien, chu_y, muc_tieu,
 tac_dong, dieu_tra, kich_ban, hom_nay, hop_tin, tin_bi_giu, mo_trang; writes duyet_de_xuat, lay_tin) and the served
-graphs wrapped (`src/assistant/actions.py`) — reads `dong_luc` (alerts_flow: policies, macro, projects in VND),
-`tim_kiem` (search_flow), `de_xuat` (the review queue; the specialist's waiting items), `su_kien` (events),
-`canh_bao_he_thong` (the bell's alerts), `lien_he` (the RM's contacts); writes `gui_de_xuat` (propose_flow, client
-and RM), `ghi_lien_he` (contact_flow), `khuyen_nghi` (recommend_flow), `chuyen_gia_duyet` (specialist_flow),
-`danh_dau_khan` (event_urgent_flow), `da_xem_canh_bao` (alert_ack_flow). The dashboard, flows, feed, goals, impact,
+graphs wrapped (`src/assistant/actions.py`) — reads `dong_luc` (news_flow (alerts): policies, macro, projects in VND),
+`tim_kiem` (pages_flow (search)), `de_xuat` (the review queue; the specialist's waiting items), `su_kien` (events),
+`canh_bao_he_thong` (the bell's alerts), `lien_he` (the RM's contacts); writes `gui_de_xuat` (review_flow (propose), client
+and RM), `ghi_lien_he` (pages_flow (contact)), `khuyen_nghi` (review_flow (recommend)), `chuyen_gia_duyet` (specialist_flow),
+`danh_dau_khan` (news_flow (urgent)), `da_xem_canh_bao` (alert_ack_flow). The dashboard, flows, feed, goals, impact,
 investigate, scenario and RM-today reads are the Copilot's tools.
 
 Left to their pages, deliberately: the four-eyes governance decisions (configuration versions, CIO views and runs,
@@ -396,7 +396,7 @@ streamed. The service has `sinks = []` like `assistant` (its items are the perso
 
 ## 10. Migration *(target)*
 
-1. A1: the registry beside the Copilot; `copilot_flow` reads its tools from it (no behaviour change; its tests pass).
+1. A1: the registry beside the Copilot; `assistant_flow (task copilot)` reads its tools from it (no behaviour change; its tests pass).
 2. A2: `POST /api/assistant` and the agent; the panel switches to it; `POST /api/copilot` kept (the template path,
    and the fallback when the model is unavailable — NFR-03: an AI failure must not stop the product).
 3. A3: conversations move from `sessionStorage` to the server; the panel lists them; the old storage is dropped

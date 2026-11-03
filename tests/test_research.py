@@ -12,15 +12,14 @@ from news import store as news_store
 from procedural import goals
 from research import store
 from research import suggest
-from research.graph import goal_outflow_flow, goal_suggest_flow, research_release_flow, research_upload_flow
+from research.graph import research_flow
 from research import ops as research_ops
 
-UPLOAD = Operon(research_upload_flow, params={"item": None, "by": None})
-RELEASE = Operon(research_release_flow, params={"item_id": None, "decision": None, "by": None, "note": None})
-DECLARE = Operon(
-    goal_outflow_flow, params={"family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
+UPLOAD = Operon(research_flow, params={"task": "upload", "item": None, "by": None})
+RELEASE = Operon(research_flow, params={"task": "release", "item_id": None, "decision": None, "by": None, "note": None})
+DECLARE = Operon(research_flow, params={"task": "outflow", "family_id": None, "goal_id": None, "purpose": None, "by": None, "country": None}
 )
-SUGGEST = Operon(goal_suggest_flow, params={"family_id": None, "by": None, "mode": None})
+SUGGEST = Operon(research_flow, params={"task": "suggest", "family_id": None, "by": None, "mode": None})
 NOTE = "Đã kiểm tra nguồn công khai và xung đột lợi ích"
 TODAY = date(2026, 10, 15)
 

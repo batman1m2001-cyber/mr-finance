@@ -4,13 +4,14 @@ to the net worth; the client reads events by type; the goals followed are the on
 
 import asyncio
 
+from news.graph import news_flow
 from operonx import Operon
 from test_apply import MARKET, approved
 
 from apply import reads
-from overview.graph import overview_flow
+from pages.graph import pages_flow
 
-OV = Operon(overview_flow, params={"client_id": None, "scope": None, "role": None, "goals": None})
+OV = Operon(pages_flow, params={"action": "overview", "client_id": None, "scope": None, "role": None, "goals": None})
 
 
 def overview(**inputs):
@@ -34,9 +35,9 @@ def test_every_edge_comes_from_a_record_it_names():
     approved(*MARKET)
     o = overview(role="rm")
     d = dashboard()
-    from impact.graph import alerts_flow
+    from news.graph import news_flow
 
-    rep = asyncio.run(Operon(alerts_flow, params={"client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
+    rep = asyncio.run(Operon(news_flow, params={"action": "alerts", "client_id": None, "scope": None}).run(inputs={"client_id": "C01"}))
     alerts = {a["id"]: a for a in rep["report"]["alerts"]}
     holdings = {h["key"]: h for h in d["holdings"]}
     runs = {i["run_id"]: i for i in reads.family_impact("C01", "rm")["items"] if i["status"] == "EFFECTIVE"}
@@ -109,12 +110,11 @@ def test_the_goals_are_the_ones_the_browser_follows():
 
 def test_the_workspace_kinds_money_reserve_and_scenarios():
     # FEAT-40 (OWN-GW-11/12): the month's flows as on Toàn cảnh, the reserve always, the stress scenarios hypothetical
-    from flows.graph import flows_flow
 
     o = overview()
     by = {n["id"]: n for n in o["nodes"]}
     f = asyncio.run(
-        Operon(flows_flow, params={"client_id": None, "scope": None, "month": None}).run(inputs={"client_id": "C01"})
+        Operon(pages_flow, params={"action": "flows", "client_id": None, "scope": None, "month": None}).run(inputs={"client_id": "C01"})
     )
     f = f["flows"]
     assert by["FL:in"]["value"] == f["total_in"] and by["FL:out"]["value"] == f["total_out"]

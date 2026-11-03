@@ -49,9 +49,9 @@ KIND = {"policy": "chính sách", "macro": "vĩ mô", "infrastructure": "dự á
 
 async def drivers(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """What is moving the client's wealth: each policy, macro move and project, in VND (the policy-cost page)."""
-    from impact.graph import alerts_flow
+    from news.graph import news_flow
 
-    r = (await _graph(alerts_flow, client_id=_need_client(ctx), scope=ctx.scope))["report"]
+    r = (await _graph(news_flow, action="alerts", client_id=_need_client(ctx), scope=ctx.scope))["report"]
     found = sorted(r["alerts"], key=lambda a: -abs(a["impact"]))
     if not found:
         return {"text": "Chưa thấy chính sách, biến động vĩ mô hay dự án nào tác động tới tài sản.", "data": {"n": 0}}
@@ -90,12 +90,12 @@ async def drivers(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 async def search(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     """The header's search: what the role may open, each hit with its page."""
-    from search.graph import search_flow
+    from pages.graph import pages_flow
 
     q = str(args.get("q") or "").strip()[:100]
     if not q:
         raise ToolFailed("Cần từ khóa để tìm")
-    found = (await _graph(search_flow, q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]
+    found = (await _graph(pages_flow, action="search", q=q, role=ctx.role, client_id=ctx.client_id, scope=ctx.scope))["search"]
     hits = found["hits"]
     if not hits:
         return {"text": f"Không tìm thấy gì cho “{q}” trong những gì bạn được xem.", "data": {"hits": 0, "total": 0}}
@@ -250,11 +250,11 @@ OPTIONS = {"light": "phương án nhẹ", "heavy": "phương án mạnh"}
 
 
 async def plan_propose(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from scenarios.graph import scenario_flow
+    from scenarios.graph import scenarios_flow
 
     sid = STRESS.get(args.get("scenario"), "vni_30")
     want = args.get("option") if args.get("option") in OPTIONS else "light"
-    r = (await _graph(scenario_flow, client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
+    r = (await _graph(scenarios_flow, action="scenario", client_id=_need_client(ctx), scenario=sid, params=None, scope=ctx.scope))["result"]
     option = next((o for o in r["options"] if o["id"] == want), None)
     if option is None:
         raise ToolFailed(f"Kịch bản {r['title']} không có {OPTIONS[want]}")
@@ -265,11 +265,12 @@ async def plan_propose(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def propose(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from review.graph import propose_flow
+    from review.graph import review_flow
 
     it = (
         await _graph(
-            propose_flow,
+            review_flow,
+            task="propose",
             client_id=_need_client(ctx),
             option=args.get("option"),
             scenario=args.get("scenario"),
@@ -299,11 +300,12 @@ def plan_contact(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def contact(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from contacts.graph import contact_flow
+    from pages.graph import pages_flow
 
     c = (
         await _graph(
-            contact_flow,
+            pages_flow,
+            action="contact",
             family_id=args.get("family_id"),
             channel=args.get("channel"),
             signal=None,
@@ -337,11 +339,12 @@ def plan_recommend(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def recommend(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from review.graph import recommend_flow
+    from review.graph import review_flow
 
     it = (
         await _graph(
-            recommend_flow,
+            review_flow,
+            task="recommend",
             client_id=_need_client(ctx),
             title=args.get("title"),
             actions=args.get("actions"),
@@ -381,11 +384,12 @@ def plan_urgent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def urgent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from events.graph import event_urgent_flow
+    from news.graph import news_flow
 
     ev = (
         await _graph(
-            event_urgent_flow,
+            news_flow,
+            action="urgent",
             event_id=args.get("event_id"),
             urgent=args.get("urgent"),
             reason=args.get("reason"),
@@ -421,9 +425,9 @@ def plan_ack(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def ack(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from control.graph import alert_ack_flow
+    from control.graph import admin_flow
 
-    a = (await _graph(alert_ack_flow, alert_id=args.get("alert_id"), by=ctx.user, note=args.get("note")))["alert"]
+    a = (await _graph(admin_flow, task="alert_ack", alert_id=args.get("alert_id"), by=ctx.user, note=args.get("note")))["alert"]
     return {"text": f"Đã đánh dấu đã xem cảnh báo {a['id']}.", "data": {"id": a["id"]}}
 
 
@@ -472,9 +476,9 @@ def plan_agent(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def agent_run(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from views.graph import agent_queue_flow
+    from news.graph import news_flow
 
-    job = (await _graph(agent_queue_flow, event_id=args.get("event_id"), by=ctx.user, mode=args.get("mode")))["job"]
+    job = (await _graph(news_flow, action="queue", event_id=args.get("event_id"), by=ctx.user, mode=args.get("mode")))["job"]
     return {
         "text": f"Đã xếp Agent CIO chạy cho sự kiện {job['event_id']} (lần {job['id']}, chế độ {MODES[job['mode']]}). "
         "Nhận định ra là bản nháp: qua Agent Phản biện, rồi bạn duyệt ở trang Sự kiện & nhận định; tiến độ ở trang "
@@ -514,9 +518,9 @@ def plan_challenge(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 async def challenge(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
     from views import store as views_store
-    from views.graph import decide_flow
+    from review.graph import review_flow
 
-    await _graph(decide_flow, view_id=args.get("view_id"), action="challenge", by=ctx.user)
+    await _graph(review_flow, task="view", view_id=args.get("view_id"), action="challenge", by=ctx.user)
     v = views_store.get(str(args.get("view_id")))
     found = views_store.latest_challenge(v["id"])
     ran = len(views_store.challenges(v["id"])) > int(args.get("before") or 0)
@@ -552,9 +556,9 @@ def plan_job(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def job_run(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from control.graph import job_run_flow
+    from control.graph import admin_flow
 
-    r = (await _graph(job_run_flow, job=args.get("job"), by=ctx.user))["run"]
+    r = (await _graph(admin_flow, task="job_run", job=args.get("job"), by=ctx.user))["run"]
     return {
         "text": f"Đã bắt đầu “{r['label']}” (lần {r['id']}). Việc chạy nền; kết quả ở trang Việc nền.",
         "data": {"id": r["id"], "job": r["job"]},
@@ -668,11 +672,11 @@ def plan_account(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 async def account_request(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from people.graph import account_request_flow
+    from control.graph import admin_flow
 
     keys = ("kind", "person_id", "email", "role", "title", "note")
     body = {k: args.get(k) or "" for k in keys}
-    r = (await _graph(account_request_flow, by=ctx.user, full_name=args.get("name") or "", **body))["request"]
+    r = (await _graph(admin_flow, task="account_request", by=ctx.user, full_name=args.get("name") or "", **body))["request"]
     return {
         "text": f"Đã gửi yêu cầu {r['id']} ({r['label']}): chờ một Quản trị khác duyệt ở trang Tài khoản và vai trò."
         + (
