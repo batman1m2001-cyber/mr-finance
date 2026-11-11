@@ -102,7 +102,7 @@ def _what(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def plan_add(ctx: Ctx, args: Dict[str, Any]) -> Dict[str, Any]:
-    from wealth.money import vnd
+    from _shared.money import vnd
 
     w = _what(ctx, args)
     debt = sum(x["value"] for x in w["rows"] if x["item"]["type"] == "loan")

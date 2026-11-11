@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from scenarios import _sim
 from wealth import fixtures, profile
 

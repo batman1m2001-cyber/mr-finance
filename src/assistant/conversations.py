@@ -34,7 +34,7 @@ from operonx_agents import RunState, SQLiteSession
 
 from assistant.base import Ctx
 from control import crypto
-from wealth.paths import state_path
+from _shared.paths import state_path
 
 TITLE = 80  # characters of a title at most
 STALE_S = 80.0  # a turn still ``running`` after this long was cut (the run's wall clock is 60 s + 5)

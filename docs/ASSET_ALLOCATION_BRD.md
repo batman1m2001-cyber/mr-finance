@@ -67,7 +67,7 @@ flowchart LR
 |---|---|---|---|
 | 1 | Lấy tài sản và khoản vay của khách (cá nhân hoặc gia đình) | `consolidate_flow` (FEAT-20) | Danh sách tài sản, khoản vay |
 | 2 | Lấy mức rủi ro 1–5 và ngưỡng sụt giảm | Kết quả bài test (FEAT-24); chưa có thì hồ sơ giả lập, ghi "Giả lập" | Mức rủi ro, nguồn, ngày |
-| 3 | Xếp từng tài sản vào một giỏ (mục 5) | Mã loại tài sản (`wealth/labels.py`) | Ba giỏ |
+| 3 | Xếp từng tài sản vào một giỏ (mục 5) | Mã loại tài sản (`src/_shared/labels.py`) | Ba giỏ |
 | 4 | Tính mục tiêu và đủ/thiếu từng giỏ (mục 6) | Thu nhập, chi tiêu, khoản chi có ngày, người phụ thuộc, mong muốn để lại, tuổi nghỉ hưu | Cần / có / thiếu |
 | 5 | Lấy danh mục mô hình của mức rủi ro, cộng mức nghiêng CIO đã duyệt (mục 7) | Bảng mô hình; quyết định nhận định (FEAT-06) | Tỷ trọng mục tiêu giỏ Tăng trưởng |
 | 6 | Lấp giỏ Thanh khoản: so sánh ba cách, chọn, xếp bậc thang (mục 8.1–8.3) | Bước 4, 5; lãi vay; thuế giao dịch | Số tiền chuyển, nguồn tiền |

@@ -20,7 +20,7 @@ from functools import lru_cache
 from typing import Any, Callable, Dict, List, Optional
 
 from control import audit, db, roles
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 THRESHOLDS = {  # BR-09 and the FR-501 post-check rules
     "pre_review_pct": -0.05,
@@ -463,7 +463,7 @@ def clear_cache() -> None:
 
 def _in_force(kind: str) -> tuple:
     _kind(kind)
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     path = state_path()
     if not path.exists():  # no state yet, so no versions: the shipped file, without creating the database
@@ -581,7 +581,7 @@ def decide(version_id: str, action: str, by: str, note: str = "") -> Dict[str, A
 def mirror(kind: str, new: Any, source_id: str, by: str = "tcb:sync") -> Optional[Dict[str, Any]]:
     """The AI zone only (F-D7, ZONE-06): a version TCB approved, put in force here as it is, with TCB's id. None when
     it is the one already in force. Elsewhere a version comes in force only through propose and decide."""
-    from wealth.paths import in_zone
+    from _shared.paths import in_zone
 
     if not in_zone():
         raise roles.Forbidden("Chỉ vùng AI nhận cấu hình đã duyệt từ TCB")

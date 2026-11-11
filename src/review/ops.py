@@ -6,7 +6,7 @@ from __future__ import annotations
 from operonx import op
 
 from control import roles
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from people import auth
 from wealth import fixtures, store
 

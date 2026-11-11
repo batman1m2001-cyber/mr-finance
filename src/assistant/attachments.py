@@ -36,9 +36,9 @@ from operonx.core.loggings import LOGGER
 from assistant import conversations as conv
 from assistant.base import Ctx
 from control import crypto
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from statements import _parse
-from wealth.text import number
+from _shared.text import number
 
 MAX_BYTES = 5 * 1024 * 1024
 KEEP_S = 24 * 3600.0  # O-D8
@@ -424,7 +424,7 @@ def _day(iso: Any) -> str:
 
 
 def _item_line(it: Dict[str, Any]) -> str:
-    from wealth.money import _vn, pct, vnd
+    from _shared.money import _vn, pct, vnd
 
     t = it["type"]
     if t == "stock":

@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional
 
 from control import crypto
-from wealth.paths import ensure_schema, state_path
+from _shared.paths import ensure_schema, state_path
 
 
 def _seal(table: str, row_id: Any, column: str, text: Optional[str]) -> Optional[str]:

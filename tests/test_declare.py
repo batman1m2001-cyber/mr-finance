@@ -7,7 +7,7 @@ from consolidate.graph import consolidate_flow
 from declare import _rules
 from statements.graph import intake_flow
 from wealth import store
-from wealth.money import TR, TY
+from _shared.money import TR, TY
 
 PARAMS = {"client_id": None, "message": None, "session_id": None}
 

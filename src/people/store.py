@@ -26,7 +26,7 @@ from contextvars import ContextVar
 from typing import Any, Dict, Iterator, List, Optional
 
 from control import crypto
-from wealth.paths import DATA, ensure_schema, no_people_in_zone, state_path
+from _shared.paths import DATA, ensure_schema, no_people_in_zone, state_path
 
 KINDS = ("staff", "client", "dependent")
 STAFF_ROLES = ("cio", "rm", "admin")

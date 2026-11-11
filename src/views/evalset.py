@@ -25,7 +25,7 @@ from typing import Any, Dict, List
 from views import agents, schema
 from views import store as vstore
 from wealth import ai
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 
 def eval_set() -> Dict[str, Any]:

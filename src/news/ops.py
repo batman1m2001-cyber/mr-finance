@@ -18,7 +18,7 @@ from operonx import op
 from control import alerts, roles
 from news import rss, rules, store
 from people import auth
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 USER_AGENT = "OneWealth-demo/0.1 (+https://github.com/batman1m2001-cyber/mr-finance)"
 

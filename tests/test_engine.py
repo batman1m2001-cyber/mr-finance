@@ -18,7 +18,7 @@ from engine import (
     linalg,
     propagate,
 )
-from wealth.paths import DATA
+from _shared.paths import DATA
 from wealth.valuation import holding
 
 RAW = json.loads((DATA / "factor_model.json").read_text(encoding="utf-8"))

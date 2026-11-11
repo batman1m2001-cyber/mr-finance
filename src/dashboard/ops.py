@@ -12,11 +12,11 @@ from typing import Any, Dict, List
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from dashboard import _calendar
 from wealth import fixtures, profile
-from wealth.labels import CLASSES, GROUPS, TRUST, TRUST_WEIGHT
-from wealth.money import TR, months_text, pct, vnd
+from _shared.labels import CLASSES, GROUPS, TRUST, TRUST_WEIGHT
+from _shared.money import TR, months_text, pct, vnd
 
 INVESTED = ("stock", "fund", "bond")
 LIQUID = ("cash", "deposit")

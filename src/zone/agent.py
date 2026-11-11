@@ -20,7 +20,7 @@ from inbox import importer, sign
 from news import store as news_store
 from views import agents
 from views import store as vstore
-from wealth.paths import in_zone
+from _shared.paths import in_zone
 from zone import sync
 
 FRESH_S = 48 * 3600

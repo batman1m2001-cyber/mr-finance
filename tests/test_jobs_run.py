@@ -12,7 +12,7 @@ from news.graph import news_flow
 from assistant import desktools
 from assistant.base import Ctx
 from control import alerts, audit, db, jobs, roles
-from control.errors import Conflict
+from _shared.errors import Conflict
 
 
 class Rec:

@@ -13,7 +13,7 @@ from test_views import GOLD, agent, decide, event
 
 from apply import reads
 from control import db, roles
-from control.errors import BadRequest, Conflict
+from _shared.errors import BadRequest, Conflict
 from news import store as news_store
 from newsletter import compose, store
 from research import conflict

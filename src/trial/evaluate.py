@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional
 
 from control import db
 from trial import daily, segments, shadow
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 FINAL = ("correct", "incorrect", "missed", "quiet", "excluded", "failed")
 VERDICTS = ("correct", "incorrect", "missed", "quiet", "pending", "excluded", "failed")

@@ -41,7 +41,7 @@ def ask_load(by: str, since: str = "2020-01-01") -> dict:
     """An Admin asks for the market history to be loaded again from ``since`` (Hệ thống). Queued: the
     ``market_load`` job runs it within a minute; one load at a time."""
     from control import audit, db, roles
-    from control.errors import BadRequest
+    from _shared.errors import BadRequest
 
     roles.require(by, "admin")
     since = str(since or "2020-01-01")

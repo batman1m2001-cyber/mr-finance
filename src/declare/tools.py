@@ -16,7 +16,7 @@ from operonx.agents import RunContext, tool
 
 from declare import _rules
 from wealth import fixtures, store
-from wealth.money import TR, TY, vnd
+from _shared.money import TR, TY, vnd
 
 #: What each recent run has written, so the same thing said once is recorded once. A model can
 #: call a tool twice with the same arguments in one run (measured on Claude Haiku: 10 lượng of

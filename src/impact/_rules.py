@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict, List
 
-from wealth.money import vnd
+from _shared.money import vnd
 
 Hit = Dict[str, Any]
 H = List[Dict[str, Any]]

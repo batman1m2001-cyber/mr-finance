@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from wealth import fixtures
 
 LABELS = {

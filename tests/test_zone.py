@@ -22,7 +22,7 @@ from inbox import importer, sign
 from news import store as news_store
 from people import store as people
 from views import store as vstore
-from wealth.paths import OutsideTheZone
+from _shared.paths import OutsideTheZone
 from zone import agent, mirror, sync
 from zone import web as zone_web
 

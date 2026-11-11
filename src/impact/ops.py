@@ -7,7 +7,7 @@ from typing import Any, Dict, Iterator, List
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from impact import _rules
 from wealth import fixtures, profile, store
 

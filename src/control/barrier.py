@@ -84,7 +84,7 @@ def identifiers() -> List[str]:
     AI zone, which holds no client (ZONE-01)."""
     from people import store as people
     from wealth import store
-    from wealth.paths import in_zone
+    from _shared.paths import in_zone
 
     if in_zone():
         return []

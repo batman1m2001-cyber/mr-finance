@@ -510,7 +510,7 @@ def _schemas() -> None:
     from control.db import SCHEMA as CONTROL_SCHEMA
     from market.store import SCHEMA as MARKET_SCHEMA
     from news.store import SCHEMA as NEWS_SCHEMA
-    from wealth.paths import ensure_schema, state_path
+    from _shared.paths import ensure_schema, state_path
 
     path = state_path()
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -524,7 +524,7 @@ def _schemas() -> None:
 
 
 def _run(who: Who, sql: str, tables: List[Table], loaded: Dict[str, List[Sequence[Any]]]) -> Dict[str, Any]:
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     _schemas()
     started = time.perf_counter()

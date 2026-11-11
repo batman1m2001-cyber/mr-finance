@@ -15,7 +15,7 @@ import copy
 import time
 from typing import Any, Dict, List, Optional
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from engine import ScenarioError, default_model
 from engine.scenario import Branch, validate
 from events import store as events

@@ -125,10 +125,10 @@ def answer_flow(question, k):  # a setting is a graph input
   checklist, the only place a requirement's status is stated (its code, the
   test that shows it, by name, and the evidence). Questions are `Q-nn` in
   `docs/brd/requirements/open_questions.md`, never deleted.
-- `docs/brd/board/` is how it is built: one file per milestone, every card
-  with its plan (what it does, its rows, criteria, dependencies, files) and
-  its status. The engine (`operonx-project`) writes it. Never edit it by
-  hand: `operonx-project replan` changes a plan.
+- `docs/brd/board.md` is the board: one card per task
+  (`### C4 · title · todo|doing|needs you|done`, then `req`, `after`,
+  `files`, `done`). Move a card with `operonx-project board C4 doing`; it
+  is done when its `done` tests pass.
 - When a change meets or alters a requirement, update its row (status,
   code, test) and add one line to `docs/brd/CHANGELOG.md`. The rules are in
   `docs/brd/README.md`. The checklist's summary table is counted from
@@ -139,13 +139,6 @@ def answer_flow(question, k):  # a setting is a graph input
   skipped) and the `rows` it serves. Change a phase's status in the commit
   that finishes it. `operonx-project plans` lists them; the studio's
   Project mode shows them.
-- To work a card yourself: `operonx-project take <milestone> <card>` prints
-  its worktree, criteria and rows; make the criteria pass there, then
-  `operonx-project submit <milestone> <card>`. The review and the held-out
-  tests decide, as for the engine's own cards.
-- New work: rows in the checklist, then `operonx-project start --title ...
-  --rows <ID> ...` (or the studio's Board) and `operonx-project daemon`.
-  `.operonx/project/`, outside git, is only the running engine's state.
 <!-- /operonx:builder -->
 
 ## Commands

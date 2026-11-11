@@ -43,7 +43,7 @@ def declare_outflow(family_id: str, goal_id: str, purpose: str, by: str, country
 async def suggest_goals(family_id: str, by: str, mode: str = "") -> dict:
     """AI gợi ý nhãn (NEWS_EVIDENCE_BRD §7, P2): a purpose and country for each goal the RM has not declared and the
     rule cannot read; nothing is kept until the RM saves it as a declaration."""
-    from control.errors import BadRequest, Conflict
+    from _shared.errors import BadRequest, Conflict
     from research import suggest
     from views import agents
 

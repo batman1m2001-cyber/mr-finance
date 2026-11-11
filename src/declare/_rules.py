@@ -15,7 +15,7 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Optional
 
-from wealth.text import ascii_lower
+from _shared.text import ascii_lower
 
 TY, TR = 1_000_000_000, 1_000_000
 YEAR = 2026

@@ -18,14 +18,14 @@ MAX_BYTES = 5 * 1024 * 1024
 
 
 def path() -> Path:
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     return Path(os.environ.get("MF_LOG") or state_path().with_name("mr-finance-log.jsonl"))
 
 
 def write(level: str, event: str, **fields: Any) -> None:
     """One line; a log that cannot be written never stops the work that logs."""
-    from wealth.paths import in_zone
+    from _shared.paths import in_zone
 
     rec = {"at": round(time.time(), 3), "level": level, "process": "zone" if in_zone() else "bank", "event": event}
     rec.update({k: v for k, v in fields.items() if v is not None})

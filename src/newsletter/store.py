@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from control import audit, db, roles
-from control.errors import BadRequest, Conflict
+from _shared.errors import BadRequest, Conflict
 from newsletter import compose
 from research import conflict
 

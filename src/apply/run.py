@@ -32,7 +32,7 @@ from people import store as people_store
 from procedural import goals as procedural_goals
 from views import schema
 from wealth import fixtures, profile
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 # BR-09 default: the 3-month P10 at or below −5 % of net worth; the value in force is versioned (FR-701)
 PRE_REVIEW_PCT = config.THRESHOLDS["pre_review_pct"]

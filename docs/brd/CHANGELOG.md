@@ -2,6 +2,10 @@
 
 Newest first. One line per meaningful change: date — what — documents touched.
 
+- 2026-11-11 — The board is one file, `board.md` (operonx LEAN_PROJECT_PLAN L5): the 8 cards still open on the
+  milestone boards m1–m33 are its todo cards, the rest is in git at 56013cd. The code every feature needs (paths,
+  money, text, labels, errors) moved to `src/_shared`; `operonx lint` holds the rest on a baseline — `board.md`,
+  `docs/ARCHITECTURE.md`, `ASSET_ALLOCATION_BRD.md`, `requirements_traceability.md`, FEAT-08, FEAT-12.
 - 2026-10-29 — UI/UX feedback round 4 (owner, “Sửa UI UX”): Wealth Planning Advisor is Wealth Planning, Headline News
   is Wealth Advisor. Wealth view: assets, debt and net worth as three tiles; Portfolio gain / loss and Chính sách và dự
   án left; allocation full width, its groups by liquidity (cash and deposits first) and each debt under them with the

@@ -13,7 +13,7 @@ from operonx import Operon
 
 from pages.graph import pages_flow
 from timeline.history import grid, month_back
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 ROOT = Path(__file__).resolve().parents[1]
 PEOPLE = sorted(p.stem for p in (DATA / "clients").glob("*.json"))

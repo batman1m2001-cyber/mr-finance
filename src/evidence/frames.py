@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional
 
 from evidence import _check, _stats
 from evidence import catalogue as cat
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 REVIEW = ("_cio", "evidence_review")
 DECISIONS = {"approve": "approved", "return": "returned", "reject": "rejected"}

@@ -8,7 +8,7 @@ from review.graph import review_flow
 from scenarios import _sim
 from scenarios.graph import scenarios_flow
 from wealth import fixtures, store
-from wealth.money import TR, TY
+from _shared.money import TR, TY
 
 ENGINE = Operon(scenarios_flow, params={"action": "scenario", "client_id": None, "scenario": None, "params": None, "scope": None})
 

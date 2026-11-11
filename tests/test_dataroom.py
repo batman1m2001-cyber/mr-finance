@@ -59,7 +59,7 @@ def test_no_real_table_shares_a_room_tables_name():
     from people import store
 
     store.client_ids()
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     con = sqlite3.connect(state_path())
     real = {r[0] for r in con.execute("select name from sqlite_master")}
@@ -276,7 +276,7 @@ def test_the_tool_returns_rows_total_sql_and_as_of():
 
 def test_a_long_cell_is_cut_and_the_live_file_is_never_written(tmp_path):
     seed(1, title="x" * 1000)
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     ask("cio", "select count(*) from tin")  # a new file: the stores' schemas are created once
     before = state_path().stat().st_mtime_ns

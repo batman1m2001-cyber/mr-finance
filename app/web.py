@@ -46,7 +46,7 @@ from views import ops as view_ops
 from views import queue as agent_queue
 from views import store as views_store
 from wealth import fixtures, store
-from wealth.paths import DATA, ROOT
+from _shared.paths import DATA, ROOT
 from zone import sync as zone_sync
 
 

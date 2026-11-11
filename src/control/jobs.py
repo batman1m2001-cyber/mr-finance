@@ -15,7 +15,7 @@ import time
 from typing import Any, Dict, List, Optional
 
 from control import audit, db, roles
-from control.errors import Conflict
+from _shared.errors import Conflict
 
 STALE_S = 30 * 60
 # the fetches and checks a person may want again at once; the clockwork (heartbeat, agent_worker, memory consolidation,

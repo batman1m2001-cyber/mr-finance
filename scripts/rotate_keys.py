@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from assistant import conversations  # noqa: E402
 from control import crypto  # noqa: E402
-from wealth.paths import state_path  # noqa: E402
+from _shared.paths import state_path  # noqa: E402
 
 
 def main() -> None:

@@ -7,7 +7,7 @@ from operonx.app.jobs import Job
 from impact import _rules
 from impact.ops import every_client
 from wealth import fixtures, store
-from wealth.money import TY
+from _shared.money import TY
 
 ENGINE = Operon(news_flow, params={"action": "alerts", "client_id": None, "scope": None})
 

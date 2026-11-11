@@ -13,7 +13,7 @@ from operonx import op
 
 from apply import run as apply_run
 from control import roles
-from control.errors import BadRequest, Conflict
+from _shared.errors import BadRequest, Conflict
 from engine import default_model
 from events import store as events
 from measure import forecasts
@@ -21,7 +21,7 @@ from news.ops import config as news_config
 from views import agents, decide, prompts, schema
 from views import store as vstore
 from views.preview import preview
-from wealth.paths import in_zone
+from _shared.paths import in_zone
 
 
 def public(view_id: str) -> Dict[str, Any]:

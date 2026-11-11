@@ -24,7 +24,7 @@ from assistant import conversations as conv
 from assistant.base import Ctx, Param, Tool, ToolFailed
 from control import crypto
 from control.roles import ROLES
-from wealth.paths import ROOT
+from _shared.paths import ROOT
 
 OPEN_MAX = 20
 DAYS, DAYS_MAX = 30, 180

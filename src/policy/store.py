@@ -14,7 +14,7 @@ import time
 from typing import Any, Callable, Dict, List, Optional
 
 from control import audit, db, roles
-from control.errors import BadRequest, Conflict
+from _shared.errors import BadRequest, Conflict
 from policy import source, text
 
 STATUS = {

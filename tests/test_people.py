@@ -7,7 +7,7 @@ import json
 from control import roles
 from people import store
 from wealth import fixtures
-from wealth.paths import DATA, ROOT
+from _shared.paths import DATA, ROOT
 
 
 def _make_advisory():

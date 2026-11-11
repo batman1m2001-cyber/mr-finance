@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from risk import _bank
 from wealth import fixtures, store
 
