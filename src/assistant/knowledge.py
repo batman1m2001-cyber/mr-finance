@@ -27,7 +27,7 @@ from operonx_kb.registry import BlobStoreConfig, CatalogConfig, LexicalIndexConf
 
 from assistant import conversations as conv
 from assistant.base import Ctx
-from wealth.paths import ROOT
+from _shared.paths import ROOT
 
 GUIDE = ROOT / "docs" / "huong-dan"
 ROLE_OF = {"chung": "all", "khach-hang": "client", "rm": "rm", "cio": "cio", "quan-tri": "admin"}

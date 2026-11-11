@@ -15,7 +15,7 @@ from operonx import op
 
 from control import config
 from wealth import fixtures, store, valuation
-from wealth.labels import SOURCES, TRUST
+from _shared.labels import SOURCES, TRUST
 
 SCOPES = ("personal", "family")
 

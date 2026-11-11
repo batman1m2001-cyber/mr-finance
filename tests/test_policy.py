@@ -14,7 +14,7 @@ from starlette.testclient import TestClient
 from test_views import FakeLLM
 
 from control import alerts, config, db, roles
-from control.errors import BadRequest, Conflict
+from _shared.errors import BadRequest, Conflict
 from policy import agent, source, store, text
 from views import prompts
 from wealth import fixtures

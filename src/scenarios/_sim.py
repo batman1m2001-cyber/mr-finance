@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Any, Callable, Dict, List, Optional
 
-from wealth.money import TR, TY, pct, vnd
+from _shared.money import TR, TY, pct, vnd
 
 
 def R() -> Dict[str, float]:

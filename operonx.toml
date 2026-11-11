@@ -56,3 +56,6 @@ sinks = []
 sinks = []
 [tracing.services.assistant_conversations]
 sinks = []
+
+[lint]
+baseline = {C13 = 107, C14 = 63, C15 = 48, C16 = 3}

@@ -34,7 +34,7 @@ KIND = "mr-finance audit segment"
 
 
 def folder() -> Optional[Path]:
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     v = os.environ.get("MF_AUDIT_WORM", "").strip()
     if v.lower() == "off":

@@ -9,7 +9,7 @@ from operonx.agents.testing import ScriptedLLM, says, scripted
 
 from statements.graph import intake_flow
 from wealth import store
-from wealth.text import ascii_lower, number
+from _shared.text import ascii_lower, number
 
 SAMPLES = Path(__file__).resolve().parents[1] / "data" / "samples"
 PARAMS = {"client_id": None, "filename": None, "content": None}

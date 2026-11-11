@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from dashboard.ops import is_liquid
 from overview.ops import CLASSES, GROUP
 from people import auth

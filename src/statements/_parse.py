@@ -15,7 +15,7 @@ import io
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
-from wealth.text import ascii_lower, number
+from _shared.text import ascii_lower, number
 
 INSTITUTIONS = (
     "VPS",

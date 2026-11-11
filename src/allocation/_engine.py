@@ -17,7 +17,7 @@ from datetime import date
 from typing import Any, Dict, List, Optional
 
 from allocation import _cashflow, _model
-from wealth.money import TY, pct, vnd
+from _shared.money import TY, pct, vnd
 
 BUCKETS = {"liquidity": "Thanh khoản", "legacy": "Di sản", "growth": "Tăng trưởng"}
 LIQUID = ("cash", "deposit")

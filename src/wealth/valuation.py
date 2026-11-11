@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from wealth.labels import SOURCES
+from _shared.labels import SOURCES
 
 
 def holding(

@@ -1,5 +1,5 @@
 from wealth import fixtures, store, valuation
-from wealth.money import TR, TY, months_text, pct, vnd
+from _shared.money import TR, TY, months_text, pct, vnd
 
 
 def test_money_reads_like_a_vietnamese_reader_says_it():

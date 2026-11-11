@@ -13,7 +13,7 @@ import json
 from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 START = date(2020, 12, 31)
 DAILY_FROM = date(2025, 10, 1)  # the fixtures' first transaction month: every day from here

@@ -19,7 +19,7 @@ import json
 import re
 from urllib.parse import urlsplit
 
-from wealth.paths import ROOT
+from _shared.paths import ROOT
 
 
 def _inline_hashes() -> str:

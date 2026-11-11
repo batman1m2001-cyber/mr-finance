@@ -14,7 +14,7 @@ from typing import Any, Dict, List
 from operonx import op
 
 from apply import reads
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from control.roles import Forbidden
 from feed import opens
 from flows.ops import LABELS

@@ -60,7 +60,7 @@ cloned to 6,500 families with their amounts scaled ×0.5–×2; one approval app
 (BRD ≤ 2 s). What it took: a family read decodes its own result row and the snapshot without its families
 (`family_result`, `snapshot_head`; the snapshot is 27 MB at 6,500), the consolidation reads each client from the
 database once per run (`people.store.one_read`), and the stores create their tables once per file
-(`wealth.paths.ensure_schema`).
+(`_shared.paths.ensure_schema`).
 
 ## Limitations
 - **FR-404 on our definition ([ADR-0017](../decisions/ADR-0017-goal-impact-rule.md), Q-11 resolved):** each run stores `goal_impact` per family (`src/apply/goals.py`): the

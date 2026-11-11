@@ -8,7 +8,7 @@ import re
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from people import auth
 from statements import _parse
 from wealth import ai, fixtures, store, valuation
@@ -101,7 +101,7 @@ def pick_items(
 @op
 def load_sample(filename: str) -> dict:
     """A sample statement (data/samples), as an upload would send it."""
-    from wealth.paths import DATA
+    from _shared.paths import DATA
 
     path = (DATA / "samples" / filename).resolve()
     if path.parent != (DATA / "samples").resolve() or not path.is_file():

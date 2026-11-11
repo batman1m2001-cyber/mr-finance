@@ -10,7 +10,7 @@ import pytest
 
 from market import factors, fetch, sources, store
 from market.sources import Request
-from wealth.paths import ROOT
+from _shared.paths import ROOT
 
 REC = ROOT / "tests" / "data" / "market"
 

@@ -51,7 +51,7 @@ def user(user_id: str) -> Dict[str, str]:
     """The staff user ``user_id``. Inside a request (sign-in on), it must be the person signed in: an action is
     never taken in someone else's name (BRD-RULE-SEC-01)."""
     from people import auth
-    from wealth.paths import in_zone
+    from _shared.paths import in_zone
 
     if in_zone() and user_id == ZONE_ACTOR and not auth.checking():
         return {"id": ZONE_ACTOR, "name": "Agent vùng AI", "role": "cio", "title": "Vùng AI (F-D7)"}

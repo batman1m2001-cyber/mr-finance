@@ -29,7 +29,7 @@ from typing import Any, Dict, List, Optional
 
 from control import audit, roles
 from control import db as control_db
-from control.errors import Conflict
+from _shared.errors import Conflict
 from people import auth, store
 
 KINDS = {

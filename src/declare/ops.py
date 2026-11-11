@@ -9,11 +9,11 @@ from typing import Any, Dict, List
 from operonx import op
 from operonx.core.loggings import LOGGER
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from declare import _rules
 from people import auth
 from wealth import ai, fixtures, store
-from wealth.money import vnd
+from _shared.money import vnd
 
 KINDS = {"asset", "dependent", "income"}
 
@@ -103,7 +103,7 @@ def chat_session(session_id: str):
     from operonx.agents import SQLiteSession
 
     from control.crypto import SealedSession
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     return SealedSession(SQLiteSession(session_id, state_path().with_name("chat.db")), session_id)
 

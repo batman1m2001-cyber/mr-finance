@@ -18,7 +18,7 @@ import time
 from typing import Any, Dict, List, Optional
 
 from control import audit, crypto, db
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 
 CHANNELS = {"call": "Gọi điện", "meeting": "Gặp mặt", "message": "Tin nhắn"}
 TARGET = 0.5  # BRD-KPI-06

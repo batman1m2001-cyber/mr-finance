@@ -15,7 +15,7 @@ import time
 from typing import Any, Dict
 
 from control import roles
-from control.errors import Conflict
+from _shared.errors import Conflict
 from policy import store, text
 from views import agents, prompts
 from views import store as vstore

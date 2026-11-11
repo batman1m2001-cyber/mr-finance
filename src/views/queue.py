@@ -13,7 +13,7 @@ import time
 from typing import Any, Dict, List, Optional
 
 from control import audit, db, roles
-from control.errors import Conflict
+from _shared.errors import Conflict
 from events import store as events
 from views import agents
 

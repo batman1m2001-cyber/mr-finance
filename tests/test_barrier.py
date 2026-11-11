@@ -23,7 +23,7 @@ from operonx.core.registry import ResourceHub
 from control import barrier, config
 from statements.graph import intake_flow
 from views import agents
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 REPLY = '{"holdings": [{"type": "cash", "name": "Tiền", "balance": 1000000}]}'
 

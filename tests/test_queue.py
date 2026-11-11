@@ -11,7 +11,7 @@ from starlette.testclient import TestClient
 from test_views import GOLD, event
 
 from control import config, db, roles
-from control.errors import Conflict
+from _shared.errors import Conflict
 from views import queue, worker
 from views import store as vstore
 

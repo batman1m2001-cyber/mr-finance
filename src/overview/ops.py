@@ -25,7 +25,7 @@ from typing import Any, Dict, List, Optional
 from operonx import op
 
 from apply import reads
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from people import auth
 from scenarios._sim import SCENARIOS, R
 from views import schema

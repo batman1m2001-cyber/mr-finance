@@ -8,7 +8,7 @@ import asyncio
 from operonx import op
 
 from trial import daily, evaluate, report, shadow
-from wealth.paths import ROOT
+from _shared.paths import ROOT
 
 OUT = ROOT / "out" / "trial"
 

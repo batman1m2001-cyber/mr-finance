@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from wealth.money import vnd
+from _shared.money import vnd
 
 # A question: its text (``{portfolio}`` is the client's own invested amount), options with the
 # tolerance points they carry, and where each option leads. ``next`` names the next question,

@@ -10,7 +10,7 @@ from test_apply import MARKET, approved
 from contacts import store as contacts
 from pages.graph import pages_flow
 from control import db
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from feed import opens
 from measure import reviewed
 from review.graph import review_flow

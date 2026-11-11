@@ -18,7 +18,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from control import db
 from trial import daily
-from wealth.paths import ROOT
+from _shared.paths import ROOT
 
 BRIDGE_LOG = ROOT / "logs" / "claude_bridge.jsonl"
 SLACK_S = 5.0  # a bridge line is written as the call ends, inside its run

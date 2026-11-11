@@ -73,4 +73,4 @@ the RM reassignment); `tests/test_system.py` (Hệ thống and the history load)
   agents, the audit chain, history loads and accounts; sources and the RM assignment are edited in Cấu hình. It
   has no password form: on the public demo anyone can sign in as Admin (`scripts/set_password.py` sets one).
 - A served action whose input is wrong still answers 500 in most places (a `ValueError`); only the history load
-  answers 400 (`control.errors.BadRequest`).
+  answers 400 (`_shared.errors.BadRequest`).

@@ -10,7 +10,7 @@ import time
 from typing import Any, Dict, List, Optional
 
 from control import audit, db, log, roles
-from control.errors import BadRequest, Conflict
+from _shared.errors import BadRequest, Conflict
 
 KINDS: Dict[str, Dict[str, Any]] = {
     "news_feed": {"label": "Nguồn tin không lấy được", "roles": ("cio", "admin"), "severity": "medium"},

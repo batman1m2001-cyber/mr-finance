@@ -12,9 +12,9 @@ from typing import Any, Dict, List, Optional
 from operonx import op
 
 from allocation import _cashflow, _engine, _model
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from wealth import fixtures, profile, store
-from wealth.money import vnd
+from _shared.money import vnd
 
 EXAMPLE = Path(__file__).resolve().parents[2] / "data" / "allocation_example.json"
 CERTAIN = ("salary", "pension", "rent")  # income that keeps coming without a market: wages, a pension, rent

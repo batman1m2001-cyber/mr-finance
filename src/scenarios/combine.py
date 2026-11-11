@@ -23,7 +23,7 @@ from math import factorial, prod
 from typing import Any, Dict, List, Optional
 
 from scenarios import _sim
-from wealth.money import vnd
+from _shared.money import vnd
 
 GROUP = {"cash": "deposit"}  # the overview's class nodes (overview.ops.GROUP): cash sits with deposits
 NOTE = "Giả định — không phải giao dịch, không cộng vào tài sản ròng."

@@ -12,7 +12,7 @@ from scenarios import _sim
 from scenarios.combine import combine
 from scenarios.graph import scenarios_flow
 from wealth import fixtures
-from wealth.money import TR, TY
+from _shared.money import TR, TY
 
 COMBINE = Operon(
     scenarios_flow, params={"action": "combine", "client_id": None, "scenarios": None, "params": None, "scope": None, "goals": None}

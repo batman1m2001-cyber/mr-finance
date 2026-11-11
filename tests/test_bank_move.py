@@ -16,7 +16,7 @@ import pytest
 from operonx import Operon
 
 from control import audit, crypto, db, pgexport, secrets, worm
-from wealth.paths import ROOT, state_path
+from _shared.paths import ROOT, state_path
 
 
 def entries(n, start=0):

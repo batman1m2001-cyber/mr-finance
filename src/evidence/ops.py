@@ -6,7 +6,7 @@ from typing import Any, Dict
 
 from operonx import op
 
-from control.errors import BadRequest
+from _shared.errors import BadRequest
 from evidence import agent
 from evidence import catalogue as cat
 from evidence import frames
@@ -58,7 +58,7 @@ async def draft(news_id: str = None, by: str = None, mode: str = "") -> dict:
     """The evidence agent on one news item (§4, P1): its event type and a frame, checked (§9) and sent back with the
     reasons at most twice; the draft waits for the CIO. The agent reads the item, never a client's data."""
     from control import roles
-    from control.errors import Conflict
+    from _shared.errors import Conflict
     from news import store as news
     from views import agents
 
@@ -89,7 +89,7 @@ def decide_draft(news_id: str = None, decision: str = None, by: str = None, note
     import time
 
     from control import audit, db, roles
-    from control.errors import Conflict
+    from _shared.errors import Conflict
 
     u = roles.require(by, "cio")
     kept = agent.drafts()

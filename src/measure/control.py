@@ -60,7 +60,7 @@ def members(cfg: Optional[Dict[str, Any]] = None) -> List[str]:
     import json
 
     from control import config
-    from wealth.paths import state_path
+    from _shared.paths import state_path
 
     cfg = cfg or _cfg()
     key = (json.dumps(cfg, sort_keys=True), json.dumps(config.data("rm_assignment"), sort_keys=True), str(state_path()))

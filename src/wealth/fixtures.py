@@ -7,7 +7,7 @@ import json
 from functools import lru_cache
 from typing import Any, Dict, List
 
-from wealth.paths import DATA
+from _shared.paths import DATA
 
 
 @lru_cache(maxsize=1)

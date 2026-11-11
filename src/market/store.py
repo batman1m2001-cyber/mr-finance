@@ -17,7 +17,7 @@ import time
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
-from wealth.paths import ensure_schema, state_path
+from _shared.paths import ensure_schema, state_path
 
 SCHEMA = """
 create table if not exists market_series (

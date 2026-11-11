@@ -8,7 +8,7 @@ from dashboard import _calendar
 from dashboard.graph import dashboard_flow
 from dashboard.ops import concentration, drawdown, liquidity, net_worth
 from wealth import fixtures
-from wealth.money import TR, TY
+from _shared.money import TR, TY
 
 ENGINE = Operon(dashboard_flow, params={"client_id": None, "scope": None, "months": None})
 

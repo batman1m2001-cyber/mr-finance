@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from typing import Any, Dict, Iterator, Optional
 
 from control.audit import SCHEMA as AUDIT_SCHEMA
-from wealth.paths import ensure_schema, forget_schema, state_path
+from _shared.paths import ensure_schema, forget_schema, state_path
 
 SCHEMA = """
 create table if not exists counters (name text primary key, value integer not null);

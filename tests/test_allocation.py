@@ -11,7 +11,7 @@ from allocation import _engine, _model, ops
 from allocation.graph import allocation_flow
 from views.schema import forbidden_words
 from wealth import fixtures, store
-from wealth.money import TY, TR
+from _shared.money import TY, TR
 
 FLOW = Operon(allocation_flow, params={"client_id": None, "scope": None, "method": None, "assumptions": None, "role": None, "whatif": None})
 EXAMPLE = Operon(allocation_flow, params={"action": "example", "method": None, "assumptions": None, "role": None})

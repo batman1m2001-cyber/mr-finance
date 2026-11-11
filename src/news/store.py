@@ -15,7 +15,7 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from control import audit
 from control.audit import SCHEMA as AUDIT_SCHEMA
-from wealth.paths import ensure_schema, state_path
+from _shared.paths import ensure_schema, state_path
 
 STATUSES = ("new", "dismissed", "grouped", "refused")
 

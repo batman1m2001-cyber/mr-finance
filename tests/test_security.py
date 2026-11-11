@@ -27,7 +27,7 @@ from starlette.testclient import TestClient
 from control import crypto, secrets
 from people import auth, store
 from wealth import store as wealth
-from wealth.paths import DATA, state_path
+from _shared.paths import DATA, state_path
 
 K1, K2 = (base64.b64encode(os.urandom(32)).decode() for _ in range(2))
 ACCOUNTS = ["1902-CASA-01", "VPB-001", "LN-HOME-01", "OH-TD-01", "VISA-SIG-01", "SSI-001"]

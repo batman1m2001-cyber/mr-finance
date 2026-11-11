@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from control import pgexport  # noqa: E402
-from wealth.paths import state_path  # noqa: E402
+from _shared.paths import state_path  # noqa: E402
 
 DB = "mrf"
 
