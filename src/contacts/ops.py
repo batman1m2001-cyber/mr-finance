@@ -11,7 +11,7 @@ from control import roles
 from people import auth
 
 
-@op
+@op(writes="contacts")
 def log_contact(
     family_id: str, channel: str = "call", signal: Optional[str] = None, note: str = "", by: str = None
 ) -> dict:

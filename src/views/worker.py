@@ -9,13 +9,13 @@ from operonx import op
 from views import queue
 
 
-@op
+@op(reads=["events", "news"], writes="agent_queue")
 def queue_agent(event_id: str, by: str = "cio", mode: Optional[str] = None) -> dict:
     """POST /api/events/run-agent: the run queued (or the one already waiting for this event)."""
     return {"job": queue.enqueue(event_id, by, mode)}
 
 
-@op
+@op(writes="agent_queue")
 async def work_queue(tick: int = None, at: str = None) -> dict:
     """The ``agent_worker`` job: the oldest queued run, through ``cio_agent_flow``."""
     return {"job": await run_next()}

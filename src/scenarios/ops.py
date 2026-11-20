@@ -28,7 +28,7 @@ def check_request(client_id: str = None, scenario: str = None, params: dict = No
     return {"client_id": client_id, "scenario": scenario, "params": params, "scope": scope or "personal"}
 
 
-@op
+@op(reads=["results", "wealth"])
 def profile_of(client_id: str, members: list) -> dict:
     return {"profile": profile.build(client_id, members)}
 

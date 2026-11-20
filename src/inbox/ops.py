@@ -5,7 +5,7 @@ from operonx import op
 from inbox import importer
 
 
-@op
+@op(writes=["events", "news", "views", "zone"])
 def import_inbox(tick: int = None, at: str = None) -> dict:
     """Every READY package through the checks (every 10 minutes, BRD-RULE-AI-13)."""
     return {"imported": importer.run_ready()}

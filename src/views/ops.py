@@ -50,7 +50,7 @@ def public(view_id: str) -> Dict[str, Any]:
 # -- the agent graph ---------------------------------------------------------------------------
 
 
-@op
+@op(reads=["events", "news"], writes="views")
 def gather(event_id: str, by: str = "cio", mode: Optional[str] = None) -> dict:
     """Deterministic inputs (BRD 8.1): the event's news and the market catalogue — never client data."""
     roles.require(by, "cio")
@@ -75,7 +75,7 @@ def gather(event_id: str, by: str = "cio", mode: Optional[str] = None) -> dict:
     return {"packet": packet, "view_id": view["id"], "run_id": run_id, "mode": run_mode}
 
 
-@op
+@op(writes="views")
 async def analyse(lens: str, packet: dict, mode: str, run_id: str) -> dict:
     """One analyst group (macro, equity, credit, other); the four run at once."""
     try:
@@ -84,7 +84,7 @@ async def analyse(lens: str, packet: dict, mode: str, run_id: str) -> dict:
         return {"note": None, "error": str(exc)}
 
 
-@op
+@op(writes="views")
 async def analyse_more(packet: dict, mode: str, run_id: str) -> dict:
     """The analyst groups declared in the prompts configuration beyond the BRD's four (NFR-06), at once."""
     import asyncio
@@ -98,7 +98,7 @@ async def analyse_more(packet: dict, mode: str, run_id: str) -> dict:
     return {"notes": [g for g in got if not isinstance(g, BaseException)], "error": "; ".join(errors)}
 
 
-@op
+@op(writes="views")
 async def discuss(
     packet: dict,
     mode: str,
@@ -125,7 +125,7 @@ async def discuss(
         return {"notes": notes, "merged": None, "error": str(exc)}
 
 
-@op
+@op(writes="views")
 async def compose(
     packet: dict, mode: str, run_id: str, notes: Optional[list] = None, merged: Optional[dict] = None, error: str = ""
 ) -> dict:
@@ -140,7 +140,7 @@ async def compose(
     return {"view": view, "errors": errs}
 
 
-@op
+@op(writes="views")
 def save_view(
     view_id: str, run_id: str, view: Optional[dict] = None, errors: Optional[list] = None, by: str = "cio"
 ) -> dict:
@@ -189,7 +189,7 @@ async def _challenge(view_id: str, by: str, stage: str) -> Dict[str, Any]:
     return ch
 
 
-@op
+@op(reads=["events", "impacts", "news"], writes="views")
 async def review(view_id: str, ok: bool, by: str = "cio") -> dict:
     """The challenger, before approval (FR-303)."""
     if ok:
@@ -211,7 +211,7 @@ async def _challenge_or_note(view_id: str, by: str, stage: str) -> None:
 # -- the decisions -----------------------------------------------------------------------------
 
 
-@op
+@op(reads=["config", "events", "news", "results", "wealth"], writes=["impacts", "views"])
 async def decide_view(
     view_id: str,
     action: str,

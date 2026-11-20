@@ -16,19 +16,19 @@ async def add(item: dict, by: str) -> dict:
     return {"document": await asyncio.to_thread(store.add, item, by)}
 
 
-@op
+@op(writes="policy")
 def verify(document_id: str, by: str, note: str = "") -> dict:
     """POST /api/policy/verify: a second CIO confirms the source."""
     return {"document": store.verify(document_id, by, note)}
 
 
-@op
+@op(writes="policy")
 def set_status(document_id: str, status: str, by: str, note: str = "", date: Optional[str] = None) -> dict:
     """POST /api/policy/status: where the document stands now."""
     return {"document": store.set_status(document_id, status, by, note, date or "")}
 
 
-@op
+@op(writes=["policy", "views"])
 async def summarise(document_id: str, by: str, mode: str = "") -> dict:
     """POST /api/policy/summarise: the policy agent on a verified document."""
     return {"document": await agent.summarise(document_id, by, mode)}

@@ -32,7 +32,7 @@ def read_proposal(
     }
 
 
-@op
+@op(writes="reviews")
 def propose(client_id: str, kind: str, title: str, data: dict) -> dict:
     """Into the queue, pending."""
     item_id = store.propose(client_id, kind, title, data)
@@ -49,7 +49,7 @@ def read_decision(item_id: str = None, decision: str = None, note: str = None, b
     return {"item_id": str(item_id or ""), "decision": decision, "note": str(note or "")[:1000], "by": by}
 
 
-@op
+@op(reads="reviews")
 def check_pending(item_id: str) -> dict:
     """The item exists and still waits."""
     found = store.review(item_id)
@@ -61,13 +61,13 @@ def check_pending(item_id: str) -> dict:
     return {"item_id": item_id}
 
 
-@op
+@op(writes="reviews")
 def decide(item_id: str, decision: str, note: str = "", by: str = None) -> dict:
     """The RM's decision, kept with its note, its time and who decided, and audited (BRD-KPI-05)."""
     return {"item": store.decide(item_id, decision, note, by)}
 
 
-@op
+@op(writes="reviews")
 def recommend(client_id: str = None, title: str = None, actions: list = None, note: str = None, by: str = None) -> dict:
     """POST /api/review/recommend: the RM writes an action recommendation for a family assigned to them (G-D7); the
     RM's own approval stands."""

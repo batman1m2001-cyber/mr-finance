@@ -39,7 +39,7 @@ def check_request(client_id: str = None, scope: str = None, months: int = None) 
     }
 
 
-@op
+@op(reads=["results", "wealth"])
 def client_profile(client_id: str, members: list) -> dict:
     """What the numbers are measured against: income, spending, the benchmark, the drawdown the
     client accepts (from their last risk test, else their file), dependents and dated events —

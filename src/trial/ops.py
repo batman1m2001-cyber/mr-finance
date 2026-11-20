@@ -13,7 +13,7 @@ from _shared.paths import ROOT
 OUT = ROOT / "out" / "trial"
 
 
-@op
+@op(reads="views", writes=["events", "news"])
 async def trial_day(force: bool = False, tick: int = None, at: str = None) -> dict:
     """Group the news since the last run into events and run the agents on each (once a day; ``force`` again)."""
     return {"trial": await daily.run(force=bool(force))}

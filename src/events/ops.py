@@ -10,7 +10,7 @@ from control import roles
 from events import store
 
 
-@op
+@op(writes=["events", "news"])
 def group(news_ids: list, title: Optional[str] = None, by: str = "cio") -> dict:
     roles.require(by, "cio")
     ids = [str(i) for i in news_ids or []]
@@ -19,7 +19,7 @@ def group(news_ids: list, title: Optional[str] = None, by: str = "cio") -> dict:
     return {"event": store.create(ids, title, by)}
 
 
-@op
+@op(reads="news", writes="events")
 def flag_urgent(event_id: str, urgent: bool = True, reason: str = "", by: str = "cio") -> dict:
     """POST /api/events/urgent: the CIO flags an event urgent with a reason, or takes the flag off (BRD-KPI-01)."""
     roles.require(by, "cio")

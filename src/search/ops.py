@@ -118,6 +118,6 @@ def find(q: str, role: str, holdings: List[Dict[str, Any]], goals: List[Dict[str
     return {"q": q, "role": role, "hits": hits, "total": sum(found.values()), "found": found}
 
 
-@op
+@op(reads=["events", "news", "research"])
 def search(q: str, role: str, holdings: list, goals: list) -> dict:
     return {"search": find(q, role, holdings, goals)}

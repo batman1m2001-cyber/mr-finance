@@ -80,7 +80,7 @@ def check_request(client_id: str = None, scope: str = None, role: str = None, go
     return {"client_id": client_id, "scope": scope, "role": role, "followed": followed}
 
 
-@op
+@op(reads=["events", "impacts", "news", "views"])
 def build(
     client_id: str,
     scope: str,

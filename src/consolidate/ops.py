@@ -20,7 +20,7 @@ from _shared.labels import SOURCES, TRUST
 SCOPES = ("personal", "family")
 
 
-@op
+@op(reads="config")
 def household(client_id: str, scope: str = "personal") -> dict:
     """Whose assets this picture holds: the client, and in the family view every member who
     consented (when the ``consent`` configuration asks for it). Members who did not are listed, so the
@@ -93,14 +93,14 @@ async def open_api(members: list) -> dict:
     return {"holdings": holdings}
 
 
-@op
+@op(reads="wealth")
 async def statements(members: list) -> dict:
     """What the client's uploaded statements were read into (src/statements)."""
     holdings = await _each(members, lambda mid, c: store.holdings(mid, "statement"))
     return {"holdings": holdings}
 
 
-@op
+@op(reads="wealth")
 async def declared(members: list) -> dict:
     """What the client declared: in their file, and since, in the chat (src/declare)."""
     mk = fixtures.market()

@@ -26,7 +26,7 @@ def check_request(client_id: str = None, answers: dict = None) -> dict:
     return {"client_id": client_id, "answers": {str(k): str(v) for k, v in answers.items()}}
 
 
-@op
+@op(reads="wealth")
 def context(client_id: str, holdings: list, transactions: list) -> dict:
     """What the client's own data says about how much risk they can carry."""
     c = fixtures.client(client_id)
@@ -80,7 +80,7 @@ def ask(qid: str, answers: dict, ctx: dict) -> dict:
     return {"reply": {"question": _bank.question(qid, ctx, answered), "answered": answered}}
 
 
-@op
+@op(writes="results")
 def result(client_id: str, answers: dict, ctx: dict) -> dict:
     """Tolerance and capacity, the profile (the lower of the two), the persona, what does not add
     up, and when to take the test again. Kept: the dashboard measures risk against it."""

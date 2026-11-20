@@ -36,7 +36,7 @@ async def backfill(since: str = "2020-01-01", only: list = None) -> dict:
     return {"run": {"job": "market_backfill", "jobs": out, "points": sum(r["points"] for r in out)}}
 
 
-@op
+@op(writes="market")
 def ask_load(by: str, since: str = "2020-01-01") -> dict:
     """An Admin asks for the market history to be loaded again from ``since`` (Hệ thống). Queued: the
     ``market_load`` job runs it within a minute; one load at a time."""
@@ -58,7 +58,7 @@ def ask_load(by: str, since: str = "2020-01-01") -> dict:
     return {"load": req}
 
 
-@op
+@op(writes="market")
 async def run_loads(tick: int = None, at: str = None) -> dict:
     """The ``market_load`` job: the load an Admin asked for, if any (every series from its ``since``)."""
     return {"load": await load_pending()}
@@ -82,7 +82,7 @@ async def load_pending() -> Optional[dict]:
     return store.loads(1)[0]
 
 
-@op
+@op(reads="market")
 def propose_estimate(by: str, end: str = None, note: str = "") -> dict:
     """A CIO proposes the model estimated from the stored history as the next ``factor_model`` version (F2); a
     second CIO approves it in Cấu hình (ADR-0016). Nothing changes until then."""
