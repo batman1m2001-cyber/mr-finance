@@ -161,7 +161,7 @@ def as_holding(client_id: str, institution: str, filename: str, it: dict, mk: di
     return h
 
 
-@op
+@op(writes="wealth")
 def save_holdings(client_id: str, filename: str, institution: str, items: list, method: str = "rules") -> dict:
     """The items as holdings (``as_holding``), kept as this client's ``statement`` holdings (reading the same file
     again replaces them)."""

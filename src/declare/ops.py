@@ -108,13 +108,13 @@ def chat_session(session_id: str):
     return SealedSession(SQLiteSession(session_id, state_path().with_name("chat.db")), session_id)
 
 
-@op
+@op(writes="wealth")
 def rule_declare(client_id: str, message: str) -> dict:
     """No model: the rules read the message."""
     return {"reply": by_rules(client_id, message), "method": "rules"}
 
 
-@op
+@op(writes="wealth")
 def agent_answer(
     client_id: str,
     message: str,
@@ -136,7 +136,7 @@ def agent_answer(
     return {"reply": reply, "method": "rules", "error": error or status}
 
 
-@op
+@op(reads="wealth")
 def recorded(
     client_id: str,
     since: float,
@@ -170,7 +170,7 @@ STEP = {
 }
 
 
-@op
+@op(writes="wealth")
 async def stream_declare(item: dict = None):
     """POST /api/declare/stream: the same turn as POST /api/declare, said as it happens — ``start``, then ``step`` (a
     tool starting and ending), ``text`` (the agent's words), ``form`` (what ``hoi_them`` asks), and ``answer`` (the

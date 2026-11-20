@@ -27,7 +27,7 @@ def check_request(client_id: str = None, scope: str = None) -> dict:
     return {"client_id": client_id, "scope": scope or "personal"}
 
 
-@op
+@op(reads=["results", "wealth"])
 def profile_of(client_id: str, members: list) -> dict:
     """The profile the alerts read: income, dependents, dated payments."""
     return {"profile": profile.build(client_id, members)}
@@ -114,7 +114,7 @@ def _labels(ev: Dict[str, Any], mine: Dict[str, Any], hit: Dict[str, Any]) -> Li
     return own or got
 
 
-@op
+@op(writes="results")
 def keep(client_id: str, scope: str, alerts: list, net_worth: float) -> dict:
     """The alerts as the page shows them, kept (the dashboard counts the latest)."""
     counts = {k: sum(1 for a in alerts if a["severity"] == k) for k in SEVERITY}

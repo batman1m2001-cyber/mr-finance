@@ -14,21 +14,21 @@ from research import store
 from wealth import fixtures
 
 
-@op
+@op(writes="research")
 def upload(item: dict, by: str) -> dict:
     """A report, house view or regulation note, waiting for another CIO to release it."""
     roles.require(by, "cio")
     return {"item": store.upload(item or {}, by)}
 
 
-@op
+@op(writes=["news", "research"])
 def release(item_id: str, decision: str, by: str, note: str = "") -> dict:
     """A CIO other than the one who uploaded it releases (after the release time) or rejects, with a note."""
     roles.require(by, "cio")
     return {"item": store.decide(str(item_id), str(decision), by, note)}
 
 
-@op
+@op(writes="wealth")
 def declare_outflow(family_id: str, goal_id: str, purpose: str, by: str, country: str = "") -> dict:
     """The RM records where a goal's money goes (FR-601)."""
     roles.require(by, "rm")
@@ -39,7 +39,7 @@ def declare_outflow(family_id: str, goal_id: str, purpose: str, by: str, country
     return {"declared": store.declare(family_id, goal_id, purpose, country, by)}
 
 
-@op
+@op(reads="wealth")
 async def suggest_goals(family_id: str, by: str, mode: str = "") -> dict:
     """AI gợi ý nhãn (NEWS_EVIDENCE_BRD §7, P2): a purpose and country for each goal the RM has not declared and the
     rule cannot read; nothing is kept until the RM saves it as a declaration."""

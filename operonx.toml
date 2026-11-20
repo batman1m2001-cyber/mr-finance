@@ -57,5 +57,58 @@ sinks = []
 [tracing.services.assistant_conversations]
 sinks = []
 
+# The project's stores: what its flows keep, and through which they work together (one flow writes a store, another
+# reads it; neither calls the other). All are tables of data/state.db. Ops declare the stores they reach
+# (`@op(reads=, writes=)`), and `python scripts/stores.py` holds the declarations equal to the SQL (tests/test_stores.py).
+# Tables in no store (sign-in, the audit log, counters, settings, the trial's own records) are every flow's.
+[stores.news]
+description = "The news inbox: every item fetched, with what the gates and the CIO decided about it."
+tables = ["news_items", "news_runs", "reference_stories", "source_runs"]
+[stores.events]
+description = "Events: news items the CIO grouped into one thing that happened, with its urgent flag."
+tables = ["events"]
+[stores.agent_queue]
+description = "CIO agent runs waiting for the agent_worker job."
+tables = ["agent_jobs"]
+[stores.views]
+description = "House views: what the agents concluded about an event, the challenger's objections, the CIO's decision."
+tables = ["agent_runs", "views", "challenges", "decisions", "forecasts"]
+[stores.impacts]
+description = "A view applied to clients: each family's impact in VND, and the alerts raised for them."
+tables = ["application_runs", "family_impacts", "run_snapshots", "client_alerts"]
+[stores.results]
+description = "Computed results kept for reuse: allocations, impact scores, risk."
+tables = ["results"]
+[stores.wealth]
+description = "What a client declared and holds: profile, holdings, goals."
+tables = ["profile", "holdings", "goal_outflows"]
+[stores.reviews]
+description = "The RM's reviews of a client's allocation."
+tables = ["reviews"]
+[stores.research]
+description = "Research the house released, and where it applies."
+tables = ["research_items"]
+[stores.policy]
+description = "Policy documents the policy agent reads."
+tables = ["policy_documents"]
+[stores.newsletters]
+description = "Newsletters drafted and sent."
+tables = ["newsletters"]
+[stores.conversations]
+description = "The assistant's conversations: turns, attachments, what was parked and what to follow up."
+tables = ["conversations", "turns", "parked", "assistant_runs", "attachments", "follow_ups", "consolidations"]
+[stores.contacts]
+description = "A client's requests to be contacted by their RM."
+tables = ["rm_contacts"]
+[stores.market]
+description = "Market series, and requests to load more."
+tables = ["market_series", "load_requests"]
+[stores.zone]
+description = "What crosses between the bank and the AI zone: packages out, packages in, the sync log."
+tables = ["zone_outbox", "zone_syncs", "external_outputs"]
+[stores.config]
+description = "Versions of the house configuration (sources, rules, catalogues)."
+tables = ["config_versions"]
+
 [lint]
 baseline = {C13 = 107, C14 = 63, C15 = 48, C16 = 3}

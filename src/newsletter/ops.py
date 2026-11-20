@@ -10,7 +10,7 @@ from operonx import op
 from newsletter import store
 
 
-@op
+@op(reads=["events", "news", "views"], writes="newsletters")
 async def draft(
     view_ids: list,
     by: str,
@@ -24,7 +24,7 @@ async def draft(
     return {"newsletter": await store.draft(view_ids, by, title, mode, distribution, conflict, body)}
 
 
-@op
+@op(writes="newsletters")
 def act(newsletter_id: str, action: str, by: str, note: str = "", changes: Optional[dict] = None) -> dict:
     """POST /api/newsletters/act: edit, submit, approve, return or withdraw."""
     return {"newsletter": store.act(newsletter_id, action, by, note, changes)}

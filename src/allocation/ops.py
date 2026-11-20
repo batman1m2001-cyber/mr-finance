@@ -106,7 +106,7 @@ def tilts() -> List[Dict[str, Any]]:
     return list(store.result(*TILTS) or [])
 
 
-@op
+@op(reads=["results", "wealth"])
 def case_of(client_id: str, members: list, holdings: list, transactions: list) -> dict:
     """The case the engine reads: the household's holdings and profile, its certain income, risk level and the tilts."""
     me = fixtures.client(client_id)
@@ -151,7 +151,7 @@ def example(method: str = None, assumptions: dict = None, role: str = None) -> d
     return {"allocation": {**_for(role, out), "example": {"id": case["id"], "note": case["note"]}}}
 
 
-@op
+@op(writes="results")
 def tilt(asset_class: str = None, stance: str = None, view_id: str = None, reason: str = "", by: str = None) -> dict:
     """A CIO's Tăng / Trung lập / Giảm on a class, from an approved view: it replaces that view's earlier tilt on the
     class; neutral takes it away. The model moves ±2 points per tilt, ±5 at most (allocation._model)."""
@@ -190,7 +190,7 @@ def model_method() -> str:
     return str(store.result(*METHOD) or "tilt")
 
 
-@op
+@op(reads="results")
 def tilt_list() -> dict:
     """The tilts in force, the classes a CIO may tilt and the model each level gets from them, both ways side by side
     (``model``: the ±2-point tilts, ``model_bl``: Black–Litterman) and the way in force."""
@@ -204,7 +204,7 @@ def tilt_list() -> dict:
             "method": model_method(), "methods": methods}  # fmt: skip
 
 
-@op
+@op(writes="results")
 def set_method(method: str = None, by: str = None) -> dict:
     """The CIO picks how the tilts move every client's model: ``tilt`` or ``bl``; audited."""
     from control import audit, db, roles
@@ -219,7 +219,7 @@ def set_method(method: str = None, by: str = None) -> dict:
     return {"method": method}
 
 
-@op
+@op(writes="reviews")
 def send(client_id: str, allocation: dict, by: str = None) -> dict:
     """The actions an RM sends to the review queue: the ones a client may see (never a blocked one), with the summary
     of the three buckets."""
@@ -258,7 +258,7 @@ def send(client_id: str, allocation: dict, by: str = None) -> dict:
     return {"review_id": item, "actions": len(shown)}
 
 
-@op
+@op(writes="reviews")
 def review(item_id: str = None, decisions: dict = None, note: str = "", by: str = None) -> dict:
     """The CIO's decision on each action of an allocation an RM sent (Q-29): ``decisions`` {n: approve | reject}. Once
     every action is decided the item is approved with the approved actions only (the client sees those), or rejected
@@ -300,7 +300,7 @@ def review(item_id: str = None, decisions: dict = None, note: str = "", by: str 
     return {"item": got}
 
 
-@op
+@op(reads=["results", "reviews"])
 def queue() -> dict:
     """The CIO's allocation page: the allocations waiting for the CIO, the last ones decided, the RMs' bucket overrides."""
     q = read_queue()
@@ -325,7 +325,7 @@ def _amount(a: Dict[str, Any]) -> str:
     return f"{vnd(a['amount'])}–{vnd(a['amount_high'])}" if a.get("amount_high") else vnd(a["amount"])
 
 
-@op
+@op(writes="results")
 def override(client_id: str, holdings: list, key: str = None, bucket: str = "", reason: str = "", by: str = None) -> dict:
     """An RM moves one asset into another bucket (§5), with a reason of at least 10 characters; an empty bucket takes
     the override away (back to the bucket its class gives). Kept per client, in the audit chain and in the log the

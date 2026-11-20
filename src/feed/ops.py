@@ -181,7 +181,7 @@ def _spending(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return out
 
 
-@op
+@op(reads=["events", "news", "research", "views", "wealth"], writes="impacts")
 def feed(client_id: str, scope: str, role: str, dashboard: dict, transactions: list) -> dict:
     """The items, most important first, each with why and its evidence. Read by the client themselves, its
     high-level items are kept as delivered to them (BRD-KPI-07, feed/opens.py)."""
@@ -191,7 +191,7 @@ def feed(client_id: str, scope: str, role: str, dashboard: dict, transactions: l
     return {"feed": out}
 
 
-@op
+@op(writes="impacts")
 def open_item(client_id: str = None, key: str = None) -> dict:
     """POST /api/feed/open: the client opened a high-level item (a click in the bell or on its evidence)."""
     client_id = str(client_id or "")

@@ -304,7 +304,7 @@ async def _turn(r: Dict[str, Any], ctx: Ctx, cid: Optional[str], done, fall, clo
             yield e
 
 
-@op
+@op(writes="conversations")
 async def turn(request: dict) -> dict:
     """One turn (``turn_events``), its answer only."""
     result = None
@@ -318,7 +318,7 @@ def _latest(dates: List[str]) -> str | None:
     return max((d for d in dates if d), default=None)
 
 
-@op
+@op(writes="conversations")
 def answer(request: dict, result: dict) -> dict:
     """The answer with what it rests on (each step's page, sources and date), stamped and audited: who, the mode,
     the tools and their statuses, the model and its usage — not the conversation's text."""
@@ -386,7 +386,7 @@ FIELDS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", 
           "attachments", "voice", "lang")
 
 
-@op
+@op(writes="conversations")
 async def stream_turn(item: dict = None):
     """POST /api/assistant/stream (FEAT-40): the same turn as POST /api/assistant, said as it happens — one event per
     yield: ``step`` (a tool starting, with the graph nodes it reads; ending, with what its result names), ``text``
@@ -413,7 +413,7 @@ async def stream_turn(item: dict = None):
 # -- the conversations (A3): list, open, delete ------------------------------------------------------------------
 
 
-@op
+@op(writes="conversations")
 async def conversations(action: str = None, conversation_id: str = None, role: str = None, client_id: str = None,
                   title: str = None) -> dict:  # fmt: skip
     """The person's sessions in this role: ``list`` (newest first) or ``list_archived``, ``open`` one (its turns as
@@ -454,7 +454,7 @@ async def conversations(action: str = None, conversation_id: str = None, role: s
 # -- the Bộ nhớ page (A4): list, correct, forget, forget all, search the archive ---------------------------------
 
 
-@op
+@op(reads="conversations")
 async def memory_page(
     action: str = None,
     item_id: str = None,

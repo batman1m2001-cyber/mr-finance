@@ -12,7 +12,7 @@ from control import roles
 from views import store as vstore
 
 
-@op
+@op(reads=["config", "results", "views", "wealth"], writes="impacts")
 async def recompute(run_id: str, by: str = "cio", idem_key: Optional[str] = None) -> dict:
     """Thẩm định lại: the same approved view on today's holdings and prices → a new run, compared
     with the old one family by family."""
@@ -34,7 +34,7 @@ async def recompute(run_id: str, by: str = "cio", idem_key: Optional[str] = None
     return {"run": new, "compare": compare}
 
 
-@op
+@op(writes="impacts")
 def decide_run(run_id: str, action: str, by: str, reason: str = "") -> dict:
     """make_effective (a run post-check held) or withdraw, with a reason."""
     roles.require(by, "cio")

@@ -223,7 +223,7 @@ def run_summary(
     }
 
 
-@op
+@op(writes="news")
 def keep(rows: list, counts: dict, at: float, started: Optional[float] = None) -> dict:
     """The new items kept, and the run recorded: the feed-health strip and the collection monitor."""
     kept, dup = store.add(rows)
@@ -238,14 +238,14 @@ def keep(rows: list, counts: dict, at: float, started: Optional[float] = None) -
     return {"ingest": {**summary, "ids": added}}
 
 
-@op
+@op(writes="news")
 def dismiss(ids: list, by: str = "cio", note: str = "") -> dict:
     """The CIO drops items from the inbox (FR-103)."""
     roles.require(by, "cio")
     return {"changed": store.set_status([str(i) for i in ids], "dismissed", by=by, note=note)}
 
 
-@op
+@op(writes="news")
 def release(item_id: str, by: str, note: str) -> dict:
     """The CIO releases a held item (Compliance's step before OWN-FB-18); the note is required, and kept with who
     and when."""
