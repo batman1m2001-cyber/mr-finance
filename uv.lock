@@ -1185,7 +1185,7 @@ requires-dist = [
     { name = "onnxruntime", specifier = ">=1.17" },
     { name = "openpyxl", specifier = ">=3.1.5" },
     { name = "operonx", extras = ["openai", "serve"], specifier = ">=1.40.0" },
-    { name = "operonx-agents", specifier = ">=0.3.1" },
+    { name = "operonx-agents", specifier = ">=0.3.2" },
     { name = "operonx-kb", extras = ["pdf"], specifier = ">=0.2.6" },
     { name = "pillow", specifier = ">=10" },
     { name = "playwright", marker = "extra == 'ui'", specifier = ">=1.44" },
@@ -1592,7 +1592,7 @@ serve = [
 
 [[package]]
 name = "operonx-agents"
-version = "0.3.1"
+version = "0.3.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -1600,9 +1600,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/55/b47ef9d457d4b2454a8c6ad8bed378949effefafaf4fb7c0693462ff74ad/operonx_agents-0.3.1.tar.gz", hash = "sha256:ef0611447531611e25dbad9d4d0e39b00fdc87aa93360d07ef7416b64e933422", size = 137686, upload-time = "2026-10-16T21:20:23.802Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/75/98/5a1eeb1ed24772c0b250573650f06eff20bc3aedba939950f2af20383aab/operonx_agents-0.3.2.tar.gz", hash = "sha256:131e6dfa5e823b82e9ddf43971f9a74c44bbfd24a0a3aad94004f959dd2df272", size = 137883, upload-time = "2026-11-21T12:40:14.573Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ed/04/6c3ce577e37ac98b3e76e5d5ed8c69a6a6fac97093c95f914a31d0fd45a3/operonx_agents-0.3.1-py3-none-any.whl", hash = "sha256:b5a3bc23fb3a750e2b9c3ccb0a7bb32b472081c058ad96359fdb6e0ad8f88ac2", size = 149624, upload-time = "2026-10-16T21:20:22.501Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/e6/b97fb54456a839af0ced91bd2711cfbc38ea66b4b63f50ee389047613c3b/operonx_agents-0.3.2-py3-none-any.whl", hash = "sha256:bc21b33f55400ecd605a84d7c8061ad31ee02d69e8c8b5d04ce51e9461bf38d8", size = 149872, upload-time = "2026-11-21T12:40:13.435Z" },
 ]
 
 [[package]]
