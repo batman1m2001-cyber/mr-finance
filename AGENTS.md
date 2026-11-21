@@ -186,7 +186,7 @@ uv run operonx run NAME        # run one job
 ## operonx guides
 
 <!-- operonx:guide -->
-Installed: operonx 1.40.0, operonx-agents 0.3.1, operonx-kb 0.2.6. `.operonx/guide/README.md` indexes every page of every
+Installed: operonx 1.40.0, operonx-agents 0.3.2, operonx-kb 0.2.6. `.operonx/guide/README.md` indexes every page of every
 installed operonx package, each tested against that version; search them with
 `grep -n "WORD" .operonx/guide/*/*.md`.
 Upgrade: `uv lock --upgrade-package operonx && uv sync`, then `uv run operonx guide`
