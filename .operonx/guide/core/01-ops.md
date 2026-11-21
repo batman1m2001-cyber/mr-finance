@@ -89,6 +89,12 @@ frames, a long stream) frees each item once it is consumed, so memory stays
 flat. A transient output may have only one consumer, cannot feed a
 `PARENT.declare` cell, and cannot be `.collect()`ed.
 
+**Stores:** an op that reads or writes the project's own data says which:
+`@op(writes="inbox")`, `@op(reads=["inbox", "events"])`. A store is a name (a
+table, a queue, a folder); the engine does nothing with it. The studio's
+project picture draws `flow → store → flow` from these, which is how two
+flows that never call each other are seen to work together.
+
 ## `@graph` — a graph, and a graph inside a graph
 
 A `@graph` function wires ops. Its parameters are the graph's inputs, and
@@ -209,7 +215,9 @@ asyncio.run(main())
 
 - `prompt` is a string (one user message) or `{"system": ..., "user": ...}`
   with `{placeholders}`; `messages=[...]` passes a ready message list.
-- `stream=True` makes it a streaming op that yields `content` deltas.
+- `stream=True` makes it a streaming op that yields `content` deltas
+  (to a client as server-sent events: `egress(item=s["content"])` on an
+  `http(..., sse=True)` door, [composition](02-composition.md#doors-for-streams)).
   The last frame has `final=True`, an empty `content` and the whole
   answer in `full_content`, so joining every frame's `content` gives the
   answer once. Read `full_content` for the whole text, streamed or not.
@@ -237,6 +245,76 @@ asyncio.run(main())
   lookup, args: {id: 7}}]}`, `{status: 429}` (raises the SDK's error),
   `{delay: 0.5, text: ...}`, `{echo: "Echo: "}` (the last user message
   back). No network; `hub.get("llm:<key>").calls` holds what it was sent.
+  One test scripts its own turns for a `with` block, whatever `conftest.py`
+  installed: `with operonx.testing.fake_model({"status": 503}, "ok",
+  retry={"max_attempts": 3}) as model:` (`key="llm:assistant"` by default;
+  other keywords are the resource's own, `chunk_size=` too); the old model
+  is back after the block.
+
+## Prompts — a named file, asked for by name
+
+A prompt that matters is a file: `prompts/<name>.md` in the project, the text
+as the model gets it. `{{name}}` is filled in; any other brace is text (the
+JSON a prompt shows needs no escaping); `{{> other}}` includes another prompt.
+Optional front matter (`---` … `---`) holds a `description`.
+
+```python
+import asyncio
+from pathlib import Path
+
+from operonx import END, START, Operon, graph
+from operonx.prompts import prompt
+from operonx.providers.ops import LLMOp
+from operonx.testing import fake_model
+
+Path("prompts").mkdir(exist_ok=True)
+Path("prompts/guard.md").write_text('Reply with JSON only: {"intent": "..."}\n')
+Path("prompts/intake.system.md").write_text("You help {{customer}}.\n{{> guard}}\n")
+
+
+@graph
+def intake(customer, message):
+    llm = LLMOp.of(
+        resource="assistant",
+        prompt={"system": prompt("intake.system"), "user": "{message}"},
+        customer=customer,
+        message=message,
+    )
+    START >> llm >> END
+
+
+async def main():
+    handle = Operon(intake, params={"customer": None, "message": None}).start(
+        {"customer": "Lan", "message": "money back please"}
+    )
+    await handle.result()
+    return handle.trace.nodes
+
+
+with fake_model('{"intent": "refund"}'):
+    nodes = asyncio.run(main())
+
+row = next(n for n in nodes if n.op_name == "llm")
+assert row.attrs["prompts"][0]["name"] == "intake.system"  # the run says which prompt, which version
+```
+
+- `prompt("name")` is read when the graph is built: a name the project does
+  not have raises `PromptNotFound` there (so `operonx check` catches it).
+- It returns a `str` that `prompt=` formats as written; `.text` is the file's
+  text (what an `Agent(instructions=prompt("declare.agent"))` is given) and
+  `.render(customer="Lan")` fills it in yourself.
+- **Versions and labels.** `operonx prompt publish intake.system --label
+  production` freezes the working text as the next number
+  (`prompts/.versions/intake.system/1.md`) and points the label at it
+  (`prompts/labels.toml`). A process serves the label in
+  `OPERONX_PROMPT_LABEL` (default `production`); a prompt without that label
+  is served from its working text. Roll back by moving the label: `operonx
+  prompt label intake.system production 1`. Also `list`, `show`, `diff`,
+  `log`. Labels are read when the graph is built: a moved label takes a
+  restart. Commit `prompts/` — the history is the repository's.
+- Every run row of that op carries `attrs.prompts`: `[{part, name, version,
+  label, hash}]` (`version` is `None` for the working text; `hash` is of the
+  text).
 
 ## Agents — a model that calls tools
 

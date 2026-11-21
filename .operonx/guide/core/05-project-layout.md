@@ -1,8 +1,10 @@
 # 5. Project layout and conventions
 
 A product built on operonx looks like this. The files below are a complete,
-working project, and `operonx init` writes this layout (with a feature of
-its own) for you.
+working project. `operonx init` writes the same layout with a feature of its
+own (its `JOBS`, and its `SERVICES` with `--http`, at the bottom of the
+feature's file), `src/_shared/config.py`, `data/` for what jobs read and
+`tests/<feature>/`.
 
 ```text
 scorer/
@@ -16,11 +18,7 @@ scorer/
 │   ├── __init__.py
 │   └── main.py           # APP = Application(...): read this file first
 ├── src/
-│   └── scoring/          # one folder per feature
-│       ├── __init__.py
-│       ├── graph.py      # @graph functions: wiring only
-│       ├── ops.py        # @op functions: the logic
-│       └── _text.py      # private helpers (leading underscore)
+│   └── scoring.py        # one file per feature: its ops, then its graphs
 ├── tests/
 │   └── test_scoring.py
 ├── datasets/             # eval cases, one .jsonl per dataset
@@ -30,22 +28,36 @@ scorer/
 `docs/brd/requirements/requirements_traceability.md` is the checklist: one
 row per requirement, with its status, the code that meets it and the test
 that shows it. Update a row when a change meets or alters its requirement.
-`operonx-project` builds the open rows as milestones. Each milestone's
-cards and their status are written to `docs/brd/board/`, in git, by the
-engine only; never edit it. The engine's runtime state is
-`.operonx/project/`, outside git, and is rebuilt from the board on a fresh
-clone. The studio's Board tab shows the checklist, before the first
-milestone too. How to build with it, and how to work a card yourself
-(`take`/`submit`), is operonx-project's guide: `project/01-project.md` in
-`.operonx/guide/` when it is installed.
+The board is `docs/brd/board.md`, in git: one card per task
+(`### C4 · title · todo|doing|needs you|done`, then `req`, `after`,
+`files`, `done`). The assistant moves the cards; the studio's Board shows
+them by lane, read from `files`. A card goes to `doing` before its first
+edit (one at a time), to `needs you` with the question when blocked, and to
+`done` only through its `done` tests.
+
+With `--web`, `web/` holds the pages, served at `/`: `index.html` loads one
+`pages/<screen>.js` per screen; a page wires `components/` (functions that
+render and report what the user did) to the server through `lib/api.js`,
+the only file that calls `fetch` (`operonx lint` C17); styles and images
+go in `assets/`. More is in operonx-project's guide: `project/01-project.md`
+in `.operonx/guide/` when it is installed.
 
 ## The rules
 
-- **`ops.py` holds the logic, `graph.py` only wires it.** A graph function
-  creates ops, reads their outputs and draws `>>` edges. No computation,
-  no I/O, no conditionals in Python: branch with `if_()`.
-- **Imports go one way:** `app/` → `src/<feature>/graph.py` → `ops.py` →
-  `_helpers.py`. Nothing in `src/` imports `app/`.
+- **One file per feature: `src/<feature>.py`.** Its ops (the logic) come
+  first, then the graphs that wire them, then its `JOBS` and `SERVICES` when
+  it declares them (what `operonx init` writes; this page's `app/main.py`
+  declares them inline instead). A graph function only creates ops, reads
+  their outputs and draws `>>` edges. No computation, no I/O, no
+  conditionals in Python: branch with `if_()`.
+- **Past ~300 lines, split the file into a folder** `src/<feature>/`:
+  `ops.py` (the logic), `graph.py` (wiring only), `jobs.py`, `routes.py`,
+  private helpers as `_<name>.py`, and an `__init__.py` that re-exports what
+  other code imports (`JOBS`, `SERVICES`, the graphs), so no import outside
+  the folder changes. `operonx add` writes into either shape.
+- **Imports go one way:** `app/` → `src/<feature>` → `src/_shared/`;
+  inside a split feature, `graph.py` → `ops.py` → `_helpers.py`. Nothing in
+  `src/` imports `app/`.
 - **`app/main.py` is the map of the product:** every service and job,
   with the graph each runs.
 - **Resources by key.** Ops reach models and stores through
@@ -118,30 +130,20 @@ dependencies = ["operonx[serve]>=1.13"]
 pythonpath = ["src", "."]
 ```
 
-```python file=src/scoring/__init__.py
-```
+```python file=src/scoring.py
+"""The scoring feature: its logic (ops), then its wiring (a graph)."""
 
-```python file=src/scoring/_text.py
-def word_count(text: str) -> int:
+from operonx import END, START, graph, op
+
+
+def _word_count(text: str) -> int:
     return len(text.split())
-```
-
-```python file=src/scoring/ops.py
-from operonx import op
-
-from scoring._text import word_count
 
 
 @op
 def score(id: str, text: str) -> dict:
-    words = word_count(text)
+    words = _word_count(text)
     return {"id": id, "words": words, "verdict": "engaged" if words >= 5 else "brief"}
-```
-
-```python file=src/scoring/graph.py
-from operonx import END, START, graph
-
-from scoring.ops import score
 
 
 @graph
@@ -157,13 +159,13 @@ def score_flow(id, text):
 """The scorer: one HTTP service and the batch job over the same graph.
 
 POST /score:8017 ──► score_flow ──► {id, words, verdict}
-operonx run score_calls ──► score_flow per line of calls.jsonl ──► out/scored.jsonl
+operonx run score_calls ──► score_flow per line of data/calls.jsonl ──► out/scored.jsonl
 """
 
 from operonx.app import Application, Service, env, http
 from operonx.app.jobs import Job
 
-from scoring.graph import score_flow
+from scoring import score_flow
 
 APP = Application(
     "scorer",
@@ -172,7 +174,7 @@ APP = Application(
         Job(
             "score_calls",
             graph=score_flow,
-            items="calls.jsonl",
+            items="data/calls.jsonl",
             output="out/scored.jsonl",
             key="id",
         )
@@ -180,7 +182,7 @@ APP = Application(
 )
 ```
 
-```json file=calls.jsonl
+```json file=data/calls.jsonl
 {"id": "c1", "text": "yes I can talk now"}
 {"id": "c2", "text": "busy"}
 ```
@@ -191,8 +193,7 @@ import asyncio
 from operonx import Operon
 from operonx.app.jobs import Job
 
-from scoring.graph import score_flow
-from scoring.ops import score
+from scoring import score, score_flow
 
 
 def test_score_counts_words():
@@ -221,16 +222,23 @@ operonx run score_calls
 
 `operonx lint` checks the conventions of this page and of the project's
 `AGENTS.md` (no `print()`, no graph inside a function, no logic in a
-graph's body, the edges written out, every secret in `.env.example`, ...);
-`operonx lint --rules` lists them, and `operonx lint --build` also loads the
-application and builds every graph with the network blocked.
+graph's body, the edges written out, every secret in `.env.example`, ...)
+and the project's shape: code in `src/` reaches another feature only through
+its top-level names (a split feature's `__init__` names) or its graph, every endpoint is a `Service`, the
+environment is read only in `src/_shared/config.py`, and the root holds only
+the folders and files above (plus `data/`, `out/`, `web/`, `deploy/`,
+`scripts/`). `operonx lint --rules` lists them, and `operonx lint --build`
+also loads the application and builds every graph with the network blocked.
+A project older than a rule runs `operonx lint --baseline` once: today's
+count per rule goes in `operonx.toml`, and lint is red only when a count
+goes up.
 
 ## Growing it
 
-- **A second feature** is a second folder under `src/` with its own
-  `graph.py` and `ops.py`, and one more entry in `app/main.py`.
+- **A second feature** is a second file under `src/` with its own ops and
+  graphs, and one more entry in `app/main.py`.
 - **A model** is an `llm:` entry in `resources.yaml` and an
-  `LLMOp.of(resource=...)` in the feature's `graph.py`; its key goes in `.env`.
+  `LLMOp.of(resource=...)` in the feature's graph; its key goes in `.env`.
   Its provider's limits go on the entry, for the whole process:
   `rate_limit: {concurrency: 8, per_minute: 500}` (or `per_second`) — every
   op and run calling that key waits its turn; a stream holds its slot until

@@ -127,30 +127,44 @@ def answer_flow(question, k):  # a setting is a graph input
   `docs/brd/requirements/open_questions.md`, never deleted.
 - `docs/brd/board.md` is the board: one card per task
   (`### C4 · title · todo|doing|needs you|done`, then `req`, `after`,
-  `files`, `done`). Move a card with `operonx-project board C4 doing`; it
-  is done when its `done` tests pass.
+  `files`, `done`). Move it with `operonx-project board C4 doing` before
+  its first edit, one card in `doing` at a time; to `needs you` with the
+  question as its note when you are blocked; to `done` only when its `done`
+  tests pass.
 - When a change meets or alters a requirement, update its row (status,
   code, test) and add one line to `docs/brd/CHANGELOG.md`. The rules are in
   `docs/brd/README.md`. The checklist's summary table is counted from
   the rows by the engine: leave it.
-- Work with more than one step gets a plan doc under `docs/` that starts
-  with a status block: `title`, `status` (plan, in_progress, done or
-  parked), `phases` (each `{id, title, status}`: open, in_progress, done or
-  skipped) and the `rows` it serves. Change a phase's status in the commit
-  that finishes it. `operonx-project plans` lists them; the studio's
-  Project mode shows them.
+- `docs/brd/knowledge.md` is what the project learned: `### K3 · title ·
+  pattern|pitfall|replaced|decision`, then `where` (files), `use` (when; a
+  pitfall's symptom first; a decision's why), `instead` (for `replaced`).
+  Before writing something new, search it and `.operonx/catalog.md` (every
+  op, graph and job; `operonx guide` rewrites it). When a card is done, add
+  what is reusable or a pitfall; when the owner decides something, add a
+  `decision`; when a pattern is replaced, edit its entry, never add a second.
+- Search before reading a whole doc: `operonx-project search QUERY` ranks
+  the sections of the board, the BRD, the plans, knowledge and the guide
+  (heading, 3 lines, `path:line`); `operonx-project read PATH HEADING`
+  prints one section.
+- Work with more than one step gets a plan doc under `docs/` (why and
+  how) and a cycle on the board: `operonx-project cycle open ID TITLE
+  --plan docs/X_PLAN.md`, its phases as cards (`operonx-project put --title
+  T --cycle ID`). `cycle close ID` once every card in it is done; a card
+  left open moves to the Backlog first (`put C4 --cycle Backlog`).
 <!-- /operonx:builder -->
 
 ## Commands
 
 <!-- operonx:commands -->
 ```bash
-uv run pytest                 # the tests: keep them green
-uv run operonx lint           # the rules below, checked (operonx lint --rules)
-uv run operonx serve --list   # every service, and where it listens
-uv run operonx run --list     # every job
-uv run operonx serve          # serve every service (and run scheduled jobs on their clocks)
-uv run operonx run NAME       # run one job
+uv run operonx add WHAT NAME   # route, job, llm, page: wired code + what to fill in
+uv run operonx check           # lint, tests, graphs, routes: one verdict (--call, --no-tests)
+uv run pytest                  # the tests: keep them green
+uv run operonx lint            # the rules below, checked (operonx lint --rules)
+uv run operonx serve --list    # every service, and where it listens
+uv run operonx run --list      # every job
+uv run operonx serve           # serve every service (and run scheduled jobs on their clocks)
+uv run operonx run NAME        # run one job
 ```
 <!-- /operonx:commands -->
 
@@ -172,11 +186,9 @@ uv run operonx run NAME       # run one job
 ## operonx guides
 
 <!-- operonx:guide -->
-Installed: operonx 1.38.0, operonx-agents 0.3.1, operonx-kb 0.2.6. Read `.operonx/guide/README.md` first: it lists every
-page of every installed operonx package, each tested against that version.
+Installed: operonx 1.40.0, operonx-agents 0.3.1, operonx-kb 0.2.6. `.operonx/guide/README.md` indexes every page of every
+installed operonx package, each tested against that version; search them with
+`grep -n "WORD" .operonx/guide/*/*.md`.
 Upgrade: `uv lock --upgrade-package operonx && uv sync`, then `uv run operonx guide`
 (after `uv add operonx-agents` or `operonx-kb`, just `uv run operonx guide`).
-Names come from variables: write `name=` only when other code reads the name,
-one op per line. Branch with `if_(cond, a).else_(b)` in the `>>` chain, never a
-hand-built `BranchOp`.
 <!-- /operonx:guide -->
