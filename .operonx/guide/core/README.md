@@ -32,8 +32,7 @@ project's `.operonx/guide/` (its `README.md` indexes them all):
 **operonx-agents** (`agents/`: `Agent`, `Runner`, approvals,
 `agent_service`, trajectory evals), **operonx-kb** (`kb/`: ingest,
 search, citations, `kb_tools`, MCP) and **operonx-project** (`project/`:
-building a project from its `docs/brd/` checklist, milestones, cards,
-take/submit, `adopt`).
+building a project from its `docs/brd/` checklist, its board of cards, `adopt`).
 
 ## Install
 
@@ -47,15 +46,23 @@ Other extras: `anthropic`, `gemini`, `langfuse`, `postgres`, `mongo`,
 ## Start a project: `operonx init`
 
 ```bash run
-operonx init myapp          # the hello template; also --template http | chat | agent
+operonx init myapp          # hello: a job over data/, offline
+operonx init bot -t chat --http        # chat | agent; --http serves it
 ```
 
-It writes the layout of [project layout](05-project-layout.md): `operonx.toml`,
-`resources.yaml`, `.env.example`, `app/main.py` with the `Application`, one
-feature in `src/<feature>/`, its tests, and `AGENTS.md` (with `CLAUDE.md`
-pointing at it) for coding assistants. It also copies the guide of every
-installed operonx package into `myapp/.operonx/guide/`. Existing files are
-kept unless `--force`.
+One template (`hello`, `chat`: one LLM call, `agent`: an agent with a tool)
+and up to three flags: `--http` (a service), `--web` (pages in `web/`, brings
+`--http`), `--deploy` (a Dockerfile and compose file). It writes the layout of
+[project layout](05-project-layout.md): `operonx.toml` (its `parts` say what
+was chosen), `resources.yaml`, `.env.example`, `app/main.py` with the
+`Application`, one feature in `src/<feature>.py` (its ops, graph and `JOBS`, and
+its `SERVICES` with `--http`), its tests in `tests/<feature>/`, and `AGENTS.md` (with
+`CLAUDE.md` pointing at it). It also copies the guide of every installed
+operonx package into `myapp/.operonx/guide/`.
+
+`operonx init . --web` later adds a flag: it writes the missing files,
+rewrites those still as init wrote them, and for a file you edited prints
+the lines to add. `--force` overwrites.
 
 ## Imports
 
