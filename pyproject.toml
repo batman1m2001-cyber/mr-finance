@@ -5,7 +5,7 @@ description = "An agent with one tool (operonx-agents), served over HTTP."
 requires-python = ">=3.10"
 dependencies = [
     "operonx[openai,serve]>=1.40.0",
-    "operonx-agents>=0.3.1",
+    "operonx-agents>=0.3.2",  # instructions as a named prompt
     "python-dotenv>=1.0",  # operonx.bootstrap() reads .env with it
     "pypdf>=6.19.0",
     "pillow>=10",  # the assistant reads photos (OCR_PLAN): opened, shrunk, a scan's pages

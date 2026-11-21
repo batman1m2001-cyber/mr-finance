@@ -11,9 +11,7 @@ from _shared.paths import ROOT
 DECLARER = Agent(
     name="declarer",
     model=Model("assistant", deadline=45),
-    instructions=(
-        prompt("declare/agent", root=ROOT).text
-    ),
+    instructions=prompt("declare/agent", root=ROOT),  # the card and the run row name it
     tools=TOOLS,
     limits=UsageLimits(turns=6, tool_calls=12),
 )
