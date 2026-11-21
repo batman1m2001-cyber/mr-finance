@@ -571,7 +571,7 @@ metric(
     "advisory.hit_rate",
     "Tỷ lệ khuyến nghị đúng",
     "Tỷ lệ = số khuyến nghị đúng ÷ (đúng + sai), trên các khuyến nghị khách hàng đã thực hiện." + MOCK,
-    "web/pages/performance.js::tiles",
+    "web/pages/perfall.js::rate",
     right="Đúng",
     wrong="Sai",
 )
