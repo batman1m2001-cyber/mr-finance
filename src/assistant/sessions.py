@@ -16,16 +16,15 @@ from operonx.core.loggings import LOGGER
 
 from assistant import conversations as conv
 from assistant.base import Ctx
+from operonx.prompts import prompt
+from _shared.paths import ROOT
 
 WHEN = (1, 4)  # turns after which the title and goal are written again; and after every compaction
 ANSWER_TOKENS = 400  # the model thinks first; at 120 it wrote nothing
 ROOM = 2500  # tokens of the conversation it reads (the newest turns)
 WORDS = 8
 SYSTEM = (
-    "Bạn đặt tên cho một cuộc trò chuyện giữa người dùng và trợ lý tài chính OneWealth. Trả về đúng một JSON: "
-    '{"title": "...", "goal": "..."}. title: tiếng Việt, 2–7 từ, nói chủ đề (vd “Dòng tiền tháng 9”, “Kịch bản '
-    "VN-Index giảm”), không dấu chấm, không số tiền. goal: một câu ngắn, điều người dùng muốn đạt được trong cuộc "
-    "trò chuyện này. Không thêm gì ngoài JSON."
+    prompt("assistant/session-title", root=ROOT).text
 )
 
 

@@ -19,14 +19,14 @@ from assistant import conversations as conv
 from assistant.base import Ctx, ToolFailed
 from copilot import router
 from copilot.scrub import scrub
+from operonx.prompts import prompt
+from _shared.paths import ROOT
 
 PER_PERSON = 20
 IN_TOTAL = 500
 RESULTS = 3
 SYSTEM = (
-    "Bạn trả lời câu hỏi bằng tiếng Việt, ngắn gọn (tối đa 5 câu), chỉ từ kết quả tìm kiếm web. Mở đầu bằng “Theo "
-    "các nguồn tìm được,”. Kết thúc bằng một câu “Mức độ chắc chắn: cao / trung bình / thấp” và lý do ngắn (các nguồn "
-    "có thống nhất, có mới không). Không đưa khuyến nghị đầu tư. Nếu kết quả không trả lời được, nói thẳng như vậy."
+    prompt("assistant/web", root=ROOT).text
 )
 PLACEHOLDER = re.compile(r"<(?:người|số|mã)>")
 URL = re.compile(r"https?://[^\s)\]>\"']+")
