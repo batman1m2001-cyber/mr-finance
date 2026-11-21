@@ -21,18 +21,12 @@ from statements.ops import (
     rule_read,
     save_holdings,
 )
+from operonx.prompts import prompt
+from _shared.paths import ROOT
 
 READ_PROMPT = {
-    "system": (
-        "Bạn đọc sao kê ngân hàng / công ty chứng khoán của Việt Nam và trích ra các khoản tài sản. "
-        "Trả lời bằng một khối JSON duy nhất: "
-        '{{"holdings": [{{"type": "stock", "ticker": "MWG", "qty": 6000, "avg_price": 52000, "price": 68000}}, '
-        '{{"type": "cash", "name": "Tiền", "balance": 120000000}}, '
-        '{{"type": "deposit", "name": "Tiền gửi 12 tháng", "balance": 2000000000, "rate": 5.0, '
-        '"maturity": "2027-03-15"}}]}}. '
-        "Số tiền tính bằng đồng (VND), không dấu phân cách. Chỉ ghi những gì có trong sao kê."
-    ),
-    "user": "Tệp {filename}:\n\n{statement}",
+    "system": prompt("statements/read.system", root=ROOT),
+    "user": prompt("statements/read.user", root=ROOT),
 }
 
 

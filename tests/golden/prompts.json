@@ -1,0 +1,82 @@
+{
+ "assistant/attachment": {
+  "as": "text",
+  "sha256": "3e478a157cf5a2c6636eee7793f2542bfd37330d3664938230db2f25973a01e6",
+  "chars": 2023
+ },
+ "assistant/consolidate": {
+  "as": "text",
+  "sha256": "137251ef0c3a6ac6558da6f181cc5f9b2f5aeb7521a729384038fe27a24c8ce8",
+  "chars": 713
+ },
+ "assistant/rules": {
+  "as": "template",
+  "sha256": "3b38b05be4e00baef3a891627a9617927d15d74242fef85470f4b2b7fc2ca87b",
+  "chars": 2159
+ },
+ "assistant/session-title": {
+  "as": "text",
+  "sha256": "ab83a34e98acbd3a93f3d792b141ca5135ed118acf073016387f34f8d60af5ef",
+  "chars": 361
+ },
+ "assistant/web": {
+  "as": "text",
+  "sha256": "14b818bb2c54accc431a84a781426be00ca1ed95222fa4325a25581f724015d8",
+  "chars": 332
+ },
+ "cio/analyst": {
+  "as": "text",
+  "sha256": "223d78df040ef3cd3f0b1d33927e23ced43c800e86705d59849346c732decbcf",
+  "chars": 391
+ },
+ "cio/challenge": {
+  "as": "text",
+  "sha256": "387031973b2da7d9663195ce9722ce04415adb95cb5d813b2cff02fb4c954efe",
+  "chars": 381
+ },
+ "cio/debate": {
+  "as": "text",
+  "sha256": "dbfb4f75d2ecc0ff6ecdf0cb074ad3bee75ec69f514b581c9518bd2b4c3178b6",
+  "chars": 201
+ },
+ "cio/guard": {
+  "as": "text",
+  "sha256": "11306e8d87b0293d6fb38948ef65f57591482bf31b439d3ee405b2866eb923bc",
+  "chars": 299
+ },
+ "cio/policy": {
+  "as": "text",
+  "sha256": "766248e8912c59f7c67d31b2be93397765611648c05a1d8fa53c87be5651f3e7",
+  "chars": 623
+ },
+ "cio/synthesize": {
+  "as": "text",
+  "sha256": "214cbfa371a0e330bb887b72583343160b31f7e63bedaf00649f286538604851",
+  "chars": 578
+ },
+ "declare/agent": {
+  "as": "text",
+  "sha256": "ef626b40b6980c21727ff81b17c63f65e194c4dbb344b596e678139634b816f3",
+  "chars": 1792
+ },
+ "research/suggest": {
+  "as": "template",
+  "sha256": "a73890784080fe85aa22470f60f94a52281fcfcc39a4ce89bcc13a030a472e95",
+  "chars": 487
+ },
+ "statements/read.system": {
+  "as": "template",
+  "sha256": "3e4e1833f230ab2e62db3c7b06c6eb4269cd59b7fb8c5018d35b1540e2b13080",
+  "chars": 489
+ },
+ "statements/read.user": {
+  "as": "template",
+  "sha256": "0da4fbf78bb2d6a1182dc2aca9e00a535a573ba6ab7df6b4fe3d9cfa49d438f1",
+  "chars": 28
+ },
+ "trial/daily": {
+  "as": "template",
+  "sha256": "ea47c3c2a3a242846d47e47d23b6b6dc1202a5aede62234d42fbff03668d982a",
+  "chars": 789
+ }
+}
