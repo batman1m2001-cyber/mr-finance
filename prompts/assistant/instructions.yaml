@@ -1,0 +1,30 @@
+id: pr_7f47ba9f
+description: "The assistant's instructions, per person, role and turn (assistant/turn.py gives the data)"
+kind: text
+join: "\n"
+parts:
+  - use: assistant/persona
+  - pick: reads
+    cases:
+      true: assistant/facts-model
+      false: assistant/facts-template
+  - when: data_room
+    use: assistant/data-room
+  - use: assistant/writes
+  - pick: role
+    cases:
+      rm: assistant/duties
+      cio: assistant/duties
+      admin: assistant/duties
+    else: none
+  - use: assistant/guards
+  - use: assistant/now
+  - var: graph
+  - when: remember
+    use: assistant/remembered
+  - when: recount
+    use: assistant/recount
+  - when: voice
+    use: assistant/voice
+  - when: english
+    use: assistant/english

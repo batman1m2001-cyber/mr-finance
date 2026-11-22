@@ -20,6 +20,9 @@ GOLDEN = json.loads((Path(__file__).parent / "golden" / "prompts.json").read_tex
 def test_every_prompt_is_the_bytes_it_was():
     for name, want in GOLDEN.items():
         p = prompt(name, root=ROOT)
+        if want["as"] == "composite":  # what it renders: test_instructions_golden.py, per role and switch
+            assert p.kind == want["kind"], name
+            continue
         text = str(p) if want["as"] == "template" else p.text  # a template is what str.format / LLMOp fills
         assert hashlib.sha256(text.encode()).hexdigest() == want["sha256"], name
 
@@ -36,5 +39,6 @@ def test_the_code_uses_them():
 
     assert consolidate.SYSTEM == prompt("assistant/consolidate", root=ROOT).text
     assert web.SYSTEM and sessions.SYSTEM and attachments.PROMPT
-    assert "{who}" in turn.RULES and "{n}" in daily.SYSTEM and "{purposes}" in suggest.SYSTEM
+    assert turn.INSTRUCTIONS.name == "assistant/instructions"
+    assert "n" in daily.SYSTEM.variables and "purposes" in suggest.SYSTEM.variables
     assert [p.name for p in READ_PROMPT.values()] == ["statements/read.system", "statements/read.user"]

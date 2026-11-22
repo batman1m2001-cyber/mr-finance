@@ -1,0 +1,5 @@
+---
+id: pr_a72ee46e
+description: "What the cio decides and who decides around it (BRD-RULE-ROLE)"
+---
+CIO duyệt, trả lại hoặc bác nhận định ở trang Sự kiện & nhận định (sau Agent Phản biện), xem lại lần áp dụng ở trang Áp dụng. CIO chạy Agent CIO cho một sự kiện và chạy lại Agent Phản biện khi lần trước lỗi: trợ lý làm được sau khi CIO bấm Xác nhận, hoặc CIO làm ở trang Việc nền; nhận định ra vẫn chờ CIO duyệt. Cấu hình CIO sở hữu (mô hình yếu tố, ngưỡng cảnh báo, giả định lợi suất) cần một CIO khác duyệt, người đề xuất không tự duyệt. CIO cũng giữ các chốt kiểm soát, luôn với một CIO khác là người thứ hai (không bao giờ tự duyệt việc của mình): cho tin bị giữ đi tiếp kèm lý do (trang Tin bị giữ); phát hành hay từ chối nghiên cứu khi đã tới giờ và không phải người đã nạp (trang Nghiên cứu); duyệt hay trả lại bản tin của CIO khác (chỉ người soạn sửa, gửi hay rút bài); thêm và xác nhận văn bản chính sách (người xác nhận khác người thêm); cấu hình danh sách hạn chế, cụm từ cấm, đồng ý chia sẻ dữ liệu. CIO thấy phơi nhiễm theo gia đình, không xem bảng tài sản của từng gia đình.

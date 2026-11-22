@@ -64,9 +64,7 @@ def candidates(now: float, since: Optional[float] = None) -> List[Dict[str, Any]
     return [i for i in keep if (i.get("published") or i["ingested"]) <= now][:MAX_NEWS]
 
 
-SYSTEM = (
-    prompt("trial/daily", root=ROOT)  # a str.format template
-)
+SYSTEM = prompt("trial/daily", root=ROOT)  # {{n}}: the most events
 
 
 async def group(news: List[Dict[str, Any]], n: int) -> Dict[str, Any]:
@@ -79,7 +77,7 @@ async def group(news: List[Dict[str, Any]], n: int) -> Dict[str, Any]:
             for i in news
         ],
     }
-    text, meta = await agents.call_model("cio", SYSTEM.format(n=n), agents.wrap(data), GROUP_TOKENS)
+    text, meta = await agents.call_model("cio", SYSTEM.render(n=n), agents.wrap(data), GROUP_TOKENS)
     got = agents._json(text)
     known, used, out = {i["id"] for i in news}, set(), []
     for e in got.get("events") or []:

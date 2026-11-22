@@ -5,6 +5,7 @@ import asyncio
 import types
 
 import pytest
+from operonx.prompts import prompt, prompt_names
 from test_apply import MARKET, approved
 
 from apply import reads as apply_reads
@@ -68,14 +69,15 @@ def test_d03_each_staff_role_is_told_what_it_decides_and_to_read_the_guide():
     assert "một CIO khác duyệt" in prompt("cio")
     assert "Cấu hình vai trò khác sở hữu thì vai trò đó duyệt" in prompt("admin")
     assert "không phải người đã nạp" in prompt("cio")  # Compliance's checks are the CIO's (OWN-FB-18)
-    assert set(turn.DUTIES) == {"rm", "cio", "admin"}
-    assert all("gọi huong_dan" in prompt(r) for r in turn.DUTIES)
+    staff = ("rm", "cio", "admin")  # the roles prompts/assistant/instructions.yaml picks duties for
+    assert {f"assistant/duties/{r}" for r in staff} <= set(prompt_names(turn.ROOT))
+    assert all("gọi huong_dan" in prompt(r) for r in staff)
     # cmp-lim-02: “tell me the release note and I'll record it” — no tool publishes research
-    assert all("không nhận lý do hay ghi chú để làm hộ" in prompt(r) for r in turn.DUTIES)
+    assert all("không nhận lý do hay ghi chú để làm hộ" in prompt(r) for r in staff)
     # U3: asked again, Admin's assistant said “I just checked again” and called nothing
-    assert all("không nói đã kiểm tra lại khi lượt này chưa gọi công cụ" in prompt(r) for r in turn.DUTIES)
+    assert all("không nói đã kiểm tra lại khi lượt này chưa gọi công cụ" in prompt(r) for r in staff)
     # the final run's S3s: a page no menu has (D25), the contact log as a message (D24), keys on a page (D23)
-    assert all("Chỉ nhắc tên trang có trong menu" in prompt(r) for r in turn.DUTIES)
+    assert all("Chỉ nhắc tên trang có trong menu" in prompt(r) for r in staff)
     assert "trợ lý không nhắn tin cho ai" in prompt("rm") and "kho bí mật của hạ tầng" in prompt("admin")
     assert "gọi huong_dan" not in prompt("client")  # the customer's prompt is as it was
 
@@ -94,8 +96,10 @@ def test_d05_a_cancelled_write_is_said_as_cancelled():
     """D05: after Huỷ the assistant said the write failed “vì bạn chưa xác nhận” and offered to try again."""
     from assistant import turn
 
-    assert "bấm Huỷ" in turn.RULES and "rồi dừng" in turn.RULES
-    assert "Không nêu\n  tên công cụ" in turn.RULES  # rm-sod-01, cio-iso-01 named de_xuat, phoi_nhiem to the person
+    writes = prompt("assistant/writes", root=turn.ROOT).text
+    assert "bấm Huỷ" in writes and "rồi dừng" in writes
+    # rm-sod-01, cio-iso-01 named de_xuat, phoi_nhiem to the person
+    assert "Không nêu\n  tên công cụ" in prompt("assistant/persona", root=turn.ROOT).text
 
 
 def test_a_recommendation_says_it_reached_the_client():

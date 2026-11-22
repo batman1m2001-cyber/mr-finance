@@ -13,9 +13,7 @@ from operonx.prompts import prompt
 from _shared.paths import ROOT
 
 COUNTRY_NAMES = sorted(set(goals.COUNTRIES.values()))
-SYSTEM = (
-    prompt("research/suggest", root=ROOT)  # a str.format template
-)
+SYSTEM = prompt("research/suggest", root=ROOT)  # {{purposes}} {{countries}}: `suggest` renders it
 
 
 def unread(rows: List[Dict[str, Any]], declared: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -51,7 +49,7 @@ async def live(rows: List[Dict[str, Any]]) -> Tuple[Dict[str, Dict[str, Any]], L
     """One call for all the family's unread goals → (suggestions, the call's meta)."""
     from views import agents
 
-    system = SYSTEM.format(purposes=", ".join(goals.PURPOSES), countries=", ".join(COUNTRY_NAMES))
+    system = SYSTEM.render(purposes=", ".join(goals.PURPOSES), countries=", ".join(COUNTRY_NAMES))
     data = [{"goal_id": g["goal_id"], "tên": g["label"], "ngày": g["date"], "loại": g.get("category")} for g in rows]
     text, meta = await agents.call_model("cio", system, agents.wrap(data), 600)
     got = agents._json(text)
