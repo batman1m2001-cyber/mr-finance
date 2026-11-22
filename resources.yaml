@@ -99,4 +99,5 @@ run_store:default:
   user: ${RUNS_CH_USER:default}
   password: ${RUNS_CH_PASSWORD:}
   database: mr_finance_runs
+  ttl_days: 0                 # keep every run: no expiry (unset, operonx expires a service's runs after 30 days)
   media: clickhouse           # attachments and audio beside the runs, so the studio on another host plays them
