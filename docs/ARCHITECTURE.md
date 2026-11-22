@@ -88,7 +88,7 @@ op (@op, ops.py)  ─►  graph (@graph, graph.py, nối bằng >>)  ─►  Ser
 - **Lỗi có mã HTTP.** `src/_shared/errors.py`: `BadRequest` (400), `Conflict` (409); rào chắn AI trả 403. Các lỗi này mang thông điệp
   tiếng Việt tới người dùng; lỗi khác trả `500` kèm trace id.
 - **Nhánh** bằng `if_(cond, a).else_(b)` trong chuỗi `>>`; không có `@graph` lồng trong hàm.
-- **Truy vết**: mỗi lần chạy ghi vào `.operonx/runs` (xem bằng `uv run operonx studio`), trừ các service đọc và trợ lý
+- **Truy vết**: mỗi lần chạy ghi vào ClickHouse (`run_store:default` trong resources.yaml; trước 2026-11-22 là thư mục `.operonx/runs`) (xem bằng `uv run operonx studio`), trừ các service đọc và trợ lý
   được tắt trong `operonx.toml` — vì nhanh hơn, và vì không chép lời người dùng ra đĩa.
 
 ## 4. Cấu trúc thư mục

@@ -13,10 +13,9 @@ app  = "app.main:APP"
 [resources]
 overlay = "resources.yaml"
 
-# Which trace sinks every run goes to. "local" records each run under
-# .operonx/runs.
+# Which trace sinks every run goes to: the run store in resources.yaml (ClickHouse). The studio reads the same store.
 [tracing]
-sinks = ["local"]
+sinks = ["run_store:default"]
 
 # The page reads are not traced: each recomputes a picture from stored data and changes nothing (the audit log keeps
 # what matters), and a trace of one — every step's inputs and outputs, ~0.4 MB for the feed — took two thirds of the
