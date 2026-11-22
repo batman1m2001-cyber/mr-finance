@@ -88,3 +88,15 @@ audio_worker:default:
   inbound_maxsize: 4000
   use_preprocess: true
   vad_model: models/silero_vad.onnx
+
+# Where every traced run goes (operonx.toml [tracing] sinks): the team ClickHouse, one database for this project.
+# Runs were folders under .operonx/runs until 2026-11-22: 780,000 of them, 17 GB, and the studio walked them all.
+# Unset (a laptop, CI): the store is built and its writes fail in its own thread — a run never waits for it.
+run_store:default:
+  backend: clickhouse
+  host: ${RUNS_CH_HOST:127.0.0.1}
+  port: ${RUNS_CH_PORT:8123}
+  user: ${RUNS_CH_USER:default}
+  password: ${RUNS_CH_PASSWORD:}
+  database: mr_finance_runs
+  media: clickhouse           # attachments and audio beside the runs, so the studio on another host plays them
