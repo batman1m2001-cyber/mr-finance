@@ -295,7 +295,8 @@ with fake_model('{"intent": "refund"}'):
     nodes = asyncio.run(main())
 
 row = next(n for n in nodes if n.op_name == "llm")
-assert row.attrs["prompts"][0]["name"] == "intake.system"  # the run says which prompt, which version
+# the run says which prompt, which version
+assert row.attrs["prompts"][0]["name"] == "intake.system"
 ```
 
 - `prompt("name")` is read when the graph is built: a name the project does
@@ -312,9 +313,29 @@ assert row.attrs["prompts"][0]["name"] == "intake.system"  # the run says which 
   prompt label intake.system production 1`. Also `list`, `show`, `diff`,
   `log`. Labels are read when the graph is built: a moved label takes a
   restart. Commit `prompts/` — the history is the repository's.
+- **A service that runs from an older build.** Set a prompt store — a
+  Postgres address, as a setting of the project:
+  `[prompts]` `store = "${PROMPT_STORE_DSN}"` in `operonx.toml`, the address in
+  the environment or `.env`. `operonx prompt publish` / `label` then also copy
+  the versions and labels there (`operonx prompt push` copies all of them,
+  `operonx prompt store` shows what it serves), and `prompt("name")` in a
+  process with the store set gives what the store's label points at — a
+  version published after the image was built included. One way only: the
+  files are where a prompt is written; a store that cannot be reached serves
+  the files. A process re-reads the store every 15 s in the background
+  (`OPERONX_PROMPT_STORE_EVERY`); code that builds its prompts once compares
+  `operonx.prompt_store.generation()` and builds them again when it went up.
 - Every run row of that op carries `attrs.prompts`: `[{part, name, version,
   label, hash}]` (`version` is `None` for the working text; `hash` is of the
   text).
+- **A prompt chosen at run time.** When which prompt to send is only known in
+  a call (one per agent, per state), an op renders it and hands the text on:
+  `return {"system": prompt(f"{agent}/analyzer").render(rules=rules)}`, then
+  `LLMOp.of(prompt={"system": "{system}", ...}, system=ctx["system"])`. What
+  `.render` returns is a string that remembers the prompts it was made from,
+  so the LLM op's row still says them: `attrs.prompts = [{input: "system",
+  name, version, label, hash}]`. A prompt given as a value to another's
+  `.render` is listed too.
 
 ## Agents — a model that calls tools
 
