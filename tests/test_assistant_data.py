@@ -10,6 +10,7 @@ import time
 
 import pytest
 from operonx import Operon
+from operonx.prompts import prompt
 from operonx_agents.testing import ScriptedLLM, asks, says, scripted
 
 from assistant import base, conversations, datacatalog, dataroom, registry, turn
@@ -21,6 +22,9 @@ from news import store as news
 
 INPUTS = ("message", "role", "client_id", "scope", "route", "goals", "turn_id", "approvals", "conversation_id")
 ASK = Operon(assistant_flow, params={k: None for k in INPUTS})
+
+DATA_RULE = prompt("assistant/data-room", root=turn.ROOT).text  # the text objects the instructions link
+RECOUNT = prompt("assistant/recount", root=turn.ROOT).text
 
 
 def seed(n, status="new"):
@@ -141,8 +145,8 @@ def test_with_client_ai_off_the_model_writes_the_sql_and_never_reads_the_rows(mo
 def test_the_rule_to_count_again_is_in_the_prompt_of_the_roles_with_a_room():
     for role in ("cio", "rm", "client", "admin"):
         text = turn.instructions(type("R", (), {"deps": ctx(role)})())
-        assert (turn.DATA_RULE in text) == (role in dataroom.ROLES), role
-    assert "đếm lại ngay" in turn.DATA_RULE and "không cãi" in turn.DATA_RULE and "count(*)" in turn.DATA_RULE
+        assert (DATA_RULE in text) == (role in dataroom.ROLES), role
+    assert "đếm lại ngay" in DATA_RULE and "không cãi" in DATA_RULE and "count(*)" in DATA_RULE
 
 
 def test_the_cio_conversation_of_2026_10_24_counts_and_counts_again_showing_how(model_on):
@@ -172,9 +176,9 @@ def test_the_cio_conversation_of_2026_10_24_counts_and_counts_again_showing_how(
     # the rule alone got “Tôi đã đếm lại” with no tool called); the first turn and the answer's request are free
     system = llm.requests[2]["messages"][0]["content"]
     assert (
-        turn.DATA_RULE in system
-        and turn.RECOUNT in system
-        and turn.RECOUNT not in llm.requests[0]["messages"][0]["content"]
+        DATA_RULE in system
+        and RECOUNT in system
+        and RECOUNT not in llm.requests[0]["messages"][0]["content"]
     )
     assert [r.get("tool_choice") for r in llm.requests] == [None, None, "required", None]
     # the recount's result says, next to the count, not to guess why (in the prompt alone Haiku guessed 3 of 3, D5)

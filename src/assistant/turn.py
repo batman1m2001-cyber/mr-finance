@@ -93,81 +93,12 @@ ROLE_NAMES = {
     "cio": "giám đốc đầu tư (CIO)",
     "admin": "quản trị hệ thống",
 }
-# what each staff role decides, and who decides around it (BRD-RULE-ROLE-01…05, SCOPE-02, WF-08, BR-03, BR-04, FR-701):
-# without it the assistant said the CIO approves a specialist's recommendation and could not state SCOPE-02 (staff
-# stress test D03). Short, one paragraph per role; the guide (huong_dan) has the pages and the steps.
-DUTIES = {
-    "rm": "RM chăm sóc các gia đình được giao (chỉ sổ của mình, gia đình khác thuộc RM khác): duyệt hay từ chối đề "
-    "xuất của khách, ghi liên hệ, viết khuyến nghị hành động. RM duyệt là đủ: khuyến nghị và đề xuất RM đã duyệt "
-    "tới khách ngay, không có bước chuyên gia. Khuyến nghị mua bán một mã cổ phiếu không bao giờ gửi thẳng cho "
-    "khách. RM không duyệt thay CIO. "
-    "Ghi liên hệ là ghi việc với gia đình, không phải nhắn cho đồng nghiệp: trợ lý không nhắn tin cho ai.",
-    "cio": "CIO duyệt, trả lại hoặc bác nhận định ở trang Sự kiện & nhận định (sau Agent Phản biện), xem lại lần áp "
-    "dụng ở trang Áp dụng. CIO chạy Agent CIO cho một sự kiện và chạy lại Agent Phản biện khi lần trước lỗi: trợ lý "
-    "làm được sau khi CIO bấm Xác nhận, hoặc CIO làm ở trang Việc nền; nhận định ra vẫn chờ CIO duyệt. Cấu hình CIO "
-    "sở hữu (mô hình yếu tố, ngưỡng cảnh báo, giả định lợi suất) cần một CIO khác duyệt, người đề xuất không tự "
-    "duyệt. CIO cũng giữ các chốt kiểm soát, luôn với một CIO khác là người thứ hai (không bao giờ tự duyệt việc "
-    "của mình): cho tin bị giữ đi tiếp kèm lý do (trang Tin bị giữ); phát hành hay từ chối nghiên cứu khi đã "
-    "tới giờ và không phải người đã nạp (trang Nghiên cứu); duyệt hay trả lại bản tin của CIO khác (chỉ người soạn "
-    "sửa, gửi hay rút bài); thêm và xác nhận văn bản chính sách (người xác nhận khác người thêm); cấu hình danh sách "
-    "hạn chế, cụm từ cấm, đồng ý chia sẻ dữ liệu. CIO thấy phơi nhiễm theo gia đình, không xem bảng tài sản của "
-    "từng gia đình.",
-    "admin": "Quản trị lo nguồn tin, nạp dữ liệu, vận hành, tình trạng hệ thống và cấu hình Quản trị sở hữu (nguồn "
-    "tin, phân công RM, chế độ AI…). Quản trị chạy ngay một việc nền (lấy tin, dữ liệu thị trường, kiểm tra chuỗi "
-    "nhật ký…): trợ lý làm được sau khi bấm Xác nhận, hoặc ở trang Việc nền; các agent do CIO chạy. Cấu hình vai trò "
-    "khác sở hữu thì vai trò đó duyệt. Tài khoản nhân viên (thêm, đổi vai trò, khoá, mở lại, đặt lại mật khẩu): "
-    "trợ lý gửi yêu cầu sau khi bấm Xác nhận, một Quản trị khác duyệt ở trang Tài khoản và vai trò; trợ lý không duyệt "
-    "và không bao giờ có mã một lần. Quản trị không xem tài sản hay danh mục của khách. Khoá API và mật khẩu không "
-    "trang nào hiện: chúng ở kho bí mật của hạ tầng.",
-}
-RULES = prompt("assistant/rules", root=ROOT)  # a str.format template: `instructions` fills it
-FACTS_MODEL = (
-    "Mọi con số, tên, ngày phải lấy từ kết quả công cụ hoặc từ lời người dùng. Cần cộng, trừ, nhân, chia, phần "
-    "trăm, lãi kép thì gọi công cụ tinh, không tính nhẩm, và ghi công thức để người dùng kiểm lại. "
-    "Nói số liệu ngày nào (as_of) và lấy từ trang nào. Nói mức chắc chắn: số đọc từ hệ thống là số ghi nhận; "
-    "kịch bản và mô phỏng là ước tính, không phải dự báo."
-)
-FACTS_TEMPLATE = (
-    "Bạn chỉ thấy trạng thái của công cụ, không thấy số liệu (dữ liệu khách hàng không gửi ra ngoài ngân hàng). "
-    "Câu hỏi đã che tên và số. Gọi các công cụ cần rồi trả lời đúng một câu ngắn, không có số liệu: hệ thống sẽ "
-    "ghép kết quả của từng công cụ."
-)
-
-# the data room (ADR-0040) and the re-count rule (ASSISTANT_DATA_PLAN.md §3.5): on 2026-10-24 the assistant repeated a
-# list's cap of 200 as the number of news items and argued when the CIO said 1,415
-DATA_RULE = (
-    "\n- Câu hỏi đếm, lọc hay tổng hợp số liệu mà không công cụ nào khác trả lời đúng thì gọi truy_van. Tổng số luôn "
-    "đếm bằng count(*), không lấy số dòng của một danh sách hay một trang. Người dùng nói một con số sai hoặc không "
-    "khớp: đếm lại ngay bằng công cụ trong lượt này, kể cả khi lượt trước đã đếm (số liệu có thể đã đổi); chưa gọi "
-    "công cụ trong lượt này thì không được nói đã đếm lại. Rồi chỉ nói đã đếm thế nào (bảng nào, điều kiện gì) cùng "
-    "con số vừa đếm: không cãi, không đoán hay kể lý do vì sao lệch."
-)
-# The rule above was not enough on the real model (Haiku 5.5): the CIO's “Sao lại 200? Tôi thấy 1.415 tin chờ xử lý
-# mà.” got “Tôi đã đếm lại ngay…” with no tool called in that turn, three runs out of three, a line at the prompt's
-# end included (docs/ASSISTANT_DATA_PLAN.md, D4 status). So a turn whose question names a number the last answer did
-# not say is a dispute: the prompt says so, and its first model request must call a tool (``tool_choice``).
-RECOUNT = (
-    "\nLượt này người dùng nêu một con số khác với câu trả lời trước: gọi truy_van đếm lại ngay trong lượt này rồi "
-    "mới trả lời, không dùng lại kết quả của lượt trước. Câu trả lời chỉ gồm bảng đã đếm, điều kiện và con số vừa đếm; "
-    "không đoán vì sao con số của người dùng khác (không viết “có thể bạn…”, “có thể do…”)."
-)
-# The page is in English (docs/LANGUAGE_PLAN.md L4): the tools still speak Vietnamese, the answer does not. A spoken
-# turn stays Vietnamese, since the speech service reads Vietnamese only (L5).
-ENGLISH = (
-    "\nTrang đang ở tiếng Anh: trả lời hoàn toàn bằng tiếng Anh, kể cả khi câu hỏi hay kết quả công cụ là tiếng Việt; "
-    "xưng “I”, gọi người dùng là “you”. Giữ nguyên như trong dữ liệu: tên người, tên tài sản, mã chứng khoán, tiêu đề "
-    "tin. Viết số kiểu tiếng Anh: dấu phẩy ngăn hàng nghìn, dấu chấm thập phân (“1.25 bn VND”, “12.5%”, “1,415”). "
-    "Ngày viết dd/mm/yyyy. Tên trang dùng tên tiếng Anh trên menu (Overview, Net worth, News, Scenarios…)."
-)
-# A spoken turn (docs/VOICE_PLAN.md V-D8): the answer is read aloud, sentence by sentence, to a listener who may be
-# older; the screen still shows the whole answer and its sources. Typed turns get "" here, so their prompt is unchanged.
-VOICE = (
-    "\nLượt này người dùng hỏi bằng giọng nói và câu trả lời sẽ được đọc thành tiếng: trả lời 2–3 câu ngắn, câu đầu là "
-    "điều quan trọng nhất (con số chính trước). Làm tròn số cho dễ nghe (“khoảng 7,5 tỷ đồng”). Không dùng bảng, danh "
-    "sách, tiêu đề, ký hiệu hay công thức; nói ngày số liệu gọn trong một cụm. Phần chi tiết thì nói “chi tiết trên "
-    "màn hình”. Câu hỏi chưa rõ (khách nào, khoản nào, khoảng thời gian nào) thì hỏi lại đúng một câu ngắn để xác nhận. "
-    "Việc ghi vẫn chờ người dùng bấm Xác nhận trên màn hình: nói ngắn là đã hiện nút xác nhận."
-)
+# The instructions are one prompt object (docs/PROMPTS.md): prompts/assistant/instructions.yaml links the text objects
+# by the data `instructions` gives — the facts rule by reads, the data room (ADR-0040) by role, a staff role's duties
+# (BRD-RULE-ROLE-01…05), the recount rule (ASSISTANT_DATA_PLAN.md §3.5: the rule alone got “Tôi đã đếm lại” with no tool
+# called, so a dispute also forces a tool call, ``Copilot``), a spoken turn (VOICE_PLAN.md V-D8) and an English page
+# (LANGUAGE_PLAN.md L4; a spoken turn stays Vietnamese, the speech service reads Vietnamese only).
+INSTRUCTIONS = prompt("assistant/instructions", root=ROOT)
 NUMBER = re.compile(r"\d(?:[\d.,]*\d)?")
 RECOUNTING: ContextVar[bool] = ContextVar("assistant_recounting", default=False)
 
@@ -194,11 +125,6 @@ class Copilot(Model):
         if RECOUNTING.get() and tools and tool_choice is None and messages and messages[-1].get("role") == "user":
             tool_choice = "required"
         return super().stream(messages, tools=tools, tool_choice=tool_choice, **kw)
-
-
-REMEMBERED = """
-Điều người dùng đã nhờ ghi nhớ (họ xem và sửa ở trang Bộ nhớ; có thể đã cũ, số liệu luôn lấy từ công cụ):
-{items}"""
 
 
 # the client's sections by the bank's names (ADR-0037); the other lenses are the graph's own
@@ -234,36 +160,26 @@ def graph_line(ctx: Ctx) -> str:
         " “Mục này”, “nút này”, “cái này”, “đường này” là mục đang chọn trên đồ thị, không phải nút bấm của giao "
         "diện: gọi lien_ket. So sánh kịch bản dùng so_sanh_kich_ban."
     )
-    return "\nĐồ thị: " + "; ".join(parts) + "." + hint
+    return "Đồ thị: " + "; ".join(parts) + "." + hint
 
 
 def instructions(rctx: RunContext) -> str:
     ctx: Ctx = rctx.deps
     english = ctx.lang == "en" and not ctx.voice
-    return RULES.format(
+    return INSTRUCTIONS.render(
         who=ROLE_NAMES.get(ctx.role, ctx.role),
-        duties=(
-            f"\n- {DUTIES[ctx.role]} Câu hỏi về quy trình, ai duyệt gì, làm ở trang nào: gọi huong_dan rồi trả lời "
-            "theo đúng vai trò này. Việc chỉ làm trên trang (phát hành nghiên cứu, cho tin đi tiếp, duyệt bản tin hay "
-            "cấu hình, xác nhận văn bản) thì trợ lý không làm và không nhận lý do hay ghi chú để làm hộ: "
-            "nói thẳng, mở trang đó. Hỏi lại việc đang chờ hay tình trạng thì đọc lại bằng công cụ của bàn (số liệu "
-            "đổi từng phút); không nói đã kiểm tra lại khi lượt này chưa gọi công cụ. Chỉ nhắc tên trang có trong menu "
-            "của vai trò này."
-        )
-        if ctx.role in DUTIES
-        else "",
-        facts=FACTS_MODEL if ctx.reads else FACTS_TEMPLATE,
-        data=DATA_RULE if ctx.role in dataroom.ROLES else "",
+        language="tiếng Anh (English)" if english else "tiếng Việt",
+        reads=bool(ctx.reads),
+        data_room=ctx.role in dataroom.ROLES,
+        role=ctx.role,
         today=date.today().strftime("%d/%m/%Y"),  # “tháng 9” is this year's: without it, a model guessed last year's
         page=router.page_path(ctx.route) or "—",
         graph=graph_line(ctx),
-        remembered=REMEMBERED.format(items="\n".join(f"- {t}" for t in ctx.remembered))
-        if ctx.reads and ctx.remembered
-        else "",
-        recount=RECOUNT if ctx.recount else "",
-        voice=VOICE if ctx.voice else "",
-        language="tiếng Anh (English)" if english else "tiếng Việt",
-        english=ENGLISH if english else "",
+        remember=bool(ctx.reads and ctx.remembered),
+        items="\n".join(f"- {t}" for t in ctx.remembered),
+        recount=bool(ctx.recount),
+        voice=bool(ctx.voice),
+        english=english,
     )
 
 

@@ -5,12 +5,18 @@ import asyncio
 import re
 
 import pytest
+from operonx.prompts import prompt
 
 from assistant import registry
 from assistant.base import Ctx, ToolFailed
 from assistant.graphtools import ASSUMED
 from assistant.tools import _vnd
-from assistant.turn import FACTS_MODEL, graph_line
+from assistant.turn import ROOT, graph_line
+
+
+def text(name):
+    """A text object of the assistant's instructions (prompts/assistant/instructions.yaml links them)."""
+    return prompt(name, root=ROOT).text
 
 
 def run(coro):
@@ -52,7 +58,7 @@ def test_d07_a_reply_has_room_for_the_models_reasoning_and_is_asked_to_be_short(
     from assistant import turn
 
     assert turn.ANSWER_TOKENS >= 2400 and turn.agent("client").settings.max_tokens == turn.ANSWER_TOKENS
-    assert "dưới\n150 chữ" in turn.RULES
+    assert "dưới\n150 chữ" in text("assistant/persona")
 
 
 def test_d09_the_paid_web_search_is_not_for_general_knowledge():
@@ -69,7 +75,7 @@ def test_d03_a_calculation_is_a_tool_result_with_its_formula():
     assert calc("37 - 40")["text"].endswith("= -3")
     assert calc("1,5 * 2")["data"]["value"] == 3.0  # a Vietnamese decimal comma
     assert calc("3 × 4 ÷ 2")["data"]["value"] == 6.0
-    assert "tinh" in FACTS_MODEL and "không tính nhẩm" in FACTS_MODEL
+    assert "tinh" in text("assistant/facts-model") and "không tính nhẩm" in text("assistant/facts-model")
 
 
 @pytest.mark.parametrize("bad", ["__import__('os').system('id')", "abs(-1)", "x + 1", "9 ** 9999", "1/0", "", "[1]"])
@@ -292,10 +298,10 @@ def test_d19_d20_one_way_of_address_and_the_graph_is_a_page_to_open():
     """D19: “Em chưa tạo được… anh/chị cần…” — the assistant called itself and the person “em”. D20: asked to show a
     scenario on the graph, it opened the old impact graph: the workspace's lenses were no page it could open. Since
     ADR-0037 the client has no graph: the planning page is what it opens, by the bank's name."""
-    from assistant import turn
     from assistant.tools import PAGES
 
-    assert "gọi người dùng là “bạn”" in turn.RULES and "không dùng “anh/chị”" in turn.RULES  # D19 again in T2
+    persona = text("assistant/persona")
+    assert "gọi người dùng là “bạn”" in persona and "không dùng “anh/chị”" in persona  # D19 again in T2
     assert not [k for k, (_, r) in PAGES.items() if r.get("client", "").startswith("#/client/xem/")]
     out = run(registry.REGISTRY["mo_trang"].run(ctx(), {"page": "ke-hoach"}))
     assert out["navigate"] == "#/client/muc-tieu/ke-hoach" and out["text"] == "Mở trang Wealth Planning."
@@ -423,7 +429,7 @@ def test_d28_a_compacted_conversation_keeps_the_order_of_questions_and_reads_bac
     from assistant import turn
 
     assert "## Người dùng đã hỏi (theo thứ tự" in turn.SUMMARY and "tám mục" in turn.SUMMARY
-    assert "gọi doc_lai_phien để đọc lại, không đoán" in turn.RULES
+    assert "gọi doc_lai_phien để đọc lại, không đoán" in text("assistant/guards")
 
 
 def test_d32_a_comparison_gives_each_scenarios_own_split_and_names_the_combinations():

@@ -86,7 +86,7 @@ def test_the_assistant_services_keep_no_trace():
     described = {s["name"]: s for s in Application.load(ROOT / "operonx.toml").describe()["services"]}
     for name in ("assistant", "copilot", "assistant_conversations", "assistant_memory"):
         assert described[name]["sinks"] == [], name
-    assert described["assistant_consolidate"]["sinks"] == ["local"]  # a job's trace holds counts, not text
+    assert described["assistant_consolidate"]["sinks"] == ["run_store:default"]  # a job's trace holds counts
 
 
 # -- states from records, matched with traces ----------------------------------------------------------------------

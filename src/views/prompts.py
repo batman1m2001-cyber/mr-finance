@@ -3,8 +3,8 @@ two people, and only after the fixed eval set passes on the proposal (MEAS-07, `
 
 ``DEFAULT`` is version 1 — the text the agents shipped with, kept as files in ``prompts/cio/``. Later versions are
 this configuration kind's (the database, two people, the eval set), not the files'. A template names what it is
-filled with between double angle brackets: ``<<guard>>`` (every prompt), ``<<task>>`` (the analyst), ``<<round>>``
-(the debate).
+filled with as operonx prompts name their data, between double braces: ``{{guard}}`` (every prompt), ``{{task}}`` (the
+analyst), ``{{round}}`` (the debate).
 Templates are not ``str.format`` strings because they show the JSON the model must answer with.
 
 ``lenses`` are the analyst groups: the four of the BRD (§8.1) are fixed in the agent graph and must stay; a lens
@@ -63,10 +63,10 @@ DEFAULT: Dict[str, Any] = {
 }
 
 NEEDS = {
-    "analyst": ("<<guard>>", "<<task>>"),
-    "debate": ("<<guard>>", "<<round>>"),
-    "synthesize": ("<<guard>>",),
-    "challenge": ("<<guard>>",),
+    "analyst": ("{{guard}}", "{{task}}"),
+    "debate": ("{{guard}}", "{{round}}"),
+    "synthesize": ("{{guard}}",),
+    "challenge": ("{{guard}}",),
 }
 
 
@@ -76,7 +76,7 @@ def default() -> Dict[str, Any]:
 
 def fill(template: str, **values: Any) -> str:
     for k, v in values.items():
-        template = template.replace(f"<<{k}>>", str(v))
+        template = template.replace("{{" + k + "}}", str(v))
     return template
 
 

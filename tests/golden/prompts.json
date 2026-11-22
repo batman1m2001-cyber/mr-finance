@@ -9,34 +9,112 @@
   "sha256": "137251ef0c3a6ac6558da6f181cc5f9b2f5aeb7521a729384038fe27a24c8ce8",
   "chars": 713
  },
- "assistant/rules": {
-  "as": "template",
-  "sha256": "3b38b05be4e00baef3a891627a9617927d15d74242fef85470f4b2b7fc2ca87b",
-  "chars": 2159
+ "assistant/data-room": {
+  "as": "text",
+  "sha256": "b80e6360477568f3c1cc20ea988d1d6d50e549d1dd0203c895736e54260d5721",
+  "chars": 505
+ },
+ "assistant/duties": {
+  "as": "composite",
+  "kind": "text"
+ },
+ "assistant/duties/admin": {
+  "as": "text",
+  "sha256": "1fa61d85dedb46267190316051514b8c4a703836261d6b21ab5e9fa78e0cdbcf",
+  "chars": 700
+ },
+ "assistant/duties/cio": {
+  "as": "text",
+  "sha256": "b2effa259462d3e641c77444a8b2bab5aa336e6aa4d6bb9c6c281f97eadf5930",
+  "chars": 988
+ },
+ "assistant/duties/common": {
+  "as": "text",
+  "sha256": "95735a53943b2292e8bf2ce55a99e1143c6c86568eaa10273858bcd6a4f30869",
+  "chars": 500
+ },
+ "assistant/duties/rm": {
+  "as": "text",
+  "sha256": "17f1451a0a4c8cea95416ba8ce511752f219c9cb336f7351fe53509f31b05f4f",
+  "chars": 450
+ },
+ "assistant/english": {
+  "as": "text",
+  "sha256": "753603737171f14ca0c464e81a1fb31a1f829c151d57fd58f778874ebcc2a56d",
+  "chars": 434
+ },
+ "assistant/facts-model": {
+  "as": "text",
+  "sha256": "92d160d0d1c946218a9cb7642c75291debe0030d5b85878414fd2fef789630a6",
+  "chars": 358
+ },
+ "assistant/facts-template": {
+  "as": "text",
+  "sha256": "c9bda5d65adfb89d07a9e0840c075ebe0d97d5d4278c1fd6c2a17885152c42e2",
+  "chars": 246
+ },
+ "assistant/guards": {
+  "as": "text",
+  "sha256": "1cbc352de22ad1905681187bdf6727b81a8da8ef40626eb180cadc487d9ffc9e",
+  "chars": 930
+ },
+ "assistant/instructions": {
+  "as": "composite",
+  "kind": "text"
+ },
+ "assistant/now": {
+  "as": "text",
+  "sha256": "38468a9f69e9bd9862cfed12165d358d81ffa08467adbc6b367c9ea1daa6bd53",
+  "chars": 43
+ },
+ "assistant/persona": {
+  "as": "text",
+  "sha256": "fd2184679b4c73d3f8da995dff77d626a62d7d5b09e39efc944a9cc2c739b809",
+  "chars": 492
+ },
+ "assistant/recount": {
+  "as": "text",
+  "sha256": "63982571d79dad380c8b2cb2eab767b94a54984c55b152c6dcc027a2a1ca817c",
+  "chars": 308
+ },
+ "assistant/remembered": {
+  "as": "text",
+  "sha256": "1ea78851f2795731afcd3c7b922982671e62dfc5d4050091072fab84944b64e4",
+  "chars": 115
  },
  "assistant/session-title": {
   "as": "text",
   "sha256": "ab83a34e98acbd3a93f3d792b141ca5135ed118acf073016387f34f8d60af5ef",
   "chars": 361
  },
+ "assistant/voice": {
+  "as": "text",
+  "sha256": "3f6fa5e2281c195e52ae4411bd46c29e03cd51b9d188f7c01499df78acd296e8",
+  "chars": 540
+ },
  "assistant/web": {
   "as": "text",
   "sha256": "14b818bb2c54accc431a84a781426be00ca1ed95222fa4325a25581f724015d8",
   "chars": 332
  },
+ "assistant/writes": {
+  "as": "text",
+  "sha256": "f66cdb5542aaeb3f1c830ce97cc165ded8b3c9eac46b5a45c3cb24115cfdf837",
+  "chars": 633
+ },
  "cio/analyst": {
   "as": "text",
-  "sha256": "223d78df040ef3cd3f0b1d33927e23ced43c800e86705d59849346c732decbcf",
+  "sha256": "a622a1b09b315888c25a1173aa40880f8258f28c075f6e26ff5b36813236a4e7",
   "chars": 391
  },
  "cio/challenge": {
   "as": "text",
-  "sha256": "387031973b2da7d9663195ce9722ce04415adb95cb5d813b2cff02fb4c954efe",
+  "sha256": "5cc27cb65cec2b0aa61f9f8693de6e691ff7978f39c151300ec91ec332385686",
   "chars": 381
  },
  "cio/debate": {
   "as": "text",
-  "sha256": "dbfb4f75d2ecc0ff6ecdf0cb074ad3bee75ec69f514b581c9518bd2b4c3178b6",
+  "sha256": "94ef4ddd82704eb8a47b3b097307e7b4b70d6bdb95e1e57fa0c2a90c1a0e3813",
   "chars": 201
  },
  "cio/guard": {
@@ -51,8 +129,13 @@
  },
  "cio/synthesize": {
   "as": "text",
-  "sha256": "214cbfa371a0e330bb887b72583343160b31f7e63bedaf00649f286538604851",
+  "sha256": "d0a06ad0a5e9dfeaf80df65960662925e86fbed79a015806ffd7c5f1ad45b0e9",
   "chars": 578
+ },
+ "copilot/router": {
+  "as": "text",
+  "sha256": "3ebbc940c6732f213490ed5e69e50ef96e0885cd50a793a11fe289d903124f00",
+  "chars": 407
  },
  "declare/agent": {
   "as": "text",

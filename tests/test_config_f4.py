@@ -48,7 +48,7 @@ def test_version_1_of_the_prompts_is_the_text_the_agents_shipped_with():
     p = config.data("prompts")
     assert p == prompts.default() and config.active("prompts")["id"] == "CF-prompts-v1"
     text = prompts.fill(p["analyst"], guard=p["guard"], task=p["lenses"]["macro"]["task"])
-    assert text.startswith("Bạn là nhóm phân tích vĩ mô và lãi suất") and "DỮ_LIỆU" in text and "<<" not in text
+    assert text.startswith("Bạn là nhóm phân tích vĩ mô và lãi suất") and "DỮ_LIỆU" in text and "{{" not in text
 
 
 # -- what reads them -----------------------------------------------------------------------------

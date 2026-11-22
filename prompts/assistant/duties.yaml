@@ -1,0 +1,12 @@
+id: pr_44377fe9
+description: "A staff role's duties as one rule: what the role decides, then what every staff role does"
+kind: text
+join: " "
+parts:
+  - text: "-"
+  - pick: role
+    cases:
+      rm: assistant/duties/rm
+      cio: assistant/duties/cio
+      admin: assistant/duties/admin
+  - use: assistant/duties/common
