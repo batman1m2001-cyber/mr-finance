@@ -23,8 +23,9 @@ def test_every_prompt_is_the_bytes_it_was():
         if want["as"] == "composite":  # what it renders: test_instructions_golden.py, per role and switch
             assert p.kind == want["kind"], name
             continue
-        text = str(p) if want["as"] == "template" else p.text  # a template is what str.format / LLMOp fills
-        assert hashlib.sha256(text.encode()).hexdigest() == want["sha256"], name
+        # suggest/daily .render() theirs and statements/read goes to LLMOp: both fill {{x}} in this text to the bytes
+        # str.format filled from the old template form (checked on 1.44.0 before these four were pinned by their text)
+        assert hashlib.sha256(p.text.encode()).hexdigest() == want["sha256"], name
 
 
 def test_every_prompt_file_is_accounted_for():

@@ -143,23 +143,23 @@
   "chars": 1792
  },
  "research/suggest": {
-  "as": "template",
-  "sha256": "a73890784080fe85aa22470f60f94a52281fcfcc39a4ce89bcc13a030a472e95",
+  "as": "text",
+  "sha256": "9bab289f6008bd27b5aa76edc2410df3bf6cf889a4d5697bb799c4e9bfb2d7d8",
   "chars": 487
  },
  "statements/read.system": {
-  "as": "template",
-  "sha256": "3e4e1833f230ab2e62db3c7b06c6eb4269cd59b7fb8c5018d35b1540e2b13080",
-  "chars": 489
+  "as": "text",
+  "sha256": "25422105cbc76fab891c365e34fcbec6f3a0d0c8090fc7db60dc4561244453e1",
+  "chars": 481
  },
  "statements/read.user": {
-  "as": "template",
-  "sha256": "0da4fbf78bb2d6a1182dc2aca9e00a535a573ba6ab7df6b4fe3d9cfa49d438f1",
-  "chars": 28
+  "as": "text",
+  "sha256": "266e8da3ced13221c3d9889f8a59f91406441164b8660b1f8131eaab423641ae",
+  "chars": 32
  },
  "trial/daily": {
-  "as": "template",
-  "sha256": "ea47c3c2a3a242846d47e47d23b6b6dc1202a5aede62234d42fbff03668d982a",
-  "chars": 789
+  "as": "text",
+  "sha256": "9521b2e1d74829f7c3b7b0dd258087838dcf9f0e2b9cb894f6e02440eb1df161",
+  "chars": 787
  }
 }
