@@ -18,6 +18,7 @@ import {after, start as startMotion} from "./motion.js?v=20261016r1";
 import {mount as mountHeader} from "./header.js?v=20261025t3";
 import {SECTIONS, TOOLBAR} from "./workspace/lenses.js?v=20261025t3";
 import {DESKS} from "./desk/roles.js?v=20261102a1";
+import {api} from "./lib/api.js";
 
 const ROLES = {
   client: {
@@ -423,7 +424,7 @@ function scopeSwitch(pick) {
 async function pickers() {
   const sel = $("#client");
   // a client gets only themselves (their family through the scope switch): the hidden picker holds just them
-  const {clients} = await (await fetch("/api/clients")).json();
+  const {clients} = await (await api("/api/clients")).json();
   for (const c of clients) state.clients[c.id] = c;
   sel.innerHTML = clients.map(c => `<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.persona_hint)}</option>`).join("");
   const saved = localStore("mf.client");
@@ -466,13 +467,13 @@ function signInPage() {
 }
 
 async function signOut() {
-  await fetch("/api/auth/logout", {method: "POST"});
+  await api("/api/auth/logout", {method: "POST"});
   try { for (const k of Object.keys(sessionStorage)) if (k.startsWith("mf.")) sessionStorage.removeItem(k); } catch (_) { /* private mode */ }
   location.replace(location.pathname);  // one full load, no hash: the old role's page never routes again
 }
 
 async function start() {
-  const me = await (await fetch("/api/auth/me")).json().catch(() => ({auth: false}));
+  const me = await (await api("/api/auth/me")).json().catch(() => ({auth: false}));
   state.auth = !!me.auth;
   state.demo = !!me.demo_accounts;
   state.me = me.user || null;
@@ -498,7 +499,7 @@ async function start() {
   await Promise.all([
     pickers(),
     state.me && state.me.role === "client" ? null  // the staff list: desk and RMs
-      : fetch("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
+      : api("/api/agents").then(r => r.json()).then(a => { for (const u of a.users || []) state.users[u.id] = u; }).catch(() => { /* the pages still work */ }),
   ]);
   await route();
 }
