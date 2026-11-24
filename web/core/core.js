@@ -2,6 +2,7 @@
    components every page uses (states, badges, drawer, toast). Business rules live on the server:
    pages receive status, severity and labels already decided. */
 import {english, t as tr} from "./i18n.js?v=20261102a1";
+import {api} from "../lib/api.js";
 export {english, lang, setLang, t} from "./i18n.js?v=20261102a1";
 
 // ── api ──────────────────────────────────────────────────────────────────────
@@ -61,14 +62,14 @@ export const keep = {
 };
 
 async function fetchGet(path) {
-  const r = await fetch(path);
+  const r = await api(path);
   const body = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(body.error || `${path}: ${r.status}`);
   return body;
 }
 
 async function fetchPost(path, body) {
-  const r = await fetch(path, {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(body || {})});
+  const r = await api(path, {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(body || {})});
   const out = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(errorText(out) || `${path}: ${r.status}`);
   if (out && out.$errors) throw new Error(errorText(out));
@@ -80,7 +81,7 @@ async function fetchPost(path, body) {
    confirmed write): nothing kept is sure any more. */
 export async function stream(path, body, onEvent) {
   try {
-    const r = await fetch(path, {method: "POST", headers: {"content-type": "application/json", accept: "text/event-stream"}, body: JSON.stringify(body || {})});
+    const r = await api(path, {method: "POST", headers: {"content-type": "application/json", accept: "text/event-stream"}, body: JSON.stringify(body || {})});
     if (!r.ok || !r.body || !(r.headers.get("content-type") || "").startsWith("text/event-stream")) {
       throw new Error(errorText(await r.json().catch(() => ({}))) || `${path}: ${r.status}`);
     }

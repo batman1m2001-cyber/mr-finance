@@ -35,3 +35,19 @@ def test_every_page_is_a_module_page():
     for gone in ("app.js", "app.css", "charts.js", "fmt.js"):
         assert not (WEB / gone).exists() and gone not in html, gone
     assert "Mỗi người đăng nhập bằng tài khoản của mình" in html  # sign-in replaced the role switcher (ADR-0020)
+
+
+def test_the_pages_reach_the_backend_only_through_lib_api():
+    # D8: one BASE in web/lib/api.js; to serve web/ from elsewhere, only that line changes
+    from app.web import app
+
+    found = [
+        f"{p.relative_to(WEB)}:{n}"
+        for p in WEB.rglob("*.js")
+        if p != WEB / "lib" / "api.js"
+        for n, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1)
+        if re.search(r"\bfetch\(|new WebSocket\((?!socket\()|new EventSource\(", line)  # a WebSocket takes its address from socket()
+    ]
+    assert not found, found
+    assert 'export const BASE = ""' in (WEB / "lib" / "api.js").read_text(encoding="utf-8")
+    assert TestClient(app).get("/lib/api.js").status_code == 200

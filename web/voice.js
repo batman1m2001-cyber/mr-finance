@@ -10,6 +10,8 @@
    States: connecting, listening, thinking, speaking, off. onAsked(text) returns false when the panel cannot ask
    (a turn already running): the microphone listens again. */
 
+import {socket} from "./lib/api.js";
+
 const GAP_MS = 250;  // between two sentences: room to take in a number
 const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0)).buffer;
 
@@ -88,8 +90,7 @@ export function voice({onState = () => {}, onHeard = () => {}, onAsked = () => f
       send(data.frame);
     };
     mic.connect(node);  // the worklet's output is not connected: nothing of the microphone is played back
-    const proto = location.protocol === "https:" ? "wss" : "ws";
-    ws = new WebSocket(`${proto}://${location.host}/api/assistant/voice?rate=${ctx.sampleRate}`);
+    ws = new WebSocket(socket(`/api/assistant/voice?rate=${ctx.sampleRate}`));
     ws.binaryType = "arraybuffer";
     ws.onmessage = onMessage;
     ws.onclose = (e) => { if (state !== "off") close(e.code === 1000 ? "" : "Mất kết nối giọng nói; bấm micro để thử lại."); };

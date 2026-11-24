@@ -6,6 +6,7 @@
    far are kept for this page's life, per client. */
 import {internal, esc, pct, post} from "../core/core.js";
 import {icon} from "../core/icons.js?v=20261016r1";
+import {api} from "../lib/api.js";
 
 const LEVELS = ["Bảo toàn", "Thận trọng", "Cân bằng", "Tăng trưởng", "Mạo hiểm"];
 const runs = {};  // per client: {answers, order, reply}
@@ -23,7 +24,7 @@ function scale(label, hint, score, level, tone) {
 export async function render(box, ctx) {
   const client = ctx.client(), staff = ctx.role !== "client";
   const run = runs[client] ||= {answers: {}, order: [], reply: null};
-  const me = await fetch("/api/clients").then(r => r.json()).then(c => c.clients.find(x => x.id === client) || {}).catch(() => ({}));
+  const me = await api("/api/clients").then(r => r.json()).then(c => c.clients.find(x => x.id === client) || {}).catch(() => ({}));
 
   const step = async () => {
     box.querySelector(".rbody").classList.add("loading");

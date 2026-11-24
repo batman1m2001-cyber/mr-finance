@@ -117,8 +117,9 @@ def answer_flow(question, k):  # a setting is a graph input
 - Tests go in `tests/`. Call an op directly (`my_op(x=1)()`), run a graph
   with `Operon` or a `Job`, and never call a real model: use a fake one.
 
-<!-- operonx:builder -->
-## Building it: docs/brd and the board
+## docs/brd and the board
+
+Both are plain Markdown: read them, and edit them directly.
 
 - `docs/brd/` is the living BRD: what the product must do, and how far it
   is. `docs/brd/requirements/requirements_traceability.md` is the
@@ -127,14 +128,13 @@ def answer_flow(question, k):  # a setting is a graph input
   `docs/brd/requirements/open_questions.md`, never deleted.
 - `docs/brd/board.md` is the board: one card per task
   (`### C4 · title · todo|doing|needs you|done`, then `req`, `after`,
-  `files`, `done`). Move it with `operonx-project board C4 doing` before
-  its first edit, one card in `doing` at a time; to `needs you` with the
-  question as its note when you are blocked; to `done` only when its `done`
+  `files`, `done`). Change the status in the card's heading: `doing` before
+  its first edit, one card in `doing` at a time; `needs you`, with the
+  question as its note, when you are blocked; `done` only when its `done`
   tests pass.
 - When a change meets or alters a requirement, update its row (status,
-  code, test) and add one line to `docs/brd/CHANGELOG.md`. The rules are in
-  `docs/brd/README.md`. The checklist's summary table is counted from
-  the rows by the engine: leave it.
+  code, test) and the checklist's summary counts, and add one line to
+  `docs/brd/CHANGELOG.md`. The rules are in `docs/brd/README.md`.
 - `docs/brd/knowledge.md` is what the project learned: `### K3 · title ·
   pattern|pitfall|replaced|decision`, then `where` (files), `use` (when; a
   pitfall's symptom first; a decision's why), `instead` (for `replaced`).
@@ -142,16 +142,11 @@ def answer_flow(question, k):  # a setting is a graph input
   op, graph and job; `operonx guide` rewrites it). When a card is done, add
   what is reusable or a pitfall; when the owner decides something, add a
   `decision`; when a pattern is replaced, edit its entry, never add a second.
-- Search before reading a whole doc: `operonx-project search QUERY` ranks
-  the sections of the board, the BRD, the plans, knowledge and the guide
-  (heading, 3 lines, `path:line`); `operonx-project read PATH HEADING`
-  prints one section.
+- Search before reading a whole doc: `grep -rn QUERY docs/ .operonx/guide/`.
 - Work with more than one step gets a plan doc under `docs/` (why and
-  how) and a cycle on the board: `operonx-project cycle open ID TITLE
-  --plan docs/X_PLAN.md`, its phases as cards (`operonx-project put --title
-  T --cycle ID`). `cycle close ID` once every card in it is done; a card
-  left open moves to the Backlog first (`put C4 --cycle Backlog`).
-<!-- /operonx:builder -->
+  how) and a `## ID · title · open` section on the board, its phases as
+  cards under it. Mark it `closed` once every card in it is done; a card
+  left open moves to `## Backlog` first.
 
 ## Commands
 

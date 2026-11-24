@@ -7,6 +7,7 @@
    book only, not the page. */
 import {$, esc, get, n as how, num as count, pct, post, stream, vnd} from "../core/core.js";
 import {CLASS_ICON, icon} from "../core/icons.js?v=20261016r1";
+import {api} from "../lib/api.js";
 
 const EXAMPLES = ["Tôi có 1 mảnh đất 500m2 ở Long Thành mua 2019 giá 3 tỷ", "Nhà tôi có 10 lượng vàng",
   "Tôi có 2 con, 14 tuổi và 10 tuổi", "Tôi có 20% cổ phần công ty Hoa Sen trị giá 5 tỷ"];
@@ -163,7 +164,7 @@ export async function render(box, ctx) {
     const file = $("#stmt-file", box);
     file.onchange = async () => { const f = file.files[0]; if (f) send(f.name, await f.arrayBuffer()); };
     for (const b of box.querySelectorAll("[data-sample]")) b.onclick = async () => {
-      const r = await fetch(`/samples/${encodeURIComponent(b.dataset.sample)}`);
+      const r = await api(`/samples/${encodeURIComponent(b.dataset.sample)}`);
       send(b.dataset.sample, await r.arrayBuffer());
     };
   };
