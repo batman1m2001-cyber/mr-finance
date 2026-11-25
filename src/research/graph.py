@@ -1,5 +1,5 @@
 """research_flow: one flow for the CIO's research desk and the goals' outflow labels, plus the newsletter (FR-801),
-a route picks its `task` (app/main.py binds it with `variants`, and `bodies.py` is each route's request contract).
+a route picks its `task` (app/research.py binds it with `variants`, and its `body=` functions are each route's request contract).
 The task is not called `action`: a newsletter step has a field of that name.
 
 upload     POST /api/research            upload a report, house view or regulation note

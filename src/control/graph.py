@@ -1,5 +1,5 @@
-"""admin_flow: one flow for the Admin's and the CIO's small writes, a route picks its `task` (app/main.py binds it with
-`variants`, and `bodies.py` is each route's request contract); the two jobs take theirs through `Job(inputs=...)`.
+"""admin_flow: one flow for the Admin's and the CIO's small writes, a route picks its `task` (app/control.py binds it with
+`variants`, and its `body=` functions are each route's request contract); the two jobs take theirs through `Job(inputs=...)`.
 
 config_propose   POST /api/config/propose         propose a new version of one kind of configuration (FR-701)
 config_decide    POST /api/config/decide          approve or reject a proposed version

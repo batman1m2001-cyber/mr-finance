@@ -1,5 +1,5 @@
-"""scenarios_flow: one flow for the planning feature, a route picks its `action` (app/main.py binds it with `variants`,
-and `bodies.py` is each route's request contract).
+"""scenarios_flow: one flow for the planning feature, a route picks its `action` (app/scenarios.py binds it with `variants`,
+and its `body=` functions are each route's request contract).
 
 scenario  POST /api/scenario          the client's picture → a life event or a stress test → numbers and two options
 combine   POST /api/scenario/combine  several stress tests at once on the client's holdings, no double count
