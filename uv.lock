@@ -1441,7 +1441,7 @@ requires-dist = [
     { name = "httpx", marker = "extra == 'test'", specifier = ">=0.24" },
     { name = "onnxruntime", specifier = ">=1.17" },
     { name = "openpyxl", specifier = ">=3.1.5" },
-    { name = "operonx", extras = ["openai", "serve", "clickhouse"], specifier = ">=1.47.1" },
+    { name = "operonx", extras = ["openai", "serve", "clickhouse"], specifier = ">=1.49.0" },
     { name = "operonx-agents", specifier = ">=0.3.2" },
     { name = "operonx-kb", extras = ["pdf"], specifier = ">=0.2.6" },
     { name = "pillow", specifier = ">=10" },
@@ -1817,7 +1817,7 @@ wheels = [
 
 [[package]]
 name = "operonx"
-version = "1.47.1"
+version = "1.49.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "orjson" },
@@ -1826,9 +1826,9 @@ dependencies = [
     { name = "rich" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9d/96/340f3ac417e3f653844d36e60f5337ad1c1afe712150a00e7aea206b9e4f/operonx-1.47.1.tar.gz", hash = "sha256:5b576622af96c4a55da91c4c63fb43c1f1e8feaebf6488dfae40b9742bd7c67e", size = 886617, upload-time = "2026-11-25T02:58:54.99Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d3/8f/536a015a911cb1510137300012d88bca562a4fa8b0536c7f27183b82eabc/operonx-1.49.0.tar.gz", hash = "sha256:23bb829b83a44caf68b0b628cb4d3eb8ca85f65d8766a80fab0ea66026f0408c", size = 891144, upload-time = "2026-11-25T07:56:56.745Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/a1/c68039a9b079e4a7e3edc23b6205565355a338255eb6bd083d18b2cdfb57/operonx-1.47.1-py3-none-any.whl", hash = "sha256:759b23c2bc33eb1ccf632c763c2c7c142f4b5a0dc24abfc44943e0011bcc45f9", size = 1076574, upload-time = "2026-11-25T02:58:53.083Z" },
+    { url = "https://files.pythonhosted.org/packages/05/90/564a1c02801d72d7778ba76e9561e6ca056cae9a2f1e378bd72e3ef0a5dd/operonx-1.49.0-py3-none-any.whl", hash = "sha256:2f2f96ec0cad55a1a02d41545e02f683fd25613ad6c7e0427df0e9919e9af940", size = 1082016, upload-time = "2026-11-25T07:56:55.056Z" },
 ]
 
 [package.optional-dependencies]

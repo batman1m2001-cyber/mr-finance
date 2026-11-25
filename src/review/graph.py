@@ -1,5 +1,5 @@
-"""review_flow: the RM queue and the CIO's decisions, one flow; a route picks its `task` (app/main.py binds it with
-`variants`, and `bodies.py` is each route's request contract). The selector is `task` because a view's or a run's
+"""review_flow: the RM queue and the CIO's decisions, one flow; a route picks its `task` (app/review.py binds it with
+`variants`, and its `body=` functions are each route's request contract). The selector is `task` because a view's or a run's
 decision has a field named `action`.
 
 propose    POST /api/review/propose    a simulation's option, sent to the RM queue as a pending item

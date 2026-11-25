@@ -1,4 +1,4 @@
-"""The market and measurement jobs' one graph (app/main.py gives each job its `action`, and `job` for a source;
+"""The market and measurement jobs' one graph (app/market.py gives each job its `action`, and `job` for a source;
 `operonx run market_<kind>` or `operonx run accuracy_score` runs one now). The Admin's two requests are
 control/graph.py admin_flow."""
 

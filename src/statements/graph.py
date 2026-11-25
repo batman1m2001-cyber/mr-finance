@@ -73,7 +73,7 @@ def read_flow(filename, content):
 
 @graph
 def intake_flow(action="statement", client_id=None, filename=None, content=None, message=None, session_id=None):
-    """What a client brings in, one flow, the route picks its ``action`` (``sample``: the eval's, a sample statement from data/samples, read and nothing kept) (app/main.py `variants`; bodies.py has each
+    """What a client brings in, one flow, the route picks its ``action`` (``sample``: the eval's, a sample statement from data/samples, read and nothing kept) (app/statements.py `variants`, and each
     route's request contract). ``statement`` (POST /api/statement): a statement the client uploaded, read and kept as
     their tier-2 holdings. ``declare`` (POST /api/declare): one chat turn, the agent records what the client says
     (when AI is on), or the rules do, as their tier-3 declarations. The turn said as it happens

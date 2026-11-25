@@ -1,5 +1,5 @@
-"""pages_flow: one flow for the client's pages, a route picks its `action` (app/main.py binds it with `variants`,
-and `bodies.py` is each route's request contract).
+"""pages_flow: one flow for the client's pages, a route picks its `action` (app/pages.py binds it with `variants`,
+and its `body=` functions are each route's request contract).
 
 dashboard  POST /api/dashboard   the consolidated holdings, then every section of the page at once
 overview   POST /api/overview    the client's whole picture as one graph (UI redesign R4)

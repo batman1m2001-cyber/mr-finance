@@ -1,5 +1,5 @@
 """assistant_flow: one flow for the assistant's request–reply routes and its two jobs; a route picks its `task`
-(app/main.py binds it with `variants`, a job with `Job(inputs=...)`, and `bodies.py` is each route's request
+(app/assistant.py binds it with `variants`, a job with `Job(inputs=...)`, and its `body=` functions are each route's request
 contract). The selector is not called `action`: the conversations and memory bodies have a field of that name.
 
 turn           POST /api/assistant                a message (or the person's answers to the writes it waits on) →

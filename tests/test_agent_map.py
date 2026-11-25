@@ -27,13 +27,6 @@ def traced(tmp_path, monkeypatch):
     """The jobs' run records and traces in this test's folder, read back by the map from the same place."""
     monkeypatch.setenv("OPERONX_RUNS_DIR", str(tmp_path / "runs"))
     monkeypatch.setattr("operonx.app.jobs.job.Job.records", lambda self: tmp_path / "jobs")
-    # The jobs trace to the local consumer (OPERONX_RUNS_DIR), whatever ran before: once a test loads operonx.toml,
-    # its [tracing] sinks (the ClickHouse run store) settle onto the same job objects, and no trace lands here.
-    from dataclasses import replace
-
-    from app.main import APP
-
-    monkeypatch.setattr(APP, "manifest", replace(APP.manifest, tracing=None))
     ecosystem._FINISHED.clear()
     return tmp_path
 
@@ -89,7 +82,8 @@ def test_every_tool_of_the_assistant_is_on_the_map_once():
     assert m["tools_knowledge"]["kinds"]["paid"] == 1  # the web search, the one tool that costs
 
 
-def test_the_assistant_services_keep_no_trace():
+def test_the_assistant_services_keep_no_trace(monkeypatch):
+    monkeypatch.delenv("OPERONX_TRACE")  # what operonx.toml declares, not the tests' local pin (conftest)
     described = {s["name"]: s for s in Application.load(ROOT / "operonx.toml").describe()["services"]}
     for name in ("assistant", "copilot", "assistant_conversations", "assistant_memory"):
         assert described[name]["sinks"] == [], name

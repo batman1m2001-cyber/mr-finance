@@ -1,5 +1,5 @@
-"""policy_flow: one flow for the policy radar (FR-306), a route picks its `action` (app/main.py binds it with `variants`,
-and `bodies.py` is each route's request contract).
+"""policy_flow: one flow for the policy radar (FR-306), a route picks its `action` (app/policy.py binds it with `variants`,
+and its `body=` functions are each route's request contract).
 
 add        POST /api/policy            a CIO adds a policy document
 verify     POST /api/policy/verify     a second CIO confirms the document's source

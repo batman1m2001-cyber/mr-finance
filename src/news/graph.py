@@ -1,5 +1,5 @@
 """news_flow: the news, its events and the alerts they cause, one flow; a route or a job picks its `action`
-(app/main.py binds it with `variants` or `Job(inputs=...)`, and `bodies.py` is each route's request contract).
+(app/news.py binds it with `variants` or `Job(inputs=...)`, and its `body=` functions are each route's request contract).
 
 ingest     the news_ingest and zone_news jobs, POST /api/news/ingest: every white-listed feed → the gates → sorted →
            kept (BRD FR-101…105), then the follow-ups on approved events (A6). ``feeds`` replaces the network with

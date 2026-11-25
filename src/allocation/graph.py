@@ -1,5 +1,5 @@
-"""allocation_flow: one flow for the whole allocation feature, a route picks its `action` (app/main.py binds it with
-`variants`, and `bodies.py` is each route's request contract).
+"""allocation_flow: one flow for the whole allocation feature, a route picks its `action` (app/allocation.py binds it with
+`variants`, and its `body=` functions are each route's request contract).
 
 view      POST /api/allocation          the household's holdings and profile → the case → three buckets, the actions
 example   POST /api/allocation/example  the BRD's worked example K-7F3A

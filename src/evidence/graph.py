@@ -1,5 +1,5 @@
-"""evidence_flow: one flow for the evidence feature, a route picks its `action` (app/main.py binds it with `variants`,
-and `bodies.py` is each route's request contract).
+"""evidence_flow: one flow for the evidence feature, a route picks its `action` (app/evidence.py binds it with `variants`,
+and its `body=` functions are each route's request contract).
 
 read          POST /api/evidence               the frames behind the alerts' evidence, as the caller's role may read them
 decide        POST /api/evidence/decide        the CIO approves, returns or rejects a frame
