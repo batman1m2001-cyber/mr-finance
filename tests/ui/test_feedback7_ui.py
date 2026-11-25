@@ -13,7 +13,9 @@ def test_the_rms_desk_is_tong_quan_and_hom_nay_is_gone(open_page):
     p = open_page()
     p.go("#/rm")
     p.page.wait_for_selector(".desk-rm [data-fam]")
-    assert rail(p)[0] == "Tổng quan" and "Hôm nay" not in rail(p) and "Sổ khách hàng" not in rail(p)  # OWN-FB-25, -21
+    # Advisory performance first on the RM rail (partner feedback 2026-11-02), then Tổng quan
+    assert rail(p)[:2] == ["Advisory performance", "Tổng quan"]
+    assert "Hôm nay" not in rail(p) and "Sổ khách hàng" not in rail(p)  # OWN-FB-25, -21
     assert p.page.inner_text("#dk-title") == "Tổng quan"
     assert p.page.inner_text("#rk-t") == "Khách hàng đang quản lý"  # OWN-FB-19
     assert "3 khách hàng" in p.page.inner_text(".desk-rm .ws-sub")

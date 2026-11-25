@@ -27,6 +27,13 @@ def traced(tmp_path, monkeypatch):
     """The jobs' run records and traces in this test's folder, read back by the map from the same place."""
     monkeypatch.setenv("OPERONX_RUNS_DIR", str(tmp_path / "runs"))
     monkeypatch.setattr("operonx.app.jobs.job.Job.records", lambda self: tmp_path / "jobs")
+    # The jobs trace to the local consumer (OPERONX_RUNS_DIR), whatever ran before: once a test loads operonx.toml,
+    # its [tracing] sinks (the ClickHouse run store) settle onto the same job objects, and no trace lands here.
+    from dataclasses import replace
+
+    from app.main import APP
+
+    monkeypatch.setattr(APP, "manifest", replace(APP.manifest, tracing=None))
     ecosystem._FINISHED.clear()
     return tmp_path
 
