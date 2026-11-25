@@ -20,6 +20,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [  # pip: pip install -e ".[test]"
     "pytest>=8",
+    "pytest-xdist>=3",  # pytest -n 8: the suite in minutes, not half an hour
     "httpx>=0.24",  # starlette's TestClient
 ]
 ui = [  # the browser tests in tests/ui (skipped without it); a Chromium: `playwright install chromium` or MF_CHROMIUM
@@ -32,7 +33,10 @@ dev = ["mr-finance[test,ui]"]  # uv: `uv sync` installs the test and browser-tes
 [tool.pytest.ini_options]
 pythonpath = ["src", "."]
 testpaths = ["tests"]
-markers = ["ui: browser tests in tests/ui (Playwright + Chromium); skip with -m 'not ui'"]
+markers = [
+    "ui: browser tests in tests/ui (Playwright + Chromium); skip with -m 'not ui'",
+    "smoke: the one browser test the fast check keeps (-m 'not ui or smoke')",
+]
 
 [tool.ruff]
 line-length = 120  # Vietnamese prompts and data rows read better whole

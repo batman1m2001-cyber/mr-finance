@@ -1,7 +1,10 @@
 """Every test gets an empty state file of its own, the project's resources, and the rule paths
-(MF_AI=off) unless it turns the model on itself. Sign-in is off (MF_AUTH=off) except in tests/test_auth.py and the
-browser tests, which sign in."""
+(MF_AI=off) unless it turns the model on itself. The run post-check's "today" is the fixture prices' own date, so
+a run is not held for stale prices as the calendar moves past data/market.json. Sign-in is off (MF_AUTH=off)
+except in tests/test_auth.py and the browser tests, which sign in."""
 
+import json
+from datetime import date
 from pathlib import Path
 
 import operonx
@@ -22,3 +25,19 @@ def state(tmp_path, monkeypatch):
     monkeypatch.setenv("MF_AI", "off")
     monkeypatch.setenv("MF_AUTH", "off")
     return path
+
+
+PRICE_DATE = date.fromisoformat(json.loads((ROOT / "data" / "market.json").read_text())["as_of"])
+
+
+class _PriceDay(date):
+    @classmethod
+    def today(cls):
+        return PRICE_DATE
+
+
+@pytest.fixture(autouse=True)
+def price_day(monkeypatch):
+    import apply.run
+
+    monkeypatch.setattr(apply.run, "date", _PriceDay)

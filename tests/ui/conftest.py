@@ -63,10 +63,15 @@ def sign_in_on(monkeypatch):
     monkeypatch.setenv("MF_DEMO_ACCOUNTS", "on")
 
 
+SMOKE = "test_routes.py::test_every_route_renders_without_errors[desktop-dark]"
+
+
 def pytest_collection_modifyitems(items):
-    for item in items:  # `pytest -m "not ui"` skips the browser tests (about a minute)
+    for item in items:  # `pytest -m "not ui"` skips the browser tests (half the suite's time)
         if "tests/ui/" in str(item.fspath).replace("\\", "/"):
             item.add_marker(pytest.mark.ui)
+            if item.nodeid.endswith(SMOKE):  # the fast check keeps one: every route renders, no errors
+                item.add_marker(pytest.mark.smoke)
 
 
 @pytest.fixture(scope="session")

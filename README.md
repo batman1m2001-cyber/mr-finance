@@ -18,7 +18,8 @@ With uv:
 
 ```bash
 uv sync
-uv run pytest                  # offline, ~20 s
+uv run pytest -n 8             # offline, every test: ~6 min on 8 workers
+uv run pytest -n 8 -m "not ui or smoke"   # the fast check (a dependency bump): no browser tests but one
 uv run operonx serve           # http://127.0.0.1:8030
 ```
 
@@ -27,7 +28,7 @@ With pip (no uv):
 ```bash
 python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -e ".[test]"
-pytest
+pytest -n 8
 operonx serve
 ```
 

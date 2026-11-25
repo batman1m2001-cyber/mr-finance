@@ -15,7 +15,8 @@ def test_a_statement_and_a_declaration_reach_the_book(open_page):
     rows = p.page.locator("#book tbody tr").count()
     p.page.click("[data-sample]")
     p.page.wait_for_function("/Đã đọc \\d+ khoản/.test(document.querySelector('#stmt-out')?.textContent)")
-    assert p.page.locator("#book tbody tr").count() > rows  # the page drew again with the statement's holdings
+    # the page draws again with the statement's holdings just after it says what it read
+    p.page.wait_for_function(f"document.querySelectorAll('#book tbody tr').length > {rows}")
     p.page.fill("#chat-in", "Nhà tôi có 10 lượng vàng")
     p.page.press("#chat-in", "Enter")
     p.page.wait_for_function("/ghi \\d+ mục/.test(document.querySelector('#chat-log')?.textContent)")
@@ -86,6 +87,8 @@ def test_the_policy_filter_keeps_one_side(open_page, base_url):
     rep = api(base_url, "/api/alerts", {"client_id": "C01", "scope": "personal"})["report"]
     items = list({a["factor"]: a for a in reversed(rep["alerts"])}.values())  # one per news, its largest hit
     assert p.page.locator("#sections .acard").count() == len(items)
+    for more in p.page.locator("#impact [data-col]").all():  # three per column, the rest behind Xem thêm (feedback 6)
+        more.click()
     assert p.page.locator("#impact .nrow").count() == len(items)
     p.page.click("[data-af=positive]")
     pos = [a for a in items if _direction(a) == "positive"]
